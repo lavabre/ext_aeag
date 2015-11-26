@@ -1,0 +1,80 @@
+{% extends "AeagFrdBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+      <li>
+          <i class="icon-home"></i>
+          <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+       </li>
+        <li>
+           <i class="icon-cogs"></i>
+          <a href="{{ path('AeagFrdBundle_admin_consulterPhases') }}">Phases</a> 
+       </li>
+       <li class="active">
+         {{phase.code}}
+       </li>
+{% endblock breadcrumb %}
+
+
+{%block panel_heading %}
+           <h3>
+                Mise à jour de la phase {{phase.code}}
+           </h3>
+ {%endblock panel_heading %}
+
+ {%block content %}
+         <div class="row">
+           <div class="col-xm-offset-3 col-xm-5">
+               <form action="{{ path('AeagFrdBundle_admin_majPhase', { 'code': phase.code }) }}" class="form-horizontal" role="form"  method="post" {{ form_enctype(form) }}>
+                   
+                    {% spaceless %}
+                        {% if not form.vars.valid %}
+                                <div class="alert alert-danger">
+                                   {% for children in form.children %}
+                                         {% if not children.vars.valid %}
+                                            {{ form_errors(children) }}
+                                       {% endif %}
+                                    {% endfor %}
+                                 </div>
+                        {% endif %}
+                    {% endspaceless %}
+                 
+                    <div class="form-group">
+                        <label class="col-xs-3 control-label">Code</label>
+                        {%if form_errors(form.code) %}
+                            <div class="col-xs-8 input-group has-error has-feedback">
+                        {% else %}
+                             <div class="col-xs-8 input-group">
+                         {% endif %}
+                           {{ form_widget(form.code, { 'attr': {'class': 'form-control ', 'placeholder': 'Code'} }) }}
+                         </div>
+                     </div> 
+                        
+                      <div class="form-group">
+                        <label class="col-xs-3 control-label">Libelle</label>
+                        {%if form_errors(form.libelle) %}
+                            <div class="col-xs-8 input-group has-error has-feedback">
+                        {% else %}
+                             <div class="col-xs-8 input-group">
+                         {% endif %}
+                           {{ form_widget(form.libelle, { 'attr': {'class': 'form-control ', 'placeholder': 'Libelle'} }) }}
+                         </div>
+                     </div> 
+                        
+                      <div class="col-sm-offset-3 col-sm-8">
+                            <button type="submit" class="btn btn-success"> 
+                              <i class="fa fa-check"> Enregister</i>
+                            </button>
+                            <a class="btn btn-danger" href="{{ path('AeagFrdBundle_admin_consulterPhases') }}">
+                                <i class="fa fa-home"> Retour</i>
+                             </a>
+                      </div>
+            
+                        <div class="hide">
+                        {{ form_rest(form) }}
+                        </div>
+                        
+                    </form>
+             </div>
+        </div>
+      
+{%endblock content %}

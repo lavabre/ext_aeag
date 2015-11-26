@@ -1,0 +1,11 @@
+# ignorer tous les fichiers dans le r�pertoire app/cache
+app/cache/
+# ignorer tous les fichiers dans le r�pertoire app/cache
+app/logs/
+# ignorer tous les fichiers dans le r�pertoire web/fichiers
+web/fichiers/
+# ignorer tous les fichiers dans le r�pertoire web/bundles
+web/bundles/
+# ignorer tous les fichiers dans le r�pertoire nbproject/private
+nbproject/private/
+/vendor1/winzou/console-bundle/CoreSphere/ConsoleBundle

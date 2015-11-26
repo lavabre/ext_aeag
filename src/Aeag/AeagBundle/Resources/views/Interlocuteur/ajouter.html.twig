@@ -1,0 +1,101 @@
+{% extends "AeagUserBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+<li><a href="{{ path('fos_user_profile_show') }}">Compte</a></li> 
+<li><a href="{{ path('Aeag_interlocuteur') }}">Interlocuteurs</a></li> 
+<li class="active">Nouveau</li> 
+{% endblock breadcrumb %}
+
+{% block content %}
+
+<div class="col-xs-offset-3 col-xs-8">
+    <form role="form" action="{{ path('Aeag_interlocuteur_ajouter') }}" {{ form_enctype(form) }} method="POST">
+   
+      <h3 class="form-title">Ajout d'un interlocuteur</h3>
+      
+       
+      {% spaceless %}
+            {% if not form.vars.valid %}
+                    <div class="alert alert-danger">
+                       {% for children in form.children %}
+                            {% if not children.vars.valid %}
+                                {{ form_errors(children) }}
+                           {% endif %}
+                        {% endfor %}
+                    </div>
+            {% endif %}
+        {% endspaceless %}
+      
+    
+        <div class="form-group">
+            <label for="majInterlocuteur_nom" class="required">Nom : </label>
+           {% if form_errors(form.nom) %}
+                 <div class="input-group has-error has-feedback">
+           {% else %}
+                  <div class="input-group">
+           {% endif %}
+                   <span class="input-group-addon"><i class="fa fa-user"></i><i class="fa fa-asterisk text-danger"></i></span>
+                   {{ form_widget(form.nom, { 'attr': {'class': 'form-control', 'placeholder': 'Nom', 'required':'required'} }) }}
+                 </div>
+          </div>
+            
+          <div class="form-group">
+            <label for="majInterlocuteur_prenom" class="required">Prénom : </label>
+           {% if form_errors(form.prenom) %}
+                 <div class="input-group has-error has-feedback">
+           {% else %}
+                  <div class="input-group">
+           {% endif %}
+                   <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                   {{ form_widget(form.prenom, { 'attr': {'class': 'form-control', 'placeholder': 'Prénom'} }) }}
+                 </div>
+          </div>  
+            
+          <div class="form-group">
+            <label for="majInterlocuteur_prenom" class="required">Fonction : </label>
+           {% if form_errors(form.fonction) %}
+                 <div class="input-group has-error has-feedback">
+           {% else %}
+                  <div class="input-group">
+           {% endif %}
+                   <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                   {{ form_widget(form.fonction, { 'attr': {'class': 'form-control', 'placeholder': 'Fonction'} }) }}
+                 </div>
+          </div>  
+            
+        <div class="form-group">
+            <label for="majInterlocuteur_email" class="required">Adresse email :</label>
+            {% if form_errors(form.email) %}
+                   <div class="input-group has-error has-feedback">
+            {% else %}
+                   <div class="input-group">
+            {% endif %}
+                    <span class="input-group-addon"><i class="fa fa-mail-forward"></i><i class="fa fa-asterisk text-danger"></i></span>
+                    {{ form_widget(form.email, { 'attr': {'class': 'form-control', 'placeholder': 'Adresse email', 'required':'required'} }) }}
+                  </div>
+        </div>
+                       
+       <div class="form-group">
+            <label for="majInterlocuteur_tel" class="required">Tél. :</label>
+            {% if form_errors(form.tel) %}
+                   <div class="input-group has-error has-feedback">
+            {% else %}
+                   <div class="input-group">
+            {% endif %}
+                    <span class="input-group-addon"><i class="fa fa-phone"></i>&nbsp;&nbsp;&nbsp;</span>
+                    {{ form_widget(form.tel, { 'attr': {'class': 'form-control', 'placeholder': 'Numéro téléphone'} }) }}
+                  </div>
+        </div>                
+            
+         
+         {{ form_rest(form) }}
+    
+       <div class="btn-group pull-right">
+        <button type="submit" class="btn btn-success  pull-right" value="Ajouter">Ajouter</button>
+        <a class="btn btn-danger" href="{{ path('Aeag_interlocuteur') }}"><i class="fa fa-power-off"></i> Retour</a> 
+       </div>
+        
+    </form>
+</div>
+
+{% endblock content %}

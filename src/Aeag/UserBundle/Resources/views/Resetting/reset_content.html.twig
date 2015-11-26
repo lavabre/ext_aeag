@@ -1,0 +1,45 @@
+{% trans_default_domain 'FOSUserBundle' %}
+
+
+<div class="col-xs-offset-3 col-xs-8">
+
+<form  role="form" action="{{ path('fos_user_resetting_reset', {'token': token}) }}" {{ form_enctype(form) }} method="POST">
+   
+    <legend>Réinitialisation du mot de passe</legend> 
+    
+    {% spaceless %}
+            {% if not form.vars.valid %}
+                    <div class="alert alert-danger">
+                       {% for children in form.children %}
+                            {% if not children.vars.valid %}
+                                {% if children.vars.name == 'plainPassword' %}
+                                       la double saisi du nouveau mot de passe est incorrecte
+                                {% endif %}
+                                {{ form_errors(children) }}
+                           {% endif %}
+                        {% endfor %}
+                    </div>
+            {% endif %}
+        {% endspaceless %}
+    
+         <div class="form-group">
+             <label class="required" for="fos_user_resetting_password_form_plainPassword_first">Nouveau mot de passe :</label>
+             {% if form_errors(form.plainPassword) %}
+                    <div class="input-group has-error has-feedback">
+             {% else %}
+                    <div class="input-group">
+             {% endif %}
+                   <span class="input-group-addon"><i class="fa fa-key"></i><i class="fa fa-asterisk text-danger"></i></span>
+                   <input class="form-control" id="fos_user_resetting_form_plainPassword_first" type="password" placeholder="Nouveau mot de passe" required="required" name="fos_user_resetting_form[plainPassword][first]">
+                   <input class="form-control" id="fos_user_resetting_form_plainPassword_second" type="password" placeholder="Resaisir le nouveau mot de passe" required="required" name="fos_user_resetting_form[plainPassword][second]">
+               </div>
+         </div>
+             
+         {{form_row (form._token)}} 
+      
+        <button type="submit" class="btn btn-danger  pull-right" value="{{ 'resetting.reset.submit'|trans }}">{{ 'resetting.reset.submit'|trans }}</button>
+
+    
+</form>
+</div>
+

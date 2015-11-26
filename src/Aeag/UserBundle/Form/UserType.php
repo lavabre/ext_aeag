@@ -1,0 +1,50 @@
+<?php
+
+namespace Aeag\UserBundle\Form;
+
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
+
+class UserType extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder
+            ->add('correspondant', 'integer', array('label' => 'Référence aeag','required' => true))
+            ->add('username', 'text', array('label' => 'Login','required' => true))
+            ->add('prenom', 'text', array('label' => 'Prénom','required' => false))
+            ->add('password', 'text', array('label' => 'password','required' => true))
+            ->add('email', 'email', array('label' => 'Email','required' => true))
+            ->add('email1', 'email', array('label' => 'Email1','required' => false))
+            ->add('email2', 'email', array('label' => 'Email2','required' => false))
+            ->add('tel', 'text', array('label' => 'N° télphone','required' => false))
+            ->add('tel1', 'text', array('label' => 'N° télphone','required' => false))
+            ->add('enabled','choice', array('choices' => array( '1' => 'Oui', '2' => 'Non'),
+                                            'empty_data'  => array('1'),
+                                            'required' => true,
+                                            'expanded' => true,
+                ))
+           ->add('roles', 'choice', array(
+                'choices'   => array('ROLE_ADMIN' => 'Administrateur ',
+                                     'ROLE_ADMINDEC' => 'Administrateur Déchet',
+                                     'ROLE_ADMINFRD' => 'Administrateur Frd',
+                                     'ROLE_ADMINSQE' => 'Administrateur Sqe',
+                                     'ROLE_PROGSQE' => 'Programmeur Sqe',
+                                     'ROLE_ODEC' => 'Collecteur  Déchet',
+                                     'ROLE_FRD' => 'Membre Frd ',
+                                     'ROLE_SQE' => 'Consultant Sqe ',),
+               'empty_value' => 'Choisissez un rôle',
+               'empty_data'  => array('ROLE_AEAG'),
+               'required'  => true,
+                'multiple' => true,
+              ))
+          
+        ;
+       
+    }
+
+    public function getName()
+    {
+        return 'aeag_userbundle_usertype';
+    }
+}

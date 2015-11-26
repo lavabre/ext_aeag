@@ -1,0 +1,73 @@
+{% trans_default_domain 'FOSUserBundle' %}
+
+<div class="col-xs-offset-3 col-xs-8">
+    
+     <h3 class="form-title">Compte</h3>
+     
+      <div class="form-group">
+          <label for="fos_user_profile_form_username" class="required">Nom : </label>
+          <div class="input-group">
+          <span class="input-group-addon"><i class="fa fa-user"></i></span>
+          <input type="text" value="{{ user.username }}" class="form-control" readonly>
+          </div>
+      </div>
+      <div class="form-group">
+          <label for="fos_user_profile_form_email" class="required">Adresse email :</label>
+          <div class="input-group">
+              <span class="input-group-addon"><i class="fa fa-mail-forward"></i></span>
+              <input type="email" value="{{ user.email }}" class="form-control" readonly>
+            </div>
+          <div class="input-group">
+               <span class="input-group-addon"><i class="fa fa-mail-forward"></i></span>
+              <input type="email" value="{{ user.email1 }}" class="form-control" readonly>
+          </div>
+          <div class="input-group">
+               <span class="input-group-addon"><i class="fa fa-mail-forward"></i></span>
+              <input type="email" value="{{ user.email2 }}" class="form-control" readonly>
+          </div>
+      </div>
+      <div class="form-group">
+          <label for="fos_user_profile_form_tel" class="required">Tél. : </label>
+          <div class="input-group">
+          <span class="input-group-addon"><i class="fa fa-phone"></i></span>
+          <input type="text" value="{{ user.tel }}" class="form-control" readonly>
+          </div>
+           <div class="input-group">
+          <span class="input-group-addon"><i class="fa fa-phone"></i></span>
+          <input type="text" value="{{ user.tel1 }}" class="form-control" readonly>
+          </div>
+      </div>
+     
+      {%if  is_granted('ROLE_ODEC') %}
+      <div class="btn-group pull-left">
+           <a class="btn btn-primary" href="{{ path('Aeag_interlocuteur')}}"><i class="fa fa-user"></i> Interlocuteurs</a> 
+      </div>
+      {%endif %}
+              
+       <div class="btn-group pull-right">
+            {%if  is_granted('ROLE_ODEC') %}
+                <a class="btn btn-danger" href="{{ path('aeag_dec')}}"><i class="fa fa-power-off"></i> Retour</a> 
+              {% else %}
+                <a class="btn btn-danger" href="{{ path('aeag_homepage')}}"><i class="fa fa-power-off"></i> Retour</a> 
+              {%endif %}
+            <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+              Actions
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                 <li>
+                    <a href="{{ path('AeagUserBundle_compte_edit') }}">
+                    <i class="fa fa-pencil-square-o fa-lg"></i> Modifier le compte
+                   </a> 
+                </li>
+                <li>
+                    <a href="{{ path('fos_user_change_password') }}">
+                    <i class="fa fa-key fa-lg"></i> Changer le mot de passe
+                    </a>
+                </li>
+             </ul>
+             
+      </div>
+
+
+ </div>

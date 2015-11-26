@@ -1,0 +1,341 @@
+{% extends "AeagDecBundle::layout.html.twig" %}
+
+
+{% block breadcrumb %}
+      <li>
+          <a href="{{ path('aeag_dec') }}">Accueil</a> 
+       </li>
+       <li>
+          {%if  is_granted('ROLE_ADMINDEC') %}
+              <a href="{{ path('AeagDecBundle_admin_listeDeclarationCollecteurs', {'annee' : annee, 'statut': declarationCollecteur.statut.code }) }}">Déclarations</a> 
+          {% else %}
+               <a href="{{ path('AeagDecBundle_collecteur_listeDeclarations') }}">Déclarations</a> 
+          {% endif %}
+        </li>
+        <li class="active">
+          {%if  is_granted('ROLE_ADMINDEC') %}
+              Déclarations trimestrielles {{declarationCollecteur.annee}} de {{collecteur.numero}}  {{collecteur.libelle}}
+          {% else %}
+              Trimestrielles {{declarationCollecteur.annee}} 
+          {% endif %}
+         </li>
+{% endblock breadcrumb %}
+
+
+{% block panel_heading %}
+    <h3>
+       Déclarations trimestrielles {{declarationCollecteur.annee}} de {{collecteur.numero}}  {{collecteur.libelle}}
+    </h3>
+{% endblock panel_heading %}
+     
+ {% block modal %}
+      {%if entities| length > 0 %}
+            {% for entity in entities %}
+               <div class="modal fade" id="sup-{{entity.sousDec.id}}" tabindex="-1" role="dialog" aria-labelledby="supLabel-{{entity.sousDec.id}}" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                              <h4 class="modal-title" id="supLabel-{{entity.sousDec.id}}">Suppression de la déclaration trimestrielle n° {{ entity.sousDec.numero }}</h4>
+                            </div>
+                            <div class="modal-body">
+                                <h4>Cliquer sur la corbeille pour valider la suppression</h4>
+                                <br/><br/>
+                                <div class="alert alert-danger">Attention : Une fois supprimée, la déclaration sera supprimée définitivement</div>
+                            </div>
+                            <div class="modal-footer">
+                               <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
+                              <a  class="btn btn-danger"  href="{{ path('AeagDecBundle_collecteur_supprimerSousDeclaration', { 'sousDeclarationCollecteur_id': entity.sousDec.id }) }}" title="Supprimer">
+                                  <i class="fa fa-trash-o"> Supprimer</i>
+                                </a>
+                             </div>
+                          </div>
+                        </div>
+                </div>
+        
+                <div class="modal fade" id="val-{{entity.sousDec.id}}" tabindex="-1" role="dialog" aria-labelledby="valLabel-{{entity.sousDec.id}}" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                              <h4 class="modal-title" id="valLabel-{{entity.sousDec.id}}">Validation de la déclaration trimestrielle n° {{ entity.sousDec.numero }}</h4>
+                            </div>
+                            <div class="modal-body">
+                                <h4>Cliquer sur le bouton vert pour valider la déclaration N° {{ entity.sousDec.numero }} et la mettre à la disposition de l'agence de l'eau</h4>
+                                </br></br>
+                                <div class="alert alert-danger">
+                                    <p>
+                                       Attention : Une fois validée, la déclaration N° {{ entity.sousDec.numero }} ne sera plus modifiable.
+                                     </p>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                             <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
+                              <a class="btn btn-success" href="{{ path('AeagDecBundle_collecteur_validerSousDeclaration', { 'sousDeclarationCollecteur_id': entity.sousDec.id }) }}" title="Valider">
+                                 <i class="fa fa-check"> Valider</i>
+                              </a>
+                             </div>
+                          </div>
+                        </div>
+                </div>
+        
+                <div class="modal fade" id="deval-{{entity.sousDec.id}}" tabindex="-1" role="dialog" aria-labelledby="devalLabel-{{entity.sousDec.id}}" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                              <h4 class="modal-title" id="devalLabel-{{entity.sousDec.id}}">Dévalidation de la déclaration N° {{ entity.sousDec.numero }}</h4>
+                            </div>
+                            <div class="modal-body">
+                                <h4>Cliquer sur le bouton vert pour dévalider la déclaration N° {{ entity.sousDec.numero }}</h4>
+                                </br></br>
+                                <div class="alert alert-danger">
+                                    <p>
+                                      {% if   entity.sousDec.statut.code == '40' %}
+                                         Attention : Une fois dévalidée, la déclaration  N° {{ entity.sousDec.numero }} sera à l'état "approuvée".
+                                      {% else  %}
+                                       Attention : Une fois dévalidée, la déclaration  N° {{ entity.sousDec.numero }} sera modifiable. n'oubliez pas de la valider ensuite.
+                                       {% endif %}
+                                     </p>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                             <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
+                              <a class="btn btn-success"  href="{{ path('AeagDecBundle_collecteur_devaliderSousDeclaration', { 'sousDeclarationCollecteur_id': entity.sousDec.id }) }}" title="Dévalider">
+                                  <i class="fa fa-check-square-o"> Dévalider</i>
+                               </a>
+                             </div>
+                          </div>
+                        </div>
+                </div>
+         
+               {%if  is_granted('ROLE_ADMINDEC') %}
+                 <div class="modal fade" id="tran-{{entity.sousDec.id}}" tabindex="-1" role="dialog" aria-labelledby="tranLabel-{{entity.sousDec.id}}" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                              <h4 class="modal-title" id="tranLabel-{{entity.sousDec.id}}">Transfert de la déclaration N° {{ entity.sousDec.numero }}</h4>
+                            </div>
+                            <div class="modal-body">
+                                <h4>Cliquer sur le bouton vert pour transferer la déclaration N° {{ entity.sousDec.numero }} à l'agence de l'eau</h4>
+                                </br></br>
+                                <div class="alert alert-danger">
+                                    <p>
+                                       Attention : Une fois transférée, la déclaration N° {{ entity.sousDec.numero }} sera dans la liste des déclarations transférées.
+                                     </p>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                             <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
+                              <a class="btn btn-success"  href="{{ path('AeagDecBundle_admin_transfererSousDeclaration', { 'sousDeclarationCollecteur_id': entity.sousDec.id }) }}" title="Transférer">
+                                   <i class="fa fa-download"> Transférer</i>
+                               </a>
+                             </div>
+                          </div>
+                        </div>
+                </div>
+              {% endif %}
+           
+          {% endfor %}
+       {%endif%}  
+ {% endblock modal %}
+
+
+  {%block content %}
+         
+        {%set dec_quantiteReel = 0%}
+        {%set dec_quantiteRet = 0%}
+        {%set dec_montAide = 0%}
+        {%set dec_montApDispo = 0%}
+        {%if entities| length > 0 %}
+            {% for entity in entities %}
+                    {% set dec_quantiteReel = dec_quantiteReel + entity.sousDec.quantiteReel %}
+                    {% set dec_quantiteRet = dec_quantiteRet + entity.sousDec.quantiteRet %}
+                    {% set dec_montAide = dec_montAide + entity.sousDec.montAide %}
+                    {% set dec_montApDispo =  entity.sousDec.montantApDispo %}
+            {%endfor%}
+            <div class="row">
+               <div class="col-md-12">
+                  <div class="small">
+                      <table class="table table-bordered table-striped table-condensed table-advance table-hover">
+                                 <thead>
+                                      <tr>
+                                           <th class="text-center">Quantité déclarée (kg)</th>
+                                           <th class="text-center">Quantité retenue (kg)</th>
+                                           <th class="text-center">Aide retenue (€)</th>
+                                           <th class="text-center">Aide prévisionnelle {€)</th>
+                                           <th class="text-center">Aide disponible (€)</th>
+                                        </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                        <td align="right">{{ (dec_quantiteReel) | number_format(0,'.',' ')}}</td>
+                                        <td align="right">{{ (dec_quantiteRet) | number_format(0,'.',' ')}}</td>
+                                        <td align="right">{{ dec_montAide | number_format(2,'.',' ')}}</td>
+                                        <td align="right">{{ declarationCollecteur.montantAp | number_format(2,'.',' ')}}</td>
+                                        <td align="right">{{ dec_montApDispo | number_format(2,'.',' ')}}</td>
+                                    </tr>
+                        </table>
+                    </div>
+                 </div>
+              </div>
+          {%endif%}  
+         
+       <div class="row">
+          <div class="col-md-6">
+                    <a  class="btn btn-success" href="{{ path('AeagDecBundle_collecteur_ajouterSousDeclaration', { 'declarationCollecteur_id': declarationCollecteur.id }) }}" title="Ajouter déclaration">
+                       <i class="fa fa-plus"> Ajouter déclaration trimestrielle</i>
+                    </a>
+             </div>
+       </div>
+              
+      <div class="row">
+          <div class="col-md-12">
+              <div class="small">
+                  <table class="table table-bordered table-striped table-condensed table-advance table-hover" id="idTable">
+                        <thead>
+                           <tr>
+                                <th width="1%">Actions</th>
+                                <th>Numéro</th>
+                                <th>Date</th>
+                                <th>Statut</th>
+                                <th>Quantité déclarée (kg)</th>
+                                <th>Quantité retenue (kg)</th>
+                                <th>Aide retenue (€)</th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                            {% for entity in entities %}
+                                {%if  entity.sousDec.statut.code == '21' %}
+                                  <tr style="background-color:#f2dede;">
+                                {%else%}
+                                  <tr>
+                                {%endif%}
+                                    <td nowrap id="idTd1-{{ entity.sousDec.id }}">
+                                        <a class="btn btn-primary"  href="{{ path('AeagDecBundle_collecteur_listeDeclarationDetails', { 'sousDeclarationCollecteur_id': entity.sousDec.id }) }}" title="Consulter">
+                                            <i class="fa fa-eye"></i>
+                                        </a>
+                                     {%if  is_granted('ROLE_ADMINDEC') %}
+                                            {% if entity.sousDec.statut.code < '30' %}
+                                            <a class="btn btn-danger" data-toggle="modal" href="#sup-{{entity.sousDec.id}}" title="Supprimer">
+                                              <i class="fa fa-trash-o"></i>
+                                            </a>
+                                       {% endif %}
+                                       {% if entity.sousDec.statut.code <= '22' %}
+                                            <a class="btn btn-success" data-toggle="modal" href="#val-{{entity.sousDec.id}}" title="Valider">
+                                              <i class="fa fa-check"></i>
+                                            </a>
+                                       {% endif %}
+                                       {% if entity.sousDec.statut.code == '22' %}
+                                                <a class="btn btn-warning" data-toggle="modal" href="#deval-{{entity.sousDec.id}}" title="Dévalider">
+                                                   <i class="fa fa-refresh"></i>
+                                               </a>
+                                       {% endif %}
+                                       {% if entity.sousDec.statut.code == '30' %}
+                                            <a class="btn btn-default" class="btn purple" data-toggle="modal" href="#deval-{{entity.sousDec.id}}" title="Dévalider">
+                                               <i class="fa fa-refresh"></i>
+                                            </a>
+                                            <a class="btn btn-warning" data-toggle="modal" href="#tran-{{entity.sousDec.id}}" title="Transférer">
+                                              <i class="fa fa-download"></i>
+                                            </a>
+                                       {% endif %}
+                                       {% if entity.sousDec.statut.code == '40' %}
+                                                <a class="btn btn-warning" data-toggle="modal" href="#deval-{{entity.sousDec.id}}" title="Dévalider">
+                                                   <i class="fa fa-refresh"></i>
+                                                </a>
+                                         {#       <a class="btn btn-default" href="{{ asset('fichiers/dec/') }}{{ entity.fichier }}" title="Fichier">
+                                                    <i class="fa fa-file-excel-o "></i>
+                                                 </a>#}
+                                       {% endif %}
+                                     {% else %}
+                                         {% if entity.sousDec.statut.code < '22' %}
+                                                <a class="btn btn-danger" data-toggle="modal" href="#sup-{{entity.sousDec.id}}" title="Supprimer">
+                                                    <i class="fa fa-trash-o"></i>
+                                                </a>
+                                           {% endif %}
+                                           {% if entity.sousDec.statut.code == '20' and entity.sousDec.montAide > 0 %}
+                                                <a class="btn btn-success" data-toggle="modal" href="#val-{{entity.sousDec.id}}" title="Valider">
+                                                    <i class="fa fa-check"></i>
+                                                </a>
+                                           {% endif %}
+                                           {# if entity.sousDec.statut.code == '22' %}
+                                                <a class="btn btn-warning" data-toggle="modal" href="#deval-{{entity.sousDec.id}}" title="Dévalider">
+                                                   <i class="fa fa-refresh"></i>
+                                               </a>
+                                           {% endif #}
+                                      {% endif %}  
+                                        
+                                        
+                                       <a  class="btn btn-info" href="{{ path('AeagDecBundle_collecteur_pdfSousDeclaration', { 'sousDeclarationCollecteur_id': entity.sousDec.id }) }}" title="Imprimer">
+                                           <i class="fa fa-print"></i>
+                                       </a>
+                                    </td>
+                                    <td>{{ entity.sousDec.numero}}</td>
+                                    <td>{{ entity.sousDec.dateDebut | date('d/m/Y') }}</td>
+                                    <td>{{ entity.sousDec.statut.libelle}}</td>
+                                    <td align="right">{{ (entity.sousDec.quantiteReel) | number_format(0,'.',' ')}}</td>
+                                    <td align="right">{{ (entity.sousDec.quantiteRet) | number_format(0,'.',' ')}}</td>
+                                    <td align="right">{{ entity.sousDec.montAide | number_format(2,'.',' ')}}</td>
+                                  </tr>
+                             {% endfor %}
+                        </tbody>
+                     </table>
+                     
+                      <div class="col-md-offset-3 col-md-6 pull-right">
+                           <a class="btn btn-danger" href="{{ app.session.get('retour') }}"><i class="fa fa-power-off"></i> Retour</a> 
+                      </div>
+                 
+            </div>
+          </div>
+       </div>
+         
+       <div class="row">
+         <div class="col-md-6 pull-left text-info">
+            <ul class="list-inline">
+                <li><a class="btn btn-primary btn-xs" href="#" title="Consulter"><i class="fa fa-eye"></i></a> Consulter</li>
+                <li><a class="btn btn-danger btn-xs" href="#" title="Supprimer"><i class="fa fa-trash-o"></i></a> Supprimer</li>
+                <li><a class="btn btn-success btn-xs" href="#" title="Valider"><i class="fa fa-check"></i></a> Valider</li>
+                <li><a class="btn btn-info btn-xs" href="#" title="Valider"> <i class="fa fa-print"></i></a> Imprimer</li>
+            </ul>  
+            {%if  is_granted('ROLE_ADMINDEC') %}
+            <ul class="list-inline">
+                <li><a class="btn btn-warning btn-xs" href="#" title="Transférer"><i class="fa fa-download"></i></a> Transférer</li>
+                <li><a class="btn btn-default btn-xs" href="#" title="Fichier généré"><i class="fa fa-file-excel-o"></i></a> Ouvrir fichier</li>
+                <li><a class="btn btn-warning btn-xs" href="#" title="Dévalider"><i class="fa fa-refresh"></i></a> Dévalider</li>
+            </ul>  
+            {% endif %}
+        </div>
+      </div>  
+    {%endblock content %}
+ 
+  {% block scripts %}
+     
+       // DataTable
+          var table = $('#idTable').DataTable(
+                      {"stateSave": true,
+                       "oLanguage": {
+                          "sSearch": "Filtre",
+                          "sFirst": "1ere page",
+                          "sLast": "Dernière page",
+                          "sNext": "Prochaine page",
+                          "sPrevious": "Page précédente",
+                          "EmptyTable": "Pas de données",
+                          "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+                          "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+                          "sZeroRecords": "Pas d'enregistrement à afficher",
+                          "sInfoEmpty": "Pas d'enregistrement à afficher",
+                          "sInfoThousands": " ",
+                          "sLengthMenu": 'Afficher <select>' +
+                                  '<option value="10">10</option>' +
+                                  '<option value="20">20</option>' +
+                                  '<option value="30">30</option>' +
+                                  '<option value="40">40</option>' +
+                                  '<option value="50">50</option>' +
+                                  '<option value="-1">Tous</option>' +
+                                  '</select> enregistrements',
+                          "sPaginationType": "full_numbers"
+                      }
+                     }
+                    );
+   {% endblock scripts %}  

@@ -1,0 +1,57 @@
+{% extends "AeagAeagBundle::layout.html.twig" %}
+
+
+{% block breadcrumb %}{% endblock breadcrumb %}
+       
+{%block panel_heading %}
+            <h3 class="page-title">
+                Mise à jour de la region {{region.reg}} {{ region.libelle }}
+            </h3>
+{%endblock panel_heading %}
+
+{% block content %}
+
+<div class="col-xs-offset-3 col-xs-8">
+    <form role="form" action="{{ path('Aeag_region_editer', { 'reg': region.reg }) }}" {{ form_enctype(form) }} method="POST">
+   
+       
+      {% spaceless %}
+            {% if not form.vars.valid %}
+                    <div class="alert alert-danger">
+                       {% for children in form.children %}
+                            {% if not children.vars.valid %}
+                                {{ form_errors(children) }}
+                           {% endif %}
+                        {% endfor %}
+                    </div>
+            {% endif %}
+        {% endspaceless %}
+      
+                     
+          <div class="form-group">
+            <label for="majDepartement_aidable" class="required">Appli déchet : </label>
+           {% if form_errors(form.dec) %}
+                 <div class="input-group has-error has-feedback">
+           {% else %}
+                  <div class="input-group">
+           {% endif %}
+                   <span class="input-group-addon"><i class="fa fa-unlock"></i><i class="fa fa-asterisk text-danger"></i></span>
+                   {{ form_widget(form.dec, { 'attr': {'class': 'form-control'} }) }}
+                 </div>
+          </div>  
+              
+              
+         <div class="hidden">    
+         {{ form_rest(form) }}
+          </div>
+    
+       <div class="btn-group pull-right">
+        <button type="submit" class="btn btn-success  pull-right" value="Ajouter">Mettre à jour</button>
+        <a  id="btFermer" class="btn btn-danger" href="{{ path('Aeag_listeRegion')}}"><i class="fa fa-power-off"></i> Retour</a>
+       </div>
+        
+    </form>
+</div>
+
+{% endblock content %}
+

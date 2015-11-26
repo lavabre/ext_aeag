@@ -1,0 +1,43 @@
+{% extends "AeagAeagBundle::layout.html.twig" %}
+
+
+{% block menu %}
+     <li><a href="{{ path('aeag_homepage') }}"><i class="fa fa-home"></i>&nbsp; Accueil</a></li>
+     <li><a href="{{ path('aeag_dec') }}"><i class="fa fa-home"></i>&nbsp; Dechets</a></li>
+     <li><a href="{{ path('aeag_frd') }}"><i class="fa fa-home"></i>&nbsp; Frd</a></li>
+     <li><a href="{{ path('aeag_aide') }}"><i class="fa fa-home"></i>&nbsp; Aide</a></li>
+     <li><a href="{{ path('aeag_sqe') }}"><i class="fa fa-home"></i>&nbsp; Programmation SQE</a></li>
+     <li><a href="{{ path('AeagUserBundle_User', { 'role': 'ROLE_AEAG' }) }}"><i class="fa fa-users"></i>&nbsp; Utilisateurs</a></li>
+ {% endblock menu %}
+
+  
+{% block breadcrumb %}
+      <li class="active">
+          Accueil
+      </li>
+{% endblock breadcrumb %}
+   
+ {% block panel_heading %}
+     <h3>
+      {%if app.user %}
+         {{ app.user.username }}
+     {% else %}
+         Bonjour
+     {% endif %}
+    </h3>
+ {% endblock panel_heading %}
+
+{% block content %}
+   <div class="row">
+      <div class="col-xs-offset-2 col-xs-10">
+        {%if app.user %}
+        <h2>Bonjour.<br>bienvenue sur le site extranet de l'agence de l'eau 'Adour-Garonne'</h2>
+       {% else %}
+        <h2>Bonjour,<br>Le site est réservé aux utilisateurs recensés à l'agence de l'eau 'Adour-Garonne' </h2>
+       {% endif %}
+    </div>
+  </div>
+{% endblock content %}
+   
+
+

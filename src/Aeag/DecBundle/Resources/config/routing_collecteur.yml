@@ -1,0 +1,213 @@
+AeagDecBundle_collecteur:
+    path:  /
+    defaults: { _controller: AeagDecBundle:Collecteur:index }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_collecteur_envoyerMessage:
+    path:  /envoyerMessage
+    defaults: { _controller: AeagDecBundle:Collecteur:envoyerMessage }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_collecteur_consulterMessage:
+    path:  /consulterMessage/{id}
+    defaults: { _controller: AeagDecBundle:Collecteur:consulterMessage, id:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_collecteur_supprimerMessage:
+    path:  /supprimerMessage/{id}
+    defaults: { _controller: AeagDecBundle:Collecteur:supprimerMessage, id:null }
+    requirements:
+        methods:  GET|POST
+ 
+AeagDecBundle_collecteur_majCompte:
+    path:  /majCompte
+    defaults: { _controller: AeagDecBundle:Collecteur:majCompte }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_collecteur_consulterCorrespondant:
+    path:  /consulterCorrespondant/{id}
+    defaults: { _controller: AeagDecBundle:Collecteur:consulterCorrespondant, id:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_collecteur_consulterCollecteur:
+    path:  /consulterCollecteur/{id}
+    defaults: { _controller: AeagDecBundle:Collecteur:consulterCollecteur, id:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_collecteur_consulterCentreTransit:
+    path:  /consulterCentreTransit/{id}
+    defaults: { _controller: AeagDecBundle:Collecteur:consulterCentreTransit, id:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_collecteur_consulterCentreTraitement:
+    path:  /consulterCentreTraitement/{id}
+    defaults: { _controller: AeagDecBundle:Collecteur:consulterCentreTraitement, id:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_collecteur_listeProducteurs:
+    path:  /listeProducteurs
+    defaults: { _controller: AeagDecBundle:Collecteur:listeProducteurs }
+    requirements:
+        methods:  GET|POST   
+        
+AeagDecBundle_collecteur_pdfListeProducteurs:
+    path:  /pdfListeProducteurs/{collecteur_id}
+    defaults: { _controller: AeagDecBundle:Collecteur:pdfListeProducteurs, collecteur_id:null }
+    requirements:
+        methods:  GET|POST   
+        
+AeagDecBundle_collecteur_consulterProducteur:
+    path:  /consulterProducteur/{id}
+    defaults: { _controller: AeagDecBundle:Collecteur:consulterProducteur, id:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_collecteur_majProducteur:
+    path:  /majProducteur/{collecteur_id}/{producteur_id}
+    defaults: { _controller: AeagDecBundle:Collecteur:majProducteur, collecteur_id:null, producteur_id:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_collecteur_ajouterProducteur:
+    path:  /ajouterProducteur/{collecteur_id}
+    defaults: { _controller: AeagDecBundle:Collecteur:ajouterProducteur, collecteur_id:null }
+    requirements:
+        methods:  GET|POST      
+        
+AeagDecBundle_collecteur_supprimerProducteur:
+    path:  /supprimerProducteur/{id}
+    defaults: { _controller: AeagDecBundle:Collecteur:supprimerProducteur, id:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_collecteur_producteur_taux_special:
+    path:  /tauxSpecialProducteur/{id}
+    defaults: { _controller: AeagDecBundle:Collecteur:tauxSpecialProducteur, id:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_producteur_cp:
+    path:  /producteur/cp
+    defaults: { _controller: AeagDecBundle:Collecteur:producteurCp }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_collecteur_majCollecteur:
+    path:  /majCollecteur/{id}
+    defaults: { _controller: AeagDecBundle:Collecteur:majCollecteur, id:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_collecteur_listeDeclarations:
+    path:  /listeDeclarations
+    defaults: { _controller: AeagDecBundle:Collecteur:listeDeclarations }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_collecteur_ajouterDeclaration:
+    path:  /ajouterDeclaration/{collecteur_id}
+    defaults: { _controller: AeagDecBundle:Collecteur:ajouterDeclaration, collecteur_id:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_collecteur_supprimerDeclaration:
+    path:  /supprimerDeclaration/{declarationCollecteur_id}
+    defaults: { _controller: AeagDecBundle:Collecteur:supprimerDeclaration, declarationCollecteur_id:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_collecteur_listeSousDeclarations:
+    path:  /listeSousDeclarations/{declarationCollecteur_id}
+    defaults: { _controller: AeagDecBundle:Collecteur:listeSousDeclarations, declarationCollecteur_id:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_collecteur_pdfSousDeclaration:
+    path:  /pdfSousDeclaration/{sousDeclarationCollecteur_id}
+    defaults: { _controller: AeagDecBundle:Collecteur:pdfSousDeclaration, sousDeclarationCollecteur_id:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_collecteur_ajouterSousDeclaration:
+    path:  /ajouterSousDeclaration/{declarationCollecteur_id}
+    defaults: { _controller: AeagDecBundle:Collecteur:ajouterSousDeclaration, declarationCollecteur_id:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_collecteur_validerSousDeclaration:
+    path:  /validerSousDeclaration/{sousDeclarationCollecteur_id}
+    defaults: { _controller: AeagDecBundle:Collecteur:validerSousDeclaration, sousDeclarationCollecteur_id:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_collecteur_devaliderSousDeclaration:
+    path:  /devaliderSousDeclaration/{sousDeclarationCollecteur_id}
+    defaults: { _controller: AeagDecBundle:Collecteur:devaliderSousDeclaration, sousDeclarationCollecteur_id:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_collecteur_supprimerSousDeclaration:
+    path:  /supprimerSousDeclaration/{sousDeclarationCollecteur_id}
+    defaults: { _controller: AeagDecBundle:Collecteur:supprimerSousDeclaration, sousDeclarationCollecteur_id:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_collecteur_listeDeclarationDetails:
+    path:  /listeDeclarationDetails/{sousDeclarationCollecteur_id}/{declarationDetail_id}
+    defaults: { _controller: AeagDecBundle:Collecteur:listeDeclarationDetails, sousDeclarationCollecteur_id:null, declarationDetail_id:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_collecteur_ajouterFichier:
+    path:  /ajouterFichier/{sousDeclarationCollecteur_id}
+    defaults: { _controller: AeagDecBundle:Collecteur:ajouterFichier, sousDeclarationCollecteur_id:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_collecteur_ajouterFichierDeclarationDetail:
+    path:  /ajouterFichierDeclarationDetail/{sousDeclarationCollecteur_id}
+    defaults: { _controller: AeagDecBundle:Collecteur:ajouterFichierDeclarationDetail, sousDeclarationCollecteur_id:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_collecteur_supprimerFichierDeclarationDetail:
+    path:  /supprimerFichierDeclarationDetail/{sousDeclarationCollecteur_id}
+    defaults: { _controller: AeagDecBundle:Collecteur:supprimerFichierDeclarationDetail, sousDeclarationCollecteur_id:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_collecteur_ajouterDeclarationDetail:
+    path:  /ajouterDeclarationDetail/{sousDeclarationCollecteur_id}
+    defaults: { _controller: AeagDecBundle:Collecteur:ajouterDeclarationDetail, sousDeclarationCollecteur_id:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_collecteur_supprimerDeclarationDetail:
+    path:  /supprimerDeclarationDetail/{declarationDetail_id}
+    defaults: { _controller: AeagDecBundle:Collecteur:supprimerDeclarationDetail, declarationDetail_id:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_collecteur_modifierDeclarationDetail:
+    path:  /modifierDeclarationDetail/{declarationDetail_id}
+    defaults: { _controller: AeagDecBundle:Collecteur:modifierDeclarationDetail, declarationDetail_id:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_collecteur_crudDeclarationDetail:
+    path:  /crudDeclarationDetail/{crud}/{sousDeclarationCollecteur_id}/{declarationDetail_id}
+    defaults: { _controller: AeagDecBundle:Collecteur:crudDeclarationDetail, crud:null, sousDeclarationCollecteur_id:null, declarationDetail_id:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_collecteur_aide:
+    path:  /aide
+    defaults: { _controller: AeagDecBundle:Collecteur:aide }

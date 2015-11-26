@@ -1,0 +1,180 @@
+{% extends "AeagUserBundle::layout.html.twig" %}
+
+
+{% block breadcrumb %}{% endblock breadcrumb %}
+       
+ {% block panel_heading %}
+        <h3>
+       Modification de l'utilisateur {{ entity.username }} 
+       </h3>
+ {% endblock panel_heading %}
+       
+
+ {%block content %}
+     
+      <div class="col-xs-offset-3 col-xs-8">
+          <form role="form"  class="form-horizontal" action="{{ path('AeagUserBundle_User_update', { 'id': entity.id }) }}" id="idForm" method="post" {{ form_enctype(form) }}>
+
+                {% spaceless %}
+                     {% if not form.vars.valid %}
+                             <div class="alert alert-danger">
+                                {% for children in form.children %}
+                                     {% if not children.vars.valid %}
+                                         {{ form_errors(children) }}
+                                    {% endif %}
+                                 {% endfor %}
+                             </div>
+                     {% endif %}
+
+                      {% if message %}
+                             <div class="alert alert-danger">
+                                 <strong>Error!</strong> {{ message }}
+                             </div>
+                     {% endif %} 
+
+                 {% endspaceless %}
+              
+                               
+                 <div class="form-group">
+                    <label for="aeag_userbundle_userrtype_username" class="col-xm-3 control-label">Login</label>
+                    {% if form_errors(form.username) %}
+                        <div class="input-group has-error has-feedback">
+                    {% else %}
+                         <div class="input-group">
+                     {% endif %}
+                       <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                       {{ form_widget(form.username, { 'attr': {'class': 'form-control', 'placeholder': 'Login'} }) }}
+                     </div>
+                 </div>
+                    
+                <div class="form-group">
+                   <label for="aeag_userbundle_userrtype_password"  class="col-xm-3 control-label">Mot de passe</label>
+                    {% if form_errors(form.password) %}
+                        <div class="input-group has-error has-feedback">
+                    {% else %}
+                         <div class="input-group">
+                     {% endif %}
+                         <span class="input-group-addon"><i class="fa fa-key"></i></span>
+                         {{ form_widget(form.password, { 'attr': {'class': 'form-control', 'placeholder': 'Mot de passe'} }) }}
+                        </div>
+                 </div>
+                   
+                <div class="form-group">
+                     <label  class="col-xm-3 control-label">Adresse mail</label>
+                     {% if form_errors(form.email) %}
+                        <div class="input-group has-error has-feedback">
+                    {% else %}
+                        <div class="input-group">
+                    {% endif %}
+                             <span class="input-group-addon"><i class="fa fa-mail-forward"></i></span>
+                             {{ form_widget(form.email, { 'attr': { 'class': 'form-control', 'placeholder': 'Adresse mail'} }) }}
+                        </div>
+                    {% if form_errors(form.email1) %}
+                             <div class="input-group has-error has-feedback">
+                      {% else %}
+                             <div class="input-group">
+                      {% endif %}
+                              <span class="input-group-addon"><i class="fa fa-mail-forward"></i></span>
+                              {{ form_widget(form.email1, { 'attr': {'class': 'form-control', 'placeholder': 'Adresse email complémentaire'} }) }}
+                            </div>
+                      {% if form_errors(form.email2) %}
+                             <div class="input-group has-error has-feedback">
+                      {% else %}
+                             <div class="input-group">
+                      {% endif %}
+                              <span class="input-group-addon"><i class="fa fa-mail-forward"></i></span>
+                              {{ form_widget(form.email2, { 'attr': {'class': 'form-control', 'placeholder': 'Adresse email complémentaire'} }) }}
+                            </div>
+                  </div>
+                
+                  <div class="form-group">
+                        <label for="fos_user_profile_form_tel" class="required">Tél. :</label>
+                        {% if form_errors(form.tel) %}
+                               <div class="input-group has-error has-feedback">
+                        {% else %}
+                               <div class="input-group">
+                        {% endif %}
+                                <span class="input-group-addon"><i class="fa fa-phone"></i></span>
+                                {{ form_widget(form.tel, { 'attr': {'class': 'form-control', 'placeholder': 'Numéro téléphone'} }) }}
+                              </div>
+                        {% if form_errors(form.tel1) %}
+                               <div class="input-group has-error has-feedback">
+                        {% else %}
+                               <div class="input-group">
+                        {% endif %}
+                                <span class="input-group-addon"><i class="fa fa-phone"></i></span>
+                                {{ form_widget(form.tel1, { 'attr': {'class': 'form-control', 'placeholder': 'Numéro téléphone complémentaire'} }) }}
+                              </div>
+                    </div> 
+                                   
+                   <div class="form-group">
+                        <label class="col-xm-3 control-label">Rôle</label>
+                         {% if form_errors(form.roles) %}
+                             <div class="input-group has-error has-feedback">
+                         {% else %}
+                              <div class="input-group">
+                          {% endif %}
+                              <span class="input-group-addon"><i class="fa fa-graduation-cap"></i></span>
+                                     <select id="aeag_userbundle_userrtype_roles" class="form-control valid" multiple="multiple" placeholder="Rôle" size="7" required="required" name="aeag_userbundle_userrtype[roles][]" aria-required="true" aria-invalid="false">
+                                            {% if role == 'ROLE_AEAG' %}
+                                                      <option value="ROLE_ADMIN">Administrateur </option>
+                                                      <option value="ROLE_ADMINDEC">Administrateur Déchet</option>
+                                                      <option value="ROLE_ADMINFRD">Administrateur Frd</option>
+                                                      <option value="ROLE_ADMINSQE">Administrateur Sqe</option>
+                                                      <option value="ROLE_ADMINSTOCK">Administrateur Stock</option>
+                                                      <option value="ROLE_PROGSQE"> Programmeur Sqe</option>
+                                                       <option value="ROLE_ODEC"> Collecteur  Déchet</option>
+                                                       <option value="ROLE_FRD"> Membre Frd</option>
+                                                       <option value="ROLE_SQE">Consultant Sqe</option>
+                                                       <option value="ROLE_STOCK">Utilisateur Stock</option>
+                                                        <option selected="selected" value="ROLE_AEAG">Consultant</option>
+                                            {% elseif  role == 'ROLE_ODEC' %}
+                                                      <option value="ROLE_ADMINDEC">Administrateur Déchet</option>
+                                                      <option selected="selected" value="ROLE_ODEC"> Collecteur  Déchet</option>
+                                             {% elseif  role == 'ROLE_FRD' %}
+                                                     <option value="ROLE_ADMINFRD">Administrateur Frd</option>
+                                                     <option selected="selected"  value="ROLE_FRD"> Membre Frd</option>
+                                              {% elseif  role == 'ROLE_SQE' %}
+                                                     <option value="ROLE_ADMINSQE">Administrateur Sqe</option>
+                                                     <option value="ROLE_PROGSQE"> Programmeur Sqe</option>
+                                                     <option selected="selected" value="ROLE_SQE">Consultant Sqe</option>
+                                             {% elseif  role == 'ROLE_STOCK' %}
+                                                     <option value="ROLE_ADMINSTOCK">Administrateur Stock</option>
+                                                     <option selected="selected" value="ROLE_STOCK">Utilisateur Stock</option>
+                                              {% endif %}
+                                    </select>
+                            </div>
+                    </div>
+                        
+                     <div class="form-group">
+                        <label class="col-xm-3 control-label">Autorisation</label>
+                         {% if form_errors(form.enabled) %}
+                             <div class="input-group has-error has-feedback">
+                         {% else %}
+                              <div class="input-group">
+                          {% endif %}
+                              <span class="input-group-addon"><i class="fa fa-graduation-cap"></i></span>
+                              {{ form_widget(form.enabled, { 'attr': {'class': 'form-control', 'placeholder': 'Autoriser'} }) }}
+                            </div>
+                    </div>
+                        
+                    <div class="form-group">
+                        <div class="col-xs-offset-4 col-xs-8">
+                           <button id="btForm" type="submit" class="btn btn-success"><i class="fa fa-save"></i> Enregister</button>
+                           <a id="btFermer" class="btn btn-danger" href="{{ path('AeagUserBundle_User', { 'role': role }) }}"><i class="fa fa-power-off"></i> Annuler</a>
+                         </div>
+                     </div>
+                   
+                   
+                                       
+                  <div class="hide">
+                  {{ form_rest(form) }}
+                  </div>
+                        
+          </form>
+          
+             
+      </div>
+    {%endblock content %}
+
+    

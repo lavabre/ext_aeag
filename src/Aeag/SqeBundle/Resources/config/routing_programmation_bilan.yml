@@ -1,0 +1,53 @@
+
+AeagSqeBundle_programmation_bilan:
+    path:  /
+    defaults: { _controller: AeagSqeBundle:ProgrammationBilan:index }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_bilan_station:
+    path:  /station
+    defaults: { _controller: AeagSqeBundle:ProgrammationBilan:station }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_bilan_station_groupes:
+    path:  /station/groupes/{stationAnId}/{grparAnId}
+    defaults: { _controller: AeagSqeBundle:ProgrammationBilan:stationGroupe, stationAnId : null, grparAnId: null }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_bilan_prestataire:
+    path:  /prestataire
+    defaults: { _controller: AeagSqeBundle:ProgrammationBilan:prestataire }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_bilan_prestataire_groupes:
+    path:  /prestataire/groupes/{prestataireId}/{grparAnId}/{type}
+    defaults: { _controller: AeagSqeBundle:ProgrammationBilan:prestataireGroupe, prestataireId : null, grparAnId: null, type: null }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_bilan_periodes:
+    path:  /periode
+    defaults: { _controller: AeagSqeBundle:ProgrammationBilan:periode }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_bilan_periode_groupes:
+    path:  /periode/groupes/{periodeAnId}/{grparAnId}
+    defaults: { _controller: AeagSqeBundle:ProgrammationBilan:periodeGroupe, periodeAnId : null, grparAnId: null }
+    requirements:
+        methods:  GET|POST
+        
+
+
+    
+
+    
+
+
+
+
+        

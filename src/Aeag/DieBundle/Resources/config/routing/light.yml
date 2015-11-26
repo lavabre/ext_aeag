@@ -1,0 +1,8 @@
+default:
+    path:  /
+    defaults: { _controller: "AeagDieBundle:Default:indexLight" }
+
+default_light:
+    path:  /{theme}
+    defaults: { _controller: "AeagDieBundle:Default:indexLight", theme:null }
+    

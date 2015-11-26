@@ -1,0 +1,163 @@
+<div class="col-md-12">
+    <div id="idtableau_periode" class="small">
+        <table class="table table-bordered table-condensed table-advance" id="idTable_periode">
+            <thead id="idTheadPeriodes">
+                <tr>
+                   <th width="10%">Periodes / Groupes de paramètres</th>
+                    {% for groupe in grparAns %}
+                        <th width="1%" id="idThGroupe_{{ groupe.id }}" nowrap>{{ groupe.grparRef.libelleGrp }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody id="idBodyPeriodes">
+                {%if periodeAns | length%}  
+                    {% for periodeAn in periodeAns %}
+                        {% if periodeAn.renseigner == "O" %}
+                              <tr  id='idPeriode_{{ periodeAn.periode.id }}' name='idPeriode_{{ periodeAn.periode.id }}' width="10%">
+                                 <td nowrap>{{ periodeAn.periode.periode.labelPeriode}}&nbsp;&nbsp;
+                                   (du {{ periodeAn.periode.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;au&nbsp;&nbsp; {{ periodeAn.periode.periode.dateFin | date("d/m/Y") }})
+                                </td>
+                                {% for groupe in grparAns %}
+                                     <td id="idTd_{{ periodeAn.periode.id }}_{{ groupe.id }}">
+                                        <div class="text-center" id="idDiv_{{ periodeAn.periode.id }}_{{ groupe.id }}">
+                                            {% for prog in periodeAn.progs %}
+                                                {% if groupe.grparRef.codeGrp == prog.groupe %}
+                                                     {% if prog.nb > 0 %}
+                                                         {% if periodeAn.periode.codeStatut.codeStatut == 'INV' %}
+                                                                <a id="idBt_{{ periodeAn.periode.id }}_{{ groupe.id }}" class="btn btn-warning" data-toggle="modal" href="#modal_{{ periodeAn.periode.id }}_{{ groupe.id }}">
+                                                         {% else %}
+                                                               <a id="idBt_{{ periodeAn.periode.id }}_{{ groupe.id }}" class="btn btn-success" data-toggle="modal" href="#modal_{{ periodeAn.periode.id }}_{{ groupe.id }}">
+                                                          {% endif %}
+                                                           <span id="idNb_{{ periodeAn.periode.id }}_{{ groupe.id }}" class="badge">
+                                                              {{ prog.nb |  number_format(0,'.',' ')}}
+                                                           </span>
+                                                        </a>
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endfor %}
+                                            
+                                            {% for prog in periodeAn.progCompls %}
+                                                {% if groupe.grparRef.codeGrp == prog.groupe%}
+                                                      {% if prog.nb > 0 %}
+                                                           {% if periodeAn.periode.codeStatut.codeStatut == 'INV' %}
+                                                                <a id="idBt_{{ periodeAn.periode.id }}_{{ groupe.id }}" class="btn btn-warning" data-toggle="modal" href="#modal_{{ periodeAn.periode.id }}_{{ groupe.id }}">
+                                                           {% else %}
+                                                                <a id="idBt_{{ periodeAn.periode.id }}_{{ groupe.id }}" class="btn btn-info" data-toggle="modal" href="#modal_compl_{{ periodeAn.periode.id }}_{{ groupe.id }}">
+                                                           {% endif %}
+                                                               <span id="idNb_{{ periodeAn.periode.id }}_{{ groupe.id }}" class="badge">
+                                                                  {{ prog.nb |  number_format(0,'.',' ')}}
+                                                               </span>
+                                                            </a>
+                                                       {% endif %}
+                                                {% endif %}
+                                            {% endfor %}
+                                           
+                                            {% for prog in periodeAn.progIgnores %}
+                                                {% if groupe.grparRef.codeGrp == prog.groupe%}
+                                                      {% if prog.nb > 0 %}
+                                                           {% if periodeAn.periode.codeStatut.codeStatut == 'INV' %}
+                                                                <a id="idBt_{{ periodeAn.periode.id }}_{{ groupe.id }}" class="btn btn-warning" data-toggle="modal" href="#modal_{{ periodeAn.periode.id }}_{{ groupe.id }}">
+                                                           {% else %}
+                                                                <a id="idBt_{{ periodeAn.periode.id }}_{{ groupe.id }}" class="btn btn-primary" data-toggle="modal" href="#modal_compl_{{ periodeAn.periode.id }}_{{ groupe.id }}">
+                                                           {% endif %}
+                                                               <span id="idNb_{{ periodeAn.periode.id }}_{{ groupe.id }}" class="badge">
+                                                                  {{ prog.nb |  number_format(0,'.',' ')}}
+                                                               </span>
+                                                            </a>
+                                                       {% endif %}
+                                                {% endif %}
+                                            {% endfor %}
+                                            
+                                        </div>
+                                    </td>
+                                 {% endfor %}
+                             </tr>
+                        {% else %}
+                             <tr  id='idPeriode_{{ periodeAn.periode.id }}' name='idPeriode_{{ periodeAn.periode.id }}' width="10%">
+                                 <td nowrap>{{ periodeAn.periode.periode.labelPeriode}}&nbsp;&nbsp;
+                                            (du {{ periodeAn.periode.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;au&nbsp;&nbsp; {{ periodeAn.periode.periode.dateFin | date("d/m/Y") }})
+                                 </td>
+                                {% for groupe in grparAns %}
+                                    <td>
+                                        {% if periodeAn.progCompls | length == 0 %}
+                                            <div class="text-center" id="idDiv_{{ periodeAn.periode.id }}_{{ groupe.id }}">
+                                                <a id="idBt_{{ periodeAn.periode.id }}_{{ groupe.id }}" class="btn btn-danger" data-toggle="modal" href="#">
+                                                   <span id="idNb_{{ periodeAn.periode.id }}_{{ groupe.id }}" class="badge">
+                                                      0
+                                                   </span>
+                                                </a>
+                                            </div>
+                                        {% endif %}
+                                    </td>
+                                {% endfor %}
+                             </tr>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </tbody>
+        </table> 
+    </div>
+</div>
+            
+{% block modal %}
+    
+    <div id="idModalPeriodeGroupes"></div>
+    
+ {% endblock modal %}
+
+ <script>
+      {%if periodeAns | length%}  
+        {% for periodeAn in periodeAns %}
+            {% if periodeAn.renseigner == "O" %}
+                 {% for groupe in grparAns %}
+                     
+                    $(document).on('click','#idBt_{{ periodeAn.periode.id }}_{{ groupe.id }}',function(e){
+                        e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                        $('#modalTraitementEncours').modal('toggle');
+                        var url = '{{ path("AeagSqeBundle_programmation_bilan_periode_groupes",{"periodeAnId":  "par1", "grparAnId":  "par2","action": "par3","maj":"par4","lotan":"par5"}) }}', // Le nom du fichier indiqué dans le formulaire
+                        url = url.replace("par1", {{ periodeAn.periode.id }});
+                        url = url.replace("par2", {{ groupe.id }});
+                        url = url.replace("amp;","");
+                        url = url.replace("par3", '{{ action }}');
+                        url = url.replace("par4", '{{ maj }}');
+                        url = url.replace("amp;","");
+                        url = url.replace("par5", '{{ lotan.id }}');
+                        url = url.replace("amp;","");
+                        $.ajax({
+                                url: url,
+                                type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+                                success: function(html) { // Je récupère la réponse du fichier PHP
+                                     $('#idModalPeriodeGroupes').empty().append(html);
+                                     $('#modalPeriodeGroupe').modal();
+                                     $('#modalTraitementEncours').modal('hide');
+                                     }
+                            });
+                     });
+                     
+                     $(document).on('click','#idBt_compl_{{ periodeAn.periode.id }}_{{ groupe.id }}',function(e){
+                        e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                        $('#modalTraitementEncours').modal('toggle');
+                       var url = '{{ path("AeagSqeBundle_programmation_bilan_periode_groupes",{"periodeAnId":  "par1", "grparAnId":  "par2","action": "par3","maj":"par4","lotan":"par5"}) }}', // Le nom du fichier indiqué dans le formulaire
+                        url = url.replace("par1", {{ periodeAn.periode.id }});
+                        url = url.replace("par2", {{ groupe.id }});
+                        url = url.replace("amp;","");
+                        url = url.replace("par3", '{{ action }}');
+                        url = url.replace("par4", '{{ maj }}');
+                        url = url.replace("amp;","");
+                        url = url.replace("par5", '{{ lotan.id }}');
+                        url = url.replace("amp;","");
+                        $.ajax({
+                                url: url,
+                                type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+                                success: function(html) { // Je récupère la réponse du fichier PHP
+                                     $('#idModalPeriodeGroupes').empty().append(html);
+                                     $('#modalComplPeriodeGroupe').modal();
+                                     $('#modalTraitementEncours').modal('hide');
+                                     }
+                            });
+                     });
+                   {% endfor %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+ </script>

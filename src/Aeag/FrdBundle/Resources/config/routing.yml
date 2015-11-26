@@ -1,0 +1,21 @@
+aeag_frd:
+    path:  /
+    defaults: { _controller: AeagFrdBundle:Default:index }
+    
+aeag_frd_admin:
+    resource: "@AeagFrdBundle/Resources/config/routing_admin.yml"
+    prefix:   /adminfrd
+    
+aeag_frd_membre:
+    resource: "@AeagFrdBundle/Resources/config/routing_membre.yml"
+    prefix:   /membre
+    
+aeag_frd_referentiel:
+    resource: "@AeagFrdBundle/Resources/config/routing_referentiel.yml"
+    prefix:   /referentiel
+    
+
+    
+
+    
+

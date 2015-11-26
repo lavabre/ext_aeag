@@ -1,0 +1,36 @@
+AeagFrdBundle_admin:
+    path:  /
+    defaults: { _controller: AeagFrdBundle:Admin:index }
+    
+AeagFrdBundle_admin_parametres:
+    path:  /parametres
+    defaults: { _controller: AeagFrdBundle:Parametres:index }
+    
+AeagFrdBundle_admin_parametre:
+    path:  /parametre/{code}
+    defaults: { _controller: AeagFrdBundle:Parametres:parametre, code:null }
+    requirements:
+        methods:  GET|POST
+  
+AeagFrdBundle_admin_exporterListeFraisDeplacements:
+    path:  /exporterListeFraisDeplacements
+    defaults: { _controller: AeagFrdBundle:Admin:exporterListeFraisDeplacements }
+    requirements:
+        methods:  GET|POST
+        
+AeagFrdBundle_admin_validerFraisDeplacement:
+    path:  /validerFraisDeplacement
+    defaults: { _controller: AeagFrdBundle:Admin:validerFraisDeplacement, id:null, datePhase:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagFrdBundle_admin_devaliderFraisDeplacement:
+    path:  /devaliderFraisDeplacement/{id}
+    defaults: { _controller: AeagFrdBundle:Admin:devaliderFraisDeplacement }
+    requirements:
+        methods:  GET|POST
+        
+
+
+    
+

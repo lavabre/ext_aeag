@@ -1,0 +1,119 @@
+{% extends "AeagFrdBundle:Referentiel:index.html.twig" %}
+
+
+{% block content %}
+
+    <div class="widget-panel">
+
+        <div class="widget-top">
+            <div align="center">
+                <h2>Chargement du référentiel</h2>
+            </div>
+        </div>
+        <br><br><br>
+
+        <div class="widget-content module">
+            <div class="form-grid">
+                <form action="{{ path('AeagFrdBundle_chargeComptes') }}" class="leftLabel"
+                      method="post" {{ form_enctype(form) }}>
+
+                    {% if message %}
+                        <div class="notification-wrap success">
+                            <span class="icon-success"> : </span>
+
+                            <p>
+                                {{ message }}
+                            </p>
+                        </div>
+                    {% endif %}
+
+                    <div class="grid_1"></div>
+                    <div class="grid_11 right">
+                        <ul>
+                            <li>
+                                <label class="fldTitle">{{ form_label(form.fichier, 'Fichier à charger') }}</label>
+
+                                <div class="fieldwrap">{{ form_widget(form.fichier, { 'attr': {'class': 'full-width'} }) }}
+                                </div>
+                            </li>
+                        </ul>
+                        {{ form_rest(form) }}
+                        <br><br>
+
+                        <div align="center">
+                            <input type="submit" id="idCharger" class="submit-button-blue" value="Charger" name="">
+                            <a href="{{ path('AeagFrdBundle_referentiel') }}">
+                                <img src="{{ asset('bundles/AeagFrd/images/web-app/24/Exit.png') }}" width="24"
+                                     height="24">
+                            </a>
+                        </div>
+                    </div>
+                </form>
+                <br>
+
+                <form action="{{ path('AeagFrdBundle_chargeCorrespondants') }}" class="leftLabel"
+                      method="post" {{ form_enctype(form) }}>
+
+                    {% if message %}
+                        <div class="notification-wrap success">
+                            <span class="icon-success"> : </span>
+
+                            <p>
+                                {{ message }}
+                            </p>
+                        </div>
+                    {% endif %}
+
+                    <div class="grid_1"></div>
+                    <div class="grid_11 right">
+                        <ul>
+                            <li>
+                                <label class="fldTitle">{{ form_label(form.fichier, 'Fichier à charger') }}</label>
+
+                                <div class="fieldwrap">{{ form_widget(form.fichier, { 'attr': {'class': 'full-width'} }) }}
+                                </div>
+                            </li>
+                        </ul>
+                        {{ form_rest(form) }}
+                        <br><br>
+
+                        <div align="center">
+                            <input type="submit" id="idCharger" class="submit-button-blue" value="Charger" name="">
+                            <a href="{{ path('AeagFrdBundle_referentiel') }}">
+                                <img src="{{ asset('bundles/AeagFrd/images/web-app/24/Exit.png') }}" width="24"
+                                     height="24">
+                            </a>
+                        </div>
+                    </div>
+                </form>
+                <br><br>
+            </div>
+        </div>
+    </div>
+
+    <div class="widget-panel grid_12">
+
+        <div class="widget-content module">
+            <div class="elem-grid">
+                <div id="progress3">
+                    <div class="percent">
+                    </div>
+                    <div class="pbar">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock %}
+
+{% block scripts %}
+
+      $("#progress3").hide();
+
+        $("#idCharger").click(function () {
+            $("#progress3").show();
+        });
+{% endblock scripts %}

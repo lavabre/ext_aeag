@@ -1,0 +1,47 @@
+{% extends "AeagSqeBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="icon-home"></i>
+        <a href="{{ path('aeag_sqe') }}">Accueil</a> 
+    </li>
+ {% endblock breadcrumb %}
+ 
+ {%block panel_heading %}
+    {#<h3 class="page-title">
+        Programmation SQE
+     </h3>#}
+{%endblock panel_heading %}
+
+
+ {% block content %}
+     
+     <div class="row">
+            <div class="col-md-10 pull-right text-info">
+                <ul class="list-inline btn-group-lg">
+                    <li><a class="btn btn-primary btn-lg" href="{{ path('Aeag_sqe_programmation_lots', {'action': 'V'}) }}" title="Consulter"><i class="fa fa-eye fa-3x"></i> Consulter</a></li>
+                    {%if  is_granted('ROLE_PROGSQE') %}
+                    <li><a class="btn btn-warning btn-lg active" href="{{ path('Aeag_sqe_programmation_lots', {'action': 'P'}) }}" title="Programmer"><i class="fa fa-edit fa-3x"></i> Programmer</a></li>
+                    <li><a class="btn btn-success btn-lg disabled" href="#" title="Echange de fichiers"><i class="fa fa-download fa-3x"></i> Echange de fichiers</a></li>
+                    {% endif %}
+                  </ul>  
+            </div>
+         </div>       
+                  </br></br>
+         <div class="row">
+            <div class="col-md-8 pull-right text-info">
+                  <ul class="list-inline btn-group-lg">
+                    <li><a class="btn btn-info  btn-lg" href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur.pdf') }}" target="_blank" title="Aide"><i class="fa fa-book fa-3x"></i> Aide</a></li>
+                  </ul>  
+            </div>
+         </div>       
+      
+   
+ {% endblock content %}
+   
+{% block scriptsTr %}
+     
+     $('#idPanelHeading').hide();
+     
+   
+{% endblock scriptsTr %} 

@@ -1,0 +1,3 @@
+aeag_die_administrateur:
+    path:  /
+    defaults: { _controller: "AeagDieBundle:Admin:index" }

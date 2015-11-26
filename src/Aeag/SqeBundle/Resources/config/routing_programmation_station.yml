@@ -1,0 +1,22 @@
+AeagSqeBundle_programmation_stations:
+    path:  /criteres
+    defaults: { _controller: AeagSqeBundle:ProgrammationStation:index}
+    requirements:
+        methods:  GET
+        
+AeagSqeBundle_programmation_allStations:
+    path:  /toutesStations
+    defaults: { _controller: AeagSqeBundle:ProgrammationStation:allStations}
+    requirements:
+        methods:  GET|POST
+        
+        
+AeagSqeBundle_programmation_station_resultat:
+    path:  /resultat
+    defaults: { _controller: AeagSqeBundle:ProgrammationStation:resultat }
+    requirements:
+        methods:  GET|POST
+        
+
+        
+

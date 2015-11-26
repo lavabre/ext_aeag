@@ -1,0 +1,119 @@
+{% extends "AeagDecBundle:Referentiel:index.html.twig" %}
+
+{% block breadcrumb %}
+      <li>
+          <a href="{{ path('aeag_dec') }}">Accueil</a> 
+      </li>
+       <li class="active">
+         Chargement déclarations 
+       </li>
+   {% endblock breadcrumb %}
+       
+   {% block panel_heading %}
+       <h3>
+       Export de l'agence de l'Eau vers le site extranet
+       </h3>
+   {% endblock panel_heading %}
+
+
+  {%block content %}
+       <div class="row">
+          <div class="col-md-12">
+              <div class="small ">
+                 <form class="form-horizontal" id="idForm" action="{{ path('AeagDecBundle_admin_chargeFichierDeclaration') }}" method="post">
+                  <table class="table table-bordered table-striped table-condensed table-advance table-hover" id="idTable">
+                     <thead>
+                           <tr>
+                                <th align="left">Action</th>
+                                <th align="left">Type</th>
+                                <th align="left">Fichier</th>
+                                <th align="right">Lignes</th>
+                                <th align="right">Taille</th>
+                                <th align="center">date Création</th>
+                             </tr>
+                        </thead>
+                        <tbody>
+                         
+                          {% for fichier in fichiers %}
+                                {% if fichier.nom[:10] == 'dec_deccol' %}
+                                    <tr>
+                                         <td>
+                                           <a class="btn btn-primary" id="confirme_{{ fichier.indice }}"  href="#">
+                                               <i class="fa fa-download"> Charger</i>
+                                            </a>
+                                        </td>
+                                        <td aligne="left">Dossiers collecteurs</td>
+                                        <td align="left">{{ fichier.nom }}</td>
+                                        <td align="right">{{ fichier.nblignes }}</td>
+                                        <td align="right">{{ fichier.taille }}</td>
+                                        <td align="center">{{ fichier.date }}</td>
+                                     </tr>
+                                {% endif %}
+                          {% endfor %}
+                                    
+                          </tbody>
+                     </table>
+                     <input type="hidden" id="ficent" name="ficent" value="">
+                     
+                     <div class="col-sm-offset-3 col-sm-8">
+                       <a class="btn btn-danger" href="{{ path('AeagDecBundle_admin') }}"><i class="fa fa-power-off"></i> Retour</a>
+                     </div>
+                     
+                 </form> 
+                <br>  
+                <div id='idMessage1'></div> 
+                <div id='idMessage2'>
+                      {% if message | length %} 
+                             <div class="alert alert-block alert-success fade in">
+                                 <button type="button" class="close" data-dismiss="alert"></button>
+                                 <h4 class="alert-heading">Terminer</h4>
+                                 <p>
+                                    {{ message.0 }}
+                                    {%if message.1%}
+                                        <br>{{ message.1 }}
+                                    {%endif%}
+                                    {%if message.2%}
+                                       <br>{{ message.2 }}
+                                     {%endif%}
+                                     {%if message.3%}
+                                       <br>{{ message.3 }}
+                                     {%endif%}
+                                </p>
+                             </div>
+                       {% endif %}
+                 </div> 
+                 <br>
+                 <div id="idAttente">
+                    <div class="alert alert-danger" role="alert">
+                        <a href="#" class="alert-link"> Traitement en cours .... Merci de patienter</a>
+                     </div>
+                 </div>
+             </div>
+          </div>
+        </div>
+     {%endblock content %}
+ 
+   
+{% block scripts %}
+ 
+       $('#idMessage1').hide();
+            $('#idMessage2').hide();
+            $('#idAttente').hide();
+            {% for fichier in fichiers %}
+                $('#confirme_{{fichier.indice}}').click(function (e) {
+                        e.preventDefault();
+                        $('#idMessage1').show();
+                        $('#idAttente').show();
+                        $('#idMessage2').hide();
+                        $('#ficent').val('{{fichier.nom}}');
+                        $('form').submit();
+                        return false;
+                    });
+               {% endfor %}
+
+            {% if message %}
+               $('#idMessage1').hide(); 
+               $('#idAttente').hide(); 
+               $('#idMessage2').show();
+            {%endif%}
+  {% endblock scripts %}

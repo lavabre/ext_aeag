@@ -1,0 +1,22 @@
+aeag_sqe:
+    path:  /
+    defaults: { _controller: AeagSqeBundle:Default:index }
+    
+aeag_sqe_admin:
+    resource: "@AeagSqeBundle/Resources/config/routing_admin.yml"
+    prefix:   /adminsqe
+
+aeag_sqe_referentiel:
+    resource: "@AeagSqeBundle/Resources/config/routing_referentiel.yml"
+    prefix:   /referentiel
+    
+aeag_sqe_programmation:
+    resource: "@AeagSqeBundle/Resources/config/routing_programmation.yml"
+    prefix:   /programmation
+    
+aeag_sqe_envoyerMessage:
+    path:  /message/envoyer
+    defaults: { _controller: AeagSqeBundle:Default:envoyerMessage }
+    requirements:
+        methods:  GET|POST
+ 

@@ -1,0 +1,83 @@
+{% extends "AeagDieBundle::layout.html.twig" %}
+
+{% block contenu %}
+
+
+<div align="center">
+   <h1>Administration des organismes</H1>
+</div>
+<br>
+<table align="center">
+    <tr>
+        <td align="left">
+            <a href="{{ path('demande_new') }}">
+                <img src="{{ asset('bundles/aeagdie/images/icons/web-app/24/Add.png') }}">
+                Nouveau organisme
+            </a>
+        </td>
+    </tr>
+</table>
+
+<table class="table" cellspacing="0" width="50%" align="center">
+
+    <thead>
+        <tr>
+            <th class="th-text">Id&nbsp;</th>
+            <th class="th-text">Nom&nbsp;</th>
+            <th class="th-text">Prénom&nbsp;</th>
+            <th class="th-text">Email&nbsp;</th>
+            <th class="th-text">Organisme&nbsp;</th>
+            <th class="th-text">Objet&nbsp;</th>
+            <th class="th-text">Date création&nbsp;</th>
+            <th class="th-text">Date écheance&nbsp;</th>
+            <th class="th-text" nowrap align="left">Modifier</th>
+            <th class="th-text" nowrap align="left">Supprimer</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% set i = 1 %}
+    {% for entity in entities %}
+        <tr class="resultat{{ i }}">
+            <td width="10%"><a href="{{ path('demande_edit', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
+            <td width="10%" nowrap>{{ entity.nom }}&nbsp;</td>
+            <td width="10%" nowrap>{{ entity.prenom }}&nbsp;</td>
+            <td width="30%" nowrap>{{ entity.email }}&nbsp;</td>
+            <td width="30%" nowrap>{{ entity.organisme }}&nbsp;</td>
+            <td width="20%" nowrap>{{ entity.objet }}&nbsp;</td>
+            <td width="10%" nowrap>{% if entity.dateCreation %}{{ entity.dateCreation|date('d-m-Y') }}{% endif%}&nbsp;</td>
+            <td width="10%" nowrap>{% if entity.dateEcheance %}{{ entity.dateEcheance|date('d-m-Y') }}{% endif%}&nbsp;</td>
+            <td width="10%" align="right">
+                {% if is_granted('ROLE_ADMIN') %}
+	              <a href="{{ path('demande_edit', { 'id': entity.id }) }}">
+                          <img src="{{ asset('bundles/aeagdie/images/icons/web-app/24/Modify.png') }}">
+                      </a>
+	       {%  endif  %}
+            </td>
+            <td width="10%" align="left">
+             {% if is_granted('ROLE_ADMIN') %}
+		    <a href="{{ path('demande_delete', { 'id': entity.id }) }}">
+                        <img src="{{ asset('bundles/aeagdie/images/icons/web-app/24/Delete.png') }}">
+                    </a>
+	      {%  endif  %}
+	   </td>
+        </tr>
+    {% set i = i + 1 %}
+    {% if i > 2 %}
+    {% set i = 1 %}
+    {% endif %}
+    {% endfor %}
+    </tbody>
+</table>
+
+ <table align="center">
+        <tr>
+            <td>
+                <a class="button blue" href="{{ path('admin') }}">
+                    <img src="{{ asset('bundles/aeagdie/images/icons/web-app/24/back.png') }}">  
+                    Retour
+                </a>
+            </td>
+        </tr>
+    </table>
+
+{% endblock %}

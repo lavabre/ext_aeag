@@ -1,0 +1,166 @@
+{% extends "AeagDecBundle:Default:index.html.twig" %}
+
+{% block breadcrumb %}
+          <li>
+          <i class="icon-home"></i>
+          <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+       </li>
+        <li>
+          <i class="icon-users"></i>
+          <a href="{{ path('Aeag_listeCorrespondants') }}">Correspondants</a> 
+       </li>
+       <li class="active">
+           {{ correspondant.identifiant }}
+       </li>
+ {% endblock breadcrumb %}
+       
+ {%block panel_heading %}
+    <h3 class="page-title">
+       Consultation du correspondant : {{ correspondant.identifiant }}
+    </h3>
+  {%endblock panel_heading %}
+
+  {%block content %}
+  <div class="row">
+          <div class="col-xm-12">    
+                <form class="form-horizontal" role="form">
+           <div class="form-body">
+                 <div class="row">
+                   <div class="col-md-offset-3"></div>
+                   <div class="col-md-9">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Identifiant Aeag :</label>
+                            <div class="col-md-9">
+                            <p class="form-control-static">{{ correspondant.corId }}</p>
+                            </div>
+                        </div>
+                   </div>
+                   <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Numéro :</label>
+                            <div class="col-md-9">
+                            <p class="form-control-static">{{ correspondant.identifiant }}</p>
+                            </div>
+                        </div>
+                   </div>
+                   <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Siret :</label>
+                            <div class="col-md-9">
+                            <p class="form-control-static">{{ correspondant.siret }}</p>
+                            </div>
+                        </div>
+                   </div>
+                   <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Adresse :</label>
+                            <div class="col-md-9">
+                             <p class="form-control-static">
+                                  {{ correspondant.adr1 }}&nbsp;{{ correspondant.adr2 }}<br>
+                                  {{ correspondant.adr3 }}<br>
+                                  {{ correspondant.adr4 }}<br>
+                                  {{ correspondant.cp }}&nbsp;{{ correspondant.ville }}
+                             </p>
+                            </div>
+                        </div>
+                   </div>
+                  
+                   <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Liens :</label>
+                            <div class="col-md-9">
+                            <p class="form-control-static">
+                                <table class="table table-bordered table-hover" id="idTable1">
+                                <thead>
+                                   <tr>
+                                       <th>Type</th>
+                                        <th>Identifiant</th>
+                                        <th>Libelle</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {%if odecs %}
+                                      {% for odec in odecs %}
+                                            <tr>
+                                                <td>Collecteur</td>
+                                                <td>{{ odec.numero }}</td>
+                                                <td>{{ odec.libelle }}</td>
+                                              </tr>
+                                         {% endfor %}
+                                    {%endif%}
+                                    {%if cts %}     
+                                        {% for ct in cts %}
+                                            <tr>
+                                                <td>Centre de Transit</td>
+                                                <td>{{ ct.numero }}</td>
+                                                <td>{{ ct.libelle }}</td>
+                                              </tr>
+                                         {% endfor %}
+                                     {%endif%}
+                                     {%if ctdts %}     
+                                        {% for ctdt in ctdts %}
+                                            <tr>
+                                                <td>Centre de Traitement</td>
+                                                <td>{{ ctdt.numero }}</td>
+                                                <td>{{ ctdt.libelle }}</td>
+                                              </tr>
+                                         {% endfor %}
+                                      {%endif%}
+                                     {%if pdecs %}     
+                                        {% for pdec in pdecs %}
+                                            <tr>
+                                                <td>Producteur</td>
+                                                <td>{{ pdec.numero }}</td>
+                                                <td>{{ pdec.libelle }}</td>
+                                              </tr>
+                                         {% endfor %}
+                                      {%endif%}
+                                </tbody>
+                             </table> 
+                               </p>
+                            </div>
+                        </div>
+                   </div>
+         
+                  </div>
+                </div>
+             </div>
+       </form>
+
+                <div class="col-md-offset-3 col-md-6">
+                   <a class="btn btn-danger icon-remove pull-right" href="{{ path('Aeag_listeCorrespondants') }}">Fermer
+                   <i class="fa fa-power-off"></i> 
+                   </a>
+                </div>
+    
+          </div>
+    </div>
+
+{%endblock content %}
+
+    
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+       
+       jQuery(document).ready(function() {
+             
+                        
+                         $("#idForm").validate( {
+                                ignore: ".ignore",
+                                messages: {
+
+                                 'MajOuvrage[siret]' : {
+                                  nowhitespace: "<div class='form-group has-error'><span class='help-block'>Veuillez ne pas inscrire d'espaces blancs.</span></div>",
+                                  minlength: "<div class='form-group has-error'><span class='help-block'>Veuillez saisir 14 caractères.</span></div>"
+                                  }
+
+                               }
+                           });   
+       
+            });
+       
+       
+  </script>
+{% endblock javascripts %}

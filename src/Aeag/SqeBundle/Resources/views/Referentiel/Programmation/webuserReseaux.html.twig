@@ -1,0 +1,120 @@
+{% extends "AeagSqeBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="icon-home"></i>
+        <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+    </li>
+    <li>
+        <i class="icon-home"></i>
+        <a href="{{ app.session.get('niveau1') }}">Utilisateurs</a> 
+    </li>
+    <li class="active">
+        Réseaux
+    </li>
+{% endblock breadcrumb %}
+
+
+{%block panel_heading %}
+    <h3 class="page-title">
+        Liste des réseaux de l'utilisateur : {{ pgProgWebuser.nom }}
+        {# <a class="btn btn-primary pull-right" href="{{ path('AeagDecBundle_admin_pdfListeDechets') }}" title="Imprimer la lister"> 
+                <i class="fa fa-print"> Imprimer la liste</i>
+         </a>#}
+    </h3>
+{%endblock panel_heading %}
+
+
+
+{%block content %}
+    <div class="row">
+        <div class="col-xm-12">
+            <div class="small">
+                <table class="table table-bordered table-condensed table-advance" id="idTable">
+                    <thead>
+                        <tr>
+                            <th width="10%">Code Aeag</th>
+                            <th width="10%">Code Sandre</th>
+                            <th>Nom</th>
+                            <th>Obligatoire</th>
+                            <th width="10%">Stations</th>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for entity in entities %}
+                            <tr>
+                                <td>{{ entity.reseau.codeAeagRsx }}</td>
+                                <td>{{ entity.reseau.codeSandre }}</td>
+                                <td>{{ entity.reseau.nomRsx }}</td>
+                                <td>{{ entity.WebuserRsx.defaut }}</td>
+                                <td align="center">
+                                    {% if entity.nbStations > 0 %}
+                                        <a class="btn btn-info btn-xs" href="{{ path('AeagSqeBundle_referentiel_webuser_reseau_stations', { 'pgRefReseauMesureId': entity.reseau.groupementId }) }}" title="Lots">
+                                            <i class="fa fa-eye"></i> 
+                                        </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{%endblock content %}
+
+
+{% block scripts %}
+
+    // DataTable
+    var table = $('#idTable').DataTable(
+    {"stateSave": true,
+    "oLanguage": {
+    "sSearch": "Filtre",
+    "sFirst": "1ere page",
+    "sLast": "Dernière page",
+    "sNext": "Prochaine page",
+    "sPrevious": "Page précédente",
+    "EmptyTable": "Pas de données",
+    "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+    "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+    "sZeroRecords": "Pas d'enregistrement à afficher",
+    "sInfoEmpty": "Pas d'enregistrement à afficher",
+    "sInfoThousands": " ",
+    "sLengthMenu": 'Afficher <select>' +
+        '<option value="10">10</option>' +
+        '<option value="20">20</option>' +
+        '<option value="30">30</option>' +
+        '<option value="40">40</option>' +
+        '<option value="50">50</option>' +
+        '<option value="-1">Tous</option>' +
+        '</select> enregistrements',
+    "sPaginationType": "full_numbers"
+    }
+    }
+    );
+
+    $("#idTable thead td").each( function ( i ) {
+
+    if ( i != 4){
+    var select = $('<select><option value=""></option></select>')
+    .appendTo( $(this).empty() )
+    .on( 'change', function () {
+    table.column( i )
+    .search( $(this).val() )
+    .draw();
+    } );
+
+    table.column( i ).data().unique().sort().each( function ( d, j ) {
+    select.append( '<option value="'+d+'">'+d+'</option>' )
+    } );
+    };
+    } );
+{% endblock scripts %}

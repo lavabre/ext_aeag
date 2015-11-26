@@ -1,0 +1,158 @@
+{% extends "AeagDecBundle::layout.html.twig" %}
+
+     
+ {% block breadcrumb %}
+      <li>
+          <a href="{{ path('aeag_dec') }}">Accueil</a> 
+      </li>
+      <li class="active">
+            {{collecteur.numero}}  {{collecteur.libelle}} 
+       </li>
+   {% endblock breadcrumb %}
+
+
+{% block panel_heading %}
+    <h3>
+       Déclarations annuelles de {{ collecteur.numero }} {{ collecteur.libelle }}
+    </h3>
+{% endblock panel_heading %}
+
+
+  
+{% block modal %}
+      {%if entities| length > 0 %}
+            {% for entity in entities %}
+        
+                <div class="modal fade" id="sup-{{entity.0.id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                              <h4 class="modal-title" id="myModalLabel">Suppression de la déclaration {{ entity.0.annee }}</h4>
+                            </div>
+                            <div class="modal-body">
+                                <h4>Cliquer sur la corbeille pour valider la suppression</h4>
+                                <br/><br/>
+                                <div class="alert alert-danger">Attention : Une fois supprimée, la déclaration sera supprimée définitivement</div>
+                            </div>
+                            <div class="modal-footer">
+                               <button type="button" class="btn btn-primary" data-dismiss="modal">Annuler</button>
+                              <a class="btn btn-danger" href="{{ path('AeagDecBundle_collecteur_supprimerDeclaration', { 'declarationCollecteur_id': entity.0.id }) }}" title="Supprimer">
+                                  <i class="fa fa-trash-o"></i>
+                              </a>
+                             </div>
+                          </div>
+                        </div>
+                </div>
+        {% endfor %}
+       {%endif%}  
+  {% endblock modal %}
+
+
+  {%block content %}
+            
+       {% if is_granted('ROLE_ADMINDEC') %}
+            <div class="table-toolbar centered">
+                    <a class="btn green" href="{{ path('AeagDecBundle_collecteur_ajouterDeclaration', { 'collecteur_id': collecteur.id }) }}" title="Ajouter dossier"> Ajouter dossier
+                    <i class="fa fa-plus"></i>
+                    </a>
+             </div>  
+       {% endif %}       
+             
+      <div class="row">
+          <div class="col-md-12">
+              <div class="small ">
+                  <table class="table table-bordered table-striped table-condensed table-advance table-hover" id="idTable">
+                        <thead>
+                           <tr>
+                                <th>Actions</th>
+                                <th>année</th>
+                                <th>Quantité déclarée</th>
+                                <th>Quantité retenue</th>
+                                <th>Aide de l'agence</th>
+                                <th>Déclarations</th>
+                             </tr>
+                        </thead>
+                        <tbody>
+                            {% for entity in entities %}
+                               {% set phase = 0 %}
+                               {% for sousDec in entity.1 %}
+                                  {% if sousDec.statut.code >= phase %}
+                                       {% set  phase = sousDec.statut.code %}
+                                  {% endif %}
+                               {% endfor %}
+                            
+                            
+                                <tr>
+                                    <td nowrap id="idTd1-{{ entity.0.id }}" nowrap>
+                                        <a class="btn btn-primary" href="{{ path('AeagDecBundle_collecteur_listeSousDeclarations', { 'declarationCollecteur_id': entity.0.id }) }}" title="Détails">
+                                           <i class="fa fa-eye"></i>
+                                       </a>
+                                      {% if is_granted('ROLE_ADMINDEC') %}
+                                       {% if entity.0.statut.code < '30' and phase < 30 %}
+                                            <a class="btn btn-danger" data-toggle="modal" href="#sup-{{entity.0.id}}" title="Supprimer">
+                                               <i class="fa fa-trash-o"></i>
+                                            </a>
+                                       {% endif %} 
+                                     {% endif %} 
+                                    </td>
+                                    <td>{{ entity.0.annee}}</td>
+                                    <td align="right">{{ (entity.0.quantiteReel) | number_format(0,'.',' ')}} kg</td>
+                                    <td align="right">{{ (entity.0.quantiteRet) | number_format(0,'.',' ')}} kg</td>
+                                    <td align="right">{{ entity.0.montAide | number_format(2,'.',' ')}} €</td>
+                                    <td align="left" nowrap>
+                                    {% set nb1 = 0 %}
+                                    {% for sousDec in entity.1 %}
+                                    {% set nb1 = nb1 + 1 %}
+                                       N° {{ sousDec.numero }} : {{ sousDec.dateDebut | date('d/m/Y') }} {{ sousDec.statut.libelle }}</br>
+                                    {% endfor %}
+                                    </td>
+                                </tr>
+                             {% endfor %}
+                        </tbody>
+                     </table>
+            </div>
+          </div>
+        </div>
+       
+       <div class="row">
+         <div class="col-md-6 pull-left text-info">
+           <ul class="list-inline">
+            <li><a class="btn btn-primary btn-xs" href="#" title="Consulter"><i class="fa fa-eye"></i></a> Consulter</li>
+            <li><a class="btn btn-danger btn-xs" href="#" title="Supprimer"><i class="fa fa-trash-o"></i></a> Supprimer</li>
+           </ul>  
+        </div>
+      </div>
+{%endblock content %}
+
+ {% block scripts %}
+     
+       // DataTable
+          var table = $('#idTable').DataTable(
+                      {"stateSave": true,
+                       "oLanguage": {
+                          "sSearch": "Filtre",
+                          "sFirst": "1ere page",
+                          "sLast": "Dernière page",
+                          "sNext": "Prochaine page",
+                          "sPrevious": "Page précédente",
+                          "EmptyTable": "Pas de données",
+                          "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+                          "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+                          "sZeroRecords": "Pas d'enregistrement à afficher",
+                          "sInfoEmpty": "Pas d'enregistrement à afficher",
+                          "sInfoThousands": " ",
+                          "sLengthMenu": 'Afficher <select>' +
+                                  '<option value="10">10</option>' +
+                                  '<option value="20">20</option>' +
+                                  '<option value="30">30</option>' +
+                                  '<option value="40">40</option>' +
+                                  '<option value="50">50</option>' +
+                                  '<option value="-1">Tous</option>' +
+                                  '</select> enregistrements',
+                          "sPaginationType": "full_numbers"
+                      }
+                     }
+                    );
+   {% endblock scripts %}  
+ 

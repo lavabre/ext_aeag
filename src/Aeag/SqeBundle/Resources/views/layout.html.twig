@@ -1,0 +1,315 @@
+{% extends '::base.html.twig' %}
+
+{% block titre %}
+    {% if  app.environment == 'dev' %}
+       Programmation SQE en test
+     {% else %}
+        Programmation SQE 
+    {% endif %}
+{% endblock titre %}
+
+ {% block message_admin %}
+  {#  <div id="idAttente">
+        <i class="fa fa-spinner fa-spin"></i>
+        <div class="alert alert-warning">
+                 <p>
+                   Merci de patientez SVP
+                 </p>
+        </div>
+    </div>#}
+    {%if (app.session.get('messageAdmin') | length) > 0 and is_granted('ROLE_SQE') and not is_granted('ROLE_ADMINSQE') %}
+<h5 class="alert alert-danger pull-right">
+           {{ app.session.get('messageAdmin') }}
+</h5>
+    {%endif%}
+{% endblock message_admin %}
+
+ {% block menu %}
+
+     {% if is_granted('ROLE_ADMINSQE') %}
+         <li><a href="{{ path('aeag_homepage') }}"><i class="fa fa-home"></i>&nbsp; Accueil</a></li>
+
+         {%if app.session.get('menu') == 'parametres'%}
+                <li class="active">
+                    <a href="{{ path('AeagSqeBundle_admin_parametres') }}">
+                        <span class="selected"></span>
+                        Paramètres
+                    </a>
+                </li>
+         {%else%}
+                <li>
+                    <a href="{{ path('AeagSqeBundle_admin_parametres') }}">
+                        Paramètres
+                    </a>
+                </li>
+        {%endif%}
+
+              {%if app.session.get('menu') == 'programmation'%}
+                <li class="active">
+                    <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+                        <span class="selected"></span>
+                        Programmation
+                    </a>
+         {%else%}
+                <li>
+                    <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+                        Programmation
+                    </a>
+        {%endif%}
+                   <ul class="dropdown-menu">
+                       <li><a href="{{ path('Aeag_sqe_programmation_lots', {'action': 'P'}) }}">Programmer</a></li>
+                       <li><a href="{{ path('Aeag_sqe_programmation_lots', {'action': 'V'}) }}">Consulter</a></li>
+                   </ul>
+                </li>
+        
+        {%if app.session.get('menu') == 'referentiel'%}   
+            <li class="active">
+                    <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+                        <span class="selected"></span>
+                        Référentiel
+                        <i class="fa fa-angle-down"></i>     
+                    </a>
+         {%else%}
+            <li>
+                <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+                    Référentiel
+                    <i class="fa fa-angle-down"></i>     
+                </a>
+          {%endif%}
+               <ul class="dropdown-menu">
+                   <li class="dropdown-submenu">
+                       <a href="javascript:;">
+                            Sandre
+                       </a>
+                       <ul class="dropdown-menu">
+                           <li><a href="{{ path('AeagSqeBundle_referentiel_sandre_parametres') }}">Paramètres</a></li>
+                           <li><a href="{{ path('AeagSqeBundle_referentiel_sandre_supports') }}">Supports</a></li>
+{#                           <li><a href="{{ path('AeagSqeBundle_referentiel_sandre_fractions') }}">Fractions</a></li>#}
+                           <li><a href="{{ path('AeagSqeBundle_referentiel_sandre_unites') }}">Unités de mesure</a></li>
+                           <li><a href="{{ path('AeagSqeBundle_referentiel_sandre_methodes') }}">Méthodes</a></li>
+                           <li><a href="{{ path('AeagSqeBundle_referentiel_sandre_zone_verticale_prospectees') }}">Zones verticales prospectées</a></li>
+                        </ul>
+                   </li>
+                   <li class="dropdown-submenu">
+                       <a  href="javascript:;">
+                            Aeag
+                       </a>
+                       <ul class="dropdown-menu">
+                           <li><a href="{{ path('AeagSqeBundle_referentiel_ref_corres_producteurs') }}">Producteurs</a></li>
+                           <li><a href="{{ path('AeagSqeBundle_referentiel_ref_corres_prestataires') }}">Prestataires</a></li>
+                           <li><a href="{{ path('AeagSqeBundle_referentiel_pg_ref_station_mesures') }}">Stations de mesure</a></li>
+                           <li><a href="{{ path('AeagSqeBundle_referentiel_pg_ref_reseau_mesures') }}">Réseaux de mesure</a></li>
+{#                           <li><a href="{{ path('AeagSqeBundle_referentiel_pg_ref_site_prelevement') }}">Sites de prélèvement</a></li>#}
+                       </ul>
+                    </li>
+                    <li class="dropdown-submenu">
+                         <a  href="javascript:;">
+                            Programmation
+                         </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{ path('AeagSqeBundle_referentiel_typeMilieux') }}">Types de milieu</a></li>
+                            <li><a href="{{ path('AeagSqeBundle_referentiel_zoneGeographiques') }}">Zones géographiques</a></li>
+                            <li><a href="{{ path('AeagSqeBundle_referentiel_webusers') }}">Utilisateurs</a></li>
+                            <li><a href="{{ path('AeagSqeBundle_referentiel_groupes') }}">Groupes de paramètres</a></li>
+                            <li><a href="{{ path('AeagSqeBundle_referentiel_marches') }}">Marchés</a></li>
+{#                            <li><a href="{{ path('AeagSqeBundle_referentiel_lots') }}">Lots</a></li>#}
+                        </ul>
+                    </li>
+                </ul>
+             </li>   
+   
+             <li><a href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur.pdf') }}" target="_blank">Aide</a></li>
+
+<!-- Fin Menu administrateur -->            
+   {%elseif is_granted('ROLE_PROGSQE') %}
+<!-- Menu prog sqe -->
+   
+        {%if app.session.get('menu') == 'programmation'%}
+                <li class="active">
+                    <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+                        <span class="selected"></span>
+                        Programmation
+                    </a>
+         {%else%}
+                <li>
+                    <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+                        Programmation
+                    </a>
+        {%endif%}
+                   <ul class="dropdown-menu">
+                       <li><a href="{{ path('Aeag_sqe_programmation_lots', {'action': 'P'}) }}">Programmer</a></li>
+                       <li><a href="{{ path('Aeag_sqe_programmation_lots', {'action': 'V'}) }}">Consulter</a></li>
+                   </ul>
+                </li>
+
+        {%if app.session.get('menu') == 'referentiel'%}   
+            <li class="active">
+                <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+                    <span class="selected"></span>
+                    Référentiel
+                    <i class="fa fa-angle-down"></i>     
+                </a>
+                        {%else%}
+            <li>
+                <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+                    Référentiel
+                    <i class="fa fa-angle-down"></i>     
+                </a>
+        {%endif%}
+                    <ul class="dropdown-menu">
+                   <li class="dropdown-submenu">
+                       <a href="javascript:;">
+                            Sandre
+                       </a>
+                       <ul class="dropdown-menu">
+                           <li><a href="{{ path('AeagSqeBundle_referentiel_sandre_parametres') }}">Paramètres</a></li>
+                           <li><a href="{{ path('AeagSqeBundle_referentiel_sandre_supports') }}">Supports</a></li>
+{#                           <li><a href="{{ path('AeagSqeBundle_referentiel_sandre_fractions') }}">Fractions</a></li>#}
+                           <li><a href="{{ path('AeagSqeBundle_referentiel_sandre_unites') }}">Unités de mesure</a></li>
+                           <li><a href="{{ path('AeagSqeBundle_referentiel_sandre_methodes') }}">Méthodes</a></li>
+                           <li><a href="{{ path('AeagSqeBundle_referentiel_sandre_zone_verticale_prospectees') }}">Zones verticales prospectées</a></li>
+                        </ul>
+                   </li>
+                   <li class="dropdown-submenu">
+                       <a  href="javascript:;">
+                            Aeag
+                       </a>
+                       <ul class="dropdown-menu">
+                           <li><a href="{{ path('AeagSqeBundle_referentiel_ref_corres_producteurs') }}">Producteurs</a></li>
+                           <li><a href="{{ path('AeagSqeBundle_referentiel_ref_corres_prestataires') }}">Prestataires</a></li>
+                           <li><a href="{{ path('AeagSqeBundle_referentiel_pg_ref_station_mesures') }}">Stations de mesure</a></li>
+                           <li><a href="{{ path('AeagSqeBundle_referentiel_pg_ref_reseau_mesures') }}">Réseaux de mesure</a></li>
+{#                           <li><a href="{{ path('AeagSqeBundle_referentiel_pg_ref_site_prelevement') }}">Sites de prélèvement</a></li>#}
+                       </ul>
+                    </li>
+                    <li class="dropdown-submenu">
+                        <a  href="javascript:;">
+                            Programmation
+                         </a>
+                        <ul class="dropdown-menu">
+                           <li><a href="{{ path('AeagSqeBundle_referentiel_typeMilieux') }}">Types de milieu</a></li>
+                            <li><a href="{{ path('AeagSqeBundle_referentiel_zoneGeographiques') }}">Zones géographiques</a></li>
+{#                            <li><a href="{{ path('AeagSqeBundle_referentiel_webusers') }}">Utilisateurs</a></li>#}
+                            <li><a href="{{ path('AeagSqeBundle_referentiel_groupes') }}">Groupes de paramètres</a></li>
+                            <li><a href="{{ path('AeagSqeBundle_referentiel_marches') }}">Marchés</a></li>
+{#                            <li><a href="{{ path('AeagSqeBundle_referentiel_lots') }}">Lots</a></li>#}
+                        </ul>
+                    </li>
+                </ul>
+            </li>  
+            
+            {%if app.session.get('menu') == 'contact'%}
+                <li class="active">
+                  <a href="{{ path('aeag_sqe_envoyerMessage') }}">
+                  Contact
+                  </a>
+               </li>
+             {% else %}
+                <li>
+                <a href="{{ path('aeag_sqe_envoyerMessage') }}">
+                Contact
+                </a>
+             </li>
+            {% endif %}
+            
+             <li><a href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur.pdf') }}" target="_blank">Aide</a></li>
+    
+        
+   {% else %}
+       <!-- Menu sqe -->
+       {%if app.session.get('menu') == 'programmation'%}
+                <li class="active">
+                    <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+                        <span class="selected"></span>
+                        Programmation
+                    </a>
+        {%else%}
+                <li>
+                    <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+                        Programmation
+                    </a>
+        {%endif%}
+                     <ul class="dropdown-menu">
+                       <li><a href="{{ path('Aeag_sqe_programmation_lots', {'action': 'V'}) }}">Consulter</a></li>
+                   </ul>
+                </li>
+
+       
+        {%if app.session.get('menu') == 'referentiel'%}   
+            <li class="active">
+                <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+                    <span class="selected"></span>
+                    Référentiel
+                    <i class="fa fa-angle-down"></i>     
+                </a>
+                        {%else%}
+            <li>
+                <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+                    Référentiel
+                    <i class="fa fa-angle-down"></i>     
+                </a>
+        {%endif%}
+                    <ul class="dropdown-menu">
+                   <li class="dropdown-submenu">
+                       <a href="javascript:;">
+                            Sandre
+                       </a>
+                       <ul class="dropdown-menu">
+                           <li><a href="{{ path('AeagSqeBundle_referentiel_sandre_parametres') }}">Paramètres</a></li>
+                           <li><a href="{{ path('AeagSqeBundle_referentiel_sandre_supports') }}">Supports</a></li>
+{#                           <li><a href="{{ path('AeagSqeBundle_referentiel_sandre_fractions') }}">Fractions</a></li>#}
+                           <li><a href="{{ path('AeagSqeBundle_referentiel_sandre_unites') }}">Unités de mesure</a></li>
+                           <li><a href="{{ path('AeagSqeBundle_referentiel_sandre_methodes') }}">Méthodes</a></li>
+                           <li><a href="{{ path('AeagSqeBundle_referentiel_sandre_zone_verticale_prospectees') }}">Zones verticales prospectées</a></li>
+                        </ul>
+                   </li>
+                   <li class="dropdown-submenu">
+                       <a  href="javascript:;">
+                            Aeag
+                       </a>
+                       <ul class="dropdown-menu">
+                           <li><a href="{{ path('AeagSqeBundle_referentiel_ref_corres_producteurs') }}">Producteurs</a></li>
+                           <li><a href="{{ path('AeagSqeBundle_referentiel_ref_corres_prestataires') }}">Prestataires</a></li>
+                           <li><a href="{{ path('AeagSqeBundle_referentiel_pg_ref_station_mesures') }}">Stations de mesure</a></li>
+                           <li><a href="{{ path('AeagSqeBundle_referentiel_pg_ref_reseau_mesures') }}">Réseaux de mesure</a></li>
+{#                           <li><a href="{{ path('AeagSqeBundle_referentiel_pg_ref_site_prelevement') }}">Sites de prélèvement</a></li>#}
+                       </ul>
+                    </li>
+                    <li class="dropdown-submenu">
+                        <a  href="javascript:;">
+                            Programmation
+                         </a>
+                        <ul class="dropdown-menu">
+                           <li><a href="{{ path('AeagSqeBundle_referentiel_typeMilieux') }}">Types de milieu</a></li>
+                            <li><a href="{{ path('AeagSqeBundle_referentiel_zoneGeographiques') }}">Zones géographiques</a></li>
+{#                            <li><a href="{{ path('AeagSqeBundle_referentiel_webusers') }}">Utilisateurs</a></li>#}
+                            <li><a href="{{ path('AeagSqeBundle_referentiel_groupes') }}">Groupes de paramètres</a></li>
+                            <li><a href="{{ path('AeagSqeBundle_referentiel_marches') }}">Marchés</a></li>
+{#                            <li><a href="{{ path('AeagSqeBundle_referentiel_lots') }}">Lots</a></li>#}
+                        </ul>
+                    </li>
+                </ul>
+            </li>   
+            
+             {%if app.session.get('menu') == 'contact'%}
+                <li class="active">
+                  <a href="{{ path('aeag_sqe_envoyerMessage') }}">
+                  Contact
+                  </a>
+               </li>
+             {% else %}
+                <li>
+                <a href="{{ path('aeag_sqe_envoyerMessage') }}">
+                Contact
+                </a>
+             </li>
+            {% endif %}
+            
+            <li><a href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur.pdf') }}" target="_blank">Aide</a></li>
+   
+  {%endif%}
+<!--  fin Menu collecteur -->
+ 
+{% endblock menu %}
+
+ 

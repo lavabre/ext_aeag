@@ -1,0 +1,84 @@
+{% extends "AeagSqeBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="icon-home"></i>
+        <a href="{{ path('aeag_sqe') }}">Accueil</a> 
+    </li>
+    <li>
+        <i class="icon-home"></i>
+        <a href="{{ app.session.get('retour') }}">Site de prélévement</a> 
+    </li>
+    <li class="active">
+        Stations de mesure
+    </li>
+{% endblock breadcrumb %}
+
+
+{%block panel_heading %}
+    <h3 class="page-title">
+        Liste des stations de mesure du site de prelevement {{ pgRefSitePrelevementNom }}
+        {# <a class="btn btn-primary pull-right" href="{{ path('AeagDecBundle_admin_pdfListeDechets') }}" title="Imprimer la lister"> 
+                <i class="fa fa-print"> Imprimer la liste</i>
+         </a>#}
+    </h3>
+{%endblock panel_heading %}
+
+
+
+{%block content %}
+
+
+    <div class="row">
+        <div class="col-xm-12">
+            <div class="small">
+                <table class="table table-bordered table-condensed table-advance" id="idTable">
+                    <thead>
+                        <tr>
+                            <th>Numero</th>
+                            <th>Libelle</th>
+                            <th>Commune</th>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for entity in entities %}
+                            <tr>
+                                <td>{{ entity.pgRefStationMesure.numero }}</td>
+                                <td>{{ entity.pgRefStationMesure.libelle }}</td>
+                                <td>{{ entity.commune.libelle }}</td>
+                             </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{%endblock content %}
+
+
+{% block scripts %}
+   
+    $("#idTable thead td").each( function ( i ) {
+    
+     if ( i != 4){
+        var select = $('<select><option value=""></option></select>')
+            .appendTo( $(this).empty() )
+            .on( 'change', function () {
+                table.column( i )
+                    .search( $(this).val() )
+                    .draw();
+            } );
+ 
+        table.column( i ).data().unique().sort().each( function ( d, j ) {
+            select.append( '<option value="'+d+'">'+d+'</option>' )
+        } );
+        };
+    } );
+    
+ 
+{% endblock scripts %}

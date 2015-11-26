@@ -1,0 +1,7 @@
+parameters:
+#    aeag_reference.example.class: Aeag\AeagBundle\Example
+
+services:
+#    aeag_reference.example:
+#        class: %aeag_reference.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

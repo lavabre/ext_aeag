@@ -1,0 +1,9 @@
+{% extends "AeagUserBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+<li class="active">Compte</li> 
+{% endblock breadcrumb %}
+
+{% block fos_user_content %}
+{% include "FOSUserBundle:Profile:show_content.html.twig" %}
+{% endblock fos_user_content %}

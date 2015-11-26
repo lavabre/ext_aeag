@@ -1,0 +1,122 @@
+AeagSqeBundle_referentiel_typeMilieux:
+    path:  /types_milieux
+    defaults: { _controller: AeagSqeBundle:ReferentielProgrammation:typeMilieux }
+    
+AeagSqeBundle_referentiel_typeMilieu_typePeriodes:
+    path:  /types_milieux/types_periodes/{progTypeMilieuCode}/{progTypePeriodeCode}
+    defaults: { _controller: AeagSqeBundle:ReferentielProgrammation:typeMilieuTypePeriodes, progTypeMilieuCode:null, progTypePeriodeCode:null }
+    
+
+AeagSqeBundle_referentiel_zoneGeographiques:
+    path:  /zones_geographiques
+    defaults: { _controller: AeagSqeBundle:ReferentielProgrammation:zoneGeographiques }
+    
+AeagSqeBundle_referentiel_zoneGeographique_stations:
+    path:  /zones_geographique/stations/{progZoneGeoRefId}
+    defaults: { _controller: AeagSqeBundle:ReferentielProgrammation:zoneGeographiqueStations, progZoneGeoRefId:null }
+    
+AeagSqeBundle_referentiel_zoneGeographique_station_site_prelevements:
+    path:  /zones_geographique/station/site_prelevements/{pgRefStationMesureOuvFoncId}
+    defaults: { _controller: AeagSqeBundle:ReferentielProgrammation:zoneGeographiqueStationSitePrelevements, pgRefStationMesureOuvFoncId:null }
+ 
+    
+AeagSqeBundle_referentiel_webusers:
+    path:  /adminsqe/utilisateurs
+    defaults: { _controller: AeagSqeBundle:ReferentielProgrammation:webusers } 
+    
+AeagSqeBundle_referentiel_webuser_marches:
+    path:  /adminsqe/utilisateur/marches/{webuserId}
+    defaults: { _controller: AeagSqeBundle:ReferentielProgrammation:webuserMarches, webuserId:null } 
+    
+AeagSqeBundle_referentiel_webuser_marche_lots:
+    path:  /adminsqe/utilisateur/marche/lots/{pgProgMarcheId}
+    defaults: { _controller: AeagSqeBundle:ReferentielProgrammation:webuserMarcheLots, pgProgMarcheId:null}
+    
+AeagSqeBundle_referentiel_webuser_marche_lot_groupes:
+    path:  /adminsqe/utilisateur/marche/lot/Groupes/{pgProgLotId}
+    defaults: { _controller: AeagSqeBundle:ReferentielProgrammation:webuserMarcheLotGroupes, pgProgLotId:null }
+  
+AeagSqeBundle_referentiel_webuser_marche_lot_groupe_parametres:
+    path:  /adminsqe/utilisateur/marche/lot/Groupe de paramètres/paramètres/{pgProgGrpParamRefId}
+    defaults: { _controller: AeagSqeBundle:ReferentielProgrammation:webuserMarcheLotGroupeParametres, pgProgGrpParamRefId:null }    
+    
+    
+AeagSqeBundle_referentiel_webuser_reseaux:
+    path:  /adminsqe/utilisateur/reseaux/{webuserId}
+    defaults: { _controller: AeagSqeBundle:ReferentielProgrammation:webuserwReseaux, webuserId:null } 
+    
+AeagSqeBundle_referentiel_webuser_reseau_stations:
+    path:  /adminsqe/utilisateur/reseau/stations/{pgRefReseauMesureId}
+    defaults: { _controller: AeagSqeBundle:ReferentielProgrammation:webuserReseauStations, pgRefReseauMesureId:null }      
+ 
+AeagSqeBundle_referentiel_webuser_reseau_station_sitePrelevements:
+    path:  /adminsqe/utilisateur/reseau/station/site_prelevements/{pgRefStationMesureOuvFoncId}
+    defaults: { _controller: AeagSqeBundle:ReferentielProgrammation:webuserReseauStationSitePrelevements, pgRefStationMesureOuvFoncId:null } 
+    
+    
+AeagSqeBundle_referentiel_webuser_zoneGeographiques:
+    path:  /adminsqe/utilisateur/zone_geographique/{webuserId}
+    defaults: { _controller: AeagSqeBundle:ReferentielProgrammation:webuserZoneGeographiques, webuserId:null }  
+    
+AeagSqeBundle_referentiel_webuser_zoneGeographique_stations:
+    path:  /adminsqe/utilisateur/zones_geographique/stations/{progZoneGeoRefId}
+    defaults: { _controller: AeagSqeBundle:ReferentielProgrammation:webuserZoneGeographiqueStations, progZoneGeoRefId:null }
+    
+AeagSqeBundle_referentiel_webuser_zoneGeographique_station_sitePrelevements:
+    path:  /adminsqe/utilisateur/zones_geographique/station/site_prelevements/{pgRefStationMesureOuvFoncId}
+    defaults: { _controller: AeagSqeBundle:ReferentielProgrammation:webuserZoneGeographiqueStationSitePrelevements, pgRefStationMesureOuvFoncId:null } 
+
+    
+AeagSqeBundle_referentiel_groupes:
+    path:  /groupes de paramètres
+    defaults: { _controller: AeagSqeBundle:ReferentielProgrammation:Groupes }
+    
+AeagSqeBundle_referentiel_groupe_parametres:
+    path:  /groupe/paramètres/{pgProgGrpParamRefId}
+    defaults: { _controller: AeagSqeBundle:ReferentielProgrammation:groupeParametres, pgProgGrpParamRefId:null }
+    
+    
+AeagSqeBundle_referentiel_marches:
+    path:  /marches
+    defaults: { _controller: AeagSqeBundle:ReferentielProgrammation:marches }   
+     
+AeagSqeBundle_referentiel_marche_lots:
+    path:  /marche/lots/{pgProgMarcheId}
+    defaults: { _controller: AeagSqeBundle:ReferentielProgrammation:marcheLots, pgProgMarcheId:null}
+    
+AeagSqeBundle_referentiel_marche_lot_groupes:
+    path:  /marche/lot/groupes de paramètres/{pgProgLotId}
+    defaults: { _controller: AeagSqeBundle:ReferentielProgrammation:marcheLotgroupes, pgProgLotId:null } 
+    
+AeagSqeBundle_referentiel_marche_lot_groupe_parametres:
+    path:  /marche/lot/groupe/paramètres/{pgProgGrpParamRefId}
+    defaults: { _controller: AeagSqeBundle:ReferentielProgrammation:marcheLotGroupeParametres, pgProgGrpParamRefId:null }
+        
+    
+    
+AeagSqeBundle_referentiel_lots:
+    path:  /lots
+    defaults: { _controller: AeagSqeBundle:ReferentielProgrammation:lots}
+    
+AeagSqeBundle_referentiel_lot_groupes:
+    path:  /lot/groupes de paramètres/{pgProgLotId}
+    defaults: { _controller: AeagSqeBundle:ReferentielProgrammation:lotGroupes, pgProgLotId:null }
+    
+AeagSqeBundle_referentiel_lot_groupe_parametres:
+    path:  /lot/groupe/paramètres/{pgProgGrpParamRefId}
+    defaults: { _controller: AeagSqeBundle:ReferentielProgrammation:lotGroupeParametres, pgProgGrpParamRefId:null }
+    
+    
+    
+     
+
+    
+ 
+
+        
+    
+    
+
+ 
+
+        

@@ -1,0 +1,95 @@
+    <table class="table table-bordered table-striped table-condensed table-advance table-hover" id="idTable">
+        <thead>
+           <tr>
+                <th width="5%">Sélectionner</th>
+                <th>Code</th>
+                <th>Libellé</th>
+                <th>Type</th>
+                <th>Support</th>
+                <th width="10%">Paramètres</th>
+                
+             </tr>
+             <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+              </tr>
+        </thead>
+        <tbody>
+            {% for entity in entities %}
+                  <tr>
+                       <td>
+                        <div class="checkbox">
+                             <input type="checkbox" id="check_{{ entity.pgProGrpParamRef.id }}" name="check[]" value="{{entity.pgProGrpParamRef.id}}">
+                        </div><!-- /input-group -->
+                     </td>
+                    <td>{{ entity.pgProGrpParamRef.codeGrp }}</td>
+                    <td>{{ entity.pgProGrpParamRef.libelleGrp }}</td>
+                    <td>{{ entity.pgProGrpParamRef.typeGrp }}</td>
+                     <td>{% if entity.pgSandreSupports | length %}
+                          {{ entity.pgSandreSupports.nomSupport }}
+                        {% endif %}
+                    </td>
+                     <td align="center">
+                         <a class="btn btn-info" href="{{ path('AeagSqeBundle_referentiel_voir_groupe_parametres', { 'pgProgGrpParamRefId': entity.pgProGrpParamRef.id }) }}" target="_blank" title="paramètres">
+                          <i class="fa fa-eye"></i> 
+                        </a>
+                    </td>
+                   
+                 </tr>
+             {% endfor %}
+        </tbody>
+     </table>
+
+    <script>
+   
+ 
+       $('#idTable').dataTable( {"stateSave": true,
+                             "oLanguage": {
+                              "sSearch": "Filtre",
+                              "sFirst": "1ere page",
+                              "sLast": "Dernière page",
+                              "sNext": "Prochaine page",
+                              "sPrevious": "Page précédente",
+                              "EmptyTable": "Pas de données",
+                              "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+                              "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+                              "sZeroRecords": "Pas d'enregistrement à afficher",
+                              "sInfoEmpty": "Pas d'enregistrement à afficher",
+                              "sInfoThousands": " ",
+                              "sLengthMenu": 'Afficher <select>'+
+                                           '<option value="10">10</option>'+
+                                           '<option value="20">20</option>'+
+                                           '<option value="30">30</option>'+
+                                           '<option value="40">40</option>'+
+                                           '<option value="50">50</option>'+
+                                           '<option value="-1">Tous</option>'+
+                                           '</select> enregistrements',
+                              "sPaginationType": "full_numbers"
+                           }
+                        } );
+                        
+    var table = $('#idTable').DataTable(); 
+  
+    $("#idTable thead td").each( function ( i ) {
+    
+    if (i != 5 && i != 6){
+        var select = $('<select><option value=""></option></select>')
+            .appendTo( $(this).empty() )
+            .on( 'change', function () {
+                table.column( i )
+                    .search( $(this).val() )
+                    .draw();
+            } );
+ 
+        table.column( i ).data().unique().sort().each( function ( d, j ) {
+            select.append( '<option value="'+d+'">'+d+'</option>' )
+        } );
+        };
+    } );
+    
+   
+   </script>

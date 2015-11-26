@@ -1,0 +1,60 @@
+{%if messages | length > 0 %} 
+                 <a href="#"  class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown"  data-close-others="true">
+                <i class="fa fa-envelope"></i>
+                <span class="badge badge-important ">{{app.session.get('Messages') | length}}</span>
+                </a>
+                  <ul class="dropdown-menu    inbox-form-group" style="width: 350px;">
+                      {% if app.session.get('Messages') %}
+                        {% for message in app.session.get('Messages') %} 
+                           {% if message %}
+                               <li>
+                                <div class="btn-group">
+
+                                    <a href="#" data-target="#ajax_{{message.message.id}}" data-toggle="modal" title="Consulter">
+                                         <button type="button" class="btn btn-primary">
+                                             <i class="fa fa-eye info"> Voir</i>
+                                         </button>
+                                     </a>
+                                    <a href="#" id="supprimer_{{ message.message.id }}" title="Supprimer">
+                                          <button type="button" class="btn btn-danger">
+                                               <i class="fa fa-trash-o warning"> Supprimer</i>
+                                          </button>
+                                    </a>
+                                    {{ message.message.created|date("d/m/Y H:i:s") }}
+                                </div>
+                                 </li>
+                              {% endif %}
+                         {% endfor %} 
+                       {% endif %}
+                   </ul>
+                    <script type="text/javascript" language="javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+                    <script type="text/javascript" language="javascript">
+                        jQuery(document).ready(function() {
+                            {%if (app.session.get('Messages') | length) > 0 %}
+                                {% for message in app.session.get('Messages') %} 
+                                     $('#supprimer_{{ message.message.id }}').click(function() {
+                                         var $url = "{{ path('Aeag_supprimerMessage', { 'id': message.message.id}) }}";
+                                                           $.ajax({
+                                                                    type: "POST",
+                                                                    async: false,
+                                                                    url: $url,
+                                                                    success: function (data) {
+                                                                        $('#header_inbox_bar').empty();
+                                                                        $('#header_inbox_bar').append(data);
+                                                                     },
+                                                                    error: function (jqXHR, textStatus, errorThrown) {
+                                                                        $('#header_inbox_bar').empty();
+                                                                        $('#header_inbox_bar').append('<div class="error">' + jqXHR.responseText + '</div>');
+                                                                    }
+                                                                    });    
+                                                            return false;
+                                                    });
+                                     {%endfor%}
+                              {%endif%}  
+                              {% block scripts %}{% endblock scripts %}                      
+
+                        });
+                   </script>
+ {%endif%}
+
+

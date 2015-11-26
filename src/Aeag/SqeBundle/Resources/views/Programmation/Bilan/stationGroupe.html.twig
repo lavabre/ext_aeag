@@ -1,0 +1,205 @@
+                     
+<div class="modal fade" id="modalStationGroupe" tabindex="-1" role="dialog" aria-labelledby="myModalLabelStationGroupe" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h5>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="col-md-offset-1 col-md-3">Station :</div>
+                    <div class="col-md-8">{{ periodeAn.station.station.code}}&nbsp;&nbsp;{{ periodeAn.station.station.libelle}}</div>
+                    <div class="col-md-offset-1 col-md-3">Groupe :</div>
+                    <div class="col-md-8">{{ periodeAn.groupe.grparRef.codeGrp }}&nbsp;&nbsp;{{ periodeAn.groupe.grparRef.libelleGrp }}</div>
+                    {% if periodeAn.zoneVertes | length %}
+                        <div class="col-md-offset-1 col-md-3">Zones verticales  :</div>
+                        <div class="col-md-8">
+                            {% for zoneVerte in periodeAn.zoneVertes %}
+                              {{ zoneVerte.nomZone }} </br>
+                           {% endfor %}
+                        </div>
+                    {% endif %}
+                  </div>
+              </div>
+              </h5>
+              </br>
+              <h4 class="modal-title text-center" id="idTitreStationsSelectionnes">
+                Liste des périodes sélectionnées
+              </h4>
+          </div>
+          <div class="modal-body-sqe">
+              <div class="row">
+                  <div class="col-md-offset-1 col-md-10">
+                      <div class=small">
+                          <table class="table table-bordered table-condensed table-advance" id="idTable_station_groupe">
+                              <thead>
+                                  <tr>
+                                     <th>Période</th>
+                                     <th>Intervalles</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                   {% for prog in periodeAn.progs %}
+                                       {% if prog.statut == 'INV' %}
+                                           <tr class="info">
+                                        {% else  %}
+                                           <tr>
+                                        {% endif %}
+                                             <td>
+                                               {{ prog.periode.labelPeriode }}
+                                             </td>
+                                             <td nowrap>du {{ prog.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;au&nbsp;&nbsp; {{ prog.periode.dateFin | date("d/m/Y") }}</td>
+                                         </tr>
+                                     {% endfor %}
+                                </tbody>
+                          </table>
+                      </div>
+                  </div>
+              </div>
+                                
+                <div class="row">
+                   <div class="col-md-10 pull-left text-info">
+                       <ul class="list-inline">
+                           {% if periodeAn.station.lotan.phase.codePhase > 'P30' %}
+                                <li><a class="btn btn-info btn-xs" href="#" title="Programmation reportée sur la version suivante"><i class="fa"></i></a> Programmation reportée sur la version {{ periodeAn.station.lotan.version + 1}}</li>
+                           {% endif %}
+                        </ul>  
+                   </div>
+                </div>
+           
+          </div>
+                          
+                 
+                                
+                                
+                                
+          <div class="modal-footer">
+              <button id="idFermer" type="button" class="btn btn-default" data-dismiss="modal">
+                  <i class="fa fa-undo"> Fermer</i>
+              </button>
+          </div>
+      </div>
+  </div>
+</div>
+                                                          
+<div class="modal fade" id="modalComplStationGroupe" tabindex="-1" role="dialog" aria-labelledby="myModalLabelComplStationGroupe" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h4 class="modal-title text-center" id="idTitreStationsSelectionnes">
+                  Station : {{ periodeAn.station.station.code}}&nbsp;&nbsp;{{ periodeAn.station.station.libelle}}</br>
+                  Groupe : {{ periodeAn.groupe.grparRef.codeGrp }}&nbsp;&nbsp;{{ periodeAn.groupe.grparRef.libelleGrp }}</br>
+                  Liste des périodes sélectionnées
+              </h4>
+          </div>
+          <div class="modal-body">
+              <div class="row">
+                  <div class="col-md-12">
+                      <div class="small">
+                          <table class="table table-bordered table-condensed table-advance" id="idTableCompl_station_groupe">
+                              <thead>
+                                  <tr>
+                                     <th>Période</th>
+                                     <th>Intervalles</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                {% for prog in periodeAn.progCompls %}
+                                        {% if prog.statut == 'INV' %}
+                                           <tr class="info">
+                                        {% else  %}
+                                           <tr>
+                                        {% endif %}
+                                             <td>
+                                               {{ prog.periode.labelPeriode }}
+                                             </td>
+                                             <td nowrap>du {{ prog.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;au&nbsp;&nbsp; {{ prog.periode.dateFin | date("d/m/Y") }}</td>
+                                         </tr>
+                                     {% endfor %}
+                              </tbody>
+                          </table>
+                      </div>
+                  </div>
+              </div>
+                              
+            <div class="row">
+                 <div class="col-md-10 pull-left text-info">
+                     <ul class="list-inline">
+                             <li><a class="btn btn-info btn-xs" href="#" title="Programmation reportée sur la version suivante"><i class="fa"></i></a> Programmation reportée sur la version {{ periodeAn.station.lotan.version + 1}}</li>
+                      </ul>  
+                 </div>
+              </div>                       
+                              
+          </div>
+                              
+                              
+                              
+          <div class="modal-footer">
+              <button id="idFermer" type="button" class="btn btn-default" data-dismiss="modal">
+                 <i class="fa fa-undo"> Fermer</i>
+              </button>
+          </div>
+      </div>
+  </div>
+</div>
+
+<script>
+      // table prestataire_groupe
+    var table_station_groupe = $('#idTable_station_groupe1').DataTable(
+                            {"stateSave": true,
+                              "order": [[ 0, "asc" ]],
+                             "oLanguage": {
+                                    "sSearch": "Filtre",
+                                    "sFirst": "1ere page",
+                                    "sLast": "Dernière page",
+                                    "sNext": "Prochaine page",
+                                    "sPrevious": "Page précédente",
+                                    "EmptyTable": "Pas de données",
+                                    "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+                                    "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+                                    "sZeroRecords": "Pas d'enregistrement à afficher",
+                                    "sInfoEmpty": "Pas d'enregistrement à afficher",
+                                    "sInfoThousands": " ",
+                                    "sLengthMenu": 'Afficher <select>' +
+                                        '<option value="10">10</option>' +
+                                        '<option value="20">20</option>' +
+                                        '<option value="30">30</option>' +
+                                        '<option value="40">40</option>' +
+                                        '<option value="50">50</option>' +
+                                        '<option value="-1">Tous</option>' +
+                                        '</select> enregistrements',
+                                    "sPaginationType": "full_numbers"
+                                    }
+                            }
+                        );
+                
+    var tableCompl_station_groupe = $('#idTableCompl_station_groupe1').DataTable(
+                            {"stateSave": true,
+                              "order": [[ 0, "asc" ]],
+                             "oLanguage": {
+                                    "sSearch": "Filtre",
+                                    "sFirst": "1ere page",
+                                    "sLast": "Dernière page",
+                                    "sNext": "Prochaine page",
+                                    "sPrevious": "Page précédente",
+                                    "EmptyTable": "Pas de données",
+                                    "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+                                    "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+                                    "sZeroRecords": "Pas d'enregistrement à afficher",
+                                    "sInfoEmpty": "Pas d'enregistrement à afficher",
+                                    "sInfoThousands": " ",
+                                    "sLengthMenu": 'Afficher <select>' +
+                                        '<option value="10">10</option>' +
+                                        '<option value="20">20</option>' +
+                                        '<option value="30">30</option>' +
+                                        '<option value="40">40</option>' +
+                                        '<option value="50">50</option>' +
+                                        '<option value="-1">Tous</option>' +
+                                        '</select> enregistrements',
+                                    "sPaginationType": "full_numbers"
+                                    }
+                            }
+                        );
+
+</script>

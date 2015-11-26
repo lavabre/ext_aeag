@@ -1,0 +1,119 @@
+{% extends "AeagAeagBundle::layout.html.twig" %}
+
+
+{% block breadcrumb %}{% endblock breadcrumb %}
+
+ 
+{% block panel_heading %}
+    <h3>
+       Mise à jour de l'ouvrage : {{ ouvrage.numero }} {{ ouvrage.libelle }}
+    </h3>
+{% endblock panel_heading %}
+
+ {%block content %}
+   <div class="col-xs-12 medium">
+        <form role="form" action="{{ path('Aeag_majOuvrage', {'id': ouvrage.id }) }}" class="form-horizontal" id="idForm" method="post" {{ form_enctype(form) }}>
+             {% spaceless %}
+                     {% if not form.vars.valid %}
+                             <div class="alert alert-danger">
+                                {% for children in form.children %}
+                                     {% if not children.vars.valid %}
+                                         {{ form_errors(children) }}
+                                    {% endif %}
+                                 {% endfor %}
+                             </div>
+                     {% endif %}
+              {% endspaceless %}
+            
+             {% if message %}
+                        <div class="alert alert-danger">
+                            <button class="close" data-dismiss="alert"></button>
+                            <h5>
+                             {{ message | nl2br}}
+                            </h5>
+                       </div>
+             {% endif %}   
+       
+              {%if ouvrage.ouvId %} 
+                   <div class="form-group">
+                    <label for="MajOuvrage_ouvId" class="col-xs-3 control-label">Identifiant Aeag</label>
+                    {%if form_errors(form.ouvId) %}
+                        <div class="col-xs-8 input-group has-error has-feedback">
+                    {% else %}
+                         <div class="col-xs-8 input-group">
+                     {% endif %}
+                       {{ form_widget(form.ouvId, { 'attr': {'class': 'form-control ', 'placeholder': 'identifiant Aeag'} }) }}
+                     </div>
+                   </div> 
+                {% endif %}  
+                       
+                {% if ouvrage.numero %}
+                    <div class="form-group">
+                    <label for="MajOuvrage_numero" class="col-xs-3 control-label">Numéro</label>
+                    {%if form_errors(form.numero) %}
+                        <div class="col-xs-8 input-group has-error has-feedback">
+                    {% else %}
+                         <div class="col-xs-8 input-group">
+                     {% endif %}
+                       {{ form_widget(form.numero, { 'attr': {'class': 'form-control ', 'placeholder': 'Numéro'} }) }}
+                     </div>
+                   </div> 
+                 {% endif %} 
+                    
+                    <div class="form-group">
+                    <label for="MajOuvrage_libelle" class="col-xs-3 control-label">Libellé</label>
+                    {%if form_errors(form.libelle) %}
+                        <div class="col-xs-8 input-group has-error has-feedback">
+                    {% else %}
+                         <div class="col-xs-8 input-group">
+                     {% endif %}
+                       {{ form_widget(form.libelle, { 'attr': {'class': 'form-control ', 'placeholder': 'Libellé'} }) }}
+                     </div>
+               </div> 
+                    
+               <div class="form-group">
+                    <label for="MajOuvrage_siret" class="col-xs-3 control-label">Siret</label>
+                    {%if form_errors(form.siret) %}
+                        <div class="col-xs-8 input-group has-error has-feedback">
+                    {% else %}
+                         <div class="col-xs-8 input-group">
+                     {% endif %}
+                       {{ form_widget(form.siret, { 'attr': {'class': 'form-control ',
+                                                             'placeholder': 'Sireté',
+                                                             'maxlength': '14',
+                                                             'minlength': '14',
+                                                             'nowhitespace': 'true',
+                                                             'number': 'true'} }) }}
+                     </div>
+               </div> 
+             
+                    
+               <div class="form-group">
+                <label for="majOuvrage_dec" class="col-xs-3 control-label">déchet aidable : </label>
+               {% if form_errors(form.dec) %}
+                     <div class="col-xs-8 input-group has-error has-feedback">
+               {% else %}
+                      <div class="col-xs-8 input-group">
+               {% endif %}
+                       <span class="input-group-addon"><i class="fa fa-unlock"></i><i class="fa fa-asterisk text-danger"></i></span>
+                       {{ form_widget(form.dec, { 'attr': {'class': 'form-control', 'placeholder': 'Déchat aidable'} }) }}
+                     </div>
+              </div>  
+         
+               
+                <div class="btn-group pull-right">
+                <button type="submit" class="btn btn-success  pull-right" value="Ajouter">Mettre à jour</button>
+                <a  id="btFermer" class="btn btn-danger" href="{{ app.session.get('retour') }}"><i class="fa fa-power-off"></i> Retour</a>
+               </div>
+         
+               <div class="hide">
+                 {{ form_rest(form) }}
+               </div>
+       
+        </form>
+ </div>
+
+{% endblock content %}
+                    
+
+    

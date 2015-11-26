@@ -1,0 +1,30 @@
+historique:
+    path:  /
+    defaults: { _controller: "AeagDieBundle:Historique:index" }
+
+historique_show:
+    path:  /{id}/show
+    defaults: { _controller: "AeagDieBundle:Historique:show" }
+
+historique_new:
+    path:  /new
+    defaults: { _controller: "AeagDieBundle:Historique:new" }
+
+historique_create:
+    path:  /create
+    defaults: { _controller: "AeagDieBundle:Historique:create" }
+    requirements: { methods: post }
+
+historique_edit:
+    path:  /{id}/edit
+    defaults: { _controller: "AeagDieBundle:Historique:edit" }
+
+historique_update:
+    path:  /{id}/update
+    defaults: { _controller: "AeagDieBundle:Historique:update" }
+    requirements: { methods: post }
+
+historique_delete:
+    path:  /{id}/delete
+    defaults: { _controller: "AeagDieBundle:Historique:delete" }
+    requirements: { methods: post }

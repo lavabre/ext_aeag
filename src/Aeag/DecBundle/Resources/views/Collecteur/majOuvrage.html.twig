@@ -1,0 +1,195 @@
+{% extends "AeagDecBundle:Default:index.html.twig" %}
+
+{% block HEAD %}
+    {{parent()}}
+     <link href="{{ asset('bundles/aeagdec/assets/plugins/bootstrap-switch/static/stylesheets/bootstrap-switch-metro.css') }}" rel="stylesheet" type="text/css"/>
+ {% endblock HEAD %}
+
+
+{%block PAGE_TITLE %}
+    <h3 class="page-title">
+        {%if entity.type == 'ODEC' %}
+                Modification du collecteur : {{ entity.numero }} {{ entity.libelle }}
+        {%else%}
+                Modification de l'ouvrage : {{ entity.numero }} {{ entity.libelle }}
+        {%endif%}
+    </h3>
+    <ul class="page-breadcrumb breadcrumb">
+        <li>
+          <i class="icon-home"></i>
+          <a href="{{ path('aeag_dec') }}">Accueil</a> 
+          <i class="fa fa-angle-right"></i>
+       </li>
+       <li>
+          <i class="icon-user"></i>
+          <a href="{{ path('AeagDecBundle_collecteur_majOuvrage', { 'id': entity.id }) }}">{{ entity.username }} {{ entity.prenom }}</a> 
+          <i class="fa fa-angle-right"></i>
+       </li>
+    </ul>
+{%endblock PAGE_TITLE %}
+
+
+ {%block CONTENT %}
+  <div class="portlet box blue">
+    <div class="portlet-title">
+       <div class="caption"><i class="icon-reorder"></i>
+            {%if entity.type == 'ODEC' %}
+                Modification du collecteur : {{ entity.numero }} {{ entity.libelle }}
+             {%elseif entity.type == 'PDEC'%}
+                Modification du producteur : {{ entity.numero }} {{ entity.libelle }}
+             {%else%}
+                Modification de l'ouvrage : {{ entity.numero }} {{ entity.libelle }}
+            {%endif%}
+      </div>
+    </div>
+    <div class="portlet-body form">
+        <form action="{{ path('AeagDecBundle_collecteur_compte', { 'id': entity.id }) }}" class="form-horizontal" id="idForm" method="post" {{ form_enctype(form) }}>
+            <div class="form-body">
+                {% if not form.vars.valid %}
+                        <div class="alert alert-danger">
+                            <button class="close" data-dismiss="alert"></button>
+                             <ul>
+                                {% for child in form if not child.vars.valid %}
+                                    <li>
+                                        {% if child.vars.compound and not child.vars.valid %}
+                                            {{ child.vars.label|trans|capitalize }}:
+                                            {{ forms.display_error(child) }}
+                                        {% else %}
+                                            <h5>
+                                                <a href="#{{ child.vars.id }}">
+                                                    {{ child.vars.label|trans|capitalize }}:
+                                                </a>
+                                                <small>
+                                                    {% for error in child.vars.errors %}
+                                                        {{ error.message|capitalize }}
+                                                    {% endfor %}
+                                                </small>
+                                            </h5>
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                         </div>
+                {% endif %}
+                <div class="row">
+                   <div class="col-md-12">
+                      <div class="form-group">
+                         <label  class="col-md-3 control-label">Identifiant ouvrage Aeag</label>
+                         <div class="col-md-4">
+                            {{ form_widget(form.ouvId, { 'attr': {'class': 'form-control', 'placeholder': 'identifiant ouvrage aeag'} }) }}
+                          </div>
+                         {%if form_errors(form.ouvId) | length %}
+                          <div class="col-md-4">
+                              <div class="form-group has-error">
+                                  <div class="input-icon left">                                       
+                                       <i class="icon-exclamation-sign"></i>   
+                                       {{ form_errors(form.ouvId) }}
+                                  </div>
+                               </div>
+                          </div>
+                         {%endif%}
+                      </div>
+                      <div class="form-group">
+                         <label  class="col-md-3 control-label">Numéro</label>
+                         <div class="col-md-4">
+                            <div class="input-group">
+                                 <span class="input-group-addon"><i class="icon-key"></i></span>
+                                 {{ form_widget(form.numero, { 'attr': {'class': 'form-control', 'placeholder': 'Numéro'} }) }}
+                           </div>
+                          </div>
+                         {%if form_errors(form.numero) | length %}
+                           <div class="col-md-4">
+                              <div class="form-group has-error">
+                                  <div class="input-icon left">                                       
+                                       <i class="icon-exclamation-sign"></i>   
+                                       {{ form_errors(form.numero) }}
+                                  </div>
+                               </div>
+                           </div>
+                         {%endif%}
+                      </div>
+                      <div class="form-group">
+                         <label  class="col-md-3 control-label">Libellé</label>
+                         <div class="col-md-4">
+                            <div class="input-group">
+                                 <span class="input-group-addon"><i class="icon-headphones"></i></span>
+                                 {{ form_widget(form.libelle, { 'attr': {'class': 'form-control', 'placeholder': 'Libellé'} }) }}
+                            </div>
+                          </div>
+                         {%if form_errors(form.libelle) | length %}
+                          <div class="col-md-4">
+                            <div class="form-group has-error">
+                                <div class="input-icon left">                                       
+                                     <i class="icon-exclamation-sign"></i>   
+                                     {{ form_errors(form.libelle) }}
+                                </div>
+                             </div>
+                          </div>
+                         {%endif%}
+                      </div>
+                      <div class="form-group">
+                         <label  class="col-md-3 control-label">Siret!!!!</label>
+                         <div class="col-md-4">
+                            <div class="input-group">
+                                 <span class="input-group-addon"><i class="icon-envelope"></i></span>
+                                 {{ form_widget(form.siret, { 'attr': { 'class': 'form-control', 'placeholder': 'Siret'} }) }}
+                            </div>
+                            {%if form_errors(form.siret) | length %}
+                                  <div class="form-group has-error">
+                                     <div class="input-icon left icon-exclamation-sign">                                       
+                                          {{ form_errors(form.siret) }}
+                                     </div>
+                                  </div>
+                             {%endif%}
+                         </div>
+
+                      </div>
+                   </div>
+                 </div>
+            </div>
+            <div class="form-actions fluid center">
+                 <div class="col-md-offset-3 col-md-9">
+                    <button type="submit" class="btn btn-success icon-ok-sign"> Enregister</button>
+                    <a class="btn btn-danger icon-remove" href="{{ path('aeag_dec') }}"> Annuler</a>
+                 </div>
+             </div>
+            <div class="hide">
+              {{ form_rest(form) }}
+              </div>
+        </form>
+    </div>
+ </div>
+
+{%endblock CONTENT %}
+
+    
+{% block JAVASCRIPTS_LEVEL_SCRIPTS %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/aeagdec/assets/plugins/select2/select2.min.js') }}" type="text/javascript" ></script>
+    <script src="{{ asset('bundles/aeagdec/assets/plugins/bootstrap-switch/static/js/bootstrap-switch.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('bundles/aeagdec/assets/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('bundles/aeagdec/assets/scripts/form-validation.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('bundles/aeagdec/assets/plugins/jquery-validation/dist/jquery.validate.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('bundles/aeagdec/assets/plugins/jquery-validation/localization/messages_fr.js') }}" type="text/javascript"></script>
+   
+   <script>
+       
+        $("#idForm").validate( {
+             ignore: ".ignore",
+             messages: {
+
+              'MajOuvrage[siret]' : {
+               maxlength: "Veuillez saisir 14 caractères.",
+               nowhitespace: "Veuillez ne pas inscrire d'espaces blancs."
+               },
+
+               'Compte[email]' : {
+               required: "<div class='alert alert-danger'> Nous avons besoin de votre adresse mail pour vous contacter</div>",
+               email: "<div class='alert alert-danger'> Indiquer une adresse mail correctement (name@domain.com)</div>"
+               }
+
+            }
+        });   
+       
+  </script>
+{% endblock JAVASCRIPTS_LEVEL_SCRIPTS %}

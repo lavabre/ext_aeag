@@ -1,0 +1,26 @@
+     
+
+    
+aeag_die_Light:
+    path:  /
+    defaults: { _controller: AeagDieBundle:Default:indexLight }
+    
+
+aeag_die_Light_theme:
+    path:  /{theme}
+    defaults: { _controller: AeagDieBundle:Default:indexLight, theme:null }
+    requirements:
+        theme: '[0-9]{2}'
+ 
+    
+aeag_die_createLight:
+    path:  /create/{theme}
+    defaults: { _controller: AeagDieBundle:Default:createLight, theme:null  }
+    requirements: 
+        methods: post
+        theme: '[0-9]{2}'
+    
+
+
+    
+

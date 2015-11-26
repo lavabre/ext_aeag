@@ -1,0 +1,70 @@
+Aeag_sqe_programmation_lots:
+    path:  /criteres/{action}
+    defaults: { _controller: AeagSqeBundle:ProgrammationLot:index, action : null }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_lot_filtre:
+    path:  /filtres/{action}
+    defaults: { _controller: AeagSqeBundle:ProgrammationLot:filtres, action : null }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_lot_soumettre:
+    path:  /soumettre/{lotAnId}/{action}
+    defaults: { _controller: AeagSqeBundle:ProgrammationLot:soumettre, lotAnId : null, action : null }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_lot_debloquer:
+    path:  /debloquer/{lotAnId}/{action}
+    defaults: { _controller: AeagSqeBundle:ProgrammationLot:debloquer, lotAnId : null, action : null }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_lot_valider:
+    path:  /valider/{lotAnId}/{action}
+    defaults: { _controller: AeagSqeBundle:ProgrammationLot:valider, lotAnId : null, action : null }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_lot_refuser:
+    path:  /refuser/{lotAnId}/{action}
+    defaults: { _controller: AeagSqeBundle:ProgrammationLot:refuser, lotAnId : null, action : null }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_lot_devalider:
+    path:  /devalider/{lotAnId}/{action}
+    defaults: { _controller: AeagSqeBundle:ProgrammationLot:devalider, lotAnId : null, action : null }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_lot_supprimer:
+    path:  /supprimer/{lotAnId}/{action}
+    defaults: { _controller: AeagSqeBundle:ProgrammationLot:supprimer, lotAnId : null, action : null }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_lot_dupliquer:
+    path:  /dupliquer/{lotAnId}/{action}
+    defaults: { _controller: AeagSqeBundle:ProgrammationLot:dupliquer, lotAnId : null, action : null }
+    requirements:
+        methods:  GET|POST
+ 
+AeagSqeBundle_programmation_lot_resultat:
+    path:  /resultats/{action}
+    defaults: { _controller: AeagSqeBundle:ProgrammationLot:resultats, action :  null}
+    
+AeagSqeBundle_programmation_lot_resultat_unique:
+    path:  /resultat_unique/{action}
+    defaults: { _controller: AeagSqeBundle:ProgrammationLot:resultatUnique, action : null}
+    
+AeagSqeBundle_programmation_lot_retour:
+    path:  /retour/{action}
+    defaults: { _controller: AeagSqeBundle:ProgrammationLot:retour, action : null }
+    
+
+
+
+        

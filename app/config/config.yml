@@ -1,0 +1,149 @@
+imports:
+    - { resource: parameters.yml }
+    - { resource: security.yml }
+
+framework:
+    #esi:             ~
+    translator:      { fallback: "%locale%" }
+    secret:          "%secret%"
+    router:
+        resource: "%kernel.root_dir%/config/routing.yml"
+        strict_requirements: ~
+    form:            ~
+    csrf_protection: ~
+    validation:      { enable_annotations: true }
+    templating:
+        engines: ['twig']
+        #assets_version: SomeVersionScheme
+    default_locale:  "%locale%"
+    trusted_hosts:   ~
+    trusted_proxies: ~
+    session:
+        # handler_id set to null will use default session handler from php.ini
+        handler_id:  ~
+    fragments:       ~
+    http_method_override: true
+
+# Twig Configuration
+twig:
+    debug:            "%kernel.debug%"
+    strict_variables: "%kernel.debug%"
+    globals:
+          webmaster:  Joël LAVABRE  (05.61.36.36.37)
+          symfony:  2.7.5
+          version : 1.0
+
+# Assetic Configuration
+assetic:
+    debug:          "%kernel.debug%"
+    use_controller: false
+    bundles:        [ ]
+    #java: /usr/bin/java
+    filters:
+        cssrewrite: ~
+        #closure:
+        #    jar: "%kernel.root_dir%/Resources/java/compiler.jar"
+        #yui_css:
+        #    jar: "%kernel.root_dir%/Resources/java/yuicompressor-2.4.7.jar"
+
+# Doctrine Configuration
+doctrine:
+    dbal:
+        default_connection:   default
+        connections:
+            default:
+                driver:   %database_driver%
+                host:     %database_host%
+                port:     %database_port%
+                dbname:   %database_name%
+                user:     %database_user%
+                password: %database_password%
+                charset:  UTF8
+            dec:
+                driver:   %database_driver2%
+                host:     %database_host2%
+                port:     %database_port2%
+                dbname:   %database_name2%
+                user:     %database_user2%
+                password: %database_password2%
+                charset:  UTF8
+            frd:
+                driver:   %database_driver3%
+                host:     %database_host3%
+                port:     %database_port3%
+                dbname:   %database_name3%
+                user:     %database_user3%
+                password: %database_password3%
+                charset:  UTF8
+                
+            aide:
+                driver:   %database_driver4%
+                host:     %database_host4%
+                port:     %database_port4%
+                dbname:   %database_name4%
+                user:     %database_user4%
+                password: %database_password4%
+                charset:  UTF8
+                
+            sqe:
+                driver:   %database_driver5%
+                host:     %database_host5%
+                port:     %database_port5%
+                dbname:   %database_name5%
+                user:     %database_user5%
+                password: %database_password5%
+                charset:  UTF8
+           
+            
+                
+    orm:
+        default_entity_manager:   default
+        entity_managers:
+            default:
+                connection:       default
+                mappings:
+                    AeagAeagBundle : ~
+                    AeagUserBundle : ~
+                    FOSUserBundle: ~
+            dec:
+                connection:       dec
+                mappings:
+                    AeagDecBundle : ~
+            frd:
+                connection:       frd
+                mappings:
+                    AeagFrdBundle : ~
+                    
+            aide:
+                connection:       aide
+                mappings:
+                    AeagAideBundle : ~
+                    
+            sqe:
+                connection:       sqe
+                mappings:
+                    AeagSqeBundle : ~
+                    
+            die:
+                connection:       die
+                mappings:
+                    AeagDieBundle : ~
+                    
+         
+  
+# Swiftmailer Configuration
+swiftmailer:
+    transport: "%mailer_transport%"
+    host:      "%mailer_host%"
+    username:  "%mailer_user%"
+    password:  "%mailer_password%"
+    
+    
+fos_user:
+    db_driver:     orm
+    firewall_name: main
+    use_listener: true
+    user_class:   Aeag\UserBundle\Entity\User
+    from_email:
+        address:        automate@eau-adour-garonne.fr
+        sender_name:    Aeag

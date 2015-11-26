@@ -1,0 +1,74 @@
+{%if entity.3 != 'SUP' %} 
+    <td  nowrap id="idTd1-{{ entity.0.id }}">
+        {% if entity.0.Phase.code > '30'%}
+            <a class="btn btn-primary" href="{{ path('AeagFrdBundle_membre_viewFraisDeplacement', { 'id': entity.0.id }) }}" title="Voir">
+                <i class="fa fa-eye"></i>
+            </a>
+            <a class="btn btn-info" href="{{ path('AeagFrdBundle_declaration_pdf', { 'id': entity.0.id }) }}" title="Imprimer">
+                <i class="fa fa-print"></i>
+            </a>
+        {%elseif entity.0.Phase.code > '10'%}
+            {%if entity.0.exporter == 'N' %}
+                <a class="btn btn-primary" href="{{ path('AeagFrdBundle_membre_viewFraisDeplacement', { 'id': entity.0.id }) }}" title="Voir">
+                    <i class="fa fa-eye"></i>
+                </a>
+                <a class="btn btn-info" href="{{ path('AeagFrdBundle_declaration_pdf', { 'id': entity.0.id }) }}" title="Imprimer">
+                    <i class="fa fa-print"></i>
+                </a>
+            {%endif%}
+            {%if entity.0.valider == 'N' %}
+                <a class="btn btn-default" data-toggle="modal" href="#deval-{{entity.0.id}}" title="Repasser au statut précédent">
+                    <i class="fa fa-refresh"></i>
+                </a>
+            {%endif%}
+        {%else%}
+            <a class="btn btn-warning" href="{{ path('AeagFrdBundle_membre_fraisDeplacement', { 'id': entity.0.id }) }}" title="Editer">
+                <i class="fa fa-edit"></i> 
+            </a>
+            <a class="btn btn-info" href="{{ path('AeagFrdBundle_declaration_pdf', { 'id': entity.0.id }) }}" title="Imprimer">
+                <i class="fa fa-print"></i>
+            </a>
+            <a class="btn btn-danger" data-toggle="modal" href="#sup-{{entity.0.id}}" title="Supprimer">
+                <i class="fa fa-trash-o"></i> 
+            </a>
+            <a class="btn btn-success" data-toggle="modal" href="#val-{{entity.0.id}}" title="valider">
+                <i class="fa fa-check"></i>
+            </a>
+        {%endif%}
+    </td>
+{%else%}
+    <td  nowrap id="idTd1-{{ entity.0.id }}">
+        SUPPRIMER
+    </td>
+{%endif%}
+<td>{{ entity.0.id }}</td>
+<td>
+    {%if entity.2%}
+        {{ entity.2.adr1 }}
+    {%endif%}
+<td>{{ entity.0.dateDepart | date("d/m/Y") }} &nbsp; {{ entity.0.heureDepart }}</td>
+<td>{{ entity.0.dateRetour | date("d/m/Y") }} &nbsp; {{ entity.0.heureretour }}</td>
+<td  id="idTd5-{{ entity.0.id }}">
+    {{ entity.0.phase.libelle }}
+    {% if entity.0.phase.code == '60' %}
+        ({{ entity.0.montRemtb | number_format(2,'.',' ') }} €)
+    {% endif %}
+</td>
+<td>{{ entity.0.objet }}</td>
+<td>
+    {% if entity.0.phase.code >= '30' %}
+        {% if  entity.0.dateCourrier %}
+            {{ entity.0.dateCourrier | date("d/m/Y") }}
+        {% endif %}
+    {% endif %}
+</td>
+<script>
+    mes = '';
+    {% for flashMessage in app.session.flashbag.get('notice-success') %}
+        mes = '<div class="alert alert-success">';
+        mes = mes + '<p> {{ flashMessage }} </p>';
+        mes = mes + '</div>';
+    {% endfor %}
+         $('#idMessage').html(mes);
+         $('#idMessage').show();
+</script>

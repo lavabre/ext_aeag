@@ -1,0 +1,49 @@
+{% extends "AeagDieBundle::layout.html.twig" %}
+
+{% block contenu %}
+
+<div align="center">
+    <h1>Création d'un thème </H1>
+</div>
+<br>
+
+
+<form class="form" action="{{ path('theme_create') }}" method="post" {{ form_enctype(form) }}>
+     {{ form_errors(form) }}
+    
+        <table align="center">
+            <tr>
+                <td align="right" width="35%">{{ form_label(form.theme,'Thème') }}</td>
+                <td width="65%" align="left">
+                {% if form_errors(form.theme) | length %}
+                <span class="relative"> 
+                    {{ form_widget(form.theme, { 'attr': {'class': 'full-width error'} }) }}
+                    <span class="check-error"></span>
+                {% else %}
+                {{ form_widget(form.theme, { 'attr': {'class': 'full-width'} }) }}
+                {% endif %}  
+                </td>
+                <td nowrap><div class="symfony-form-errors">{{ form_errors(form.theme) }}</div></td>
+            </tr>
+        </table>
+        <br><br>
+
+        {{ form_rest(form) }}
+
+        <div  align="center">
+            <button   class="button blue" type="submit">Créer</button>
+        </div>
+</form>
+<br>
+<br>
+<table align="center">
+    <tr>
+        <td>
+            <a class="button blue" href="{{ path('theme') }}">
+                <img src="{{ asset('bundles/aeagdie/images/icons/web-app/24/back.png') }}">  
+                Retour
+            </a>
+        </td>
+    </tr>
+</table>
+{% endblock %}

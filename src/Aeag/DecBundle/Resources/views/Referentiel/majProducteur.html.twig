@@ -1,0 +1,213 @@
+{% extends "AeagDecBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+          <li>
+          <i class="fa fa-home"></i>
+          <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+       </li>
+       <li>
+          <i class="fa fa-university"></i>
+          <a href="{{ path('AeagDecBundle_admin_listeProducteurs') }}">Producteurs</a> 
+       </li>
+       <li class="active">
+           {{ entity.numero }} {{ entity.libelle }}
+       </li>
+ {% endblock breadcrumb %}
+ 
+{% block panel_heading %}
+    <h3>
+       Mise à jour du producteur : {{ entity.numero }} {{ entity.libelle }}
+    </h3>
+{% endblock panel_heading %}
+
+ {%block content %}
+   <div class="col-xs-12 medium">
+        <form role="form" action="{{ path('AeagDecBundle_admin_majProducteur', {'producteur_id': entity.id }) }}" class="form-horizontal" id="idForm" method="post" {{ form_enctype(form) }}>
+             {% spaceless %}
+                     {% if not form.vars.valid %}
+                             <div class="alert alert-danger">
+                                {% for children in form.children %}
+                                     {% if not children.vars.valid %}
+                                         {{ form_errors(children) }}
+                                    {% endif %}
+                                 {% endfor %}
+                             </div>
+                     {% endif %}
+              {% endspaceless %}
+            
+             {% if message %}
+                        <div class="alert alert-danger">
+                            <button class="close" data-dismiss="alert"></button>
+                            <h5>
+                             {{ message | nl2br}}
+                            </h5>
+                       </div>
+             {% endif %}   
+       
+              {%if entity.ouvId %} 
+                   <div class="form-group">
+                    <label for="MajProducteur_ouvId" class="col-xs-3 control-label">Identifiant Aeag</label>
+                    {%if form_errors(form.ouvId) %}
+                        <div class="col-xs-8 input-group has-error has-feedback">
+                    {% else %}
+                         <div class="col-xs-8 input-group">
+                     {% endif %}
+                       {{ form_widget(form.ouvId, { 'attr': {'class': 'form-control ', 'placeholder': 'identifiant Aeag'} }) }}
+                     </div>
+                   </div> 
+                {% endif %}  
+                       
+                {% if entity.numero %}
+                    <div class="form-group">
+                    <label for="MajProducteur_numero" class="col-xs-3 control-label">Numéro</label>
+                    {%if form_errors(form.numero) %}
+                        <div class="col-xs-8 input-group has-error has-feedback">
+                    {% else %}
+                         <div class="col-xs-8 input-group">
+                     {% endif %}
+                       {{ form_widget(form.numero, { 'attr': {'class': 'form-control ', 'placeholder': 'Numéro'} }) }}
+                     </div>
+                   </div> 
+                 {% endif %} 
+                    
+                    <div class="form-group">
+                    <label for="MajProducteur_libelle" class="col-xs-3 control-label">Libellé</label>
+                    {%if form_errors(form.libelle) %}
+                        <div class="col-xs-8 input-group has-error has-feedback">
+                    {% else %}
+                         <div class="col-xs-8 input-group">
+                     {% endif %}
+                       {{ form_widget(form.libelle, { 'attr': {'class': 'form-control ', 'placeholder': 'Libellé'} }) }}
+                     </div>
+               </div> 
+                    
+               <div class="form-group">
+                    <label for="MajProducteur_siret" class="col-xs-3 control-label">Siret</label>
+                    {%if form_errors(form.siret) %}
+                        <div class="col-xs-8 input-group has-error has-feedback">
+                    {% else %}
+                         <div class="col-xs-8 input-group">
+                     {% endif %}
+                       {{ form_widget(form.siret, { 'attr': {'class': 'form-control ',
+                                                             'placeholder': 'Sireté',
+                                                             'maxlength': '14',
+                                                             'minlength': '14',
+                                                             'nowhitespace': 'true',
+                                                             'number': 'true'} }) }}
+                     </div>
+               </div> 
+                    
+                <div class="form-group">
+                    <label for="MajProducteur_adresse" class="col-xs-3 control-label">Adresse</label>
+                    {%if form_errors(form.adresse) %}
+                        <div class="col-xs-8 input-group has-error has-feedback">
+                    {% else %}
+                         <div class="col-xs-8 input-group">
+                     {% endif %}
+                       {{ form_widget(form.adresse, { 'attr': {'class': 'form-control ', 'placeholder': 'Adresse'} }) }}
+                     </div>
+               </div> 
+                    
+                <div class="form-group">
+                    <label for="MajProducteur_cp" class="col-xs-3 control-label">Code postal</label>
+                    {%if form_errors(form.cp) %}
+                        <div class="col-xs-8 input-group has-error has-feedback">
+                    {% else %}
+                         <div class="col-xs-8 input-group">
+                     {% endif %}
+                       {{ form_widget(form.cp, { 'attr': {'class': 'form-control ', 
+                                                          'placeholder': 'Code postal',
+                                                          'maxlength': '5',
+                                                          'minlength': '5',
+                                                          'nowhitespace': 'true',
+                                                          'number': 'true' } }) }}
+                     </div>
+               </div>
+                    
+                <div class="form-group">
+                    <label for="MajProducteur_ville" class="col-xs-3 control-label">Ville</label>
+                    {%if form_errors(form.ville) %}
+                        <div class="col-xs-8 input-group has-error has-feedback">
+                    {% else %}
+                         <div class="col-xs-8 input-group">
+                     {% endif %}
+                       {{ form_widget(form.ville, { 'attr': {'class': 'form-control ', 'placeholder': 'Ville'} }) }}
+                     </div>
+               </div> 
+         
+                        
+                <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Liens :</label>
+                            <div class="col-md-9">
+                            <p class="form-control-static">
+                                <table class="table table-bordered table-hover" id="idTable1">
+                                <thead>
+                                   <tr>
+                                       <th>Type</th>
+                                        <th>Identifiant</th>
+                                        <th>Libelle</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                   {%if correspondants %}
+                                        {% for correspondant in correspondants %}
+                                            <tr>
+                                                <td>Correspondant</td>
+                                                <td>{{ correspondant.Correspondant.identifiant }}</td>
+                                                <td>{{ correspondant.Correspondant.adr1 }}&nbsp;{{ correspondant.Correspondant.adr2 }}</td>
+                                              </tr>
+                                         {% endfor %}
+                                    {%endif%}
+                                     {%if odecs %}
+                                      {% for odec in odecs %}
+                                            <tr>
+                                                <td>Collecteur</td>
+                                                <td>{{ odec.numero }}</td>
+                                                <td>{{ odec.libelle }}</td>
+                                              </tr>
+                                         {% endfor %}
+                                    {%endif%}
+                                    {%if cts %}     
+                                        {% for ct in cts %}
+                                            <tr>
+                                                <td>Centre de Transit</td>
+                                                <td>{{ ct.numero }}</td>
+                                                <td>{{ ct.libelle }}</td>
+                                              </tr>
+                                         {% endfor %}
+                                     {%endif%}
+                                     {%if ctdts %}     
+                                        {% for ctdt in ctdts %}
+                                            <tr>
+                                                <td>Centre de Traitement</td>
+                                                <td>{{ ctdt.numero }}</td>
+                                                <td>{{ ctdt.libelle }}</td>
+                                              </tr>
+                                         {% endfor %}
+                                      {%endif%}
+                                  </tbody>
+                             </table> 
+                               </p>
+                            </div>
+                        </div>
+                   </div>
+                    
+              
+                <div class="btn-group pull-right">
+                <button type="submit" class="btn btn-success  pull-right" value="Ajouter">Mettre à jour</button>
+                <a  id="btFermer" class="btn btn-danger" href="{{ path('AeagDecBundle_collecteur_listeProducteurs') }}"><i class="fa fa-power-off"></i> Retour</a>
+               </div>
+         
+               <div class="hide">
+                 {{ form_rest(form) }}
+               </div>
+       
+        </form>
+ </div>
+
+{% endblock content %}
+                    
+           
+
+    

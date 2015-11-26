@@ -1,0 +1,40 @@
+demande:
+    path:  /
+    defaults: { _controller: "AeagDieBundle:Demande:index" }
+
+demande_show:
+    path:  /{id}/show
+    defaults: { _controller: "AeagDieBundle:Demande:show" }
+
+demande_new:
+    path:  /new
+    defaults: { _controller: "AeagDieBundle:Demande:new" }
+
+demande_create:
+    path:  /create
+    defaults: { _controller: "AeagDieBundle:Demande:create" }
+    requirements: { methods: post }
+
+demande_edit:
+    path:  /{id}/edit
+    defaults: { _controller: "AeagDieBundle:Demande:edit" }
+
+demande_update:
+    path: /{id}/update
+    defaults: { _controller: "AeagDieBundle:Demande:update" }
+    requirements: { methods: post }
+
+demande_delete:
+    path: /{id}/delete
+    defaults: { _controller: "AeagDieBundle:Demande:delete" }
+    
+demande_listesoustheme:
+    path: /listesoustheme
+    defaults : { _controller: "AeagDieBundle:Demande:listesoustheme"}
+    
+demande_listeDemandes:
+    path: /{page}
+    defaults: { _controller: "AeagDieBundle:Demande:listeDemandes" }
+
+    
+    

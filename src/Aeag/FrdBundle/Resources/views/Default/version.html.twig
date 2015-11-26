@@ -1,0 +1,56 @@
+{% extends "AeagFrdBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+         <li>
+           <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+       </li>
+       <li class="active">
+          navigateir web incomptaible
+       </li>
+{% endblock breadcrumb %}
+
+
+{%block panel_heading %}
+           <h3>
+               NAVIGATEUR WEB INCOMPATIBLE
+           </h3>
+ {%endblock panel_heading %}
+
+       
+  {%block content %}
+        <div class="row">
+            <div class="col-sm-2 page-500">
+                    <div class=" number center">
+                            Désolé !
+                    </div>
+           </div>
+           <div class="col-sm-10 page-500">
+                     <div class=" details">
+                            <h3>NAVIGATEUR WEB INCOMPATIBLE</h3>
+                            <p>
+                                 <div class="note note-info">
+                                     <p>Votre navigateur web : {{navigateur}} a une  version : <b>{{version}}</b> incompatible pour cette application.</p>
+                                     <p>Essayer avec 'Google chrome' ou 'Firefox' ou avec une version de votre navigateur plus récente.</p>
+                                     <p>Si vous ne pouvez pas changer de navigateur web, <b>envoyer par courrier</b> vos frais de déplacement avec les justificatifs</p>
+                                     <p>à l'agence de l'eau 'adour-garonne'.</p>
+                                </div>
+                            </p>
+                    </div>
+            </div>
+        </div>
+      
+
+       <div class="row">
+            <div class="col-sm-3  page-500"></div>
+            <div class="col-sm-6 page-500">
+                  <h3><a href="{{ path('fos_user_security_logout') }}">
+                           </br>
+                            <i class="fa fa-sign-out"></i>  
+                            <span>Quitter</span>
+                        </a>
+                 </h3>
+            </div>
+            <div class="col-md-3 page-500"></div>
+        </div>
+  {%endblock content %}
+ 

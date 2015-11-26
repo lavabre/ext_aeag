@@ -1,0 +1,459 @@
+{% extends "AeagSqeBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+                  <li>
+                       <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+                  </li>
+                  <li>
+                     <a href="{{ path('Aeag_sqe_programmation_lots', {'action' : action }) }}">Critères</a> 
+                  </li>
+                  <li class="active">
+                             Lots
+                  </li>
+ {% endblock breadcrumb %}
+ 
+{% block modal %}
+
+    {%if  is_granted('ROLE_PROGSQE') %}
+        {% for entity in entities %}
+            {% if entity.lotAn %}
+                <div class="modal fade" id="sup-{{ entity.lotAn.id }}">
+                    <div class="modal-dialog modal-sm">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title" id="supLabel-{{ entity.lotAn.id }}">Suppression de la programmation {{ entity.lotAn.anneeProg }} version {{ entity.lotAn.version }} du lot : {{ entity.lot.nomLot }}</h4>
+                            </div>
+                            <div class="modal-body">
+                                <h4>Cliquer sur la corbeille pour valider la suppression la programmation {{ entity.lotAn.anneeProg }} version {{ entity.lotAn.version }} du lot : {{ entity.lot.nomLot }}</h4>
+                                <br/><br/>
+                                <div class="alert alert-danger">Attention : Une fois supprimée, la programmation de ce groupe sera supprimée définitivement</div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
+                                <a  id="idSupprimerGroupe"  class="btn btn-danger"  href="{{ path('AeagSqeBundle_programmation_lot_supprimer', { 'lotAnId': entity.lotAn.id }) }}" title="Supprimer">
+                                    <i class="fa fa-trash-o"> Supprimer</i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>  
+
+                <div class="modal fade" id="sou-{{ entity.lotAn.id }}">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title" id="souLabel-{{ entity.lotAn.id }}">Soumission à la validation de la programmation {{ entity.lotAn.anneeProg }} version {{ entity.lotAn.version }} du lot : {{ entity.lot.nomLot }} </h4>
+                            </div>
+                            <div class="modal-body">
+                                <h4>Cliquer sur le bouton vert pour soumettre à la validation  la programmation {{ entity.lotAn.anneeProg }} version {{ entity.lotAn.version }} du lot : {{ entity.lot.nomLot }}</h4>
+                                <br/><br/>
+                                <div class="alert alert-danger">Attention : Une fois soumise, la programmation de ce lot ne sera plus modifiable</div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
+                                <a   class="btn btn-success"  href="{{ path('AeagSqeBundle_programmation_lot_soumettre', { 'lotAnId': entity.lotAn.id }) }}" title="Soumettre à la validation">
+                                    <i class="fa fa-check"> Soumettre à la validation</i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>  
+
+                <div class="modal fade" id="deblo-{{ entity.lotAn.id }}>
+                    <div class="modal-dialog modal-sm">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title" id="debloLabel-{{ entity.lotAn.id }}">Déblocage de la programmation {{ entity.lotAn.anneeProg }} version {{ entity.lotAn.version }} du lot : {{ entity.lot.nomLot }}</h4>
+                            </div>
+                            <div class="modal-body">
+                                <h4>Cliquer sur le bouton vert pour débloquer la programmation {{ entity.lotAn.anneeProg }} version {{ entity.lotAn.version }} du lot : {{ entity.lot.nomLot }}</h4>
+                                </br></br>
+                                <div class="alert alert-danger">
+                                    <p>
+                                        Attention : Une fois débloquée, la programmation de ce lot sera modifiable. n'oubliez pas de la soumettre à la validation ensuite.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
+                                <a class="btn btn-success"  href="{{ path('AeagSqeBundle_programmation_lot_debloquer', { 'lotAnId': entity.lotAn.id }) }}" title="Débloquer">
+                                    <i class="fa fa-check-square-o"> Débloquer</i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="val-{{ entity.lotAn.id }}">
+                    <div class="modal-dialog modal-sm">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title" id="valLabel-{{ entity.lotAn.id }}">Validation de la programmation {{ entity.lotAn.anneeProg }} version {{ entity.lotAn.version }} du lot : {{ entity.lot.nomLot }}</h4>
+                            </div>
+                            <div class="modal-body">
+                                <h4>Cliquer sur le bouton vert pour valider la programmation {{ entity.lotAn.anneeProg }} version {{ entity.lotAn.version }} du lot : {{ entity.lot.nomLot }}</h4>
+                                </br></br>
+                                <div class="alert alert-danger">
+                                    <p>
+                                        Attention : Une fois validée, n'oubliez pas de lancer le job talend.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
+                                <a class="btn btn-success"  href="{{ path('AeagSqeBundle_programmation_lot_valider', { 'lotAnId': entity.lotAn.id }) }}" title="Valider">
+                                    <i class="fa fa-check-square-o"> Valider</i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="refus-{{ entity.lotAn.id }}">
+                    <div class="modal-dialog modal-sm">
+                        <div class="modal-content">
+                            <form action="{{ path('AeagSqeBundle_programmation_lot_refuser', { 'lotAnId': entity.lotAn.id }) }}" class="form-horizontal" id="idFormRefus-{{ entity.lotAn.id }}" method="post">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <h4 class="modal-title" id="refuslLabel-{{ entity.lotAn.id }}">Refus de la programmation {{ entity.lotAn.anneeProg }} version {{ entity.lotAn.version }} du lot : {{ entity.lot.nomLot }}</h4>
+                                </div>
+                                <div class="modal-body">
+
+                                    <h4> Motif du refus</h4>
+                                    <textarea id="idRefusMotif-{{ entity.lotAn.id }}" class="form-control" rows="6" required></textarea>
+                                    </br></br>
+                                    <div class="alert alert-danger">
+                                        <p>
+                                            Attention : Une fois refusée, la programmation de ce lot sera modifiable.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
+                                    <a  id="idBtRefus-{{ entity.lotAn.id }}"class="btn btn-danger"  href="#" title="Refuser">
+                                        <i class="fa fa-check-square-o"> Refuser</i>
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="deval-{{ entity.lotAn.id }}">
+                    <div class="modal-dialog modal-sm">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title" id="devalLabel-{{ entity.lotAn.id }}">Dévalidation de la programmation {{ entity.lotAn.anneeProg }} version {{ entity.lotAn.version }} du lot : {{ entity.lot.nomLot }}</h4>
+                            </div>
+                            <div class="modal-body">
+                                <h4>Cliquer sur le bouton rouge pour dévalider la programmation {{ entity.lotAn.anneeProg }} version {{ entity.lotAn.version }} du lot : {{ entity.lot.nomLot }}</h4>
+                                </br></br>
+                                <div class="alert alert-danger">
+                                    <p>
+                                        Attention : Une fois dévalidée, a programmation de ce lot sera modifiable.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
+                                <a class="btn btn-danger"  href="{{ path('AeagSqeBundle_programmation_lot_devalider', { 'lotAnId': entity.lotAn.id }) }}" title="Dévalider">
+                                    <i class="fa fa-check-square-o"> Dévalider</i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="dupl-{{ entity.lotAn.id }}">
+                    <div class="modal-dialog modal-sm">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title" id="duplLabel-{{ entity.lotAn.id }}">Nouvelle version de la programmation {{ entity.lotAn.anneeProg }} version {{ entity.lotAn.version }} du lot : {{ entity.lot.nomLot }}</h4>
+                            </div>
+                            <div class="modal-body">
+                                <h4>Cliquer sur le bouton vert pour créer une nouvelle version de la programmation {{ entity.lotAn.anneeProg }} version {{ entity.lotAn.version }} du lot : {{ entity.lot.nomLot }}</h4>
+                                </br></br>
+                                <div class="alert alert-danger">
+                                    <p>
+                                        Attention : Une fois valider, la version actuelle de la programmation de ce lot sera figée et la nouvelle version de la programmation de ce lot débutera juste aprés la période en cours.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
+                                <a class="btn btn-success"  href="{{ path('AeagSqeBundle_programmation_lot_dupliquer', { 'lotAnId': entity.lotAn.id }) }}" title="Créer nouvelle version">
+                                    <i class="fa fa-check-square-o"> Créer nouvelle versionr</i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+{% endblock modal %}
+
+
+{%block panel_heading %}
+    <h3 class="page-title">
+        {% if entities | length == 1 %}
+            {{ entities | length }} Lot disponible pour la programmation {{ critAnnee }}
+        {% else %}
+            {{ entities | length }} Lots disponibles  pour la programmation {{ critAnnee }}
+        {% endif %}
+        {# <a class="btn btn-primary pull-right" href="{{ path('AeagDecBundle_admin_pdfListeDechets') }}" title="Imprimer la lister"> 
+                <i class="fa fa-print"> Imprimer la liste</i>
+         </a>#}
+    </h3>
+{%endblock panel_heading %}
+
+
+
+{%block content %}
+
+
+    <div class="row">
+        <div class="col-xm-12">
+            <div class="small">
+                <table class="table table-bordered table-condensed table-advance" id="idTable">
+                    <thead>
+                        <tr>
+                    <a href="../Station/index.html.twig"></a>
+                    <th width="5%">Actions</th>
+                    <th>Nom</th>
+                    <th>Version</th>
+                    <th>marché</th>
+                    <th>Zone géographique</th>
+                    <th>Type de milieu</th>
+                    <th>Mandataire</th>
+                    <th>Etat</th>
+                    <th>Statut</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {% for entity in entities %}
+                            {%if not entity.lotAn%}
+                                <tr>
+                                    <td align="center" nowrap>
+                                       {#<a id="id_{{entity.lot.id}}" class="btn btn-primary" href="{{ path('AeagSqeBundle_programmation_stations', { 'pgProgLotId': entity.lot.id , 'pgProgLotAnId': null, 'maj': 'V'}) }}" title="Consulter la programmation">
+                                            <i class="fa fa-eye"></i> 
+                                        </a>#}
+                                        {%if  is_granted('ROLE_PROGSQE') %}
+                                            {% if action != 'V' %}   
+                                                <a  id="id_{{entity.lot.id}}" class="btn btn-warning" href="{{ path('AeagSqeBundle_programmation_stations', { 'pgProgLotId': entity.lot.id, 'lotan': null, 'action': action, 'maj': 'C' }) }}" title="Créer la programmation">
+                                                    <i class="fa fa-edit"></i> 
+                                                </a>
+                                            {% endif  %}
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ entity.lot.nomLot }}</td>
+                                    <td>1</td>
+                                    <td>{{ entity.lot.marche.nomMarche }}</td>
+                                    <td>{{ entity.lot.zgeoRef.nomZoneGeo }}</td>
+                                    <td>{% if entity.typeMilieu | length %}
+                                        {{ entity.typeMilieu.nomMilieu }}
+                                    {% endif %}
+                                </td>
+                                <td>{%if entity.lot.titulaire %}
+                                    {{ entity.lot.titulaire.nomCorres }}
+                                    {% endif %}
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                {% else %}
+                                    <tr>
+                                        <td align="center" nowrap>
+                                            <a id="id_{{entity.lot.id}}" class="btn btn-primary" href="{{ path('AeagSqeBundle_programmation_stations', { 'pgProgLotId': entity.lot.id ,'lotan': entity.lotAn.id, 'action': action,  'maj': 'V'}) }}" title="Consulter la programmation">
+                                                <i class="fa fa-eye"></i> 
+                                            </a>
+                                            {%if  is_granted('ROLE_PROGSQE') %}
+                                                {% if action != 'V' or (action == 'P' and  maj != 'C') %}   
+                                                    {% if entity.lotAn.phase.codePhase < 'P20' %}
+                                                        <a id="id_{{entity.lot.id}}" class="btn btn-warning" href="{{ path('AeagSqeBundle_programmation_stations', { 'pgProgLotId': entity.lot.id , 'lotan': entity.lotAn.id, 'action': action, 'maj': 'M'}) }}" title="Modifier la programmation">
+                                                            <i class="fa fa-edit"></i> 
+                                                        </a>
+
+
+                                                        <a class="btn btn-danger" data-toggle="modal" href="#sup-{{ entity.lotAn.id }}" title="Supprimer la programmation">
+                                                            <i class="fa fa-trash-o"></i>
+                                                        </a>
+                                                    {% endif %}
+
+                                                    {% if entity.lotAn.phase.codePhase == 'P20' %}
+                                                        <a id="id_{{entity.lot.id}}" class="btn btn-warning" href="{{ path('AeagSqeBundle_programmation_stations', { 'pgProgLotId': entity.lot.id , 'lotan': entity.lotAn.id, 'action': action, 'maj': 'M'}) }}" title="Modifier la programmation">
+                                                            <i class="fa fa-edit"></i> 
+                                                        </a>
+
+                                                        <a class="btn btn-danger" data-toggle="modal" href="#sup-{{ entity.lotAn.id }}" title="Supprimer la programmation">
+                                                            <i class="fa fa-trash-o"></i>
+                                                        </a>
+
+                                                        <a class="btn btn-success" data-toggle="modal" href="#sou-{{ entity.lotAn.id }}" title="Soumettre à validation">
+                                                            <i class="fa fa-lock"></i>
+                                                        </a>
+
+
+                                                    {% endif %}
+
+                                                    {% if entity.lotAn.phase.codePhase == 'P25' %}
+                                                        <a class="btn btn-danger" data-toggle="modal" href="#deblo-{{ entity.lotAn.id }}" title="Débloquer la programmation">
+                                                            <i class="fa fa-unlock"></i>
+                                                        </a>
+
+                                                        {%if  is_granted('ROLE_ADMINSQE') %}  
+                                                            <a class="btn btn-danger" data-toggle="modal" href="#refus-{{ entity.lotAn.id }}" title="Refuser par l'administrateur">
+                                                                <i class="fa fa-thumbs-down"></i>
+                                                            </a>
+                                                            <a class="btn btn-success" data-toggle="modal" href="#val-{{ entity.lotAn.id }}" title="Valider par l' administrateur">
+                                                                <i class="fa fa-thumbs-up"></i>
+                                                            </a>  
+                                                        {% endif %}   
+
+                                                    {% endif %}
+
+                                                    {% if entity.lotAn.phase.codePhase == 'P30' %}
+
+                                                        {%if  is_granted('ROLE_ADMINSQE') %}   
+                                                            <a class="btn btn-danger" data-toggle="modal" href="#deval-{{ entity.lotAn.id }}" title="Dévalider par l'administrateur">
+                                                                <i class="fa fa-thumbs-down"></i>
+                                                            </a>
+                                                        {% endif %}   
+
+                                                    {% endif %}
+
+                                                    {% if entity.lotAn.phase.codePhase == 'P40' %}
+                                                        {%if  is_granted('ROLE_ADMINSQE') %}   
+                                                            <a class="btn btn-warning" data-toggle="modal" href="#dupl-{{ entity.lotAn.id }}" title="Nouvelle version">
+                                                                <i class="fa fa-plus"></i>
+                                                            </a>
+                                                        {% endif %}   
+                                                    {% endif %}
+
+                                                {% endif %}
+
+                                            {% endif %}
+
+
+                                        </td>
+                                        <td>{{ entity.lot.nomLot }}</td>
+                                        <td>{{ entity.lotAn.version }}</td>
+                                        <td>{{ entity.lot.marche.nomMarche }}</td>
+                                        <td>{{ entity.lot.zgeoRef.nomZoneGeo }}</td>
+                                        <td>{% if entity.typeMilieu | length %}
+                                            {{ entity.typeMilieu.nomMilieu }}
+                                            {% endif %}
+                                            </td>
+                                            <td>{%if entity.lot.titulaire %}
+                                                {{ entity.lot.titulaire.nomCorres }}
+                                                {% endif %}
+                                                </td>
+                                                <td>{{entity.lotAn.phase.libellePhase}} </td>
+                                                <td>{{entity.lotAn.codeStatut.libelleStatut}} le {{ entity.lotAn.dateModif | date("d/m/Y H:i")}} par {{ entity.lotAn.utilModif.nom}} </td>
+                                            </tr>
+                                            {% endif %}
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-10 pull-left text-info">
+                                        <ul class="list-inline">
+                                            <li><a class="btn btn-primary btn-xs" href="#" title="Consulter la programmation"><i class="fa fa-eye"></i></a> Consulter la programmation</li>
+                                                    {%if  is_granted('ROLE_PROGSQE') %}
+                                                <li><a class="btn btn-warning btn-xs" href="#" title="Modifier la programmation"><i class="fa fa-edit"></i></a> Créer/ Modifier la programmation</li>
+                                                <li><a class="btn btn-danger btn-xs" href="#" title="Supprimer la programmation"><i class="fa fa-trash-o"></i></a> Supprimer la programmatuion</li>
+                                                    {% endif %}
+                                                    {# <li><a class="btn btn-success btn-xs" href="#" title="ajouter la programmation"><i class="fa fa-plus"></i></a> Ajouter la programmation</li>#}
+                                        </ul>  
+                                    </div>
+                                </div>   
+                                </br>
+                                <div class="row">
+                                    <div class="col-md-10 pull-left text-info">
+                                        <ul class="list-inline">
+                                            {%if  is_granted('ROLE_PROGSQE') %}
+                                                <li><a class="btn btn-success btn-xs" href="#" title="Soumettre"><i class="fa fa-lock"></i></a> Soumettre à validation</li>
+                                                <li><a class="btn btn-danger btn-xs" href="#" title="Remodifier"><i class="fa fa-unlock"></i></a> Débloquer à la programmation</li>
+                                                    {% endif %}
+                                        </ul>  
+                                    </div>
+                                </div>       
+                                </br>
+                                <div class="row">
+                                    <div class="col-md-10 pull-left text-info">
+                                        <ul class="list-inline">
+                                            {%if  is_granted('ROLE_ADMINSQE') %} 
+                                                <li><a class="btn btn-success btn-xs" href="#" title="validation admin"><i class="fa fa-thumbs-up"></i></a> Valider par l'administrateur</li>
+                                                <li><a class="btn btn-warning btn-xs" href="#" title="Nouvelle version"><i class="fa fa-plus"></i></a> Créer une nouvelle version</li>
+                                                <li><a class="btn btn-danger btn-xs" href="#" title="Dévalider"><i class="fa fa-thumbs-down"></i></a> Refuser par l'administrateur</li>
+                                                    {% endif %}
+                                                    {# <li><a class="btn btn-success btn-xs" href="#" title="ajouter la programmation"><i class="fa fa-plus"></i></a> Ajouter la programmation</li>#}
+                                        </ul>  
+                                    </div>
+                                </div>                  
+
+
+{%endblock content %}
+
+    {% block scripts %}
+
+        {% for entity in entities %}
+            $(document).on('click', '#id_{{entity.lot.id}}',function(e){
+            $('#modalTraitementEncours').modal('toggle');
+            });
+
+            {% if  entity.lotAn %}
+                $('#idFormRefus-{{ entity.lotAn.id }}').validate();
+
+                $(document).on('click', '#idBtRefus-{{ entity.lotAn.id }}',function(e){
+                $('#idFormRefus-{{ entity.lotAn.id }}').submit();
+                });
+            {% endif %}
+            
+           {% if  entity.lotAn %}
+           $("#sup-{{ entity.lotAn.id }}").draggable({
+                handle: ".modal-header"
+            });    
+            
+          $("#sou-{{ entity.lotAn.id }}").draggable({
+                handle: ".modal-header"
+            });    
+            
+          $("#deblo-{{ entity.lotAn.id }}").draggable({
+                handle: ".modal-header"
+            });    
+            
+           $("#val-{{ entity.lotAn.id }}").draggable({
+                handle: ".modal-header"
+            });    
+            
+           $("#refus-{{ entity.lotAn.id }}").draggable({
+                handle: ".modal-header"
+            });    
+            
+           $("#deval-{{ entity.lotAn.id }}").draggable({
+                handle: ".modal-header"
+            });    
+            
+          $("#dupl-{{ entity.lotAn.id }}").draggable({
+                handle: ".modal-header"
+            });    
+            
+         {% endif %}
+
+        {% endfor %}
+
+    {% endblock %}

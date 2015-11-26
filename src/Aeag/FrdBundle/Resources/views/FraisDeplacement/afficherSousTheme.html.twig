@@ -1,0 +1,16 @@
+{%if sousThemes | length%}
+       <td class="control-label">Sous thème<span class="required">*</span></td>
+        <td>
+         <select id="sousTheme" name="sousTheme" class="input-medium form-control">
+         {% for a in sousThemes %}
+            {%if a.libelle == sousTheme or a.code == sousTheme %}
+                <option  value="{{  a.code }}" selected>{{ a.libelle }}</option>
+            {%else%}
+                <option  value="{{  a.code }}" >{{ a.libelle }}</option>
+            {%endif%}
+         {% else %}
+             <option value=""></option>
+         {% endfor %}
+          </select>
+{%endif%}
+ 

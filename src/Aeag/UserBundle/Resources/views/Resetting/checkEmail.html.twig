@@ -1,0 +1,16 @@
+{% extends "AeagUserBundle::layout.html.twig" %}
+
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% block breadcrumb %}
+<li><a href="{{ path('fos_user_profile_show') }}">Compte</a></li> 
+<li class="active">Réinitialisation mot de passe</li> 
+{% endblock breadcrumb %}
+
+{% block fos_user_content %}
+    <div class="col-xs-offset-3 col-xs-8">
+        <div class="alert alert-info">
+         <h4>{{ 'resetting.check_email'|trans({'%email%': email}) }}</h4>
+        </div>
+    </div>
+{% endblock %}

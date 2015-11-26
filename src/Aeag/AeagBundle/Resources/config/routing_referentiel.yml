@@ -1,0 +1,111 @@
+Aeag_listeRegion:
+    path:  /listeRegion
+    defaults: { _controller: AeagAeagBundle:Referentiel:listeRegion }
+    requirements:
+        methods:  GET|POST
+        
+Aeag_pdfListeRegion:
+    path:  /pdfListeRegion
+    defaults: { _controller: AeagAeagBundle:Referentiel:pdfListeRegion }
+    requirements:
+        methods:  GET|POST
+        
+Aeag_region_editer:
+    path:  /region/editer/{reg}
+    defaults: { _controller: AeagAeagBundle:Referentiel:editerRegion, reg:null }
+    requirements:
+        methods:  GET|POST
+ 
+Aeag_listeDepartement:
+    path:  /listeDepartement/{reg}
+    defaults: { _controller: AeagAeagBundle:Referentiel:listeDepartement, reg:null }
+    requirements:
+        methods:  GET|POST
+        
+Aeag_pdfListeDepartement:
+    path:  /pdfListeDepartement/{reg}
+    defaults: { _controller: AeagAeagBundle:Referentiel:pdfListeDepartement, reg:null }
+    requirements:
+        methods:  GET|POST
+        
+Aeag_departement_editer:
+    path:  /departement/editer/{dept}
+    defaults: { _controller: AeagAeagBundle:Referentiel:editerDepartement, dept:null }
+    requirements:
+        methods:  GET|POST
+        
+Aeag_listeCommune:
+    path:  /listeCommune/{dept}
+    defaults: { _controller: AeagAeagBundle:Referentiel:listeCommune, dept:null }
+    requirements:
+        methods:  GET|POST  
+        
+Aeag_pdfListeCommune:
+    path:  /pdfListeCommune/{dept}
+    defaults: { _controller: AeagAeagBundle:Referentiel:pdfListeCommune }
+    requirements:
+        methods:  GET|POST
+        
+Aeag_commune_editer:
+    path:  /commune/editer/{id}
+    defaults: { _controller: AeagAeagBundle:Referentiel:editerCommune, id:null }
+    requirements:
+        methods:  GET|POST
+        
+Aeag_listeCodePostal:
+    path:  /listeCodePostal/{commune}
+    defaults: { _controller: AeagAeagBundle:Referentiel:listeCodePostal, commune:null }
+    requirements:
+        methods:  GET|POST  
+        
+Aeag_codePostal_editer:
+    path:  /codePostal/editer/{id}
+    defaults: { _controller: AeagAeagBundle:Referentiel:editerCodePostal, id:null }
+    requirements:
+        methods:  GET|POST
+ 
+        
+Aeag_listeOuvrage:
+    path:  /listeOuvrage
+    defaults: { _controller: AeagAeagBundle:Referentiel:listeOuvrage }
+    requirements:
+        methods:  GET|POST
+        
+Aeag_listeOuvrageCorrespondant:
+    path:  /listeOuvrageCorrespondant/{ouvrage}
+    defaults: { _controller: AeagAeagBundle:Referentiel:listeOuvrageCorrespondant, ouvrage:null }
+    requirements:
+        methods:  GET|POST
+        
+Aeag_listeCorrespondants:
+    path:  /listeCorrespondants
+    defaults: { _controller: AeagAeagBundle:Referentiel:listeCorrespondants }
+    requirements:
+        methods:  GET|POST
+        
+Aeag_pdfListeCorrespondants:
+    path:  /pdfListeCorrespondants
+    defaults: { _controller: AeagAeagBundle:Referentiel:pdfListeCorrespondants }
+    requirements:
+        methods:  GET|POST
+        
+Aeag_listeCorrespondantOuvrage:
+    path:  /listeCorrespondantOuvrage/{correspondant}
+    defaults: { _controller: AeagAeagBundle:Referentiel:listeCorrespondantOuvrage, correspondant:null }
+    requirements:
+        methods:  GET|POST
+        
+Aeag_consulterCorrespondant:
+    path:  /consulterCorrespondant/{id}
+    defaults: { _controller: AeagAeagBundle:Referentiel:consulterCorrespondant, id:null }
+    requirements:
+        methods:  GET|POST
+        
+Aeag_majOuvrage:
+    path:  /majOuvrage/{id}
+    defaults: { _controller: AeagAeagBundle:Referentiel:majOuvrage,id:null }
+    requirements:
+        methods:  GET|POST
+        
+
+    

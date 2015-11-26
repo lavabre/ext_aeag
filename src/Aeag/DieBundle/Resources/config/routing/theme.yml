@@ -1,0 +1,30 @@
+theme:
+    path:  /
+    defaults: { _controller: "AeagDieBundle:Theme:index" }
+
+theme_show:
+    path:  /{id}/show
+    defaults: { _controller: "AeagDieBundle:Theme:show" }
+
+theme_new:
+    path:  /new
+    defaults: { _controller: "AeagDieBundle:Theme:new" }
+
+theme_create:
+    path:  /create
+    defaults: { _controller: "AeagDieBundle:Theme:create" }
+    requirements: { methods: post }
+
+theme_edit:
+    path:  /{id}/edit
+    defaults: { _controller: "AeagDieBundle:Theme:edit" }
+
+theme_update:
+    path:  /{id}/update
+    defaults: { _controller: "AeagDieBundle:Theme:update" }
+    requirements: { methods: post }
+
+theme_delete:
+    path:  /{id}/delete
+    defaults: { _controller: "AeagDieBundle:Theme:delete" }
+ 

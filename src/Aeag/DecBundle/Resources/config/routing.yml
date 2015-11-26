@@ -1,0 +1,17 @@
+aeag_dec:
+    path:  /
+    defaults: { _controller: AeagDecBundle:Default:index }
+    
+aeag_dec_admin:
+    resource: "@AeagDecBundle/Resources/config/routing_admin.yml"
+    prefix:   /admindec
+    
+aeag_dec_collecteur:
+    resource: "@AeagDecBundle/Resources/config/routing_collecteur.yml"
+    prefix:   /collecteur
+    
+aeag_dec_referentiel:
+    resource: "@AeagDecBundle/Resources/config/routing_referentiel.yml"
+    prefix:   /referentiel
+    
+

@@ -1,0 +1,167 @@
+{% extends "AeagDecBundle::layout.html.twig" %}
+
+
+{% block breadcrumb %}
+          <li>
+          <i class="fa fa-home"></i>
+          <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+       </li>
+       <li>
+          <i class="fa fa-university"></i>
+          <a href="{{ path('AeagDecBundle_collecteur_listeProducteurs') }}">Producteurs</a> 
+       </li>
+       <li class="active">
+           {{ pdec.numero }} {{ pdec.libelle }}
+       </li>
+ {% endblock breadcrumb %}
+       
+ {%block panel_heading %}
+    <h3 class="page-title">
+       Consultation du producteur : {{ pdec.numero }} {{ pdec.libelle }}
+    </h3>
+  {%endblock panel_heading %}
+
+
+ {%block content %}
+  <div class="row">
+          <div class="col-md-12">   
+           <form class="form-horizontal" role="form">
+           <div class="form-body">
+                 <div class="row">
+                   <div class="col-md-offset-3"></div>
+                   <div class="col-md-9">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Identifiant Aeag :</label>
+                            <div class="col-md-9">
+                            <p class="form-control-static">{{ pdec.ouvId }}</p>
+                            </div>
+                        </div>
+                   </div>
+                   <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Numéro :</label>
+                            <div class="col-md-9">
+                            <p class="form-control-static">{{ pdec.numero }}</p>
+                            </div>
+                        </div>
+                   </div>
+                   <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Libellé :</label>
+                            <div class="col-md-9">
+                            <p class="form-control-static">{{ pdec.libelle }}</p>
+                            </div>
+                        </div>
+                   </div>
+                   <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Siret :</label>
+                            <div class="col-md-9">
+                            <p class="form-control-static">{{ pdec.siret }}</p>
+                            </div>
+                        </div>
+                   </div>
+                            
+                   {% if pdec.naf %}
+                   <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Activité (code NAF) :</label>
+                            <div class="col-md-9">
+                            <p class="form-control-static">{{ pdec.naf }}</p>
+                            </div>
+                        </div>
+                   </div>
+                   {% endif %}
+                            
+                   <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Code postal :</label>
+                            <div class="col-md-9">
+                            <p class="form-control-static">{{ pdec.adresse }} {{ pdec.cp }} {{ pdec.ville }}</p>
+                            </div>
+                        </div>
+                   </div>
+                   
+                   {% if pdec.Commune %}
+                       {% if pdec.cp != pdec.commune.commune %}
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Commune :</label>
+                                <div class="col-md-9">
+                                <p class="form-control-static">{{ pdec.commune.commune }} {{ pdec.commune.libelle }}</p>
+                                </div>
+                            </div>
+                       </div>  
+                       {% endif %}
+                   {% endif %}
+                            
+                   {% if odecs %}
+                        <div class="col-md-12">
+                             <div class="form-group">
+                                 <label class="control-label col-md-3">collecteurs associés :</label>
+                                 <div class="col-md-9">
+                                 <p class="form-control-static">{{ odecs | number_format(0,'.',' ')}} 
+                                 </p>
+                                 </div>
+                             </div>
+                        </div>
+                   {% endif %}
+         
+                    {% if decls %}
+                        
+                        <div class="col-md-12">
+                             <div class="form-group">
+                                 <label class="control-label col-md-3">Déclarations :</label>
+                                 <div class="col-md-9">
+                                   <p class="form-control-static">
+                                        <div class="col-md-12 small">
+                                          <div class="medium">
+                                                <table class="table table-striped table-hover table-bordered table-advance">
+                                                        <thead>
+                                                          <tr>
+                                                              <th>Déclaration</th>
+                                                              <th>Quantité déclarée</th>
+                                                              <th>Quantité retenue</th>
+                                                              <th>Montant retenue</th>
+                                                          </tr>
+                                                      </thead>
+                                                      <tbody>
+                                                          {% for decl in decls %}
+                                                          <tr>
+                                                              <td align="center">{{ decl.annee }}</td>
+                                                              <td align="right">{{ (decl.quantiteReel) | number_format(0,'.',' ')}} kg</td>
+                                                              <td align="right">{{ (decl.quantiteRet) | number_format(0,'.',' ')}} kg</td>
+                                                              <td align="right">{{ decl.montAide | number_format(2,'.',' ')}} €</td>
+                                                          </tr>
+                                                           {% endfor %}
+                                                      </tbody>
+                                                  </table>
+                                          </div>
+                                      </div>
+                                   </p>
+                                 </div>
+                             </div>
+                        </div>
+                    
+                   {% endif %}
+                   
+                  </div>
+                </div>
+             </div>
+       </form>
+              
+            <div class="form-group">
+                <div class="col-xs-offset-4 col-xs-8">
+                {#  <a class="btn btn-warning" href="{{ path('AeagDecBundle_collecteur_majProducteur', { 'collecteur_id': collecteur.id, 'producteur_id': pdec.id }) }}"  title="Mettre à jour">
+                                            <i class="fa fa-edit"></i> 
+                   </a>#}
+                   <a  id="btFermer" class="btn btn-danger" href="{{ app.session.get('retour') }}"><i class="fa fa-power-off"></i> Retour</a>
+                 </div>
+             </div>
+        </div>
+    </div>
+
+{%endblock content %}
+
+ 

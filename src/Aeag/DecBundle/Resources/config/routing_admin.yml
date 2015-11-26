@@ -1,0 +1,68 @@
+AeagDecBundle_admin:
+    path:  /
+    defaults: { _controller: AeagDecBundle:Admin:index }
+    
+AeagDecBundle_admin_aide:
+    path:  /aide
+    defaults: { _controller: AeagDecBundle:Admin:aide }
+    
+AeagDecBundle_admin_envoyerMessage:
+    path:  /envoyerMessage/{id}
+    defaults: { _controller: AeagDecBundle:Admin:envoyerMessage,id:null }
+    
+AeagDecBundle_admin_parametres:
+    path:  /parametres
+    defaults: { _controller: AeagDecBundle:Parametres:index }
+    
+AeagDecBundle_admin_parametre:
+    path:  /parametre-{code}
+    defaults: { _controller: AeagDecBundle:Parametres:parametre, code:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_admin_listeDeclarationCollecteurs:
+    path:  /listeDeclarationCollecteurs/{annee}/{statut}
+    defaults: { _controller: AeagDecBundle:Admin:listeDeclarationCollecteurs, annee:null, statut:null }
+    requirements:
+        methods:  GET|POST
+        
+
+AeagDecBundle_admin_validerSousDeclaration:
+    path:  /validerSousDeclaration/{sousDeclarationCollecteur_id}
+    defaults: { _controller: AeagDecBundle:Admin:validerSousDeclaration, sousDeclarationCollecteur_id:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_admin_devaliderSousDeclaration:
+    path:  /devaliderSousDeclaration/{sousDeclarationCollecteur_id}
+    defaults: { _controller: AeagDecBundle:Admin:devaliderSousDeclaration, sousDeclarationCollecteur_id:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_admin_supprimerSousDeclaration:
+    path:  /supprimerSousDeclaration/{sousDeclarationCollecteur_id}
+    defaults: { _controller: AeagDecBundle:Admin:supprimerSousDeclaration, sousDeclarationCollecteur_id:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_admin_transfererSousDeclaration:
+    path:  /transfererSousDeclaration/{sousDeclarationCollecteur_id}
+    defaults: { _controller: AeagDecBundle:Admin:transfererSousDeclaration, sousDeclarationCollecteur_id:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_admin_majCompteursDeclarations:
+    path:  /majCompteursdeclarations/{annee}
+    defaults: { _controller: AeagDecBundle:Admin:majcompteursDeclarations, annee:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_admin_majCompteursProducteurs:
+    path:  /majCompteursProducteurs/{annee}
+    defaults: { _controller: AeagDecBundle:Admin:majcompteursProducteurs, annee:null }
+    requirements:
+        methods:  GET|POST
+        
+
+
+        

@@ -1,0 +1,90 @@
+        {%if stations | length%}  
+            {% for station in stations %}
+            <input type="hidden" name="id_{{ station.station.ouvFoncId }}" value ="{{station.station.ouvFoncId}}"
+                   {% if action == 'P'  and maj != 'V'  %}
+                       <tr>
+                       <td align="center">
+                           {% if station.cocher == 'O' %}
+                               <input type="checkbox" id="check_{{ station.station.ouvFoncId }}" name="check[]" value="{{station.station.ouvFoncId}}" checked="checked">
+                           {% else %}    
+                               <input type="checkbox" id="check_{{ station.station.ouvFoncId }}" name="check[]" value="{{station.station.ouvFoncId}}">
+                           {% endif %}
+                       </td>
+                       <td>
+                           <a  href="{{ station.lien }}" target="_blank" title="Localisation">
+                               {{ station.station.code }}
+                           </a>
+                       </td>
+                       {% if station.autreLot | length %}
+                           <td id="idTd_{{ station.station.ouvFoncId }}" class="warning">
+                               {{ station.station.libelle }}
+                               <a  href="{{ station.lienAutreLot }}" target="_blank" title="Voir cette porgrammation">&nbsp;(existe sur la programmtion  {{ station.autreLot.anneeProg }} version {{ station.autreLot.version }} du lot : {{ station.autreLot.lot.nomLot }}&nbsp;<i class="fa fa-folder-open fa-lg fa-fw"></i>)</a>
+                           </td>
+                       {% else %}
+                           <td>{{ station.station.libelle }}</td>
+                       {% endif %}
+                       <td>{{ station.commune.libelle }}</td>
+                       <td>{{ station.station.codeMasdo }} </td>
+                       {% if lot.codeMilieu.categorieMilieu == 'R' %}
+                           <td>{{ station.station.nomCoursEau }} </td>
+                       {% endif %}
+                       <td align="center" width="20%">
+                           {%if station.reseaux | length > 1 %}  
+                               <select id="criteres_reseau_{{station.station.ouvFoncId}}" name="criteres_reseau_{{station.station.ouvFoncId}}" class="form-control input-small" placeholder="Reseau">
+                               {% else %}
+                                   <select id="criteres_reseau_{{station.station.ouvFoncId}}" readonly name="criteres_reseau_{{station.station.ouvFoncId}}" class="form-control input-small" placeholder="Reseau">  
+                                   {% endif %}
+                                   <option value=""></option>
+                                   {%if station.reseaux | length%}  
+                                       {% for reseau in station.reseaux %}
+                                           {%if reseau.cocher == 'O' %}
+                                               <option  value="{{ reseau.reseau.groupementId }}" selected="selected">{{ reseau.reseau.nomRsx }}</option>  
+                                           {%else %}
+                                               <option  value="{{ reseau.reseau.groupementId }}" >{{ reseau.reseau.nomRsx }}</option>
+                                           {% endif %}
+                                       {% endfor %}
+                                   {%endif%}
+                               </select>     
+                       </td>
+                   </tr>
+            {% else %}
+                {% if station.cocher == 'O' %}
+                    <tr>
+                        <td>
+                            <a  href="{{ station.lien }}" target="_blank" title="Localisation">
+                                {{ station.station.code }}
+                            </a>
+                        </td>
+                        {% if station.autreLot | length %}
+                            <td id="idTd_{{ station.station.ouvFoncId }}" class="warning">
+                                {{ station.station.libelle }}
+                                <a  href="{{ station.lienAutreLot }}" target="_blank" title="Voir cette porgrammation">&nbsp;(existe sur la programmtion  {{ station.autreLot.anneeProg }} version {{ station.autreLot.version }} du lot : {{ station.autreLot.lot.nomLot }}&nbsp;<i class="fa fa-folder-open fa-lg fa-fw"></i>)</a>
+                            </td>
+                        {% else %}
+                            <td>{{ station.station.libelle }}</td>
+                        {% endif %}
+                        <td>{{ station.commune.libelle }}</td>
+                        <td>{{ station.station.codeMasdo }} </td>
+                        {% if lot.codeMilieu.categorieMilieu == 'R' %}
+                            <td>{{ station.station.nomCoursEau }} </td>
+                        {% endif %}
+                        <td align="center" width="20%">
+                            <select id="criteres_reseau_{{station.station.ouvFoncId}}" readonly name="criteres_reseau_{{station.station.ouvFoncId}}" class="form-control input-small" placeholder="Reseau">  
+                                <option value=""></option>
+                                {% for reseau in station.reseaux %}
+                                    {%if reseau.cocher == 'O' %}
+                                        <option  value="{{ reseau.reseau.groupementId }}" selected="selected">{{ reseau.reseau.nomRsx }}</option>  
+                                    {%else %}
+                                        <option  value="{{ reseau.reseau.groupementId }}" >{{ reseau.reseau.nomRsx }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>     
+                        </td>
+                    </tr>
+                {% endif %}                                                    
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+
+

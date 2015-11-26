@@ -1,0 +1,83 @@
+{% extends "AeagDecBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+       <li>
+         <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+       </li>
+       <li class="active">
+          <a href="{{ path('AeagDecBundle_admin_listeFiliere') }}">Codes filières</a>  
+       </li>
+       <li class="active">Nouveau</li> 
+{% endblock breadcrumb %}
+       
+{%block panel_heading %}
+            <h3 class="page-title">
+                Ajout d'un code filière
+            </h3>
+{%endblock panel_heading %}
+
+{% block content %}
+
+<div class="col-xs-offset-3 col-xs-8">
+    <form role="form" action="{{ path('AeagDecBundle_admin_filiere_ajouter') }}" {{ form_enctype(form) }} method="POST">
+       
+      {% spaceless %}
+            {% if not form.vars.valid %}
+                    <div class="alert alert-danger">
+                       {% for children in form.children %}
+                            {% if not children.vars.valid %}
+                                {{ form_errors(children) }}
+                           {% endif %}
+                        {% endfor %}
+                    </div>
+            {% endif %}
+        {% endspaceless %}
+      
+    
+        <div class="form-group">
+            <label for="majFiliere_code" class="required">Code : </label>
+           {% if form_errors(form.code) %}
+                 <div class="input-group has-error has-feedback">
+           {% else %}
+                  <div class="input-group">
+           {% endif %}
+                   <span class="input-group-addon"><i class="fa fa-code"></i><i class="fa fa-asterisk text-danger"></i></span>
+                   {{ form_widget(form.code, { 'attr': {'class': 'form-control', 'placeholder': 'Code'} }) }}
+                 </div>
+          </div>
+            
+          <div class="form-group">
+            <label for="majFiliere_libelle" class="required">Libellé : </label>
+           {% if form_errors(form.libelle) %}
+                 <div class="input-group has-error has-feedback">
+           {% else %}
+                  <div class="input-group">
+           {% endif %}
+                   <span class="input-group-addon"><i class="fa fa-comment"></i><i class="fa fa-asterisk text-danger"></i></span>
+                   {{ form_widget(form.libelle, { 'attr': {'class': 'form-control', 'placeholder': 'Libellé'} }) }}
+                 </div>
+          </div>  
+            
+          <div class="form-group">
+            <label for="majFiliere_aidable" class="required">Aidable : </label>
+           {% if form_errors(form.aidable) %}
+                 <div class="input-group has-error has-feedback">
+           {% else %}
+                  <div class="input-group">
+           {% endif %}
+                   <span class="input-group-addon"><i class="fa fa-unlock"></i><i class="fa fa-asterisk text-danger"></i></span>
+                   {{ form_widget(form.aidable, { 'attr': {'class': 'form-control', 'placeholder': 'Aidable'} }) }}
+                 </div>
+          </div>  
+              
+         {{ form_rest(form) }}
+    
+       <div class="btn-group pull-right">
+        <button type="submit" class="btn btn-success  pull-right" value="Ajouter">Ajouter</button>
+        <a class="btn btn-danger" href="{{ path('AeagDecBundle_admin_listeFiliere') }}"><i class="fa fa-power-off"></i> Retour</a> 
+       </div>
+        
+    </form>
+</div>
+
+{% endblock content %}

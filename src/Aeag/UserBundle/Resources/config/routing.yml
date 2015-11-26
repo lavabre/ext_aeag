@@ -1,0 +1,52 @@
+AeagUserBundle_compte_show:
+    path: /compte
+    defaults: { _controller: AeagUserBundle:Compte:show}
+    
+AeagUserBundle_compte_edit:
+    path: /compte/edit
+    defaults: { _controller: AeagUserBundle:Compte:edit}
+
+AeagUserBundle_User:
+    path:  /Liste/{role}
+    defaults: { _controller: AeagUserBundle:User:index, role : null}
+    requirements:
+        methods:  GET
+        
+
+AeagUserBundle_User_show:
+    path:  /consultation/{id}
+    defaults: { _controller: "AeagUserBundle:User:show" }
+
+AeagUserBundle_User_new:
+    path:  /nouveau
+    defaults: { _controller: "AeagUserBundle:User:new" }
+
+AeagUserBundle_User_create:
+    path:  /creation
+    defaults: { _controller: "AeagUserBundle:User:create" }
+    requirements: { methods: post }
+
+AeagUserBundle_User_edit:
+    path:  /maj/{id}
+    defaults: { _controller: "AeagUserBundle:User:edit" }
+
+AeagUserBundle_User_update:
+    path:  /modification/{id}
+    defaults: { _controller: "AeagUserBundle:User:update" }
+    requirements:
+        methods:  GET|POST
+
+AeagUserBundle_User_delete:
+    path:  /suppression/{id}
+    defaults: { _controller: "AeagUserBundle:User:delete" }
+    requirements:
+        methods:  GET|POST
+        
+AeagUserBundle_ChangePassword:
+    path:  /change-password
+    defaults: { _controller: "AeagUserBundle:ChangePassword:ChangePassword" }
+    requirements:
+        methods:  GET|POST
+
+
+

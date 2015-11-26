@@ -1,0 +1,28 @@
+{%if groupes | length%}  
+    {% for groupe in groupes %}
+              <td align="center">
+                <div class="checbox">
+                     {% if groupe.cocher == 'O' %}
+                          <input type="checkbox" id="check_{{ groupe.groupe.id }}" name="check[]" value="{{groupe.groupe.id}}" checked="checked">
+                     {% else %}    
+                          <input type="checkbox" id="check_{{ groupe.groupe.id }}" name="check[]" value="{{groupe.groupe.id}}">
+                     {% endif %}
+                </div><!-- /input-group -->
+             </td> 
+           <td>{{ groupe.groupe.codeGrp}}</td>
+            <td>{{ groupe.groupe.libelleGrp}}</td>
+            <td>{{ groupe.groupe.typeGrp }}</td>
+            <td>{% if groupe.groupe.support | length %}
+                  {{ groupe.groupe.support.nomSupport }}
+                {% endif %}
+            </td>
+            <td align="center">
+                {% if groupe.parametres | length %}
+                  <a class="btn btn-info" data-toggle="modal" href="#modal_{{ groupe.groupe.id }}" title="Paramètres">
+                      <i class="fa fa-eye"></i>
+                  </a>
+               {% endif %}
+            </td>
+
+    {% endfor %}
+{%endif %}

@@ -1,0 +1,25 @@
+Bonjour {{ demande.nom }} {{ demande.prenom }},
+
+Nous accusons réception de votre demande suivante :
+
+   organisme   : {{ organisme.organisme }}
+   
+   département : {{ demande.dept }}
+   
+   Thème       : {{ theme.theme }}
+   
+   Objet       : {{ demande.objet }}
+   
+   {{ demande.corps }}
+               
+
+Celle-ci sera traitée avant le {{ demande.dateEcheance |date("d-m-Y") }}.
+
+Cordialement.
+
+
+Agence de l'eau Adour-Garonne
+90 rue du Férétra
+CS 87801
+31078 Toulouse Cedex 4
+Tel 05 61 36 37 87

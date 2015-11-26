@@ -1,0 +1,43 @@
+AeagSqeBundle_referentiel_ref_corres_producteurs:
+    path:  /producteurs
+    defaults: { _controller: AeagSqeBundle:ReferentielAeag:pgRefCorresProducteurs }
+    
+AeagSqeBundle_referentiel_ref_corres_prestataires:
+    path:  /prestataires
+    defaults: { _controller: AeagSqeBundle:ReferentielAeag:pgRefCorresPrestataires }
+    
+AeagSqeBundle_referentiel_pg_ref_station_mesures:
+    path:  /stations
+    defaults: { _controller: AeagSqeBundle:ReferentielAeag:pgRefStationMesures} 
+    
+AeagSqeBundle_referentiel_pg_ref_station_mesure_pg_ref_site_prelevements:
+    path:  /station/site_prelevements/{pgRefStationMesureOuvFoncId}
+    defaults: { _controller: AeagSqeBundle:ReferentielAeag:pgRefSationMesurePgRefSitePrelevements, pgRefStationMesureOuvFoncId:null }
+    
+AeagSqeBundle_referentiel_pg_ref_station_mesure_pg_ref_reseau_mesures:
+    path:  /station/reseau_mesures/{pgRefStationMesureOuvFoncId}
+    defaults: { _controller: AeagSqeBundle:ReferentielAeag:pgRefStationMesurePgRefReseauMesures, pgRefStationMesureOuvFoncId:null }
+    
+AeagSqeBundle_referentiel_pg_ref_reseau_mesures:
+    path:  /reseaux
+    defaults: { _controller: AeagSqeBundle:ReferentielAeag:pgRefReseauMesures }  
+    
+AeagSqeBundle_referentiel_pg_ref_reseau_mesure_pg_ref_station_mesures:
+    path:  /reseau/stations/{pgRefReseauMesureId}
+    defaults: { _controller: AeagSqeBundle:ReferentielAeag:pgRefReseauMesurePgRefStationMesures, pgRefReseauMesureId:null } 
+    
+AeagSqeBundle_referentiel_pg_ref_reseau_mesure_pg_ref_station_mesure_pg_ref_site_prelevements:
+    path:  /reseau/station/site_prelevements/{pgRefReseauMesureId}/{pgRefStationMesureOuvFoncId}
+    defaults: { _controller: AeagSqeBundle:ReferentielAeag:pgRefReseauMesurePgRefSationMesurePgRefSitePrelevements, pgRefReseauMesureId:null, pgRefStationMesureOuvFoncId:null }
+    
+    
+AeagSqeBundle_referentiel_pg_ref_site_prelevement:
+    path:  /site_prelevements
+    defaults: { _controller: AeagSqeBundle:ReferentielAeag:pgRefSitePrelevements }  
+    
+AeagSqeBundle_referentiel_pg_ref_site_prelevement_pg_ref_station_mesures:
+    path:  /site_prelevement/stations/{pgRefSitePrelevementCode}/{pgRefSitePrelevementNom}
+    defaults: { _controller: AeagSqeBundle:ReferentielAeag:pgRefSitePrelevementPgRefStationMesures, pgRefSitePrelevementCode:null, pgRefSitePrelevementNom:null }
+    
+
+    

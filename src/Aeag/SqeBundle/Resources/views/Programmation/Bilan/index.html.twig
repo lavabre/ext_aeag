@@ -1,0 +1,359 @@
+{% extends "AeagSqeBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+               <li>
+                   <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+               </li>
+               <li>
+                    <a href="{{ path('Aeag_sqe_programmation_lots', {'action': action}) }}">Critères</a> 
+               </li>
+                <li>
+                        <a href="{{ path('AeagSqeBundle_programmation_lot_retour', {'action': action}) }}">Lots</a> 
+                </li>
+                <li>
+                       <a href="{{ path('AeagSqeBundle_programmation_stations', {'action': action, 'maj': maj, 'lotan': lotan.id})}}">Stations</a> 
+                </li>
+               <li>
+                      <a href="{{ path('AeagSqeBundle_programmation_groupes', {'action': action, 'maj': maj, 'lotan': lotan.id})}}">Groupes de parametres</a> 
+                </li>
+               <li>
+                     <a href="{{ path('AeagSqeBundle_programmation_periodes', {'action': action, 'maj': maj, 'lotan': lotan.id})}}">Périodes</a> 
+                </li>
+                <li class="active">
+                          Bilan
+                 </li>
+ {% endblock breadcrumb %}
+
+{% block modal %}
+  
+     <div class="modal fade" id="val" tabindex="-1" role="dialog" aria-labelledby="valLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title" id="valLabel">Soumission à la validation de la programmation {{ campagne }} version {{ lotan.version }} du lot : {{ lotan.lot.nomLot }} </h4>
+                        </div>
+                        <div class="modal-body">
+                            <h4>Cliquer sur le bouton vert pour soumettre à la validation  la programmation {{ campagne }} version {{ lotan.version }} du lot : {{ lotan.lot.nomLot }}</h4>
+                            <br/><br/>
+                            <div class="alert alert-danger">Attention : Une fois soumise, la programmation de ce lot ne sera plus modifiable</div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
+                            <a  id="idSupprimerGroupe"  class="btn btn-success"  href="{{ path('AeagSqeBundle_programmation_lot_soumettre', {  'lotAnId': lotan.id, 'action': action, 'maj': maj }) }}" title="Soumettre à la validation">
+                                <i class="fa fa-check"> Soumettre à la validation</i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>  
+    
+{% endblock modal %}
+
+
+{%block panel_heading %}
+    <h3 class="page-title">
+        {% if action == 'P'  and maj != 'V' %}
+            Bilan de la programmation {{ campagne }} version {{ lotan.version }} du lot : {{ lotan.lot.nomLot }}
+        {% else %}
+            Consultation du bilan de la programmation {{ campagne }} version {{ lotan.version }} du lot : {{ lotan.lot.nomLot }}
+        {% endif %}
+        {# <a class="btn btn-primary pull-right" href="{{ path('AeagDecBundle_admin_pdfListeDechets') }}" title="Imprimer la lister"> 
+                <i class="fa fa-print"> Imprimer la liste</i>
+         </a>#}
+    </h3>
+{%endblock panel_heading %}
+
+
+
+{%block content %}
+    <div class="form-body">
+        {% if messages | length %}
+            <div class="alert alert-warning alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                {% for message in messages %}
+                    <strong>{{ message }}</strong><br/>
+                {% endfor %}   
+            </div>
+        {% endif %} 
+
+        <div class="row">
+            <div class="col-xm-12 text-center">
+                <blockquote>
+                   <p>
+                   Stations : {% if controle.station.nbOk == controle.station.nb %}
+                                  <span id="idBt" class="btn btn-success">
+                                {% else %}
+                                   <span id="idBt" class="btn btn-danger">
+                                {% endif %}
+                                    <a href="{{ path('AeagSqeBundle_programmation_stations', { 'action': action, 'maj': maj, 'lotan': lotan.id })}}">
+                                        <span class="badge">
+                                            {{ controle.station.nbOk  |  number_format(0,'.',' ')}}/{{ controle.station.nb  |  number_format(0,'.',' ')}}
+                                         </span>
+                                 </a>
+                               </span>
+                    Groupes : {% if controle.groupe.nbOk ==  controle.groupe.nb %}
+                                  <span id="idBt" class="btn btn-success">
+                                {% else %}
+                                   <span id="idBt" class="btn btn-danger">
+                                {% endif %}
+                                 <a href="{{ path('AeagSqeBundle_programmation_groupes', { 'action': action, 'maj': maj, 'lotan': lotan.id })}}">
+                                        <span class="badge">
+                                            {{ controle.groupe.nbOk  |  number_format(0,'.',' ')}}/{{ controle.groupe.nb  |  number_format(0,'.',' ')}}
+                                         </span>
+                                 </a>
+                               </span>
+                    Périodes : {% if controle.periode.nbOk ==  controle.periode.nb %}
+                                   <span id="idBt" class="btn btn-success">
+                                {% else %}
+                                   <span id="idBt" class="btn btn-danger">
+                                {% endif %}
+                                    <a href="{{ path('AeagSqeBundle_programmation_periodes', { 'action': action, 'maj': maj, 'lotan': lotan.id })}}">
+                                        <span class="badge">
+                                            {{ controle.periode.nbOk  |  number_format(0,'.',' ')}}/{{  controle.periode.nb  |  number_format(0,'.',' ')}}
+                                         </span>
+                                    </a>
+                               </span>
+                    </p>
+                </blockquote>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-xm-12">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <ul  class="nav nav-pills nav-justified" role="tablist">
+                            <li class="active"><a href="#tab_1_1" data-toggle="tab"><h4>Stations </h4></a></li>
+                            <li class=""><a href="#tab_1_2" data-toggle="tab"><h4>Périodes </h4></a></li>
+                            <li class=""><a href="#tab_1_3" data-toggle="tab"><h4>Prestataires </h4></a></li>
+                        </ul>
+                        <div  class="tab-content">
+                           <div class="tab-pane fade active in" id="tab_1_1">
+                               {{ render(controller("AeagSqeBundle:ProgrammationBilan:station", {'action': action, 'maj': maj, 'lotan': lotan.id})) }}
+                            </div>
+                            <div class="tab-pane fade" id="tab_1_2">
+                               {{ render(controller("AeagSqeBundle:ProgrammationBilan:periode", {'action': action, 'maj': maj, 'lotan': lotan.id})) }}
+                            </div>
+                            <div class="tab-pane fade" id="tab_1_3">
+                               {{ render(controller("AeagSqeBundle:ProgrammationBilan:prestataire", {'action': action, 'maj': maj, 'lotan': lotan.id})) }}
+                            </div>
+                           
+                        </div>
+                            <div class="row">
+                               <div class="col-md-10 pull-left text-info">
+                                   <ul class="list-inline">
+                                        <li><a class="btn btn-success btn-xs" href="#" title="Programmation renseignée"><i class="fa" ></i></a> Programmation validée</li>
+                                        <li><a class="btn btn-info btn-xs" href="#" title="programmation complémentaire"><i class="fa"></i></a> Autre programmation complétée</li>
+                                        <li><a class="btn btn-primary btn-xs" href="#" title="programmation complémentaire"><i class="fa"></i></a> Autre programmation ignorée</li>
+                                        <li><a class="btn btn-danger btn-xs" href="#" title="Programmation non renseignée"><i class="fa"></i></a> Programmation non renseignée</li>
+                                        {% if  lotan.phase.codePhase > 'P30' %}
+                                         <li><a class="btn btn-info btn-xs" href="#" title="Programmation reportée sur la version suivante"><i class="fa"></i></a> Programmation reportée sur la version {{ lotan.version + 1}}</li>
+                                        {% endif %}
+                                    </ul>  
+                               </div>
+                            </div>
+                            <div class="form-actions fluid center">
+                                <div class="col-md-offset-5 col-md-9">
+                                       <a id="idValider" class="btn btn-primary"  href="{{ path('AeagSqeBundle_programmation_lot_retour', { 'action': action, 'maj': maj, 'lotan': lotan.id }) }}" title="Retour">
+                                            <i class="fa fa-home"> Retour  </i>
+                                        </a>
+                                        {% if action == 'P'  and maj != 'V' %}
+                                            {%if  is_granted('ROLE_PROGSQE') %}
+                                                {% if lotan.phase.codePhase == 'P20' %}
+                                                     <a class="btn btn-success" data-toggle="modal" href="#val" title="Soumettre à la validation>
+                                                         <i class="fa fa-lock"> Soumettre à la validation</i>
+                                                     </a>
+                                                     
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endif %}
+                                 </div>
+                            </div>           
+
+                            <div id="idCache"></div>
+
+                     </div>
+                </div>
+            </div>
+        </div>
+     </div> 
+                
+     {% if action == 'P'  and maj != 'V' %}
+     <div class="progress" style="height: 50px;padding: 5px 5px;">
+                   {% if controle.station.ok == 1 %}
+                            <div class="progress-bar progress-bar-success" style="width: 25%;font-size: 16px;line-height: 35px;">
+                                    <a id="idSuivantStation" href="{{ path('AeagSqeBundle_programmation_stations', {'action': action, 'maj': maj, 'lotan': lotan.id})}}">Stations
+                                        <span class="btn btn-success">
+                                           <span class="badge">
+                                              {{ controle.station.nb  |  number_format(0,'.',' ')}}
+                                           </span>
+                                       </span>
+                                    </a>
+                              </div>
+                    {% else %}
+                            <div class="progress-bar progress-bar-danger" style="width: 25%;font-size: 16px;line-height: 35px;">
+                                    <a id="idSuivantStation" href="{{ path('AeagSqeBundle_programmation_stations', {'action': action, 'maj': maj, 'lotan': lotan.id})}}">Stations
+                                        <span class="btn btn-danger">
+                                             <span class="badge">
+                                                 {{ controle.station.nb  |  number_format(0,'.',' ')}}
+                                              </span>
+                                         </span>
+                                    </a>
+                             </div>
+                    {% endif %}
+                    {% if  controle.groupe.ok == 1 %}
+                            <div class="progress-bar progress-bar-success" style="width: 25%;font-size: 16px;line-height: 35px;">
+                                    <a id="idSuivantGroupe" href="{{ path('AeagSqeBundle_programmation_groupes', {'action': action, 'maj': maj, 'lotan': lotan.id})}}">Groupes de parametres
+                                        <span class="btn btn-success">
+                                           <span class="badge">
+                                              {{ controle.groupe.nb  |  number_format(0,'.',' ')}}
+                                           </span>
+                                       </span>
+                                    </a>
+                            </div>
+                    {% else %}
+                            <div class="progress-bar progress-bar-danger" style="width: 25%;font-size: 16px;line-height: 35px;">
+                                   <a id="idSuivantGroupe" href="{{ path('AeagSqeBundle_programmation_groupes', {'action': action, 'maj': maj, 'lotan': lotan.id})}}">Groupes de parametres
+                                        <span class="btn btn-danger">
+                                             <span class="badge">
+                                                {{ controle.groupe.nbValide  |  number_format(0,'.',' ')}}/{{ controle.groupe.nb  |  number_format(0,'.',' ')}}
+                                              </span>
+                                         </span>
+                                   </a>
+                             </div>
+                    {% endif %}
+                    {% if controle.periode.ok == 1 %}
+                            <div class="progress-bar progress-bar-success" style="width: 25%;font-size: 16px;line-height: 35px;">
+                                    <a id="idSuivantPeriode" href="{{ path('AeagSqeBundle_programmation_periodes', {'action': action, 'maj': maj, 'lotan': lotan.id})}}">Périodes
+                                         <span class="btn btn-success">
+                                            <span class="badge">
+                                                {{ controle.periode.nb  |  number_format(0,'.',' ')}}
+                                             </span>
+                                        </span>
+                                    </a> 
+                           </div>
+                      {% else %}
+                            <div class="progress-bar progress-bar-danger" style="width: 25%;font-size: 16px;line-height: 35px;">
+                                    <a id="idSuivantPeriode" href="{{ path('AeagSqeBundle_programmation_periodes', {'action': action, 'maj': maj, 'lotan': lotan.id})}}">Périodes
+                                         <span class="btn btn-danger">
+                                            <span class="badge">
+                                                {{ controle.periode.nb  |  number_format(0,'.',' ')}}
+                                             </span>
+                                        </span>
+                                     </a> 
+                           </div>
+                      {% endif %}
+                      {% if controle.station.nbOk == controle.station.nb and  controle.groupe.nbOk == controle.groupe.nb and controle.periode.nbOk == controle.periode.nb %}
+                            <div class="progress-bar progress-bar-success progress-bar-striped active" style="width: 25%;font-size: 16px;line-height: 35px;">
+                                    <a id="idSuivantBilan" href="#">Bilan</a> 
+                           </div>
+                       {% else %}
+                            <div class="progress-bar progress-bar-danger progress-bar-striped active" style="width: 25%;font-size: 16px;line-height: 35px;">
+                                    <a id="idSuivantBilan" href="#">Bilan</a> 
+                           </div>
+                       {% endif %}
+             </div>
+     {% endif %}
+
+
+{%endblock content %}
+
+{% block scripts %}
+
+    jQuery(document).ready(function() {
+
+    $('#idCache').hide();
+    
+    
+    // DataTable
+     $('#idTable_station').DataTable(
+        {    "ordering": false,
+             "paging" :  true,
+            "oLanguage": {
+            "sSearch": "Filtre",
+            "sFirst": "1ere page",
+            "sLast": "Dernière page",
+            "sNext": "Prochaine page",
+            "sPrevious": "Page précédente",
+            "EmptyTable": "Pas de données",
+            "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+            "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+            "sZeroRecords": "Pas d'enregistrement à afficher",
+            "sInfoEmpty": "Pas d'enregistrement à afficher",
+            "sInfoThousands": " ",
+            "sLengthMenu": 'Afficher <select>' +
+                '<option value="10">10</option>' +
+                '<option value="20">20</option>' +
+                '<option value="30">30</option>' +
+                '<option value="40">40</option>' +
+                '<option value="50">50</option>' +
+                '<option value="-1">Tous</option>' +
+                '</select> enregistrements',
+            "sPaginationType": "full_numbers"
+        }
+    }
+    );
+    
+     // DataTable
+     $('#idTable_prestataire').DataTable(
+        {   "ordering": false,
+            "paging" :  true,
+            "oLanguage": {
+            "sSearch": "Filtre",
+            "sFirst": "1ere page",
+            "sLast": "Dernière page",
+            "sNext": "Prochaine page",
+            "sPrevious": "Page précédente",
+            "EmptyTable": "Pas de données",
+            "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+            "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+            "sZeroRecords": "Pas d'enregistrement à afficher",
+            "sInfoEmpty": "Pas d'enregistrement à afficher",
+            "sInfoThousands": " ",
+            "sLengthMenu": 'Afficher <select>' +
+                '<option value="10">10</option>' +
+                '<option value="20">20</option>' +
+                '<option value="30">30</option>' +
+                '<option value="40">40</option>' +
+                '<option value="50">50</option>' +
+                '<option value="-1">Tous</option>' +
+                '</select> enregistrements',
+            "sPaginationType": "full_numbers"
+        }
+    }
+    );
+   
+    
+    // DataTable
+     $('#idTable_periode').DataTable(
+        {    "ordering": false,
+            "paging" :  true,
+            "oLanguage": {
+            "sSearch": "Filtre",
+            "sFirst": "1ere page",
+            "sLast": "Dernière page",
+            "sNext": "Prochaine page",
+            "sPrevious": "Page précédente",
+            "EmptyTable": "Pas de données",
+            "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+            "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+            "sZeroRecords": "Pas d'enregistrement à afficher",
+            "sInfoEmpty": "Pas d'enregistrement à afficher",
+            "sInfoThousands": " ",
+            "sLengthMenu": 'Afficher <select>' +
+                '<option value="10">10</option>' +
+                '<option value="20">20</option>' +
+                '<option value="30">30</option>' +
+                '<option value="40">40</option>' +
+                '<option value="50">50</option>' +
+                '<option value="-1">Tous</option>' +
+                '</select> enregistrements',
+            "sPaginationType": "full_numbers"
+        }
+    }
+    );
+    
+   });
+
+{% endblock scripts %}

@@ -1,0 +1,15 @@
+<select class="form-control" id="MajProducteur_ville" name="MajProducteur_ville" required="required" >    
+   <option value=""></option> 
+   {%for ville in villes %}
+      {% if cp %}
+            {% if acheminement == ville.acheminement %}
+                   <option value="{{ville.acheminement}}" selected>{{ ville.acheminement }}</option> 
+            {% else %}
+                   <option value="{{ville.acheminement}}">{{ville.acheminement }}</option> 
+            {% endif %}
+       {% else %}
+            <option value="{{ville.acheminement}}">{{ ville.acheminement }}</option> 
+       {% endif %}
+   {% endfor %}
+</select>
+   

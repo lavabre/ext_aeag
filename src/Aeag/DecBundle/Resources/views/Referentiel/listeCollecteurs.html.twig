@@ -1,0 +1,105 @@
+{% extends "AeagDecBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+          <li>
+          <i class="icon-home"></i>
+          <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+       </li>
+      <li class="active">
+           Collecteurs
+       </li>
+ {% endblock breadcrumb %}
+       
+ {%block panel_heading %}
+        <h3>
+           Liste des collecteurs
+           <a class="btn btn-primary pull-right" href="{{ path('AeagDecBundle_admin_pdfListeCollecteurs') }}" title="Imprimer la lister"> 
+               <i class="fa fa-print"> Imprimer la liste</i>
+           </a>
+       </h3>
+  {%endblock panel_heading %}
+
+  {%block content %}
+        <div class="row">
+          <div class="col-md-12">
+              <div class="small ">
+                  <table class="table table-bordered table-condensed table-advance" id="idTable">
+                        <thead>
+                           <tr>
+                                <th width="1%">Action</th>
+                                <th>Numéro</th>
+                                <th>Siret</th>
+                                <th>Libelle</th>
+                                <th>Correspondants</th>
+                                <th>Déchet aidable</th>
+                             </tr>
+                        </thead>
+                        <tbody>
+                            {% for entity in entities %}
+                                {%if  entity[0].dec == 'N' %}
+                                    <tr style="background-color:#f2dede;">
+                                {%else%}
+                                    <tr>
+                                {%endif%}
+                                     <td nowrap>
+                                       <a class="btn btn-info" href="{{ path('AeagDecBundle_collecteur_consulterCollecteur', { 'id': entity[0].id }) }}"  title="Consulter">
+                                          <i class="fa fa-eye"></i> 
+                                       </a>
+                                        <a class="btn btn-warning" href="{{ path('Aeag_majOuvrage', { 'id': entity[0].id }) }}"  title="Editer">
+                                          <i class="fa fa-edit"></i> 
+                                       </a>
+                                     </td>
+                                    <td>{{ entity[0].numero }}</td>
+                                    <td>{{ entity[0].siret }}</td>
+                                    <td>{{ entity[0].libelle }}</td>
+                                    <td>
+                                    {%if entity[1] %}
+                                        {%for correspondant in entity[1]%}
+                                             {{ correspondant.identifiant }} {{ correspondant.adr1 }} {{ correspondant.adr2 }}
+                                        {%endfor%}
+                                     {%endif%}
+                                    </td>
+                                    <td align="center">{{ entity[0].dec }}</td>
+                                  </tr>
+                             {% endfor %}
+                        </tbody>
+                     </table>
+            </div>
+          </div>
+        </div>
+  {%endblock content%}
+  
+  {% block scripts %}
+     
+       // DataTable
+          var table = $('#idTable').DataTable(
+                      {"stateSave": true,
+                       "oLanguage": {
+                          "sSearch": "Filtre",
+                          "sFirst": "1ere page",
+                          "sLast": "Dernière page",
+                          "sNext": "Prochaine page",
+                          "sPrevious": "Page précédente",
+                          "EmptyTable": "Pas de données",
+                          "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+                          "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+                          "sZeroRecords": "Pas d'enregistrement à afficher",
+                          "sInfoEmpty": "Pas d'enregistrement à afficher",
+                          "sInfoThousands": " ",
+                          "sLengthMenu": 'Afficher <select>' +
+                                  '<option value="10">10</option>' +
+                                  '<option value="20">20</option>' +
+                                  '<option value="30">30</option>' +
+                                  '<option value="40">40</option>' +
+                                  '<option value="50">50</option>' +
+                                  '<option value="-1">Tous</option>' +
+                                  '</select> enregistrements',
+                          "sPaginationType": "full_numbers"
+                      }
+                     }
+                    );
+   {% endblock scripts %}  
+   
+ 
+
+  

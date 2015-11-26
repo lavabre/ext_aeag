@@ -1,0 +1,213 @@
+{% extends "AeagDieBundle::layout.html.twig" %}
+
+{% block contenu %}
+
+
+
+<div align="center">
+   <h1>Mise  à jour de la demande : {{ entity.id }}</H1>
+</div>
+<br>
+
+
+
+<form class="form" action="{{ path('demande_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
+   
+
+      <!-- Les erreurs générales du formulaire. -->
+	 {{ form_errors(edit_form) }}
+
+       
+      
+      
+      <table class="table1" cellspacing="0" width="50%" align="center">
+
+        <caption><h2>Informations personnelles</h2></caption>
+        <tbody>
+            <tr>
+
+                <td align="left" width="15%">{{ form_label(edit_form.nom,'Nom') }}</td>
+                <td width="85%">
+                {% if form_errors(edit_form.nom) | length %}
+                   <span class="relative"> 
+                    {{ form_widget(edit_form.nom, { 'attr': {'class': 'full-width error'} }) }}
+                    <span class="check-error"></span>
+                {% else %}
+                  {{ form_widget(edit_form.nom, { 'attr': {'class': 'full-width'} }) }}
+                {% endif %}       
+                </td>
+                <td  nowrap><div class="symfony-form-errors">{{ form_errors(edit_form.nom) }}</div></td>
+                    
+            </tr>
+            <tr>
+
+                <td align="left">{{ form_label(edit_form.prenom, "Prénom") }}</td>
+                <td width="85%">
+                {% if form_errors(edit_form.prenom) | length %}
+                   <span class="relative"> 
+                    {{ form_widget(edit_form.prenom, { 'attr': {'class': 'full-width error'} }) }}
+                    <span class="check-error"></span>
+                {% else %}
+                  {{ form_widget(edit_form.prenom, { 'attr': {'class': 'full-width'} }) }}
+                {% endif %}    
+                </td>
+                <td nowrap><div class="symfony-form-errors">{{ form_errors(edit_form.prenom) }}</div></td>
+            </tr>
+
+            <tr>
+
+                <td align="left">{{ form_label(edit_form.organisme, "Organisme") }}</td>
+                <td width="85%">
+                {% if form_errors(edit_form.organisme) | length %}
+                   <span class="relative"> 
+                    {{ form_widget(edit_form.organisme, { 'attr': {'class': 'full-width error'} }) }}
+                    <span class="check-error"></span>
+                {% else %}
+                  {{ form_widget(edit_form.organisme, { 'attr': {'class': 'full-width'} }) }}
+                {% endif %}  
+                </td>
+                <td nowrap><div class="symfony-form-errors">{{ form_errors(edit_form.organisme) }}</div></td>
+            </tr>
+                <tr>
+
+                <td align="left" width="15%">{{ form_label(form.dept,'Département') }}</td>
+                <td width="85%">
+                {% if form_errors(form.dept) | length %}
+                   <span class="relative"> 
+                    {{ form_widget(form.dept, { 'attr': {'class': 'full-width error'} }) }}
+                    <span class="check-error"></span>
+                {% else %}
+                  {{ form_widget(form.dept, { 'attr': {'class': 'full-width'} }) }}
+                {% endif %}       
+                </td>
+                <td  nowrap><div class="symfony-form-errors">{{ form_errors(form.dept) }}</div></td>
+                    
+            </tr>
+            <tr>
+
+                <td align="left">{{ form_label(edit_form.email, "Courriel") }}</td>
+                <td width="85%">
+                {% if form_errors(edit_form.email) | length %}
+                   <span class="relative"> 
+                    {{ form_widget(edit_form.email, { 'attr': {'class': 'full-width error'} }) }}
+                    <span class="check-error"></span>
+                {% else %}
+                  {{ form_widget(edit_form.email, { 'attr': {'class': 'full-width'} }) }}
+                {% endif %}  
+                 </td>
+                <td nowrap><div class="symfony-form-errors">{{ form_errors(edit_form.email) }}</div></td> 
+            </tr>
+        </tbody>
+    </table>
+    <table class="table1" cellspacing="0" width="50%" align="center">
+
+        <caption><h2>Objet</h2></caption>
+        <tbody>
+            <tr>
+
+                <td align="left" width="15%">{{ form_label(edit_form.theme) }}</td>
+                <td width="85%">
+                {% if form_errors(edit_form.theme) | length %}
+                   <span class="relative"> 
+                    {{ form_widget(edit_form.theme, { 'attr': {'class': 'full-width error'} }) }}
+                    <span class="check-error"></span>
+                {% else %}
+                  {{ form_widget(edit_form.theme, { 'attr': {'class': 'full-width'} }) }}
+                {% endif %}  
+                </td>
+                <td nowrap><div class="symfony-form-errors">{{ form_errors(edit_form.theme) }}</div></td>
+            </tr>
+
+            <tr>
+
+                <td align="left">{{ form_label(edit_form.objet, "Objet") }}</td>
+                <td width="85%">
+                {% if form_errors(edit_form.objet) | length %}
+                   <span class="relative"> 
+                    {{ form_widget(edit_orm.objet, { 'attr': {'class': 'full-width error'} }) }}
+                    <span class="check-error"></span>
+                {% else %}
+                  {{ form_widget(edit_form.objet, { 'attr': {'class': 'full-width'} }) }}
+                {% endif %}  
+                </td>
+                <td nowrap><div class="symfony-form-errors">{{ form_errors(edit_form.objet) }}</div></td>
+            </tr>
+            <tr>
+                <td align="left">{{ form_label(edit_form.corps, "Corps") }}</td>
+                <td width="85%">
+                {% if form_errors(edit_form.corps) | length %}
+                   <span class="relative"> 
+                    {{ form_widget(edit_form.corps, { 'attr': {'rows':5, 'class': 'full-width error'} }) }}
+                    <span class="check-error"></span>
+                {% else %}
+                  {{ form_widget(edit_form.corps, { 'attr': {'rows':5, 'class': 'full-width'} }) }}
+                {% endif %}  
+                </td>
+                <td nowrap><div class="symfony-form-errors">{{ form_errors(edit_form.corps) }}</div></td>
+            </tr>
+        </tbody>
+    </table>
+
+    {{ form_rest(edit_form) }}</td>
+
+    <div  align="center">
+      <button   class="button blue" type="submit">Modifier la demande</button>
+    </div>
+
+</form>
+<br>
+ <table align="center">
+    <tr>
+        <td>
+            <a class="button blue" href="{{ path('demande') }}">
+                <img src="{{ asset('bundles/aeagdie/images/icons/web-app/24/back.png') }}">  
+                Retour
+            </a>
+        </td>
+    </tr>
+</table>
+
+{% endblock %}
+{% block javascripts %}
+
+<script src="{{ asset('bundles/aeagdie/js/die.js') }}" type="text/javascript"></script>
+
+<script>
+
+		$(".loading").hide();
+
+		$("#aeag_diebundle_demandetype_theme").change(function() {
+
+			$(".loading").show();
+			
+			var id_theme = $("#aeag_diebundle_demandetype_theme").val();
+			var DATA = 'id_theme=' + id_theme;
+		
+			$.ajax({
+				methode: "POST",
+				mode: "abort",
+				dataType: "html",
+			    url:  "{{ path('demande_listesoustheme') }}" ,
+				data: DATA,
+			    cache: false,
+			    success : function(response) {
+		
+			    	  $("#aeag_diebundle_demandetype_sousTheme").find("option").remove();
+		             // $.each(response, function(i, item) {
+			         //   $("#aeag_diebundle_demandetype_sousTheme").append(new Option(item, i));
+		             // });
+			           $("#aeag_diebundle_demandetype_sousTheme").html(response);
+			
+			           $(".loading").hide();
+				}
+			});
+			
+			 return false;
+				
+		
+		})
+
+		
+	</script>
+
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends "AeagUserBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+<li><a href="{{ path('fos_user_profile_show') }}">Compte</a></li> 
+<li class="active">Mise à jour</li> 
+{% endblock breadcrumb %}
+
+{% block fos_user_content %}
+{% include "AeagUserBundle:Profile:edit_content.html.twig" %}
+{% endblock fos_user_content %}

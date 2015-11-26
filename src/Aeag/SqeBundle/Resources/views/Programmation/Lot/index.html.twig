@@ -1,0 +1,386 @@
+{% extends "AeagSqeBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+         <li>
+            <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+         </li>
+         <li class="active">
+                  Critères
+         </li>
+ {% endblock breadcrumb %}
+
+
+{%block panel_heading %}
+    <h3 class="page-title">
+        Critères de sélection
+    </h3>
+{%endblock panel_heading %}
+
+
+{%block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="small">
+                <form action="{{ path('AeagSqeBundle_programmation_lot_resultat', { 'action':action }) }}" class="form-horizontal" id="idForm" method="post" {{ form_enctype(form) }}>
+                    <div class="hide">
+                        {{ form_rest(form) }}
+                    </div>
+                    <div class="form-body">
+                        {% if not form.vars.valid %}
+                            <div class="alert alert-danger">
+                                <button class="close" data-dismiss="alert"></button>
+                                <ul>
+                                    {% for child in form if not child.vars.valid %}
+                                        <li>
+                                            {% if child.vars.compound and not child.vars.valid %}
+                                                {{ child.vars.label|trans|capitalize }}:
+                                                {{ forms.display_error(child) }}
+                                            {% else %}
+                                                <h5>
+                                                    <a href="#{{ child.vars.id }}">
+                                                        {{ child.vars.label|trans|capitalize }}:
+                                                    </a>
+                                                    <small>
+                                                        {% for error in child.vars.errors %}
+                                                            {{ error.message|capitalize }}
+                                                        {% endfor %}
+                                                    </small>
+                                                </h5>
+                                            {% endif %}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div id="idCriteres"> 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions fluid center">
+                        <div class="col-md-offset-3 col-md-9">
+                            <button type="submit" id="idSubmit" class="btn btn-success">
+                                {% if action == 'P'%}
+                                    <i class="fa fa-search"> Rechercher</i>
+                                {% else %}
+                                    <i class="fa fa-search"> Rechercher</i>
+                                {% endif %}
+                            </button>
+                            <a id="idInitialiser" class="btn btn-danger" href="#">
+                                <i class="fa fa-refresh"> Initialiser</i>
+                            </a>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+{% block scripts %}
+    
+    
+         {% if app.session.get('critWebuser')   %}
+           $('#filtre_criteres_webuser option:selected').removeAttr('selected');
+           var valeur = {{ app.session.get('critWebuser') }};
+           $("#filtre_criteres_webuser option[value='" + valeur + "']").attr('selected','selected');
+           document.getElementById('criteres_webuser').value=valeur;
+      {% endif %}
+    
+      {% if app.session.get('critMarche')   %}
+           $('#filtre_criteres_marche option:selected').removeAttr('selected');
+           var valeur = {{ app.session.get('critMarche') }};
+           $("#filtre_criteres_marche option[value='" + valeur + "']").attr('selected','selected');
+           document.getElementById('criteres_marche').value=valeur;
+      {% endif %}
+          
+      {% if app.session.get('critTitulaire')   %}
+           $('#filtre_criteres_titulaire option:selected').removeAttr('selected');
+           var valeur = {{ app.session.get('critTitulaire') }};
+           $("#filtre_criteres_titulaire option[value='" + valeur + "']").attr('selected','selected');
+           document.getElementById('criteres_titulaire').value=valeur;
+      {% endif %}
+      
+     {% if app.session.get('critZoneGeoRef')   %}
+           $('#filtre_criteres_zoneGeoRef option:selected').removeAttr('selected');
+           var valeur = {{ app.session.get('critZoneGeoRef') }};
+           $("#filtre_criteres_zoneGeoRef option[value='" + valeur + "']").attr('selected','selected');
+           document.getElementById('criteres_zoneGeoRef').value=valeur;
+      {% endif %}
+          
+      {% if app.session.get('critCatMilieu')   %}
+           $('#filtre_criteres_catMilieu option:selected').removeAttr('selected');
+           var valeur = '{{ app.session.get('critCatMilieu') }}';
+           $("#filtre_criteres_catMilieu option[value='" + valeur + "']").attr('selected','selected');
+           document.getElementById('criteres_catMilieu').value=valeur;
+       {% endif %}
+      
+      {% if app.session.get('critTypeMilieu')   %}
+           $('#filtre_criteres_typeMilieu option:selected').removeAttr('selected');
+           var valeur = '{{ app.session.get('critTypeMilieu') }}';
+           $("#filtre_criteres_typeMilieu option[value='" + valeur + "']").attr('selected','selected');
+           document.getElementById('criteres_typeMilieu').value=valeur;
+      {% endif %}
+      
+      {% if app.session.get('critLot')   %}
+           $('#filtre_criteres_lot option:selected').removeAttr('selected');
+           var valeur = {{ app.session.get('critLot') }};
+           $("#filtre_criteres_lot option[value='" + valeur + "']").attr('selected','selected');
+           document.getElementById('criteres_lot').value=valeur;
+      {% endif %}      
+          
+          {% if app.session.get('critPhase')   %}
+           $('#filtre_criteres_phase option:selected').removeAttr('selected');
+           var valeur = {{ app.session.get('critPhase') }};
+           $("#filtre_criteres_phase option[value='" + valeur + "']").attr('selected','selected');
+           document.getElementById('criteres_phase').value=valeur;
+      {% endif %}      
+          
+
+    $(document).on('click', '#idSubmit',function(e){
+    $('#criteres_annee').val($('#filtre_criteres_annee').val());
+    $('#criteres_webuser').val($('#filtre_criteres_webuser option:selected').val());
+    $('#criteres_marche').val($('#filtre_criteres_marche option:selected').val());
+    $('#criteres_titulaire').val($('#filtre_criteres_titulaire option:selected').val());
+    $('#criteres_zoneGeoRef').val($('#filtre_criteres_zoneGeoRef option:selected').val());
+    $('#criteres_catMilieu').val($('#filtre_criteres_catMilieu option:selected').val());
+    $('#criteres_typeMilieu').val($('#filtre_criteres_typeMilieu option:selected').val());
+    $('#criteres_lot').val($('#filtre_criteres_lot option:selected').val());
+    $('#criteres_phase').val($('#filtre_criteres_phase option:selected').val());
+    $('#modalTraitementEncours').modal();
+    });
+
+    var requestData = {
+    annee : $('#criteres_annee').val(),
+    phase : $('#criteres_phase').val(),
+    webuser: $('#criteres_webuser').val(),
+    marche :  $('#criteres_marche option:selected').val(),
+    titulaire :  $('#criteres_titulaire option:selected').val(),
+    zoneGeoRef :  $('#criteres_zoneGeoRef option:selected').val(),
+    catMilieu :  $('#criteres_catMilieu option:selected').val(),
+    typeMilieu :  $('#criteres_typeMilieu option:selected').val(),
+    lot :  $('#criteres_lot option:selected').val()
+    }
+    var url = '{{ path("AeagSqeBundle_programmation_lot_filtre",{"action":  "par1"}) }}';
+    url = url.replace("par1", '{{ action }}');
+    $.get( url, requestData , function( responseData ) { 
+    $("#idCriteres" ).empty().html( responseData ); 
+    });
+
+
+    $(document).on('change','#filtre_criteres_annee',function(){
+    $('#idAttente').show();
+    cache: false  
+    var requestData = {
+    annee : $('#filtre_criteres_annee').val(),
+    phase : $('#filtre_criteres_phase').val(),
+    webuser: $('#filtre_criteres_webuser').val(),
+    marche :  $('#filtre_criteres_marche option:selected').val(),
+    titulaire :  $('#filtre_criteres_titulaire option:selected').val(),
+    zoneGeoRef :  $('#filtre_criteres_zoneGeoRef option:selected').val(),
+    catMilieu :  $('#filtre_criteres_catMilieu option:selected').val(),
+    typeMilieu :  $('#filtre_criteres_typeMilieu option:selected').val(),
+    lot :  $('#filtre_criteres_lot option:selected').val()
+    }
+    var url = '{{ path("AeagSqeBundle_programmation_lot_filtre",{"action":  "par1"}) }}';
+    url = url.replace("par1", '{{ action }}');
+    $.get( url, requestData , function( responseData ) { 
+    $("#idCriteres" ).empty().html( responseData ); 
+    $('#idAttente').hide();
+    });
+    } );  
+
+    $(document).on('change','#filtre_criteres_webuser',function(){
+    $('#idAttente').show();
+    cache: false  
+    var requestData = {
+    annee : $('#filtre_criteres_annee').val(),
+    phase : $('#filtre_criteres_phase').val(),
+    webuser: $('#filtre_criteres_webuser').val(),
+    marche :  $('#filtre_criteres_marche option:selected').val(),
+    titulaire :  $('#filtre_criteres_titulaire option:selected').val(),
+    zoneGeoRef :  $('#filtre_criteres_zoneGeoRef option:selected').val(),
+    catMilieu :  $('#filtre_criteres_catMilieu option:selected').val(),
+    typeMilieu :  $('#filtre_criteres_typeMilieu option:selected').val(),
+    lot :  $('#filtre_criteres_lot option:selected').val()
+    }
+    var url = '{{ path("AeagSqeBundle_programmation_lot_filtre",{"action":  "par1"}) }}';
+    url = url.replace("par1", '{{ action }}');
+    $.get( url, requestData , function( responseData ) { 
+    $("#idCriteres" ).empty().html( responseData ); 
+    $('#idAttente').hide();
+    });
+    } );  
+
+    $(document).on('change','#filtre_criteres_marche',function(){
+    $('#idAttente').show();
+    cache: false  
+    var requestData = {
+    annee : $('#filtre_criteres_annee').val(),
+    phase : $('#filtre_criteres_phase').val(),
+    webuser: $('#filtre_criteres_webuser').val(),
+    marche :  $('#filtre_criteres_marche option:selected').val(),
+    titulaire :  $('#filtre_criteres_titulaire option:selected').val(),
+    zoneGeoRef :  $('#filtre_criteres_zoneGeoRef option:selected').val(),
+    catMilieu :  $('#filtre_criteres_catMilieu option:selected').val(),
+    typeMilieu :  $('#filtre_criteres_typeMilieu option:selected').val(),
+    lot :  $('#filtre_criteres_lot option:selected').val()
+    }
+    var url = '{{ path("AeagSqeBundle_programmation_lot_filtre",{"action":  "par1"}) }}';
+    url = url.replace("par1", '{{ action }}');
+    $.get( url, requestData , function( responseData ) { 
+    $("#idCriteres" ).empty().html( responseData ); 
+    $('#idAttente').hide();
+    });
+    } );   
+
+    $(document).on('change','#filtre_criteres_titulaire',function(){
+    $('#idAttente').show();
+    cache: false  
+    var requestData = {
+    annee : $('#filtre_criteres_annee').val(),
+    phase : $('#filtre_criteres_phase').val(),
+    webuser: $('#filtre_criteres_webuser').val(),
+    marche :  $('#filtre_criteres_marche option:selected').val(),
+    titulaire :  $('#filtre_criteres_titulaire option:selected').val(),
+    zoneGeoRef :  $('#filtre_criteres_zoneGeoRef option:selected').val(),
+    catMilieu :  $('#filtre_criteres_catMilieu option:selected').val(),
+    typeMilieu :  $('#filtre_criteres_typeMilieu option:selected').val(),
+    lot :  $('#filtre_criteres_lot option:selected').val()
+    }
+    var url = '{{ path("AeagSqeBundle_programmation_lot_filtre",{"action":  "par1"}) }}';
+    url = url.replace("par1", '{{ action }}');
+    $.get( url, requestData , function( responseData ) { 
+    $("#idCriteres" ).empty().html( responseData ); 
+    $('#idAttente').hide();
+    });
+    } );   
+
+
+    $(document).on('change','#filtre_criteres_zoneGeoRef',function(){
+    $('#idAttente').show();
+    cache: false  
+    var requestData = {
+    annee : $('#filtre_criteres_annee').val(),
+    phase : $('#filtre_criteres_phase').val(),
+    webuser: $('#filtre_criteres_webuser').val(),
+    marche :  $('#filtre_criteres_marche option:selected').val(),
+    titulaire :  $('#filtre_criteres_titulaire option:selected').val(),
+    zoneGeoRef :  $('#filtre_criteres_zoneGeoRef option:selected').val(),
+    catMilieu :  $('#filtre_criteres_catMilieu option:selected').val(),
+    typeMilieu :  $('#filtre_criteres_typeMilieu option:selected').val(),
+    lot :  $('#filtre_criteres_lot option:selected').val()
+    }
+    var url = '{{ path("AeagSqeBundle_programmation_lot_filtre",{"action":  "par1"}) }}';
+    url = url.replace("par1", '{{ action }}');
+    $.get( url, requestData , function( responseData ) { 
+    $("#idCriteres" ).empty().html( responseData ); 
+    $('#idAttente').hide();
+    });
+    } ); 
+
+    $(document).on('change','#filtre_criteres_catMilieu',function(){
+    $('#idAttente').show();
+    cache: false  
+    var requestData = {
+    annee : $('#filtre_criteres_annee').val(),
+    phase : $('#filtre_criteres_phase').val(),
+    webuser: $('#filtre_criteres_webuser').val(),
+    marche :  $('#filtre_criteres_marche option:selected').val(),
+    titulaire :  $('#filtre_criteres_titulaire option:selected').val(),
+    zoneGeoRef :  $('#filtre_criteres_zoneGeoRef option:selected').val(),
+    catMilieu :  $('#filtre_criteres_catMilieu option:selected').val(),
+    typeMilieu :  $('#filtre_criteres_typeMilieu option:selected').val(),
+    lot :  $('#filtre_criteres_lot option:selected').val()
+    }
+    var url = '{{ path("AeagSqeBundle_programmation_lot_filtre",{"action":  "par1"}) }}';
+    url = url.replace("par1", '{{ action }}');
+    $.get( url, requestData , function( responseData ) { 
+    $("#idCriteres" ).empty().html( responseData ); 
+    $('#idAttente').hide();
+    });
+    } );  
+
+    $(document).on('change','#filtre_criteres_typeMilieu',function(){
+    $('#idAttente').show();
+    cache: false  
+    var requestData = {
+    annee : $('#filtre_criteres_annee').val(),
+    phase : $('#filtre_criteres_phase').val(),
+    webuser: $('#filtre_criteres_webuser').val(),
+    marche :  $('#filtre_criteres_marche option:selected').val(),
+    titulaire :  $('#filtre_criteres_titulaire option:selected').val(),
+    zoneGeoRef :  $('#filtre_criteres_zoneGeoRef option:selected').val(),
+    catMilieu :  $('#filtre_criteres_catMilieu option:selected').val(),
+    typeMilieu :  $('#filtre_criteres_typeMilieu option:selected').val(),
+    lot :  $('#filtre_criteres_lot option:selected').val()
+    }
+     var url = '{{ path("AeagSqeBundle_programmation_lot_filtre",{"action":  "par1"}) }}';
+    url = url.replace("par1", '{{ action }}');
+    $.get( url, requestData , function( responseData ) { 
+    $("#idCriteres" ).empty().html( responseData ); 
+    $('#idAttente').hide();
+    });
+    } );  
+    
+     $(document).on('change','#filtre_criteres_phase',function(){
+    $('#idAttente').show();
+    cache: false  
+    var requestData = {
+     annee : $('#filtre_criteres_annee').val(),
+    phase : $('#filtre_criteres_phase').val(),
+    webuser: $('#filtre_criteres_webuser').val(),
+    marche :  $('#filtre_criteres_marche option:selected').val(),
+    titulaire :  $('#filtre_criteres_titulaire option:selected').val(),
+    zoneGeoRef :  $('#filtre_criteres_zoneGeoRef option:selected').val(),
+    catMilieu :  $('#filtre_criteres_catMilieu option:selected').val(),
+    typeMilieu :  $('#filtre_criteres_typeMilieu option:selected').val(),
+    lot :  $('#filtre_criteres_lot option:selected').val()
+    }
+    var url = '{{ path("AeagSqeBundle_programmation_lot_filtre",{"action":  "par1"}) }}';
+    url = url.replace("par1", '{{ action }}');
+    $.get( url, requestData , function( responseData ) { 
+    $("#idCriteres" ).empty().html( responseData ); 
+    $('#idAttente').hide();
+    });
+    } );  
+
+
+
+    $(document).on('click','#idInitialiser',function(){
+    $('#idAttente').show();
+    $('#filtre_criteres_webuser option:selected').removeAttr('selected');
+    $('#filtre_criteres_marche option:selected').removeAttr('selected');
+    $('#filtre_criteres_titulaire option:selected').removeAttr('selected');
+    $('#filtre_criteres_zoneGeoRef option:selected').removeAttr('selected');
+    $('#filtre_criteres_catMilieu option:selected').removeAttr('selected');
+    $('#filtre_criteres_typeMilieu option:selected').removeAttr('selected');
+    $('#filtre_criteres_lot option:selected').removeAttr('selected');
+    $('#filtre_criteres_phase option:selected').removeAttr('selected');
+    $('#filtre_criteres_annee').val({{ app.session.get('parAnnee') }});
+    var requestData = {
+    annee : $('#filtre_criteres_annee').val(),
+    webuser: null,
+    marche :  null,
+    titulaire :  null,
+    zoneGeoRef :  null,
+    catMilieu :  null,
+    typeMilieu :  null,
+    lot :  null,
+   phase :  null
+    }
+    var url = '{{ path("AeagSqeBundle_programmation_lot_filtre",{"action":  "par1"}) }}';
+    url = url.replace("par1", '{{ action }}');
+    $.get( url, requestData , function( responseData ) { 
+    $("#idCriteres" ).empty().html( responseData ); 
+    $('#idAttente').hide();
+    });
+    });
+
+{% endblock scripts %}
+
+

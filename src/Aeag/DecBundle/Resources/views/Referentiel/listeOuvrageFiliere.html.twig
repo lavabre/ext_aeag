@@ -1,0 +1,94 @@
+{% extends "AeagDecBundle:Referentiel:index.html.twig" %}
+
+{% block HEAD %}
+    {{parent()}}
+     <link href="{{ asset('bundles/aeagdec/assets/plugins/data-tables/DT_bootstrap.css') }}" rel="stylesheet" type="text/css"/>
+ {% endblock HEAD %}
+
+
+{%block PAGE_TITLE %}
+    <h3 class="page-title">
+       Liste des filières associés à l'ouvrage : {{ouvrage.numero}} {{ouvrage.libelle}}
+    </h3>
+    <ul class="page-breadcrumb breadcrumb">
+        <li>
+          <i class="icon-home"></i>
+          <a href="{{ path('AeagDecBundle_admin') }}">Accueil</a> 
+           <i class="fa fa-angle-right"></i>
+       </li>
+       <li>
+          <i class="icon-reorder"></i>
+          <a href="{{ path('AeagDecBundle_admin_listeOuvrage') }}">Ouvrages</a>
+          <i class="fa fa-angle-right"></i>
+        </li>
+        <li>
+          <i class="icon-reorder"></i>
+          <a href="{{ path('AeagDecBundle_admin_listeOuvrageFiliere', {'ouvrage': ouvrage.numero }) }}">Filières</a>
+          <i class="fa fa-angle-right"></i>
+        </li>
+    </ul>
+    {%endblock PAGE_TITLE %}
+
+
+  {%block CONTENT %}
+       <div class="row">
+          <div class="col-md-12">
+             <div class="portlet-body">
+                     <table class="table-advance table-bordered table-hover table-striped" id="idTable">
+                        <thead>
+                           <tr>
+                                <th>Code</th>
+                                <th>Libelle</th>
+                             </tr>
+                        </thead>
+                        <tbody>
+                            {% for entity in entities %}
+                                <tr>
+                                    <td>{{ entity.Filiere.code }}</td>
+                                    <td>{{ entity.Filiere.libelle }}</td>
+                                </tr>
+                             {% endfor %}
+                        </tbody>
+                     </table>
+            </div>
+          </div>
+        </div>
+     {%endblock CONTENT %}
+ 
+
+     {% block JAVASCRIPTS_LEVEL_SCRIPTS %}
+          {{ parent() }}
+          <script src="{{ asset('bundles/aeagdec/assets/plugins/select2/select2.min.js') }}" type="text/javascript" ></script>
+          <script type="text/javascript" src="{{ asset('bundles/aeagdec/assets/plugins/data-tables/jquery.dataTables.js') }}"></script>
+          <script type="text/javascript" src="{{ asset('bundles/aeagdec/assets/plugins/data-tables/DT_bootstrap.js') }}"></script>
+          <script type="text/javascript" src="{{ asset('bundles/aeagdec/assets/scripts/table-managed.js') }}"></script>     
+          <script>
+            jQuery(document).ready(function() {
+              TableManaged.init();
+                $('#idTable').dataTable( {
+                             "oLanguage": {
+                              "sSearch": "Filtre",
+                              "sFirst": "1ere page",
+                              "sLast": "Dernière page",
+                              "sNext": "Prochaine page",
+                              "sPrevious": "Page précédente",
+                              "EmptyTable": "Pas de données",
+                              "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+                              "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+                              "sZeroRecords": "Pas d'enregistrement à afficher",
+                              "sInfoEmpty": "Pas d'enregistrement à afficher",
+                              "sInfoThousands": " ",
+                              "sLengthMenu": 'Afficher <select>'+
+                                           '<option value="10">10</option>'+
+                                           '<option value="20">20</option>'+
+                                           '<option value="30">30</option>'+
+                                           '<option value="40">40</option>'+
+                                           '<option value="50">50</option>'+
+                                           '<option value="-1">Tous</option>'+
+                                           '</select> enregistrements',
+                              "sPaginationType": "full_numbers"
+                           }
+                        } );
+            });
+         </script>
+      {% endblock JAVASCRIPTS_LEVEL_SCRIPTS %}

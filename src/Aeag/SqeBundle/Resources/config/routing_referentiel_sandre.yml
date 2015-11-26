@@ -1,0 +1,27 @@
+AeagSqeBundle_referentiel_sandre_parametres:
+    path:  /parametres
+    defaults: { _controller: AeagSqeBundle:ReferentielSandre:pgSandreParametres }
+    
+AeagSqeBundle_referentiel_sandre_supports:
+    path:  /supports
+    defaults: { _controller: AeagSqeBundle:ReferentielSandre:pgSandreSupports }
+    
+AeagSqeBundle_referentiel_sandre_supports_fractions:
+    path:  /supports/fractions/{support}
+    defaults: { _controller: AeagSqeBundle:ReferentielSandre:pgSandreSupportsFractions, support:null }
+    
+AeagSqeBundle_referentiel_sandre_fractions:
+    path:  /fractions
+    defaults: { _controller: AeagSqeBundle:ReferentielSandre:pgSandreFractions}
+    
+AeagSqeBundle_referentiel_sandre_unites:
+    path:  /unites
+    defaults: { _controller: AeagSqeBundle:ReferentielSandre:pgSandreUnites }
+    
+AeagSqeBundle_referentiel_sandre_methodes:
+    path:  /methodes
+    defaults: { _controller: AeagSqeBundle:ReferentielSandre:pgSandreMethodes }
+    
+AeagSqeBundle_referentiel_sandre_zone_verticale_prospectees:
+    path:  /zoneVerticaleprospectees
+    defaults: { _controller: AeagSqeBundle:ReferentielSandre:pgSandreZoneVerticaleProspectees }

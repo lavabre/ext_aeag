@@ -1,0 +1,52 @@
+{% extends "AeagSqeBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+          <li>
+          <i class="icon-home"></i>
+          <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+           <i class="fa fa-angle-right"></i>
+       </li>
+       <li class="active">
+           Maintenance
+       </li>
+   {% endblock breadcrumb %}
+
+
+{%block panel_heading %}
+    <h3 class="page-title">
+       MAINTENANCE
+    </h3>
+  {%endblock panel_heading %}
+
+    
+    {%block content %}
+      
+       <div class="row">
+            <div class="col-md-12 page-500">
+                <div class=" number">
+                        Désolé !
+                </div>
+                <div class=" details">
+                        <h3>Site en maintenance</h3>
+                        <p>{%  if maintenance | length %}
+                            {{ maintenance }}
+                           {% endif %}
+                        </p>
+                </div>
+            </div>
+        </div>
+       
+       <div class="row">
+            <div class="col-md-3 page-500"></div>
+            <div class="col-md-6 page-500">
+                  <h3><a href="{{ path('fos_user_security_logout') }}">
+                           </br>
+                            <i class="icon-signout"></i>  
+                            <span>Quitter</span>
+                        </a>
+                 </h3>
+            </div>
+            <div class="col-md-3 page-500"></div>
+        </div>
+   {%endblock content %}
+ 

@@ -1,0 +1,184 @@
+{% extends "AeagDecBundle::layout.html.twig" %}
+
+
+{% block breadcrumb %}{% endblock breadcrumb %}
+       
+ {%block panel_heading %}
+    <h3 class="page-title">
+       Consultation du collecteur : {{ odec.numero }} {{ odec.libelle }}
+    </h3>
+  {%endblock panel_heading %}
+
+ {%block content %}
+  <div class="row">
+          <div class="col-md-12">     
+              <form class="form-horizontal" role="form">
+           <div class="form-body">
+                 <div class="row">
+                   <div class="col-md-offset-3"></div>
+                   <div class="col-md-9">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Identifiant Aeag :</label>
+                            <div class="col-md-9">
+                            <p class="form-control-static">{{ odec.ouvId }}</p>
+                            </div>
+                        </div>
+                   </div>
+                   <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Numéro :</label>
+                            <div class="col-md-9">
+                            <p class="form-control-static">{{ odec.numero }}</p>
+                            </div>
+                        </div>
+                   </div>
+                   <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Libellé :</label>
+                            <div class="col-md-9">
+                            <p class="form-control-static">{{ odec.libelle }}</p>
+                            </div>
+                        </div>
+                   </div>
+                   <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Siret :</label>
+                            <div class="col-md-9">
+                            <p class="form-control-static">{{ odec.siret }}</p>
+                            </div>
+                        </div>
+                   </div>
+                   <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Liens :</label>
+                            <div class="col-md-9">
+                            <p class="form-control-static">
+                              <table class="table table-bordered table-striped table-condensed table-advance table-hover" id="idTable">
+                                <thead>
+                                   <tr>
+                                        <th width="1%">Actions</th>
+                                        <th>Type</th>
+                                        <th>Identifiant</th>
+                                        <th>Libelle</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {%if corres %}
+                                        {% for cor in corres %}
+                                           {% if cor.correspondant %}
+                                            <tr>
+                                                <td nowrap>
+                                                    <a class="btn btn-info" href="{{ path('Aeag_envoyerMessage', { 'id': cor.user.id }) }}"  title="Message">
+                                                       <i class="fa fa-inbox"></i> 
+                                                    </a>
+                                                </td>
+                                                <td>Correspondant</td>
+                                                <td>{{ cor.correspondant.Correspondant.identifiant }}</td>
+                                                <td>{{ cor.correspondant.Correspondant.adr1 }}&nbsp;{{ cor.correspondant.Correspondant.adr2 }}</td>
+                                              </tr>
+                                           {% endif %}
+                                           {% if cor.interlocuteurs %}
+                                              {% for int in cor.interlocuteurs %}
+                                                 <tr>
+                                                    <td nowrap>
+                                                        <a class="btn btn-info" href="{{ path('Aeag_interlocuteur_envoyerMessage', { 'id': int.id }) }}"  title="Message">
+                                                           <i class="fa fa-inbox"></i> 
+                                                        </a>
+                                                    </td>
+                                                    <td>Interlocuteur</td>
+                                                    <td>{{ int.nom }} &nbsp;{{ int.prenom}}</td>
+                                                    <td>{{ int.fonction }}</td>
+                                                  </tr>
+                                              {% endfor %}
+                                           {% endif %}
+                                         {% endfor %}
+                                    {%endif%}
+                                    {%if cts %}     
+                                        {% for ct in cts %}
+                                            <tr>
+                                                <td></td>
+                                                <td>Centre de Transit</td>
+                                                <td>{{ ct.numero }}</td>
+                                                <td>{{ ct.libelle }}</td>
+                                              </tr>
+                                         {% endfor %}
+                                     {%endif%}
+                                     {%if ctdts %}     
+                                        {% for ctdt in ctdts %}
+                                            <tr>
+                                                <td></td>
+                                                <td>Centre de Traitement</td>
+                                                <td>{{ ctdt.numero }}</td>
+                                                <td>{{ ctdt.libelle }}</td>
+                                              </tr>
+                                         {% endfor %}
+                                      {%endif%}
+                                     {% if pdecs %}     
+                                        {% for pdec in pdecs %}
+                                            {% if pdec.Producteur %}
+                                            <tr>
+                                                <td></td>
+                                                <td>Producteur</td>
+                                                <td>{{ pdec.Producteur.numero }}</td>
+                                                <td>{{ pdec.Producteur.libelle }}</td>
+                                              </tr>
+                                           {%endif%}
+                                         {% endfor %}
+                                      {%endif%}
+                                </tbody>
+                             </table> 
+                               </p>
+                            </div>
+                        </div>
+                   </div>
+         
+                  </div>
+                </div>
+             </div>
+       </form>
+              
+              <div class="form-group">
+                <div class="col-xs-offset-4 col-xs-8">
+                   <a  id="btFermer" class="btn btn-danger" href="{{ app.session.get('retour') }}"><i class="fa fa-power-off"></i> Retour</a>
+                 </div>
+             </div>
+    
+          </div>
+    </div>
+     
+ {%endblock content %}
+       
+ {% block scripts %}
+     
+       // DataTable
+          var table = $('#idTable').DataTable(
+                      {"stateSave": false,
+                       "oLanguage": {
+                          "sSearch": "Filtre",
+                          "sFirst": "1ere page",
+                          "sLast": "Dernière page",
+                          "sNext": "Prochaine page",
+                          "sPrevious": "Page précédente",
+                          "EmptyTable": "Pas de données",
+                          "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+                          "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+                          "sZeroRecords": "Pas d'enregistrement à afficher",
+                          "sInfoEmpty": "Pas d'enregistrement à afficher",
+                          "sInfoThousands": " ",
+                          "sLengthMenu": 'Afficher <select>' +
+                                  '<option value="10">10</option>' +
+                                  '<option value="20">20</option>' +
+                                  '<option value="30">30</option>' +
+                                  '<option value="40">40</option>' +
+                                  '<option value="50">50</option>' +
+                                  '<option value="-1">Tous</option>' +
+                                  '</select> enregistrements',
+                          "sPaginationType": "full_numbers"
+                      }
+                     }
+                    );
+   {% endblock scripts %}  
+   
+
+    

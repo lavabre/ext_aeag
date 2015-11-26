@@ -1,0 +1,50 @@
+<script>
+        var html = '';
+        html = '<table class="table table-bordered table-condensed table-advance">';
+        {% for ctrlStation in ctrlStations %}
+            html = html + '<tr>';
+            {% if ctrlStation.renseigner == 'N' %}
+                html = html + '<td class="danger">';
+            {% else %}
+                html = html + '<td class="success">';
+            {% endif %}
+            html = html + '{{ ctrlStation.station.code}}&nbsp;&nbsp;{{ ctrlStation.station.libelle}}';
+            html = html + '</td>';
+            html = html + '</tr>';
+        {% endfor %}
+        html = html + '</table>';
+        $('#idTdCtrlStations').empty().append(html);
+        
+        var html = '';
+        html = '<table class="table table-bordered table-condensed table-advance">';
+        {% for ctrlGroupe in ctrlGroupes %}
+            html = html + '<tr>';
+            {% if ctrlGroupe.renseigner == 'N' %}
+                html = html + '<td class="danger">';
+            {% else %}
+                html = html + '<td class="success">';
+            {% endif %}
+            html = html + '{{ ctrlGroupe.groupe.codeGrp}}&nbsp;&nbsp;{{ ctrlGroupe.groupe.libelleGrp}}';
+            html = html + '</td>';
+            html = html + '</tr>';
+        {% endfor %}
+        html = html + '</table>';
+        $('#idTdCtrlGroupes').empty().append(html);
+        
+        var html = '';
+        html = '<table class="table table-bordered table-condensed table-advance">';
+        {% for ctrlPeriode in ctrlPeriodes %}
+            html = html + '<tr>';
+            {% if ctrlPeriode.renseigner == 'N' %}
+                html = html + '<td class="danger">';
+            {% else %}
+                html = html + '<td class="success">';
+            {% endif %}
+            html = html + '{{ ctrlPeriode.periode.labelPeriode}}';
+            html = html + '</td>';
+            html = html + '</tr>';
+        {% endfor %}
+        html = html + '</table>';
+        $('#idTdCtrlPeriodes').empty().append(html);
+        $('#modal_valider_programmation').modal();
+</script>

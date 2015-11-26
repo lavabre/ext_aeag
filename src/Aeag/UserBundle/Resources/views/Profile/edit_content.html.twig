@@ -1,0 +1,103 @@
+{% trans_default_domain 'FOSUserBundle' %}
+
+<div class="col-xs-offset-3 col-xs-8">
+    <form role="form" id="idForm" action="{{ path('AeagUserBundle_compte_edit') }}" {{ form_enctype(form) }} method="POST">
+   
+      <h3 class="form-title">Mise à jour du compte</h3>
+      
+       
+      {% spaceless %}
+            {% if not form.vars.valid %}
+                    <div class="alert alert-danger">
+                       {% for children in form.children %}
+                            {% if not children.vars.valid %}
+                                {{ form_errors(children) }}
+                           {% endif %}
+                        {% endfor %}
+                    </div>
+            {% endif %}
+        {% endspaceless %}
+      
+    
+        <div class="form-group">
+            <label for="fos_user_profile_form_username" class="required">Nom : </label>
+           {% if form_errors(form.username) %}
+                 <div class="input-group has-error has-feedback">
+           {% else %}
+                  <div class="input-group">
+           {% endif %}
+                   <span class="input-group-addon"><i class="fa fa-user"></i><i class="fa fa-asterisk text-danger"></i></span>
+                   {{ form_widget(form.username, { 'attr': {'class': 'form-control', 'placeholder': 'Nom utilisateur', 'required':'required'} }) }}
+                 </div>
+          </div>
+        <div class="form-group">
+            <label for="fos_user_profile_form_email" class="required">Adresse email :</label>
+            {% if form_errors(form.email) %}
+                   <div class="input-group has-error has-feedback">
+            {% else %}
+                   <div class="input-group">
+            {% endif %}
+                    <span class="input-group-addon"><i class="fa fa-mail-forward"></i><i class="fa fa-asterisk text-danger"></i></span>
+                    {{ form_widget(form.email, { 'attr': {'class': 'form-control', 'placeholder': 'Adresse email', 'required':'required'} }) }}
+                  </div>
+            {% if form_errors(form.email1) %}
+                   <div class="input-group has-error has-feedback">
+            {% else %}
+                   <div class="input-group">
+            {% endif %}
+                    <span class="input-group-addon"><i class="fa fa-mail-forward"></i>&nbsp;&nbsp;&nbsp;</span>
+                    {{ form_widget(form.email1, { 'attr': {'class': 'form-control', 'placeholder': 'Adresse email complémentaire'} }) }}
+                  </div>
+            {% if form_errors(form.email2) %}
+                   <div class="input-group has-error has-feedback">
+            {% else %}
+                   <div class="input-group">
+            {% endif %}
+                    <span class="input-group-addon"><i class="fa fa-mail-forward"></i>&nbsp;&nbsp;&nbsp;</span>
+                    {{ form_widget(form.email2, { 'attr': {'class': 'form-control', 'placeholder': 'Adresse email complémentaire'} }) }}
+                  </div>
+        </div>
+                       
+       <div class="form-group">
+            <label for="fos_user_profile_form_tel" class="required">Tél. :</label>
+            {% if form_errors(form.tel) %}
+                   <div class="input-group has-error has-feedback">
+            {% else %}
+                   <div class="input-group">
+            {% endif %}
+                    <span class="input-group-addon"><i class="fa fa-phone"></i>&nbsp;&nbsp;&nbsp;</span>
+                    {{ form_widget(form.tel, { 'attr': {'class': 'form-control', 'placeholder': 'Numéro téléphone'} }) }}
+                  </div>
+            {% if form_errors(form.tel1) %}
+                   <div class="input-group has-error has-feedback">
+            {% else %}
+                   <div class="input-group">
+            {% endif %}
+                    <span class="input-group-addon"><i class="fa fa-phone"></i>&nbsp;&nbsp;&nbsp;</span>
+                    {{ form_widget(form.tel1, { 'attr': {'class': 'form-control', 'placeholder': 'Numéro téléphone complémentaire'} }) }}
+                  </div>
+        </div>                
+            
+        <div class="form-group">
+          <label for="fos_user_profile_form_current_password" class="required">Mot de passe actuel :</label>
+           {% if form_errors(form.current_password) %}
+                 <div class="input-group has-error has-feedback">
+           {% else %}
+               <div class="input-group">
+           {% endif %}
+                   <span class="input-group-addon"><i class="fa fa-key"></i><i class="fa fa-asterisk text-danger"></i></span>
+                   {{ form_widget(form.current_password, { 'attr': {'class': 'form-control', 'placeholder': 'Mot de passe actuel', 'required':'required'} }) }}
+                 </div>
+         </div>
+       
+         <div class="hide">
+              {{ form_rest(form) }}
+           </div>
+    
+       <div class="btn-group pull-right">
+        <button type="submit" class="btn btn-success  pull-right" value="{{ 'profile.edit.submit'|trans }}">Mettre à jour</button>
+        <a class="btn btn-danger" href="{{ path('fos_user_profile_show') }}"><i class="fa fa-power-off"></i> Retour</a> 
+       </div>
+        
+    </form>
+</div>

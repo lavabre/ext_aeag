@@ -1,0 +1,13 @@
+   
+AeagSqeBundle_referentiel_sandre:
+    resource: "@AeagSqeBundle/Resources/config/routing_referentiel_sandre.yml"
+    prefix:   /sandre
+    
+AeagSqeBundle_referentiel_aeag:
+    resource: "@AeagSqeBundle/Resources/config/routing_referentiel_aeag.yml"
+    prefix:   /aeag
+    
+AeagSqeBundle_referentiel_programmation:
+    resource: "@AeagSqeBundle/Resources/config/routing_referentiel_programmation.yml"
+    prefix:   /programmation
+    

@@ -1,0 +1,24 @@
+aeag_sqe_programmation_lot:
+    resource: "@AeagSqeBundle/Resources/config/routing_programmation_lot.yml"
+    prefix:   /lot
+    
+aeag_sqe_programmation_station:
+    resource: "@AeagSqeBundle/Resources/config/routing_programmation_station.yml"
+    prefix:   /station
+    
+aeag_sqe_programmation_groupe:
+    resource: "@AeagSqeBundle/Resources/config/routing_programmation_groupe.yml"
+    prefix:   /groupe
+    
+aeag_sqe_programmation_periode:
+    resource: "@AeagSqeBundle/Resources/config/routing_programmation_periode.yml"
+    prefix:   /periode
+    
+aeag_sqe_programmation_bilan:
+    resource: "@AeagSqeBundle/Resources/config/routing_programmation_bilan.yml"
+    prefix:   /bilan
+
+
+
+
+        

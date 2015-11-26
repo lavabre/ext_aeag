@@ -1,0 +1,5 @@
+{% extends is_granted('ROLE_ADMIN') ? "::base.html.twig" :
+ is_granted('ROLE_ODEC') ? "AeagDecBundle::layout.html.twig" :
+ is_granted('ROLE_FRD') ? "AeagFrdBundle::layout.html.twig" :
+ is_granted('ROLE_SQE') ? "AeagSqeBundle::layout.html.twig" :
+ "::base.html.twig" %}

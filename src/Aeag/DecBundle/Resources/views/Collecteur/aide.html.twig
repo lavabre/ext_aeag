@@ -1,0 +1,811 @@
+{% extends "AeagDecBundle::layout.html.twig" %}
+
+ {% block breadcrumb %}
+          <li>
+          <i class="icon-home"></i>
+          <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+           <i class="fa fa-angle-right"></i>
+       </li>
+       <li class="active">
+           Aide
+       </li>
+   {% endblock breadcrumb %}
+
+
+{%block panel_heading %}
+    <h3 class="page-title">
+       AIDE
+    </h3>
+  {%endblock panel_heading %}
+
+
+ {%block content %}
+       <div class="row">
+            <div class="col-xm-3">
+                    <div class="btn-group-vertical">
+                                   <a data-toggle="tab" href="#tab_1">
+                                           <button type="button" class="btn btn-primary">
+                                            <i class="fa fa-briefcase"> déclarations</i>
+                                            </button>
+                                    </a>
+                                   <a data-toggle="tab" href="#tab_2">
+                                        <button type="button" class="btn btn-primary">
+                                           <i class="fa fa-group"></i> Parametres
+                                        </button>
+                                    </a>
+                                    <a data-toggle="tab" href="#tab_3">
+                                       <button type="button" class="btn btn-primary">
+                                           <i class="fa fa-leaf"></i> Référentiel
+                                        </button>     
+                                            
+                                    </a>
+                                    <a data-toggle="tab" href="#tab_4">
+                                        <button type="button" class="btn btn-primary">
+                                           <i class="fa fa-info-circle"></i>Acteurs
+                                        </button>   
+                                    </a>
+                            </li>
+                    </div>
+            </div>
+            <div class="col-xm-9">
+                    <div class="tab-content">
+                            <div id="tab_1" class="tab-pane active">
+                                    <div id="accordion1" class="panel-group">
+                                            <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                            <h4 class="panel-title">
+                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion1" href="#accordion1_1">
+                                                                     1. Toutes
+                                                            </a>
+                                                            </h4>
+                                                    </div>
+                                                    <div id="accordion1_1" class="panel-collapse collapse">
+                                                            <div class="panel-body">
+                                                                <p>
+                                                                Liste completes des déclaration de l'année sélectionnée.
+                                                                <p>Actions possibles : 
+                                                                <ol>
+                                                                    <li>
+                                                                        <a class="btn btn-primary         " href="#" title="Voir">
+                                                                        <i class="fa fa-eye"></i>
+                                                                        </a>
+                                                                        : Liste des producteurs 
+                                                                        <p>Actions possibles :
+                                                                        <ol start="10">
+                                                                            <li>
+                                                                                <a class="btn btn-primary         " href="#" title="Consulter">
+                                                                                    <i class="fa fa-eye"></i> 
+                                                                                </a>
+                                                                                : Consulter le détail du producteur
+                                                                            </li>
+                                                                            <li>
+                                                                                <a class="btn btn-warning        " href="#" title="Mettre à jour">
+                                                                                    <i class="fa fa-edit"></i> 
+                                                                                </a>
+                                                                                : Modifier le détail du producteur si la déclaration n'est pas validée.
+                                                                            </li>
+                                                                            <li>
+                                                                                <a class="btn btn-danger      " data-toggle="modal" href="#" title="Supprimer">
+                                                                                <i class="fa fa-trash-o"></i> 
+                                                                                </a>
+                                                                                : Supprimer le détail du producteur si la déclaration n'est pas validée.
+                                                                            </li>
+                                                                        </ol>
+                                                                    </li>
+                                                                    <li>
+                                                                        <a class="btn btn-danger      " data-toggle="modal" href="#" title="Supprimer">
+                                                                        <i class="fa fa-trash-o"></i> 
+                                                                        </a>
+                                                                        : Supprimer la déclaration si celle-ci n'a pas été transférée.
+                                                                    </li>
+                                                                    <li>
+                                                                        <a class="btn btn-success      " data-toggle="modal" href="#" title="Valider">
+                                                                        <i class="fa fa-check"></i> 
+                                                                        </a>
+                                                                        : Valider la déclaration si celle-ci a été pré-validée par le collecteur.
+                                                                    </li>
+                                                                    <li>
+                                                                       <a class="btn btn-default" data-toggle="modal" href="#" title="Dévalider">
+                                                                        <i class="fa fa-refresh"></i> 
+                                                                        </a>
+                                                                        : Remettre la déclaration à l'état 'pré-validée' par le collecteur.
+                                                                    </li>
+                                                                    <li>
+                                                                       <a class="btn btn-warning        " data-toggle="modal" href="#" title="Transférer">
+                                                                       <i class="fa fa-download"></i> 
+                                                                       </a>
+                                                                        : Transférer la déclaration à l'agence de l'eau.
+                                                                          Un fichier csv sera généré et accessible à partir de l'application AEAG
+                                                                    </li>
+                                                                </ol>
+                                                                </p>
+                                                            </p>
+                                                            </div>
+                                                    </div>
+                                            </div>
+                                            <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                            <h4 class="panel-title">
+                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion1" href="#accordion1_2">
+                                                                     2. Déclarations conformes
+                                                            </a>
+                                                            </h4>
+                                                    </div>
+                                                    <div id="accordion1_2" class="panel-collapse collapse">
+                                                            <div class="panel-body">
+                                                                <p>
+                                                                Liste des déclaration en cours de saisie qui ne présentent pas d'anomalies.
+                                                                <p>Actions possibles : 
+                                                                <ol>
+                                                                    <li>
+                                                                        <a class="btn btn-primary         " href="#" title="Voir">
+                                                                        <i class="fa fa-eye"></i>
+                                                                        </a>
+                                                                        : Liste des producteurs 
+                                                                        <p>Actions possibles :
+                                                                        <ol start="10">
+                                                                            <li>
+                                                                                <a class="btn btn-primary         " href="#" title="Consulter">
+                                                                                    <i class="fa fa-eye"></i> 
+                                                                                </a>
+                                                                                : Consulter le détail du producteur
+                                                                            </li>
+                                                                            <li>
+                                                                                <a class="btn btn-warning        " href="#" title="Mettre à jour">
+                                                                                    <i class="fa fa-edit"></i> 
+                                                                                </a>
+                                                                                : Modifier le détail du producteur.
+                                                                            </li>
+                                                                            <li>
+                                                                                <a class="btn btn-danger      " data-toggle="modal" href="#" title="Supprimer">
+                                                                                <i class="fa fa-trash-o"></i> 
+                                                                                </a>
+                                                                                : Supprimer le détail du producteur.
+                                                                            </li>
+                                                                        </ol>
+                                                                    </li>
+                                                                    <li>
+                                                                        <a class="btn btn-danger      " data-toggle="modal" href="#" title="Supprimer">
+                                                                        <i class="fa fa-trash-o"></i> 
+                                                                        </a>
+                                                                        : Supprimer la déclaration.
+                                                                    </li>
+                                                                  </ol>
+                                                                </p>
+                                                              </p>
+                                                            </div>
+                                                    </div>
+                                            </div>
+                                            <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                            <h4 class="panel-title">
+                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion1" href="#accordion1_3">
+                                                                     3. Déclarations non conformes
+                                                            </a>
+                                                            </h4>
+                                                    </div>
+                                                    <div id="accordion1_3" class="panel-collapse collapse">
+                                                            <div class="panel-body">
+                                                                <p>
+                                                                 Liste des déclarations en cours de saisie qui contiennent des erreurs.
+                                                                 <p>Actions possibles : 
+                                                                <ol>
+                                                                    <li>
+                                                                        <a class="btn btn-primary         " href="#" title="Voir">
+                                                                        <i class="fa fa-eye"></i>
+                                                                        </a>
+                                                                        : Liste des producteurs 
+                                                                        <p>Actions possibles :
+                                                                        <ol start="10">
+                                                                            <li>
+                                                                                <a class="btn btn-primary         " href="#" title="Consulter">
+                                                                                    <i class="fa fa-eye"></i> 
+                                                                                </a>
+                                                                                : Consulter le détail du producteur
+                                                                            </li>
+                                                                            <li>
+                                                                                <a class="btn btn-warning        " href="#" title="Mettre à jour">
+                                                                                    <i class="fa fa-edit"></i> 
+                                                                                </a>
+                                                                                : Modifier le détail du producteur.
+                                                                            </li>
+                                                                            <li>
+                                                                                <a class="btn btn-danger      " data-toggle="modal" href="#" title="Supprimer">
+                                                                                <i class="fa fa-trash-o"></i> 
+                                                                                </a>
+                                                                                : Supprimer le détail du producteur.
+                                                                            </li>
+                                                                        </ol>
+                                                                    </li>
+                                                                    <li>
+                                                                        <a class="btn btn-danger      " data-toggle="modal" href="#" title="Supprimer">
+                                                                        <i class="fa fa-trash-o"></i> 
+                                                                        </a>
+                                                                        : Supprimer la déclaration.
+                                                                    </li>
+                                                                  </ol>
+                                                                </p>
+                                                              </p>
+                                                            </div>
+                                                    </div>
+                                            </div>
+                                            <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                            <h4 class="panel-title">
+                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion1" href="#accordion1_4">
+                                                                     4. Déclarations pré-validées
+                                                            </a>
+                                                            </h4>
+                                                    </div>
+                                                    <div id="accordion1_4" class="panel-collapse collapse">
+                                                            <div class="panel-body">
+                                                                <p>
+                                                                Liste des déclaration validées par le collecteur.
+                                                                 <p>Actions possibles : 
+                                                                <ol>
+                                                                    <li>
+                                                                        <a class="btn btn-primary         " href="#" title="Voir">
+                                                                        <i class="fa fa-eye"></i>
+                                                                        </a>
+                                                                        : Liste des producteurs 
+                                                                        <p>Actions possibles :
+                                                                        <ol start="10">
+                                                                            <li>
+                                                                                <a class="btn btn-primary         " href="#" title="Consulter">
+                                                                                    <i class="fa fa-eye"></i> 
+                                                                                </a>
+                                                                                : Consulter le détail du producteur
+                                                                            </li>
+                                                                            <li>
+                                                                                <a class="btn btn-warning        " href="#" title="Mettre à jour">
+                                                                                    <i class="fa fa-edit"></i> 
+                                                                                </a>
+                                                                                : Modifier le détail du producteur.
+                                                                            </li>
+                                                                            <li>
+                                                                                <a class="btn btn-danger      " data-toggle="modal" href="#" title="Supprimer">
+                                                                                <i class="fa fa-trash-o"></i> 
+                                                                                </a>
+                                                                                : Supprimer le détail du producteur.
+                                                                            </li>
+                                                                        </ol>
+                                                                    </li>
+                                                                    <li>
+                                                                        <a class="btn btn-danger      " data-toggle="modal" href="#" title="Supprimer">
+                                                                        <i class="fa fa-trash-o"></i> 
+                                                                        </a>
+                                                                        : Supprimer la déclaration.
+                                                                    </li>
+                                                                    <li>
+                                                                        <a class="btn btn-success      " data-toggle="modal" href="#" title="Valider">
+                                                                        <i class="fa fa-check"></i> 
+                                                                        </a>
+                                                                        : Valider la déclaration.
+                                                                    </li>
+                                                                    <li>
+                                                                       <a class="btn btn-default" data-toggle="modal" href="#" title="Dévalider">
+                                                                        <i class="fa fa-refresh"></i> 
+                                                                        </a>
+                                                                        : Remettre la déclaration à l'état 'pré-validée' par le collecteur.
+                                                                    </li>
+                                                                  </ol>
+                                                                </p>
+                                                              </p>
+                                                            </div>
+                                                    </div>
+                                            </div>
+                                            <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                            <h4 class="panel-title">
+                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion1" href="#accordion1_5">
+                                                                     5. Déclarations validées
+                                                            </a>
+                                                            </h4>
+                                                    </div>
+                                                    <div id="accordion1_5" class="panel-collapse collapse">
+                                                            <div class="panel-body">
+                                                                <p>
+                                                                Liste des déclarations validées par le responsable de l'agence de l'eau.
+                                                                 <p>Actions possibles : 
+                                                                <ol>
+                                                                    <li>
+                                                                        <a class="btn btn-primary         " href="#" title="Voir">
+                                                                        <i class="fa fa-eye"></i>
+                                                                        </a>
+                                                                        : Liste des producteurs 
+                                                                        <p>Actions possibles :
+                                                                        <ol start="10">
+                                                                            <li>
+                                                                                <a class="btn btn-primary         " href="#" title="Consulter">
+                                                                                    <i class="fa fa-eye"></i> 
+                                                                                </a>
+                                                                                : Consulter le détail du producteur
+                                                                            </li>
+                                                                        </ol>
+                                                                    </li>
+                                                                    <li>
+                                                                       <a class="btn btn-default" data-toggle="modal" href="#" title="Dévalider">
+                                                                        <i class="fa fa-refresh"></i> 
+                                                                        </a>
+                                                                        : Remettre la déclaration à l'état 'pré-validée' par le collecteur.
+                                                                    </li>
+                                                                </ol>
+                                                               </p>
+                                                              </p>
+                                                            </div>
+                                                    </div>
+                                            </div>
+                                            <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                            <h4 class="panel-title">
+                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion1" href="#accordion1_6">
+                                                                     6. Déclarations transférées
+                                                            </a>
+                                                            </h4>
+                                                    </div>
+                                                    <div id="accordion1_6" class="panel-collapse collapse">
+                                                        <div class="panel-body">
+                                                            <p>
+                                                            Liste des déclarations transférées à l'agence de l'eau.
+                                                              <p>Actions possibles : 
+                                                                <ol>
+                                                                    <li>
+                                                                        <a class="btn btn-primary         " href="#" title="Voir">
+                                                                        <i class="fa fa-eye"></i>
+                                                                        </a>
+                                                                        : Liste des producteurs 
+                                                                        <p>Actions possibles :
+                                                                        <ol start="10">
+                                                                            <li>
+                                                                                <a class="btn btn-primary         " href="#" title="Consulter">
+                                                                                    <i class="fa fa-eye"></i> 
+                                                                                </a>
+                                                                                : Consulter le détail du producteur
+                                                                            </li>
+                                                                        </ol>
+                                                                    </li>
+                                                                 </ol>
+                                                               </p>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                            </div>
+                                            <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                            <h4 class="panel-title">
+                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion1" href="#accordion1_7">
+                                                                     7. Déclarations traitées
+                                                            </a>
+                                                            </h4>
+                                                    </div>
+                                                    <div id="accordion1_7" class="panel-collapse collapse">
+                                                        <div class="panel-body">
+                                                            <p>
+                                                            Liste des déclarations intégrées et traitées à l'agence de l'eau.
+                                                              <p>Actions possibles : 
+                                                                <ol>
+                                                                    <li>
+                                                                        <a class="btn btn-primary         " href="#" title="Voir">
+                                                                        <i class="fa fa-eye"></i>
+                                                                        </a>
+                                                                        : Liste des producteurs 
+                                                                        <p>Actions possibles :
+                                                                        <ol start="10">
+                                                                            <li>
+                                                                                <a class="btn btn-primary         " href="#" title="Consulter">
+                                                                                    <i class="fa fa-eye"></i> 
+                                                                                </a>
+                                                                                : Consulter le détail du producteur
+                                                                            </li>
+                                                                        </ol>
+                                                                    </li>
+                                                                 </ol>
+                                                               </p>
+                                                           </p>
+                                                        </div>
+                                                    </div>
+                                            </div>
+                                            <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                            <h4 class="panel-title">
+                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion1" href="#accordion1_8">
+                                                                     8. Déclarations payées
+                                                            </a>
+                                                            </h4>
+                                                    </div>
+                                                    <div id="accordion1_8" class="panel-collapse collapse">
+                                                        <div class="panel-body">
+                                                            <p>
+                                                            Liste des déclarations payées par l'agence de l'eau.
+                                                              <p>Actions possibles : 
+                                                                <ol>
+                                                                    <li>
+                                                                        <a class="btn btn-primary         " href="#" title="Voir">
+                                                                        <i class="fa fa-eye"></i>
+                                                                        </a>
+                                                                        : Liste des producteurs 
+                                                                        <p>Actions possibles :
+                                                                        <ol start="10">
+                                                                            <li>
+                                                                                <a class="btn btn-primary         " href="#" title="Consulter">
+                                                                                    <i class="fa fa-eye"></i> 
+                                                                                </a>
+                                                                                : Consulter le détail du producteur
+                                                                            </li>
+                                                                        </ol>
+                                                                    </li>
+                                                                 </ol>
+                                                               </p>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                            </div>
+                                    </div>
+                            </div>
+                            <div id="tab_2" class="tab-pane">
+                                    <div id="accordion2" class="panel-group">
+                                            <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                            <h4 class="panel-title">
+                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#accordion2_1">
+                                                                     1. ANNEE
+                                                            </a>
+                                                            </h4>
+                                                    </div>
+                                                    <div id="accordion2_1" class="panel-collapse collapse">
+                                                            <div class="panel-body">
+                                                                    <p>
+                                                                        Année de la déclaration en cours
+                                                                   </p>
+                                                            </div>
+                                                    </div>
+                                            </div>
+                                            <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                            <h4 class="panel-title">
+                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#accordion2_2">
+                                                                     2. LIB_MAINTENANCE
+                                                            </a>
+                                                            </h4>
+                                                    </div>
+                                                    <div id="accordion2_2" class="panel-collapse collapse">
+                                                            <div class="panel-body">
+                                                                <p>
+                                                                 Message de maintenance pour chaque collecteur qui se conencte sur le site  
+                                                                </p>
+                                                            </div>
+                                                    </div>
+                                            </div>
+                                            <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                            <h4 class="panel-title">
+                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#accordion2_3">
+                                                                     3. LIB-MESSAGE
+                                                            </a>
+                                                            </h4>
+                                                    </div>
+                                                    <div id="accordion2_3" class="panel-collapse collapse">
+                                                            <div class="panel-body">
+                                                                <p>
+                                                                    Message pour tous les collecteurs
+                                                                </p>
+                                                            </div>
+                                                    </div>
+                                            </div>
+                                            <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                            <h4 class="panel-title">
+                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#accordion2_4">
+                                                                     4. MAINTENANCE
+                                                            </a>
+                                                            </h4>
+                                                    </div>
+                                                    <div id="accordion2_4" class="panel-collapse collapse">
+                                                            <div class="panel-body">
+                                                                <p>
+                                                                <ol>
+                                                                    <li>
+                                                                        O = site en maintenance
+                                                                    </li>
+                                                                    <li>
+                                                                        N = site en production 
+                                                                    </li>
+                                                                </ol>
+                                                                </p>
+                                                            </div>
+                                                    </div>
+                                            </div>
+                                            <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                            <h4 class="panel-title">
+                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#accordion2_5">
+                                                                     5. REP_EXPORT
+                                                            </a>
+                                                            </h4>
+                                                    </div>
+                                                    <div id="accordion2_5" class="panel-collapse collapse">
+                                                            <div class="panel-body">
+                                                                <p>
+                                                                    Répertoire servant de transfert de l'agence de l'eau vers le site extranet.
+                                                                </p>
+                                                            </div>
+                                                    </div>
+                                            </div>
+                                            <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                            <h4 class="panel-title">
+                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#accordion2_6">
+                                                                     6. REP_IMPORT
+                                                            </a>
+                                                            </h4>
+                                                    </div>
+                                                    <div id="accordion2_6" class="panel-collapse collapse">
+                                                            <div class="panel-body">
+                                                               <p>
+                                                                    Répertoire servant de transfert du site extranet vers l'agence de l'eau.
+                                                                </p>  
+                                                            </div>
+                                                    </div>
+                                            </div>
+                                            <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                            <h4 class="panel-title">
+                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#accordion2_7">
+                                                                     7. REP_REFERENTIEL
+                                                            </a>
+                                                            </h4>
+                                                    </div>
+                                                    <div id="accordion2_7" class="panel-collapse collapse">
+                                                            <div class="panel-body">
+                                                                <p>
+                                                                    Répertoire servant de transfert du réferentiel de l'agence de l'eau vers le site extranet.
+                                                                </p>  
+                                                            </div>
+                                                    </div>
+                                            </div>
+                                    </div>
+                            </div>
+                            <div id="tab_3" class="tab-pane">
+                                    <div id="accordion3" class="panel-group">
+                                            <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                            <h4 class="panel-title">
+                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion3" href="#accordion3_1">
+                                                                     1. Importer
+                                                            </a>
+                                                            </h4>
+                                                    </div>
+                                                    <div id="accordion3_1" class="panel-collapse collapse">
+                                                            <div class="panel-body">
+                                                                    <p>
+                                                                      Intégration des fichiers csv générés à partir de l'application AEAG. 
+                                                                    </p>
+                                                                    <p>
+                                                                    <div class="alert alert-danger">
+                                                                        Il est important de respecter l'ordre des fichiers.
+                                                                    </div> 
+                                                                    </p>
+                                                            </div>
+                                                    </div>
+                                            </div>
+                                            <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                            <h4 class="panel-title">
+                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion3" href="#accordion3_2">
+                                                                     2. Taux
+                                                            </a>
+                                                            </h4>
+                                                    </div>
+                                                    <div id="accordion3_2" class="panel-collapse collapse">
+                                                            <div class="panel-body">
+                                                                <p>
+                                                                    Liste des taux
+                                                                </p>
+                                                            </div>
+                                                    </div>
+                                            </div>
+                                            <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                            <h4 class="panel-title">
+                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion3" href="#accordion3_3">
+                                                                     3. Code déchets
+                                                            </a>
+                                                            </h4>
+                                                    </div>
+                                                    <div id="accordion3_3" class="panel-collapse collapse">
+                                                            <div class="panel-body">
+                                                                <p>
+                                                                    Liste des codes déchets
+                                                                </p>
+                                                            </div>
+                                                    </div>
+                                            </div>
+                                            <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                            <h4 class="panel-title">
+                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion3" href="#accordion3_4">
+                                                                     4. Filières
+                                                            </a>
+                                                            </h4>
+                                                    </div>
+                                                    <div id="accordion3_4" class="panel-collapse collapse">
+                                                            <div class="panel-body">
+                                                                 <p>
+                                                                    Liste des filières
+                                                                </p>
+                                                            </div>
+                                                    </div>
+                                            </div>
+                                            <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                            <h4 class="panel-title">
+                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion3" href="#accordion3_5">
+                                                                     5. Ouvrages
+                                                            </a>
+                                                            </h4>
+                                                    </div>
+                                                    <div id="accordion3_5" class="panel-collapse collapse">
+                                                            <div class="panel-body">
+                                                                <p>
+                                                                    Liste des ouvrages (ODEC,CT,CTDT,PDEC)
+                                                                </p>
+                                                            </div>
+                                                    </div>
+                                            </div>
+                                            <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                            <h4 class="panel-title">
+                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion3" href="#accordion3_6">
+                                                                     6. Code NAF
+                                                            </a>
+                                                            </h4>
+                                                    </div>
+                                                    <div id="accordion3_6" class="panel-collapse collapse">
+                                                            <div class="panel-body">
+                                                                <p>
+                                                                    Liste des codes NAF
+                                                                </p>
+                                                            </div>
+                                                    </div>
+                                            </div>
+                                            <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                            <h4 class="panel-title">
+                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion3" href="#accordion3_7">
+                                                                     7. Départements
+                                                            </a>
+                                                            </h4>
+                                                    </div>
+                                                    <div id="accordion3_7" class="panel-collapse collapse">
+                                                        <div class="panel-body">
+                                                             <p>
+                                                                    Liste des départements
+                                                             </p>
+                                                        </div>
+                                                    </div>
+                                            </div>
+                                           <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                            <h4 class="panel-title">
+                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion3" href="#accordion3_8">
+                                                                     8. Communes
+                                                            </a>
+                                                            </h4>
+                                                    </div>
+                                                    <div id="accordion3_8" class="panel-collapse collapse">
+                                                        <div class="panel-body">
+                                                             <p>
+                                                                    Liste des communes
+                                                             </p>
+                                                        </div>
+                                                    </div>
+                                            </div>
+                                    </div>
+                            </div>
+                            <div id="tab_4" class="tab-pane">
+                                    <div id="accordion4" class="panel-group">
+                                            <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                            <h4 class="panel-title">
+                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion4" href="#accordion4_1">
+                                                                     1. Users
+                                                            </a>
+                                                            </h4>
+                                                    </div>
+                                                    <div id="accordion4_1" class="panel-collapse collapse">
+                                                            <div class="panel-body">
+                                                              <p>
+                                                                    Liste des Users reconnus par l'application extranet
+                                                             </p>
+                                                            </div>
+                                                    </div>
+                                            </div>
+                                            <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                            <h4 class="panel-title">
+                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion4" href="#accordion4_2">
+                                                                     2. Correspondants
+                                                            </a>
+                                                            </h4>
+                                                    </div>
+                                                    <div id="accordion4_2" class="panel-collapse collapse">
+                                                        <div class="panel-body">
+                                                            <p>
+                                                                    Liste des correspondants de l'agence de l'eau
+                                                             </p>
+                                                        </div>
+                                                    </div>
+                                            </div>
+                                            <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                            <h4 class="panel-title">
+                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion4" href="#accordion4_3">
+                                                                     3. Collecteurs
+                                                            </a>
+                                                            </h4>
+                                                    </div>
+                                                    <div id="accordion4_3" class="panel-collapse collapse">
+                                                        <div class="panel-body">
+                                                            <p>
+                                                                    Liste des collecteurs (ODEC)
+                                                             </p>
+                                                        </div>
+                                                    </div>
+                                            </div>
+                                            <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                            <h4 class="panel-title">
+                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion4" href="#accordion4_4">
+                                                                     4. Centres de Transit
+                                                            </a>
+                                                            </h4>
+                                                    </div>
+                                                    <div id="accordion4_4" class="panel-collapse collapse">
+                                                        <div class="panel-body">
+                                                             <p>
+                                                                    Liste des centres de transit (CT)
+                                                             </p>
+                                                        </div>
+                                                    </div>
+                                            </div>
+                                            <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                            <h4 class="panel-title">
+                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion4" href="#accordion4_5">
+                                                                     5. centres de traitement
+                                                            </a>
+                                                            </h4>
+                                                    </div>
+                                                    <div id="accordion4_5" class="panel-collapse collapse">
+                                                            <div class="panel-body">
+                                                                 <p>
+                                                                    Liste des centres de traitement (CTDT)
+                                                             </p>
+                                                            </div>
+                                                    </div>
+                                            </div>
+                                            <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                            <h4 class="panel-title">
+                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion4" href="#accordion4_6">
+                                                                     6. Producteurs
+                                                            </a>
+                                                            </h4>
+                                                    </div>
+                                                    <div id="accordion4_6" class="panel-collapse collapse">
+                                                        <div class="panel-body">
+                                                             <p>
+                                                                    Liste des producteurs (PDEC)
+                                                             </p>
+                                                        </div>
+                                                    </div>
+                                            </div>
+                                    </div>
+                            </div>
+                     </div>
+            </div>
+        </div>
+ 
+ {%endblock content %}
+
+ 

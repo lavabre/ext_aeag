@@ -1,0 +1,848 @@
+/* Site */
+html{color:#000;background:#FFF;}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,button,textarea,p,blockquote,th,td{margin:0;padding:0;}table{border-collapse:collapse;border-spacing:0;}fieldset,img{border:0;}address,caption,cite,code,dfn,em,strong,th,var,optgroup{font-style:inherit;font-weight:inherit;}del,ins{text-decoration:none;}li{list-style:none;}caption,th{text-align:left;}h1,h2,h3,h4,h5,h6{font-size:90%;font-weight:normal;}q:before,q:after{content:'';}abbr,acronym{border:0;font-variant:normal;}sup{vertical-align:baseline;}sub{vertical-align:baseline;}legend{color:#000;}input,button,textarea,select,optgroup,option{font-family:inherit;font-size:inherit;font-style:inherit;font-weight:inherit;}input,button,textarea,select{*font-size:90%;}
+
+html, body
+{
+    background-color: white;
+}
+
+body
+{
+    font-size:        12px;
+    font-family:      "Lucida Sans Unicode", "Lucida Grande", Verdana, Arial, Helvetica, sans-serif;
+    color:            #313131;
+}
+
+a
+{
+    color:           #08C;
+    text-decoration: none;
+}
+
+a:hover
+{
+    text-decoration: underline;
+}
+
+strong
+{
+    font-weight: bold;
+}
+
+em
+{
+    font-style: italic;
+}
+
+h1, h2, h3, h5
+{
+    font-family:    Georgia, "Times New Roman", Times, serif;
+    color:          #404040;
+}
+
+h1
+{
+    font-size:      45px;
+    padding-bottom: 30px;
+}
+
+h2
+{
+    font-weight:   bold;
+    color:         #404040;
+    /* Font is duplicated of body (sans-serif) */
+    font-family:      "Lucida Sans Unicode", "Lucida Grande", Verdana, Arial, Helvetica, sans-serif;
+
+    margin-bottom:    10px;
+    background-color: #E1EBF6;
+    padding:          2px 4px;
+    display:          inline-block;
+    text-transform:   uppercase;
+    font-size:        15px;
+
+}
+
+h2.configure-error
+{
+    background-color: #CC514F;
+}
+
+h3
+{
+    background-color: #E1EBF6;
+    color: #404040;
+    padding: 3px 8px;
+    margin: 2px 2px .5em 2px;
+    font-size:      15px;
+}
+
+
+p
+{
+    line-height:    20px;
+    padding-bottom: 20px;
+}
+
+ul a
+{
+    background: url(../images/blue-arrow.png) no-repeat right 6px;
+    padding-right: 10px;
+}
+
+ul, ol
+{
+    padding-left: 20px;
+}
+
+li
+{
+    padding-bottom: 18px;
+}
+
+ol li
+{
+    list-style-type: decimal;
+}
+
+ul li
+{
+    list-style-type: none;
+}
+
+a:link 
+{color: #696; 
+ text-decoration: none; 
+ background-color: transparent }
+a:visited 
+{ color: #699; 
+  text-decoration: none; 
+  background-color: transparent }
+a:hover 
+{ color: #c93; 
+  text-decoration: underline; 
+  background-color: transparent }
+a:active 
+{ color: #900; 
+  text-decoration: underline; 
+  background-color: transparent }
+
+
+#flash-message
+{
+    font-size:      15px;
+    padding-bottom: 30px;
+}
+
+#symfony-header
+{
+    position: relative;
+    padding: 30px 30px 20px 30px;
+}
+
+#symfony-wrapper
+{
+    width:  90%;
+    margin: 0 auto;
+}
+
+#symfony-content
+{
+    font-size:                  10px;
+    background-color:           white;
+    border:                     1px solid #DFDFDF;
+    padding:                    50px;
+    -moz-border-radius:         16px;
+    -webkit-border-radius:      16px;
+    border-radius:              16px;
+    margin-bottom:              20px;
+}
+
+
+#symfony-form-footer
+{
+    background-color:  white;
+    color: #fff;
+    padding-left: 50px;
+    position: relative;
+  
+}
+
+
+#symfony-sidebar .autocomplete {
+    position: absolute;
+    background: #fff;
+    border: 1px solid #888;
+    width: 16em;
+    list-style-type: none;
+    z-index: 52;
+}
+
+#symfony-sidebar .autocomplete li {
+    padding: 2px;
+    margin: 0;
+}
+
+#symfony-sidebar .autocomplete li.selected {
+    background: #008;
+    color: #fff;
+}
+
+#symfony-search
+{
+    position: absolute;
+
+    top:   50px;
+    right: 30px;
+}
+
+#symfony-search-field
+{
+    width: 190px;
+}
+
+#symfony-search label
+{
+    display: block;
+    float: left;
+    width: 20px;
+    height: 25px;
+    background: url(../images/search.png) no-repeat left 5px;
+}
+
+#symfony-search label span
+{
+    display: none;
+}
+
+
+
+
+
+.symfony-button-grey,
+.symfony-button-green
+{
+    font-size: 0.85em;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    display: inline-block;
+    outline: none;
+
+    text-align:     center;
+    text-transform: uppercase;
+
+    padding: 3px 10px;
+
+    text-shadow: 0 1px 1px rgba(0,0,0,.3);
+
+    -webkit-border-radius: 4px;
+    -moz-border-radius:    4px;
+    border-radius:         4px;
+}
+
+.symfony-button-grey
+{
+    color:       #868686;
+    font-weight: normal;
+
+    padding:    5px 10px;
+    border:     solid 1px #d7d7d7;
+    background: #ffffff;
+    background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#d7d7d7));
+    background: -moz-linear-gradient(top,  #ffffff,  #d7d7d7);
+    filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#d7d7d7');
+}
+
+.symfony-button-green
+{
+    padding: 5px 12px;
+
+    color: white;
+
+    border:     solid 1px #a7da39;
+    background: #a7da39;
+    background: -webkit-gradient(linear, left top, left bottom, from(#a7da39), to(#6a9211));
+    background: -moz-linear-gradient(top,  #a7da39,  #6a9211);
+    filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#a7da39', endColorstr='#6a9211');
+}
+
+.symfony-block-steps span
+{
+    display: inline-block;
+    padding: 2px 3px;
+  font-size:      11px;
+  line-height:    15px;
+  color:          #868686;
+  font-weight:    bold;
+  text-transform: uppercase;
+}
+
+.symfony-block-steps span.selected
+{
+    background-color: #aacd4e;
+    color:            #FFFFFF;
+}
+
+h1
+{
+    margin-top: 10px;
+    font-size: 26px;
+}
+
+.symfony-form-row
+{
+    padding-bottom: 40px;
+}
+
+.symfony-form-column
+{
+    width: 430px;
+    float: left;
+}
+
+
+.symfony-form-field
+{
+    height: 20px;
+}
+
+.symfony-form-label
+{
+    display:        inline;
+    padding:     5px 5px 5px 5px;
+    font-weight:    bold;
+   
+  
+}
+
+.symfony-form-field input[type=text],
+.symfony-form-field input[type=email],
+.symfony-form-field textarea,
+.symfony-form-field select
+{
+    font-size: 12px;
+    width:     500px;
+    padding:    0px 5px;
+    border:     1px solid #E1EBF6;
+   
+}
+
+.symfony-form-field select
+{
+    font-size: 12px;
+    width:     520px;
+    padding:    0px 5px;
+    border:     1px solid #E1EBF6;
+   
+}
+
+
+
+.symfony-form-field textarea
+{
+    width:     500px;
+    height:     80em;
+    padding:    0px 5px;
+}
+
+.symfony-form-field-select textarea
+{
+    border:     1px solid #CCFF00;
+    background: #FFFFCC;
+    width:      520px;
+    height:     8em;
+    padding:    0px 5px;
+}
+
+
+.symfony-form-errors ul
+{
+    padding: 0;
+}
+
+.symfony-form-errors li 
+{
+    background:  url(../images/notification.gif) no-repeat left 6px;
+    font-size:   11px;
+    line-height: 16px;
+    color:       #759e1a;
+    padding:     10px 25px;
+    width:      90%;
+}
+
+.symfony-configuration
+{
+    margin: 10px 0;
+    width:  90%;
+    height: 240px;
+}
+
+.version
+{
+    text-align: right;
+    font-size: 10px;
+    margin-right: 20px;
+}
+
+.loading {
+    background:url(../images/loading.gif) no-repeat center;
+    width: 36px;
+    height: 36px;
+}
+
+.field-keys {
+    border-top: 1px solid #15b;
+    border-bottom: 1px solid #15b;
+    background: #e3e3e3;
+    padding: 3px;
+    margin: .5em 10px;
+}
+
+.resultat {
+    font : 12px Verdana, Arial, Helvetica, sans-serif;
+    position: relative;
+    padding: 10px;
+    margin-top: 10px;
+    width: 90%;
+    float: left;
+    margin-left: 10px;
+    margin-bottom: 10px; 
+}
+
+.resultat1 {
+    background-color :#EEE;
+        
+}
+
+.resultat2 {
+    background-color :#DDDDDD;
+}
+
+/* Texte */
+.th-text {
+    font : 14px Verdana, Arial, Helvetica, sans-serif;
+    color : #00008B;
+    background :#999999; 
+    font-weight : bold;
+}
+
+.highlight {
+font-style: italic;
+border: 1px solid #888;
+padding: 0.5em;
+margin: 0.5em 0;
+background-color: #ffc;
+}
+
+.infos {
+	background-image: url(../images/icons/web-app/48/Info.png);
+	background-repeat: no-repeat;
+        background-position : top center;
+	padding-left: 5em;
+	margin-bottom: 1em;
+	min-height: 4em;
+}
+
+/************** Button-style links **************/
+.button,
+.form legend,
+.legend,
+.mini-menu {
+	line-height: 1.333em;
+	padding: 0.167em 0.5em 0.25em;
+	border: 1px solid white;
+	-moz-border-radius: 0.417em;
+	-webkit-border-radius: 0.417em;
+	-webkit-background-clip: padding-box;
+	border-radius: 0.417em;
+	-moz-box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+	-webkit-box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+	box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+	text-decoration: none;
+	font-weight: normal;
+	-moz-text-shadow: none;
+	-webkit-text-shadow: none;
+	text-shadow: none;
+	outline: 0;
+	}
+	.button {
+		display: inline-block;
+	}
+	/* IE class */
+	.ie .button,
+	.ie .form legend,
+	.ie .legend,
+	.ie .mini-menu {
+		border-color: #cccccc;
+	}
+	.button {
+		color: #666666;
+		background: #dfdfdf url(../images/old-browsers-bg/button-bg.png) repeat-x top;
+		-webkit-background-size: 100% 100%;
+		-moz-background-size: 100% 100%;
+		-o-background-size: 100% 100%;
+		background-size: 100% 100%;
+		background: -moz-linear-gradient(
+			top,
+			#f6f6f6,
+			#dfdfdf
+		);
+		background: -webkit-gradient(
+			linear,
+			left top, left bottom,
+			from(#f6f6f6),
+			to(#dfdfdf)
+		);
+	}
+	.button.red,
+	.red .button {
+		color: white;
+		background: #790000 url(../images/old-browsers-bg/button-red-bg.png) repeat-x top;
+		background: -moz-linear-gradient(
+			top,
+			#ca3535,
+			#790000
+		);
+		background: -webkit-gradient(
+			linear,
+			left top, left bottom,
+			from(#ca3535),
+			to(#790000)
+		);
+		}
+		.button.red a,
+		.red .button a {
+			color: white;
+		}
+	a.button:hover,
+	.mini-menu > li > a:hover {
+		color: #115577;
+		background: #98d2f3 url(../images/old-browsers-bg/button-hover-bg.png) repeat-x top;
+		-webkit-background-size: 100% 100%;
+		-moz-background-size: 100% 100%;
+		-o-background-size: 100% 100%;
+		background-size: 100% 100%;
+		background: -moz-linear-gradient(
+			top,
+			#dff3fc,
+			#98d2f3
+		);
+		background: -webkit-gradient(
+			linear,
+			left top, left bottom,
+			from(#dff3fc),
+			to(#98d2f3)
+		);
+	}
+	a.button.red:hover,
+	.red a.button:hover {
+		color: white;
+		background: #9d0404 url(../images/old-browsers-bg/button-red-hover-bg.png) repeat-x top;
+		background: -moz-linear-gradient(
+			top,
+			#fe6565,
+			#9d0404
+		);
+		background: -webkit-gradient(
+			linear,
+			left top, left bottom,
+			from(fe6565),
+			to(#9d0404)
+		);
+	}
+	.form legend,
+	.legend,
+	.mini-menu {
+		color: #666666;
+		background: #e7e7e7 url(../images/old-browsers-bg/legend-bg.png) repeat-x top;
+		-webkit-background-size: 100% 100%;
+		-moz-background-size: 100% 100%;
+		-o-background-size: 100% 100%;
+		background-size: 100% 100%;
+		background: -moz-linear-gradient(
+			top,
+			#f8f8f8,
+			#e7e7e7
+		);
+		background: -webkit-gradient(
+			linear,
+			left top, left bottom,
+			from(#f8f8f8),
+			to(#e7e7e7)
+		);
+	}
+	
+	.button img,
+	.form legend img,
+	.legend img,
+	.mini-menu img {
+		margin-bottom: -2px;
+	}
+
+/******************** Button ********************/
+button,
+.big-button {
+	display: inline-block;
+	border: 1px solid;
+	border-color: #50a3c8 #297cb4 #083f6f;
+	background: #0c5fa5 url(../images/old-browsers-bg/button-element-bg.png) repeat-x left top;
+	-webkit-background-size: 100% 100%;
+	-moz-background-size: 100% 100%;
+	-o-background-size: 100% 100%;
+	background-size: 100% 100%;
+	background: -moz-linear-gradient(
+		top,
+		white,
+		#72c6e4 4%,
+		#0c5fa5
+	);
+	background: -webkit-gradient(
+		linear,
+		left top, left bottom,
+		from(white),
+		to(#0c5fa5),
+		color-stop(0.03, #72c6e4)
+	);
+	-moz-border-radius: 0.333em;
+	-webkit-border-radius: 0.333em;
+	-webkit-background-clip: padding-box;
+	border-radius: 0.333em;
+	color: white;
+	-moz-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+	-webkit-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+	-moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+	-webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+	font-size: 1.167em;
+	padding: 0.286em 1em 0.357em;
+	line-height: 1.429em;
+	cursor: pointer;
+	font-weight: bold;
+	}
+	/* IE class */
+	.ie button {
+		overflow: visible;
+	}
+	/* IE class */
+	.ie7 button {
+		padding-top: 0.357em;
+		padding-bottom: 0.214em;
+		line-height: 1.143em;
+	}
+	button img,
+	.big-button img {
+		margin-bottom: -3px;
+	}
+	button:hover,
+	.big-button:hover {
+		border-color: #1eafdc #1193d5 #035592;
+		background: #057fdb url(../images/old-browsers-bg/button-element-hover-bg.png) repeat-x left top;
+		background: -moz-linear-gradient(
+			top,
+			white,
+			#2bcef3 4%,
+			#057fdb
+		);
+		background: -webkit-gradient(
+			linear,
+			left top, left bottom,
+			from(white),
+			to(#057fdb),
+			color-stop(0.03, #2bcef3)
+		);
+	}
+	button:active,
+	.big-button:active {
+		border-color: #5b848b #b2def1 #b2def1 #68a6ba;
+		background: #3dbfed url(../images/old-browsers-bg/button-element-active-bg.png) repeat-x top;
+		background: -moz-linear-gradient(
+			top,
+			#89e7f9,
+			#3dbfed
+		);
+		background: -webkit-gradient(
+			linear,
+			left top, left bottom,
+			from(#89e7f9),
+			to(#3dbfed)
+		);
+		-moz-box-shadow: none;
+		-webkit-box-shadow: none;
+		box-shadow: none;
+	}
+	
+	button.red,
+	.red button,
+	.big-button.red,
+	.red .big-button {
+		color: white;
+		border-color: #bf3636 #5d0000 #0a0000;
+		background: #790000 url(../images/old-browsers-bg/button-element-red-bg.png) repeat-x top;
+		background: -moz-linear-gradient(
+			top,
+			white,
+			#ca3535 4%,
+			#790000
+		);
+		background: -webkit-gradient(
+			linear,
+			left top, left bottom,
+			from(white),
+			to(#790000),
+			color-stop(0.03, #ca3535)
+		);
+		}
+		button.red:hover,
+		.red button:hover,
+		.big-button.red:hover,
+		.red .big-button:hover {
+			border-color: #c24949 #9d3d3d #590909;
+			background: #9d0404 url(../images/old-browsers-bg/button-element-red-hover-bg.png) repeat-x top;
+			background: -moz-linear-gradient(
+				top,
+				white,
+				#fe6565 4%,
+				#9d0404
+			);
+			background: -webkit-gradient(
+				linear,
+				left top, left bottom,
+				from(white),
+				to(#9d0404),
+				color-stop(0.03, #fe6565)
+			);
+		}
+		button.red:active,
+		.red button:active,
+		.big-button.red:active,
+		.red .big-button:active {
+			border-color: #7c5656 #f7cbcb #f7cbcb #a15151;
+			background: #ff5252 url(../images/old-browsers-bg/button-element-red-active-bg.png) repeat-x top;
+			background: -moz-linear-gradient(
+				top,
+				#ff9d9d,
+				#ff5252
+			);
+			background: -webkit-gradient(
+				linear,
+				left top, left bottom,
+				from(#ff9d9d),
+				to(#ff5252)
+			);
+		}
+	
+	button:disabled,
+	button:disabled:hover,
+	.big-button.disabled,
+	.big-button.disabled:hover {
+		color: #bfbfbf;
+		border-color: #e9f2f6 #c4c3c3 #a2a2a2 #e3e2e2;
+		background: #c8c8c8 url(../images/old-browsers-bg/button-element-disabled-bg.png) repeat-x top;
+		background: -moz-linear-gradient(
+			top,
+			#f0f2f2,
+			#c8c8c8
+		);
+		background: -webkit-gradient(
+			linear,
+			left top, left bottom,
+			from(#f0f2f2),
+			to(#c8c8c8)
+		);
+		-moz-text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.75);
+		-webkit-text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.75);
+		text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.75);
+		-moz-box-shadow: none;
+		-webkit-box-shadow: none;
+		box-shadow: none;
+		cursor: auto;
+	}
+	/* IE class */
+	button.disabled,
+	button.disabled:hover {
+		color: #bfbfbf;
+		border-color: #e9f2f6 #c4c3c3 #a2a2a2 #e3e2e2;
+		background: #c8c8c8 url(../images/old-browsers-bg/button-element-disabled-bg.png) repeat-x top;
+		cursor: auto;
+	}
+	
+	button.grey,
+	.big-button.grey {
+		color: white;
+		border-color: #a1a7ae #909498 #6b7076;
+		background: #9fa7b0 url(../images/old-browsers-bg/button-element-grey-bg.png) repeat-x top;
+		background: -moz-linear-gradient(
+			top,
+			white,
+			#c5cbce 5%,
+			#9fa7b0
+		);
+		background: -webkit-gradient(
+			linear,
+			left top, left bottom,
+			from(white),
+			to(#9fa7b0),
+			color-stop(0.05, #c5cbce)
+		);
+		-moz-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+		-webkit-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+		-moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+		-webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+		box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+		}
+		button.grey:hover,
+		.big-button.grey:hover {
+			border-color: #a1a7b0 #939798 #6e7275;
+			background: #b1b5ba url(../images/old-browsers-bg/button-element-grey-hover-bg.png) repeat-x top;
+			background: -moz-linear-gradient(
+				top,
+				white,
+				#d6dadc 4%,
+				#b1b5ba
+			);
+			background: -webkit-gradient(
+				linear,
+				left top, left bottom,
+				from(white),
+				to(#b1b5ba),
+				color-stop(0.03, #d6dadc)
+			);
+		}
+		button.grey:active
+		.big-button.grey:active {
+			border-color: #666666 #ffffff #ffffff #979898;
+			background: #dddddd url(../images/old-browsers-bg/button-element-grey-active-bg.png) repeat-x top;
+			background: -moz-linear-gradient(
+				top,
+				#f1f1f1,
+				#dddddd
+			);
+			background: -webkit-gradient(
+				linear,
+				left top, left bottom,
+				from(#f1f1f1),
+				to(#dddddd)
+			);
+		}
+	
+	button.small,
+	.big-button.small {
+		font-size: 0.833em;
+		padding: 0.2em 0.3em 0.3em 0.2em;
+		vertical-align: 0.2em;
+		}
+		/* IE class */
+		.ie button.small {
+			padding: 0.5em 0.3em;
+			vertical-align: 0.1em;
+		}
+	
+	.ie7 button + button {
+		margin-left: 0.25em;
+	}
+        
+        
+   

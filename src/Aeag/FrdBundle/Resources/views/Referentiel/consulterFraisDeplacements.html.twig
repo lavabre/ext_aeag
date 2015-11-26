@@ -1,0 +1,342 @@
+{% extends "AeagFrdBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="icon-home"></i>
+        <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+    </li>
+    <li class="active">
+        Frais de déplacements
+    </li>
+{% endblock breadcrumb %}
+
+
+{% block panel_heading %}
+    <h3>
+        Frais de déplacements
+    </h3>
+{% endblock panel_heading %}
+
+
+{% block modal %}
+    {% if entities | length > 0 %}
+        {% for entity in entities %}
+
+            <div class="modal fade" id="sup-{{entity.0.id}}" tabindex="-1" role="dialog" aria-labelledby="supLabel-{{entity.0.id}}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title" id="supLabel-{{entity.0.id}}">Suppression de la demande n° {{ entity.0.id}} 
+                                {% if  entity.1 %}
+                                    de {{ entity.1.username }} {{ entity.1.prenom }}
+                                {% endif %}
+                                </h4>
+                        </div>
+                        <div class="modal-body">
+                            <h4>Cliquer sur la corbeille pour valider la suppression</h4>
+                            <br/><br/>
+                            <div class="alert alert-danger">Attention : Une fois supprimer, la demande sera supprimée définitivement</div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
+                            <a id="btSupprimer-{{ entity.0.id}}" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-trash-o"></i> Supprimer</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="val-{{entity.0.id}}" tabindex="-1" role="dialog" aria-labelledby="valLabel-{{entity.0.id}}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title" id="valLabel-{{entity.0.id}}">
+                                {%if entity.0.id %}
+                                    Validation de la demande n° {{ entity.0.id}}
+                                    {% if  entity.1 %}
+                                    de {{ entity.1.username }} {{ entity.1.prenom }}
+                                    {% endif %}
+                                  {%else%}
+                                    Validation de la demande
+                                    {% if  entity.1 %}
+                                    de {{ entity.1.username }} {{ entity.1.prenom }}
+                                    {% endif %}
+                                 {%endif%}
+                            </h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <form action="#" id="form{{ entity.0.id}}" class="form-horizontal" method="post">
+                                        <table class="table table-bordered table-hover">
+                                            <tr>
+                                                <td class="control-label">Date du courrier<span class="required">*</span></td>
+                                                <td>
+                                                    <input type="text" id="datePhase-{{ entity.0.id}}" name="datePhase-{{ entity.0.id}}" class="input-small form-control" required="required" />
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </form>
+                                </div>
+                            </div>
+                            <h4>Cliquer sur 'Valider' pour valider la réception du courrier et rendre disponible la demande à l'exportation</h4>
+                            </br></br>
+                            <div class="alert alert-info">Info : Une fois valider,<br>Aller dans le menu "Frais de déplacements->Exporter" pour exporter cette demande</div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
+                            <a id="btValider-{{ entity.0.id}}" class="btn btn-success" data-dismiss="modal"><i class="fa fa-check"></i> Valider</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="deval-{{entity.0.id}}" tabindex="-1" role="dialog" aria-labelledby="devalLabel-{{entity.0.id}}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title" id="devalLabel-{{entity.0.id}}">
+                                {%if entity.0.id %}
+                                    Modifier la demande n° {{ entity.0.id}}
+                                    {% if  entity.1 %}
+                                    de {{ entity.1.username }} {{ entity.1.prenom }}
+                                    {% endif %}
+                                 {%else%}
+                                    Modifier la demande 
+                                    {% if  entity.1 %}
+                                    de {{ entity.1.username }} {{ entity.1.prenom }}
+                                    {% endif %}
+                                  {%endif%}
+                            </h4>
+                        </div>
+                        <div class="modal-body">
+                            <h4>Cliquer sur 'Modifier' pour changer le status de la demande</h4>
+                            </br></br>
+                            <div class="alert alert-info">Info : Une fois changer, la demande sera revenu à son état antérieur</div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
+                            <a id="btDeValider-{{ entity.0.id}}" class="btn btn-warning" data-dismiss="modal"><i class="fa fa-check"></i> Modifier</a>
+                        </div>
+                    </div>
+                </div>
+            </div>     
+
+        {% endfor %}
+    {% endif %}  
+{% endblock modal%}
+
+
+{%block content %}
+    <div  id="idMessage" class="row"></div>
+    <div class="row">
+        <div class="col-xm-12">
+            <div class="small ">
+                <table class="table table-bordered table-striped table-condensed table-advance table-hover" id="idTable">
+                    <thead>
+                        <tr>
+                            <th>Actions</th>
+                            <th>Numéro</th>
+                            <th>Nom</th>
+                            <th>Date de départ</th>
+                            <th>Date de retour</th>
+                            <th>Statut</th>
+                            <th>Objet</th>
+                            <th>Couurier</th>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </thead>
+                    <tbody id="idTbody">
+                        {%if entities | length > 0 %}
+                            {% for entity in entities %}
+                                <tr id="idTr-{{ entity.0.id }}">
+                                    <td  nowrap id="idTd1-{{ entity.0.id }}">
+                                        {% if entity.0.Phase.code > '30' %}
+                                            <a class="btn btn-primary" href="{{ path('AeagFrdBundle_membre_viewFraisDeplacement', { 'id': entity.0.id }) }}" title="Voir">
+                                                <i class="fa fa-eye"></i>
+                                            </a>
+                                            <a class="btn btn-info" href="{{ path('AeagFrdBundle_declaration_pdf', { 'id': entity.0.id }) }}" title="Imprimer">
+                                                <i class="fa fa-print"></i>
+                                            </a>
+                                        {%elseif entity.0.Phase.code > '10'%}
+                                            {%if entity.0.exporter == 'N' %}
+                                                <a class="btn btn-primary" href="{{ path('AeagFrdBundle_membre_viewFraisDeplacement', { 'id': entity.0.id }) }}" title="Voir">
+                                                    <i class="fa fa-eye"></i>
+                                                </a>
+                                                <a class="btn btn-info" href="{{ path('AeagFrdBundle_declaration_pdf', { 'id': entity.0.id }) }}" title="Imprimer">
+                                                    <i class="fa fa-print"></i>
+                                                </a>
+                                                <a class="btn btn-default" data-toggle="modal" href="#deval-{{entity.0.id}}" title="Repasser au statut précédent">
+                                                    <i class="fa fa-refresh"></i>
+                                                </a>
+                                            {%endif%}
+                                            {%if entity.0.valider == 'N' %}
+                                                <a class="btn btn-success" data-toggle="modal" href="#val-{{entity.0.id}}" title="Courrier reçu">
+                                                    <i class="fa fa-envelope"></i>
+                                                </a>
+                                            {%endif%}
+                                        {%else%}
+                                            <a class="btn btn-warning" href="{{ path('AeagFrdBundle_membre_fraisDeplacement', { 'id': entity.0.id }) }}" title="Editer">
+                                                <i class="fa fa-edit"></i> 
+                                            </a>
+                                            <a class="btn btn-info" href="{{ path('AeagFrdBundle_declaration_pdf', { 'id': entity.0.id }) }}" title="Imprimer">
+                                                <i class="fa fa-print"></i>
+                                            </a>
+                                            <a class="btn btn-danger" data-toggle="modal" href="#sup-{{entity.0.id}}" title="Supprimer">
+                                                <i class="fa fa-trash-o"></i> 
+                                            </a>
+                                        {%endif%}
+                                    </td>
+                                    <td>{{ entity.0.id }}</td>
+                                    <td>
+                                        {%if entity.2%}
+                                            {{ entity.2.adr1 }}
+                                        {%endif%}
+                                    <td>{{ entity.0.dateDepart | date("d/m/Y") }} &nbsp; {{ entity.0.heureDepart }}</td>
+                                    <td>{{ entity.0.dateRetour | date("d/m/Y") }} &nbsp; {{ entity.0.heureretour }}</td>
+                                    <td  id="idTd5-{{ entity.0.id }}">
+                                        {{ entity.0.phase.libelle }}
+                                        {% if entity.0.phase.code == '60' %}
+                                            ({{ entity.0.montRemtb | number_format(2,'.',' ') }} €)
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ entity.0.objet }}</td>
+                                    <td>
+                                        {% if entity.0.phase.code >= '30' %}
+                                            {% if  entity.0.dateCourrier %}
+                                              {{ entity.0.dateCourrier | date("d/m/Y") }}
+                                            {% endif %}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {%endif%}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 pull-left text-info">
+            <ul class="list-inline">
+                <li><a class="btn btn-primary btn-xs" href="#" title="Consulter"><i class="fa fa-eye"></i></a> Consulter</li>
+                <li><a class="btn btn-info btn-xs" href="#" title="Valider"> <i class="fa fa-print"></i></a> Imprimer</li>
+                <li><a class="btn btn-warning btn-xs" href="#" title="Editerr"><i class="fa fa-edit"></i></a> Editer</li>
+                <li><a class="btn btn-danger btn-xs" href="#" title="Supprimer"><i class="fa fa-trash-o"></i></a> Supprimer</li>
+                <li><a class="btn btn-success btn-xs" href="#" title="Valider"><i class="fa fa-check"></i></a> Valider</li>
+                <li><a class="btn btn-default btn-xs" href="#" title="Dévalider"><i class="fa fa-refresh"></i></a> Dévalider</li>
+            </ul>  
+        </div>
+    </div>  
+
+{%endblock content %}
+
+{% block scripts %}
+
+
+    // DataTable
+    var table = $('#idTable').DataTable(
+    {"stateSave": true,
+     "order": [[ 1, "desc" ]],
+    "oLanguage": {
+    "sProcessing":     "Traitement en cours...",
+    "sLoadingRecords": "Chargement en cours...",
+    "sSearch": "Rechercher&nbsp;:",
+    "sEmptyTable": "Aucune donn&eacute;e disponible dans le tableau",
+    "sInfo": "Affichage de l'&eacute;lement _START_ &agrave; _END_ sur _TOTAL_ &eacute;l&eacute;ments",
+    "sInfoFiltered": "(filtr&eacute; de _MAX_ &eacute;l&eacute;ments au total)",
+    "sZeroRecords":    "Aucun &eacute;l&eacute;ment &agrave; afficher",
+    "sInfoEmpty":      "Affichage de l'&eacute;lement 0 &agrave; 0 sur 0 &eacute;l&eacute;ments",
+    "sInfoThousands": " ",
+    "sLengthMenu": 'Afficher <select>' +
+        '<option value="10">10</option>' +
+        '<option value="20">20</option>' +
+        '<option value="30">30</option>' +
+        '<option value="40">40</option>' +
+        '<option value="50">50</option>' +
+        '<option value="-1">Tous</option>' +
+        '</select> enregistrements',
+    "sPaginationType": "full_numbers",
+    "oPaginate": {
+    "sFirst":      "Premier",
+    "sPrevious":   "Pr&eacute;c&eacute;dent",
+    "sNext":       "Suivant",
+    "sLast":       "Dernier"
+    },
+    }
+    }
+    );
+
+
+    $("#idTable thead td").each( function ( i ) {
+
+    if (i != 0 && i != 1 && i != 3 && i != 4 && i != 6){
+    var select = $('<select><option value=""></option></select>')
+    .appendTo( $(this).empty() )
+    .on( 'change', function () {
+    table.column( i )
+    .search( $(this).val() )
+    .draw();
+    } );
+
+    table.column( i ).data().unique().sort().each( function ( d, j ) {
+    select.append( '<option value="'+d+'">'+d+'</option>' )
+    } );
+    };
+    } );
+
+
+
+    {%if entities | length > 0 %}
+        {% for entity in entities %}
+            $('#btValider-{{ entity.0.id}}').click( function() {
+            cache: false, 
+            datePhase = $('#datePhase-{{ entity.0.id}}').val();
+            if(!datePhase){
+            alert('Vous devez renseigner une date d\'arrivée pour le courrier');
+            return false;
+            };
+            $.ajax({  type: 'POST',
+            url: '{{ path("AeagFrdBundle_admin_validerFraisDeplacement")}}',
+            data: 'id=' + {{ entity.0.id}} + '&datePhase=' + datePhase})
+            .done(function( html ) { $('#idTr-{{ entity.0.id }}' ).empty().html( html );  });
+
+            } );  
+            $('#btSupprimer-{{ entity.0.id}}').click( function() {
+            cache: false,  
+            $.get( "{{ path('AeagFrdBundle_membre_deleteFraisDeplacement', { 'id': entity.0.id }) }}",  function( responseData ) { 
+            $('#idTr-{{ entity.0.id }}').empty().html( responseData );
+            });
+            } );  
+            $('#btDeValider-{{ entity.0.id}}').click( function() {
+            cache: false,  
+            $.get( "{{ path('AeagFrdBundle_admin_devaliderFraisDeplacement', { 'id': entity.0.id }) }}",  function( responseData ) { 
+            $('#idTr-{{ entity.0.id }}').empty().html( responseData ); 
+            });
+
+
+            } ); 
+
+
+            $( "#datePhase-{{ entity.0.id}}" ).datepicker();
+
+
+
+        {%endfor%}
+    {%endif%}                 
+
+
+{% endblock scripts %}
+

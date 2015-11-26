@@ -1,0 +1,55 @@
+<h1>Historique list</h1>
+
+<table class="records_list">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Datecreation</th>
+            <th>Nom</th>
+            <th>Prenom</th>
+            <th>Organisme</th>
+            <th>Email</th>
+            <th>Theme</th>
+            <th>Soustheme</th>
+            <th>Objet</th>
+            <th>Corps</th>
+            <th>Dateecheance</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for entity in entities %}
+        <tr>
+            <td><a href="{{ path('historique_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
+            <td>{% if entity.dateCreation %}{{ entity.dateCreation|date('Y-m-d H:i:s') }}{% endif%}</td>
+            <td>{{ entity.nom }}</td>
+            <td>{{ entity.prenom }}</td>
+            <td>{{ entity.organisme }}</td>
+            <td>{{ entity.email }}</td>
+            <td>{{ entity.theme }}</td>
+            <td>{{ entity.sousTheme }}</td>
+            <td>{{ entity.objet }}</td>
+            <td>{{ entity.corps }}</td>
+            <td>{% if entity.dateEcheance %}{{ entity.dateEcheance|date('Y-m-d H:i:s') }}{% endif%}</td>
+            <td>
+                <ul>
+                    <li>
+                        <a href="{{ path('historique_show', { 'id': entity.id }) }}">show</a>
+                    </li>
+                    <li>
+                        <a href="{{ path('historique_edit', { 'id': entity.id }) }}">edit</a>
+                    </li>
+                </ul>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<ul>
+    <li>
+        <a href="{{ path('historique_new') }}">
+            Create a new entry
+        </a>
+    </li>
+</ul>

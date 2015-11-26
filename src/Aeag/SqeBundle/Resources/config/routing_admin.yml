@@ -1,0 +1,16 @@
+AeagSqeBundle_admin:
+    path:  /
+    defaults: { _controller: AeagSqeBundle:Admin:index }
+    
+AeagSqeBundle_admin_parametres:
+    path:  /parametres
+    defaults: { _controller: AeagSqeBundle:Parametres:index }
+    
+AeagSqeBundle_admin_parametre:
+    path:  /parametre-{code}
+    defaults: { _controller: AeagSqeBundle:Parametres:parametre, code:null }
+    requirements:
+        methods:  GET|POST
+
+
+        

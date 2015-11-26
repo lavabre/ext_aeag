@@ -1,0 +1,53 @@
+{% extends "AeagDecBundle:Referentiel:index.html.twig" %}
+
+{% block HEAD %}
+    {{parent()}}
+     <link href="{{ asset('bundles/aeagdec/assets/plugins/data-tables/DT_bootstrap.css') }}" rel="stylesheet" type="text/css"/>
+ {% endblock HEAD %}
+
+
+{%block PAGE_TITLE %}
+    <h3 class="page-title">
+       Liste des types de conditionnement
+    </h3>
+    <ul class="page-breadcrumb breadcrumb">
+        <li>
+          <i class="icon-home"></i>
+          <a href="{{ path('AeagDecBundle_admin') }}">Accueil</a> 
+           <i class="fa fa-angle-right"></i>
+       </li>
+       <li>
+          <i class="icon-reorder"></i>
+          <a href="{{ path('AeagDecBundle_admin_listeConditionnement') }}">Types de conditionnement</a> 
+        </li>
+    </ul>
+    {%endblock PAGE_TITLE %}
+
+
+  {%block content %}
+       <div class="row">
+          <div class="col-md-12">
+             <div class="portlet-body">
+                     <table class="table-advance table-bordered table-hover table-striped" id="idTable">
+                        <thead>
+                           <tr>
+                                <th>Code</th>
+                                <th>Libelle</th>
+                             </tr>
+                        </thead>
+                        <tbody>
+                            {% for entity in entities %}
+                                <tr>
+                                    <td>{{ entity.code }}</td>
+                                    <td>{{ entity.libelle }}</td>
+                                </tr>
+                             {% endfor %}
+                        </tbody>
+                     </table>
+            </div>
+          </div>
+        </div>
+     {%endblock content %}
+ 
+
+     

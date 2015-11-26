@@ -1,0 +1,629 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title text-center" id="ModalLabel_Valider">
+        Station : {{ station.station.code}}&nbsp;&nbsp;{{ station.station.libelle}} </br>
+        Période : {{ periode.periode.labelPeriode }} </br>
+      {#  Groupes :  {{ groupes | length }} #}
+    </h4>
+</div>
+<div class="modal-body-sqe">
+    <div id="idMessage_groupe"></div>
+    <div class="row">
+        <div class="col-md-offset-1 col-md-10">
+            <div class="small text-center">
+                 {% if supports | length %}
+                    {% if  supports | length  > 0 %}
+                     <table class="table  table-bordered table-condensed table-advance" id="idTable_groupes">
+                         <caption align=top><h4>Sélectionner un ou plusieurs supports</h4></caption>
+                       <thead>
+                           <tr>
+                               {% for support in supports %}
+                                <th>{{ support.nomSupport }}</th>
+                               {% endfor %}
+                           </tr>
+                       </thead>
+                       <tbody>
+                            <tr>
+                            {% for support in supports %}
+                                <td>
+                                    {% if action == 'P'  and maj != 'V' %}
+                                        <div class="text-center">
+                                            <input type="checkbox" id="checkSupport_{{ support.codeSupport }}" name="checkSupport[]" value="{{ support.codeSupport }}" >
+                                            <div id ="idSitePrelevement_{{ support.codeSupport }}" class="label-warning"></div>
+                                        </div>
+                                    {% else %}
+                                        <div id="idSupportCocher_{{ support.codeSupport }}">
+                                             <input type="hidden" id="idSupportCocherOk_{{ support.codeSupport }}"  value="" >
+                                             <span class="glyphicon glyphicon-check" aria-hidden="true"></span>
+                                        </div>
+                                    {% endif %}
+                                </td> 
+                           {% endfor %}
+                           </tr>
+                       </tbody>
+                   </table>
+                {% endif %}
+             {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-offset-1 col-md-10">
+            <div id="idChoisirGroupes" class="small">
+               <input type="hidden" name="periodeEncour" id="periodeEncour" value="{{ periode.periode.id }}">
+                <input type="hidden" name="stationEncour" id="stationEncour" value="{{ station.id }}">
+                <input type="hidden" id="optionGroupes" value="N">
+                <table class="table table-bordered table-condensed table-advance" id="idTable_groupes">
+                    <caption align=top><h4>Sélectionner un ou plusieurs groupes</h4></caption>
+                    <thead>
+                        <tr>
+                            <th width="5%">Actions</th>
+                            <th>Groupe de paramatètres</th>
+                            <th>type</th>
+                            <th>Support</th>
+                            <th>Prestataire</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {%if groupes | length%}  
+                            {% for groupe in groupes %}
+                                {% if groupe.Compl == 'O' or ( groupe.Compl ==  null and groupe.autre | length) %}
+                                  <tr id="idTr_{{ groupe.groupe.id }}" class="danger">
+                                {% else %}
+                                   <tr id="idTr_{{ groupe.groupe.id }}">
+                                {% endif %}
+                                    <td align="center">
+                                        {% if action == 'P'  and maj != 'V' %}
+                                        <div class="text-center">
+                                            {% if groupe.renseigne == 'N' %}
+                                                <input type="checkbox"  id="checkGroupe_{{ groupe.groupe.id }}" name="checkGroupe[]" value="{{ groupe.groupe.id }}" >
+                                            {% else %}
+                                                <input type="checkbox"  id="checkGroupe_{{ groupe.groupe.id }}" name="checkGroupe[]" value="{{ groupe.groupe.id }}" checked="checked">
+                                             {% endif %}
+                                           </div>
+                                        {% else %}
+                                            <div id="idGroupeCocher_{{ groupe.groupe.id }}">
+                                                 <span class="glyphicon glyphicon-check" aria-hidden="true"></span>
+                                            </div>
+                                        {% endif %}
+                                    </td> 
+                                    <td id="idTdCompl_{{ groupe.groupe.id }}" nowrap>
+                                        {{ groupe.groupe.grparRef.codeGrp }}&nbsp;&nbsp;{{ groupe.groupe.grparRef.libelleGrp }}
+                                    </td>
+                                    <td>
+                                        {{ groupe.groupe.grparRef.typeGrp }}
+                                    </td>
+                                    <td>
+                                        {% if groupe.obliSupport | length %}
+                                            {% for obliSupport in groupe.obliSupport %} 
+                                                {% if obliSupport.support | length %}
+                                                   {{ obliSupport.support.nomSupport }}&nbsp;&nbsp;
+                                                {% endif %}
+                                            {% endfor %}
+                                       {% endif %}
+                                    </td>
+                                    <td id="idTdPresta_{{ groupe.groupe.id }}">
+                                        {% if groupe.Compl == 'O' or ( groupe.Compl ==  null and groupe.autre | length) %}
+                                            {% if groupe.autreGroupe %}
+                                                {% if groupe.autreGroupe.prestaDft %}
+                                                   {{ groupe.autreGroupe.prestaDft.nomCorres }}
+                                                {% endif %}
+                                            {% endif %}
+                                        {% else %}
+                                            {% if groupe.groupe.prestaDft %}
+                                               {{ groupe.groupe.prestaDft.nomCorres }}
+                                            {% endif %}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+                    
+    <div class="row">
+    <div class="col-md-2"></div>
+       <div class="col-md-10 pull-left text-info">
+        <ul class="list-inline">
+            <li> 
+             {%if groupes | length%}
+                 {% set lot = null %}
+                 {% set Compl = "N" %}
+                 {% set EstCompl = "N" %}
+                  {% for groupe in groupes %}
+                      {% if groupe.autre | length %}
+                          {% if lot != groupe.autre.id %}
+                             <a class="btn btn-danger btn-xs" href="#" title="Autre programmation prévue"><i class="fa"></i></a>
+                             prévu dans la programmation {{ groupe.autre.anneeProg }} version {{ groupe.autre.version }} du lot : {{ groupe.autre.lot.nomLot }}
+                             {% set lot = groupe.autre.id %}
+                             {% if groupe.Compl == 'O' or ( groupe.Compl ==  null and groupe.autre | length) %}
+                                 {% set Compl = "O" %}
+                             {% endif %}
+                             {% if groupe.EstCompl == 'O'  %}
+                                 {% set EstCompl = "O" %}
+                             {% endif %}
+                           {% endif %}
+                      {% endif %}
+                  {% endfor %}
+              {% endif %}
+             </li>
+         </ul> 
+       </div>
+    </div>
+    {% if lot | length > 0 %}
+       {% if action == 'P'  and maj != 'V' %}    
+           {% if EstCompl == 'N' %}
+                <div class="row">
+                    <div class="col-lg-6 col-lg-offset-3">
+                        <div class="btn-group" data-toggle="buttons">
+                            {% if Compl == 'O'%}
+                                <button type="button" id="optionGroupes1"  class="btn btn-primary" autocomplete="off">Complétez ce lot</button>
+                                <button type="button" id="optionGroupes2"  class="btn btn-default" autocomplete="off">Ignorer ce lot</button>
+                                <input type="hidden" id="optionGroupes" value="C">
+                            {% else %}
+                                <button type="button" id="optionGroupes1"  class="btn btn-default" autocomplete="off">Complétez ce lot</button>
+                                <button type="button" id="optionGroupes2"  class="btn btn-primary" autocomplete="off">Ignorer ce lot</button>
+                                <input type="hidden" id="optionGroupes" value="I">
+                            {% endif %}
+                        </div>
+                     </div>
+                </div>
+          {% else %}
+              <input type="hidden" id="optionGroupes" value="N">
+          {% endif %}    
+       {% endif %}
+    {% endif %}
+    
+    {% if autrePeriodes | length > 0 %}
+       {% if action == 'P'  and maj != 'V' %}      
+        <div id="idBlockAutrePeriodes" class="row">
+            <div class="col-lg-6 col-lg-offset-3">
+               <p>Sélectionner la ou les semaines identiques à cette programmation</p>
+               <select id="autrePeriodes" class="form-control input-small" placeholder="autre périodes" name="autrePeriodes[]" required="required" multiple>
+                    <option value=""></option>
+                        {% for autrePeriode in autrePeriodes %}
+                            {% if periode.periode.numPeriode != autrePeriode.periode.numPeriode %}
+                               <option  value="{{ autrePeriode.id }}" >{{ autrePeriode.periode.labelPeriode }}</option>
+                            {% endif %}
+                        {% endfor %}
+                </select>
+             </div>
+        </div>
+       {% endif %}
+    {% endif %}
+    
+    
+ </div>               
+                     
+<div class="modal-footer">
+    {% if action == 'P'  and maj != 'V' %}
+        <button id="idValiderSelectionGroupe" type="submit" class="btn btn-success icon-ok-sign">
+            <i class="fa fa-check"> Valider</i>
+        </button>
+    {% endif %}
+    <button id="idAnnulerSelectionGroupe" type="button" class="btn btn-default" data-dismiss="modal">
+        <i class="fa fa-undo"> Annuler</i>
+    </button>
+
+
+<script>
+    
+    if ($('#optionGroupes').val() == 'C'){
+        $('#idBlockAutrePeriodes').hide();
+    }else{
+        $('#idBlockAutrePeriodes').show();
+    }
+    
+    {% if Compl == 'O'%}
+        $('#optionGroupes').val('C');
+    {% else %}
+         $('#optionGroupes').val('I');
+    {% endif %}
+    
+      {# validation des groupes pour une periode#}
+    $(document).on('click','#idValiderSelectionGroupe',function(e){
+        $('#modalTraitementEncours').modal('toggle');
+        $('#idModalProgrammer').modal('hide');
+         e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+        {%if groupes | length%}  
+           {% for groupe in groupes %}
+                $('#checkGroupe_{{ groupe.groupe.id }}').prop( "disabled", false );
+            {% endfor %}
+        {% endif %}
+        var $this = $('#idForm_groupe'); // L'objet jQuery du formulaire
+        var url = '{{ path("AeagSqeBundle_programmation_periode_valider",{"stationId":  "par1", "periodeId" : "par2", "optionGroupes" : "par3","action": "par4","maj":"par5","lotan":"par6" }) }}';
+        url = url.replace("par1", $('#stationEncour').val());
+        url = url.replace("par2", $('#periodeEncour').val());
+         url = url.replace("amp;","");
+        url = url.replace("par3", $('#optionGroupes').val());
+        url = url.replace("amp;","");
+        url = url.replace("par4", '{{ action }}');
+         url = url.replace("amp;","");
+        url = url.replace("par5", '{{ maj }}');
+        url = url.replace("amp;","");
+        url = url.replace("par6", '{{ lotan.id }}');
+        url = url.replace("amp;","");
+        $.ajax({
+            url: url,
+            type: 'post', // La méthode indiquée dans le formulaire (get ou post)
+            data: $this.serialize(),
+            success: function(html) { // Je récupère la réponse du fichier PHP
+                    $('#idStation_' + $('#stationEncour').val()).empty().append(html);
+                    $('#modalTraitementEncours').modal('hide');
+                }
+        });
+    });
+    
+    {% if groupes | length %}  
+        {%set groupeRenseigne = 'N' %}
+        {% for groupe in groupes %}
+                 {% if groupe.renseigne == 'O' %}
+                      {%set groupeRenseigne = 'O' %}
+                 {% endif %}
+         {% endfor %}
+    {% endif %}
+     
+     
+   
+     
+     
+    {%if groupes | length%}  
+       {% for groupe in groupes %}
+            {%set nbErreurSite = 0 %}
+               {% if groupe.renseigne == 'N' %}
+                        $('#checkGroupe_{{ groupe.groupe.id }}').prop( "checked", false );
+                        $('#idGroupeCocher_{{ groupe.groupe.id }}').hide();
+                    {% else %}
+                        $('#checkGroupe_{{ groupe.groupe.id }}').prop( "checked", true );
+                        $('#idGroupeCocher_{{ groupe.groupe.id }}').show();
+                    {% endif %}
+            var html = '';
+            {% for obliSupport in groupe.obliSupport %} 
+                {% if obliSupport.support | length %}
+                   {% if obliSupport.obli == "O" %}
+                        $('#checkGroupe_{{ groupe.groupe.id }}').prop( "disabled", true );
+                        $('#checkGroupe_{{ groupe.groupe.id }}').prop( "checked", true );
+                    {% else %}
+                        $('#checkGroupe_{{ groupe.groupe.id }}').prop( "disabled", false );
+                    {% endif %}
+                    
+                   {% if obliSupport.site == "ko" %}
+                          $('#checkSupport_{{ obliSupport.support.codeSupport }}').prop( "checked", false );   
+                          $('#checkSupport_{{ obliSupport.support.codeSupport }}').prop( "disabled", true );
+                          $('#checkSupport_{{ obliSupport.support.codeSupport }}').hide()
+                          $('#checkGroupe_{{ groupe.groupe.id }}').prop( "disabled", true );
+                          $('#checkGroupe_{{ groupe.groupe.id }}').prop( "checked", false);
+                          $('#idSupportCocher_{{ obliSupport.support.codeSupport }}').hide();
+                          $('#idSupportCocherOk_{{ obliSupport.support.codeSupport }}').val('N');
+                          $('#idGroupeCocher_{{ groupe.groupe.id }}').hide();
+                          html = 'Pas de site pour ce support';
+                          {% set nbErreurSite = nbErreurSite + 1 %}
+                          support = {{  obliSupport.support.codeSupport }};
+                    {% endif %}
+                        
+                   {% if groupeRenseigne == 'N' %}
+                            $('#checkSupport_{{ obliSupport.support.codeSupport }}').prop( "checked", false );
+                             $('#idSupportCocher_{{ obliSupport.support.codeSupport }}').hide();
+                             $('#idSupportCocherOk_{{ obliSupport.support.codeSupport }}').val('N');
+                    {% else %}
+                              $('#checkSupport_{{ obliSupport.support.codeSupport }}').prop( "checked", true );   
+                              $('#idSupportCocher_{{ obliSupport.support.codeSupport }}').show();
+                              $('#idSupportCocherOk_{{ obliSupport.support.codeSupport }}').val('O');
+                    {% endif  %}
+               {% endif %}
+           {% endfor %}
+               {% if nbErreurSite == 1 %}
+                 $('#idSitePrelevement_' + support).empty().append(html).addClass("label-warning");
+              {% endif %}
+       {% endfor %}
+      
+    {% endif %}
+   
+        
+    $(document).on('click', '#optionGroupes1', function(e){
+            $('#optionGroupes1').removeClass('btn-default').addClass('btn-primary');
+            $('#optionGroupes2').removeClass('btn-primary').addClass('btn-default');
+            $('#optionGroupes').val('C');
+           $('#idBlockAutrePeriodes').hide();
+            {%if groupes | length%}  
+                {% for groupe in groupes %}
+                    {% if groupe.autre | length %}
+                      $('#idTr_{{ groupe.groupe.id }}').addClass("label-warning");
+                      $('#idTdPresta_{{ groupe.groupe.id }}').empty();
+                      {% if groupe.autreGroupe.prestaDft %}
+                         $('#idTdPresta_{{ groupe.groupe.id }}').html('{{ groupe.autreGroupe.prestaDft.nomCorres }}');
+                      {% endif %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            });  
+                
+    $(document).on('click', '#optionGroupes2', function(e){
+            $('#optionGroupes2').removeClass('btn-default').addClass('btn-primary');
+            $('#optionGroupes1').removeClass('btn-primary').addClass('btn-default');
+            $('#optionGroupes').val('I');
+             $('#idBlockAutrePeriodes').show();
+            {%if groupes | length%}  
+                {% for groupe in groupes %}
+                    {% if groupe.autre | length %}
+                      $('#idTr_{{ groupe.groupe.id }}').removeClass("label-warning");
+                      $('#idTdPresta_{{ groupe.groupe.id }}').empty();
+                      {% if groupe.groupe.prestaDft %}
+                         $('#idTdPresta_{{ groupe.groupe.id }}').html('{{ groupe.groupe.prestaDft.nomCorres }}');
+                      {% endif %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            });   
+    
+    
+    
+    {#   traitement sur un support sélectionner   #}
+       $('#idChoisirGroupes').hide();
+       {% for support in supports %}
+            {%if groupes | length%}  
+                {% for groupe in groupes %}
+                  {% for obliSupport in groupe.obliSupport %} 
+                      {% if obliSupport.support | length %}
+                        {% if obliSupport.support.codeSupport == support.codeSupport %}
+                                if ($('#checkSupport_{{ support.codeSupport }}').is(':checked') || $('#idSupportCocherOk_{{ obliSupport.support.codeSupport }}').val() == 'O'){
+                                   $('#idChoisirGroupes').show();
+                                    $('#idTr_{{ groupe.groupe.id }}').show();
+                                 }else{
+                                    $('#idTr_{{ groupe.groupe.id }}').hide();
+                                 };
+                        {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                  {% endfor %}
+            {% endif %}
+    
+    $(document).on('click', '#checkSupport_{{ support.codeSupport }}', function(e){
+              {%if groupes | length%}  
+               {% for groupe in groupes %}
+                   {% for obliSupport in groupe.obliSupport %} 
+                      {% if obliSupport.support | length %}
+                        {% if obliSupport.support.codeSupport == support.codeSupport %}
+                                if ($('#checkSupport_{{ support.codeSupport }}').is(':checked')){
+                                   $('#checkGroupe_{{ groupe.groupe.id }}').prop( "checked", true );
+                                   $('#idChoisirGroupes').show();
+                                   $('#idTr_{{ groupe.groupe.id }}').show();
+                                }else{
+                                   $('#checkGroupe_{{ groupe.groupe.id }}').prop( "checked", false );
+                                   $('#idTr_{{ groupe.groupe.id }}').hide();
+                                };
+                                {% if obliSupport.obli == "O" %}
+                                    $('#checkGroupe_{{ groupe.groupe.id }}').prop( "disabled", true );
+                                 {% else %}
+                                    $('#checkGroupe_{{ groupe.groupe.id }}').prop( "disabled", false );
+                                    if ($('#checkGroupe_{{ groupe.groupe.id }}').is(':checked')){
+                                        var url = '{{ path("AeagSqeBundle_programmation_periode_autre_programmation",{"stationId":  "par1", "periodeId" : "par2", "groupeId" : "par3","action": "par4","maj":"par5","lotan":"par6"  }) }}';
+                                        url = url.replace("par1", $('#stationEncour').val());
+                                        url = url.replace("par2", $('#periodeEncour').val());
+                                        url = url.replace("amp;","");
+                                        url = url.replace("par3", {{ groupe.groupe.id }});
+                                        url = url.replace("amp;","");
+                                        url = url.replace("par4", '{{ action }}');
+                                         url = url.replace("amp;","");
+                                        url = url.replace("par5", '{{ maj }}');
+                                        url = url.replace("amp;","");
+                                        url = url.replace("par6", '{{ lotan.id }}');
+                                        url = url.replace("amp;","");
+                                        $.ajax({
+                                            url: url,
+                                            type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+                                            success: function(reponse) { // Je récupère la réponse du fichier PHP
+                                                var message = JSON.parse(reponse);
+                                                $('#idTdCompl_{{ groupe.groupe.id }}').empty().append(message[1]);
+                                               
+                                            }
+                                        });
+                                    }else{
+                                        $('#checkSupport_{{ support.codeSupport }}').prop( "checked", false );
+                                    };
+                                   {#{% if groupe.obliSupport | length %}
+                                        {% for obliSupport in groupe.obliSupport %} 
+                                            {% if groupe.groupe.grparRef.support.codeSupport == obliSupport.codeSupport %}
+                                                  $('#checkGroupe_{{ groupe.groupe.id }}').prop( "checked", true );
+                                                  $('#checkGroupe_{{ groupe.groupe.id }}').prop( "disabled", true );
+                                            {% else %}
+                                                  $('#checkGroupe_{{ groupe.groupe.id }}').prop( "disabled", false );
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}#}
+                               {% endif %}
+                           {% endif %}
+                               {% else %}
+                                   $('#idChoisirGroupes').show();
+                             $('#idTr_{{ groupe.groupe.id }}').show();
+                   {% endif %}
+                   {% endfor %}
+               {% endfor %}
+           {% endif %}
+           });
+       {% endfor %}
+       
+       
+       {%if groupes | length%}  
+            {% for groupe in groupes %}
+                
+                {% if groupe.nbParametres == 0  or groupe.obliSupport | length== 0%}
+                             $('#idChoisirGroupes').show();
+                             $('#idTr_{{ groupe.groupe.id }}').show();
+                {% endif %}
+                              
+               {# $('#checkGroupe_{{ groupe.groupe.id }}').prop( "disabled", false );
+                if ($('#checkGroupe_{{ groupe.groupe.id }}').is(':checked')){
+                       var url = '{{ path("AeagSqeBundle_programmation_periode_autre_programmation",{"stationId":  "par1", "periodeId" : "par2", "groupeId" : "par3" }) }}';
+                       url = url.replace("par1", $('#stationEncour').val());
+                       url = url.replace("par2", $('#periodeEncour').val());
+                       url = url.replace("par3", {{ groupe.groupe.id }});
+                       $.ajax({
+                           url: url,
+                           type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+                           success: function(reponse) { // Je récupère la réponse du fichier PHP
+                               var message = JSON.parse(reponse);
+                               $('#idTdCompl_{{ groupe.groupe.id }}').empty().append(message[1]);
+                               if (message[0] == 'ko'){
+                                  {% if groupe.groupe.grparRef.support | length %}
+                                  $('#checkSupport_{{ groupe.groupe.grparRef.support.codeSupport }}').prop( "checked", false );
+                                  }else{
+                                  $('#checkSupport_{{ groupe.groupe.grparRef.support.codeSupport }}').prop( "checked", true );
+                                  {% endif %}
+                                  };
+                           }
+                       });
+               }else{
+                 {% if groupe.groupe.grparRef.support | length %}
+                   $('#checkSupport_{{ groupe.groupe.grparRef.support.codeSupport }}').prop( "checked", false );
+                  {% endif %}
+               };#}
+                $(document).on('click', '#checkGroupe_{{ groupe.groupe.id }}', function(e){
+                    if ($('#checkGroupe_{{ groupe.groupe.id }}').is(':checked')){
+                         var url = '{{ path("AeagSqeBundle_programmation_periode_autre_programmation",{"stationId":  "par1", "periodeId" : "par2", "groupeId" : "par3","action": "par4","maj":"par5","lotan":"par6"  }) }}';
+                        url = url.replace("par1", $('#stationEncour').val());
+                        url = url.replace("par2", $('#periodeEncour').val());
+                        url = url.replace("amp;","");
+                        url = url.replace("par3", {{ groupe.groupe.id }});
+                        url = url.replace("amp;","");
+                        url = url.replace("par4", '{{ action }}');
+                         url = url.replace("amp;","");
+                        url = url.replace("par5", '{{ maj }}');
+                        url = url.replace("amp;","");
+                        url = url.replace("par6", '{{ lotan.id }}');
+                        url = url.replace("amp;","");
+                        $.ajax({
+                            url: url,
+                            type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+                            success: function(reponse) { // Je récupère la réponse du fichier PHP
+                                var message = JSON.parse(reponse);
+                                $('#idTdCompl_{{ groupe.groupe.id }}').empty().append(message[1]);
+
+                            }
+                        });
+                        {% for autreGroupe in groupes %}
+                            {% if groupe.groupe.id != autreGroupe.groupe.id %}
+                                {% for obliSupport in groupe.obliSupport %} 
+                                    {% if obliSupport.support | length %}
+                                        {% for autreObliSupport in autreGroupe.obliSupport %} 
+                                            {% if autreObliSupport.support | length %}
+                                                {% if obliSupport.support.codeSupport == autreObliSupport.support.codeSupport %}
+                                                    {% if autreObliSupport.obli == "O" %}
+                                                        $('#checkGroupe_{{ autreGroupe.groupe.id }}').prop( "checked", true );
+                                                        $('#checkGroupe_{{ autreGroupe.groupe.id }}').prop( "disabled", true );
+                                                       var url = '{{ path("AeagSqeBundle_programmation_periode_autre_programmation",{"stationId":  "par1", "periodeId" : "par2", "groupeId" : "par3","action": "par4","maj":"par5","lotan":"par6"  }) }}';
+                                                        url = url.replace("par1", $('#stationEncour').val());
+                                                        url = url.replace("par2", $('#periodeEncour').val());
+                                                        url = url.replace("amp;","");
+                                                        url = url.replace("par3", {{ autreGroupe.groupe.id }});
+                                                        url = url.replace("amp;","");
+                                                        url = url.replace("par4", '{{ action }}');
+                                                         url = url.replace("amp;","");
+                                                        url = url.replace("par5", '{{ maj }}');
+                                                        url = url.replace("amp;","");
+                                                        url = url.replace("par6", '{{ lotan.id }}');
+                                                        url = url.replace("amp;","");
+                                                        $.ajax({
+                                                            url: url,
+                                                            type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+                                                            success: function(reponse) { // Je récupère la réponse du fichier PHP
+                                                                var message = JSON.parse(reponse);
+                                                                $('#idTdCompl_{{ autreGroupe.groupe.id }}').empty().append(message[1]);
+
+                                                            }
+                                                        });
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endif %}
+                                       {% endfor %}
+                                   {% endif %}
+                               {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                     }
+                });
+               {# {% if groupe.groupe.grparRef.support | length %}
+                    {% if groupe.obliSupport | length %}
+                        {% for obliSupport in groupe.obliSupport %} 
+                            {% if groupe.groupe.grparRef.support.codeSupport == obliSupport.codeSupport %}
+                                  $('#checkGroupe_{{ groupe.groupe.id }}').prop( "checked", true );
+                                  $('#checkGroupe_{{ groupe.groupe.id }}').prop( "disabled", true );
+                            {% else %}
+                                  $('#checkGroupe_{{ groupe.groupe.id }}').prop( "disabled", false );
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                {% endif %}#}
+           {% endfor %}
+     {% endif %}
+
+        {% for support in supports %}
+             {%if groupes | length%}  
+               {% for groupe in groupes %}
+                   {% for obliSupport in groupe.obliSupport %} 
+                      {% if obliSupport.support | length %}
+                        {% if obliSupport.support.codeSupport == support.codeSupport %}
+                                if ($('#checkSupport_{{ support.codeSupport }}').is(':checked')){
+                                   $('#checkGroupe_{{ groupe.groupe.id }}').prop( "checked", true );
+                                   $('#idChoisirGroupes').show();
+                                   $('#idTr_{{ groupe.groupe.id }}').show();
+                                }else{
+                                   $('#checkGroupe_{{ groupe.groupe.id }}').prop( "checked", false );
+                                   $('#idTr_{{ groupe.groupe.id }}').hide();
+                                };
+                                {% if obliSupport.obli == "O" %}
+                                    $('#checkGroupe_{{ groupe.groupe.id }}').prop( "disabled", true );
+                                 {% else %}
+                                    $('#checkGroupe_{{ groupe.groupe.id }}').prop( "disabled", false );
+                                    if ($('#checkGroupe_{{ groupe.groupe.id }}').is(':checked')){
+                                        var url = '{{ path("AeagSqeBundle_programmation_periode_autre_programmation",{"stationId":  "par1", "periodeId" : "par2", "groupeId" : "par3","action": "par4","maj":"par5","lotan":"par6"  }) }}';
+                                        url = url.replace("par1", $('#stationEncour').val());
+                                        url = url.replace("par2", $('#periodeEncour').val());
+                                        url = url.replace("amp;","");
+                                        url = url.replace("par3", {{ groupe.groupe.id }});
+                                        url = url.replace("amp;","");
+                                        url = url.replace("par4", '{{ action }}');
+                                         url = url.replace("amp;","");
+                                        url = url.replace("par5", '{{ maj }}');
+                                        url = url.replace("amp;","");
+                                        url = url.replace("par6", '{{ lotan.id }}');
+                                        url = url.replace("amp;","");
+                                        $.ajax({
+                                            url: url,
+                                            type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+                                            success: function(reponse) { // Je récupère la réponse du fichier PHP
+                                                var message = JSON.parse(reponse);
+                                                $('#idTdCompl_{{ groupe.groupe.id }}').empty().append(message[1]);
+                                               
+                                            }
+                                        });
+                                    }else{
+                                        $('#checkSupport_{{ support.codeSupport }}').prop( "checked", false );
+                                    };
+                                   {#{% if groupe.obliSupport | length %}
+                                        {% for obliSupport in groupe.obliSupport %} 
+                                            {% if groupe.groupe.grparRef.support.codeSupport == obliSupport.codeSupport %}
+                                                  $('#checkGroupe_{{ groupe.groupe.id }}').prop( "checked", true );
+                                                  $('#checkGroupe_{{ groupe.groupe.id }}').prop( "disabled", true );
+                                            {% else %}
+                                                  $('#checkGroupe_{{ groupe.groupe.id }}').prop( "disabled", false );
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}#}
+                               {% endif %}
+                           {% endif %}
+                               {% else %}
+                                   $('#idChoisirGroupes').show();
+                             $('#idTr_{{ groupe.groupe.id }}').show();
+                   {% endif %}
+                   {% endfor %}
+               {% endfor %}
+           {% endif %}
+        {% endfor %}
+        
+</script>
+    
+</div>         

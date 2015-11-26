@@ -1,0 +1,69 @@
+AeagSqeBundle_programmation_groupes:
+    path:  /
+    defaults: { _controller: AeagSqeBundle:ProgrammationGroupe:index }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_groupe_parametres:
+    path:  /parametres
+    defaults: { _controller: AeagSqeBundle:ProgrammationGroupe:groupeParametres }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_groupe_parametre_prestataires:
+    path:  /parametres/prestataire
+    defaults: { _controller: AeagSqeBundle:ProgrammationGroupe:groupeParametrePrestataires }
+    requirements:
+        methods:  GET
+        
+AeagSqeBundle_programmation_milieu_groupe_parametres:
+    path:  /milieu/parametres
+    defaults: { _controller: AeagSqeBundle:ProgrammationGroupe:milieuGroupeParametres }
+    requirements:
+        methods:  GET|POST
+        
+        
+AeagSqeBundle_programmation_groupe_selectionner:
+    path:  /selectionner
+    defaults: { _controller: AeagSqeBundle:ProgrammationGroupe:selectionner }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_groupe_ajouter:
+    path:  /ajouter
+    defaults: { _controller: AeagSqeBundle:ProgrammationGroupe:ajouter }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_programmeur_groupe_supprimer:
+    path:  /supprimer/{groupeId}
+    defaults: { _controller: AeagSqeBundle:ProgrammationGroupe:supprimer, groupeId : null }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_groupe_filtrer:
+    path:  /filtrer
+    defaults: { _controller: AeagSqeBundle:ProgrammationGroupe:filtrer}
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_groupe_valider:
+    path:  /valider/{groupeId}
+    defaults: { _controller: AeagSqeBundle:ProgrammationGroupe:valider, groupeId : null}
+    requirements:
+        methods:  GET|POST
+    
+AeagSqeBundle_programmation_groupe_resultat:
+    path:  /resultat
+    defaults: { _controller: AeagSqeBundle:ProgrammationGroupe:resultat}
+    requirements:
+        methods:  GET|POST
+        
+
+
+    
+
+
+
+
+        

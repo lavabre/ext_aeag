@@ -1,0 +1,97 @@
+{% extends "AeagFrdBundle::layout.html.twig" %}
+
+
+
+{% block breadcrumb %}{% endblock breadcrumb %}
+
+{%block panel_heading %}
+      <h3>
+          Liste des départements
+      </h3>
+
+     
+{%endblock panel_heading %}
+
+
+  {%block content %}
+  {#  <div class="row center-block">
+          <div class="offset3 col-xm-12">
+                <a  href="{{ path('Aeag_pdfDepartement') }}" title="Imprimer">
+                      <button type="button" class="btn btn-info pull-right">
+                        <i class="fa fa-print"> Pdf</i>
+                      </button>
+                 </a>
+          </div>
+     </div>
+  #}
+     
+     <div class="row">
+          <div class="col-xm-12">
+              <div class="small ">
+                  <table class="table table-bordered table-condensed table-advance" id="idTable">
+                        <thead>
+                           <tr>
+                                <th>Code</th>
+                                <th>Libelle</th>
+                                <th width="1%" align="center" nowrap>Communes</th>
+                             </tr>
+                        </thead>
+                        <tbody>
+                            {% for entity in entities %}
+                                 <tr>
+                                    <td>{{ entity.dept }}</td>
+                                    <td>{{ entity.libelle }}</td>
+                                    <td>
+                                         <a class="btn btn-primary"  href="{{ path('Aeag_listeCommune', { 'dept': entity.dept }) }}" target="_blank" title="Communes">
+                                            <i class="fa fa-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                             {% endfor %}
+                        </tbody>
+                     </table>
+            </div>
+          </div>
+        </div>
+      
+       
+  {%endblock content %}
+ 
+
+  {% block scripts %}
+       
+       // DataTable
+          var table = $('#idTable').DataTable(
+                      {"stateSave": true,
+                       "oLanguage": {
+                          "sSearch": "Filtre",
+                          "sFirst": "1ere page",
+                          "sLast": "Dernière page",
+                          "sNext": "Prochaine page",
+                          "sPrevious": "Page précédente",
+                          "EmptyTable": "Pas de données",
+                          "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+                          "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+                          "sZeroRecords": "Pas d'enregistrement à afficher",
+                          "sInfoEmpty": "Pas d'enregistrement à afficher",
+                          "sInfoThousands": " ",
+                          "sLengthMenu": 'Afficher <select>' +
+                                  '<option value="10">10</option>' +
+                                  '<option value="20">20</option>' +
+                                  '<option value="30">30</option>' +
+                                  '<option value="40">40</option>' +
+                                  '<option value="50">50</option>' +
+                                  '<option value="-1">Tous</option>' +
+                                  '</select> enregistrements',
+                          "sPaginationType": "full_numbers"
+                      }
+                     }
+                    );
+      
+       $('#btFermer').click(function (e) {
+           e.preventDefault();
+           window.setTimeout("window.close()", 1);
+           return false;
+      });
+ 
+  {% endblock scripts %}

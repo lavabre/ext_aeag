@@ -1,0 +1,271 @@
+<table class="table table-bordered table-condensed table-advance">
+    <tr>
+        <td width="20%">
+            <label  class="col-md-3 control-label">Année</label>
+        </td>
+        <td width="70%">
+            <div class="col-md-3 form-group">
+                <input id="filtre_criteres_annee" class="form-control input-small" type="text" value="{{annee}}" placeholder="Année" name="filtre_criteres[annee]"></input>
+           </div>
+        </td>
+    </tr>
+    {% if is_granted('ROLE_ADMINSQE') %}
+       <tr>
+        <td nowrap>
+            <label  class="col-md-3 control-label">Phases</label>
+        </td>
+        <td>
+          <div class="form-group">
+                <div class="col-md-9">
+                    {% if lots | length == 1 %}  
+                    <select id="filtre_criteres_phase" disabled class="form-control input-small" placeholder="Phase" name="filtre_criteres[phase]">
+                    {% else %}
+                    <select id="filtre_criteres_phase" class="form-control input-small" placeholder="Phase" name="filtre_criteres[phase]"> 
+                    {% endif %}
+                         <option value=""></option>
+                         {% if phases | length %}  
+                             {% for a in phases %}
+                                 <option  value="{{  a.id }}" >{{ a.codePhase }}  {{ a.libellePhase }}</option>
+                             {% endfor %}
+                         {%endif%}
+                    </select>
+               </div
+            </div> 
+        </td>    
+    </tr>
+        <tr>
+            <td nowrap>
+                <label  class="col-md-3 control-label">Utilisateurs</label> 
+            </td>
+            <td>
+               <div class="form-group">
+                    <div class="col-md-9">
+                        {%if webusers | length == 1%}  
+                            <select id="filtre_criteres_webuser" disabled class="form-control input-small" placeholder="Utilisateur" name="filtre_criteres[webuser]">
+                        {% else %}
+                            <select id="filtre_criteres_webuser" class="form-control input-small" placeholder="Utilisateur" name="filtre_criteres[webuser]">
+                        {% endif %}
+                             <option value=""></option>
+                             {%if webusers | length %}  
+                                 {% for a in webusers %}
+                                     <option  value="{{  a.id }}" >{{ a.nom }}</option>
+                                 {% endfor %}
+                             {%endif%}
+                        </select>
+                   </div
+                </div>
+            </td>
+        </tr>
+    
+    <tr>
+        <td nowrap>
+            <label  class="col-md-3 control-label">Marché</label> 
+        </td>
+        <td>
+          <div class="form-group">
+                <div class="col-md-9">
+                     {% if marches | length == 1 %}  
+                        <select id="filtre_criteres_marche" disabled name="filtre_criteres[marche]" class="form-control input-small" placeholder="Marche">
+                     {% else %}
+                           <select id="filtre_criteres_marche" name="filtre_criteres[marche]" class="form-control input-small" placeholder="Marche">
+                     {% endif %}
+                          <option value=""></option>
+                         {%if marches | length %}  
+                             {% for a in marches %}
+                                 <option  value="{{  a.id }}" >{{ a.nomMarche }}</option>
+                             {% endfor %}
+                         {%endif%}
+                    </select>
+               </div
+            </div>
+        </td>
+    </tr>
+     {%if titulaires | length %}  
+     <tr>
+        <td nowrap>
+            <label  class="col-md-3 control-label">Prestataire</label> 
+        </td>
+        <td>
+          <div class="form-group">
+                <div class="col-md-9">
+                    {% if titulaires | length == 1 %} 
+                     <select id="filtre_criteres_titulaire" disabled name="filtre_criteres[titulaire]" class="form-control input-small" placeholder="Titulaire">
+                    {% else %}
+                     <select id="filtre_criteres_titulaire" name="filtre_criteres[titulaire]" class="form-control input-small" placeholder="Titulaire">
+                    {% endif %}
+                          <option value=""></option>
+                         {%if titulaires | length %}  
+                             {% for a in titulaires %}
+                                 <option  value="{{  a.adrCorId }}" >{{ a.ancnumNomCorres }}</option>
+                             {% endfor %}
+                         {%endif%}
+                    </select>
+               </div
+            </div>
+        </td>
+    </tr>
+    {%endif%}
+    <tr>
+        <td nowrap>
+            <label  class="col-md-3 control-label">Zone géographique</label>
+        </td>
+        <td>
+           <div class="form-group">
+                <div class="col-md-9">
+                    {% if zoneGeoRefs | length == 1 %}  
+                     <select id="filtre_criteres_zoneGeoRef" disabled class="form-control input-small" placeholder="Zone géographique" name="filtre_criteres[zoneGeoRef]">
+                    {% else %}
+                     <select id="filtre_criteres_zoneGeoRef" class="form-control input-small" placeholder="Zone géographique" name="filtre_criteres[zoneGeoRef]"> 
+                    {% endif %}
+                          <option value=""></option>
+                         {% if zoneGeoRefs | length %}  
+                             {% for a in zoneGeoRefs %}
+                                 <option  value="{{  a.id }}" >{{ a.nomZoneGeo }}</option>
+                             {% endfor %}
+                         {%endif%}
+                    </select>
+               </div
+            </div> 
+        </td>
+    </tr>
+ {% endif %}    
+   <tr>
+        <td nowrap>
+            <label  class="col-md-3 control-label">Milieu </label> 
+        </td>
+        <td>
+            <div class="form-group">
+                <div class="col-md-9">
+                    {% if catMilieux | length == 1 %} 
+                     <select id="filtre_criteres_catMilieu" readonly class="form-control input-small" placeholder="Catégorie de milieu" name="filtre_criteres[catMilieu]">
+                    {% else %}
+                     <select id="filtre_criteres_catMilieu" class="form-control input-small" placeholder="Catégorie de milieu" name="filtre_criteres[catMilieu]"> 
+                    {% endif %}
+                         <option value=""></option>
+                         {% if catMilieux | length %}  
+                             {% for cat in catMilieux %}
+                                 <option  value="{{ cat.1 }}" >
+                                    {% if  cat.1 == "R" %}
+                                         Rivières
+                                    {% elseif cat.1 == "G" %}
+                                         Eaux souterraines
+                                    {% elseif cat.1 == "L" %}
+                                          Plans d'eau
+                                    {% else %}
+                                          Autres
+                                   {% endif %}
+                                 </option>
+                             {% endfor %}
+                         {%endif%}
+                    </select>
+               </div
+            </div> 
+        </td>
+    </tr>
+    <tr>
+        <td nowrap>
+            <label  class="col-md-3 control-label">Mesures</label> 
+        </td>
+        <td>
+            <div class="form-group">
+                <div class="col-md-9">
+                      <select id="filtre_criteres_typeMilieu" class="form-control input-small" placeholder="Type de milieu" name="filtre_criteres[typeMilieu]"> 
+                         <option value=""></option>
+                         {% if typeMilieux | length %}  
+                             {% for a in typeMilieux %}
+                                 <option  value="{{  a.codeMilieu }}" >{{ a.nomMilieu }}</option>
+                             {% endfor %}
+                         {%endif%}
+                    </select>
+               </div
+            </div> 
+        </td>
+    </tr>
+    {% if is_granted('ROLE_ADMINSQE') %}
+    <tr>
+        <td nowrap>
+            <label  class="col-md-3 control-label">Lot</label>
+        </td>
+        <td>
+          <div class="form-group">
+                <div class="col-md-9">
+                    {% if lots | length == 1 %}  
+                    <select id="filtre_criteres_lot" disabled class="form-control input-small" placeholder="Lot" name="filtre_criteres[lot]">
+                    {% else %}
+                    <select id="filtre_criteres_lot" class="form-control input-small" placeholder="Lot" name="filtre_criteres[lot]"> 
+                    {% endif %}
+                         <option value=""></option>
+                         {% if lots | length %}  
+                             {% for a in lots %}
+                                 <option  value="{{  a.id }}" >{{ a.nomLot }}</option>
+                             {% endfor %}
+                         {%endif%}
+                    </select>
+               </div
+            </div> 
+        </td>    
+    </tr>
+  
+  {% endif %}
+</table>
+
+<script type="text/javascript" language="javascript">
+    
+        
+      {% if app.session.get('critWebuser')   %}
+           $('#filtre_criteres_webuser option:selected').removeAttr('selected');
+           var valeur = {{ app.session.get('critWebuser') }};
+           $("#filtre_criteres_webuser option[value='" + valeur + "']").attr('selected','selected');
+           document.getElementById('criteres_webuser').value=valeur;
+      {% endif %}
+    
+      {% if app.session.get('critMarche')   %}
+           $('#filtre_criteres_marche option:selected').removeAttr('selected');
+           var valeur = {{ app.session.get('critMarche') }};
+           $("#filtre_criteres_marche option[value='" + valeur + "']").attr('selected','selected');
+           document.getElementById('criteres_marche').value=valeur;
+      {% endif %}
+          
+      {% if app.session.get('critTitulaire')   %}
+           $('#filtre_criteres_titulaire option:selected').removeAttr('selected');
+           var valeur = {{ app.session.get('critTitulaire') }};
+           $("#filtre_criteres_titulaire option[value='" + valeur + "']").attr('selected','selected');
+           document.getElementById('criteres_titulaire').value=valeur;
+      {% endif %}
+      
+     {% if app.session.get('critZoneGeoRef')   %}
+           $('#filtre_criteres_zoneGeoRef option:selected').removeAttr('selected');
+           var valeur = {{ app.session.get('critZoneGeoRef') }};
+           $("#filtre_criteres_zoneGeoRef option[value='" + valeur + "']").attr('selected','selected');
+           document.getElementById('criteres_zoneGeoRef').value=valeur;
+      {% endif %}
+          
+      {% if app.session.get('critCatMilieu')   %}
+           $('#filtre_criteres_catMilieu option:selected').removeAttr('selected');
+           var valeur = '{{ app.session.get('critCatMilieu') }}';
+           $("#filtre_criteres_catMilieu option[value='" + valeur + "']").attr('selected','selected');
+           document.getElementById('criteres_catMilieu').value=valeur;
+       {% endif %}
+      
+      {% if app.session.get('critTypeMilieu')   %}
+           $('#filtre_criteres_typeMilieu option:selected').removeAttr('selected');
+           var valeur = '{{ app.session.get('critTypeMilieu') }}';
+           $("#filtre_criteres_typeMilieu option[value='" + valeur + "']").attr('selected','selected');
+           document.getElementById('criteres_typeMilieu').value=valeur;
+      {% endif %}
+      
+      {% if app.session.get('critLot')   %}
+           $('#filtre_criteres_lot option:selected').removeAttr('selected');
+           var valeur = {{ app.session.get('critLot') }};
+           $("#filtre_criteres_lot option[value='" + valeur + "']").attr('selected','selected');
+           document.getElementById('criteres_lot').value=valeur;
+      {% endif %}      
+          
+          {% if app.session.get('critPhase')   %}
+           $('#filtre_criteres_phase option:selected').removeAttr('selected');
+           var valeur = {{ app.session.get('critPhase') }};
+           $("#filtre_criteres_phase option[value='" + valeur + "']").attr('selected','selected');
+           document.getElementById('criteres_phase').value=valeur;
+      {% endif %}      
+    
+ </script>

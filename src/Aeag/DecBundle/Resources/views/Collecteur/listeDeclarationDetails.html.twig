@@ -1,0 +1,325 @@
+{% extends "AeagDecBundle::layout.html.twig" %}
+
+
+{% block breadcrumb %}
+      <li>
+          <a href="{{ path('aeag_dec') }}">Accueil</a> 
+       </li>
+       <li>
+          {%if  is_granted('ROLE_ADMINDEC') %}
+              <a href="{{ path('AeagDecBundle_admin_listeDeclarationCollecteurs', {'annee' : annee, 'statut': declarationCollecteur.statut.code }) }}">Déclarations</a> 
+          {% else %}
+               <a href="{{ path('AeagDecBundle_collecteur_listeDeclarations') }}">Déclarations</a> 
+          {% endif %}
+        </li>
+        <li>
+          <a href="{{ path('AeagDecBundle_collecteur_listeSousDeclarations', { 'declarationCollecteur_id': sousDeclarationCollecteur.DeclarationCollecteur.id }) }}">{{sousDeclarationCollecteur.DeclarationCollecteur.annee}}</a> 
+        </li>
+        <li class="active">
+            {{sousDeclarationCollecteur.numero }} 
+        </li>
+{% endblock breadcrumb %}
+
+
+{%block panel_heading %}
+    <h3>
+       Déclaration  trimestrielle n° {{sousDeclarationCollecteur.numero }} de l'année {{sousDeclarationCollecteur.DeclarationCollecteur.annee}} du collecteur : {{ collecteur.numero}} {{collecteur.libelle}}
+    </h3>
+ {%endblock panel_heading %}
+
+  {% block modal %}
+      {%if entities| length > 0 %}
+              {% for entity in entities %}
+        
+                     <div class="modal fade" id="wide-{{ entity.declarationProducteurId}}" tabindex="-1" role="dialog" aria-labelledby="wideLabel-{{ entity.declarationProducteurId}}" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title" id="wideLabel-{{ entity.declarationProducteurId}}">Producteur : {{ entity.producteurSiret}} {{ entity.producteurLibelle}}</h4>
+                              </div>
+                              <div class="modal-body">
+                                <div class="row">
+                                      <div class="col-md-12 small">
+                                          <div class="medium">
+                                                <table class="table table-striped table-hover table-bordered table-advance">
+                                                        <thead>
+                                                          <tr>
+                                                              <th>Déclaration</th>
+                                                              <th>Quantité déclarée</th>
+                                                              <th>Quantité retenue</th>
+                                                              <th>Montant retenue</th>
+                                                          </tr>
+                                                      </thead>
+                                                      <tbody>
+                                                          <tr>
+                                                              <td align="center">{{ annee }}</td>
+                                                              <td align="right">{{ (entity.declarationProducteurQuantiteReel) | number_format(0,'.',' ')}} kg</td>
+                                                              <td align="right">{{ (entity.declarationProducteurQuantiteRet) | number_format(0,'.',' ')}} kg</td>
+                                                              <td align="right">{{ entity.declarationProducteurMontAide | number_format(2,'.',' ')}} €</td>
+                                                          </tr>
+                                                      </tbody>
+                                                  </table>
+                                          </div>
+                                      </div>
+                                </div>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-undo"></i> Fermer</button>
+                               </div>
+                            </div>
+                      </div>
+                  </div>
+        
+                   <div class="modal fade" id="sup-{{entity.id}}" tabindex="-1" role="dialog" aria-labelledby="supLabel-{{entity.id}}" aria-hidden="true">
+                      <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                              <h4 class="modal-title" id="supLabel-{{entity.id}}">Suppression de la ligne de la déclaration trimestrielle n° {{ sousDeclarationCollecteur.numero }}</h4>
+                            </div>
+                            <div class="modal-body">
+                                <h4>Cliquer sur  <button type="button" class="btn btn-danger" >
+                                  <i class="fa fa-trash-o"> Supprimer la ligne</i>
+                                  </button> pour valider la suppression de la ligne</h4>
+                            </div>
+                            <div class="modal-footer">
+                               <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-undo"></i> Fermer</button>
+                              <a class="btn btn-danger"  href="{{ path('AeagDecBundle_collecteur_crudDeclarationDetail', {'crud': 'D', 'sousDeclarationCollecteur_id': sousDeclarationCollecteur.id, 'declarationDetail_id': entity.id }) }}" title="Supprimer">
+                                   <i class="fa fa-trash-o"> Supprimer la ligne</i>
+                               </a>
+                             </div>
+                          </div>
+                     </div>
+                </div>
+        
+                 <div class="modal fade" id="infoProducteur" tabindex="-1" role="dialog" aria-labelledby="infoProducteur" aria-hidden="true">
+                      <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                              <h4 class="modal-title" id="infoProducteur">Producteur absent de la liste</h4>
+                            </div>
+                            <div class="modal-body">
+                                <h4>Si le producteur n'est pas dans liste : <br>
+                                       1) Aller dans l'onglet "Produceurs" <br>
+                                       2) Cliquer sur le bouton "Ajouter un producteur"
+                                       3) Revenir sur la déclaration et continuer le traitement
+                                </h4>
+                            </div>
+                            <div class="modal-footer">
+                               <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-undo"></i> Fermer</button>
+                              </div>
+                          </div>
+                     </div>
+                </div>
+             {% endfor %}
+       {%endif%} 
+  {%endblock modal%}
+
+
+  {%block content %}
+        
+           <div class="row">
+               <div class="col-md-12">
+                  <div class="small ">
+                      <table class="table table-bordered table-striped table-condensed table-advance table-hover">
+                                <thead>
+                                   <tr>
+                                        <th class="text-center">Quantité déclarée (kg)</th>
+                                        <th class="text-center">Quantité retenue (kg)</th>
+                                        <th class="text-center">Aide retenue (€)</th>
+                                   </tr>
+                               </thead>
+                               <tbody>
+                                 <tr>
+                                     <td align="right">{{ sousDeclarationCollecteur.quantiteReel | number_format(0,'.',' ')}}</td>
+                                     <td align="right">{{ sousDeclarationCollecteur.quantiteRet | number_format(0,'.',' ')}}</td>
+                                     <td align="right">{{ sousDeclarationCollecteur.montAide | number_format(2,'.',' ')}}</td>
+                                   </tr>
+                               </tbody>
+                        </table>
+                    </div>
+                 </div>
+           </div>
+
+       {% if sousDeclarationCollecteur.statut.code < '22' %}
+            <div class="row">
+                <div class="col-md-6">
+                          <a class="btn btn-success" target="_blank"  href="{{ path('AeagDecBundle_collecteur_crudDeclarationDetail', {'crud': 'C', 'sousDeclarationCollecteur_id': sousDeclarationCollecteur.id, 'declarationDetail_id': null }) }}" title="Ajouter producteur"> 
+                             <i class="fa fa-plus"> Ajouter une ligne</i>
+                          </a>
+                          <a class="btn btn-success" href="{{ path('AeagDecBundle_collecteur_ajouterFichier', {'sousDeclarationCollecteur_id':  sousDeclarationCollecteur.id})}}" title="Ajouter un fichier"> 
+                            <i class="fa fa-download"> Intégrer un fichier CSV</i>
+                          </a>
+                   </div>
+            </div>
+       {% endif %}
+
+        <div class="row">
+          <div class="col-md-12">
+              <div class="small ">
+                 <table class="table table-bordered table-condensed table-advance" id="idTable">
+                        <thead>
+                            <tr>
+                                <th>Actions</th>
+                                <th>Siret</th>
+                                <th></th>
+                                <th>Raison sociale</th>
+                                <th>Code postal</th>
+                                <th>Activité (code NAF)</th>
+                                <th>N° facture</th>
+                                <th>Date de facture ou d'enlèvement pour code 51</th>
+                                <th>Code nomenclature</th>
+                                <th>Dénomination usuelle du déchet</th>
+                                <th>Code D/R</th>
+                                <th>Centre Traitement</th>
+                                <th>Quantité pesée (en Kg)</th>
+                                <th>Code conditionnement</th>
+                                <th>Coût facturé (€/kg)</th>
+                                <th>Montant d'aide (€)</th>
+                                <th>Centre d'entreposage</th>
+                                <th>Centre de transit</th>
+                                <th>Statut</th>
+                             </tr>
+                             <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                         {% for entity in entities %}
+                           {%if  entity.statutCode == '11' %}
+                            <tr id="tr_{{entity.id}}" style="background-color:#f2dede;">
+                           {%else%}
+                            <tr id="tr_{{entity.id}}">
+                            {%endif%}
+                                <td nowrap>
+                                    <a class="btn btn-primary"   href="{{ path('AeagDecBundle_collecteur_crudDeclarationDetail', {'crud': 'R', 'sousDeclarationCollecteur_id': sousDeclarationCollecteur.id, 'declarationDetail_id': entity.id }) }}" title="Consulter">
+                                       <i class="fa fa-eye"></i>
+                                    </a>
+                                    {% if entity.statutCode < '20' %}
+                                    <a class="btn btn-warning"  href="{{ path('AeagDecBundle_collecteur_crudDeclarationDetail', {'crud': 'U', 'sousDeclarationCollecteur_id': sousDeclarationCollecteur.id, 'declarationDetail_id': entity.id }) }}" title="Mettre à jour">
+                                       <i class="fa fa-edit"></i> 
+                                    </a>
+                                    <a class="btn btn-danger" data-toggle="modal" href="#sup-{{entity.id}}" title="Supprimer">
+                                        <i class="fa fa-trash-o"></i>
+                                    </a>
+                                   {% endif %} 
+                                </td>
+                                <td>
+                                    {{ entity.producteurSiret}}
+                                </td>
+                                <td>
+                                     <a class="btn btn-sm btn-default" href="#wide-{{ entity.declarationProducteurId}}" data-toggle="modal">
+                                        <i class="fa fa-eye"></i>
+                                      </a>
+                                </td>
+                                <td>{{ entity.producteurLibelle}}</td>
+                                <td>{{ entity.producteurCodePostal}}</td>
+                                <td>{{ entity.naf}}</td>
+                                <td>{{ entity.numFacture}}</td>
+                                <td>{{ entity.dateFacture | date('d/m/Y') }}</td>
+                                <td>{{ entity.dechet}} </td>
+                                <td>{{ entity.nature}} </td>
+                                <td>{{ entity.traitFiliere}}</td>
+                                <td>{{ entity.centreTraitement}}</td>
+                                <td align="right">{{ (entity.quantiteReel) | number_format(0,'.',' ')}}</td>
+                                <td>{{ entity.filiere}}</td>
+                                <td align="right">{{ entity.coutFacture | number_format(4,'.',' ')}}</td>
+                                <td align="right">{{ entity.montAide | number_format(2,'.',' ')}}</td>
+                                <td>{{ entity.centreDepot}}</td>
+                                <td>{{ entity.centreTransit}}</td>
+                                <td>{{ entity.statutLibelle}}</td>
+                               </tr>
+                           {% endfor %}
+                        </tbody>
+                      </table>
+                     
+                   <div class="col-md-offset-3 col-md-9 pull-right">
+                      <a class="btn btn-danger" href="{{ path('AeagDecBundle_collecteur_listeSousDeclarations', { 'declarationCollecteur_id': sousDeclarationCollecteur.DeclarationCollecteur.id }) }}"><i class="fa fa-power-off"></i> Retour</a>
+                  </div>
+                  
+           </div>
+        </div>
+      </div>
+        
+      <div class="row">
+         <div class="col-md-6 pull-left text-info">
+           <ul class="list-inline">
+            <li><a class="btn btn-primary btn-xs" href="#" title="Consulter"><i class="fa fa-eye"></i></a> Consulter</li>
+            <li><a class="btn btn-warning btn-xs" href="#" title="Valider"><i class="fa fa-edit"></i></a> Mettre à jour</li>
+            <li><a class="btn btn-danger btn-xs" href="#" title="Supprimer"><i class="fa fa-trash-o"></i></a> Supprimer</li>
+           </ul>  
+        </div>
+      </div>  
+        
+ {%endblock content %}
+
+
+ {% block scripts %}
+  
+     // DataTable
+          var table = $('#idTable').DataTable(
+                      {"stateSave": true,
+                       "oLanguage": {
+                          "sSearch": "Filtre",
+                          "sFirst": "1ere page",
+                          "sLast": "Dernière page",
+                          "sNext": "Prochaine page",
+                          "sPrevious": "Page précédente",
+                          "EmptyTable": "Pas de données",
+                          "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+                          "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+                          "sZeroRecords": "Pas d'enregistrement à afficher",
+                          "sInfoEmpty": "Pas d'enregistrement à afficher",
+                          "sInfoThousands": " ",
+                          "sLengthMenu": 'Afficher <select>' +
+                                  '<option value="10">10</option>' +
+                                  '<option value="20">20</option>' +
+                                  '<option value="30">30</option>' +
+                                  '<option value="40">40</option>' +
+                                  '<option value="50">50</option>' +
+                                  '<option value="-1">Tous</option>' +
+                                  '</select> enregistrements',
+                          "sPaginationType": "full_numbers"
+                      }
+                     }
+                    );
+  
+    $("#idTable thead td").each( function ( i ) {
+    
+     if (i != 0 && i != 2){
+        var select = $('<select><option value=""></option></select>')
+            .appendTo( $(this).empty() )
+            .on( 'change', function () {
+                table.column( i )
+                    .search( $(this).val() )
+                    .draw();
+            } );
+ 
+        table.column( i ).data().unique().sort().each( function ( d, j ) {
+            select.append( '<option value="'+d+'">'+d+'</option>' )
+        } );
+        };
+    } );
+ 
+  
+   {% endblock scripts %}

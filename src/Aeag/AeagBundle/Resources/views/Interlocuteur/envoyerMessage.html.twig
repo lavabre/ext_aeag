@@ -1,0 +1,99 @@
+{% extends "AeagAeagBundle::layout.html.twig" %}
+
+{% block navbar %}{% endblock navbar %}
+
+{% block breadcrumb %}{% endblock breadcrumb %}
+
+       
+   {%block panel_heading %}
+        <h3 class="page-title">
+           Message à l'interlocuteur : {{ interlocuteur.nom }} {{ interlocuteur.prenom }} {{ interlocuteur.fonction }}
+        </h3>
+  {%endblock panel_heading %}
+
+
+
+ {%block content %}
+  <div class="col-xs-offset-3 col-xs-8">
+       <form role="form" action="{{ path('Aeag_interlocuteur_envoyerMessage', { 'id': interlocuteur.id }) }}" class="form-horizontal" id="idForm" method="post" {{ form_enctype(form) }}>
+           
+            {% spaceless %}
+                     {% if not form.vars.valid %}
+                             <div class="alert alert-danger">
+                                {% for children in form.children %}
+                                     {% if not children.vars.valid %}
+                                         {{ form_errors(children) }}
+                                    {% endif %}
+                                 {% endfor %}
+                             </div>
+                     {% endif %}
+            {% endspaceless %}
+           
+            <div class="form-group">
+                    <label class="col-xm-3 control-label">Destinataire :</label>
+                    {% if form_errors(form.destinataire) %}
+                        <div class="input-group has-error has-feedback">
+                    {% else %}
+                         <div class="input-group">
+                     {% endif %}
+                       <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                       {{ form_widget(form.destinataire, { 'attr': {'class': 'form-control', 'placeholder': 'Destinataire'} }) }}
+                     </div>
+            </div>
+                    
+            <div class="form-group">
+                    <label class="col-xm-3 control-label">Sujet :</label>
+                    {% if form_errors(form.sujet) %}
+                        <div class="input-group has-error has-feedback">
+                    {% else %}
+                         <div class="input-group">
+                     {% endif %}
+                       <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                       {{ form_widget(form.sujet, { 'attr': {'class': 'form-control', 'placeholder': 'Sujet'} }) }}
+                     </div>
+            </div>
+                    
+            <div class="form-group">
+                    <label class="col-xm-3 control-label">Message :</label>
+                    {% if form_errors(form.message) %}
+                        <div class="input-group has-error has-feedback">
+                    {% else %}
+                         <div class="input-group">
+                     {% endif %}
+                       <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                       {{ form_widget(form.message, { 'attr': {'class': 'form-control', 'placeholder': 'Message'} }) }}
+                     </div>
+            </div>
+  
+                              
+            <div class="form-group">
+                <div class="col-xs-offset-4 col-xs-8">
+                   <button id="btForm" type="submit" class="btn btn-success"><i class="fa fa-paper-plane-o"></i> Envoyer</button>
+                   <a id="btFermer" class="btn btn-danger" href="#"><i class="fa fa-power-off"></i> Annuler</a>
+                 </div>
+             </div>        
+                    
+                    
+                    
+            <div class="hide">
+              {{ form_rest(form) }}
+              </div>
+        </form>
+   </div>
+
+{%endblock content %}
+                    
+ {% block scripts %}
+       {%if maj == 'ok' %}
+        window.setTimeout("window.close()", 1);
+        return false;
+       {%endif%}
+    
+        $('#btFermer').click(function (e) {
+           e.preventDefault();
+           window.setTimeout("window.close()", 1);
+           return false;
+      });         
+    {% endblock scripts %}
+
+    

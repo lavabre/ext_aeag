@@ -1,0 +1,67 @@
+{% extends "AeagDieBundle::layout.html.twig" %}
+
+{% block contenu %}
+
+
+<div align="center">
+   <h1>Mise  à jour de l'organisme : {{ entity.organisme }}</H1>
+</div>
+<br>
+
+<form class="form" action="{{ path('organisme_update', { 'id': entity.id }) }}"
+	method="post"  {{ form_enctype(edit_form) }}>
+	{{ form_errors(edit_form) }}
+
+	  <table  align="center">
+              
+           <tr>
+                <td align="left">{{ form_label(edit_form.ordre, "n° ordre") }}</td>
+                <td width="85%">
+                    {% if form_errors(edit_form.ordre) | length %}
+                        <span class="relative"> 
+                        {{ form_widget(edit_form.ordre, { 'attr': {'class': 'full-width error'} }) }}
+                                <span class="check-error"></span>
+                    {% else %}
+                    {{ form_widget(edit_form.ordre, { 'attr': {'class': 'full-width'} }) }}
+                    {% endif %}  
+                </td>
+                <td nowrap><div class="symfony-form-errors">{{ form_errors(edit_form.ordre) }}</div></td>
+           </tr>
+            <tr>
+                <td align="left">{{ form_label(edit_form.organisme, "Organisme") }}</td>
+                <td width="85%">
+                    {% if form_errors(edit_form.organisme) | length %}
+                        <span class="relative"> 
+                        {{ form_widget(edit_form.organisme, { 'attr': {'class': 'full-width error'} }) }}
+                                <span class="check-error"></span>
+                    {% else %}
+                    {{ form_widget(edit_form.organisme, { 'attr': {'class': 'full-width'} }) }}
+                    {% endif %}  
+                </td>
+                <td nowrap><div class="symfony-form-errors">{{ form_errors(edit_form.organisme) }}</div></td>
+           </tr>
+        </table>
+
+
+	{{ form_rest(edit_form) }}
+	
+	<br> <br>
+        
+       <div  align="center">
+          <button   class="button blue" type="submit">Modifier</button>
+       </div>
+
+</form>
+<br>
+ <table align="center">
+    <tr>
+        <td>
+            <a class="button blue" href="{{ path('organisme') }}">
+                <img src="{{ asset('bundles/aeagdie/images/icons/web-app/24/back.png') }}">  
+                Retour
+            </a>
+        </td>
+    </tr>
+</table>
+
+{% endblock %}

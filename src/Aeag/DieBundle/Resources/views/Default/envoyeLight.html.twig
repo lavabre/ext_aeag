@@ -1,0 +1,144 @@
+{% extends 'AeagDieBundle::layoutLight.html.twig' %}
+
+
+{% block title %}
+Demande
+{% endblock %}
+
+{% block contenu %}
+
+ 
+<form  class="form" id="contact"  action="{{ path('defaultLight_theme', {'theme': theme}) }}"  method="post" {{ form_enctype(form) }}>
+
+<table class="table" cellspacing="0" width="580px" align="center">
+
+        <caption><h2>Informations personnelles</h2></caption>
+        <tbody>
+            <tr>
+
+                <td align="left" width="15%">{{ form_label(form.nom,'Nom') }}</td>
+                <td width="85%">
+                {% if form_errors(form.nom) | length %}
+                   <span class="relative"> 
+                    {{ form_widget(form.nom, { 'attr': {'class': 'full-width error'} }) }}
+                    <span class="check-error"></span></span>
+                {% else %}
+                  {{ form_widget(form.nom, { 'attr': {'class': 'full-width'} }) }}
+                {% endif %}       
+                </td>
+            </tr>
+            <tr>
+
+                <td align="left">{{ form_label(form.prenom, "Prénom") }}</td>
+                <td width="85%">
+                {% if form_errors(form.prenom) | length %}
+                   <span class="relative"> 
+                    {{ form_widget(form.prenom, { 'attr': {'class': 'full-width error'} }) }}
+                    <span class="check-error"></span></span>
+                {% else %}
+                  {{ form_widget(form.prenom, { 'attr': {'class': 'full-width'} }) }}
+                {% endif %}    
+                </td>
+           </tr>
+
+            <tr>
+
+                <td align="left">{{ form_label(form.organisme, "Catégorie/Organisme") }}</td>
+                <td width="85%">
+                {% if form_errors(form.organisme) | length %}
+                   <span class="relative"> 
+                    {{ form_widget(form.organisme, { 'attr': {'class': 'full-width error'} }) }}
+                    <span class="check-error"></span></span>
+                {% else %}
+                  {{ form_widget(form.organisme, { 'attr': {'class': 'full-width'} }) }}
+                {% endif %}  
+                </td>
+            </tr>
+                <tr>
+
+                <td align="left" width="15%">{{ form_label(form.dept,'Département') }}</td>
+                <td width="85%">
+                {% if form_errors(form.dept) | length %}
+                   <span class="relative"> 
+                    {{ form_widget(form.dept, { 'attr': {'class': 'full-width error'} }) }}
+                    <span class="check-error"></span></span>
+                {% else %}
+                  {{ form_widget(form.dept, { 'attr': {'class': 'full-width'} }) }}
+                {% endif %}       
+                </td>
+            </tr>
+            <tr>
+
+                <td align="left">{{ form_label(form.email, "Courriel") }}</td>
+                <td width="85%">
+                {% if form_errors(form.email) | length %}
+                   <span class="relative"> 
+                    {{ form_widget(form.email, { 'attr': {'class': 'full-width error'} }) }}
+                    <span class="check-error"></span></span>
+                {% else %}
+                  {{ form_widget(form.email, { 'attr': {'class': 'full-width'} }) }}
+                {% endif %}  
+                 </td>
+            </tr>
+        </tbody>
+    </table>
+  
+   
+    <table class="table" cellspacing="0" width="580px" align="center">
+
+        <caption><h2>Objet</h2></caption>
+        <tbody>
+            <tr>
+
+                <td align="left" width="15%">{{ form_label(form.theme) }}</td>
+                <td width="85%">
+                {% if form_errors(form.theme) | length %}
+                   <span class="relative"> 
+                    {{ form_widget(form.theme, { 'attr': {'class': 'full-width error'} }) }}
+                    <span class="check-error"></span></span>
+                {% else %}
+                  {{ form_widget(form.theme, { 'attr': {'class': 'full-width'} }) }}
+                {% endif %}  
+                </td>
+           </tr>
+
+            <tr>
+
+                <td align="left">{{ form_label(form.objet, "Description") }}</td>
+                <td width="85%">
+                {% if form_errors(form.objet) | length %}
+                   <span class="relative"> 
+                    {{ form_widget(form.objet, { 'attr': {'class': 'full-width error'} }) }}
+                    <span class="check-error"></span></span>
+                {% else %}
+                  {{ form_widget(form.objet, { 'attr': {'class': 'full-width'} }) }}
+                {% endif %}  
+                </td>
+            </tr>
+            <tr>
+
+                <td align="left">{{ form_label(form.corps, "Message") }}</td>
+                <td width="85%">
+                {% if form_errors(form.corps) | length %}
+                   <span class="relative"> 
+                    {{ form_widget(form.corps, { 'attr': {'rows':5, 'class': 'full-width error'} }) }}
+                    <span class="check-error"></span></span>
+                {% else %}
+                  {{ form_widget(form.corps, { 'attr': {'rows':5, 'class': 'full-width'} }) }}
+                {% endif %}  
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+   {{ form_rest(form) }}
+ 
+    <table align="center">
+        <tr>
+                <td><button   class="button blue" type="submit">Nouvelle demande </button>
+          </tr>
+    </table>
+   
+</form>
+
+{% endblock %}

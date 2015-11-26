@@ -1,0 +1,41 @@
+{% extends 'AeagDieBundle::layout.html.twig' %}
+
+{% block navbar %}{% endblock navbar %}
+
+{% block breadcrumb %}{% endblock breadcrumb %}
+
+{%block panel_heading %}
+    <h1>Administration du site</H1>
+    {%endblock panel_heading %}
+
+{%block content %}
+
+<div class="col-xs-offset-3 col-xs-8 small">
+
+<div class="list-group">
+        <a class="list-group-item btn btn-default btn-lg" data-toggle="modal" href="{{ path('organisme') }}" title="Gestion des Organismes">
+                   <i class="fa fa-share">  Gestion des Organismes</i>
+         </a>
+         <a class="list-group-item btn btn-default btn-lg" data-toggle="modal" href="{{ path('theme') }}" title="Gestion des Thèmes">
+                   <i class="fa fa-share">  Gestion des Thèmes</i>
+         </a>
+         <a class="list-group-item btn btn-default btn-lg" data-toggle="modal" href="{{ path('soustheme') }}" title="Gestion des Sous-Thèmes">
+                   <i class="fa fa-share">  Gestion des Sous-Thèmes</i>
+         </a>
+         <a class="list-group-item btn btn-default btn-lg" data-toggle="modal" href="{{ path('demande') }}" title="Gestion des Demandes">
+                   <i class="fa fa-share">  Gestion des Demandes</i>
+         </a>
+</div>
+            
+</div>     
+                   
+  <div class="form-actions fluid center">
+          <div class="col-md-offset-5 col-md-9">
+                  <a id="idValider" class="btn btn-primary"  href="{{ path('fos_user_security_logout') }}" title="Deconnexionr">
+                          <i class="fa fa-home"> Deconnexion  </i>
+                  </a>
+          </div>
+  </div>                  
+
+
+{% endblock  content %}

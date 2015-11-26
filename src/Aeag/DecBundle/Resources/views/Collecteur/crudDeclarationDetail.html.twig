@@ -1,0 +1,644 @@
+{% extends "AeagDecBundle::layout.html.twig" %}
+
+
+
+{% block breadcrumb %}
+        <li class="active">
+           {%if crud == 'C' %}
+               Nouveau 
+          {%else%}
+               {{ producteur.siretLibelle}}</a>
+          {%endif%} 
+        </li>
+{% endblock breadcrumb %}
+
+
+{%block panel_heading %}
+    <h3>
+       {%if crud == 'C' %}
+             Ajout d'une ligne
+        {%elseif crud == 'R' %}
+             Consultation de la ligne {{ producteur.siretLibelle}}
+        {% else %}
+             Mise à jour de la ligne {{ producteur.siretLibelle}}
+        {%endif%}
+    </h3>
+{%endblock panel_heading %}
+        
+
+  {% block modal %}
+      <div class="modal fade" id="infoProducteur" tabindex="-1" role="dialog" aria-labelledby="infoProducteur" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title alert-info" id="infoProducteur">Producteur absent de la liste</h4>
+                  </div>
+                  <div class="modal-body">
+                      <h4>Si le producteur n'est pas dans liste : <br><br>
+                          1) fermer la fenêtre en cliquant sur le bouton <a  class="btn btn-danger" href="#"><i class="fa fa-power-off"></i> Annuler</a> <br>
+                             2) Aller dans l'onglet "Producteurs" <br>
+                             3) Cliquer sur le bouton "Ajouter un producteur" <br>
+                             4) Revenir sur la déclaration <br>
+                             5) Sélectionner le producteur dans la liste <br>
+                             6) Continuer la saisie
+                      </h4>
+                  </div>
+                  <div class="modal-footer">
+                     <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-undo"></i> Fermer</button>
+                  </div>
+                </div>
+           </div>
+      </div>
+ {% endblock modal %}
+
+ 
+ {%block content %}
+ 
+    <div class="col-xs-12 medium">
+        
+         
+         <form  class="form-horizontal" role="form" action="{{ path('AeagDecBundle_collecteur_crudDeclarationDetail', {'crud': crud, 'sousDeclarationCollecteur_id': sousDeclarationCollecteur.id, 'declarationDetail_id': declarationDetail.id }) }}"  id="idForm" method="post" {{ form_enctype(form) }}>
+            
+
+            {% spaceless %}
+                     {% if not form.vars.valid %}
+                             <div class="alert alert-danger">
+                                {% for children in form.children %}
+                                     {% if not children.vars.valid %}
+                                         {{ form_errors(children) }}
+                                    {% endif %}
+                                 {% endfor %}
+                             </div>
+                     {% endif %}
+                
+                      {% if declarationDetail.message %}
+                        <div class="alert alert-danger">
+                            <button class="close" data-dismiss="alert"></button>
+                            <h5>
+                            {{declarationDetail.message | nl2br}}
+                            </h5>
+                       </div>
+                {% endif %}   
+             {% endspaceless %}
+             
+        
+                 {#  <div class="form-group">
+                           {%if form_errors(form.Producteur) | length %}
+                               <div class="has-error">
+                                   <label  class="col-md-3 control-label">Producteur</label>
+                                   <div class="col-md-8">
+                                       {{ form_widget(form.Producteur, { 'attr': {'class': 'form-control input-xxlarge'} }) }}
+                                       <span class="help-block"> {{ form_errors(form.Producteur) }}</span>
+                                    </div>
+                               </div>
+                            {%else%}
+                                   <label  class="col-md-3 control-label">Producteur</label>
+                                    <div class="col-md-8">
+                                    {{ form_widget(form.Producteur, { 'attr': {'class': 'form-control input-xxlarge'} }) }}
+                                    </div>
+                            {%endif%}
+                      </div> #}
+             
+                 {%if crud == 'C' %}
+                    <div class="form-group">
+                        <div class="row">
+                           <div class="col-xs-4 text-right">
+                                <label for="crudDeclarationDetail_Producteur" class="control-label">Producteur <i class="fa fa-asterisk text-danger btn-xs"></i></label>
+                           </div>
+                           <div class="col-xs-7">
+                            {%if crud == 'R' %}
+                                <select class="form-control" id="idProducteur" name="producteur" required="required" readonly >
+                             {% else %}
+                                <select class="form-control" id="idProducteur" name="producteur" required="required" >    
+                             {% endif %}       
+                                <option value=""></option> 
+                                {%for prod in producteurs %}
+                                    {% if producteur  %}
+                                         {% if producteur.id == prod.id %}
+                                                <option value="{{prod.id}}" selected>{{ prod.SiretLibelleCpVille }}</option> 
+                                         {% else %}
+                                                <option value="{{prod.id}}">{{ prod.SiretLibelleCpVille }}</option> 
+                                         {% endif %}
+                                    {% else %}
+                                         <option value="{{prod.id}}">{{ prod.SiretLibelleCpVille }}</option> 
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                         </div>
+                         {%for prod in producteurs %}
+                              <input type='hidden' id='naf_{{prod.id}}' value ='{{prod.naf}}'>
+                         {% endfor %}
+                         <div class="col-xs-1">
+                           <a class="btn btn-sm btn-default" href="#infoProducteur" data-toggle="modal">
+                            <i class="fa fa-info"></i>
+                          </a>
+                         </div>
+                    </div>
+                </div> 
+              {% endif %}
+                       
+                    <div class="form-group">
+                        <label for="crudDeclarationDetail_Naf" class="col-xs-4 control-label">Activité (code NAF) <i class="fa fa-asterisk text-danger btn-xs"></i></label>
+                        {%if form_errors(form.Naf) %}
+                            <div class="col-xs-8 input-group has-error has-feedback">
+                        {% else %}
+                             <div class="col-xs-8 input-group">
+                         {% endif %}
+                           {{ form_widget(form.Naf, { 'attr': {'class': 'form-control ', 'placeholder': 'code NAF'} }) }}
+                         </div>
+                     </div> 
+                   
+                     <div class="form-group">
+                            <label  class="col-xs-4 control-label">N° facture <i class="fa fa-asterisk text-danger btn-xs"></i></label>
+                             {%if form_errors(form.numFacture) %}
+                             <div class="col-xs-2 input-group has-error has-feedback">
+                            {% else %}
+                             <div class="col-xs-2 input-group">
+                             {% endif %}
+                             {{ form_widget(form.numFacture, { 'attr': {'class': 'form-control input-medium'} }) }}
+                             </div>
+                     </div>
+                            
+                     <div class="form-group">       
+                             <label  class="col-xs-4 control-label">Date facture <i class="fa fa-asterisk text-danger btn-xs"></i></label>
+                             {%if form_errors(form.dateFacture) %}
+                             <div class="col-xs-2 input-group has-error has-feedback">
+                             {% else %}
+                             <div class="col-xs-2 input-group">
+                             {% endif %}
+                             {{ form_widget(form.dateFacture, { 'attr': {'class': 'form-control input-small'} }) }}
+                             </div>
+                      </div>
+                             
+                      <div class="form-group">
+                           <label  class="col-xs-4 control-label">Code nomemclature <i class="fa fa-asterisk text-danger btn-xs"></i></label>
+                           {%if form_errors(form.Dechet) %}
+                           <div class="col-xs-8 input-group has-error has-feedback">
+                           {% else %}
+                           <div class="col-xs-8 input-group">
+                           {% endif %}
+                           {{ form_widget(form.Dechet, { 'attr': {'class': 'form-control input-xxlarge'} }) }}
+                           </div>
+                      </div>
+                           
+                      <div class="form-group">
+                           <label  class="col-xs-4 control-label">Dénomination usuelle du déchet <i class="fa fa-asterisk text-danger btn-xs"></i></label>
+                           {%if form_errors(form.nature) %}
+                            <div class="col-xs-8 input-group has-error has-feedback">
+                           {% else %}
+                           <div class="col-xs-8 input-group">
+                           {% endif %}
+                           {{ form_widget(form.nature, { 'attr': { 'class': 'form-control input-xxlarge'} }) }}
+                           </div>
+                      </div>
+                           
+                           
+                    {%set erreur1 = false %}
+                     {%set message1 = null %}
+                     {% for erreur in erreurOuvrageFiliere %}
+                     {%set erreur1 = true %}
+                     {%set message1 =  erreur.message %}
+                     {% endfor %} 
+                     {%if erreur1 %}
+                     <div class="form-group">
+                         <label  class="col-xs-4 control-label">Code D/R <i class="fa fa-asterisk text-danger btn-xs"></i></label>
+                         <div class="col-xs-6 input-group has-error has-feedback">
+                         {{ form_widget(form.traitFiliere, { 'attr': {'class': 'form-control input-xxlarge'} }) }}
+                         </div>
+                         <label  class="col-xs-4 control-label">Centre de traitement <i class="fa fa-asterisk text-danger btn-xs"></i></label>
+                         <div class="col-xs-6 input-group has-error has-feedback">
+                         {{ form_widget(form.CentreTraitement, { 'attr': {'class': 'form-control input-xxlarge'} }) }}  
+                        </div>
+                     </div>
+                      {%else%}
+                        <div class="form-group">
+                            <label  class="col-xs-4 control-label">Code D/R <i class="fa fa-asterisk text-danger btn-xs"></i></label>
+                           {%if form_errors(form.traitFiliere)%}
+                            <div class="col-xs-8 input-group has-error has-feedback">
+                           {% else %}
+                            <div class="col-xs-8 input-group">
+                           {% endif %}
+                           {{ form_widget(form.traitFiliere, { 'attr': {'class': 'form-control input-xxlarge'} }) }}
+                            </div>
+                        </div> 
+                        <div class="form-group">
+                            <label  class="col-xs-4 control-label">Centre de traitement <i class="fa fa-asterisk text-danger btn-xs"></i></label>
+                           {%if form_errors(form.CentreTraitement) %}
+                            <div class="col-xs-8 input-group has-error has-feedback">
+                           {% else %}
+                            <div class="col-xs-8 input-group">
+                           {% endif %}
+                           {{ form_widget(form.CentreTraitement, { 'attr': {'class': 'form-control input-xxlarge'} }) }}
+                           </div>
+                         </div>
+                    {%endif%}
+
+                      {%set erreur2 = false %}
+                      {%set message2= null %}
+                      {% for erreur in erreurQuantiteReel %}
+                            {%set erreur2 = true %}
+                            {%set message2 =  erreur.message %}
+                      {% endfor %} 
+                      {%if erreur2 %}
+                             <div class="form-group">
+                                 <label  class="col-xs-4 control-label">Quantité pesée (kg) <i class="fa fa-asterisk text-danger btn-xs"></i></label>
+                                 <div class="col-xs-2 input-group has-error has-feedback">
+                                 {{ form_widget(form.quantiteReel, { 'attr': { 'class': 'form-control input-small', 'number': 'true'} }) }}
+                                 </div>
+                                 <div class="col-xs-offset-4 col-xs-2 alert alert-warning">
+                                {{ message2 }}
+                                 </div>
+                            </div>
+                      {%else%}
+                            <div class="form-group">
+                                <label  class="col-xs-4 control-label">Quantité pesée (kg) <i class="fa fa-asterisk text-danger btn-xs"></i></label>
+                                {%if form_errors(form.quantiteReel) %}
+                                <div class="col-xs-2 input-group has-error has-feedback">
+                                {% else %}
+                                <div class="col-xs-2 input-group">
+                                {% endif %} 
+                                {{ form_widget(form.quantiteReel, { 'attr': { 'class': 'form-control input-small', 'number': 'true'} }) }}
+                                </div>
+                            </div>
+                      {%endif%}
+                                
+                      <div class="form-group">
+                          <label  class="col-xs-4 control-label">Code conditionnement <i class="fa fa-asterisk text-danger btn-xs"></i></label>
+                          {%if form_errors(form.FiliereAide) %}
+                          <div class="col-xs-8 input-group has-error has-feedback">
+                          {% else %}
+                          <div class="col-xs-8 input-group">
+                          {% endif %} 
+                          {{ form_widget(form.FiliereAide, { 'attr': {'class': 'form-control input-xxlarge'} }) }}
+                          </div>
+                       </div> 
+                          
+                       <div class="form-group">
+                            <label  class="col-xs-4 control-label">Coût facturé (€/kg) <i class="fa fa-asterisk text-danger btn-xs"></i></label>
+                            {%if form_errors(form.coutFacture) %}
+                            <div class="col-xs-2 input-group has-error has-feedback">
+                            {% else %}
+                            <div class="col-xs-2 input-group">
+                            {% endif %} 
+                            {{ form_widget(form.coutFacture, { 'attr': { 'class': 'form-control input-small', 'number': 'true'} }) }}
+                            </div>
+                       </div>
+                
+                      {%set erreur3 = false %}
+                      {%set message3= null %}
+                      {% for erreur in erreurMontAide %}
+                            {%set erreur3 = true %}
+                            {%set message3 =  erreur.message %}
+                      {% endfor %}
+                       {%if erreur3 %}
+                            <div class="form-group">
+                                <label id="idLabelMontAide"  class="col-xs-4 control-label">Montant de l'aide (€) <i class="fa fa-asterisk text-danger btn-xs"></i></label>
+                                <div class="col-xs-2 input-line has-error has-feedback">
+                                {{ form_widget(form.montAide, { 'attr': { 'class': 'form-control input-small', 'number': 'true'} }) }}
+                                </div>
+                                <div class="col-xs-6" id="idLabelMontRet"></div>
+                            {#    <div class="col-xs-offset-4 col-xs-6 alert alert-warning">
+                                {{ message3 }}
+                                </div>#}
+                           </div>
+                      {%else%}
+                            <div class="form-group">
+                                <label id="idLabelMontAide" class="col-xs-4 control-label">Montant de l'aide (€) <i class="fa fa-asterisk text-danger btn-xs"></i></label>
+                                {%if form_errors(form.montAide) %}
+                                <div class="col-xs-2 input-line has-error has-feedback">
+                                {% else %}
+                                <div class="col-xs-2 input-line">
+                                {% endif %} 
+                                {{ form_widget(form.montAide, { 'attr': { 'class': 'form-control input-small', 'number': 'true'} }) }}
+                                 </div>
+                                 <div class="col-xs-6" id="idLabelMontRet"></div>
+                               </div>
+                       {%endif%}
+                                
+                       <div class="form-group">
+                           <label  class="col-xs-4 control-label">Centre d'entreposage</label>
+                           {%if form_errors(form.CentreDepot)%}
+                           <div class="col-xs-8 input-group has-error has-feedback">
+                           {% else %}
+                           <div class="col-xs-8 input-group">
+                           {% endif %} 
+                           {{ form_widget(form.CentreDepot, { 'attr': {'class': 'form-control input-xxlarge'} }) }}
+                           </div>
+                       </div>
+                           
+                     {#  <div class="form-group">
+                           <label  class="col-xs-4 control-label">Centre de transit</label>
+                           {%if form_errors(form.CentreTransit) %}
+                           <div class="col-xs-8 input-group has-error has-feedback">
+                           {% else %}
+                           <div class="col-xs-8 input-group">
+                           {% endif %} 
+                           {{ form_widget(form.CentreTransit, { 'attr': {'class': 'form-control input-xxlarge'} }) }}
+                           </div>
+                      </div>#}
+                           
+                     <div class="form-group">
+                        <div class="col-xs-offset-4 col-xs-8">
+                           {%if crud == 'C' or crud == 'U'%}
+                           <button id="btForm" type="submit" class="btn btn-success"><i class="fa fa-save"></i> Enregister</button>
+                           <a id="btFermer" class="btn btn-danger" href="{{ path('AeagDecBundle_collecteur_listeDeclarationDetails', { 'sousDeclarationCollecteur_id': sousDeclarationCollecteur.id }) }}"><i class="fa fa-power-off"></i> Annuler</a>
+                           {%else%}
+                           <a  id="btFermer" class="btn btn-danger" href="{{ path('AeagDecBundle_collecteur_listeDeclarationDetails', { 'sousDeclarationCollecteur_id': sousDeclarationCollecteur.id }) }}"><i class="fa fa-power-off"></i> Retour</a>
+                           {%endif%}
+                        </div>
+                     </div>
+                           
+                    <div class="hide">
+                      {{ form_rest(form) }}
+                      <input id="idTauxAide" type="hidden" value="{{ tauxAide }}" >
+                    </div>
+        </form>
+   </div>
+{%endblock content %}
+
+    
+{% block scripts %}
+    
+    {#$(document).on('click','#btFermer',function(e){
+        {#window.setTimeout("window.close()", 1);}
+        window.close();
+    });#}
+    
+     
+      {%if maj == 'ok' %}
+        window.setTimeout("window.close()", 1);
+        return false;
+       {%endif%}
+    
+       
+      
+     
+      {%if crud == 'C' %}
+       if ($('#crudDeclarationDetail_Producteur').val() != ""){
+           $('#idProducteur option:selected').removeAttr('selected');
+           var valeur = $('#crudDeclarationDetail_Producteur').val();
+           $("#idProducteur option[value='" + valeur + "']").attr('selected','selected');
+           document.getElementById('idProducteur').value=valeur;
+        };
+      {%endif%}
+       {% if declarationDetail.centreTraitement  %}
+           $('#crudDeclarationDetail_CentreTraitement option:selected').removeAttr('selected');
+           var valeur = {{ declarationDetail.centreTraitement }};
+           $("#crudDeclarationDetail_CentreTraitement option[value='" + valeur + "']").attr('selected','selected');
+           document.getElementById('crudDeclarationDetail_CentreTraitement').value=valeur;
+      {% endif %}
+           
+      {% if declarationDetail.centreDepot  %}
+            $('#crudDeclarationDetail_CentreDepot option:selected').removeAttr('selected');
+           var valeur = {{ declarationDetail.centreDepot }};
+           $("#crudDeclarationDetail_CentreDepot option[value='" + valeur + "']").attr('selected','selected');
+           document.getElementById('crudDeclarationDetail_CentreDepot').value=valeur;
+      {% endif %}
+           
+       {% if declarationDetail.centreTransit  %}
+           $('#crudDeclarationDetail_CentreTransit option:selected').removeAttr('selected');
+           var valeur = {{ declarationDetail.centreTransit }};
+           $("#crudDeclarationDetail_CentreTransit option[value='" + valeur + "']").attr('selected','selected');
+           document.getElementById('crudDeclarationDetail_CentreTransit').value=valeur;
+      {% endif %}
+       
+     {# endif #}
+     
+      
+       (function($){
+        $.isBlank = function(obj){
+          return(!obj || $.trim(obj) === "");
+        };
+      })(jQuery);
+       
+        var val = $('#crudDeclarationDetail_quantiteReel').val();
+        var res = val.replace('\,','.').replace(' ','');
+        $('#crudDeclarationDetail_quantiteReel').val(res);
+        val = $('#crudDeclarationDetail_coutFacture').val();
+        res = val.replace('\,','.');
+        $('#crudDeclarationDetail_coutFacture').val(res);
+        var val = $('#crudDeclarationDetail_montAide').val();
+        var res = val.replace('\,','.');
+        $('#crudDeclarationDetail_montAide').val(res);
+        $('#idMontRet').hide();
+        $('#crudDeclarationDetail_montAide').css("color","black");
+        $('#idLabelMontRet').hide();
+        $('#idLabelMontAide').css("color","black");
+        if (!$.isBlank($('#crudDeclarationDetail_quantiteReel').val())  && !$.isBlank($('#crudDeclarationDetail_coutFacture').val())){
+            var montRet = 0;
+            $('#idLabelMontRet').css("color","blue");
+            $('#idLabelMontRet').text('( = Quantité pesée(' + $('#crudDeclarationDetail_quantiteReel').val() + ' kg) * Coût facturé(' + $('#crudDeclarationDetail_coutFacture').val() + ' €/kg) * Taux aide agence ( ' + $('#idTauxAide').val() + ' €))');
+            $('#idLabelMontRet').show();
+            montRet1 = Math.round(($('#crudDeclarationDetail_quantiteReel').val() * $('#crudDeclarationDetail_coutFacture').val() * $('#idTauxAide').val())* 10000) / 10000;
+            {#var strRet1 = "" + montRet1;
+            strRet1 = strRet1.substring(0, strRet1.length-1);
+            montRet1 = parseFloat( strRet1 );#}
+            montRet = Math.round( (montRet1 + 0.00001)* 100) / 100;
+            {#console.log ('montret1 : ' + montRet1 + ' montret : ' + montRet + ' aide : ' + $('#crudDeclarationDetail_montAide').val());#}
+            $('#crudDeclarationDetail_montAide').val(montRet);  
+            if (montRet != $('#crudDeclarationDetail_montAide').val()){
+                $('#crudDeclarationDetail_montAide').css("color","red");
+                $('#idLabelMontAide').css("color","red");
+                $('#idLabelMontRet').css("color","red");
+                $('#idLabelMontRet').text('(Quantité * Cout facturé * ' + $('#idTauxAide').val() + ')');
+                $('#idLabelMontRet').show();
+             };
+      }; 
+      
+       $('#idProducteur').change(function(){
+           $('#crudDeclarationDetail_Producteur').val($('#idProducteur').val());
+           $('#crudDeclarationDetail_Naf option:selected').removeAttr('selected');
+           var valeur = $('#naf_' + $('#idProducteur').val()).val();
+           $("#crudDeclarationDetail_Naf option[value='" + valeur + "']").attr('selected','selected');
+           $("#crudDeclarationDetail_Naf").val(valeur);
+           $('#modalTraitementEncours').modal('toggle');
+            var url = '{{ path("AeagDecBundle_collecteur_producteur_taux_special",{"id":  "par1"}) }}';
+            url = url.replace("par1",  $('#crudDeclarationDetail_Producteur').val());
+            $.ajax({
+                    url: url,
+                    type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+                    success: function(tauxAide) { // Je récupère la réponse du fichier PHP
+                         $('#idTauxAide').val(tauxAide);
+                         $('#modalTraitementEncours').modal('hide');
+                          if (!$.isBlank($('#crudDeclarationDetail_quantiteReel').val())  && !$.isBlank($('#crudDeclarationDetail_coutFacture').val())){
+                                    var montRet = 0;
+                                    $('#idLabelMontRet').css("color","blue");
+                                    $('#idLabelMontRet').text('( = Quantité pesée(' + $('#crudDeclarationDetail_quantiteReel').val() + ' kg) * Coût facturé(' + $('#crudDeclarationDetail_coutFacture').val() + ' €/kg) * Taux aide agence (' +  $('#idTauxAide').val() + ' €))');
+                                    $('#idLabelMontRet').show();
+                                    montRet1 = Math.round(($('#crudDeclarationDetail_quantiteReel').val() * $('#crudDeclarationDetail_coutFacture').val() * $('#idTauxAide').val())* 10000) / 10000;
+                                    {#var strRet1 = "" + montRet1;
+                                    strRet1 = strRet1.substring(0, strRet1.length-1);
+                                    montRet1 = parseFloat( strRet1 );#}
+                                    montRet = Math.round( (montRet1 + 0.00001)* 100) / 100;
+                                    {#console.log ('montret1 : ' + montRet1 + ' montret : ' + montRet + ' aide : ' + $('#crudDeclarationDetail_montAide').val() + ' taux aide : ' + $('#idTauxAide').val());#}
+                                    $('#crudDeclarationDetail_montAide').val(montRet);  
+                                     if (montRet != $('#crudDeclarationDetail_montAide').val()){
+                                        $('#crudDeclarationDetail_montAide').css("color","red");
+                                        $('#idLabelMontAide').css("color","red");
+                                        $('#idLabelMontRet').css("color","red");
+                                        $('#idLabelMontRet').text('(Quantité * Cout facturé * ' + $('#idTauxAide').val() + ')');
+                                        $('#idLabelMontRet').show();
+                                     };
+                          }else{
+                                $('#idLabelMontRet').hide();
+                          };
+                       }
+                });
+              
+        });
+       
+       
+       
+       $('#crudDeclarationDetail_FiliereAide').change(function(){
+          val = $('#crudDeclarationDetail_quantiteReel').val();
+          res = val.replace('\,','.');
+          $('#crudDeclarationDetail_quantiteReel').val(res);
+          val = $('#crudDeclarationDetail_coutFacture').val();
+          res = val.replace('\,','.');
+          $('#crudDeclarationDetail_coutFacture').val(res);
+          var val = $('#crudDeclarationDetail_montAide').val();
+          var res = val.replace('\,','.');
+          $('#crudDeclarationDetail_montAide').val(res);
+          $('#idMontRet').hide();
+            $('#crudDeclarationDetail_montAide').css("color","black");
+            $('#idLabelMontAide').css("color","black");
+            if (!$.isBlank($('#crudDeclarationDetail_quantiteReel').val())  && !$.isBlank($('#crudDeclarationDetail_coutFacture').val())){
+                var montRet = 0;
+                $('#idLabelMontRet').css("color","blue");
+                $('#idLabelMontRet').text('( = Quantité pesée(' + $('#crudDeclarationDetail_quantiteReel').val() + ' kg) * Coût facturé(' + $('#crudDeclarationDetail_coutFacture').val() + ' €/kg) * Taux aide agence (' + $('#idTauxAide').val() + ' €))');
+                $('#idLabelMontRet').show();
+                montRet1 = Math.round(($('#crudDeclarationDetail_quantiteReel').val() * $('#crudDeclarationDetail_coutFacture').val() * $('#idTauxAide').val())* 10000) / 10000;
+                {#var strRet1 = "" + montRet1;
+                strRet1 = strRet1.substring(0, strRet1.length-1);
+                montRet1 = parseFloat( strRet1 );#}
+                montRet = Math.round( (montRet1 + 0.00001)* 100) / 100;
+                {#console.log ('montret1 : ' + montRet1 + ' montret : ' + montRet + ' aide : ' + $('#crudDeclarationDetail_montAide').val());#}
+                $('#crudDeclarationDetail_montAide').val(montRet);  
+                if (montRet != $('#crudDeclarationDetail_montAide').val()){
+                    $('#crudDeclarationDetail_montAide').css("color","red");
+                    $('#idLabelMontAide').css("color","red");
+                    $('#idLabelMontRet').css("color","red");
+                    $('#idLabelMontRet').text('(Quantité * Cout facturé * ' +  $('#idTauxAide').val() + ')');
+                    $('#idLabelMontRet').show();
+                 };
+            }else{
+                $('#idLabelMontRet').hide();
+            }; 
+        });
+       
+       $('#crudDeclarationDetail_quantiteReel').change(function(){
+            val = $('#crudDeclarationDetail_quantiteReel').val();
+            res = val.replace('\,','.');
+            $('#crudDeclarationDetail_quantiteReel').val(res);
+            val = $('#crudDeclarationDetail_coutFacture').val();
+            res = val.replace('\,','.');
+            $('#crudDeclarationDetail_coutFacture').val(res);
+            var val = $('#crudDeclarationDetail_montAide').val();
+            var res = val.replace('\,','.');
+            $('#crudDeclarationDetail_montAide').val(res);
+            $('#idMontRet').hide();
+            $('#crudDeclarationDetail_montAide').css("color","black");
+            $('#idLabelMontAide').css("color","black");
+            if ((!$.isBlank($('#crudDeclarationDetail_quantiteReel').val())) && (!$.isBlank($('#crudDeclarationDetail_coutFacture').val()))){
+                    var montRet = 0;
+                    $('#idLabelMontRet').css("color","blue");
+                    $('#idLabelMontRet').text('( = Quantité pesée(' + $('#crudDeclarationDetail_quantiteReel').val() + ' kg) * Coût facturé(' + $('#crudDeclarationDetail_coutFacture').val() + ' €/kg) * Taux aide agence (' +  $('#idTauxAide').val() + ' €))');
+                    $('#idLabelMontRet').show();
+                    montRet1 = Math.round(($('#crudDeclarationDetail_quantiteReel').val() * $('#crudDeclarationDetail_coutFacture').val() * $('#idTauxAide').val())* 10000) / 10000;
+                    {#var strRet1 = "" + montRet1;
+                    strRet1 = strRet1.substring(0, strRet1.length-1);
+                    montRet1 = parseFloat( strRet1 );#}
+                    montRet = Math.round( (montRet1 + 0.00001)* 100) / 100;
+                    {#console.log ('montret1 : ' + montRet1 + ' montret : ' + montRet + ' aide : ' + $('#crudDeclarationDetail_montAide').val() + ' taux aide : ' + $('#idTauxAide').val());#}
+                    $('#crudDeclarationDetail_montAide').val(montRet);  
+                    if (montRet != $('#crudDeclarationDetail_montAide').val()){
+                        $('#crudDeclarationDetail_montAide').css("color","red");
+                        $('#idLabelMontAide').css("color","red");
+                        $('#idLabelMontRet').css("color","red");
+                        $('#idLabelMontRet').text('(Quantité * Cout facturé * ' + $('#idTauxAide').val() + ')');
+                        $('#idLabelMontRet').show();
+                     };
+             }else{
+                $('#idLabelMontRet').hide();
+            }; 
+        });
+        
+        $('#crudDeclarationDetail_coutFacture').change(function(){
+           val = $('#crudDeclarationDetail_quantiteReel').val();
+           res = val.replace('\,','.');
+           $('#crudDeclarationDetail_quantiteReel').val(res);
+           val = $('#crudDeclarationDetail_coutFacture').val();
+           res = val.replace('\,','.');
+           $('#crudDeclarationDetail_coutFacture').val(res);
+           var val = $('#crudDeclarationDetail_montAide').val();
+           var res = val.replace('\,','.');
+           $('#crudDeclarationDetail_montAide').val(res);
+           $('#idMontRet').hide();
+            $('#crudDeclarationDetail_montAide').css("color","black");
+            $('#idLabelMontAide').css("color","black");
+            if (!$.isBlank($('#crudDeclarationDetail_quantiteReel').val())  && !$.isBlank($('#crudDeclarationDetail_coutFacture').val())){
+                    var montRet = 0;
+                    $('#idLabelMontRet').css("color","blue");
+                    $('#idLabelMontRet').text('( = Quantité pesée(' + $('#crudDeclarationDetail_quantiteReel').val() + ' kg) * Coût facturé(' + $('#crudDeclarationDetail_coutFacture').val() + ' €/kg) * Taux aide agence ( ' + $('#idTauxAide').val() + ' €))');
+                    $('#idLabelMontRet').show();
+                    montRet1 = Math.round(($('#crudDeclarationDetail_quantiteReel').val() * $('#crudDeclarationDetail_coutFacture').val() * $('#idTauxAide').val())* 10000) / 10000;
+                    {#var strRet1 = "" + montRet1;
+                    strRet1 = strRet1.substring(0, strRet1.length-1);
+                    montRet1 = parseFloat( strRet1 );#}
+                    montRet = Math.round( (montRet1 + 0.00001)* 100) / 100;
+                 {#console.log ('montret1 : ' + montRet1 + ' montret : ' + montRet + ' aide : ' + $('#crudDeclarationDetail_montAide').val());#}
+                    $('#crudDeclarationDetail_montAide').val(montRet);  
+                    if (montRet != $('#crudDeclarationDetail_montAide').val()){
+                        $('#crudDeclarationDetail_montAide').css("color","red");
+                        $('#idLabelMontAide').css("color","red");
+                        $('#idLabelMontRet').css("color","red");
+                        $('#idLabelMontRet').text('(Quantité * Cout facturé * ' + $('#idTauxAide').val() + ')');
+                        $('#idLabelMontRet').show();
+                     };
+            }else{
+                $('#idLabelMontRet').hide();
+            }; 
+        });
+       
+        $('#crudDeclarationDetail_montAide').change(function(){
+            val = $('#crudDeclarationDetail_quantiteReel').val();
+            res = val.replace('\,','.');
+            $('#crudDeclarationDetail_quantiteReel').val(res);
+            val = $('#crudDeclarationDetail_coutFacture').val();
+            res = val.replace('\,','.');
+            $('#crudDeclarationDetail_coutFacture').val(res);
+            var val = $('#crudDeclarationDetail_montAide').val();
+            var res = val.replace('\,','.');
+            $('#crudDeclarationDetail_montAide').val(res);
+            $('#idMontRet').hide();
+            $('#crudDeclarationDetail_montAide').css("color","black");
+            $('#idLabelMontAide').css("color","black");
+            if (!$.isBlank($('#crudDeclarationDetail_quantiteReel').val())  && !$.isBlank($('#crudDeclarationDetail_coutFacture').val())){
+                    var montRet = 0;
+                    $('#idLabelMontRet').css("color","blue");
+                    $('#idLabelMontRet').text('( = Quantité pesée(' + $('#crudDeclarationDetail_quantiteReel').val() + ' kg) * Coût facturé(' + $('#crudDeclarationDetail_coutFacture').val() + ' €/kg) * Taux aide agence (' +  $('#idTauxAide').val()  + ' €))');
+                    $('#idLabelMontRet').show();
+                    montRet1 = Math.round(($('#crudDeclarationDetail_quantiteReel').val() * $('#crudDeclarationDetail_coutFacture').val() * $('#idTauxAide').val())* 10000) / 10000;
+                    {#var strRet1 = "" + montRet1;
+                    strRet1 = strRet1.substring(0, strRet1.length-1);
+                    montRet1 = parseFloat( strRet1 );#}
+                    montRet = Math.round( (montRet1 + 0.00001)* 100) / 100;
+                    {#console.log ('montret1 : ' + montRet1 + ' montret : ' + montRet + ' aide : ' + $('#crudDeclarationDetail_montAide').val());#}
+                    $('#crudDeclarationDetail_montAide').val(montRet);  
+                    if (montRet != $('#crudDeclarationDetail_montAide').val()){
+                        $('#crudDeclarationDetail_montAide').css("color","red");
+                        $('#idLabelMontAide').css("color","red");
+                        $('#idLabelMontRet').css("color","red");
+                        $('#idLabelMontRet').text('(Quantité * Cout facturé * ' + $('#idTauxAide').val() + ')');
+                        $('#idLabelMontRet').show();
+                     };
+             }else{
+                $('#idLabelMontRet').hide();
+            }; 
+        });
+       
+                 
+         $( "#crudDeclarationDetail_dateFacture" ).datepicker();
+ 
+{% endblock scripts %}

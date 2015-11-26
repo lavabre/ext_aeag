@@ -1,0 +1,76 @@
+{% extends "AeagFrdBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+         <li>
+          <i class="icon-home"></i>
+          <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+       </li>
+       <li class="active">
+          Finalités
+       </li>
+{% endblock breadcrumb %}
+
+
+{%block panel_heading %}
+           <h3>
+               Liste des Finalités
+           </h3>
+ {%endblock panel_heading %}
+
+{%block content %}
+      <div class="row">
+          <div class="col-xm-12">
+              <div class="small ">
+                  <table class="table table-bordered table-striped table-condensed table-advance table-hover" id="idTable">
+                        <thead>
+                           <tr>
+                                <th>Code</th>
+                                <th>Libelle</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for entity in entities %}
+                                <tr>
+                                    <td>{{ entity.code }}</td>
+                                    <td>{{ entity.libelle }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                     </table>
+            </div>
+          </div>
+        </div>
+ {%endblock content %}
+ 
+ {% block scripts %}
+     
+       // DataTable
+          var table = $('#idTable').DataTable(
+                      {"stateSave": false,
+                       "oLanguage": {
+                          "sSearch": "Filtre",
+                          "sFirst": "1ere page",
+                          "sLast": "Dernière page",
+                          "sNext": "Prochaine page",
+                          "sPrevious": "Page précédente",
+                          "EmptyTable": "Pas de données",
+                          "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+                          "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+                          "sZeroRecords": "Pas d'enregistrement à afficher",
+                          "sInfoEmpty": "Pas d'enregistrement à afficher",
+                          "sInfoThousands": " ",
+                          "sLengthMenu": 'Afficher <select>' +
+                                  '<option value="10">10</option>' +
+                                  '<option value="20">20</option>' +
+                                  '<option value="30">30</option>' +
+                                  '<option value="40">40</option>' +
+                                  '<option value="50">50</option>' +
+                                  '<option value="-1">Tous</option>' +
+                                  '</select> enregistrements',
+                          "sPaginationType": "full_numbers"
+                      }
+                     }
+                    );
+   {% endblock scripts %}  
+    
+ 

@@ -1,0 +1,183 @@
+{% extends "AeagDecBundle::layout.html.twig" %}
+
+{% block navbar %}{% endblock navbar %}
+
+{% block breadcrumb %}{% endblock breadcrumb %}
+
+
+{% block panel_heading %}
+    <h3>
+        Ajout d'un producteur
+    </h3>
+{% endblock panel_heading %}
+
+{% block content %}
+    <div class="col-xs-12 medium">
+
+        <form role="form" action="{{ path('AeagDecBundle_collecteur_ajouterProducteur', { 'collecteur_id': entity.id }) }}" class="form-horizontal" id="idForm" method="post" {{ form_enctype(form) }}>
+            {% spaceless %}
+                {% if not form.vars.valid %}
+                    <div class="alert alert-danger">
+                        {% for children in form.children %}
+                            {% if not children.vars.valid %}
+                                {{ form_errors(children) }}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {% if message %}
+                    <div class="alert alert-danger">
+                        <button class="close" data-dismiss="alert"></button>
+                        <h5>
+                            {{ message | nl2br}}
+                        </h5>
+                    </div>
+                {% endif %}   
+
+            {% endspaceless %}
+
+            <div class="form-group">
+                <label for="MajProducteur_libelle" class="col-xs-3 control-label">Libellé <i class="fa fa-asterisk text-danger btn-xs"></i></label>
+                    {%if form_errors(form.libelle) %}
+                    <div class="col-xs-8 input-group has-error has-feedback">
+                    {% else %}
+                        <div class="col-xs-8 input-group">
+                        {% endif %}
+                        {{ form_widget(form.libelle, { 'attr': {'class': 'form-control ', 'placeholder': 'Libellé'} }) }}
+                    </div>
+                </div> 
+
+                <div class="form-group">
+                    <label for="MajProducteur_siret" class="col-xs-3 control-label">Siret <i class="fa fa-asterisk text-danger btn-xs"></i></label>
+                        {%if form_errors(form.siret) %}
+                        <div class="col-xs-8 input-group has-error has-feedback">
+                        {% else %}
+                            <div class="col-xs-8 input-group">
+                            {% endif %}
+                            {{ form_widget(form.siret, { 'attr': {'class': 'form-control ',
+                                                             'placeholder': 'Siret',
+                                                             'maxlength': '14',
+                                                             'minlength': '14',
+                                                             'nowhitespace': 'true',
+                                                             'number': 'true'} }) }}
+                        </div>
+                    </div> 
+
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-xs-3 text-right">
+                                <label for="MajProducteur_naf" class="control-label">Activité (code NAF)<i class="fa fa-asterisk text-danger btn-xs"></i> </label>
+                            </div>
+                            <div class="col-xs-8">
+                                <select class="form-control" id="MajProducteur_naf" name="MajProducteur_naf" required="required" >    
+                                    <option value=""></option> 
+                                    {%for naf in nafs %}
+                                        {% if entity.naf %}
+                                            {% if entity.naf == naf.code %}
+                                                <option value="{{naf.code}}" selected>{{ naf.codeLibelle }}</option> 
+                                            {% else %}
+                                                <option value="{{naf.code}}">{{ naf.codeLibelle }}</option> 
+                                            {% endif %}
+                                        {% else %}
+                                            <option value="{{naf.code}}">{{ naf.codeLibelle }}</option> 
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>       
+
+                    <div class="form-group">
+                        <label for="MajProducteur_adresse" class="col-xs-3 control-label">Adresse</label>
+                            {%if form_errors(form.adresse) %}
+                            <div class="col-xs-8 input-group has-error has-feedback">
+                            {% else %}
+                                <div class="col-xs-8 input-group">
+                                {% endif %}
+                                {{ form_widget(form.adresse, { 'attr': {'class': 'form-control ', 'placeholder': 'Adresse'} }) }}
+                            </div>
+                        </div> 
+
+                        <div class="form-group">
+                            <label for="MajProducteur_cp" class="col-xs-3 control-label">Code postal <i class="fa fa-asterisk text-danger btn-xs"></i></label>
+                            {%if form_errors(form.cp) %}
+                                <div class="col-xs-8 input-group has-error has-feedback">
+                                {% else %}
+                                    <div class="col-xs-8 input-group">
+                                    {% endif %}
+                                    {{ form_widget(form.cp, { 'attr': {'class': 'form-control ', 
+                                                          'placeholder': 'Code postal',
+                                                          'maxlength': '5',
+                                                          'minlength': '5',
+                                                          'nowhitespace': 'true',
+                                                          'number': 'true' } }) }}
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-xs-3 text-right">
+                                        <label for="MajProducteur_ville" class="control-label">Ville <i class="fa fa-asterisk text-danger btn-xs"></i></label>
+                                    </div>
+                                    <div  id="idVilles" class="col-xs-8">
+                                        <select class="form-control" id="MajProducteur_ville" name="MajProducteur_ville" required="required" >    
+                                            <option value=""></option> 
+                                            {%for ville in villes %}
+                                                {% if entity.cp %}
+                                                    {% if entity.ville == ville.acheminement %}
+                                                        <option value="{{ville.acheminement}}" selected>{{ ville.acheminement }}</option> 
+                                                    {% else %}
+                                                        <option value="{{ville.acheminement}}">{{ville.acheminement }}</option> 
+                                                    {% endif %}
+                                                {% else %}
+                                                    <option value="{{ville.acheminement}}">{{ ville.acheminement }}</option> 
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>       
+
+
+                            <div class="btn-group pull-right">
+                                <button type="submit" class="btn btn-success  pull-right" value="Ajouter">Enregistrer</button>
+                                <a  id="btFermer" class="btn btn-danger" href="#"><i class="fa fa-power-off"></i> Retour</a>
+                            </div>
+
+                            <div class="hide">
+                                {{ form_rest(form) }}
+                            </div>
+                            </form>
+                        </div>
+
+                    {%endblock content %}
+
+                    {% block scripts %}
+
+                        $('#btFermer').click(function (e) {
+                        e.preventDefault();
+                        window.setTimeout("window.close()", 1);
+                        return false;
+                        });
+
+                        {%if maj == 'ok' %}
+                            window.setTimeout("window.close()", 1);
+                            return false;
+                        {%endif%}
+
+                        $(document).on('change','#MajProducteur_cp',function(){
+                        $('#idAttente').show();
+                        cache: false  
+                        var requestData = {
+                        cp :  $('#MajProducteur_cp').val()
+                        }
+                        $.get( "{{path("AeagDecBundle_producteur_cp")}}", requestData , function( responseData ) { 
+                        $("#idVilles" ).empty().html( responseData ); 
+                        $('#idAttente').hide();
+                        });
+                        } );  
+
+                    {% endblock scripts %}
+

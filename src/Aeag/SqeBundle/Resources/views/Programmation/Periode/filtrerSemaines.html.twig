@@ -1,0 +1,202 @@
+{% extends "AeagSqeBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+    
+            <li>
+                   <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+               </li>
+               <li>
+                    <a href="{{ path('Aeag_sqe_programmation_lots', {'action': action}) }}">Critères</a> 
+               </li>
+               <li>
+                     <a href="{{ path('AeagSqeBundle_programmation_lot_retour', {'action': action}) }}">Lots</a> 
+               </li>
+               <li>
+                      <a href="{{ path('AeagSqeBundle_programmation_stations', {'action': action, 'maj': maj, 'lotan': lotan.id})}}">Stations</a> 
+               </li>
+               <li>
+                      <a href="{{ path('AeagSqeBundle_programmation_groupes', {'action': action, 'maj': maj, 'lotan': lotan.id})}}">Groupes de parametres</a> 
+                </li>
+               <li class="active">
+                         Périodes
+               </li>
+      {% if action != 'P' or (action == 'P' and  maj != 'C') %}
+                <li>
+                    <a href="{{ path('AeagSqeBundle_programmation_bilan', {'action': action, 'maj': maj, 'lotan': lotan.id})}}">Bilan</a> 
+               </li>
+      {% endif %}
+      
+{% endblock breadcrumb %}
+
+
+
+{%block panel_heading %}
+    <h3 class="page-title">
+        {% if action == 'P'  and maj != 'V' %}
+            Semaines impactées par la programmation {{ campagne }} version {{ lotan.version }} du lot : {{ lotan.lot.nomLot }}
+        {% else %}
+            Semaines impactées par la programmation {{ campagne }} version {{ lotan.version }} du lot : {{ lotan.lot.nomLot }}
+        {% endif %}
+        {# <a class="btn btn-primary pull-right" href="{{ path('AeagDecBundle_admin_pdfListeDechets') }}" title="Imprimer la lister"> 
+                <i class="fa fa-print"> Imprimer la liste</i>
+         </a>#}
+    </h3>
+{%endblock panel_heading %}
+
+
+
+{%block content %}
+    <div class="form-body">
+        {% if messages | length %}
+            <div class="alert alert-warning alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                {% for message in messages %}
+                    <strong>{{ message }}</strong><br/>
+                {% endfor %}   
+            </div>
+        {% endif %} 
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                     <form action="{{ path('AeagSqeBundle_programmation_semaines_selectionnees', {'action': action, 'maj': maj, 'lotan': lotan.id}) }}" class="form-horizontal" id="idForm_periode" method="post">
+                                        <div id="idMessage_periode"></div>
+                                            <div class="row">
+                                                <div class="col-md-offset-1 col-md-10">
+                                                    <div class="small">
+                                                        <table class="table table-bordered table-condensed table-advance" id="idTable_periodes">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th width="1%" align="center">
+                                                                     <a class="btn btn-success" id="cocherToutLesPeriodes"  href="#"><i class="fa fa-check fa-lg"></i></a>
+                                                                    </th>
+                                                                     <th width="5%">Périodes</th>
+                                                                    <th>Intervalles</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                 {%if periodes | length%} 
+                                                                    {% for periode in periodes %}
+                                                                       <tr>
+                                                                            <td>
+                                                                                <div class="checbox">
+                                                                                    <input type="checkbox" id="checkPeriode_{{  periode.id }}" name="checkPeriode[]" value="{{  periode.id }}" >
+                                                                                </div>
+                                                                            </td> 
+                                                                            <td nowrap>{{ periode.labelPeriode }}</td>
+                                                                            <td nowrap>du {{ periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;au&nbsp;&nbsp; {{ periode.dateFin | date("d/m/Y") }}</td>
+                                                                        </tr>
+                                                                    {% endfor %}
+                                                                {% endif %}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                                            
+                                        <div class="form-actions fluid center">
+                                            <div class="col-md-offset-5 col-md-9">
+                                                <button id="idValiderSelectionPeriode" type="button" class="btn btn-success">
+                                                    <i class="fa fa-check"> Valider</i>
+                                                </button>
+                                             </div>
+                                        </div>           
+
+                                        <div id="idCache"></div>                    
+                                </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> 
+
+{% endblock content %}
+
+{% block scripts %}
+
+    jQuery(document).ready(function() {
+    
+     // Table periode
+    var table_periode = $('#idTable_periodes').DataTable(
+                            {    "ordering": false,
+                            "scrollCollapse": true,
+                            "oLanguage": {
+                                    "sSearch": "Filtre",
+                                    "sFirst": "1ere page",
+                                    "sLast": "Dernière page",
+                                    "sNext": "Prochaine page",
+                                    "sPrevious": "Page précédente",
+                                    "EmptyTable": "Pas de données",
+                                    "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+                                    "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+                                    "sZeroRecords": "Pas d'enregistrement à afficher",
+                                    "sInfoEmpty": "Pas d'enregistrement à afficher",
+                                    "sInfoThousands": " ",
+                                    "sLengthMenu": 'Afficher <select>' +
+                                        '<option value="10">10</option>' +
+                                        '<option value="20">20</option>' +
+                                        '<option value="30">30</option>' +
+                                        '<option value="40">40</option>' +
+                                        '<option value="50">50</option>' +
+                                        '<option value="-1">Tous</option>' +
+                                        '</select> enregistrements',
+                                    "sPaginationType": "full_numbers"
+                                    }
+                            }
+                        );     
+    
+            
+   
+    // traitement sur les periodes
+    
+    {#  filtrer les semaines  #}
+    
+    var cocher = true;
+     $(document).on('click','#cocherToutLesPeriodes',function(e){
+       table_periode.page.len( -1 ).draw();
+       if (cocher == true){
+           cocher = false;
+           $('#cocherToutLesPeriodes').removeClass('btn-danger').addClass('btn-success');
+           $('#cocherToutLesPeriodes i').removeClass('fa-eraser').addClass('fa-check ');
+           {% for periode in periodes %}
+               $('#checkPeriode_{{  periode.id }}').prop( "checked", false );
+           {% endfor %}
+       }else{
+           cocher = true;
+           $('#cocherToutLesPeriodes').removeClass('btn-success').addClass('btn-danger');
+           $('#cocherToutLesPeriodes i').removeClass("fa-check").addClass('fa-eraser');
+           {% for periode in periodes %}
+               $('#checkPeriode_{{  periode.id }}').prop( "checked", true );
+           {% endfor %}
+       };
+       table_periode.page.len( 10 ).draw();
+     });
+     
+     
+     {% for periode in periodes %}
+            $('#checkPeriode_{{  periode.id }}').prop( "checked", false );
+            {% if stationAns | length %}
+            {% for periodeSelectionnee in stationAns.0.periodes %}
+                {% if periode.id == periodeSelectionnee.periode.id %}
+                    $('#checkPeriode_{{  periode.id }}').prop( "checked", true );
+               {% endif %}
+           {% endfor %}
+           {% endif %}
+       {% endfor %}
+    
+    
+     $(document).on('click', '#idValiderSelectionPeriode',function(e){
+        $('#modalTraitementEncours').modal('toggle');
+        e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+        table_periode.page.len( -1 ).draw();
+        $('#idForm_periode').submit();
+  
+    });
+    
+  
+
+    });
+
+{% endblock scripts %}

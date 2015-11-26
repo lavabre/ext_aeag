@@ -1,0 +1,185 @@
+<div class="col-md-12">
+    <div id="idtableau_presta" class="small">
+        <table class="table table-bordered table-condensed table-advance" id="idTable_prestataire">
+            <thead id="idTheadPrestataires">
+                <tr>
+                   <th width="10%">Prestataires / Groupes de paramètres</th>
+                    {% for groupe in grparAns %}
+                        <th width="1%" id="idThGroupe_{{ groupe.id }}" nowrap>{{ groupe.grparRef.libelleGrp }}</th>
+                    {% endfor %}
+                 </tr>
+            </thead>
+            <tbody id="idBodyPrestataires">
+                {%if prestataires | length%}  
+                    {% for prestataire in prestataires %}
+                        {% if prestataire.renseigner == "O" %}
+                             <tr id='idPresta_{{ prestataire.prestataire.adrCorId }}' name='idPrest_{{ prestataire.prestataire.adrCorId  }}' width="10%">
+                                <td>{{ prestataire.prestataire.ancnum}}&nbsp;&nbsp;{{ prestataire.prestataire.nomcorres}}</td>
+                                {% for groupe in prestataire.groupes %}
+                                     <td id="idTd_{{ prestataire.prestataire.adrCorId }}_{{ groupe.groupe.id }}">
+                                        <div class="text-center" id="idDiv_{{ prestataire.prestataire.adrCorId }}_{{ groupe.groupe.id }}">
+                                             {% if groupe.renseigner == "O"%}
+                                                 {% if  groupe.periodes != 0 %}
+                                                        <a id="idBt_{{ prestataire.prestataire.adrCorId }}_{{ groupe.groupe.id }}" class="btn btn-success" data-toggle="modal" href="#modal_{{ prestataire.prestataire.adrCorId }}_{{ groupe.groupe.id }}">
+                                                            <span id="idNb_{{ prestataire.prestataire.adrCorId }}_{{ groupe.groupe.id }}" class="badge">
+                                                               {{ groupe.periodes |  number_format(0,'.',' ')}}
+                                                            </span>
+                                                       </a>
+                                                   {% endif %}
+                                                   
+                                                   {% if  groupe.periodeCompls != 0 %}
+                                                        <a id="idBt_compl_{{ prestataire.prestataire.adrCorId }}_{{ groupe.groupe.id }}" class="btn btn-info" data-toggle="modal" href="#modal_{{ prestataire.prestataire.adrCorId }}_{{ groupe.groupe.id }}">
+                                                             <span id="idNb_{{ prestataire.prestataire.adrCorId }}_{{ groupe.groupe.id }}" class="badge">
+                                                                {{ groupe.periodeCompls |  number_format(0,'.',' ')}}
+                                                             </span>
+                                                        </a>
+                                                    {% endif %}
+                                                   
+                                                  {% if  groupe.periodeIgnores != 0 %}
+                                                        <a id="idBt_ignore_{{ prestataire.prestataire.adrCorId }}_{{ groupe.groupe.id }}" class="btn btn-primary" data-toggle="modal" href="#modal_{{ prestataire.prestataire.adrCorId }}_{{ groupe.groupe.id }}">
+                                                           <span id="idNb_{{ prestataire.prestataire.adrCorId }}_{{ groupe.groupe.id }}" class="badge">
+                                                              {{ groupe.periodeIgnores |  number_format(0,'.',' ')}}
+                                                           </span>
+                                                      </a>
+                                                     {% endif %}
+                                                        
+                                              {% else %}
+                                                     {% if prestataire.typePresta %}
+                                                     {% if prestataire.typePresta == groupe.typePresta or prestataire.typePresta == "PL"  %}
+                                                        <a id="idBt_{{ prestataire.prestataire.adrCorId }}_{{ groupe.groupe.id }}" class="btn btn-danger" data-toggle="modal" href="#modal_{{ prestataire.prestataire.adrCorId }}_{{ groupe.groupe.id }}">
+                                                               <span id="idNb_{{ prestataire.prestataire.adrCorId }}_{{ groupe.groupe.id }}" class="badge">
+                                                                  0
+                                                               </span>
+                                                          </a>
+                                                    {% endif %}
+                                                 {% endif %}
+                                             {% endif %}
+                                        </div>
+                                     </td>
+                                {% endfor %}
+                        {% else %}
+                             <tr  id='idPresta_{{ prestataire.prestataire.adrCorId }}' name='idPresta_{{ prestataire.prestataire.adrCorId }}' width="10%">
+                                 <td>{{ prestataire.prestataire.ancnum}}&nbsp;&nbsp;{{ prestataire.prestataire.nomcorres}}</td>
+                                {% for groupe in  grparAns %}
+                                    <td>
+                                           {% if prestataire.typePresta %}
+                                              {% if prestataire.typePresta == groupe.typePresta %}
+                                                <div class="text-center"> 
+                                                    <a  class="btn btn-danger" data-toggle="modal" href="#">
+                                                        <span class="badge">
+                                                           0
+                                                        </span>
+                                                   </a>
+                                                </div>
+                                              {% endif %}
+                                          {% endif %}
+                                    </td>
+                                {% endfor %}
+                        {% endif %}
+                            </tr>
+                    {% endfor %}
+                {% endif %}
+            </tbody>
+        </table> 
+    </div>
+</div>
+            
+{% block modal %}
+    
+     <div id="idModalPrestataireGroupes"></div>
+    
+  
+{% endblock modal %}
+  
+  
+
+<script>
+
+ jQuery(document).ready(function() {
+             
+    {%if prestataires | length%}  
+        {% for prestataire in prestataires %}
+            {% if prestataire.renseigner == "O" %}
+                 {% for groupe in prestataire.groupes %}
+                    {% if groupe.renseigner == "O"  %}
+                            $(document).on('click','#idBt_{{ prestataire.prestataire.adrCorId }}_{{ groupe.groupe.id }}',function(e){
+                                e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                                $('#modalTraitementEncours').modal('toggle');
+                                var url = '{{ path("AeagSqeBundle_programmation_bilan_prestataire_groupes",{"prestataireId":  "par1", "grparAnId":  "par2", "type": "N","action": "par3","maj":"par4","lotan":"par5"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                url = url.replace("par1", {{ prestataire.prestataire.adrCorId }});
+                                url = url.replace("par2", {{ groupe.groupe.id }}); 
+                                url = url.replace("amp;","");
+                                url = url.replace("par3", '{{ action }}');
+                                url = url.replace("par4", '{{ maj }}');
+                                url = url.replace("amp;","");
+                                url = url.replace("par5", '{{ lotan.id }}');
+                                url = url.replace("amp;","");
+                                $.ajax({
+                                        url: url,
+                                        type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+                                        success: function(html) { // Je récupère la réponse du fichier PHP
+                                             $('#idModalPrestataireGroupes').empty().append(html);
+                                             $('#modalPrestataireGroupe').modal();
+                                             $('#modalTraitementEncours').modal('hide');
+                                             }
+                                    });
+                             });
+                             
+                            $(document).on('click','#idBt_compl_{{ prestataire.prestataire.adrCorId }}_{{ groupe.groupe.id }}',function(e){
+                               e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                               $('#modalTraitementEncours').modal('toggle');
+                                var url = '{{ path("AeagSqeBundle_programmation_bilan_prestataire_groupes",{"prestataireId":  "par1", "grparAnId":  "par2", "type": "C","action": "par3","maj":"par4","lotan":"par5"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                url = url.replace("par1", {{ prestataire.prestataire.adrCorId }});
+                                url = url.replace("par2", {{ groupe.groupe.id }}); 
+                                url = url.replace("amp;","");
+                                url = url.replace("par3", '{{ action }}');
+                                url = url.replace("par4", '{{ maj }}');
+                                url = url.replace("amp;","");
+                                url = url.replace("par5", '{{ lotan.id }}');
+                                url = url.replace("amp;","");
+                               $.ajax({
+                                       url: url,
+                                       type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+                                       success: function(html) { // Je récupère la réponse du fichier PHP
+                                             $('#idModalPrestataireGroupes').empty().append(html);
+                                             $('#modalPrestataireGroupe').modal();
+                                             $('#modalTraitementEncours').modal('hide');
+                                            }
+                                   });
+                            });
+                            
+                             $(document).on('click','#idBt_ignore_{{ prestataire.prestataire.adrCorId }}_{{ groupe.groupe.id }}',function(e){
+                               e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                               $('#modalTraitementEncours').modal('toggle');
+                                var url = '{{ path("AeagSqeBundle_programmation_bilan_prestataire_groupes",{"prestataireId":  "par1", "grparAnId":  "par2", "type": "T","action": "par3","maj":"par4","lotan":"par5"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                url = url.replace("par1", {{ prestataire.prestataire.adrCorId }});
+                                url = url.replace("par2", {{ groupe.groupe.id }}); 
+                                url = url.replace("amp;","");
+                                url = url.replace("par3", '{{ action }}');
+                                url = url.replace("par4", '{{ maj }}');
+                                url = url.replace("amp;","");
+                                url = url.replace("par5", '{{ lotan.id }}');
+                                url = url.replace("amp;","");
+                               $.ajax({
+                                       url: url,
+                                       type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+                                       success: function(html) { // Je récupère la réponse du fichier PHP
+                                              $('#idModalPrestataireGroupes').empty().append(html);
+                                             $('#modalPrestataireGroupe').modal();
+                                             $('#modalTraitementEncours').modal('hide');
+                                            }
+                                   });
+                            });
+                            
+                        {% endif %}
+                   {% endfor %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+        
+  
+    
+  
+});
+
+</script>

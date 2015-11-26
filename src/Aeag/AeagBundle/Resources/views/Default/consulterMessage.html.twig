@@ -1,0 +1,22 @@
+<div class="modal">
+   <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h4 class="modal-title">Message de {{message.emetteur.username}} le {{ message.message.created | date("d/m/Y")  }} à {{ message.message.created | date("H:i:s")  }}</h4>
+        </div>
+        <div class="modal-body">
+           {%if lignes %}
+            {% for ligne in lignes %}
+             {{ ligne}}<br/>
+            {%endfor%}
+          {%endif%}
+        </div>
+        <div class="modal-footer">
+          <a href="#" data-dismiss="modal" class="btn">fermer</a>
+        </div>
+      </div>
+    </div>
+</div>
+
+   

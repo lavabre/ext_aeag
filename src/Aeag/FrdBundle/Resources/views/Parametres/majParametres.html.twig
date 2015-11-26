@@ -1,0 +1,96 @@
+{% extends "AeagFrdBundle::layout.html.twig" %}
+
+  {% block breadcrumb %}
+      <li>
+          <a href="{{ path('AeagFrdBundle_admin') }}">Accueil</a> 
+      </li>
+      <li>
+          <a href="{{ path('AeagFrdBundle_admin_parametres') }}">Parametres</a> 
+       </li>
+      {%if parametre.code != "" %}
+            <li class="active">
+               {{parametre.code}}</a> 
+           </li>
+       {%else%}
+            <li class="active">
+               Nouveau 
+            </li>
+       {%endif%}
+   {% endblock breadcrumb %}
+            
+   {% block panel_heading %}
+       <h3>
+       {%if parametre.code != "" %}
+            Mise à jour du parametre : {{parametre.code}}
+        {%else%}
+             Création d'un parametre
+        {%endif%}
+       </h3>
+   {% endblock panel_heading %}
+
+  {%block content  %}
+           <div class="row">
+           <div class="col-xm-offset-3 col-xm-5">
+                {%if parametre.code != "" %}
+                   <form class="form-horizontal" role="form" action="{{ path('AeagFrdBundle_admin_parametre', { 'code': parametre.code }) }}" class="form-horizontal" method="post" {{ form_enctype(form) }}>
+                   {%else%}
+                    <form class="form-horizontal" role="form" action="{{ path('AeagFrdBundle_admin_parametre', { 'code': 'new' }) }}" class="form-horizontal" method="post" {{ form_enctype(form) }}>      
+                   {%endif%}
+                        
+                        
+                    {% spaceless %}
+                        {% if not form.vars.valid %}
+                                <div class="alert alert-danger">
+                                   {% for children in form.children %}
+                                         {% if not children.vars.valid %}
+                                            {% if children.vars.name == 'plainPassword' %}
+                                                   la double saisi du nouveau mot de passe est incorrecte
+                                            {% endif %}
+                                            {{ form_errors(children) }}
+                                       {% endif %}
+                                    {% endfor %}
+                                    {% if form_errors(form.plainPassword) %}
+                                          form_errors(form.plainPassword)
+                                    {% endif %}
+                                </div>
+                        {% endif %}
+                    {% endspaceless %}
+                        
+                     <div class="form-group">
+                        <label class="col-xs-3 control-label">Code</label>
+                        {%if form_errors(form.code) %}
+                            <div class="col-xs-8 input-group has-error has-feedback">
+                        {% else %}
+                             <div class="col-xs-8 input-group">
+                         {% endif %}
+                           {{ form_widget(form.code, { 'attr': {'class': 'form-control ', 'placeholder': 'Code'} }) }}
+                         </div>
+                     </div> 
+                        
+                     <div class="form-group">
+                        <label class="col-xs-3 control-label">Libelle</label>
+                        {%if form_errors(form.libelle) %}
+                            <div class="col-xs-8 input-group has-error has-feedback">
+                        {% else %}
+                             <div class="col-xs-8 input-group">
+                         {% endif %}
+                           {{ form_widget(form.libelle, { 'attr': {'class': 'form-control ', 'placeholder': 'Libelle'} }) }}
+                         </div>
+                     </div> 
+            
+                     <div class="col-sm-offset-3 col-sm-8">
+                            <button type="submit" class="btn btn-success"> 
+                              <i class="fa fa-check"> Enregister</i>
+                            </button>
+                            <a class="btn btn-danger" href="{{ path('AeagFrdBundle_admin_parametres') }}">
+                                <i class="fa fa-home"> Retour</i>
+                             </a>
+                      </div>
+                        
+                      <div class="hide">
+                      {{ form_rest(form) }}
+                      </div>
+                   </form>
+               </div>
+       </div>       
+{%endblock content  %}

@@ -1,0 +1,55 @@
+{% extends "AeagDecBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+          <li>
+          <i class="icon-home"></i>
+          <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+           <i class="fa fa-angle-right"></i>
+       </li>
+       <li class="active">
+           Version
+       </li>
+   {% endblock breadcrumb %}
+
+
+{%block panel_heading %}
+    <h3 class="page-title">
+       VERSION
+    </h3>
+  {%endblock panel_heading %}
+
+ 
+ {%block content %}
+    
+    <div class="row">
+        <div class="col-md-2 page-500">
+                <div class=" number center">
+                        Désolé !
+                </div>
+       </div>
+       <div class="col-md-10 page-500">
+                 <div class=" details">
+                        <h3>NAVIGATEUR WEB INCOMPATIBLE</h3>
+                        <p>
+                             <div class="note note-info">
+                                 <p>Votre navigateur web : {{navigateur}} a une  version : <b>{{version}}</b> incompatible pour cette application.</p>
+                                 <p>Essayer avec 'Google chrome' ou 'Firefox' ou avec une version de votre navigateur plus récente.</p>
+                                 <p>Si vous ne pouvez pas changer de navigateur web, <b>envoyer par courrier</b> vos demandes d'aide pour le traitement des déchets</p>
+                                 <p>à l'agence de l'eau 'adour-garonne'.</p>
+                            </div>
+                        </p>
+                </div>
+        </div>
+    </div>
+      
+    <div class="row">
+        <div class="col-md-3 page-500"></div>
+        <div class="col-md-6 page-500">
+              <h3>
+                <a class="btn default btn-lg" href="{{ path('fos_user_security_logout') }}">Quitter </a>
+              </h3>
+        </div>
+        <div class="col-md-3 page-500"></div>
+     </div>
+{%endblock content %}
+ 

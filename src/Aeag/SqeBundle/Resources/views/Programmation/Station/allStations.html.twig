@@ -1,0 +1,1228 @@
+{% extends "AeagSqeBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+                 <li>
+                   <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+                  </li>
+                  <li>
+                    <a href="{{ path('Aeag_sqe_programmation_lots', {'action': action}) }}">Critères</a> 
+                  </li>
+                  <li>
+                        <a href="{{ path('AeagSqeBundle_programmation_lot_retour', {'action': action}) }}">Lots</a> 
+                  </li>
+                 <li class="active">
+                         Stations
+                  </li>
+      {% if action != 'P' or (action == 'P' and  maj != 'C') %}
+                  <li>
+                        <a id="idMenuGroupe" href="#">Groupes de parametres</a> 
+                  </li>
+                  <li>
+                         <a id="idMenuPeriode" href="#">Périodes</a> 
+                  </li>
+                  <li>
+                  <a id="idMenuBilan" href="#">Bilan</a> 
+                  </li>
+     {% endif %}
+
+{% endblock breadcrumb %}
+
+
+{% block modal %}
+
+    <div class="modal fade" id="modal_valider" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="idTitreStationsSelectionnes">
+                        Liste des stations sélectionnées
+                    </h4>
+                </div>
+                <div class="modal-body-sqe">
+                    <div class="row">
+                        <div class="col-md-offset-1 col-md-10">
+                            <div class="small">
+                                <form action="{{ path('AeagSqeBundle_programmation_station_resultat', { 'lotan': lotan.id, 'action': action, 'maj': maj}) }}" class="form-horizontal" id="idForm" method="post">
+                                    <table class="table table-bordered table-condensed table-advance" id="idTable1">
+                                        <thead>
+                                            <tr>
+                                                <th>Code</th>
+                                                <th>Libellé</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="idListeStationsSelectionnes">
+                                        </tbody>
+                                    </table>
+                                     <input type="hidden" name="suivant" id="idSuivant" value="groupe">
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div id="idMessageSelection" class="alert alert-danger" role="alert"></div>
+                    <button id="idValiderSelection" type="submit" class="btn btn-success">
+                        <i class="fa fa-check"> Valider</i>
+                    </button>
+                    <button id="idAnnulerSelection" type="button" class="btn btn-default" data-dismiss="modal">
+                        <i class="fa fa-eraser"> Annuler</i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="modal_stationReseaux" tabindex="-1" role="dialog" aria-labelledby="ModalLabel_stationReseaux" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="idTitreStationsReseaux">
+                        Liste des réseaux disponibles
+                    </h4>
+                </div>
+                <div class="modal-body-sqe">
+                    <div class="row">
+                        <div class="col-md-offset-1 col-md-10">
+                            <div class="small">
+                                <table class="table table-bordered table-condensed table-advance" id="idTable1">
+                                    <thead>
+                                        <tr>
+                                            <th>Choisir</th>
+                                            <th>Réseau</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {%if reseaux | length > 0 %}
+                                            {% for reseau in reseaux %}
+                                                <tr>
+                                                    <td align="center">
+                                                        <input type="radio" name="optionsRadio_StationReseaux" id="optionsRadio_StationReseau_{{ reseau.groupementId }}" value="{{ reseau.groupementId }}" >
+                                                     </td> 
+                                                     <td>{{ reseau.nomRsx }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% endif %}
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="idValiderStationReseaux" type="submit" class="btn btn-success">
+                        <i class="fa fa-check"> Valider</i>
+                    </button>
+                    <button id="idAnnulerStationReseaux" type="button" class="btn btn-default" data-dismiss="modal">
+                        <i class="fa fa-eraser"> Annuler</i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock modal %}
+
+{%block panel_heading %}
+    <h3 class="page-title">
+        {% if action == 'P' %}
+            Choix des stations pour la programmation {{ campagne }} version {{ lotan.version }} du lot : {{ lotan.lot.nomLot }}
+        {% else %}
+            Stations impactées par la programmation {{ campagne }} du lot : {{ lotan.lot.nomLot }}
+        {% endif %}    
+        {# <a class="btn btn-primary pull-right" href="{{ path('AeagDecBundle_admin_pdfListeDechets') }}" title="Imprimer la lister"> 
+                <i class="fa fa-print"> Imprimer la liste</i>
+         </a>#}
+    </h3>
+{%endblock panel_heading %}
+
+
+
+{%block content %}
+    
+        <div class="form-body">
+            {% if messages | length %}
+                <div class="alert alert-warning alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    {% for message in messages %}
+                        <strong>{{ message }}</strong><br/>
+                    {% endfor %}   
+                </div>
+            {% endif %} 
+
+            <div class="row">
+                <div class="col-xm-12 small">
+                    <table class="table table-bordered table-condensed table-advance" id="idTable1">
+                        <thead>
+                            <tr>
+                                <th id="idThReseauDefaut">Réseau par défaut</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    {% if action == 'P' and maj != 'V' %}
+                                        {%if reseaux | length > 0 %} 
+                                            <select id="reseau" class="form-control input-small" placeholder="Réseau" name="reseau" required="required">
+                                            {% else %}
+                                                <select id="reseau" readonly class="form-control input-small" placeholder="Réseau" name="reseau" required="required">
+                                                {% endif %}
+                                                <option value=""></option>
+                                                {% for reseau in reseaux %}
+                                                    <option  value="{{ reseau.groupementId }}" >{{ reseau.nomRsx }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        {% else %}
+                                            <select id="reseau" readonly class="form-control input-small" placeholder="Réseau" name="reseau">
+                                                <option value=""></option>
+                                                {% for reseau in reseaux %}
+                                                    <option  value="{{ reseau.groupementId }}" >{{ reseau.nomRsx }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        {% endif %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div> 
+                       
+             {% if action == 'P'  and maj != 'V' %}
+                         <div class="row">
+                             <div class="col-md12  text-center" id="idNbCocher">
+                                 <p class="btn btn-primary"></p>
+                             </div>
+                        </div>
+               {% endif %}
+       
+            <div class="row">
+                <div class="col-xm-12 small">
+                    <div id='idStations'>
+                        <table class="table table-bordered table-condensed table-advance" id="idTable">
+                            <thead>
+                                <tr>
+                                    {% if action == 'P'  and maj != 'V' %}
+                                        <th width="1%" align="center">
+                                            {%if cocherTout == 'N' %}
+                                                <a class="btn btn-success" id="cocherTout"  href="#" title="Cocher"><i class="fa fa-check-square-o fa-lg"></i></a>
+                                                {% else %}
+                                                <a class="btn btn-danger" id="cocherTout"  href="#" title="Décocher"><i class="fa fa-square-o fa-lg"></i></a>
+                                                {% endif %}
+                                        </th>
+                                    {% endif %}
+                                    <th>Code</th>
+                                    <th>Libellé</th>
+                                    <th>Commune</th>
+                                    <th>Masse d'eau</th>
+                                        {% if lotan.lot.codeMilieu.categorieMilieu == 'R' %}
+                                        <th>Rivière</th>
+                                        {% endif %}
+                                    <th>Réseaux</th>
+                                </tr>
+                            </thead>
+                            <tbody id="idBodyStations">
+                                {%if stations | length%}  
+                                    {% for station in stations %}
+                                          <input type="hidden" name="id_{{ station.station.ouvFoncId }}" value ="{{station.station.ouvFoncId}}"
+                                           {% if action == 'P'  and maj != 'V'  %}
+                                            <tr id="idTr_{{ station.station.ouvFoncId }}"> 
+                                                <td align="center">
+                                                   {% if station.cocher == 'O' %}
+                                                       <input type="checkbox" id="check_{{ station.station.ouvFoncId }}" name="check[]" value="{{station.station.ouvFoncId}}" checked="checked">
+                                                   {% else %}    
+                                                       <input type="checkbox" id="check_{{ station.station.ouvFoncId }}" name="check[]" value="{{station.station.ouvFoncId}}">
+                                                   {% endif %}
+                                               </td>
+                                               <td>
+                                                   <a  href="{{ station.lien }}" target="_blank" title="Localisation">
+                                                       {{ station.station.code }}
+                                                   </a>
+                                               </td>
+                                                {% if station.autreLot | length %}
+                                                    <td id="idTd_{{ station.station.ouvFoncId }}" class="warning">
+                                                        {{ station.station.libelle }}
+                                                        <a  href="{{ station.lienAutreLot }}" target="_blank" title="Voir cette porgrammation">&nbsp;(existe sur la programmtion  {{ station.autreLot.anneeProg }} version {{ station.autreLot.version }} du lot : {{ station.autreLot.lot.nomLot }}&nbsp;<i class="fa fa-folder-open fa-lg fa-fw"></i>)</a>
+                                                    </td>
+                                                {% else %}
+                                                    <td>{{ station.station.libelle }}</td>
+                                                {% endif %}
+                                               <td>{{ station.commune.libelle }}</td>
+                                               <td>{{ station.station.codeMasdo }} </td>
+                                               {% if lotan.lot.codeMilieu.categorieMilieu == 'R' %}
+                                                   <td>{{ station.station.nomCoursEau }} </td>
+                                               {% endif %}
+                                               <td nowrap>
+                                                    {#{%if station.reseaux | length > 1 %}  #}
+                                                     {#  <select id="criteres_reseau_{{station.station.ouvFoncId}}" name="criteres_reseau_{{station.station.ouvFoncId}}" class="form-control input-small" placeholder="Réseau">
+                                                       {% else %}
+                                                           <select id="criteres_reseau_{{station.station.ouvFoncId}}" readonly name="criteres_reseau_{{station.station.ouvFoncId}}" class="form-control input-small" placeholder="Réseau">  
+                                                           {% endif %}
+                                                           <option value=""></option>
+                                                           {%if station.reseaux | length%}  
+                                                               {% for reseau in station.reseaux %}
+                                                                   {%if reseau.cocher == 'O' %}
+                                                                       <option  value="{{ reseau.reseau.groupementId }}" selected="selected">{{ reseau.reseau.nomRsx }}</option>  
+                                                                   {%else %}
+                                                                       <option  value="{{ reseau.reseau.groupementId }}" >{{ reseau.reseau.nomRsx }}</option>
+                                                                   {% endif %}
+                                                               {% endfor %}
+                                                           {%endif%}
+                                                       </select>  #}
+                                                      <input type="hidden" id="idStationReseau_{{ station.station.ouvFoncId }}" name="idStationReseau_{{ station.station.ouvFoncId }}" value="">
+                                                      <div id="idStationReseauLibelle_{{ station.station.ouvFoncId }}">
+                                                      <a class="btn btn-primary btn-xs"  id="idStationChangerReseau_{{ station.station.ouvFoncId }}" data-toggle="modal" href="#" title="Changer"><i class="fa fa-refresh fa-lg"></i></a>
+                                                      </div>
+                                                </td>
+                                            </tr>
+                                    {% else %}
+                                        {% if station.cocher == 'O' %}
+                                            <tr id="idTr_{{ station.station.ouvFoncId }}">   
+                                                <td>
+                                                    <a class="btn btn-info btn-xs" href="{{ station.lien }}" target="_blank" title="Localisation">
+                                                        {{ station.station.code }}
+                                                    </a>
+                                                </td>
+                                               {% if station.autreLot | length %}
+                                                    <td id="idTd_{{ station.station.ouvFoncId }}" class="warning">
+                                                         <a  href="{{ station.lienAutreLot }}" target="_blank" title="Voir cette porgrammation">&nbsp;(existe sur la programmtion  {{ station.autreLot.anneeProg }} version {{ station.autreLot.version }} du lot : {{ station.autreLot.lot.nomLot }}&nbsp;<i class="fa fa-folder-open fa-lg fa-fw"></i>)</a>
+                                                    </td>
+                                                {% else %}
+                                                    <td>{{ station.station.libelle }}</td>
+                                                {% endif %}
+                                                <td>{{ station.commune.libelle }}</td>
+                                                <td>{{ station.station.codeMasdo }} </td>
+                                                {% if lotan.lot.codeMilieu.categorieMilieu == 'R' %}
+                                                    <td>{{ station.station.nomCoursEau }} </td>
+                                                {% endif %}
+                                                <td>
+                                                  {#  <select id="criteres_reseau_{{station.station.ouvFoncId}}" readonly name="criteres_reseau_{{station.station.ouvFoncId}}" class="form-control input-small" placeholder="Reseau">  
+                                                        <option value=""></option>
+                                                        {% for reseau in station.reseaux %}
+                                                            {%if reseau.cocher == 'O' %}
+                                                                <option  value="{{ reseau.reseau.groupementId }}" selected="selected">{{ reseau.reseau.nomRsx }}</option>  
+                                                            {%else %}
+                                                                <option  value="{{ reseau.reseau.groupementId }}" >{{ reseau.reseau.nomRsx }}</option>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </select>     #}
+                                                    {% if station.reseauSelectionne | length %}
+                                                      <input type="hidden"  id="idStationReseau_{{ station.station.ouvFoncId }}" name="idStationReseau_{{ station.station.ouvFoncId }}" value="{{ station.reseauSelectionne.groupementId }}">
+                                                   {% else %}
+                                                      <input type="hidden"  id="idStationReseau_{{ station.station.ouvFoncId }}" name="idStationReseau_{{ station.station.ouvFoncId }}" value="">  
+                                                    {% endif %}
+                                                      <div id="idStationReseauLibelle_{{ station.station.ouvFoncId }}"></div>
+                                                </td>
+                                            </tr>
+                                        {% endif %}                                                    
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                            </tbody>
+                        </table>   
+                    </div>
+                </div>
+            </div>
+        </div> 
+                            
+           <div class="form-actions fluid center">
+                <div class="col-md-offset-5 col-md-9">
+
+                    {% if action == 'P'  and maj != 'V' %}
+                        <a id="idValider" class="btn btn-success" data-toggle="modal" href="#" title="Valider">
+                             <i class="fa fa-share">  Suivant</i>
+                        </a>
+                    {% else %}
+                        <button id="idSubmit" type="submit" class="btn btn-success">
+                            <i class="fa fa-eye"> Suivant</i>
+                        </button>
+                    {% endif %}
+                </div>
+            </div>                  
+        </div>   
+            
+    {% if action == 'P'  and maj != 'V' %}
+     <div class="progress" style="height: 50px;padding: 5px 5px;">
+                   {% if controle.station.ok == 1 %}
+                            <div class="progress-bar progress-bar-success progress-bar-striped active" style="width: 25%;font-size: 16px;line-height: 35px;">
+                                    <a id="idSuivantStation" href="#">Stations
+                                        <span class="btn btn-success">
+                                           <span class="badge">
+                                              {{ controle.station.nb  |  number_format(0,'.',' ')}}
+                                           </span>
+                                       </span>
+                                    </a>
+                              </div>
+                    {% else %}
+                            <div class="progress-bar progress-bar-danger progress-bar-striped active" style="width: 25%;font-size: 16px;line-height: 35px;">
+                                    <a id="idSuivantStation" href="#">Stations
+                                        <span class="btn btn-danger">
+                                             <span class="badge">
+                                                 {{ controle.station.nb  |  number_format(0,'.',' ')}}
+                                              </span>
+                                         </span>
+                                    </a>
+                             </div>
+                    {% endif %}
+                    {% if  controle.groupe.ok == 1 %}
+                            <div class="progress-bar progress-bar-success" style="width: 25%;font-size: 16px;line-height: 35px;">
+                                    <a id="idSuivantGroupe" href="#">Groupes de parametres
+                                        <span class="btn btn-success">
+                                           <span class="badge">
+                                              {{ controle.groupe.nb  |  number_format(0,'.',' ')}}
+                                           </span>
+                                       </span>
+                                    </a>
+                            </div>
+                    {% else %}
+                            <div class="progress-bar progress-bar-danger" style="width: 25%;font-size: 16px;line-height: 35px;">
+                                   <a id="idSuivantGroupe" href="#">Groupes de parametres
+                                        <span class="btn btn-danger">
+                                             <span class="badge">
+                                                {{ controle.groupe.nbValide  |  number_format(0,'.',' ')}}/{{ controle.groupe.nb  |  number_format(0,'.',' ')}}
+                                              </span>
+                                         </span>
+                                   </a>
+                             </div>
+                    {% endif %}
+                    {% if controle.periode.ok == 1 %}
+                            <div class="progress-bar progress-bar-success" style="width: 25%;font-size: 16px;line-height: 35px;">
+                                    <a id="idSuivantPeriode" href="#">Périodes
+                                         <span class="btn btn-success">
+                                            <span class="badge">
+                                                {{ controle.periode.nb  |  number_format(0,'.',' ')}}
+                                             </span>
+                                        </span>
+                                    </a> 
+                           </div>
+                      {% else %}
+                            <div class="progress-bar progress-bar-danger" style="width: 25%;font-size: 16px;line-height: 35px;">
+                                    <a id="idSuivantPeriode" href="#">Périodes
+                                         <span class="btn btn-danger">
+                                            <span class="badge">
+                                                {{ controle.periode.nb  |  number_format(0,'.',' ')}}
+                                             </span>
+                                        </span>
+                                     </a> 
+                           </div>
+                      {% endif %}
+                       {% if controle.station.nbOk == controle.station.nb and  controle.groupe.nbOk == controle.groupe.nb and controle.periode.nbOk == controle.periode.nb %}
+                            <div class="progress-bar progress-bar-success" style="width: 25%;font-size: 16px;line-height: 35px;">
+                                    <a id="idSuivantBilan" href="#">Bilan</a> 
+                           </div>
+                       {% else %}
+                            <div class="progress-bar progress-bar-danger" style="width: 25%;font-size: 16px;line-height: 35px;">
+                                    <a id="idSuivantBilan" href="#">Bilan</a> 
+                           </div>
+                       {% endif %}
+             </div>
+     {% endif %}
+                            
+    <input type="hidden" id="idStationSelectionnee" value="">
+{%endblock content %}
+
+
+{% block scripts %}
+    
+    var table1 = $('#idTable1').DataTable();
+    
+    $(document).on('click', '#idSubmit',function(e){
+        $('#modalTraitementEncours').modal();
+        $('#idForm').submit();
+    } );
+    
+  
+     {% if app.session.get('selectionReseau')   %}
+        $('#reseau option:selected').removeAttr('selected');
+        var valeur = {{ app.session.get('selectionReseau') }};
+        $("#reseau option[value='" + valeur + "']").attr('selected','selected');
+        $("#reseau").val(valeur);
+        $("#idThReseauDefaut").empty().html('Réseau par défaut');
+     {% else %}
+        $("#idThReseauDefaut").empty().html('veuillez sélectionner un réseau par défaut');
+    {% endif %}
+    
+    // selection du reseau sinon liste des stations cachée
+    valeur = $('#reseau option:selected').val();
+     if (valeur == ''){
+      $("#idThReseauDefaut").empty().html('veuillez sélectionner un réseau par défaut');
+      $('#idStations').hide();
+    }
+    
+    
+
+    $(document).on('change','#reseau',function(e){
+        e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+        reseauValeur = $('#reseau option:selected').val();
+        reseauLibelle = $('#reseau option:selected').text();
+        if (reseauValeur == ''){
+          $("#idThReseauDefaut").empty().html('veuillez sélectionner un réseau par défaut');
+          $('#idStations').hide();
+        }else{
+          $("#idThReseauDefaut").empty().html('Réseau par défaut');
+          $('#idStations').show();
+        }
+        table.page.len( -1 ).draw();
+        {%if stations | length%}  
+            {% for station in stations %}
+                {% if action == 'P'  and maj != 'V'  %}
+                    $("#idStationReseau_{{ station.station.ouvFoncId }}").val(reseauValeur);
+                    html = '<a class="btn btn-primary btn-xs"  id="idStationChangerReseau_{{ station.station.ouvFoncId }}" data-toggle="modal" href="#" title="Changer"><i class="fa fa-refresh fa-lg"></i></a> ';
+                    html = html + reseauLibelle;
+                    $("#idStationReseauLibelle_{{ station.station.ouvFoncId }}").html(html);
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        table.page.len( 10 ).draw();
+    });    
+    
+   {# {% if stations | length %} 
+      {% for station in stations %}
+            $(document).on('click','#check_{{ groupe.groupe.id }}',function(e){
+                           e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                           if ($('#check_{{ groupe.groupe.id }}').prop('checked') == false){
+                               var check = 'O';
+                           }else{
+                              var check = 'N';
+                           }
+                           var requestData = {
+                                               groupe : $('#check_{{ groupe.groupe.id }}').val(),
+                                               coche : check
+                                               }
+                           $.get( '{{path("AeagSqeBundle_programmation_groupe_selectionner")}}', requestData , function( responseData ) { 
+                                $("#idGroupe_{{ groupe.groupe.id }}" ).empty().html( responseData ); 
+                           });
+            });
+        {% endfor %}
+    {% endif %}   
+    #}
+    
+    reseauValeur = $('#reseau option:selected').val();
+    reseauLibelle = $('#reseau option:selected').text();
+    {%if stations | length%}  
+        {% for station in stations %}
+            {% if station.reseauSelectionne %}
+                $("#idStationReseau_{{ station.station.ouvFoncId }}").val({{ station.reseauSelectionne.groupementId }});
+                html = '';
+                {% if action == 'P'  and maj != 'V'  %}
+                    html = '<a class="btn btn-primary btn-xs"  id="idStationChangerReseau_{{ station.station.ouvFoncId }}" data-toggle="modal" href="#" title="Changer"><i class="fa fa-refresh fa-lg"></i></a> ';
+                {% endif %}
+                html = html + '{{ station.reseauSelectionne.nomRsx }}';
+                $("#idStationReseauLibelle_{{ station.station.ouvFoncId }}").html(html);
+            {% else %}
+                $("#idStationReseau_{{ station.station.ouvFoncId }}").val(reseauValeur);
+                html = '';
+                {% if action == 'P'  and maj != 'V'  %}
+                   html = '<a class="btn btn-primary btn-xs"  id="idStationChangerReseau_{{ station.station.ouvFoncId }}" data-toggle="modal" href="#" title="Changer"><i class="fa fa-refresh fa-lg"></i></a> ';
+                {% endif %}
+                html = html + reseauLibelle;
+                $("#idStationReseauLibelle_{{ station.station.ouvFoncId }}").html(html);
+            {% endif %} 
+            $(document).on('click','#idStationChangerReseau_{{ station.station.ouvFoncId }}',function(e){
+               $("#idStationSelectionnee").val({{ station.station.ouvFoncId }});
+               $('#modal_stationReseaux').modal();
+            });
+            
+            $(document).on('click','#check_{{ station.station.ouvFoncId }}',function(e){
+               nbcocher();
+            });
+             
+        {% endfor %}
+    {% endif %}
+    
+    $(document).on('click','#idAnnulerStationReseaux',function(e){
+       $('#modal_stationReseaux').modal('hide');
+    });
+    
+    $(document).on('click','#idValiderStationReseaux',function(e){
+       reseauSelectionne = $('input[name=optionsRadio_StationReseaux]:checked').val();
+       {%if reseaux | length > 0 %}
+           {% for reseau in reseaux %}
+                if ( {{ reseau.groupementId }} == reseauSelectionne){
+                   idStation = "#idStationReseau_" + $('#idStationSelectionnee').val(); 
+                   idStationLibelle = "#idStationReseauLibelle_" + $('#idStationSelectionnee').val(); 
+                   $(idStation).val({{ reseau.groupementId }});
+                   html = '<a class="btn btn-primary btn-xs"  id="idStationChangerReseau_' + $('#idStationSelectionnee').val() + '" data-toggle="modal" href="#" title="Changer"><i class="fa fa-refresh fa-lg"></i></a> ';
+                   html = html + '{{ reseau.nomRsx }}';
+                   $(idStationLibelle).html(html);
+                };
+          {% endfor %}
+       {% endif %}
+       $('#modal_stationReseaux').modal('hide');
+    });
+
+
+     $(document).on('click', '#idSelectionStations',function(e){
+        $('#modalTraitementEncours').modal('toggle');
+        e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+        var nbRecords = $('#idTable_length option:selected').val();
+        table.page.len( -1 ).draw();
+        var $this = $('#idForm_periode'); // L'objet jQuery du formulaire
+        var url = '{{ path("AeagSqeBundle_programmation_stations",{"tout":  "par1"}) }}';
+        url = url.replace("par1", 'O');
+        $.ajax({
+            url: url,
+            type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+            success: function(html) { // Je récupère la réponse du fichier PHP
+                $('#idBodyStations').empty().append(html);
+                $('#modalTraitementEncours').modal('hide');
+              }
+        });
+        table.page.len( nbRecords ).draw();
+    });
+    
+
+    $(document).on('click', '#idValider',function(e){
+        var nbRecords = $('#idTable_length option:selected').val();
+        table.page.len( -1 ).draw();
+        var html = '';
+        var nbValider = 0;
+        {%if stations | length%}  
+            {% for station in stations %}
+               if ($('#check_{{ station.station.ouvFoncId }}').is(':checked')){
+                    nbValider = nbValider + 1;
+                    html = html + '<tr>';
+                    html = html + '<td width="5%">';
+                    html = html + '<a  href="{{ station.lien }}" target="_blank" title="Localisation">';
+                    html = html + '{{ station.station.code }}';
+                    html = html + '</a>';
+                    html = html + '<input type="hidden" name="idStationOk_{{ station.station.ouvFoncId }}" value ="{{station.station.ouvFoncId}}">';
+                    html = html + '<input type="hidden" name="idStationReseauOk_{{ station.station.ouvFoncId }}" value ="' + $('#idStationReseau_{{ station.station.ouvFoncId }}').val() + '">';
+                    html = html + '</td>';
+                    html = html + '<td>{{ station.station.libelle }}</td>';
+                    html = html + '</tr>';
+                };
+            {% endfor %}
+        {% endif %}
+        table1.destroy();
+        $('#idTitreStationsSelectionnes').empty().append('Liste des ' +  nbValider + ' stations sélectionnées');
+        $('#idListeStationsSelectionnes').empty().append(html);
+        $('#idValiderSelection').show();
+        $('#idMessageSelection').hide();
+        table.page.len( nbRecords ).draw();
+        table1 = $('#idTable1').DataTable(
+            {"stateSave": false,
+             "order": [[ 0, "asc" ]],
+            "oLanguage": {
+            "sSearch": "Filtre",
+            "sFirst": "1ere page",
+            "sLast": "Dernière page",
+            "sNext": "Prochaine page",
+            "sPrevious": "Page précédente",
+            "EmptyTable": "Pas de données",
+            "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+            "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+            "sZeroRecords": "Pas d'enregistrement à afficher",
+            "sInfoEmpty": "Pas d'enregistrement à afficher",
+            "sInfoThousands": " ",
+            "sLengthMenu": 'Afficher <select>' +
+                '<option value="10">10</option>' +
+                '<option value="20">20</option>' +
+                '<option value="30">30</option>' +
+                '<option value="40">40</option>' +
+                '<option value="50">50</option>' +
+                '<option value="-1">Tous</option>' +
+                '</select> enregistrements',
+            "sPaginationType": "full_numbers"
+            }
+            }
+            );
+         if ( nbValider > 250 ){
+            html = 'veuillez reduire la liste des stations sélectionnées (maximun 250)';
+            $('#idMessageSelection').empty().append(html);
+            $('#idValiderSelection').hide();
+            $('#idMessageSelection').show();
+        };
+        $('#modal_valider').modal();
+    });
+    
+     $(document).on('click', '#idMenuGroupe',function(e){
+        $('#idSuivant').val('groupe');
+        var nbRecords = $('#idTable_length option:selected').val();
+        table.page.len( -1 ).draw();
+        var html = '';
+        var nbValider = 0;
+        {%if stations | length%}  
+            {% for station in stations %}
+               if ($('#check_{{ station.station.ouvFoncId }}').is(':checked')){
+                    nbValider = nbValider + 1;
+                    html = html + '<tr>';
+                    html = html + '<td width="5%">';
+                    html = html + '<a class="btn btn-info btn-xs" href="{{ station.lien }}" target="_blank" title="Localisation">';
+                    html = html + '{{ station.station.code }}';
+                    html = html + '</a>';
+                    html = html + '<input type="hidden" name="idStationOk_{{ station.station.ouvFoncId }}" value ="{{station.station.ouvFoncId}}">';
+                    html = html + '<input type="hidden" name="idStationReseauOk_{{ station.station.ouvFoncId }}" value ="' + $('#idStationReseau_{{ station.station.ouvFoncId }}').val() + '">';
+                    html = html + '</td>';
+                    html = html + '<td>{{ station.station.libelle }}</td>';
+                    html = html + '</tr>';
+                };
+            {% endfor %}
+        {% endif %}
+        table1.destroy();
+        $('#idTitreStationsSelectionnes').empty().append('Liste des ' +  nbValider + ' stations sélectionnées');
+        $('#idListeStationsSelectionnes').empty().append(html);
+        $('#idValiderSelection').show();
+        $('#idMessageSelection').hide();
+         $('#modalTraitementEncours').modal('hide');
+        table.page.len( nbRecords ).draw();
+        table1 = $('#idTable1').DataTable(
+            {"stateSave": false,
+             "order": [[ 0, "asc" ]],
+            "oLanguage": {
+            "sSearch": "Filtre",
+            "sFirst": "1ere page",
+            "sLast": "Dernière page",
+            "sNext": "Prochaine page",
+            "sPrevious": "Page précédente",
+            "EmptyTable": "Pas de données",
+            "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+            "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+            "sZeroRecords": "Pas d'enregistrement à afficher",
+            "sInfoEmpty": "Pas d'enregistrement à afficher",
+            "sInfoThousands": " ",
+            "sLengthMenu": 'Afficher <select>' +
+                '<option value="10">10</option>' +
+                '<option value="20">20</option>' +
+                '<option value="30">30</option>' +
+                '<option value="40">40</option>' +
+                '<option value="50">50</option>' +
+                '<option value="-1">Tous</option>' +
+                '</select> enregistrements',
+            "sPaginationType": "full_numbers"
+            }
+            }
+            );
+         if ( nbValider > 250 ){
+            html = 'veuillez reduire la liste des stations sélectionnées (maximun 250)';
+            $('#idMessageSelection').empty().append(html);
+            $('#idValiderSelection').hide();
+            $('#idMessageSelection').show();
+        };
+        $('#modal_valider').modal();
+        {% if action != 'P' or (action == 'P' and  maj == 'V') %}
+            $('#modal_valider').modal('hide');
+             $('#modalTraitementEncours').modal();
+            $('#idForm').submit();
+        {% endif %}
+    });
+    
+    $(document).on('click', '#idMenuPeriode',function(e){
+        $('#idSuivant').val('periode');
+        var nbRecords = $('#idTable_length option:selected').val();
+        table.page.len( -1 ).draw();
+        var html = '';
+        var nbValider = 0;
+        {%if stations | length%}  
+            {% for station in stations %}
+               if ($('#check_{{ station.station.ouvFoncId }}').is(':checked')){
+                    nbValider = nbValider + 1;
+                    html = html + '<tr>';
+                    html = html + '<td width="5%">';
+                    html = html + '<a class="btn btn-info btn-xs" href="{{ station.lien }}" target="_blank" title="Localisation">';
+                    html = html + '{{ station.station.code }}';
+                    html = html + '</a>';
+                    html = html + '<input type="hidden" name="idStationOk_{{ station.station.ouvFoncId }}" value ="{{station.station.ouvFoncId}}">';
+                    html = html + '<input type="hidden" name="idStationReseauOk_{{ station.station.ouvFoncId }}" value ="' + $('#idStationReseau_{{ station.station.ouvFoncId }}').val() + '">';
+                    html = html + '</td>';
+                    html = html + '<td>{{ station.station.libelle }}</td>';
+                    html = html + '</tr>';
+                };
+            {% endfor %}
+        {% endif %}
+        table1.destroy();
+        $('#idTitreStationsSelectionnes').empty().append('Liste des ' +  nbValider + ' stations sélectionnées');
+        $('#idListeStationsSelectionnes').empty().append(html);
+        $('#idValiderSelection').show();
+        $('#idMessageSelection').hide();
+         $('#modalTraitementEncours').modal('hide');
+        table.page.len( nbRecords ).draw();
+        table1 = $('#idTable1').DataTable(
+            {"stateSave": false,
+             "order": [[ 0, "asc" ]],
+            "oLanguage": {
+            "sSearch": "Filtre",
+            "sFirst": "1ere page",
+            "sLast": "Dernière page",
+            "sNext": "Prochaine page",
+            "sPrevious": "Page précédente",
+            "EmptyTable": "Pas de données",
+            "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+            "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+            "sZeroRecords": "Pas d'enregistrement à afficher",
+            "sInfoEmpty": "Pas d'enregistrement à afficher",
+            "sInfoThousands": " ",
+            "sLengthMenu": 'Afficher <select>' +
+                '<option value="10">10</option>' +
+                '<option value="20">20</option>' +
+                '<option value="30">30</option>' +
+                '<option value="40">40</option>' +
+                '<option value="50">50</option>' +
+                '<option value="-1">Tous</option>' +
+                '</select> enregistrements',
+            "sPaginationType": "full_numbers"
+            }
+            }
+            );
+         if ( nbValider > 250 ){
+            html = 'veuillez reduire la liste des stations sélectionnées (maximun 250)';
+            $('#idMessageSelection').empty().append(html);
+            $('#idValiderSelection').hide();
+            $('#idMessageSelection').show();
+        };
+        $('#modal_valider').modal();
+        {% if action != 'P' or (action == 'P' and  maj == 'V') %}
+            $('#modal_valider').modal('hide');
+             $('#modalTraitementEncours').modal();
+            $('#idForm').submit();
+        {% endif %}
+    });
+    
+    $(document).on('click', '#idMenuBilan',function(e){
+        $('#idSuivant').val('bilan');
+        var nbRecords = $('#idTable_length option:selected').val();
+        table.page.len( -1 ).draw();
+        var html = '';
+        var nbValider = 0;
+        {%if stations | length%}  
+            {% for station in stations %}
+               if ($('#check_{{ station.station.ouvFoncId }}').is(':checked')){
+                    nbValider = nbValider + 1;
+                    html = html + '<tr>';
+                    html = html + '<td width="5%">';
+                    html = html + '<a class="btn btn-info btn-xs" href="{{ station.lien }}" target="_blank" title="Localisation">';
+                    html = html + '{{ station.station.code }}';
+                    html = html + '</a>';
+                    html = html + '<input type="hidden" name="idStationOk_{{ station.station.ouvFoncId }}" value ="{{station.station.ouvFoncId}}">';
+                    html = html + '<input type="hidden" name="idStationReseauOk_{{ station.station.ouvFoncId }}" value ="' + $('#idStationReseau_{{ station.station.ouvFoncId }}').val() + '">';
+                    html = html + '</td>';
+                    html = html + '<td>{{ station.station.libelle }}</td>';
+                    html = html + '</tr>';
+                };
+            {% endfor %}
+        {% endif %}
+        table1.destroy();
+        $('#idTitreStationsSelectionnes').empty().append('Liste des ' +  nbValider + ' stations sélectionnées');
+        $('#idListeStationsSelectionnes').empty().append(html);
+        $('#idValiderSelection').show();
+        $('#idMessageSelection').hide();
+         $('#modalTraitementEncours').modal('hide');
+        table.page.len( nbRecords ).draw();
+        table1 = $('#idTable1').DataTable(
+            {"stateSave": false,
+             "order": [[ 0, "asc" ]],
+            "oLanguage": {
+            "sSearch": "Filtre",
+            "sFirst": "1ere page",
+            "sLast": "Dernière page",
+            "sNext": "Prochaine page",
+            "sPrevious": "Page précédente",
+            "EmptyTable": "Pas de données",
+            "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+            "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+            "sZeroRecords": "Pas d'enregistrement à afficher",
+            "sInfoEmpty": "Pas d'enregistrement à afficher",
+            "sInfoThousands": " ",
+            "sLengthMenu": 'Afficher <select>' +
+                '<option value="10">10</option>' +
+                '<option value="20">20</option>' +
+                '<option value="30">30</option>' +
+                '<option value="40">40</option>' +
+                '<option value="50">50</option>' +
+                '<option value="-1">Tous</option>' +
+                '</select> enregistrements',
+            "sPaginationType": "full_numbers"
+            }
+            }
+            );
+         if ( nbValider > 250 ){
+            html = 'veuillez reduire la liste des stations sélectionnées (maximun 250)';
+            $('#idMessageSelection').empty().append(html);
+            $('#idValiderSelection').hide();
+            $('#idMessageSelection').show();
+        };
+        $('#modal_valider').modal();
+        {% if action != 'P' or (action == 'P' and  maj == 'V') %}
+            $('#modal_valider').modal('hide');
+             $('#modalTraitementEncours').modal();
+            $('#idForm').submit();
+        {% endif %}
+    });
+
+    
+    $(document).on('click', '#idSuivantStation',function(e){
+        $('#idSuivant').val('station');
+        var nbRecords = $('#idTable_length option:selected').val();
+        table.page.len( -1 ).draw();
+        var html = '';
+        var nbValider = 0;
+        {%if stations | length%}  
+            {% for station in stations %}
+               if ($('#check_{{ station.station.ouvFoncId }}').is(':checked')){
+                    nbValider = nbValider + 1;
+                    html = html + '<tr>';
+                    html = html + '<td width="5%">';
+                    html = html + '<a class="btn btn-info btn-xs" href="{{ station.lien }}" target="_blank" title="Localisation">';
+                    html = html + '{{ station.station.code }}';
+                    html = html + '</a>';
+                    html = html + '<input type="hidden" name="idStationOk_{{ station.station.ouvFoncId }}" value ="{{station.station.ouvFoncId}}">';
+                    html = html + '<input type="hidden" name="idStationReseauOk_{{ station.station.ouvFoncId }}" value ="' + $('#idStationReseau_{{ station.station.ouvFoncId }}').val() + '">';
+                    html = html + '</td>';
+                    html = html + '<td>{{ station.station.libelle }}</td>';
+                    html = html + '</tr>';
+                };
+            {% endfor %}
+        {% endif %}
+        table1.destroy();
+        $('#idTitreStationsSelectionnes').empty().append('Liste des ' +  nbValider + ' stations sélectionnées');
+        $('#idListeStationsSelectionnes').empty().append(html);
+        $('#idValiderSelection').show();
+        $('#idMessageSelection').hide();
+        table.page.len( nbRecords ).draw();
+        table1 = $('#idTable1').DataTable(
+            {"stateSave": false,
+             "order": [[ 0, "asc" ]],
+            "oLanguage": {
+            "sSearch": "Filtre",
+            "sFirst": "1ere page",
+            "sLast": "Dernière page",
+            "sNext": "Prochaine page",
+            "sPrevious": "Page précédente",
+            "EmptyTable": "Pas de données",
+            "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+            "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+            "sZeroRecords": "Pas d'enregistrement à afficher",
+            "sInfoEmpty": "Pas d'enregistrement à afficher",
+            "sInfoThousands": " ",
+            "sLengthMenu": 'Afficher <select>' +
+                '<option value="10">10</option>' +
+                '<option value="20">20</option>' +
+                '<option value="30">30</option>' +
+                '<option value="40">40</option>' +
+                '<option value="50">50</option>' +
+                '<option value="-1">Tous</option>' +
+                '</select> enregistrements',
+            "sPaginationType": "full_numbers"
+            }
+            }
+            );
+         if ( nbValider > 250 ){
+            html = 'veuillez reduire la liste des stations sélectionnées (maximun 250)';
+            $('#idMessageSelection').empty().append(html);
+            $('#idValiderSelection').hide();
+            $('#idMessageSelection').show();
+        };
+        $('#modal_valider').modal();
+        {% if action != 'P' or (action == 'P' and  maj == 'V') %}
+            $('#modal_valider').modal('hide');
+             $('#modalTraitementEncours').modal();
+            $('#idForm').submit();
+        {% endif %}
+    });
+    
+    $(document).on('click', '#idSuivantGroupe',function(e){
+        $('#idSuivant').val('groupe');
+        var nbRecords = $('#idTable_length option:selected').val();
+        table.page.len( -1 ).draw();
+        var html = '';
+        var nbValider = 0;
+        {%if stations | length%}  
+            {% for station in stations %}
+               if ($('#check_{{ station.station.ouvFoncId }}').is(':checked')){
+                    nbValider = nbValider + 1;
+                    html = html + '<tr>';
+                    html = html + '<td width="5%">';
+                    html = html + '<a class="btn btn-info btn-xs" href="{{ station.lien }}" target="_blank" title="Localisation">';
+                    html = html + '{{ station.station.code }}';
+                    html = html + '</a>';
+                    html = html + '<input type="hidden" name="idStationOk_{{ station.station.ouvFoncId }}" value ="{{station.station.ouvFoncId}}">';
+                    html = html + '<input type="hidden" name="idStationReseauOk_{{ station.station.ouvFoncId }}" value ="' + $('#idStationReseau_{{ station.station.ouvFoncId }}').val() + '">';
+                    html = html + '</td>';
+                    html = html + '<td>{{ station.station.libelle }}</td>';
+                    html = html + '</tr>';
+                };
+            {% endfor %}
+        {% endif %}
+        table1.destroy();
+        $('#idTitreStationsSelectionnes').empty().append('Liste des ' +  nbValider + ' stations sélectionnées');
+        $('#idListeStationsSelectionnes').empty().append(html);
+        $('#idValiderSelection').show();
+        $('#idMessageSelection').hide();
+        table.page.len( nbRecords ).draw();
+        table1 = $('#idTable1').DataTable(
+            {"stateSave": false,
+             "order": [[ 0, "asc" ]],
+            "oLanguage": {
+            "sSearch": "Filtre",
+            "sFirst": "1ere page",
+            "sLast": "Dernière page",
+            "sNext": "Prochaine page",
+            "sPrevious": "Page précédente",
+            "EmptyTable": "Pas de données",
+            "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+            "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+            "sZeroRecords": "Pas d'enregistrement à afficher",
+            "sInfoEmpty": "Pas d'enregistrement à afficher",
+            "sInfoThousands": " ",
+            "sLengthMenu": 'Afficher <select>' +
+                '<option value="10">10</option>' +
+                '<option value="20">20</option>' +
+                '<option value="30">30</option>' +
+                '<option value="40">40</option>' +
+                '<option value="50">50</option>' +
+                '<option value="-1">Tous</option>' +
+                '</select> enregistrements',
+            "sPaginationType": "full_numbers"
+            }
+            }
+            );
+         if ( nbValider > 250 ){
+            html = 'veuillez reduire la liste des stations sélectionnées (maximun 250)';
+            $('#idMessageSelection').empty().append(html);
+            $('#idValiderSelection').hide();
+            $('#idMessageSelection').show();
+        };
+        $('#modal_valider').modal();
+        {% if action != 'P' or (action == 'P' and  maj == 'V') %}
+            $('#modal_valider').modal('hide');
+             $('#modalTraitementEncours').modal();
+            $('#idForm').submit();
+        {% endif %}
+    });
+    
+    $(document).on('click', '#idSuivantPeriode',function(e){
+        $('#idSuivant').val('periode');
+        var nbRecords = $('#idTable_length option:selected').val();
+        table.page.len( -1 ).draw();
+        var html = '';
+        var nbValider = 0;
+        {%if stations | length%}  
+            {% for station in stations %}
+               if ($('#check_{{ station.station.ouvFoncId }}').is(':checked')){
+                    nbValider = nbValider + 1;
+                    html = html + '<tr>';
+                    html = html + '<td width="5%">';
+                    html = html + '<a class="btn btn-info btn-xs" href="{{ station.lien }}" target="_blank" title="Localisation">';
+                    html = html + '{{ station.station.code }}';
+                    html = html + '</a>';
+                    html = html + '<input type="hidden" name="idStationOk_{{ station.station.ouvFoncId }}" value ="{{station.station.ouvFoncId}}">';
+                    html = html + '<input type="hidden" name="idStationReseauOk_{{ station.station.ouvFoncId }}" value ="' + $('#idStationReseau_{{ station.station.ouvFoncId }}').val() + '">';
+                    html = html + '</td>';
+                    html = html + '<td>{{ station.station.libelle }}</td>';
+                    html = html + '</tr>';
+                };
+            {% endfor %}
+        {% endif %}
+        table1.destroy();
+        $('#idTitreStationsSelectionnes').empty().append('Liste des ' +  nbValider + ' stations sélectionnées');
+        $('#idListeStationsSelectionnes').empty().append(html);
+        $('#idValiderSelection').show();
+        $('#idMessageSelection').hide();
+        table.page.len( nbRecords ).draw();
+        table1 = $('#idTable1').DataTable(
+            {"stateSave": false,
+             "order": [[ 0, "asc" ]],
+            "oLanguage": {
+            "sSearch": "Filtre",
+            "sFirst": "1ere page",
+            "sLast": "Dernière page",
+            "sNext": "Prochaine page",
+            "sPrevious": "Page précédente",
+            "EmptyTable": "Pas de données",
+            "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+            "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+            "sZeroRecords": "Pas d'enregistrement à afficher",
+            "sInfoEmpty": "Pas d'enregistrement à afficher",
+            "sInfoThousands": " ",
+            "sLengthMenu": 'Afficher <select>' +
+                '<option value="10">10</option>' +
+                '<option value="20">20</option>' +
+                '<option value="30">30</option>' +
+                '<option value="40">40</option>' +
+                '<option value="50">50</option>' +
+                '<option value="-1">Tous</option>' +
+                '</select> enregistrements',
+            "sPaginationType": "full_numbers"
+            }
+            }
+            );
+         if ( nbValider > 250 ){
+            html = 'veuillez reduire la liste des stations sélectionnées (maximun 250)';
+            $('#idMessageSelection').empty().append(html);
+            $('#idValiderSelection').hide();
+            $('#idMessageSelection').show();
+        };
+        $('#modal_valider').modal();
+        {% if action != 'P' or (action == 'P' and  maj == 'V') %}
+            $('#modal_valider').modal('hide');
+             $('#modalTraitementEncours').modal();
+            $('#idForm').submit();
+        {% endif %}
+    });
+    
+    $(document).on('click', '#idSuivantBilan',function(e){
+        $('#idSuivant').val('bilan');
+        var nbRecords = $('#idTable_length option:selected').val();
+        table.page.len( -1 ).draw();
+        var html = '';
+        var nbValider = 0;
+        {%if stations | length%}  
+            {% for station in stations %}
+               if ($('#check_{{ station.station.ouvFoncId }}').is(':checked')){
+                    nbValider = nbValider + 1;
+                    html = html + '<tr>';
+                    html = html + '<td width="5%">';
+                    html = html + '<a class="btn btn-info btn-xs" href="{{ station.lien }}" target="_blank" title="Localisation">';
+                    html = html + '{{ station.station.code }}';
+                    html = html + '</a>';
+                    html = html + '<input type="hidden" name="idStationOk_{{ station.station.ouvFoncId }}" value ="{{station.station.ouvFoncId}}">';
+                    html = html + '<input type="hidden" name="idStationReseauOk_{{ station.station.ouvFoncId }}" value ="' + $('#idStationReseau_{{ station.station.ouvFoncId }}').val() + '">';
+                    html = html + '</td>';
+                    html = html + '<td>{{ station.station.libelle }}</td>';
+                    html = html + '</tr>';
+                };
+            {% endfor %}
+        {% endif %}
+        table1.destroy();
+        $('#idTitreStationsSelectionnes').empty().append('Liste des ' +  nbValider + ' stations sélectionnées');
+        $('#idListeStationsSelectionnes').empty().append(html);
+        $('#idValiderSelection').show();
+        $('#idMessageSelection').hide();
+        table.page.len( nbRecords ).draw();
+        table1 = $('#idTable1').DataTable(
+            {"stateSave": false,
+             "order": [[ 0, "asc" ]],
+            "oLanguage": {
+            "sSearch": "Filtre",
+            "sFirst": "1ere page",
+            "sLast": "Dernière page",
+            "sNext": "Prochaine page",
+            "sPrevious": "Page précédente",
+            "EmptyTable": "Pas de données",
+            "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+            "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+            "sZeroRecords": "Pas d'enregistrement à afficher",
+            "sInfoEmpty": "Pas d'enregistrement à afficher",
+            "sInfoThousands": " ",
+            "sLengthMenu": 'Afficher <select>' +
+                '<option value="10">10</option>' +
+                '<option value="20">20</option>' +
+                '<option value="30">30</option>' +
+                '<option value="40">40</option>' +
+                '<option value="50">50</option>' +
+                '<option value="-1">Tous</option>' +
+                '</select> enregistrements',
+            "sPaginationType": "full_numbers"
+            }
+            }
+            );
+         if ( nbValider > 250 ){
+            html = 'veuillez reduire la liste des stations sélectionnées (maximun 250)';
+            $('#idMessageSelection').empty().append(html);
+            $('#idValiderSelection').hide();
+            $('#idMessageSelection').show();
+        };
+        $('#modal_valider').modal();
+        {% if action != 'P' or (action == 'P' and  maj == 'V') %}
+            $('#modal_valider').modal('hide');
+             $('#modalTraitementEncours').modal();
+            $('#idForm').submit();
+        {% endif %}
+    });
+
+
+    $(document).on('click', '#idAnnulerSelection',function(e){
+    var nbRecords = $('#idTable_length option:selected').val();
+    table.page.len( nbRecords ).draw();
+    $('#modal_valider').modal('hide');
+    });
+
+    $(document).on('click', '#idValiderSelection',function(e){
+    $('#modal_valider').modal('hide');
+     table1.page.len( -1 ).draw();
+    $('#modalTraitementEncours').modal();
+    $('#idForm').submit();
+    });
+
+   
+
+
+    
+
+    $(document).on('click','#cocherTout',function(e){
+        var choix = 'O';
+        if ($('#cocherTout').hasClass('btn-success')){
+            choix =  'O';
+            $('#cocherTout').removeClass('btn-success').addClass('btn-danger');
+            $('#cocherTout i').removeClass('fa-check-square-o').addClass('fa-square-o');
+            $('#cocherTout').prop( "title", "Décocher" );
+        }else{
+            choix = 'N';
+            $('#cocherTout').removeClass('btn-danger').addClass('btn-success');
+            $('#cocherTout i').removeClass('fa-square-o').addClass('fa-check-square-o');
+            $('#cocherTout').prop( "title", "Cocher" );
+        };
+        table.page.len( -1 ).draw();
+        {%if stations | length%}  
+            {% for station in stations %}
+                {% if action == 'P'  and maj != 'V'  %}
+                    if (choix == 'O'){
+                      $('#check_{{ station.station.ouvFoncId }}').prop( "checked", true );
+                    }else{
+                      $('#check_{{ station.station.ouvFoncId }}').prop( "checked", false );
+                    };
+                 {% endif %}
+            {% endfor %}
+        {% endif %}
+        nbcocher();
+        table.page.len( 10 ).draw();
+    });
+   
+   
+      // DataTable
+    var table = $('#idTable').DataTable(
+    {"stateSave": true,
+    "oLanguage": {
+    "sSearch": "Filtre",
+    "sFirst": "1ere page",
+    "sLast": "Dernière page",
+    "sNext": "Prochaine page",
+    "sPrevious": "Page précédente",
+    "EmptyTable": "Pas de données",
+    "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+    "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+    "sZeroRecords": "Pas d'enregistrement à afficher",
+    "sInfoEmpty": "Pas d'enregistrement à afficher",
+    "sInfoThousands": " ",
+    "sLengthMenu": 'Afficher <select>' +
+        '<option value="10">10</option>' +
+        '<option value="20">20</option>' +
+        '<option value="30">30</option>' +
+        '<option value="40">40</option>' +
+        '<option value="50">50</option>' +
+        '<option value="-1">Tous</option>' +
+        '</select> enregistrements',
+    "sPaginationType": "full_numbers"
+    }
+    }
+    );
+
+    
+    /* Nombre de stations cocheées*/
+   var nbcocher = function() {
+   var info = table.page.info();
+   var nbRecords = $('#idTable_length option:selected').val();
+   table.page.len( -1 ).draw();
+   var n = $( "input:checked" ).length;
+   html = "Stations cochées  : <span class='badge'>" + n  + "</span>"; 
+   $("#idNbCocher p").html(html);
+   table.page.len( nbRecords ).draw();
+    table.page(info.page).draw(false);
+  };
+  nbcocher();
+  
+
+ 
+{% endblock scripts %}

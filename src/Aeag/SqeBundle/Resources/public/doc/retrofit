@@ -1,0 +1,7 @@
+Génération de tables dans netbeans à partir de postgres
+
+1)  php app/console doctrine:mapping:convert yml ./src/Aeag/SqeBundle/Resources/config/doctrine/metadata/orm --from-database --force --em='sqe'
+
+2)  php app/console doctrine:mapping:import AeagSqeBundle annotation --em='sqe'
+
+3)  php app/console doctrine:generate:entities AeagSqeBundle 

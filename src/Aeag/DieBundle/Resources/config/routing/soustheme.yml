@@ -1,0 +1,35 @@
+soustheme:
+    path:  /
+    defaults: { _controller: "AeagDieBundle:SousTheme:index" }
+
+soustheme_show:
+    path:  /{id}/show
+    defaults: { _controller: "AeagDieBundle:SousTheme:show" }
+
+soustheme_new:
+    path:  /new
+    defaults: { _controller: "AeagDieBundle:SousTheme:new" }
+
+soustheme_create:
+    path:  /create
+    defaults: { _controller: "AeagDieBundle:SousTheme:create" }
+    requirements: { methods: post }
+
+soustheme_edit:
+    path:  /{id}/edit
+    defaults: { _controller: "AeagDieBundle:SousTheme:edit" }
+
+soustheme_update:
+    path:  /{id}/update
+    defaults: { _controller: "AeagDieBundle:SousTheme:update" }
+    requirements: { methods: post }
+
+soustheme_delete:
+    path:  /{id}/delete
+    defaults: { _controller: "AeagDieBundle:SousTheme:delete" }
+
+soustheme_rechercher:
+    path:  /rechercher
+    defaults: { _controller: "AeagDieBundle:SousTheme:rechercher" }
+    
+ 

@@ -1,0 +1,96 @@
+{% extends "AeagAeagBundle::layout.html.twig" %}
+
+
+{% block breadcrumb %}{% endblock breadcrumb %}
+
+
+{%block panel_heading %}
+    <h3>
+          Liste des codes postaux de la commune {{commune.commune}} {{commune.libelle}}
+    </h3>
+{%endblock panel_heading %}
+
+{%block content %}
+     <div class="row">
+          <div class="col-xm-12">
+              <div class="small ">
+                  <table class="table table-bordered table-condensed table-advance" id="idTable">
+                        <thead>
+                          <tr>
+                                {% if is_granted('ROLE_ADMINDEC') %} 
+                                <th width="1%">Actions</th>
+                               {% endif %}
+                                <th>Code postal</th>
+                                <th>Acheminement</th>
+                                {% if is_granted('ROLE_ADMINDEC') %} 
+                                <th width="1%" nowrap>Aidable</th>
+                               {% endif %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for entity in entities %}
+                                 {% if is_granted('ROLE_ADMINDEC') %}
+                                    {%if  entity.dec == 'N' %}
+                                        <tr style="background-color:#f2dede;">
+                                    {%else%}
+                                        <tr>
+                                    {%endif%}
+                                      <td nowrap>
+                                        <a class="btn btn-warning" href="{{ path('Aeag_codePostal_editer', { 'id': entity.id }) }}"  title="Editer">
+                                            <i class="fa fa-edit"></i> 
+                                        </a>
+                                    </td>
+                             {% else %}
+                                 <tr>
+                             {% endif %}
+                                    <td>{{ entity.cp }}</td>
+                                    <td>{{ entity.acheminement }}</td>
+                                     {% if is_granted('ROLE_ADMINDEC') %}
+                                    <td align="center">{{ entity.dec }}</td>
+                                    {% endif %}
+                                  </tr>
+                             {% endfor %}
+                        </tbody>
+                     </table>
+            </div>
+          </div>
+        </div>
+
+         <div class="row">
+            <div class="col-xs-offset-4 col-xs-8">
+               <a  id="btFermer" class="btn btn-danger" href="{{ path('Aeag_listeCommune', { 'dept': commune.departement.dept }) }}"><i class="fa fa-power-off"></i> Retour</a>
+            </div>
+         </div>
+
+ {%endblock content %}
+ 
+{% block scripts %}
+     
+       // DataTable
+          var table = $('#idTable').DataTable(
+                      {"stateSave": false,
+                       "oLanguage": {
+                          "sSearch": "Filtre",
+                          "sFirst": "1ere page",
+                          "sLast": "Dernière page",
+                          "sNext": "Prochaine page",
+                          "sPrevious": "Page précédente",
+                          "EmptyTable": "Pas de données",
+                          "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+                          "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+                          "sZeroRecords": "Pas d'enregistrement à afficher",
+                          "sInfoEmpty": "Pas d'enregistrement à afficher",
+                          "sInfoThousands": " ",
+                          "sLengthMenu": 'Afficher <select>' +
+                                  '<option value="10">10</option>' +
+                                  '<option value="20">20</option>' +
+                                  '<option value="30">30</option>' +
+                                  '<option value="40">40</option>' +
+                                  '<option value="50">50</option>' +
+                                  '<option value="-1">Tous</option>' +
+                                  '</select> enregistrements',
+                          "sPaginationType": "full_numbers"
+                      }
+                     }
+                    );
+   {% endblock scripts %}  

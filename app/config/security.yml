@@ -1,0 +1,94 @@
+security:
+    encoders:
+        Symfony\Component\Security\Core\User\User: plaintext
+        Aeag\UserBundle\Entity\User: plaintext
+
+    providers:
+        main:
+            #id: fos_user.user_provider.username
+            entity: { class: Aeag\UserBundle\Entity\User, property: username }
+
+    firewalls:
+        dev:
+            pattern:  ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        # Firewall pour les pages de connexion, inscription, et récupération de mot de passe
+        login:
+            pattern:   ^/(login$|register|resetting|aide|die)  # Les adresses de ces pages sont login, register et resetting
+            anonymous: true 
+           
+        # Firewall principal pour le reste de notre site
+        main:
+            pattern : ^/
+            anonymous: false
+            provider: main
+            form_login:
+                login_path: fos_user_security_login
+                check_path: fos_user_security_check
+                remember_me: true 
+            remember_me:
+                key:         %secret%        # On définit la clé pour le remember_me (%secret% est un parametre de parameters.ini)
+                lifetime:    31536000     # 365 jours en secondes
+                path : /
+            anonymous:      false         # On autorise les utilisateurs anonymes (non identifiés)
+            logout:    
+               path: fos_user_security_logout
+               target: /
+               invalidate_session: true
+     
+    role_hierarchy:
+        ROLE_ODEC: [ROLE_AEAG]
+        ROLE_FRD: [ROLE_AEAG]
+        ROLE_SQE: [ROLE_AEAG]
+        ROLE_ADMINDEC: [ROLE_ODEC]
+        ROLE_ADMINFRD: [ROLE_FRD]
+        ROLE_ADMINSQE: [ROLE_PROGSQE, ROLE_SQE]
+        ROLE_PROGSQE: [ROLE_SQE]
+        ROLE_ADMIN: [ROLE_ADMINDEC, ROLE_ADMINFRD, ROLE_ADMINSQE]
+        ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
+
+
+    access_control:
+        #- { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+         - { path: ^/_wdt/, role: IS_AUTHENTICATED_ANONYMOUSLY }
+         - { path: ^/_profiler/, role: IS_AUTHENTICATED_ANONYMOUSLY }
+         - { path: ^/js/, role: IS_AUTHENTICATED_ANONYMOUSLY }
+         - { path: ^/css/, role: IS_AUTHENTICATED_ANONYMOUSLY }
+         - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+         - { path: ^/login_check$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+         - { path: ^/register$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+         - { path: ^/resseting$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+      
+         # PAGES ACCESSIBLES AUX ADMINISTRATEURS
+         - { path: ^/admin*, role: ROLE_ADMIN }
+         
+         # PAGES ACCESSIBLES AUX UTILISATEURS CONNECTES
+         #- { path: ^/aeag*, role: ROLE_AEAG }
+         
+         # PAGES ACCESSIBLES AUX ADMINISTRATEUR CONNECTES
+         - { path: ^/user/compte, role: [ROLE_ODEC, ROLE_FRD, ROLE_SQE, ROLE_STOCK] }
+         - { path: ^/user*, role: [ROLE_ADMINDEC, ROLE_ADMINFRD, ROLE_ADMINSQE, ROLE_ADMINSTOCK] }
+
+          # PAGES ACCESSIBLES AUX ADMINISTRATEURS DECHETS
+         - { path: ^/admindec*, role: [ROLE_ADMINDEC] }
+          # PAGES ACCESSIBLES AUX UTILISATEURS DECHETS
+         - { path: ^/dec*, role: [ROLE_ODEC] }
+         
+          # PAGES ACCESSIBLES AUX ADMINISTRATEURS FRD
+         - { path: ^/adminfrd*, role: [ROLE_ADMINFRD] }
+          # PAGES ACCESSIBLES AUX UTILISATEURS FRD
+         - { path: ^/frd*, role: [ROLE_FRD] }
+         
+         # PAGES ACCESSIBLES AUX ADMINISTRATEURS SQE
+         - { path: ^/adminsqe*, role: [ROLE_ADMINSQE] }
+          # PAGES ACCESSIBLES AUX UTILISATEURS SQE
+         - { path: ^/sqe/programmation/*, role: [ROLE_SQE] }
+         - { path: ^/sqe*, role: [ROLE_SQE] }
+
+           # PAGES ACCESSIBLES À TOUS
+         - { path: ^/aide*, role: IS_AUTHENTICATED_ANONYMOUSLY }
+         - { path: ^/die*, role: IS_AUTHENTICATED_ANONYMOUSLY }
+         #- { path: ^/.*, role: IS_AUTHENTICATED_ANONYMOUSLY }
+         #- { path: ^/*, role: IS_AUTHENTICATED_ANONYMOUSLY }
+     

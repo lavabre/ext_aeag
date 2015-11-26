@@ -1,0 +1,9 @@
+nom : {{ demande.nom }}  {{ demande.prenom }}
+courriel : {{ demande.Email }}
+priority :major
+dueDate : {{ demande.dateEcheance |date("d-m-Y") }}
+dueDateFormat :dd-MM-yyyy
+components :{{ soustheme.sousTheme }}
+organisme :{{ demande.organisme }}
+département : {{ demande.dept }}
+{{ demande.corps }}

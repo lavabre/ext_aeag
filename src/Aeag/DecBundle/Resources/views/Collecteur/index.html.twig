@@ -1,0 +1,114 @@
+ {% extends '::base.html.twig' %}
+
+ {% block titre %}Aide à l'élimination des déchets industriels {% endblock titre %}
+
+ {% block  menu %}
+   <div class="hor-menu hidden-sm hidden-xs">
+        <h3>Aide à l'élimination des déchets industriels de l'agence de l'eau 'adour-garonne'</h3>
+          <ul class="nav navbar-nav">
+            {%if app.session.get('declarations')| length > 0 %}
+               
+                    {%if app.session.get('menu') == 'declarations'%}
+                     <li  id="idDeclarations" class="active">
+                            <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+                            <span class="selected"></span>
+                            Déclarations
+                            <i class="fa fa-angle-down"></i>     
+                            </a>
+                    {%else%}
+                       <li  id="idDeclarations">
+                            <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+                             Déclarations
+                            <i class="fa fa-angle-down"></i>     
+                            </a>
+                    {%endif%}
+                        <ul class="dropdown-menu">
+                            {%set dec = null %}
+                            {% for entity in app.session.get('declarations') %}
+                              {% if dec == null %}
+                                 {% set dec  = entity.dec_id %}
+                                 {% set nb = 1 %}
+                                 <li class="dropdown-submenu">
+                                      <a href="{{ path('AeagDecBundle_collecteur_listeSousDeclarations', { 'declarationCollecteur_id': dec }) }}">
+                                      {{ entity.dec_annee}}
+                                       </a>
+                                      <ul class="dropdown-menu">
+                              {% endif %}
+                              {% if dec != entity.dec_id %}
+                                     </ul>
+                                 </li>
+                                 {% set dec  = entity.dec_id %}
+                                  {% set nb = 1 %}
+                                 <li class="dropdown-submenu">
+                                      <a href="{{ path('AeagDecBundle_collecteur_listeSousDeclarations', { 'declarationCollecteur_id': dec }) }}">
+                                      {{ entity.dec_annee}}
+                                       </a>
+                                      <ul class="dropdown-menu">
+                               {% endif %}
+                               {% if dec == entity.dec_id %}
+                                   {% if entity.sousdec_id %}
+                                     <li>
+                                         <a href="{{ path('AeagDecBundle_collecteur_listeDeclarationDetails', { 'sousDeclarationCollecteur_id': entity.sousdec_id }) }}">
+                                         Déclaration n° {{ nb }} du {{ entity.sousdec_dateDebut | date('d/m/Y') }}
+                                         </a>
+                                      </li>
+                                      {% set nb = nb + 1 %}
+                                   {% endif %}
+                               {% endif %}
+                            {% endfor %}
+                              </ul>
+                           </li>
+                        </ul> 
+                    </li>
+                    {% endif %}
+                    {%if app.session.get('menu') == 'producteurs'%}
+                        <li class="active">
+                            <a href="{{ path('AeagDecBundle_collecteur_listeProducteurs') }}">
+                            <span class="selected"></span>
+                            Producteurs
+                            </a>
+                        </li>
+                    {%else%}
+                        <li>
+                            <a href="{{ path('AeagDecBundle_collecteur_listeProducteurs') }}">
+                            Producteurs
+                            </a>
+                        </li>
+                    {%endif%}
+                    {%if app.session.get('menu') == 'contact'%}
+                        <li class="active">
+                            <a href="{{ path('AeagDecBundle_collecteur_envoyerMessage') }}">
+                            <span class="selected"></span>
+                            Contact
+                       </li>        
+                    {%else%}
+                        <li>
+                            <a href="{{ path('AeagDecBundle_collecteur_envoyerMessage') }}">
+                            Contact
+                            </a>
+                        </li>
+                    {%endif%}
+                     {%if app.session.get('menu') == 'aide'%}
+                        <li class="active">
+                            <a href="{{ path('AeagDecBundle_collecteur_aide') }}">
+                            <i class="fa fa-question"></i> 
+                            <span class="selected"></span>
+                            </a>
+                         </li>
+                    {%else%}
+                        <li>
+                            <a href="{{ path('AeagDecBundle_collecteur_aide') }}">
+                            <i class="fa fa-question"></i> 
+                            </a>
+                        </li>
+                    {%endif%}
+                     
+           
+        </ul>
+   </div>
+
+ 
+ {% endblock  menu %}
+
+
+ 

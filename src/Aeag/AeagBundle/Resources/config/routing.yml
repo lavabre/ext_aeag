@@ -1,0 +1,62 @@
+aeag_homepage:
+    path:  /
+    defaults: { _controller: AeagAeagBundle:Aeag:index }
+    
+aeag_referentiel:
+    resource: "@AeagAeagBundle/Resources/config/routing_referentiel.yml"
+    prefix:   /aeag
+    
+Aeag_envoyerMessageAll:
+    path:  /aeag/envoyerMessageAll/
+    defaults: { _controller: AeagAeagBundle:Aeag:envoyerMessageAll }
+    requirements:
+        methods:  GET|POST
+    
+Aeag_envoyerMessage:
+    path:  /aeag/envoyerMessage/{id}
+    defaults: { _controller: AeagAeagBundle:Aeag:envoyerMessage, id:null }
+    requirements:
+        methods:  GET|POST
+        
+Aeag_consulterMessage:
+    path:  /aeag/consulterMessage/{id}
+    defaults: { _controller: AeagAeagBundle:Aeag:consulterMessage, id:null }
+    requirements:
+        methods:  GET|POST
+        
+Aeag_supprimerMessage:
+    path:  /aeag/supprimerMessage/{id}
+    defaults: { _controller: AeagAeagBundle:Aeag:supprimerMessage, id:null }
+    requirements:
+        methods:  GET|POST
+        
+Aeag_interlocuteur:
+    path:  /aeag/interlocuteur
+    defaults: { _controller: AeagAeagBundle:Interlocuteur:index }
+    requirements:
+        methods:  GET|POST
+        
+Aeag_interlocuteur_ajouter:
+    path:  /aeag/interlocuteur/ajouter
+    defaults: { _controller: AeagAeagBundle:Interlocuteur:ajouter }
+    requirements:
+        methods:  GET|POST
+        
+Aeag_interlocuteur_editer:
+    path:  /aeag/interlocuteur/editer/{id}
+    defaults: { _controller: AeagAeagBundle:Interlocuteur:editer, id:null }
+    requirements:
+        methods:  GET|POST
+        
+Aeag_interlocuteur_supprimer:
+    path:  /aeag/interlocuteur/supprimer/{id}
+    defaults: { _controller: AeagAeagBundle:Interlocuteur:supprimer, id:null }
+    requirements:
+        methods:  GET|POST
+        
+Aeag_interlocuteur_envoyerMessage:
+    path:  /aeag/interlocuteur/envoyerMessage/{id}
+    defaults: { _controller: AeagAeagBundle:Interlocuteur:envoyerMessage, id:null }
+    requirements:
+        methods:  GET|POST
+        

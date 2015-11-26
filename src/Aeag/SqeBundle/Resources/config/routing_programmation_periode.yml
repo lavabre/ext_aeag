@@ -1,0 +1,83 @@
+
+AeagSqeBundle_programmation_periodes:
+    path:  /
+    defaults: { _controller: AeagSqeBundle:ProgrammationPeriode:index }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_filtrer_semaines:
+    path:  /filtrer/semaines/
+    defaults: { _controller: AeagSqeBundle:ProgrammationPeriode:filtrerSemaines }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_semaines_selectionnees:
+    path:  /selection/semaines
+    defaults: { _controller: AeagSqeBundle:ProgrammationPeriode:semainesSelectionnees }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_periode_filtrer:
+    path:  /filtrer/
+    defaults: { _controller: AeagSqeBundle:ProgrammationPeriode:filtrer }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_periode_dupliquer_station:
+    path:  /dupliquerStation/{stationId}
+    defaults: { _controller: AeagSqeBundle:ProgrammationPeriode:dupliquerStation, stationId : null }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_periode_valider_dupliquer_station:
+    path:  /valideDupliquerStation/{stationId}
+    defaults: { _controller: AeagSqeBundle:ProgrammationPeriode:validerDupliquerStation, stationId : null }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_periode_valider_dupliquer_station_sur_autre_station:
+    path:  /valideDupliquerStationSurAutreStation/{stationId}/{autreStationId}
+    defaults: { _controller: AeagSqeBundle:ProgrammationPeriode:validerDupliquerStationSurAutreStation, stationId : null, autreStationId : null }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_periode_initialiser:
+    path:  /initialiser/{stationId}
+    defaults: { _controller: AeagSqeBundle:ProgrammationPeriode:initialiser, stationId : null }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_periode_programmer:
+    path:  /programmer/{stationId}/{periodeId}
+    defaults: { _controller: AeagSqeBundle:ProgrammationPeriode:programmer, stationId : null, periodeId : null }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_periode_valider:
+    path:  /selectionGroupe/{stationId}/{periodeId}/{optionGroupes}
+    defaults: { _controller: AeagSqeBundle:ProgrammationPeriode:valider, stationId : null, periodeId : null, optionGroupes : null }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_periode_autre_programmation:
+    path:  /autreProgrammation/{stationId}/{periodeId}/{groupeId}
+    defaults: { _controller: AeagSqeBundle:ProgrammationPeriode:autreProgrammation, stationId : null, periodeId : null, groupeId: null; }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_periode_bilan:
+    path:  /bilan
+    defaults: { _controller: AeagSqeBundle:ProgrammationPeriode:bilan }
+    requirements:
+        methods:  GET
+        
+       
+
+    
+
+    
+
+
+
+
+        

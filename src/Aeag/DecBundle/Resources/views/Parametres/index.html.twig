@@ -1,0 +1,86 @@
+{% extends "AeagDecBundle::layout.html.twig" %}
+
+   {% block breadcrumb %}
+      <li>
+          <a href="{{ path('AeagDecBundle_admin') }}">Accueil</a> 
+      </li>
+       <li class="active">
+             Paramètres 
+       </li>
+   {% endblock breadcrumb %} 
+       
+   {% block panel_heading %}
+       <h3>
+       gestion des parametres 
+       </h3>
+   {% endblock panel_heading %}
+  
+ 
+   {%block content %}
+       <div class="row">
+           <div class="offset3 col-xm9">
+                <a class="btn btn-success" href="{{ path('AeagDecBundle_admin_parametre', { 'code': null }) }}" title="Ajouter">
+                     <i class="fa fa-plus"> Nouveau</i>
+                 </a>
+          </div>
+       </div>
+       <div class="row">
+          <div class="col-md-12">
+              <div class="small ">
+                  <table class="table table-bordered table-striped table-condensed table-advance table-hover" id="idTable">
+                        <thead>
+                           <tr>
+                              <th>Action</th>                      
+                              <th>Code</th>
+                              <th>Libelle</th>
+                             </tr>
+                        </thead>
+                        <tbody>
+                           {% for entity in entities %}
+                           <tr >
+                              <td width="10%">
+                                  <a class="btn btn-warning"  href="{{path('AeagDecBundle_admin_parametre', { 'code': entity.code }) }}" title="Editer">
+                                     <i class="fa fa-edit"></i>
+                                  </a>
+                              </td>
+                              <td width="20%">{{ entity.code}}</td>
+                              <td width="70%">{{ entity.libelle }}</td>
+                            </tr>
+                           {% endfor %}
+                         </tbody>
+                     </table>
+                  </div>
+               </div>
+        </div>
+     {%endblock content %}
+ 
+   {% block scripts %}
+     
+       // DataTable
+          var table = $('#idTable').DataTable(
+                      {"stateSave": true,
+                       "oLanguage": {
+                          "sSearch": "Filtre",
+                          "sFirst": "1ere page",
+                          "sLast": "Dernière page",
+                          "sNext": "Prochaine page",
+                          "sPrevious": "Page précédente",
+                          "EmptyTable": "Pas de données",
+                          "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+                          "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+                          "sZeroRecords": "Pas d'enregistrement à afficher",
+                          "sInfoEmpty": "Pas d'enregistrement à afficher",
+                          "sInfoThousands": " ",
+                          "sLengthMenu": 'Afficher <select>' +
+                                  '<option value="10">10</option>' +
+                                  '<option value="20">20</option>' +
+                                  '<option value="30">30</option>' +
+                                  '<option value="40">40</option>' +
+                                  '<option value="50">50</option>' +
+                                  '<option value="-1">Tous</option>' +
+                                  '</select> enregistrements',
+                          "sPaginationType": "full_numbers"
+                      }
+                     }
+                    );
+   {% endblock scripts %}  

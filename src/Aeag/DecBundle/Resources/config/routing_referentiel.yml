@@ -1,0 +1,264 @@
+AeagDecBundle_admin_referentiel:
+    path:  /
+    defaults: { _controller: AeagDecBundle:Referentiel:index }
+    
+AeagDecBundle_admin_chargeReferentiel:
+    path:  /chargeReferentiel
+    defaults: { _controller: AeagDecBundle:Referentiel:chargeReferentiel }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_admin_chargeDeclaration:
+    path:  /chargeDeclaration
+    defaults: { _controller: AeagDecBundle:Referentiel:chargeDeclaration }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_admin_chargeFichier:
+    path:  /chargeFichier/{ficent}
+    defaults: { _controller: AeagDecBundle:Referentiel:chargeFichier, ficent:null , message:null, passage:null}
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_admin_chargeFichierDeclaration:
+    path:  /chargeFichierDeclaration/{ficent}
+    defaults: { _controller: AeagDecBundle:Referentiel:chargeFichierDeclaration, ficent:null , message:null, passage:null}
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_admin_chargeDossier:
+    path:  /chargeDossier/{ficent}
+    defaults: { _controller: AeagDecBundle:Referentiel:chargeDossier, ficent:null , message:null, passage:null}
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_listeRegion:
+    path:  /listeRegion
+    defaults: { _controller: AeagDecBundle:Referentiel:listeRegion }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_pdfListeRegion:
+    path:  /pdfListeRegion
+    defaults: { _controller: AeagDecBundle:Referentiel:pdfListeRegion }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_region_editer:
+    path:  /region/editer/{reg}
+    defaults: { _controller: AeagDecBundle:Referentiel:editerRegion, reg:null }
+    requirements:
+        methods:  GET|POST
+ 
+        
+AeagDecBundle_admin_listeTaux:
+    path:  /listeTaux
+    defaults: { _controller: AeagDecBundle:Referentiel:listeTaux }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_admin_listeDechet:
+    path:  /listeDechet
+    defaults: { _controller: AeagDecBundle:Referentiel:listeDechet }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_admin_pdfListeDechets:
+    path:  /pdfListeDechet
+    defaults: { _controller: AeagDecBundle:Referentiel:pdfListeDechet }
+    requirements:
+        methods:  GET|POST  
+        
+AeagDecBundle_admin_dechet_ajouter:
+    path:  /dechet/ajouter
+    defaults: { _controller: AeagDecBundle:Referentiel:ajouterDechet }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_admin_dechet_editer:
+    path:  /dechet/editer/{code}
+    defaults: { _controller: AeagDecBundle:Referentiel:editerDechet, code:null }
+    requirements:
+        methods:  GET|POST
+        
+        
+AeagDecBundle_admin_listeFiliere:
+    path:  /listeFiliere
+    defaults: { _controller: AeagDecBundle:Referentiel:listeFiliere }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_admin_pdfListeFilieres:
+    path:  /pdfListeFiliere
+    defaults: { _controller: AeagDecBundle:Referentiel:pdfListeFiliere }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_admin_filiere_ajouter:
+    path:  /filiere/ajouter
+    defaults: { _controller: AeagDecBundle:Referentiel:ajouterFiliere }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_admin_filiere_editer:
+    path:  /filiere/editer/{code}
+    defaults: { _controller: AeagDecBundle:Referentiel:editerFiliere, code:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_admin_listeDechetFiliere:
+    path:  /admin/listeDechetFiliere/{dechet}
+    defaults: { _controller: AeagDecBundle:Referentiel:listeDechetFiliere, dechet:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_admin_listeConditionnement:
+    path:  /listeConditionnement
+    defaults: { _controller: AeagDecBundle:Referentiel:listeConditionnement }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_admin_listeNaf:
+    path:  /listeNaf
+    defaults: { _controller: AeagDecBundle:Referentiel:listeNaf }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_admin_pdfListeNaf:
+    path:  /pdfListeNaf
+    defaults: { _controller: AeagDecBundle:Referentiel:pdfListeNaf }
+    requirements:
+        methods:  GET|POST   
+        
+AeagDecBundle_admin_naf_ajouter:
+    path:  /naf/ajouter
+    defaults: { _controller: AeagDecBundle:Referentiel:ajouterNaf }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_admin_naf_editer:
+    path:  /naf/editer/{code}
+    defaults: { _controller: AeagDecBundle:Referentiel:editerNaf, code:null }
+    requirements:
+        methods:  GET|POST
+        
+        
+AeagDecBundle_admin_listeOperation:
+    path:  /listeOperation
+    defaults: { _controller: AeagDecBundle:Referentiel:listeOperation }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_admin_listeOperationNaf:
+    path:  /listeOperationNAf/{operation}
+    defaults: { _controller: AeagDecBundle:Referentiel:listeOperationNaf, operation:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_admin_listeOperationCommune:
+    path:  /listeOperationCommune/{operation}
+    defaults: { _controller: AeagDecBundle:Referentiel:listeOperationCommune, operation:null }
+    requirements:
+        methods:  GET|POST
+        
+        
+AeagDecBundle_admin_listeOuvrageFiliere:
+    path:  /listeOuvrageFiliere/{ouvrage}
+    defaults: { _controller: AeagDecBundle:Referentiel:listeOuvrageFiliere, ouvrage:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_admin_listeProducteurNonPlafonne:
+    path:  /listeProducteurNonPlafonne
+    defaults: { _controller: AeagDecBundle:Referentiel:listeProducteurNonPlafonne }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_admin_pdfListeProducteurNonPlafonne:
+    path:  /pdfListeProducteurNonPlafonne
+    defaults: { _controller: AeagDecBundle:Referentiel:pdfListeProducteurNonPlafonne }
+    requirements:
+        methods:  GET|POST  
+        
+AeagDecBundle_admin_ProducteurNonPlafonne_ajouter:
+    path:  /ProducteurNonPlafonne/ajouter
+    defaults: { _controller: AeagDecBundle:Referentiel:ajouterProducteurNonPlafonne }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_admin_ProducteurNonPlafonne_editer:
+    path:  /ProducteurNonPlafonne/editer/{siret}
+    defaults: { _controller: AeagDecBundle:Referentiel:editerProducteurNonPlafonne, siret:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_admin_listeProducteurTauxSpecial:
+    path:  /listeProducteurTauxSpecial
+    defaults: { _controller: AeagDecBundle:Referentiel:listeProducteurTauxSpecial }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_admin_pdfListeProducteurTauxSpecial:
+    path:  /pdfListeProducteurTauxSpecial
+    defaults: { _controller: AeagDecBundle:Referentiel:pdfListeProducteurTauxSpecial }
+    requirements:
+        methods:  GET|POST  
+        
+AeagDecBundle_admin_listeCollecteurs:
+    path:  /listeCollecteurs
+    defaults: { _controller: AeagDecBundle:Referentiel:listeCollecteurs }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_admin_pdfListeCollecteurs:
+    path:  /pdfListeCollecteurs
+    defaults: { _controller: AeagDecBundle:Referentiel:pdfListeCollecteurs }
+    requirements:
+        methods:  GET|POST   
+        
+AeagDecBundle_admin_listeProducteurs:
+    path:  /listeProducteurs
+    defaults: { _controller: AeagDecBundle:Referentiel:listeProducteurs }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_admin_pdfListeProducteurs:
+    path:  /pdfListeProducteurs
+    defaults: { _controller: AeagDecBundle:Referentiel:pdfListeProducteurs }
+    requirements:
+        methods:  GET|POST   
+        
+AeagDecBundle_admin_majProducteur:
+    path:  /majProducteur/{producteur_id}
+    defaults: { _controller: AeagDecBundle:Referentiel:majProducteur, producteur_id:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_admin_listeCentresTransits:
+    path:  /listeCentresTransits
+    defaults: { _controller: AeagDecBundle:Referentiel:listeCentresTransits }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_admin_pdfListeCentresTransits:
+    path:  /pdfListeCentresTransits
+    defaults: { _controller: AeagDecBundle:Referentiel:pdfListeCentresTransits }
+    requirements:
+        methods:  GET|POST   
+        
+AeagDecBundle_admin_listeCentresTraitements:
+    path:  /listeCentresTraitements
+    defaults: { _controller: AeagDecBundle:Referentiel:listeCentresTraitements }
+    requirements:
+        methods:  GET|POST
+        
+AeagDecBundle_admin_pdfListeCentresTraitements:
+    path:  /pdfListeCentresTraitements
+    defaults: { _controller: AeagDecBundle:Referentiel:pdfListeCentresTraitements }
+    requirements:
+        methods:  GET|POST 
+        
+
+        
+
+        

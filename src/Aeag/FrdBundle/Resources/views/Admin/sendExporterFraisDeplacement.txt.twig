@@ -1,0 +1,30 @@
+Bonjour {{ utilisateur.username }} {{ utilisateur.prenom }},
+
+
+ {%if frais | length > 1 %}
+
+      Nous traitons actuellement vos demandes suivantes de remboursement des frais de déplacement :
+
+      {% for entity in frais %}
+               n° {{ entity.id }} {{ entity.objet }} du {{ entity.dateDepart | date("Y/m/d") }} {{ entity.heureDepart }} au {{ entity.dateRetour | date("Y/m/d") }} {{ entity.heureretour }}
+      {%endfor%}
+                
+        
+{%else%}
+  Nous traitons actuellement votre demande suivante  de remboursement des frais de déplacement
+  
+    {% for entity in frais %}
+               n° {{ entity.id }} {{ entity.objet }} du {{ entity.dateDepart | date("Y/m/d") }} {{ entity.heureDepart }} au {{ entity.dateRetour | date("Y/m/d") }} {{ entity.heureretour }}
+    {%endfor%}
+  
+
+{%endif%}
+ 
+Cordialement.
+
+
+Agence de l'eau 'Adour-Garonne'
+90, rue du Férétra
+31078 Toulouse Cedex 4
+Tél.: 05 61 36 37 38
+fax.: 05 61 36 37 28

@@ -1,0 +1,169 @@
+{% extends "AeagDecBundle::layout.html.twig" %}
+
+     
+ {% block breadcrumb %}
+      <li>
+          <a href="{{ path('aeag_dec') }}">Accueil</a> 
+      </li>
+       <li class="active">
+         {%if statut.libelle  %}
+             {{ statut.libelle }} {{annee}} 
+        {%else%}
+             Dossiers {{annee}} 
+        {%endif%}
+        </li>
+   {% endblock breadcrumb %}
+
+
+{% block panel_heading %}
+    <h3>
+        {%if statut.libelle  %}
+             {{ statut.libelle }} {{ annee }}
+        {%else%}
+             Liste des Dossiers {{ annee }}
+        {%endif%}
+    </h3>
+        {%set dec_quantiteReel = 0%}
+        {%set dec_quantiteRet = 0%}
+        {%set dec_montAide = 0%}
+        {%set dec_montAp = 0%}
+        {%set dec_montApDispo = 0%}
+        {% if dossiers| length > 0 %}
+            {% for dossier in dossiers %}
+                {% if dossier.declaration %}
+                    {% set dec_quantiteReel = dec_quantiteReel + dossier.declaration.quantiteReel %}
+                    {% set dec_quantiteRet = dec_quantiteRet + dossier.declaration.quantiteRet %}
+                    {% set dec_montAide = dec_montAide + dossier.declaration.montAide %}
+                    {% set dec_montAp = dec_montAp + dossier.declaration.montantAp %}
+                    {% set dec_montApDispo = dec_montApDispo + dossier.declaration.montantApDispo %}
+                {% endif %}
+            {% endfor %}
+            <div class="row">
+               <div class="col-md-12">
+                   <div class="hidden-xs  col-md-12">
+                    <div class="small">
+                        <table class="table table-bordered table-striped table-condensed table-advance table-hover">
+                               <thead>
+                                    <tr>
+                                         <th class="text-center">Quantité déclarée (kg)</th>
+                                         <th class="text-center">Quantité retenue (kg)</th>
+                                         <th class="text-center">Aide retenue (€)</th>
+                                         <th class="text-center">Aide prévisionnelle {€)</th>
+                                         <th class="text-center">Aide disponible (€)</th>
+                                      </tr>
+                                </thead>
+                                <tbody>
+                                  <tr>
+                                      <td align="right">{{ (dec_quantiteReel) | number_format(0,'.',' ')}}</td>
+                                      <td align="right">{{ (dec_quantiteRet) | number_format(0,'.',' ')}}</td>
+                                      <td align="right">{{ dec_montAide | number_format(2,'.',' ')}}</td>
+                                      <td align="right">{{ dec_montAp | number_format(2,'.',' ')}}</td>
+                                      <td align="right">{{ dec_montApDispo | number_format(2,'.',' ')}}</td>
+                                  </tr>
+                            </table>
+                    </div>
+                  </div>
+               </div>
+            </div>
+        {% endif %}
+ {% endblock panel_heading %}
+
+  {%block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="small">
+                <table class="table table-bordered table-striped table-condensed table-advance table-hover" id="idTable">
+                        <thead>
+                           <tr>
+                                <th>Actions</th>
+                                <th>Collecteur</th>
+                                <th class="hidden-xs" >Libellé</th>
+                                <th class="hidden-xs hidden-sm">Quantité déclarée</th>
+                                <th class="hidden-xs hidden-sm" >Quantité retenue</th>
+                                <th class="hidden-xs hidden-sm" >Aide attribuée</th>
+                                <th class="hidden-xs hidden-sm" >Aide prévisionnelle</th>
+                                <th class="hidden-xs hidden-sm">Aide disponible</th>
+                                <th class="hidden-xs hidden-sm">Déclarations</th>
+                               </tr>
+                        </thead>
+                        <tbody>
+                            {% for dossier in dossiers %}
+                                {% if dossier.declaration %}
+                                 <tr>
+                                    <td id="idTd1-{{ dossier.declaration.id }}">
+                                        <a class="btn btn-primary" href="{{ path('AeagDecBundle_collecteur_listeSousDeclarations', { 'declarationCollecteur_id': dossier.declaration.id }) }}" title="Détails">
+                                           <i class="fa fa-eye"></i>
+                                        </a>
+                                    </td>
+                                    <td>{{ dossier.collecteur.numero}}</td>
+                                    <td class="hidden-xs">{{ dossier.collecteur.libelle}}</td>
+                                    <td class="hidden-xs hidden-sm" align="right">{{ (dossier.declaration.quantiteReel) | number_format(0,'.',' ')}} kg</td>
+                                    <td class="hidden-xs hidden-sm" align="right">{{ (dossier.declaration.quantiteRet) | number_format(0,'.',' ')}} kg</td>
+                                    <td class="hidden-xs hidden-sm" align="right">{{ dossier.declaration.montAide | number_format(2,'.',' ')}} €</td>
+                                    <td class="hidden-xs hidden-sm" align="right">{{ dossier.declaration.montantAp | number_format(2,'.',' ')}} €</td>
+                                    <td class="hidden-xs hidden-sm" align="right">{{ dossier.declaration.montantApDispo | number_format(2,'.',' ')}} €</td>
+                                    <td align="left" nowrap>
+                                        {%set nb_dec = 0 %}
+                                        {% if dossier.sousDeclarations %}
+                                            {% for sousDec in dossier.sousDeclarations %}
+                                               N° {{ sousDec.numero }} : {{ sousDec.dateDebut | date('d/m/Y') }} {{ sousDec.statut.libelle }}</br>
+                                              {% set nb_dec = nb_dec + 1 %}
+                                            {% endfor %}
+                                        {%endif %}
+                                    </td>
+                                  </tr>
+                                 {#{% else %}
+                                    <tr>
+                                        <td></td>
+                                        <td>{{ dossier.collecteur.numero}}</td>
+                                        <td class="hidden-xs">{{ dossier.collecteur.libelle}}</td>
+                                        <td class="hidden-xs hidden-sm" align="right"></td>
+                                        <td class="hidden-xs hidden-sm" align="right"></td>
+                                        <td class="hidden-xs hidden-sm" align="right"></td>
+                                        <td class="hidden-xs hidden-sm" align="right"></td>
+                                        <td class="hidden-xs hidden-sm" align="right"></td>
+                                        {% for i in 0 .. (maxSousdeclaration - 1) %}
+                                            <td></td> 
+                                        {% endfor %}
+                                  </tr>#}
+                                 {% endif %}
+                             {% endfor %}
+                        </tbody>
+                    </table>
+            </div>
+        </div>
+    </div>
+  {%endblock content  %}
+  
+  {% block scripts %}
+     
+       // DataTable
+          var table = $('#idTable').DataTable(
+                      {"stateSave": true,
+                       "oLanguage": {
+                          "sSearch": "Filtré",
+                          "sFirst": "1ere page",
+                          "sLast": "Dernière page",
+                          "sNext": "Prochaine page",
+                          "sPrevious": "Page précédente",
+                          "EmptyTable": "Pas de données",
+                          "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+                          "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+                          "sZeroRecords": "Pas d'enregistrement à afficher",
+                          "sInfoEmpty": "Pas d'enregistrement à afficher",
+                          "sInfoThousands": " ",
+                          "sLengthMenu": 'Afficher <select>' +
+                                  '<option value="10">10</option>' +
+                                  '<option value="20">20</option>' +
+                                  '<option value="30">30</option>' +
+                                  '<option value="40">40</option>' +
+                                  '<option value="50">50</option>' +
+                                  '<option value="-1">Tous</option>' +
+                                  '</select> enregistrements',
+                          "sPaginationType": "full_numbers"
+                      }
+                     }
+                    );
+   {% endblock scripts %}  
+   
+ 

@@ -1,0 +1,149 @@
+{% extends "AeagDecBundle::layout.html.twig" %}
+
+ {% block breadcrumb %}
+       <li>
+          <a href="{{ path('aeag_dec') }}">Accueil</a> 
+       </li>
+       <li>
+          <a href="{{ path('AeagDecBundle_collecteur_listeDeclarations') }}">Déclarations</a> 
+        </li>
+        <li>
+          <a href="{{ path('AeagDecBundle_collecteur_listeSousDeclarations', { 'declarationCollecteur_id': sousDeclarationCollecteur.DeclarationCollecteur.id }) }}">{{sousDeclarationCollecteur.DeclarationCollecteur.annee}}</a> 
+        </li>
+       <li>
+          <a href="{{ path('AeagDecBundle_collecteur_listeDeclarationDetails', { 'declarationCollecteur_id': sousDeclarationCollecteur.DeclarationCollecteur.id ,'sousDeclarationCollecteur_id':  sousDeclarationCollecteur.id }) }}">{{sousDeclarationCollecteur.numero }}</a> 
+        </li>
+       <li class="active">
+          Fichier CSV
+       </li>
+   {% endblock breadcrumb %}
+
+
+{%block panel_heading %}
+    <h3 class="page-title">
+       Integration d'un fichier CSV
+    </h3>
+  {%endblock panel_heading %}
+
+
+ {%block content %}
+     <div class="row">
+       <div class="col-xs-offset-3 col-xs-6">
+              {% spaceless %}
+                    {% if message %}
+                        <div class="alert alert-danger">
+                            <button class="close" data-dismiss="alert"></button>
+                            <h5>
+                             {{message | nl2br}}
+                            </h5>
+                       </div>
+                {% endif %}   
+             {% endspaceless %}
+            
+             <form class="form" action="{{ path('AeagDecBundle_collecteur_ajouterFichier', {'sousDeclarationCollecteur_id':  sousDeclarationCollecteur.id})}}" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                  <label for="file">Sélectionner le fichier à intégrer</label>
+                  <input type="file" name="file"
+                         class = "filestyle" 
+                         data-buttonText="Choisir le fichier"
+                         data-buttonName="btn-primary"
+                         data-iconName="glyphicon-inbox"
+                         data-buttonBefore="true">
+                   <p class="help-block">seul l'extension csv est acceptée et la taille du fichier doit ête inférieure à 1 MB.</p>
+                </div>
+                
+               <div id="idAttente">
+                   <i class="fa fa-spinner fa-spin"></i>
+                   <div class="alert alert-warning">
+                            <p>
+                              Merci de patientez SVP
+                            </p>
+                   </div>
+              </div>
+                
+                 
+              <div class="cf nestable-lists">
+                <div class="dd" id="structureFichier">
+                     <ol class="dd-list">
+                            <li class="dd-item" data-id="1">
+                                 <div class="dd-handle">Structure du fichier</div>
+                                     <ol class="dd-list">
+                                             <li class="dd-item" data-id="2">
+                                                     <div class="dd-handle">SIRET client (lg = 14)</div>
+                                             </li>
+                                             <li class="dd-item" data-id="3">
+                                                     <div class="dd-handle">Raison sociale (lg <= 30)</div>
+                                             </li>
+                                             <li class="dd-item" data-id="4">
+                                                     <div class="dd-handle">Code Postal (lg = 5)</div>
+                                             </li>
+                                             <li class="dd-item" data-id="5">
+                                                     <div class="dd-handle">Activité (code NAF) ( 4 <= lg <= 5)</div>
+                                             </li>
+                                             <li class="dd-item" data-id="6">
+                                                     <div class="dd-handle">N° facture (lg <= 12)</div>
+                                             </li>
+                                             <li class="dd-item" data-id="7">
+                                                     <div class="dd-handle">Date de facture (lg <= 10)</div>
+                                             </li>
+                                             <li class="dd-item" data-id="8">
+                                                     <div class="dd-handle">Code nomenclature ( 5 <= lg  <= 8)</div>
+                                             </li>
+                                             <li class="dd-item" data-id="9">
+                                                     <div class="dd-handle">Dénomination usuelle du déchet (lg <= 30)</div>
+                                             </li>
+                                             <li class="dd-item" data-id="10">
+                                                     <div class="dd-handle">Code D/R (lg <= 3)</div>
+                                             </li>
+                                             <li class="dd-item" data-id="11">
+                                                     <div class="dd-handle">N° SIRET ou code agence du centre de traitement (lg <= 14)</div>
+                                             </li>
+                                             <li class="dd-item" data-id="12">
+                                                     <div class="dd-handle">Quantité pesée (en Kg) (lg <= 9)</div>
+                                             </li>
+                                             <li class="dd-item" data-id="13">
+                                                     <div class="dd-handle">Code de conditionnement (lg <= 2)</div>
+                                             </li>
+                                             <li class="dd-item" data-id="14">
+                                                     <div class="dd-handle">Coût facturé (€/kg) (lg <= 7)</div>
+                                             </li>
+                                             <li class="dd-item" data-id="15">
+                                                     <div class="dd-handle">Montant d'aide (€) (lg <= 8) </div>
+                                             </li>
+                                             <li class="dd-item" data-id="16">
+                                                     <div class="dd-handle">Code agence du centre d'entreposage (lg <= 14)</div>
+                                             </li>
+                                             <li class="dd-item" data-id="17">
+                                                     <div class="dd-handle">Siret du centre de transit (lg <= 14)</div>
+                                             </li>
+                                    </ol>
+                             </li>
+                     </ol>
+                 </div>
+              </div>
+                 
+                <div class="form-group">
+                    <div class="col-xs-offset-4 col-xs-8">
+                       <a id="btForm"  class="btn btn-success"><i class="fa fa-download"></i> Intégrer</button>
+                       <a id="btFermer" class="btn btn-danger" href="{{ path('AeagDecBundle_collecteur_listeDeclarationDetails', { 'declarationCollecteur_id': sousDeclarationCollecteur.DeclarationCollecteur.id ,'sousDeclarationCollecteur_id':  sousDeclarationCollecteur.id }) }}"><i class="fa fa-power-off"></i> Retour</a>
+                    </div>
+                </div>
+         
+  
+         </form>
+       </div>
+     </div>
+ {%endblock content %}
+
+{% block scripts %}
+ 
+    $('#idAttente').hide();
+    $('#btForm').click(function (e) {
+             e.preventDefault();
+             $('#idAttente').show();
+             $('#modalTraitementEncours').modal('toggle');
+             $('form').submit();
+             return false;
+          });
+     
+  {% endblock scripts %}

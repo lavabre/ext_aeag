@@ -1,0 +1,94 @@
+{% extends "AeagSqeBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+      <li>
+          <a href="{{ path('aeag_sqe') }}">Accueil</a> 
+      </li>
+      <li class="active">
+            Message
+       </li>
+   {% endblock breadcrumb %}
+
+       
+   {%block panel_heading %}
+        <h3 class="page-title">
+           Message de : {{ user.nom }}
+        </h3>
+  {%endblock panel_heading %}
+
+
+
+ {%block content %}
+  <div class="col-xs-offset-3 col-xs-8">
+       <form role="form" action="{{ path('aeag_sqe_envoyerMessage') }}" class="form-horizontal" id="idForm" method="post" {{ form_enctype(form) }}>
+           
+          
+            <div class="form-group">
+                    <label class="col-xm-3 control-label">Destinataire :</label>
+                       <div class="input-group">
+                       <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                         {%if admins | length == 1%}  
+                            <select id="destinataire" disabled class="form-control" placeholder="Destinataire" required="required" name="destinataire[]">
+                        {% else %}
+                            <select id="destinataire" class="form-control" multiple="multiple" placeholder="Destinataire" required="required" name="destinataire[]">
+                        {% endif %}
+                             <option value=""></option>
+                             {%if admins | length %}  
+                                 {% for a in admins %}
+                                     <option  value="{{  a.email }}" >{{ a.email }}</option>
+                                 {% endfor %}
+                             {%endif%}
+                        </select>
+               </div>
+                    
+            <div class="form-group">
+                    <label class="col-xm-3 control-label">Cc :</label>
+                    {% if form_errors(form.copie) %}
+                        <div class="input-group has-error has-feedback">
+                    {% else %}
+                         <div class="input-group">
+                     {% endif %}
+                       <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                       {{ form_widget(form.copie, { 'attr': {'class': 'form-control', 'placeholder': 'Copie à'} }) }}
+                     </div>
+            </div>
+                    
+            <div class="form-group">
+                    <label class="col-xm-3 control-label">Sujet :</label>
+                    {% if form_errors(form.sujet) %}
+                        <div class="input-group has-error has-feedback">
+                    {% else %}
+                         <div class="input-group">
+                     {% endif %}
+                       <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                       {{ form_widget(form.sujet, { 'attr': {'class': 'form-control', 'placeholder': 'Sujet'} }) }}
+                     </div>
+            </div>
+                    
+            <div class="form-group">
+                    <label class="col-xm-3 control-label">Message :</label>
+                    {% if form_errors(form.message) %}
+                        <div class="input-group has-error has-feedback">
+                    {% else %}
+                         <div class="input-group">
+                     {% endif %}
+                       <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                       {{ form_widget(form.message, { 'attr': {'class': 'form-control', 'placeholder': 'Message'} }) }}
+                     </div>
+            </div>
+  
+            <div class="form-actions fluid center">
+                 <div class="col-md-offset-3 col-md-9">
+                    <button type="submit" class="btn btn-success icon-ok-sign"> Envoyer</button>
+                    <a class="btn btn-danger icon-remove" href="{{ path('aeag_sqe') }}"> Annuler</a>
+                 </div>
+             </div>
+            <div class="hide">
+              {{ form_rest(form) }}
+              </div>
+        </form>
+   </div>
+
+{%endblock content %}
+
+    

@@ -1,0 +1,158 @@
+{% extends "AeagDecBundle::layout.html.twig" %}
+
+{% block breadcrumb %}{% endblock breadcrumb %}
+       
+       
+ {%block panel_heading %}
+    <h3 class="page-title">
+       Consultation du centre de transit : {{ ct.numero }} {{ ct.libelle }}
+    </h3>
+  {%endblock panel_heading %}
+
+
+
+ {%block content %}
+  <div class="row">
+          <div class="col-md-12"> 
+                <form class="form-horizontal" role="form">
+           <div class="form-body">
+                 <div class="row">
+                   <div class="col-md-offset-3"></div>
+                   <div class="col-md-9">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Identifiant Aeag :</label>
+                            <div class="col-md-9">
+                            <p class="form-control-static">{{ ct.ouvId }}</p>
+                            </div>
+                        </div>
+                   </div>
+                   <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Numéro :</label>
+                            <div class="col-md-9">
+                            <p class="form-control-static">{{ ct.numero }}</p>
+                            </div>
+                        </div>
+                   </div>
+                   <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Libellé :</label>
+                            <div class="col-md-9">
+                            <p class="form-control-static">{{ ct.libelle }}</p>
+                            </div>
+                        </div>
+                   </div>
+                   <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Siret :</label>
+                            <div class="col-md-9">
+                            <p class="form-control-static">{{ ct.siret }}</p>
+                            </div>
+                        </div>
+                   </div>
+                   <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Liens :</label>
+                            <div class="col-md-9">
+                            <p class="form-control-static">
+                                <table class="table table-bordered table-hover" id="idTable">
+                                <thead>
+                                   <tr>
+                                       <th>Type</th>
+                                        <th>Identifiant</th>
+                                        <th>Libelle</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {%if correspondants %}
+                                        {% for correspondant in correspondants %}
+                                            <tr>
+                                                <td>Correspondant</td>
+                                                <td>{{ correspondant.Correspondant.identifiant }}</td>
+                                                <td>{{ correspondant.Correspondant.adr1 }}&nbsp;{{ correspondant.Correspondant.adr2 }}</td>
+                                              </tr>
+                                         {% endfor %}
+                                    {%endif%}
+                                     {%if odecs %}
+                                      {% for odec in odecs %}
+                                            <tr>
+                                                <td>Collecteur</td>
+                                                <td>{{ odec.numero }}</td>
+                                                <td>{{ odec.libelle }}</td>
+                                              </tr>
+                                         {% endfor %}
+                                    {%endif%}
+                                    {%if ctdts %}     
+                                        {% for ctdt in ctdts %}
+                                            <tr>
+                                                <td>Centre de Traitement</td>
+                                                <td>{{ ctdt.numero }}</td>
+                                                <td>{{ ctdt.libelle }}</td>
+                                              </tr>
+                                         {% endfor %}
+                                      {%endif%}
+                                     {%if pdecs %}     
+                                        {% for pdec in pdecs %}
+                                            <tr>
+                                                <td>Producteur</td>
+                                                <td>{{ pdec.numero }}</td>
+                                                <td>{{ pdec.libelle }}</td>
+                                              </tr>
+                                         {% endfor %}
+                                      {%endif%}
+                                </tbody>
+                             </table> 
+                               </p>
+                            </div>
+                        </div>
+                   </div>
+         
+                  </div>
+                </div>
+             </div>
+       </form>
+              
+        <div class="form-group">
+           <div class="col-xs-offset-4 col-xs-8">
+              <a  id="btFermer" class="btn btn-danger" href="{{ app.session.get('retour') }}"><i class="fa fa-power-off"></i> Retour</a>
+            </div>
+        </div>
+              
+          </div>
+    </div>
+     
+  
+{%endblock content %}
+
+{% block scripts %}
+     
+       // DataTable
+          var table = $('#idTable').DataTable(
+                      {"stateSave": false,
+                       "oLanguage": {
+                          "sSearch": "Filtre",
+                          "sFirst": "1ere page",
+                          "sLast": "Dernière page",
+                          "sNext": "Prochaine page",
+                          "sPrevious": "Page précédente",
+                          "EmptyTable": "Pas de données",
+                          "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+                          "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+                          "sZeroRecords": "Pas d'enregistrement à afficher",
+                          "sInfoEmpty": "Pas d'enregistrement à afficher",
+                          "sInfoThousands": " ",
+                          "sLengthMenu": 'Afficher <select>' +
+                                  '<option value="10">10</option>' +
+                                  '<option value="20">20</option>' +
+                                  '<option value="30">30</option>' +
+                                  '<option value="40">40</option>' +
+                                  '<option value="50">50</option>' +
+                                  '<option value="-1">Tous</option>' +
+                                  '</select> enregistrements',
+                          "sPaginationType": "full_numbers"
+                      }
+                     }
+                    );
+   {% endblock scripts %}  
+   

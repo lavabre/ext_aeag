@@ -1,0 +1,277 @@
+{% extends "AeagFrdBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+       <li>
+         <a href="{{ path('aeag_frd') }}">Accueil</a> 
+       </li>
+       <li class="active">
+          frais de déplacement n° {{entity.0.id}}
+       </li>
+{% endblock breadcrumb %}
+
+
+{%block panel_heading %}
+           <h3>
+               Consultation frais de déplacement n° {{entity.0.id}} de {{ entity.1.username }} {{ entity.1.prenom }}
+               <a class="btn btn-primary pull-right" href="{{ path('AeagFrdBundle_declaration_pdf', { 'id': entity.0.id }) }}" title="Imprimer"> 
+                   <i class="fa fa-print"> Imprimer</i>
+               </a>
+           </h3>
+ {%endblock panel_heading %}
+
+
+{%block content %}
+  <div class="row responsive">
+          <div class="col-xm-12">
+              
+               <div class="panel panel-primary">
+                <div class="panel-heading">
+                  <h3 class="panel-title">
+                    {{ entity.0.objet }} 
+                    du
+                    {{ entity.0.dateDepart|date('d/m/Y') }} {{ entity.0.heureDepart }}
+                    au 
+                    {{ entity.0.dateRetour|date('d/m/Y') }} {{ entity.0.heureRetour }}
+                  </h3>
+                </div>
+                <div class="panel-body">
+                     <div class="form-group">
+                                 <label  class="col-sm-3 control-label">Finalité du déplacement</label>
+                                 <div class="col-sm-9">
+                                    {%if entity.0.finalite | length %}
+                                       <input type="text" class="form-control" placeholder="Disabled" disabled value="{{entity.0.finalite.libelle}}">
+                                    {%else%}
+                                       <input type="text" class="form-control" placeholder="Disabled" disabled value="">
+                                    {%endif%}
+                                 </div>
+                             </div>
+                      {%if entity.0.sousTheme %}
+                             <div class="form-group">
+                                 <label  class="col-sm-3 control-label">Sous_thème</label>
+                                 <div class="col-sm-9">
+                                        <input type="text" class="form-control" placeholder="Disabled" disabled value="{{entity.0.sousTheme.libelle}}">
+                                 </div>
+                             </div>
+                    {%endif%}
+                      <div class="form-group">
+                                 <label  class="col-sm-3 control-label">Itinéraire</label>
+                                 <div class="col-sm-9">
+                                    <input type="text" class="form-control" placeholder="Disabled" disabled value="{{ entity.0.itineraire }}">
+                                 </div>
+                             </div>
+                      <div class="form-group">
+                        <label  class="col-sm-3 control-label">Département du lieu de mission</label>
+                        <div class="col-sm-9">
+                           <input type="text" class="form-control" placeholder="Disabled" disabled value="{{ entity.2.dept }} {{ entity.2.libelle }}">
+                        </div>
+                    </div>
+                </div>
+              </div>
+            
+          </div>
+      </div>
+     </p>
+    <div class="row responsive">
+       <div class="col-sm-12">
+           <div class="panel panel-primary">
+                <div class="panel-heading">
+                  <h3 class="panel-title">
+                     Frais
+                  </h3>
+                </div>
+                <div class="panel-body">
+                  <ul  class="nav nav-pills nav-justified">
+                   <li class="active"><a href="#tab_1_1" data-toggle="tab"><i class="icon-truck"></i><b> Transport</b></a></li>
+                   <li class=""><a href="#tab_1_2" data-toggle="tab"><i class="icon-apple"></i><b> Repas</b></a></li>
+                   <li class=""><a href="#tab_1_3" data-toggle="tab"><i class="icon-home"></i><b> Nuité</b></a></li>
+                </ul>
+                <div  class="tab-content">
+                   <div class="tab-pane fade active in" id="tab_1_1">
+                     <div class="col-sm-12">
+                               <div class="col-sm-6">
+                                    <table class="table table-bordered table-hover">
+                                       <thead>
+                                           <th></th>
+                                           <th>Nbre de tickets joints</th>
+                                           <th>non joints</th>
+                                           <th>Total payé</th>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Parking</td>
+                                                <td><input type="text" class="form-control text-right" placeholder="Disabled" disabled value="{{ entity.0.parkJustif | number_format (0,'.',' ') }}"></td>
+                                                <td><input type="text" class="form-control text-right" placeholder="Disabled" disabled value="{{ entity.0.parkNonJustif | number_format (0,'.',' ') }}"></td>
+                                                <td><input type="text" class="form-control text-right" placeholder="Disabled" disabled value="{{ entity.0.parkTotal | number_format (2,'.',' ') }} €"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Péage</td>
+                                                <td><input type="text" class="form-control text-right" placeholder="Disabled" disabled value="{{ entity.0.peageJustif | number_format (0,'.',' ') }}"></td>
+                                                <td><input type="text" class="form-control text-right" placeholder="Disabled" disabled value="{{ entity.0.peageNonJustif | number_format (0,'.',' ')}}"></td>
+                                                <td><input type="text" class="form-control text-right" placeholder="Disabled" disabled value="{{ entity.0.peageTotal | number_format (2,'.',' ') }} €"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Transport en commun</td>
+                                                <td><input type="text" class="form-control text-right" placeholder="Disabled" disabled value="{{ entity.0.busMetroJustif | number_format (0,'.',' ') }}"></td>
+                                                <td><input type="text" class="form-control text-right" placeholder="Disabled" disabled value="{{ entity.0.busMetroNonJustif | number_format (0,'.',' ')}}"></td>
+                                                <td><input type="text" class="form-control text-right" placeholder="Disabled" disabled value="{{ entity.0.busMetroTotal | number_format (2,'.',' ') }} €"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Orlyval</td>
+                                                <td><input type="text" class="form-control text-right" placeholder="Disabled" disabled value="{{ entity.0.orlyvalJustif | number_format (0,'.',' ') }}"></td>
+                                                <td><input type="text" class="form-control text-right" placeholder="Disabled" disabled value="{{ entity.0.orlyvalNonJustif | number_format (0,'.',' ')}}"></td>
+                                                <td><input type="text" class="form-control text-right" placeholder="Disabled" disabled value="{{ entity.0.orlyvalTotal | number_format (2,'.',' ') }} €"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Avion (et/ou bateau)</td>
+                                                <td><input type="text" class="form-control text-right" placeholder="Disabled" disabled value="{{ entity.0.avionJustif | number_format (0,'.',' ') }}"></td>
+                                                <td><input type="text" class="form-control text-right" placeholder="Disabled" disabled value="{{ entity.0.avionNonJustif | number_format (0,'.',' ')}}"></td>
+                                                <td><input type="text" class="form-control text-right" placeholder="Disabled" disabled value="{{ entity.0.avionTotal | number_format (2,'.',' ') }} €"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Véhicule de location</td>
+                                                <td><input type="text" class="form-control text-right" placeholder="Disabled" disabled value="{{ entity.0.reservationJustif | number_format (0,'.',' ') }}"></td>
+                                                <td><input type="text" class="form-control text-right" placeholder="Disabled" disabled value="{{ entity.0.reservationNonJustif | number_format (0,'.',' ')}}"></td>
+                                                <td><input type="text" class="form-control text-right" placeholder="Disabled" disabled value="{{ entity.0.reservationTotal | number_format (2,'.',' ') }} €"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Taxi</td>
+                                                <td><input type="text" class="form-control text-right" placeholder="Disabled" disabled value="{{ entity.0.taxiJustif | number_format (0,'.',' ') }}"></td>
+                                                <td><input type="text" class="form-control text-right" placeholder="Disabled" disabled value="{{ entity.0.taxiNonJustif | number_format (0,'.',' ')}}"></td>
+                                                <td><input type="text" class="form-control text-right" placeholder="Disabled" disabled value="{{ entity.0.taxiTotal | number_format (2,'.',' ') }} €"></td>
+                                            </tr>
+                                        </tbody>
+                                   </table>
+                                </div>
+                               <div class="col-sm-6">
+                                    <table class="table table-bordered table-hover">
+                                       <thead>
+                                           <th></th>
+                                           <th>Classe</th>
+                                           <th>Couchette</th>
+                                           <th>Nbre de tickets joints</th>
+                                           <th>non joints</th>
+                                           <th>Total payé</th>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Train</td>
+                                                <td>
+                                                   {% if entity.0.trainClasse == '1' %}
+                                                       <input type="text" class="form-control text-center" placeholder="Disabled" disabled value="1ere">
+                                                   {%else%}
+                                                       <input type="text" class="form-control text-center" placeholder="Disabled" disabled value="2eme">
+                                                   {%endif%}
+                                                </td>
+                                                <td>
+                                                   {% if entity.0.trainCouchette == 'O' %}
+                                                       <input type="text" class="form-control text-center" placeholder="Disabled" disabled value="Oui">
+                                                   {%else%}
+                                                       <input type="text" class="form-control text-center" placeholder="Disabled" disabled value="Non">
+                                                   {%endif%}
+                                                </td>
+                                                <td><input type="text" class="form-control text-right" placeholder="Disabled" disabled value="{{ entity.0.trainJustif | number_format (0,'.',' ') }}"></td>
+                                                <td><input type="text" class="form-control text-right" placeholder="Disabled" disabled value="{{ entity.0.trainNonJustif | number_format (0,'.',' ') }}"></td>
+                                                <td><input type="text" class="form-control text-right" placeholder="Disabled" disabled value="{{ entity.0.trainTotal| number_format (2,'.',' ') }} €"></td>
+                                            </tr>
+                                        </tbody>
+                                   </table>
+                                    <table class="table table-bordered table-hover">
+                                       <thead>
+                                           <th></th>
+                                           <th>Nbre de kilomètres</th>
+                                          </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Moto</td>
+                                                <td><input type="text" class="form-control text-right" placeholder="Disabled" disabled value="{{ entity.0.KmMoto | number_format (0,'.',' ') }}"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Véhicule personnel (joindre la photocopie de la carte grise)</td>
+                                                <td><input type="text" class="form-control text-right" placeholder="Disabled" disabled value="{{ entity.0.KmVoiture | number_format (0,'.',' ') }}"></td>
+                                            </tr>
+                                        </tbody>
+                                   </table>
+                              </div>
+                     </div>
+                    </div>
+                   <div class="tab-pane fade" id="tab_1_2">
+                      <div class="col-sm-12">
+                                <div class="col-sm-12">
+                                    <table class="table table-bordered table-hover">
+                                       <thead>
+                                           <th></th>
+                                           <th>Restaurant</th>
+                                           <th>Offerts ou sans frais</th>
+                                          </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Nombre de repas de <b>midi</b> en <b>semaine</b></td>
+                                                <td><input type="text" class="form-control text-right" placeholder="Disabled" disabled value="{{ entity.0.AutreMidiSem | number_format (0,'.',' ') }}"></td>
+                                                <td><input type="text" class="form-control text-right" placeholder="Disabled" disabled value="{{ entity.0.OffertMidiSem | number_format (0,'.',' ') }}"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Nombre de repas de <b>midi</b> en <b>week-end</b></td>
+                                                <td><input type="text" class="form-control text-right" placeholder="Disabled" disabled value="{{ entity.0.AutreMidiWeek | number_format (0,'.',' ') }}"></td>
+                                                <td><input type="text" class="form-control text-right" placeholder="Disabled" disabled value="{{ entity.0.OffertMidiWeek | number_format (0,'.',' ') }}"></td>                                                        
+                                            </tr>
+                                            <tr>
+                                                <td>Nombre de repas du <b>soir</b></td>
+                                                <td><input type="text" class="form-control text-right" placeholder="Disabled" disabled value="{{ entity.0.AutreSoir | number_format (0,'.',' ') }}"></td>
+                                                <td><input type="text" class="form-control text-right" placeholder="Disabled" disabled value="{{ entity.0.OffertSoir | number_format (0,'.',' ') }}"></td>                                                        
+                                            </tr>
+                                        </tbody>
+                                   </table>
+                               </div>
+                      </div>
+                   </div>
+                   <div class="tab-pane fade" id="tab_1_3">
+                      <div class="col-sm-12">
+                                <div class="col-sm-12">
+                                    <table class="table table-bordered table-hover">
+                                       <thead>
+                                           <th></th>
+                                           <th>Nombre de nuitées</th>
+                                           </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Justifiés (factures fournies)</td>
+                                                <td><input type="text" class="form-control text-right" placeholder="Disabled" disabled value="{{ entity.0.ProvenceJustif | number_format (0,'.',' ') }}"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Nuitées offertes ou sans frais</td>
+                                                <td><input type="text" class="form-control text-right" placeholder="Disabled" disabled value="{{ entity.0.offertNuit | number_format (0,'.',' ') }}"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Hébergement administratif</td>
+                                                <td>
+                                                    {% if entity.0.adminNuit == 'O' %}
+                                                            <div class="make-switch" data-on-label="OUI" data-off-label="NON">
+                                                             <input type="checkbox" checked disabled class="toggle"/>
+                                                            </div>
+                                                    {%else%}
+                                                          <div class="make-switch" data-on-label="NON" data-off-label="NON">
+                                                           <input type="checkbox" disabled class="toggle"/>
+                                                          </div>
+                                                     {%endif%}
+                                                 </td>
+                                             </tr>
+                                        </tbody>
+                                   </table>
+                               </div>
+                        </div>
+                 </div>
+            </div>  
+      </div>
+     </div>
+   </div>
+ </div>
+     
+    <div class="col-sm-offset-3 col-sm-9 pull-right">
+        <a class="btn btn-danger" href="{{ path('aeag_frd') }}">
+            <i class="fa fa-power-off"></i> Retour
+        </a>
+     </div>
+    
+   
+{%endblock content %}
+ 

@@ -1,0 +1,24 @@
+default:
+    path:  /die
+    defaults: { _controller: "AeagDieBundle:Default:index" }
+    
+
+default_message:
+    path: /die/envoye
+    defaults: { _controller: "AeagDieBundle:Default:envoye" }
+
+default_create:
+    path:  /die/create
+    defaults: { _controller: "AeagDieBundle:Default:create" }
+    requirements: { methods: post }
+
+default_listesoustheme:
+    path: /die/listesoustheme
+    defaults : { _controller: "AeagDieBundle:Default:listesoustheme"}
+    
+    
+default_theme:
+    path:  /die/{theme}
+    defaults: { _controller: "AeagDieBundle:Default:index" }
+    
+

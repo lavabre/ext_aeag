@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <!-- stylesheets -->
+        <link rel="stylesheet" href="{{ asset('bundles/aeagaide/css/styles.css') }}" type="text/css" media="screen"/>
+        <link rel="stylesheet" href="{{ asset('bundles/aeagaide/css/grid.css') }}" type="text/css" media="screen"/>
+        <link rel="stylesheet" href="{{ asset('bundles/aeagaide/css/ui/jquery-ui-1.8.13.custom.css') }}" type="text/css" media="screen"/>
+        <link rel="stylesheet" href="{{ asset('bundles/aeagaide/css/elfinder.css') }}" type="text/css" media="screen">
+        <link rel="stylesheet" href="{{ asset('bundles/aeagaide/css/Sourcerer-1.2.css') }}" type="text/css" media="screen"/>
+        <link rel="stylesheet" href="{{ asset('bundles/aeagaide/css/chosen.css') }}" type="text/css" media="screen"/>
+        <link rel="stylesheet" href="{{ asset('bundles/aeagaide/css/uniform.default.css') }}" type="text/css" media="screen"/>
+        <link rel="stylesheet" href="{{ asset('bundles/aeagaide/css/data-table.css') }}" type="text/css" media="screen"/>
+        <link rel="stylesheet" href="{{ asset('bundles/aeagaide/css/fullcalendar.css') }}" type="text/css" media="screen"/>
+        <link rel="stylesheet" href="{{ asset('bundles/aeagaide/css/colorpicker.css') }}" type="text/css" media="screen"/>
+
+
+        <title>{% block title %}Les aides accordées par l'agence de l'eau{% endblock %}</title>
+        <link rel="shortcut icon" href="{{ asset('bundles/aeagaide/images/favicon.ico') }}" />
+    </head>   
+    <body id="error404">
+        {{ erreur.message }}
+        <div id="error-wrapper">
+            <!--id="error-wrapper" must be here -->
+            <div id="header"> 
+                <div id="logo" class="droptips">
+
+                         <a  href="http://www.eau-adour-garonne.fr" target="_target" onMouseOver="self.status='';return true;">
+                             <IMG alt="Site Aeag" SRC=" {{ asset('bundles/aeagaide/images/aeagepmdd.jpg') }}" BORDER=0 WIDTH=120 HEIGHT=100>
+                         </a>
+                       
+
+                </div>
+
+                <div id="topbar">
+                    
+                     <div id="content">
+                        <!--12 column grid container -->
+                        <div class="container_12">
+                             <div class="grid_2"></div>
+                             <div class="grid_8">
+                                 <h3>Les aides accord&eacute;es par l'agence de l'eau Adour-Garonne</h3>
+                             </div>
+                             <div class="grid_2">
+                                <h6>{{ "now"|date("d/m/Y") }}</h6>
+                            </div>
+                                 
+                        </div>
+                     </div>
+                </div>
+            </div>
+            <div id="error-container">
+                <!--All Error content is in div-->
+                <div class="leftSide"> 
+                    <!--Error Code with message here  -->
+                </div>
+                <div class="rightSide">   
+                    <!--Instruction here --> 
+                </div>
+            </div>
+        </div>
+        <div id="footer-wrap"> 
+             <div class="footer-container">
+
+                    <div class="footer-nav">
+
+                        <!--Footer Nav Here-->
+
+                    </div>
+
+                    <div class="copyright">
+
+                             Agence de l'eau Adour-Garonne  - 90, rue du f&eacute;r&eacute;tra  - 31078 Toulouse Cedex 4 - T&eacute;l. : 05 61 36 37 38
+                            
+                    </div>
+
+                </div>
+
+                <div id="goTop">
+
+                    <!--Got To Top Here-->
+
+                </div>
+        </div> 
+    </body>
