@@ -194,7 +194,7 @@ class ProgrammationStationController extends Controller {
         foreach ($pgProgWebuserRsx as $pgProgWebuserRs) {
             $trouve = false;
             for ($j = 0; $j < count($tabReseauxUsers); $j++) {
-                if ($tabReseauxUsers[$j] == $pgProgWebuserRs->getReseauMesure()) {
+                if ($tabReseauxUsers[$j]['reseau'] == $pgProgWebuserRs->getReseauMesure()) {
                     $trouve = true;
                     $j = count($tabReseauxUsers) + 1;
                 }
