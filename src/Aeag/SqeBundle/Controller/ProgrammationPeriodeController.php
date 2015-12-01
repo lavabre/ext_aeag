@@ -1335,6 +1335,7 @@ class ProgrammationPeriodeController extends Controller {
         foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
             $tabgroupes[$i]["groupe"] = $pgProgLotGrparAn;
             $tabgroupes[$i]["renseigne"] = 'N';
+            $tabgroupes[$i]["existe"] = 'N';
             $nbProgGrparRefLstParam = $repoPgProgGrparRefLstParam->getNbPgProgGrparRefLstParamByGrparRef($pgProgLotGrparAn->getGrparRef());
             if ($nbProgGrparRefLstParam == 0) {
                 $tabgroupes[$i]["renseigne"] = 'O';
@@ -1347,6 +1348,7 @@ class ProgrammationPeriodeController extends Controller {
             $pgProgLotPeriodeProg = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByStationAnGrparAnPeriodeAn($pgProgLotStationAn, $pgProgLotGrparAn, $pgProgLotPeriodeAn);
             if ($pgProgLotPeriodeProg) {
                 $tabgroupes[$i]["renseigne"] = 'O';
+                $tabgroupes[$i]["existe"] = 'O';
                 if ($pgProgLotPeriodeProg->getPprogCompl()) {
                     $tabgroupes[$i]["Compl"] = 'O';
                 }

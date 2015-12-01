@@ -75,7 +75,7 @@
                                     <td align="center">
                                         {% if action == 'P'  and maj != 'V' %}
                                         <div class="text-center">
-                                            {% if groupe.renseigne == 'N' %}
+                                             {% if groupe.renseigne == 'N' %}
                                                 <input type="checkbox"  id="checkGroupe_{{ groupe.groupe.id }}" name="checkGroupe[]" value="{{ groupe.groupe.id }}" >
                                             {% else %}
                                                 <input type="checkbox"  id="checkGroupe_{{ groupe.groupe.id }}" name="checkGroupe[]" value="{{ groupe.groupe.id }}" checked="checked">
@@ -259,9 +259,13 @@
     
     {% if groupes | length %}  
         {%set groupeRenseigne = 'N' %}
+        {%set groupeExiste = 'N' %}
         {% for groupe in groupes %}
                  {% if groupe.renseigne == 'O' %}
                       {%set groupeRenseigne = 'O' %}
+                 {% endif %}
+                  {% if groupe.existe == 'O' %}
+                      {%set groupeExiste = 'O' %}
                  {% endif %}
          {% endfor %}
     {% endif %}
@@ -559,7 +563,18 @@
                 {% endif %}#}
            {% endfor %}
      {% endif %}
+         
+     {%if groupes | length%}  
+                {% for groupe in groupes %}
+                   {% if groupe.renseigne == 'N' %}
+                        $('#checkGroupe_{{ groupe.groupe.id }}').prop( "checked", false );
+                    {% else %}
+                        $('#checkGroupe_{{ groupe.groupe.id }}').prop( "checked", true );
+                     {% endif %}
+                  {% endfor %}
+         {% endif %}
 
+     {% if groupeExiste == 'N' %}
         {% for support in supports %}
              {%if groupes | length%}  
                {% for groupe in groupes %}
@@ -567,8 +582,8 @@
                       {% if obliSupport.support | length %}
                         {% if obliSupport.support.codeSupport == support.codeSupport %}
                                 if ($('#checkSupport_{{ support.codeSupport }}').is(':checked')){
-                                   $('#checkGroupe_{{ groupe.groupe.id }}').prop( "checked", true );
-                                   $('#idChoisirGroupes').show();
+                                     $('#checkGroupe_{{ groupe.groupe.id }}').prop( "checked", true );
+                                     $('#idChoisirGroupes').show();
                                    $('#idTr_{{ groupe.groupe.id }}').show();
                                 }else{
                                    $('#checkGroupe_{{ groupe.groupe.id }}').prop( "checked", false );
@@ -601,7 +616,9 @@
                                             }
                                         });
                                     }else{
+                                       {% if groupeRenseigne == 'N' %}
                                         $('#checkSupport_{{ support.codeSupport }}').prop( "checked", false );
+                                        {% endif %}
                                     };
                                    {#{% if groupe.obliSupport | length %}
                                         {% for obliSupport in groupe.obliSupport %} 
@@ -623,6 +640,9 @@
                {% endfor %}
            {% endif %}
         {% endfor %}
+     {% endif %}       
+            
+      
         
 </script>
     
