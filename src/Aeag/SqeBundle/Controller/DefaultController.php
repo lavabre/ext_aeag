@@ -64,8 +64,8 @@ class DefaultController extends Controller {
             }
         }
 
-        if (is_object($user) && ($this->get('security.authorization_checker')->isGranted('ROLE_ADMINSQE'))) {
-            // insertion des users
+       if (is_object($user) && ($this->get('security.authorization_checker')->isGranted('ROLE_ADMINSQE'))) {
+             // insertion des users
             $message = $this->majPgProgWebusers();
             $message = $this->initPgProgWebusers();
             // return new Response  ($message);
