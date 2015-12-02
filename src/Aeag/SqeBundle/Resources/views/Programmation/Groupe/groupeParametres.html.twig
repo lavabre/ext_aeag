@@ -116,8 +116,7 @@
         
          $('#idMessage_parametre').hide();
          
-     
-         tableGroupeParametres =     $('#idTableGroupeParametres').DataTable(
+            tableGroupeParametres =     $('#idTableGroupeParametres').DataTable(
                          { "stateSave": false,
                              "order": [[ 1, "asc" ]],
                             "oLanguage": {
@@ -145,10 +144,18 @@
                         }
                        );
                
+         
    
         
         {% if groupe.groupe.typeGrp  == 'ANA' %}
             {% if groupe.parametres | length %}
+                var info = tableGroupeParametres.page.info();
+                var nbRecords = $('#idTableGroupeParametres_length option:selected').val();
+                var filtre = $('#idTableGroupeParametres_filter input').val();
+                   if (filtre != ''){
+                        var initval = '';
+                        tableGroupeParametres.search(initval).draw();
+                     };
                 tableGroupeParametres.page.len( -1 ).draw();
                 {% for parametre in groupe.parametres %}    
                     $(document).on('click','#check_{{ parametre.pgSandreParametre.codeParametre }}',function(e){
@@ -165,7 +172,10 @@
                           {% endfor %}
                       {% endif %}
                 {% endfor %}
-                tableGroupeParametres.page.len( 10 ).draw();
+                   if (filtre != ''){
+                        tableGroupeParametres.search(filtre).draw();
+                   };
+                    tableGroupeParametres.page.len( nbRecords ).draw();
             {% endif %}   
         {% endif %}
           
@@ -179,7 +189,14 @@
         {% endif %}
                     
         $(document).on('click','#cocherParametres',function(e){
-            tableGroupeParametres.page.len( -1 ).draw();
+                var info = tableGroupeParametres.page.info();
+                var nbRecords = $('#idTableGroupeParametres_length option:selected').val();
+                var filtre = $('#idTableGroupeParametres_filter input').val();
+                   if (filtre != ''){
+                        var initval = '';
+                        tableGroupeParametres.search(initval).draw();
+                     };
+                tableGroupeParametres.page.len( -1 ).draw();
             {#$('#cocherParametres').removeClass('btn-success').addClass('btn-danger');
             $('#cocherParametres i').removeClass('fa-check').addClass('fa-eraser');#}
             $('#cocherParametres').hide();
@@ -189,12 +206,22 @@
                     $('#check_{{ parametre.pgSandreParametre.codeParametre }}').prop( "checked", true );
                  {% endfor %}
              {% endif %}
-             tableGroupeParametres.page.len( 10 ).draw();
+            if (filtre != ''){
+                  tableGroupeParametres.search(filtre).draw();
+             };
+              tableGroupeParametres.page.len( nbRecords ).draw();
              nbcocher();
         });
         
          $(document).on('click','#decocherParametres',function(e){
-            tableGroupeParametres.page.len( -1 ).draw();
+               var info = tableGroupeParametres.page.info();
+                var nbRecords = $('#idTableGroupeParametres_length option:selected').val();
+                var filtre = $('#idTableGroupeParametres_filter input').val();
+                   if (filtre != ''){
+                        var initval = '';
+                        tableGroupeParametres.search(initval).draw();
+                     };
+                tableGroupeParametres.page.len( -1 ).draw();
             {#$('#cocherParametres').removeClass('btn-danger').addClass('btn-success');
             $('#cocherParametres i').removeClass('fa-eraser').addClass('fa-check');#}
             $('#cocherParametres').show();
@@ -204,7 +231,10 @@
                     $('#check_{{ parametre.pgSandreParametre.codeParametre }}').prop( "checked", false );
                  {% endfor %}
             {% endif %}
-            tableGroupeParametres.page.len( 10 ).draw();
+            if (filtre != ''){
+                  tableGroupeParametres.search(filtre).draw();
+             };
+            tableGroupeParametres.page.len( nbRecords ).draw();
             nbcocher();
         });
         
@@ -219,6 +249,13 @@
         
         
         $(document).on('click','#idSubmit_parametre_{{groupe.groupe.id}}',function(e){
+            var info = tableGroupeParametres.page.info();
+            var nbRecords = $('#idTableGroupeParametres_length option:selected').val();
+            var filtre = $('#idTableGroupeParametres_filter input').val();
+               if (filtre != ''){
+                    var initval = '';
+                    tableGroupeParametres.search(initval).draw();
+                 };
             tableGroupeParametres.page.len( -1 ).draw();
             var $this = $('#idForm_groupe_parametres'); // L'objet jQuery du formulaire
            var url = '{{ path("AeagSqeBundle_programmation_groupe_valider",{"groupeId":  "texte","action": "par1","maj":"par2","lotan":"par3"}) }}', // Le nom du fichier indiqué dans le formulaire
@@ -237,7 +274,14 @@
                       tabMessages = JSON.parse(messages)
                       if (tabMessages.length == 0){
                         var nbParametres = 0;
-                        tableGroupeParametres.page.len( -1 ).draw();
+                           var info = tableGroupeParametres.page.info();
+                            var nbRecords = $('#idTableGroupeParametres_length option:selected').val();
+                            var filtre = $('#idTableGroupeParametres_filter input').val();
+                               if (filtre != ''){
+                                    var initval = '';
+                                    tableGroupeParametres.search(initval).draw();
+                                 };
+                            tableGroupeParametres.page.len( -1 ).draw();
                         {% if groupe.parametres | length %}
                            {% for parametre in groupe.parametres %}
                                 if ($('#check_{{ parametre.pgSandreParametre.codeParametre }}').prop('checked') == true){
@@ -253,7 +297,10 @@
                             $("#idTd_{{ groupe.groupe.id }} a").removeClass("btn-info").addClass("btn-success");
                             $('#idValide_{{ groupe.groupe.id }}').val('O');
                         };
-                        tableGroupeParametres.page.len( 10 ).draw();
+                         if (filtre != ''){
+                                tableGroupeParametres.search(filtre).draw();
+                           };
+                          tableGroupeParametres.page.len( nbRecords ).draw();
                         $('#modal_groupe_parametres').modal('hide');
                        }else{
                        $('#idMessage_parametre').show();
@@ -269,11 +316,21 @@
                         };
                         }
              });
-           tableGroupeParametres.page.len( 10 ).draw();
+            if (filtre != ''){
+                  tableGroupeParametres.search(filtre).draw();
+             };
+            tableGroupeParametres.page.len( nbRecords ).draw();
           });
          
           
         $(document).on('click','#btFermer_parametre',function(e){
+           var info = tableGroupeParametres.page.info();
+            var nbRecords = $('#idTableGroupeParametres_length option:selected').val();
+            var filtre = $('#idTableGroupeParametres_filter input').val();
+               if (filtre != ''){
+                    var initval = '';
+                    tableGroupeParametres.search(initval).draw();
+                 };
             tableGroupeParametres.page.len( -1 ).draw();
             var nbParametres = 0;
             var nbParametres = 0;
@@ -291,19 +348,32 @@
                 {% endfor %}
             {% endif %}
             $("#idNbParametres").empty().append(nbParametres + '/' + {{ groupe.parametres | length }} );
-            tableGroupeParametres.page.len( 10 ).draw();
+             if (filtre != ''){
+                  tableGroupeParametres.search(filtre).draw();
+             };
+            tableGroupeParametres.page.len( nbRecords ).draw();
             $('#modal_groupe_parametres').modal('hide');
          });
          
          
+         
+      
           /* Nombre de groupes cocheées*/
             var nbcocher = function() {
             var info = tableGroupeParametres.page.info();
             var nbRecords = $('#idTableGroupeParametres_length option:selected').val();
+            var filtre = $('#idTableGroupeParametres_filter input').val();
+               if (filtre != ''){
+                    var initval = '';
+                    tableGroupeParametres.search(initval).draw();
+                 };
             tableGroupeParametres.page.len( -1 ).draw();
             var n = $( "input:checked" ).length;
             html = "Paramètres cochés  : <span class='badge'>" + n  + "</span>"; 
             $("#idNbCocher p").html(html);
+            if (filtre != ''){
+                  tableGroupeParametres.search(filtre).draw();
+             };
             tableGroupeParametres.page.len(nbRecords).draw();
             tableGroupeParametres.page(info.page).draw(false);
            };

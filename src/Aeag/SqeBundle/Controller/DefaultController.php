@@ -352,7 +352,7 @@ class DefaultController extends Controller {
             $i++;
             $tabRoles[$i] = 'ROLE_SQE';
             $i++;
-            if ($pgProgWebuser->getTypeUser() == 'PROGR') {
+            if ($pgProgWebuser->getTypeUser() == 'PROG') {
                 $entityUser->removeRole('ROLE_ADMINSQE');
                 $tabRoles[$i] = 'ROLE_PROGSQE';
                 $i++;

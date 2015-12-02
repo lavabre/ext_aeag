@@ -496,7 +496,13 @@
           $('#idStations').show();
           $('#idNbCocher').show();
         }
-        var nbRecords = $('#idTable_length option:selected').val()
+        var info = table.page.info();
+        var nbRecords = $('#idTable_length option:selected').val();
+        var filtre = $('#idTable_filter input').val();
+           if (filtre != ''){
+                var initval = '';
+                table.search(initval).draw();
+             };
         table.page.len( -1 ).draw();
         {%if stations | length%}  
             {% for station in stations %}
@@ -508,6 +514,9 @@
                 {% endif %}
             {% endfor %}
         {% endif %}
+          if (filtre != ''){
+            table.search(filtre).draw();
+       };
         table.page.len( nbRecords ).draw();
     });    
     
@@ -590,7 +599,13 @@
      $(document).on('click', '#idSelectionStations',function(e){
         $('#modalTraitementEncours').modal('toggle');
         e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-        var nbRecords = $('#idTable_length option:selected').val()
+        var info = table.page.info();
+        var nbRecords = $('#idTable_length option:selected').val();
+        var filtre = $('#idTable_filter input').val();
+           if (filtre != ''){
+                var initval = '';
+                table.search(initval).draw();
+             };
         table.page.len( -1 ).draw();
         var $this = $('#idForm_periode'); // L'objet jQuery du formulaire
         var url = '{{ path("AeagSqeBundle_programmation_stations",{"tout":  "par1"}) }}';
@@ -603,12 +618,21 @@
                 $('#modalTraitementEncours').modal('hide');
               }
         });
+         if (filtre != ''){
+            table.search(filtre).draw();
+        };
         table.page.len( nbRecords ).draw();
     });
     
 
     $(document).on('click', '#idValider',function(e){
+         var info = table.page.info();
         var nbRecords = $('#idTable_length option:selected').val();
+        var filtre = $('#idTable_filter input').val();
+           if (filtre != ''){
+                var initval = '';
+                table.search(initval).draw();
+             };
         table.page.len( -1 ).draw();
         var html = '';
         var nbValider = 0;
@@ -634,6 +658,9 @@
         $('#idListeStationsSelectionnes').empty().append(html);
         $('#idValiderSelection').show();
         $('#idMessageSelection').hide();
+         if (filtre != ''){
+            table.search(filtre).draw();
+        };
         table.page.len( nbRecords ).draw();
         table1 = $('#idTable1').DataTable(
             {"stateSave": false,
@@ -674,7 +701,13 @@
     
     $(document).on('click', '#idMenuGroupe',function(e){
         $('#idSuivant').val('groupe');
+         var info = table.page.info();
         var nbRecords = $('#idTable_length option:selected').val();
+        var filtre = $('#idTable_filter input').val();
+           if (filtre != ''){
+                var initval = '';
+                table.search(initval).draw();
+           };
         table.page.len( -1 ).draw();
         var html = '';
         var nbValider = 0;
@@ -701,6 +734,9 @@
         $('#idValiderSelection').show();
         $('#idMessageSelection').hide();
          $('#modalTraitementEncours').modal('hide');
+          if (filtre != ''){
+            table.search(filtre).draw();
+        };
         table.page.len( nbRecords ).draw();
         table1 = $('#idTable1').DataTable(
             {"stateSave": false,
@@ -745,7 +781,13 @@
     
     $(document).on('click', '#idMenuPeriode',function(e){
         $('#idSuivant').val('periode');
+        var info = table.page.info();
         var nbRecords = $('#idTable_length option:selected').val();
+        var filtre = $('#idTable_filter input').val();
+           if (filtre != ''){
+                var initval = '';
+                table.search(initval).draw();
+           };
         table.page.len( -1 ).draw();
         var html = '';
         var nbValider = 0;
@@ -772,6 +814,9 @@
         $('#idValiderSelection').show();
         $('#idMessageSelection').hide();
          $('#modalTraitementEncours').modal('hide');
+           if (filtre != ''){
+            table.search(filtre).draw();
+        };
         table.page.len( nbRecords ).draw();
         table1 = $('#idTable1').DataTable(
             {"stateSave": false,
@@ -816,7 +861,13 @@
     
     $(document).on('click', '#idMenuBilan',function(e){
         $('#idSuivant').val('bilan');
-         var nbRecords = $('#idTable_length option:selected').val();
+         var info = table.page.info();
+        var nbRecords = $('#idTable_length option:selected').val();
+        var filtre = $('#idTable_filter input').val();
+           if (filtre != ''){
+                var initval = '';
+                table.search(initval).draw();
+           };
         table.page.len( -1 ).draw();
         var html = '';
         var nbValider = 0;
@@ -843,6 +894,9 @@
         $('#idValiderSelection').show();
         $('#idMessageSelection').hide();
         $('#modalTraitementEncours').modal('hide');
+           if (filtre != ''){
+            table.search(filtre).draw();
+        };
         table.page.len( nbRecords ).draw();
         table1 = $('#idTable1').DataTable(
             {"stateSave": false,
@@ -888,7 +942,13 @@
     
     $(document).on('click', '#idSuivantStation',function(e){
         $('#idSuivant').val('station');
-         var nbRecords = $('#idTable_length option:selected').val();
+         var info = table.page.info();
+        var nbRecords = $('#idTable_length option:selected').val();
+        var filtre = $('#idTable_filter input').val();
+           if (filtre != ''){
+                var initval = '';
+                table.search(initval).draw();
+           };
         table.page.len( -1 ).draw();
         var html = '';
         var nbValider = 0;
@@ -914,6 +974,9 @@
         $('#idListeStationsSelectionnes').empty().append(html);
         $('#idValiderSelection').show();
         $('#idMessageSelection').hide();
+          if (filtre != ''){
+            table.search(filtre).draw();
+        };
         table.page.len( nbRecords ).draw();
         table1 = $('#idTable1').DataTable(
             {"stateSave": false,
@@ -958,7 +1021,13 @@
     
     $(document).on('click', '#idSuivantGroupe',function(e){
         $('#idSuivant').val('groupe');
+       var info = table.page.info();
         var nbRecords = $('#idTable_length option:selected').val();
+        var filtre = $('#idTable_filter input').val();
+           if (filtre != ''){
+                var initval = '';
+                table.search(initval).draw();
+           };
         table.page.len( -1 ).draw();
         var html = '';
         var nbValider = 0;
@@ -984,6 +1053,9 @@
         $('#idListeStationsSelectionnes').empty().append(html);
         $('#idValiderSelection').show();
         $('#idMessageSelection').hide();
+          if (filtre != ''){
+            table.search(filtre).draw();
+        };
         table.page.len( nbRecords ).draw();
         table1 = $('#idTable1').DataTable(
             {"stateSave": false,
@@ -1028,7 +1100,13 @@
     
     $(document).on('click', '#idSuivantPeriode',function(e){
         $('#idSuivant').val('periode');
+        var info = table.page.info();
         var nbRecords = $('#idTable_length option:selected').val();
+        var filtre = $('#idTable_filter input').val();
+           if (filtre != ''){
+                var initval = '';
+                table.search(initval).draw();
+           };
         table.page.len( -1 ).draw();
         var html = '';
         var nbValider = 0;
@@ -1054,6 +1132,9 @@
         $('#idListeStationsSelectionnes').empty().append(html);
         $('#idValiderSelection').show();
         $('#idMessageSelection').hide();
+          if (filtre != ''){
+            table.search(filtre).draw();
+        };
         table.page.len( nbRecords ).draw();
         table1 = $('#idTable1').DataTable(
             {"stateSave": false,
@@ -1098,7 +1179,13 @@
     
     $(document).on('click', '#idSuivantBilan',function(e){
         $('#idSuivant').val('bilan');
+         var info = table.page.info();
         var nbRecords = $('#idTable_length option:selected').val();
+        var filtre = $('#idTable_filter input').val();
+           if (filtre != ''){
+                var initval = '';
+                table.search(initval).draw();
+           };
         table.page.len( -1 ).draw();
         var html = '';
         var nbValider = 0;
@@ -1124,6 +1211,9 @@
         $('#idListeStationsSelectionnes').empty().append(html);
         $('#idValiderSelection').show();
         $('#idMessageSelection').hide();
+         if (filtre != ''){
+            table.search(filtre).draw();
+        };
         table.page.len( nbRecords ).draw();
         table1 = $('#idTable1').DataTable(
             {"stateSave": false,
@@ -1162,8 +1252,13 @@
     });
 
     $(document).on('click', '#idAnnulerSelection',function(e){
-    var nbRecords = $('#idTable_length option:selected').val();
-    table.page.len( nbRecords ).draw();
+      var info = table.page.info();
+      var nbRecords = $('#idTable_length option:selected').val();
+       var filtre = $('#idTable_filter input').val();
+      if (filtre != ''){
+            table.search(filtre).draw();
+        };
+     table.page.len( nbRecords ).draw();
     $('#modal_valider').modal('hide');
     {% if action != 'P' or (action == 'P' and  maj == 'V') %}
          $('#modal_valider').modal('hide');
@@ -1174,7 +1269,14 @@
 
     $(document).on('click', '#idValiderSelection',function(e){
     $('#modal_valider').modal('hide');
-    table1.page.len( -1 ).draw();
+     var info = table.page.info();
+     var nbRecords = $('#idTable_length option:selected').val();
+     var filtre = $('#idTable_filter input').val();
+        if (filtre != ''){
+             var initval = '';
+             table.search(initval).draw();
+        };
+     table.page.len( -1 ).draw();
     $('#modalTraitementEncours').modal();
     $('#idForm').submit();
     });
@@ -1197,7 +1299,13 @@
             $('#cocherTout i').removeClass('fa-square-o').addClass('fa-check-square-o');
             $('#cocherTout').prop( "title", "Cocher" );
         };
+         var info = table.page.info();
         var nbRecords = $('#idTable_length option:selected').val();
+        var filtre = $('#idTable_filter input').val();
+           if (filtre != ''){
+                var initval = '';
+                table.search(initval).draw();
+           };
         table.page.len( -1 ).draw();
         {%if stations | length%}  
             {% for station in stations %}
@@ -1211,6 +1319,9 @@
             {% endfor %}
         {% endif %}
         nbcocher();
+         if (filtre != ''){
+            table.search(filtre).draw();
+        };
         table.page.len( nbRecords ).draw();
     });
    
@@ -1246,12 +1357,20 @@
        
    /* Nombre de stations cocheées*/
    var nbcocher = function() {
-   var info = table.page.info();
-   var nbRecords = $('#idTable_length option:selected').val();
-   table.page.len( -1 ).draw();
+     var info = table.page.info();
+     var nbRecords = $('#idTable_length option:selected').val();
+     var filtre = $('#idTable_filter input').val();
+        if (filtre != ''){
+             var initval = '';
+             table.search(initval).draw();
+      };
+     table.page.len( -1 ).draw();
    var n = $( "input:checked" ).length;
    html = "Stations cochées  : <span class='badge'>" + n  + "</span>"; 
    $("#idNbCocher p").html(html);
+   if (filtre != ''){
+        table.search(filtre).draw();
+    };
    table.page.len( nbRecords ).draw();
     table.page(info.page).draw(false);
   };

@@ -606,6 +606,42 @@
                 table_station.page.len( nbRecords ).draw();
             });
             
+            
+             {# tout cocher ou tout decocher #}
+                var cocherToutesLesStationsDisponibles = false;
+                $(document).on('click','#idCocherToutesLesStationsDisponibles_{{ stationAn.station.id }}',function(e){
+                    var info = table_TableDupliquerStation.page.info();
+                    var nbRecords = $('#idTableDupliquerStation_length option:selected').val();
+                    var filtre = $('#idTableDupliquerStation_filter input').val();
+                       if (filtre != ''){
+                            var initval = '';
+                             table_TableDupliquerStation.search(initval).draw();
+                         };
+                     table_TableDupliquerStation.page.len( -1 ).draw();
+                    if (cocherToutesLesStationsDisponibles == true){
+                      cocherToutesLesStationsDisponibles = false;
+                      $('#idCocherToutesLesStationsDisponibles_{{ stationAn.station.id }}').removeClass('btn-danger').addClass('btn-success');
+                      $('#idCocherToutesLesStationsDisponibles_{{ stationAn.station.id }} i').removeClass('fa-eraser').addClass('fa-check ');
+                       {% for stationAnAutre in stationAns %}
+                          $('#checkDupliquerStation_{{ stationAnAutre.station.id }}').prop( "checked", false );
+                      {% endfor %}
+                    }else{
+                      cocherToutesLesStationsDisponibles = true;
+                      $('#idCocherToutesLesStationsDisponibles_{{ stationAn.station.id }}').removeClass('btn-success').addClass('btn-danger');
+                      $('#idCocherToutesLesStationsDisponibles_{{ stationAn.station.id }} i').removeClass("fa-check").addClass('fa-eraser');
+                      {% for stationAnAutre in stationAns %}
+                           $('#checkDupliquerStation_{{ stationAnAutre.station.id }}').prop( "checked", true );
+                           if ($('#nbGroupes_{{ stationAnAutre.station.id }}').val() > 0){
+                               $('#modalConfirmerDupliquerStation_{{ stationAnAutre.station.id }}').modal();
+                           };
+                      {% endfor %}
+                    };
+                    if (filtre != ''){
+                        table_TableDupliquerStation.search(filtre).draw();
+                    };
+                    table_TableDupliquerStation.page.len( nbRecords ).draw();
+               });
+  
               
                 {# dupliquer la station sur les autres stations séléctionnées #}
        {#        $(document).on('click', '#idValiderDupliquerStation_{{ stationAn.station.id }}',function(e){
@@ -636,7 +672,13 @@
                $(document).on('click', '#idValiderDupliquerStation_{{ stationAn.station.id }}',function(e){
                   $('#modaProgression').modal('toggle');
                   e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                  var nbRecords = $('#idTableDupliquerStation_length option:selected').val();
+                 var info = table_TableDupliquerStation.page.info();
+                   var nbRecords = $('#idTableDupliquerStation_length option:selected').val();
+                   var filtre = $('#idTableDupliquerStation_filter input').val();
+                    if (filtre != ''){
+                            var initval = '';
+                             table_TableDupliquerStation.search(initval).draw();
+                      };
                   table_TableDupliquerStation.page.len( -1 ).draw();
                   var nbStations  = 0;
                   var nbAutreStations = 0;
@@ -685,6 +727,9 @@
                           };
                         
                  {% endfor %}
+                   if (filtre != ''){
+                    table_TableDupliquerStation.search(filtre).draw();
+                };
                   table_TableDupliquerStation.page.len( nbRecords ).draw();
                   $('#modalDupliquerStation').modal('hide');
                });
@@ -834,8 +879,14 @@
 
         
    {#  traitement sur chaque periode de chaque station   #}
-    var nbRecords = $('#idTable_station_length option:selected').val();
-    table_station.page.len( -1 ).draw();
+    var info = table_station.page.info();
+     var nbRecords = $('#idTable_station_length option:selected').val();
+     var filtre = $('#idTable_station_filter input').val();
+        if (filtre != ''){
+             var initval = '';
+             table_station.search(initval).draw();
+      };
+     table_station.page.len( -1 ).draw();
     {% if stationAns |length %}
         {% for stationAn in stationAns %}
             {% for stationAnAutre in stationAns %}
@@ -959,7 +1010,10 @@
             {% endfor %}
       {% endfor %}
     {% endif %}
-    table_station.page.len( nbRecords ).draw();
+    if (filtre != ''){
+       table_station.search(filtre).draw();
+    };
+   table_station.page.len( nbRecords ).draw();
     
     $("#modal_valider_programmation").draggable({
       handle: ".modal-header"

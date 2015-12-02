@@ -95,10 +95,17 @@
         {% endif %}
     {% endfor %}
     
-    {# tout cocher ou tout decocher #}
-    var cocherToutesLesStationsDisponibles = false;
+   {# {# tout cocher ou tout decocher #}
+       {# var cocherToutesLesStationsDisponibles = false;
     $(document).on('click','#idCocherToutesLesStationsDisponibles_{{ stationAn.id }}',function(e){
-        table_TableDupliquerStation.page.len( -1 ).draw();
+        var info = table_TableDupliquerStation.page.info();
+        var nbRecords = $('#idTableDupliquerStation_length option:selected').val();
+        var filtre = $('#idTableDupliquerStation_filter input').val();
+           if (filtre != ''){
+                var initval = '';
+                 table_TableDupliquerStation.search(initval).draw();
+             };
+         table_TableDupliquerStation.page.len( -1 ).draw();
         if (cocherToutesLesStationsDisponibles == true){
           cocherToutesLesStationsDisponibles = false;
           $('#idCocherToutesLesStationsDisponibles_{{ stationAn.id }}').removeClass('btn-danger').addClass('btn-success');
@@ -117,9 +124,12 @@
                };
           {% endfor %}
         };
-        table_TableDupliquerStation.page.len( 10 ).draw();
-    });
-  
+        if (filtre != ''){
+            table_TableDupliquerStation.search(filtre).draw();
+        };
+        table_TableDupliquerStation.page.len( nbRecords ).draw();
+   });
+  #}
     
       
     {# dupliquer la station sur les autres stations séléctionnées #}
