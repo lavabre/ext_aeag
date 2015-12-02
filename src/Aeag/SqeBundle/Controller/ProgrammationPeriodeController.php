@@ -683,13 +683,17 @@ class ProgrammationPeriodeController extends Controller {
             $pgRefSitePrelevements = $repoPgRefSitePrelevement->getPgRefSitePrelevementByOuvFoncId($pgProgLotStationAn->getStation()->getOuvFoncId());
             for ($j = 0; $j < count($tabSupports); $j++) {
                 $site = 'ko';
-                foreach ($pgRefSitePrelevements as $pgRefSitePrelevement) {
-                    if ($pgRefSitePrelevement->getCodeSupport()) {
-                        if ($tabSupports[$j]->getCodeSupport() == $pgRefSitePrelevement->getCodeSupport()->getCodeSupport()) {
-                            $site = 'ok';
-                            break;
+                if (!$pgRefSitePrelevements) {
+                    $site = 'ok';
+                } else {
+                    foreach ($pgRefSitePrelevements as $pgRefSitePrelevement) {
+                        if ($pgRefSitePrelevement->getCodeSupport()) {
+                            if ($tabSupports[$j]->getCodeSupport() == $pgRefSitePrelevement->getCodeSupport()->getCodeSupport()) {
+                                $site = 'ok';
+                                break;
+                            }
                         }
-                    }
+                    }    
                 }
             }
             if ($site == 'ok') {

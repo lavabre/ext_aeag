@@ -124,12 +124,6 @@ doctrine:
                 mappings:
                     AeagSqeBundle : ~
                     
-            die:
-                connection:       die
-                mappings:
-                    AeagDieBundle : ~
-                    
-         
   
 # Swiftmailer Configuration
 swiftmailer:
