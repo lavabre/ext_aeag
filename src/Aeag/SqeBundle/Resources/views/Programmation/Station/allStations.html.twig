@@ -62,7 +62,7 @@
                 </div>
                 <div class="modal-footer">
                     <div id="idMessageSelection" class="alert alert-danger" role="alert"></div>
-                    <button id="idValiderSelection" type="submit" class="btn btn-success">
+                    <button id="idValiderSelection" type="button" class="btn btn-success">
                         <i class="fa fa-check"> Valider</i>
                     </button>
                     <button id="idAnnulerSelection" type="button" class="btn btn-default" data-dismiss="modal">
@@ -428,6 +428,35 @@
     
     var table1 = $('#idTable1').DataTable();
     
+    
+      // DataTable
+    var table = $('#idTable').DataTable(
+    {"stateSave": true,
+    "oLanguage": {
+    "sSearch": "Filtre",
+    "sFirst": "1ere page",
+    "sLast": "Dernière page",
+    "sNext": "Prochaine page",
+    "sPrevious": "Page précédente",
+    "EmptyTable": "Pas de données",
+    "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+    "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+    "sZeroRecords": "Pas d'enregistrement à afficher",
+    "sInfoEmpty": "Pas d'enregistrement à afficher",
+    "sInfoThousands": " ",
+    "sLengthMenu": 'Afficher <select>' +
+        '<option value="10">10</option>' +
+        '<option value="20">20</option>' +
+        '<option value="30">30</option>' +
+        '<option value="40">40</option>' +
+        '<option value="50">50</option>' +
+        '<option value="-1">Tous</option>' +
+        '</select> enregistrements',
+    "sPaginationType": "full_numbers"
+    }
+    }
+    );
+    
     $(document).on('click', '#idSubmit',function(e){
         $('#modalTraitementEncours').modal();
         $('#idForm').submit();
@@ -664,6 +693,23 @@
             $('#idMessageSelection').show();
         };
         $('#modal_valider').modal();
+    });
+    
+    $(document).on('click', '#idValiderSelection',function(e){
+        $('#modalTraitementEncours').modal();
+        var info = table1.page.info();
+        var nbRecords = $('#idTable1_length option:selected').val();
+        var filtre = $('#idTable1_filter input').val();
+         if (filtre != ''){
+                var initval = '';
+                table1.search(initval).draw();
+           };
+        table1.page.len( -1 ).draw();
+        $('#idForm').submit();
+         if (filtre != ''){
+            table1.search(filtre).draw();
+        };
+        table1.page.len( nbRecords ).draw();
     });
     
      $(document).on('click', '#idMenuGroupe',function(e){
@@ -1226,7 +1272,8 @@
 
     $(document).on('click', '#idAnnulerSelection',function(e){
        var info = table.page.info();
-        var nbRecords = $('#idTable_length option:selected').val();
+       var nbRecords = $('#idTable_length option:selected').val();
+       var filtre = $('#idTable_filter input').val();
          if (filtre != ''){
             table.search(filtre).draw();
         };
@@ -1293,33 +1340,6 @@
     });
    
    
-      // DataTable
-    var table = $('#idTable').DataTable(
-    {"stateSave": true,
-    "oLanguage": {
-    "sSearch": "Filtre",
-    "sFirst": "1ere page",
-    "sLast": "Dernière page",
-    "sNext": "Prochaine page",
-    "sPrevious": "Page précédente",
-    "EmptyTable": "Pas de données",
-    "sInfo": "Nombre d'enregistrements :  _TOTAL_",
-    "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
-    "sZeroRecords": "Pas d'enregistrement à afficher",
-    "sInfoEmpty": "Pas d'enregistrement à afficher",
-    "sInfoThousands": " ",
-    "sLengthMenu": 'Afficher <select>' +
-        '<option value="10">10</option>' +
-        '<option value="20">20</option>' +
-        '<option value="30">30</option>' +
-        '<option value="40">40</option>' +
-        '<option value="50">50</option>' +
-        '<option value="-1">Tous</option>' +
-        '</select> enregistrements',
-    "sPaginationType": "full_numbers"
-    }
-    }
-    );
 
     
     /* Nombre de stations cocheées*/

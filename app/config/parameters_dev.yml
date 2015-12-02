@@ -1,0 +1,45 @@
+# This file is auto-generated during the composer install
+parameters:
+    database_driver: pdo_pgsql
+    database_host: vslindev211
+    database_port: null
+    database_name: aeag
+    database_user: postgres
+    database_password: 
+    
+    database_driver2: pdo_pgsql
+    database_host2: vslindev211
+    database_port2: null
+    database_name2: dec
+    database_user2: postgres
+    database_password2: 
+    
+    database_driver3: pdo_pgsql
+    database_host3: vslindev211
+    database_port3: null
+    database_name3: frd
+    database_user3: postgres
+    database_password3: 
+    
+    database_driver4: pdo_pgsql
+    database_host4: vslindev211
+    database_port4: null
+    database_name4: aide
+    database_user4: postgres
+    database_password4: 
+    
+    database_driver5: pdo_pgsql
+    database_host5: vslindev211
+    database_port5: null
+    database_name5: sqe
+    database_user5: postgres
+    database_password5: 
+    
+           
+    
+    mailer_transport: smtp
+    mailer_host: exhubcas.dag.aeag.fr
+    mailer_user: automate
+    mailer_password: aeag31
+    locale: fr
+    secret: ThisTokenIsNotSoSecretChangeIt
