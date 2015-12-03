@@ -124,19 +124,19 @@
                 <div class="panel panel-default">
                     <div class="panel-body">
                         <ul  class="nav nav-pills nav-justified" role="tablist">
-                            <li class="active"><a href="#tab_1_1" data-toggle="tab"><h4>Stations </h4></a></li>
-                            <li class=""><a href="#tab_1_2" data-toggle="tab"><h4>Périodes </h4></a></li>
-                            <li class=""><a href="#tab_1_3" data-toggle="tab"><h4>Prestataires </h4></a></li>
+                            <li class="active"><a id="idTab_1" href="#tab_1_1" data-toggle="tab"><h4>Stations </h4></a></li>
+                            <li class=""><a id="idTab_2" href="#tab_1_2" data-toggle="tab"><h4>Périodes </h4></a></li>
+                            <li class=""><a id="idTab_3" href="#tab_1_3" data-toggle="tab"><h4>Prestataires </h4></a></li>
                         </ul>
                         <div  class="tab-content">
                            <div class="tab-pane fade active in" id="tab_1_1">
-                               {{ render(controller("AeagSqeBundle:ProgrammationBilan:station", {'action': action, 'maj': maj, 'lotan': lotan.id})) }}
+                               {#{{ render(controller("AeagSqeBundle:ProgrammationBilan:station", {'action': action, 'maj': maj, 'lotan': lotan.id})) }}#}
                             </div>
                             <div class="tab-pane fade" id="tab_1_2">
-                               {{ render(controller("AeagSqeBundle:ProgrammationBilan:periode", {'action': action, 'maj': maj, 'lotan': lotan.id})) }}
+                              {# {{ render(controller("AeagSqeBundle:ProgrammationBilan:periode", {'action': action, 'maj': maj, 'lotan': lotan.id})) }}#}
                             </div>
                             <div class="tab-pane fade" id="tab_1_3">
-                               {{ render(controller("AeagSqeBundle:ProgrammationBilan:prestataire", {'action': action, 'maj': maj, 'lotan': lotan.id})) }}
+                               {#{{ render(controller("AeagSqeBundle:ProgrammationBilan:prestataire", {'action': action, 'maj': maj, 'lotan': lotan.id})) }}#}
                             </div>
                            
                         </div>
@@ -353,6 +353,60 @@
         }
     }
     );
+    
+    
+            $('#modalTraitementEncours').modal('toggle');
+            var url = '{{ path("AeagSqeBundle_programmation_bilan_station", {'action': 'par1', 'maj': 'par2', 'lotan': 'par3'}) }}', // Le nom du fichier indiqué dans le formulaire
+            url = url.replace("par1", '{{ action }}');
+            url = url.replace("par2", '{{ maj }}');
+            url = url.replace("amp;","");
+            url = url.replace("par3", '{{ lotan.id }}');
+            url = url.replace("amp;","");
+            $.get( url, function( responseData ) { 
+                 $("#tab_1_1" ).empty().html( responseData ); 
+                 $('#modalTraitementEncours').modal('hide');
+            });
+          
+         var click_tab_2 = false;
+        $(document).on('click','#idTab_2',function(e){
+            if (click_tab_2 == false){
+                   console.log('click_tab_2 avant : ' +click_tab_2);
+                   $('#modalTraitementEncours').modal('toggle');
+                     e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                     var url = '{{ path("AeagSqeBundle_programmation_bilan_periodes", {'action': 'par1', 'maj': 'par2', 'lotan': 'par3'}) }}', // Le nom du fichier indiqué dans le formulaire
+                     url = url.replace("par1", '{{ action }}');
+                     url = url.replace("par2", '{{ maj }}');
+                     url = url.replace("amp;","");
+                     url = url.replace("par3", '{{ lotan.id }}');
+                     url = url.replace("amp;","");
+                     $.get( url, function( responseData ) { 
+                          $("#tab_1_2" ).empty().html( responseData ); 
+                          $('#modalTraitementEncours').modal('hide');
+                     });
+                   click_tab_2 = true;
+                   console.log('click_tab_2 apres : ' +click_tab_2);
+            }
+       });
+     
+    
+        var click_tab_3 = false;
+       $(document).on('click','#idTab_3',function(e){
+            if (click_tab_3 == false){
+                $('#modalTraitementEncours').modal('toggle');
+                e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                var url = '{{ path("AeagSqeBundle_programmation_bilan_prestataire", {'action': 'par1', 'maj': 'par2', 'lotan': 'par3'}) }}', // Le nom du fichier indiqué dans le formulaire
+                url = url.replace("par1", '{{ action }}');
+                url = url.replace("par2", '{{ maj }}');
+                url = url.replace("amp;","");
+                url = url.replace("par3", '{{ lotan.id }}');
+                url = url.replace("amp;","");
+                $.get( url, function( responseData ) { 
+                     $("#tab_1_3" ).empty().html( responseData ); 
+                     $('#modalTraitementEncours').modal('hide');
+                });
+                 click_tab_3 = true;
+             }
+       });
     
    });
 
