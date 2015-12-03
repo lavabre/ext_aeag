@@ -1,44 +1,44 @@
 # This file is auto-generated during the composer install
 parameters:
     database_driver: pdo_pgsql
-    database_host: slin30112
+    database_host: vslindev211
     database_port: null
     database_name: aeag
-    database_user: aeag
-    database_password: aeagaeag31
+    database_user: postgres
+    database_password: null
     
     database_driver2: pdo_pgsql
-    database_host2: slin30112
+    database_host2: vslindev211
     database_port2: null
     database_name2: dec
-    database_user2: dec
-    database_password2: decaeag31
+    database_user2: postgres
+    database_password2: null
     
     database_driver3: pdo_pgsql
-    database_host3: slin30112
+    database_host3: vslindev211
     database_port3: null
     database_name3: frd
-    database_user3: frd
-    database_password3: frdaeag31
+    database_user3: postgres
+    database_password3: null
     
     database_driver4: pdo_pgsql
-    database_host4: slin30112
+    database_host4: vslindev211
     database_port4: null
     database_name4: aide
-    database_user4: aide
-    database_password4: aideaeag31
+    database_user4: postgres
+    database_password4: null
     
     database_driver5: pdo_pgsql
-    database_host5: slin30112
+    database_host5: vslindev211
     database_port5: null
     database_name5: sqe
-    database_user5: sqe
-    database_password5: sqeaeag31
+    database_user5: postgres
+    database_password5: null
     
            
     
     mailer_transport: smtp
-    mailer_host: exhubcas.dag.aeag.fr
+    mailer_host: exhubcas
     mailer_user: automate
     mailer_password: aeag31
     locale: fr

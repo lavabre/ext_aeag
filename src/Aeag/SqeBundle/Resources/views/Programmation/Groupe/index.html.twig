@@ -177,15 +177,24 @@
                                                                     {%endif%}
                                                             </datalist>
                                                     </div>
-                                                 
-                                                 
+                                              
                                             {% else %}
-                                                    <select id="preleveur" readonly  class="form-control input-small" placeholder="Préléveur" name="preleveur">
+                                                    <select id="preleveur_ie" readonly  class="form-control input-small" placeholder="Préléveur" name="preleveur">
                                                       <option value=""></option>
                                                           {% for preleveur in preleveurs %}
                                                               <option  value="{{ preleveur.adrCorId }}" >{{ preleveur.ancnumNomCorres }}</option>
                                                           {% endfor %}
                                                  </select>
+                                                 <input id="preleveur" readonly  name="preleveur" type="text" class="form-control input-small" placeholder="Preleveur" list="preleveurList" autofocus="autofocus" autocomplete="off">
+                                                    <div>
+                                                            <datalist id="preleveurList">
+                                                                    {%if preleveurs | length %}  
+                                                                        {% for preleveur in preleveurs %}
+                                                                            <option  value="{{ preleveur.ancnumNomCorres }}" ></option>
+                                                                        {% endfor %}
+                                                                    {%endif%}
+                                                            </datalist>
+                                                    </div>
                                             {% endif %}
                                           </td>
                                           <td>
@@ -206,7 +215,7 @@
                                                     <input id="laboratoire" name="laboratoire" type="text" class="form-control input-small" placeholder="Laboratoire" list="laboratoireList" autofocus="autofocus" autocomplete="off">
                                                     <div>
                                                             <datalist id="laboratoireList">
-                                                                    {%if laboratoires | length %}  
+                                                                    {%if laboratoires  | length %}  
                                                                         {% for laboratoire in laboratoires %}
                                                                             <option  value="{{ laboratoire.ancnumNomCorres }}" ></option>
                                                                         {% endfor %}
@@ -215,12 +224,23 @@
                                                     </div>
                                                      
                                             {% else %}
-                                                    <select id="laboratoire"  readonly class="form-control input-small" placeholder="Laboratoire" name="laboratoire">
+                                                    <select id="laboratoire_ie"  readonly class="form-control input-small" placeholder="Laboratoire" name="laboratoire">
                                                           <option value=""></option>
                                                               {% for laboratoire in laboratoires %}
                                                                   <option  value="{{ laboratoire.adrCorId }}" >{{ laboratoire.ancnumNomCorres }}</option>
                                                               {% endfor %}
                                                     </select>
+                                                   <input  id="laboratoire" name="laboratoire" type="text" class="form-control input-small" placeholder="Laboratoire" list="laboratoireList" autofocus="autofocus" autocomplete="off" readonly >
+                                                    <div>
+                                                            <datalist id="laboratoireList">
+                                                                    {%if laboratoires | length %}  
+                                                                        {% for laboratoire in laboratoires %}
+                                                                            <option  value="{{ laboratoire.ancnumNomCorres }}" ></option>
+                                                                        {% endfor %}
+                                                                    {%endif%}
+                                                            </datalist>
+                                                    </div>
+                                                    
                                             {% endif %}
                                           </td>
                                       </tr>

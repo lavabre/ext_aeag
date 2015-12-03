@@ -1,0 +1,122 @@
+{% extends "AeagAgentBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+          <li>
+          <i class="icon-home"></i>
+          <a href="{{ path('aeag_agent') }}">Accueil</a> 
+       </li>
+       <li class="active">
+           Recherche agent
+       </li>
+ {% endblock breadcrumb %}
+
+
+{%block panel_heading %}
+     <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive small"
+             <table class="table table-bordered table-condensed table-advance">
+                    <tr>
+                        <td width="40%">
+                            <label  class="col-md-6 text-justify"><h5>Nom de l'agent ou une partie du nom</h5></label>
+                        </td>
+                        <td width="60%">
+                            <div class="col-md-6 form-group">
+                               <input id="filtre_criteres_nomPrenom" class="form-control input-small" type="text" value="" placeholder="Nom de l'agent ou une partie du nom" name="filtre_criteres[nomPrenom]"></input>
+                           </div>
+                        </td>
+                    </tr>
+             </table>
+             </div>
+           </div>
+         </div>
+{%endblock panel_heading %}
+
+{% block modal %}
+    
+     <div id="idModalService"></div>
+    
+  
+{% endblock modal %}
+
+ {%block content %}
+     <div class="row">
+        <div class="col-md-12">
+            <div class="small">
+                <div id="idResultats"></div>
+            </div>
+        </div>
+     </div>
+     
+      <div class="form-actions fluid center">
+        <div class="col-md-offset-4 col-md-8">
+           <a  id="idSubmit" class="btn btn-success icon-ok-sign"> Rechercher </a>
+           <a id="idInitialiser" class="btn btn-danger icon-remove" href="#"> Initialiser</a>
+        </div>
+    </div>
+      
+
+{% endblock content %}
+
+{% block scripts %}
+    
+       $('#filtre_criteres_nomPrenom').select();
+       $('#filtre_criteres_nomPrenom').focus();
+    
+       $(document).on('click','#idSubmit',function(){
+            $('#idAttente').show();
+            cache: false  
+            var requestData = {
+                            nomPrenom : $('#filtre_criteres_nomPrenom').val()
+                             }
+            $.get( "{{path("aeag_agent_resultat_etat")}}", requestData , function( responseData ) { 
+                $("#idResultats" ).empty().html( responseData ); 
+                $('#filtre_criteres_nomPrenom').select();
+                $('#filtre_criteres_nomPrenom').focus();
+                $('#idAttente').hide();
+            });
+          } );  
+      
+       {#$('#filtre_criteres_nomPrenom').bind('change',function(){
+            $('#idAttente').show();
+            cache: false  
+            var requestData = {
+                            nomPrenom : $('#filtre_criteres_nomPrenom').val()
+                             }
+            $.get( "{{path("aeag_agent_resultat_etat")}}", requestData , function( responseData ) { 
+                $("#idResultats" ).empty().html( responseData );
+                $('#filtre_criteres_nomPrenom').focus();
+                $('#idAttente').hide();
+            });
+          } ); #}
+          
+          $('#filtre_criteres_nomPrenom').bind('keypress',function(e){
+           if( e.which == 13 ){
+                $('#idAttente').show();
+                cache: false  
+                var requestData = {
+                                nomPrenom : $('#filtre_criteres_nomPrenom').val()
+                                 }
+                $.get( "{{path("aeag_agent_resultat_etat")}}", requestData , function( responseData ) { 
+                    $("#idResultats" ).empty().html( responseData );
+                    $('#filtre_criteres_nomPrenom').select();
+                    $('#filtre_criteres_nomPrenom').focus();
+                    $('#idAttente').hide();
+                });
+            };
+          } ); 
+          
+                   
+          $(document).on('click','#idInitialiser',function(){
+              $('#idAttente').show();
+              $('#filtre_criteres_nomPrenom').val(null);
+              $('#filtre_criteres_nomPrenom').select();
+              $('#filtre_criteres_nomPrenom').focus();
+              $("#idResultats" ).empty()
+              $('#idAttente').hide();
+           });
+  
+
+{% endblock scripts %}
+
+    

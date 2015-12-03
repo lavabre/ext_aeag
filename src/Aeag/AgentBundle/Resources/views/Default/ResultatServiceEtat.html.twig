@@ -1,0 +1,129 @@
+<div class="modal fade" id="modalService" tabindex="-1" role="dialog" aria-labelledby="myModalLabelService" aria-hidden="true">
+  <div class="modal-dialog"  style="width: 900px;">
+      <div class="modal-content">
+          <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h4 class="modal-title text-center" id="idTitreStationsSelectionnes">
+                  Liste des agents du service : {{ service }}
+              </h4>
+          </div>
+          <div class="modal-body">
+              <div class="row">
+                  <div class="col-md-12">
+                      <div class="small">
+                       <table class="table table-bordered table-condensed table-advance" id="idTableService">
+                            <thead>
+                               <tr>
+                                    <th>matricule</th>
+                                    <th>Nom</th>
+                                    <th>Motif</th>
+                                    <th>Retour</th>
+                                    <th>Etat</th>
+                                    <th>Tél. agent</th>
+                                    <th>Bureau</th>
+                                    <th>Sécretaire</th>
+                               </tr>
+                               <tr>
+                                   <td></td>
+                                   <td></td>
+                                   <td></td>
+                                   <td></td>
+                                   <td></td>
+                                   <td></td>
+                                   <td></td>
+                                   <td></td>
+                               </tr>
+                            </thead>
+                            <tbody>
+                                {% for agent in tabAgents %}
+                                    {% if agent.etat | trim == 'absent' or agent.etat | trim  == 'absente' %}
+                                       <tr class="danger">
+                                    {% elseif agent.etat | trim == 'présent' or agent.etat | trim  == 'présente' %}
+                                       <tr class="success">
+                                    {% else %}
+                                        <tr>
+                                    {% endif %}
+                                        <td width="5%">{{ agent.matri }}</td>
+                                        <td>{{ agent.nomPrenom }}</td>
+                                        <td>{{ agent.motif }}</td>
+                                        <td>{{ agent.dateRetour }}</td>
+                                        <td>{{ agent.etat }}</td>
+                                        <td>{{ agent.telAgent }}</td>
+                                        <td>{{ agent.bureau }}</td>
+                                        <td>
+                                            {% if agent.nomSec | length %}
+                                            {{ agent.nomSec }} (tél. : {{ agent.telSec }} )
+                                            {% endif %}
+                                        </td>
+                                      </tr>
+                                 {% endfor %}
+                            </tbody>
+                         </table>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <div class="modal-footer">
+              <button id="idFermer" type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+
+
+    
+ <script type="text/javascript" language="javascript">
+    jQuery(document).ready(function() { 
+                     
+          // DataTable
+    var tableService = $('#idTableService').DataTable(
+                { "stateSave": false,
+                  "order": [[ 1, "asc" ]],
+                  "oLanguage": {
+                    "sSearch": "Filtre",
+                    "sFirst": "1ere page",
+                    "sLast": "Dernière page",
+                    "sNext": "Prochaine page",
+                    "sPrevious": "Page précédente",
+                    "EmptyTable": "Pas de données",
+                    "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+                    "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+                    "sZeroRecords": "Pas d'enregistrement à afficher",
+                    "sInfoEmpty": "Pas d'enregistrement à afficher",
+                    "sInfoThousands": " ",
+                    "sLengthMenu": 'Afficher <select>' +
+                            '<option value="10">10</option>' +
+                            '<option value="20">20</option>' +
+                            '<option value="30">30</option>' +
+                            '<option value="40">40</option>' +
+                            '<option value="50">50</option>' +
+                            '<option value="-1">Tous</option>' +
+                            '</select> enregistrements',
+                    "sPaginationType": "full_numbers"
+                }
+               }
+              );
+      
+        $("#idTableService thead td").each( function ( i ) {
+    
+     if (i != 2){
+        var select = $('<select><option value=""></option></select>')
+            .appendTo( $(this).empty() )
+            .on( 'change', function () {
+                tableService.column( i )
+                    .search( $(this).val() )
+                    .draw();
+            } );
+ 
+        tableService.column( i ).data().unique().sort().each( function ( d, j ) {
+            select.append( '<option value="'+d+'">'+d+'</option>' )
+        } );
+        };
+    } );
+    
+    $("#idTableService tfoot").remove();
+    
+   
+       });
+ </script>

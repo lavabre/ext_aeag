@@ -213,7 +213,7 @@ class ReferentielController extends Controller {
                 // $message = $message . " -------> Fichier : " . $ficent . " exporter dans le site extranet avec succès mais impossible de le supprimer dans le répertoire " . $rep;
                 null;
             }
-            chmod($dest, 0775);
+            chmod($dest, 0777);
         } else {
             // $message = $message . " -------> Fichier : " . $ficent . " exporter dans le site extranet avec succès mais impossible de le déplacer dans le répertoire de sauvegarde " . $rep . "/Sauvegardes";
             null;

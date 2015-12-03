@@ -175,11 +175,13 @@ class ProgrammationGroupeController extends Controller {
                         $i++;
                     }
                 } else {
-                    $tabGroupes[$i]['groupe'] = $pgProgGrpParamRef;
-                    $tabGroupes[$i]['origine'] = 'R';
-                    $tabGroupes[$i]['valide'] = 'N';
-                    $tabGroupes[$i]['prestataire'] = null;
-                    $i++;
+                    if ($pgProgGrpParamRef->getValide() == 'O') {
+                        $tabGroupes[$i]['groupe'] = $pgProgGrpParamRef;
+                        $tabGroupes[$i]['origine'] = 'R';
+                        $tabGroupes[$i]['valide'] = 'N';
+                        $tabGroupes[$i]['prestataire'] = null;
+                        $i++;
+                    }
                 }
             }
         }
@@ -214,11 +216,13 @@ class ProgrammationGroupeController extends Controller {
                                         $tabGroupes[$j]['valide'] = 'N';
                                     }
                                 } else {
-                                    $j = $size;
-                                    $tabGroupes[$j]['groupe'] = $pgProgGrpParamRefCompl;
-                                    $tabGroupes[$j]['prestataire'] = $tabGroupes[$i]['prestataire'];
-                                    $tabGroupes[$j]['origine'] = 'RC';
-                                    $tabGroupes[$j]['valide'] = 'N';
+                                    if ($pgProgGrpParamRefCompl->getValide() == 'O') {
+                                        $j = $size;
+                                        $tabGroupes[$j]['groupe'] = $pgProgGrpParamRefCompl;
+                                        $tabGroupes[$j]['prestataire'] = $tabGroupes[$i]['prestataire'];
+                                        $tabGroupes[$j]['origine'] = 'RC';
+                                        $tabGroupes[$j]['valide'] = 'N';
+                                    }
                                 }
                             }
                         }
@@ -254,7 +258,7 @@ class ProgrammationGroupeController extends Controller {
                 if (!$session->has('selectionPreleveur') or ! $session->get('selectionPreleveur')) {
                     if ($pgProgLotGrparAn->getGrparRef()->getTypeGrp() != 'ANA') {
                         if ($pgProgLotGrparAn->getPrestaDft()) {
-                            $session->set('selectionPreleveur',$pgProgLotGrparAn->getPrestaDft()->getAncnumNomCorres());
+                            $session->set('selectionPreleveur', $pgProgLotGrparAn->getPrestaDft()->getAncnumNomCorres());
                         }
                     }
                 }
@@ -323,33 +327,35 @@ class ProgrammationGroupeController extends Controller {
                             }
                         }
                     } else {
-                        $i = $size;
-                        $tabGroupes[$i]['groupe'] = $pgProgGrpParamRef;
-                        $tabGroupes[$i]['origine'] = $pgProgLotGrparAn->getOrigine();
-                        $tabGroupes[$i]['prestataire'] = $pgProgLotGrparAn->getPrestaDft();
-                        $tabGroupes[$i]['valide'] = $pgProgLotGrparAn->getValide();
-                        $support = $tabGroupes[$i]['groupe']->getSupport();
-                        $size = count($tabGroupes);
-                        if ($support) {
-                            $pgProgGrparObligSupports = $repoPgProgGrparObligSupport->getPgProgGrparObligSupportByCodeSupport($support->getCodeSupport());
-                            foreach ($pgProgGrparObligSupports as $pgProgGrparObligSupport) {
-                                $pgProgGrpParamRefCompl = $repoPgProgGrpParamRef->getPgProgGrpParamRefById($pgProgGrparObligSupport->getGrparRefId());
-                                if ($pgProgGrpParamRefCompl->getCodeMilieu()->getCodeMilieu() == $pgProgTypeMilieu->getCodeMilieu()) {
-                                    $trouve = false;
-                                    $size = count($tabGroupes);
-                                    for ($j = 0; $j < $size; $j++) {
-                                        if ($tabGroupes[$j]['groupe']->getId() == $pgProgGrpParamRefCompl->getId()) {
-                                            $trouve = true;
-                                            $k = $j;
-                                            $j = $size + 1;
+                        if ($pgProgGrpParamRef->getValide() == 'O') {
+                            $i = $size;
+                            $tabGroupes[$i]['groupe'] = $pgProgGrpParamRef;
+                            $tabGroupes[$i]['origine'] = $pgProgLotGrparAn->getOrigine();
+                            $tabGroupes[$i]['prestataire'] = $pgProgLotGrparAn->getPrestaDft();
+                            $tabGroupes[$i]['valide'] = $pgProgLotGrparAn->getValide();
+                            $support = $tabGroupes[$i]['groupe']->getSupport();
+                            $size = count($tabGroupes);
+                            if ($support) {
+                                $pgProgGrparObligSupports = $repoPgProgGrparObligSupport->getPgProgGrparObligSupportByCodeSupport($support->getCodeSupport());
+                                foreach ($pgProgGrparObligSupports as $pgProgGrparObligSupport) {
+                                    $pgProgGrpParamRefCompl = $repoPgProgGrpParamRef->getPgProgGrpParamRefById($pgProgGrparObligSupport->getGrparRefId());
+                                    if ($pgProgGrpParamRefCompl->getCodeMilieu()->getCodeMilieu() == $pgProgTypeMilieu->getCodeMilieu()) {
+                                        $trouve = false;
+                                        $size = count($tabGroupes);
+                                        for ($j = 0; $j < $size; $j++) {
+                                            if ($tabGroupes[$j]['groupe']->getId() == $pgProgGrpParamRefCompl->getId()) {
+                                                $trouve = true;
+                                                $k = $j;
+                                                $j = $size + 1;
+                                            }
                                         }
-                                    }
-                                    if ($trouve == false and $tabGroupes[$i]['origine'] == 'R') {
-                                        $j = $size;
-                                        $tabGroupes[$j]['groupe'] = $pgProgGrpParamRefCompl;
-                                        $tabGroupes[$j]['prestataire'] = $pgProgLotGrparAn->getPrestaDft();
-                                        $tabGroupes[$i]['valide'] = $pgProgLotGrparAn->getValide();
-                                        $tabGroupes[$j]['origine'] = 'RC';
+                                        if ($trouve == false and $tabGroupes[$i]['origine'] == 'R') {
+                                            $j = $size;
+                                            $tabGroupes[$j]['groupe'] = $pgProgGrpParamRefCompl;
+                                            $tabGroupes[$j]['prestataire'] = $pgProgLotGrparAn->getPrestaDft();
+                                            $tabGroupes[$i]['valide'] = $pgProgLotGrparAn->getValide();
+                                            $tabGroupes[$j]['origine'] = 'RC';
+                                        }
                                     }
                                 }
                             }
@@ -435,11 +441,13 @@ class ProgrammationGroupeController extends Controller {
                             $tabGroupesMilieu[$i]['prestataire'] = null;
                         }
                     } else {
-                        $i = count($tabGroupesMilieu);
-                        $tabGroupesMilieu[$i]['groupe'] = $groupeMilieu;
-                        $tabGroupesMilieu[$i]['origine'] = 'C';
-                        $tabGroupesMilieu[$i]['cocher'] = 'N';
-                        $tabGroupesMilieu[$i]['prestataire'] = null;
+                        if ($groupeMilieu->getValide() == 'O') {
+                            $i = count($tabGroupesMilieu);
+                            $tabGroupesMilieu[$i]['groupe'] = $groupeMilieu;
+                            $tabGroupesMilieu[$i]['origine'] = 'C';
+                            $tabGroupesMilieu[$i]['cocher'] = 'N';
+                            $tabGroupesMilieu[$i]['prestataire'] = null;
+                        }
                     }
                 }
             }

@@ -386,7 +386,8 @@ class ReferentielController extends Controller {
 
         $message = $this->chargeDeclarationcollecteurAction($ficent);
          $declaration = $message[1];
-         $message[1] = null;
+         return new Response ($declaration);
+        $message[1] = null;
         $fic_decprod = 'dec_decprod_' . $tabFicent[2] . '_' . $tabFicent[3] . '_' . $tabFicent[4];
         $message = $this->chargeDeclarationProducteurAction($fic_decprod);
         $declarationProducteur = $message[1];

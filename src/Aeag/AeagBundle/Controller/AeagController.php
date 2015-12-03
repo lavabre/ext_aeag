@@ -22,7 +22,8 @@ class AeagController extends Controller {
         $user = $this->getUser();
         $em = $this->getDoctrine()->getManager();
         $session = $this->get('session');
-      
+        \apc_clear_cache();
+
         $session->set('retourErreur', $this->generateUrl('aeag_homepage'));
 
         if (!$session->get('appli')) {
