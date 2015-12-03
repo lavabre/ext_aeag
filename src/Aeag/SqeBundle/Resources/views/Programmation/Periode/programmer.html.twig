@@ -129,8 +129,8 @@
        <div class="col-md-10 pull-left text-info">
         <ul class="list-inline">
             <li> 
+            {% set lot = null %}
              {%if groupes | length%}
-                 {% set lot = null %}
                  {% set Compl = "N" %}
                  {% set EstCompl = "N" %}
                   {% for groupe in groupes %}

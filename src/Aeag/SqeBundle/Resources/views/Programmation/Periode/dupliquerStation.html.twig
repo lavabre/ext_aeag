@@ -6,6 +6,11 @@
  </div>
  <div class="modal-body-sqe">
     <div class="row">
+        <div class="col-md-offset-1 col-md10 text-center" id="idNbCocher">
+          <p class="btn btn-primary"></p>
+        </div>
+   </div>
+    <div class="row">
      <div class="col-md-offset-1 col-md-10">
          <div class="small">
              <table class="table table-bordered table-condensed table-advance" id="idTableDupliquerStation">
@@ -136,6 +141,7 @@
 
     {% for stationAnAutre in stationAns %}
         $(document).on('click', '#checkDupliquerStation_{{ stationAnAutre.station.id }}',function(e){
+            nbcocher();
              if ($('#checkDupliquerStation_{{ stationAnAutre.station.id }}').is(':checked')){
                  if ($('#nbGroupes_{{ stationAnAutre.station.id }}').val() > 0){
                     var html = '<div class="modal-header">';
@@ -175,7 +181,26 @@
 
     {% endfor %}
     
-     
+      /* Nombre de stations cocheées*/
+   var nbcocher = function() {
+     var info = table_TableDupliquerStation.page.info();
+     var nbRecords = $('#idTableDupliquerStation_length option:selected').val();
+     var filtre = $('#idTableDupliquerStation_filter input').val();
+        if (filtre != ''){
+             var initval = '';
+             table_TableDupliquerStation.search(initval).draw();
+      };
+     table_TableDupliquerStation.page.len( -1 ).draw();
+   var n = $( "#idTableDupliquerStation input:checked" ).length;
+   html = "Stations cochées  : <span class='badge'>" + n  + "</span>"; 
+   $("#idNbCocher p").html(html);
+   if (filtre != ''){
+        table_TableDupliquerStation.search(filtre).draw();
+    };
+   table_TableDupliquerStation.page.len( nbRecords ).draw();
+    table_TableDupliquerStation.page(info.page).draw(false);
+  };
+  nbcocher();
    
     
 </script>
