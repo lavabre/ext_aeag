@@ -20,9 +20,9 @@
         "sensio/generator-bundle": "~2.3",
         "incenteev/composer-parameter-handler": "~2.0",
         "doctrine/doctrine-fixtures-bundle": "@dev",
-        "winzou/console-bundle": "dev-master",
-	"doctrine/instantiator": "~1.0.1",
-        "friendsofsymfony/user-bundle": "~2.0@dev"
+        "doctrine/instantiator": "~1.0.1",
+        "friendsofsymfony/user-bundle": "~2.0@dev",
+        "ornicar/apc-bundle": "1.0.*"
      },
     "scripts": {
         "post-install-cmd": [
