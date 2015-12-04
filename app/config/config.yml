@@ -31,7 +31,7 @@ twig:
     globals:
           webmaster:  Joël LAVABRE  (05.61.36.36.37)
           symfony:  2.7.5
-          version : 1.0
+          version : 1.0.0
 
 # Assetic Configuration
 assetic:
