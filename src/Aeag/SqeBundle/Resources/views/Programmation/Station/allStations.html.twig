@@ -434,7 +434,6 @@
         $('#modalTraitementEncours').modal();
         $('#idForm').submit();
     } );
-    
   
      {% if app.session.get('selectionReseau')   %}
         $('#reseau option:selected').removeAttr('selected');
@@ -638,7 +637,7 @@
             {% for station in stations %}
                if ($('#check_{{ station.station.ouvFoncId }}').is(':checked')){
                     nbValider = nbValider + 1;
-                    html = addHtmlStations('{{ station.station.code }}', '{{ station.lien }}', '{{ station.station.ouvFoncId }}', '{{ station.station.libelle }}');
+                    html = html + addHtmlStations('{{ station.lien }}', '{{ station.station.code }}', '{{ station.station.ouvFoncId }}', '{{ station.station.libelle }}');
                 };
             {% endfor %}
         {% endif %}
@@ -694,7 +693,7 @@
             {% for station in stations %}
                if ($('#check_{{ station.station.ouvFoncId }}').is(':checked')){
                     nbValider = nbValider + 1;
-                    html = addHtmlStations('{{ station.station.code }}', '{{ station.lien }}', '{{ station.station.ouvFoncId }}', '{{ station.station.libelle }}');
+                    html = html + addHtmlStations('{{ station.lien }}', '{{ station.station.code }}', '{{ station.station.ouvFoncId }}', '{{ station.station.libelle }}');
                 };
             {% endfor %}
         {% endif %}
@@ -739,7 +738,7 @@
             {% for station in stations %}
                if ($('#check_{{ station.station.ouvFoncId }}').is(':checked')){
                     nbValider = nbValider + 1;
-                    html = addHtmlStations('{{ station.station.code }}', '{{ station.lien }}', '{{ station.station.ouvFoncId }}', '{{ station.station.libelle }}');
+                    html = html + addHtmlStations('{{ station.lien }}', '{{ station.station.code }}', '{{ station.station.ouvFoncId }}', '{{ station.station.libelle }}');
                 };
             {% endfor %}
         {% endif %}
@@ -784,7 +783,7 @@
             {% for station in stations %}
                if ($('#check_{{ station.station.ouvFoncId }}').is(':checked')){
                     nbValider = nbValider + 1;
-                    html = addHtmlStations('{{ station.station.code }}', '{{ station.lien }}', '{{ station.station.ouvFoncId }}', '{{ station.station.libelle }}');
+                    html = html + addHtmlStations('{{ station.lien }}', '{{ station.station.code }}', '{{ station.station.ouvFoncId }}', '{{ station.station.libelle }}');
                 };
             {% endfor %}
         {% endif %}
@@ -830,7 +829,7 @@
             {% for station in stations %}
                if ($('#check_{{ station.station.ouvFoncId }}').is(':checked')){
                     nbValider = nbValider + 1;
-                    html = addHtmlStations('{{ station.station.code }}', '{{ station.lien }}', '{{ station.station.ouvFoncId }}', '{{ station.station.libelle }}');
+                    html = html + addHtmlStations('{{ station.lien }}', '{{ station.station.code }}', '{{ station.station.ouvFoncId }}', '{{ station.station.libelle }}');
                 };
             {% endfor %}
         {% endif %}
@@ -874,7 +873,7 @@
             {% for station in stations %}
                if ($('#check_{{ station.station.ouvFoncId }}').is(':checked')){
                     nbValider = nbValider + 1;
-                    html = addHtmlStations('{{ station.station.code }}', '{{ station.lien }}', '{{ station.station.ouvFoncId }}', '{{ station.station.libelle }}');
+                    html = html + addHtmlStations('{{ station.lien }}', '{{ station.station.code }}', '{{ station.station.ouvFoncId }}', '{{ station.station.libelle }}');
                 };
             {% endfor %}
         {% endif %}
@@ -918,7 +917,7 @@
             {% for station in stations %}
                if ($('#check_{{ station.station.ouvFoncId }}').is(':checked')){
                     nbValider = nbValider + 1;
-                    html = addHtmlStations('{{ station.station.code }}', '{{ station.lien }}', '{{ station.station.ouvFoncId }}', '{{ station.station.libelle }}');
+                    html = html + addHtmlStations('{{ station.lien }}', '{{ station.station.code }}', '{{ station.station.ouvFoncId }}', '{{ station.station.libelle }}');
                 };
             {% endfor %}
         {% endif %}
@@ -962,7 +961,7 @@
             {% for station in stations %}
                if ($('#check_{{ station.station.ouvFoncId }}').is(':checked')){
                     nbValider = nbValider + 1;
-                    html = addHtmlStations('{{ station.station.code }}', '{{ station.lien }}', '{{ station.station.ouvFoncId }}', '{{ station.station.libelle }}');
+                    html = html + addHtmlStations('{{ station.lien }}', '{{ station.station.code }}', '{{ station.station.ouvFoncId }}', '{{ station.station.libelle }}');
                 };
             {% endfor %}
         {% endif %}
@@ -1092,19 +1091,19 @@
     }
   
     function addHtmlStations(lien, code, id, libelle){
-      var html = '';
-      html = html + '<tr>';
-      html = html + '<td width="5%">';
-      html = html + '<a class="btn btn-info btn-xs" href=">'+ lien +'" target="_blank" title="Localisation">';
-      html = html + code;
-      html = html + '</a>';
-      html = html + '<input type="hidden" name="idStationOk_'+id+'" value ="'+id+'">';
-      html = html + '<input type="hidden" name="idStationReseauOk_'+id+'" value ="' + $('#idStationReseau_'+id).val() + '">';
-      html = html + '</td>';
-      html = html + '<td>libelle</td>';
-      html = html + '</tr>';
+        var html = '';
+        html = html + '<tr>';
+        html = html + '<td width="5%">';
+        html = html + '<a class="btn btn-info btn-xs" href="'+ lien +'" target="_blank" title="Localisation">';
+        html = html + code;
+        html = html + '</a>';
+        html = html + '<input type="hidden" name="idStationOk_'+id+'" value ="'+id+'">';
+        html = html + '<input type="hidden" name="idStationReseauOk_'+id+'" value ="' + $('#idStationReseau_'+id).val() + '">';
+        html = html + '</td>';
+        html = html + '<td>'+libelle+'</td>';
+        html = html + '</tr>';
 
-      return html;
+        return html;
     }
 
     /* Nombre de stations cocheées*/
