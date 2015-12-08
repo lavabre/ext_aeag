@@ -428,35 +428,6 @@
 {% block scripts %}
     
     var table1 = $('#idTable1').DataTable();
-    
-     
-      // DataTable
-    var table = $('#idTable').DataTable(
-    {"stateSave": true,
-    "oLanguage": {
-    "sSearch": "Filtre",
-    "sFirst": "1ere page",
-    "sLast": "Dernière page",
-    "sNext": "Prochaine page",
-    "sPrevious": "Page précédente",
-    "EmptyTable": "Pas de données",
-    "sInfo": "Nombre d'enregistrements :  _TOTAL_",
-    "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
-    "sZeroRecords": "Pas d'enregistrement à afficher",
-    "sInfoEmpty": "Pas d'enregistrement à afficher",
-    "sInfoThousands": " ",
-    "sLengthMenu": 'Afficher <select>' +
-        '<option value="10">10</option>' +
-        '<option value="20">20</option>' +
-        '<option value="30">30</option>' +
-        '<option value="40">40</option>' +
-        '<option value="50">50</option>' +
-        '<option value="-1">Tous</option>' +
-        '</select> enregistrements',
-    "sPaginationType": "full_numbers"
-    }
-    }
-    );
 
     $(document).on('click', '#idSubmit',function(e){
         $('#modalTraitementEncours').modal();
@@ -488,17 +459,17 @@
     
     
         {% if action == 'P' and maj != 'V' %}
-                  {% if reseaux | length > 0 %} 
-                          {% for reseau in reseaux %}
-                                    {% if reseau.defaut ==  'O'  %}
-                                         $('#reseau option:selected').removeAttr('selected');
-                                        var valeur = {{ reseau.reseau.groupementId}};
-                                        $("#reseau option[value='" + valeur + "']").attr('selected','selected');
-                                        $("#reseau").val(valeur);
-                                        $("#idThReseauDefaut").empty().html('Réseau par défaut');
-                                    {% endif %}
-                          {% endfor %}
-                         {% endif %}
+            {% if reseaux | length > 0 %} 
+                {% for reseau in reseaux %}
+                    {% if reseau.defaut ==  'O'  %}
+                         $('#reseau option:selected').removeAttr('selected');
+                        var valeur = {{ reseau.reseau.groupementId}};
+                        $("#reseau option[value='" + valeur + "']").attr('selected','selected');
+                        $("#reseau").val(valeur);
+                        $("#idThReseauDefaut").empty().html('Réseau par défaut');
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
         {% endif %}
     
     // selection du reseau sinon liste des stations cachée
@@ -508,8 +479,6 @@
       $('#idStations').hide();
       $('#idNbCocher').hide();
     }
-    
-    
 
     $(document).on('change','#reseau',function(e){
         e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
@@ -547,27 +516,7 @@
         table.page.len( nbRecords ).draw();
     });    
     
-   {# {% if stations | length %} 
-      {% for station in stations %}
-            $(document).on('click','#check_{{ groupe.groupe.id }}',function(e){
-                           e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                           if ($('#check_{{ groupe.groupe.id }}').prop('checked') == false){
-                               var check = 'O';
-                           }else{
-                              var check = 'N';
-                           }
-                           var requestData = {
-                                               groupe : $('#check_{{ groupe.groupe.id }}').val(),
-                                               coche : check
-                                               }
-                           $.get( '{{path("AeagSqeBundle_programmation_groupe_selectionner")}}', requestData , function( responseData ) { 
-                                $("#idGroupe_{{ groupe.groupe.id }}" ).empty().html( responseData ); 
-                           });
-            });
-        {% endfor %}
-    {% endif %}   
-    #}
-    
+    // Affichage du réseau
     reseauValeur = $('#reseau option:selected').val();
     reseauLibelle = $('#reseau option:selected').text();
     {%if stations | length%}  
@@ -600,6 +549,35 @@
             
         {% endfor %}
     {% endif %}
+    
+    // DataTable
+    var table = $('#idTable').DataTable(
+        {"stateSave": true,
+            "oLanguage": {
+                "sSearch": "Filtre",
+                "sFirst": "1ere page",
+                "sLast": "Dernière page",
+                "sNext": "Prochaine page",
+                "sPrevious": "Page précédente",
+                "EmptyTable": "Pas de données",
+                "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+                "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+                "sZeroRecords": "Pas d'enregistrement à afficher",
+                "sInfoEmpty": "Pas d'enregistrement à afficher",
+                "sInfoThousands": " ",
+                "sLengthMenu": 'Afficher <select>' +
+                    '<option value="10">10</option>' +
+                    '<option value="20">20</option>' +
+                    '<option value="30">30</option>' +
+                    '<option value="40">40</option>' +
+                    '<option value="50">50</option>' +
+                    '<option value="-1">Tous</option>' +
+                    '</select> enregistrements',
+                "sPaginationType": "full_numbers"
+            }
+        }
+    );
+
     
     $(document).on('click','#idAnnulerStationReseaux',function(e){
        $('#modal_stationReseaux').modal('hide');
@@ -667,16 +645,7 @@
             {% for station in stations %}
                if ($('#check_{{ station.station.ouvFoncId }}').is(':checked')){
                     nbValider = nbValider + 1;
-                    html = html + '<tr>';
-                    html = html + '<td width="5%">';
-                    html = html + '<a  href="{{ station.lien }}" target="_blank" title="Localisation">';
-                    html = html + '{{ station.station.code }}';
-                    html = html + '</a>';
-                    html = html + '<input type="hidden" name="idStationOk_{{ station.station.ouvFoncId }}" value ="{{station.station.ouvFoncId}}">';
-                    html = html + '<input type="hidden" name="idStationReseauOk_{{ station.station.ouvFoncId }}" value ="' + $('#idStationReseau_{{ station.station.ouvFoncId }}').val() + '">';
-                    html = html + '</td>';
-                    html = html + '<td>{{ station.station.libelle }}</td>';
-                    html = html + '</tr>';
+                    html = addHtmlStations('{{ station.station.code }}', '{{ station.lien }}', '{{ station.station.ouvFoncId }}', '{{ station.station.libelle }}');
                 };
             {% endfor %}
         {% endif %}
@@ -689,33 +658,8 @@
             table.search(filtre).draw();
         };
         table.page.len( nbRecords ).draw();
-        table1 = $('#idTable1').DataTable(
-            {"stateSave": false,
-             "order": [[ 0, "asc" ]],
-            "oLanguage": {
-            "sSearch": "Filtre",
-            "sFirst": "1ere page",
-            "sLast": "Dernière page",
-            "sNext": "Prochaine page",
-            "sPrevious": "Page précédente",
-            "EmptyTable": "Pas de données",
-            "sInfo": "Nombre d'enregistrements :  _TOTAL_",
-            "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
-            "sZeroRecords": "Pas d'enregistrement à afficher",
-            "sInfoEmpty": "Pas d'enregistrement à afficher",
-            "sInfoThousands": " ",
-            "sLengthMenu": 'Afficher <select>' +
-                '<option value="10">10</option>' +
-                '<option value="20">20</option>' +
-                '<option value="30">30</option>' +
-                '<option value="40">40</option>' +
-                '<option value="50">50</option>' +
-                '<option value="-1">Tous</option>' +
-                '</select> enregistrements',
-            "sPaginationType": "full_numbers"
-            }
-            }
-            );
+        table1 = drawTable1();
+        
          if ( nbValider > 250 ){
             html = 'veuillez reduire la liste des stations sélectionnées (maximun 250)';
             $('#idMessageSelection').empty().append(html);
@@ -760,16 +704,7 @@
             {% for station in stations %}
                if ($('#check_{{ station.station.ouvFoncId }}').is(':checked')){
                     nbValider = nbValider + 1;
-                    html = html + '<tr>';
-                    html = html + '<td width="5%">';
-                    html = html + '<a class="btn btn-info btn-xs" href="{{ station.lien }}" target="_blank" title="Localisation">';
-                    html = html + '{{ station.station.code }}';
-                    html = html + '</a>';
-                    html = html + '<input type="hidden" name="idStationOk_{{ station.station.ouvFoncId }}" value ="{{station.station.ouvFoncId}}">';
-                    html = html + '<input type="hidden" name="idStationReseauOk_{{ station.station.ouvFoncId }}" value ="' + $('#idStationReseau_{{ station.station.ouvFoncId }}').val() + '">';
-                    html = html + '</td>';
-                    html = html + '<td>{{ station.station.libelle }}</td>';
-                    html = html + '</tr>';
+                    html = addHtmlStations('{{ station.station.code }}', '{{ station.lien }}', '{{ station.station.ouvFoncId }}', '{{ station.station.libelle }}');
                 };
             {% endfor %}
         {% endif %}
@@ -783,33 +718,8 @@
             table.search(filtre).draw();
         };
         table.page.len( nbRecords ).draw();
-        table1 = $('#idTable1').DataTable(
-            {"stateSave": false,
-             "order": [[ 0, "asc" ]],
-            "oLanguage": {
-            "sSearch": "Filtre",
-            "sFirst": "1ere page",
-            "sLast": "Dernière page",
-            "sNext": "Prochaine page",
-            "sPrevious": "Page précédente",
-            "EmptyTable": "Pas de données",
-            "sInfo": "Nombre d'enregistrements :  _TOTAL_",
-            "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
-            "sZeroRecords": "Pas d'enregistrement à afficher",
-            "sInfoEmpty": "Pas d'enregistrement à afficher",
-            "sInfoThousands": " ",
-            "sLengthMenu": 'Afficher <select>' +
-                '<option value="10">10</option>' +
-                '<option value="20">20</option>' +
-                '<option value="30">30</option>' +
-                '<option value="40">40</option>' +
-                '<option value="50">50</option>' +
-                '<option value="-1">Tous</option>' +
-                '</select> enregistrements',
-            "sPaginationType": "full_numbers"
-            }
-            }
-            );
+        table1 = drawTable1();
+        
          if ( nbValider > 250 ){
             html = 'veuillez reduire la liste des stations sélectionnées (maximun 250)';
             $('#idMessageSelection').empty().append(html);
@@ -840,16 +750,7 @@
             {% for station in stations %}
                if ($('#check_{{ station.station.ouvFoncId }}').is(':checked')){
                     nbValider = nbValider + 1;
-                    html = html + '<tr>';
-                    html = html + '<td width="5%">';
-                    html = html + '<a class="btn btn-info btn-xs" href="{{ station.lien }}" target="_blank" title="Localisation">';
-                    html = html + '{{ station.station.code }}';
-                    html = html + '</a>';
-                    html = html + '<input type="hidden" name="idStationOk_{{ station.station.ouvFoncId }}" value ="{{station.station.ouvFoncId}}">';
-                    html = html + '<input type="hidden" name="idStationReseauOk_{{ station.station.ouvFoncId }}" value ="' + $('#idStationReseau_{{ station.station.ouvFoncId }}').val() + '">';
-                    html = html + '</td>';
-                    html = html + '<td>{{ station.station.libelle }}</td>';
-                    html = html + '</tr>';
+                    html = addHtmlStations('{{ station.station.code }}', '{{ station.lien }}', '{{ station.station.ouvFoncId }}', '{{ station.station.libelle }}');
                 };
             {% endfor %}
         {% endif %}
@@ -863,33 +764,8 @@
             table.search(filtre).draw();
         };
         table.page.len( nbRecords ).draw();
-        table1 = $('#idTable1').DataTable(
-            {"stateSave": false,
-             "order": [[ 0, "asc" ]],
-            "oLanguage": {
-            "sSearch": "Filtre",
-            "sFirst": "1ere page",
-            "sLast": "Dernière page",
-            "sNext": "Prochaine page",
-            "sPrevious": "Page précédente",
-            "EmptyTable": "Pas de données",
-            "sInfo": "Nombre d'enregistrements :  _TOTAL_",
-            "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
-            "sZeroRecords": "Pas d'enregistrement à afficher",
-            "sInfoEmpty": "Pas d'enregistrement à afficher",
-            "sInfoThousands": " ",
-            "sLengthMenu": 'Afficher <select>' +
-                '<option value="10">10</option>' +
-                '<option value="20">20</option>' +
-                '<option value="30">30</option>' +
-                '<option value="40">40</option>' +
-                '<option value="50">50</option>' +
-                '<option value="-1">Tous</option>' +
-                '</select> enregistrements',
-            "sPaginationType": "full_numbers"
-            }
-            }
-            );
+        table1 = drawTable1();
+        
          if ( nbValider > 250 ){
             html = 'veuillez reduire la liste des stations sélectionnées (maximun 250)';
             $('#idMessageSelection').empty().append(html);
@@ -920,16 +796,7 @@
             {% for station in stations %}
                if ($('#check_{{ station.station.ouvFoncId }}').is(':checked')){
                     nbValider = nbValider + 1;
-                    html = html + '<tr>';
-                    html = html + '<td width="5%">';
-                    html = html + '<a class="btn btn-info btn-xs" href="{{ station.lien }}" target="_blank" title="Localisation">';
-                    html = html + '{{ station.station.code }}';
-                    html = html + '</a>';
-                    html = html + '<input type="hidden" name="idStationOk_{{ station.station.ouvFoncId }}" value ="{{station.station.ouvFoncId}}">';
-                    html = html + '<input type="hidden" name="idStationReseauOk_{{ station.station.ouvFoncId }}" value ="' + $('#idStationReseau_{{ station.station.ouvFoncId }}').val() + '">';
-                    html = html + '</td>';
-                    html = html + '<td>{{ station.station.libelle }}</td>';
-                    html = html + '</tr>';
+                    html = addHtmlStations('{{ station.station.code }}', '{{ station.lien }}', '{{ station.station.ouvFoncId }}', '{{ station.station.libelle }}');
                 };
             {% endfor %}
         {% endif %}
@@ -943,33 +810,8 @@
             table.search(filtre).draw();
         };
         table.page.len( nbRecords ).draw();
-        table1 = $('#idTable1').DataTable(
-            {"stateSave": false,
-             "order": [[ 0, "asc" ]],
-            "oLanguage": {
-            "sSearch": "Filtre",
-            "sFirst": "1ere page",
-            "sLast": "Dernière page",
-            "sNext": "Prochaine page",
-            "sPrevious": "Page précédente",
-            "EmptyTable": "Pas de données",
-            "sInfo": "Nombre d'enregistrements :  _TOTAL_",
-            "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
-            "sZeroRecords": "Pas d'enregistrement à afficher",
-            "sInfoEmpty": "Pas d'enregistrement à afficher",
-            "sInfoThousands": " ",
-            "sLengthMenu": 'Afficher <select>' +
-                '<option value="10">10</option>' +
-                '<option value="20">20</option>' +
-                '<option value="30">30</option>' +
-                '<option value="40">40</option>' +
-                '<option value="50">50</option>' +
-                '<option value="-1">Tous</option>' +
-                '</select> enregistrements',
-            "sPaginationType": "full_numbers"
-            }
-            }
-            );
+        table1 = drawTable1();
+        
          if ( nbValider > 250 ){
             html = 'veuillez reduire la liste des stations sélectionnées (maximun 250)';
             $('#idMessageSelection').empty().append(html);
@@ -1001,16 +843,7 @@
             {% for station in stations %}
                if ($('#check_{{ station.station.ouvFoncId }}').is(':checked')){
                     nbValider = nbValider + 1;
-                    html = html + '<tr>';
-                    html = html + '<td width="5%">';
-                    html = html + '<a class="btn btn-info btn-xs" href="{{ station.lien }}" target="_blank" title="Localisation">';
-                    html = html + '{{ station.station.code }}';
-                    html = html + '</a>';
-                    html = html + '<input type="hidden" name="idStationOk_{{ station.station.ouvFoncId }}" value ="{{station.station.ouvFoncId}}">';
-                    html = html + '<input type="hidden" name="idStationReseauOk_{{ station.station.ouvFoncId }}" value ="' + $('#idStationReseau_{{ station.station.ouvFoncId }}').val() + '">';
-                    html = html + '</td>';
-                    html = html + '<td>{{ station.station.libelle }}</td>';
-                    html = html + '</tr>';
+                    html = addHtmlStations('{{ station.station.code }}', '{{ station.lien }}', '{{ station.station.ouvFoncId }}', '{{ station.station.libelle }}');
                 };
             {% endfor %}
         {% endif %}
@@ -1023,33 +856,8 @@
             table.search(filtre).draw();
         };
         table.page.len( nbRecords ).draw();
-        table1 = $('#idTable1').DataTable(
-            {"stateSave": false,
-             "order": [[ 0, "asc" ]],
-            "oLanguage": {
-            "sSearch": "Filtre",
-            "sFirst": "1ere page",
-            "sLast": "Dernière page",
-            "sNext": "Prochaine page",
-            "sPrevious": "Page précédente",
-            "EmptyTable": "Pas de données",
-            "sInfo": "Nombre d'enregistrements :  _TOTAL_",
-            "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
-            "sZeroRecords": "Pas d'enregistrement à afficher",
-            "sInfoEmpty": "Pas d'enregistrement à afficher",
-            "sInfoThousands": " ",
-            "sLengthMenu": 'Afficher <select>' +
-                '<option value="10">10</option>' +
-                '<option value="20">20</option>' +
-                '<option value="30">30</option>' +
-                '<option value="40">40</option>' +
-                '<option value="50">50</option>' +
-                '<option value="-1">Tous</option>' +
-                '</select> enregistrements',
-            "sPaginationType": "full_numbers"
-            }
-            }
-            );
+        table1 = drawTable1();
+        
          if ( nbValider > 250 ){
             html = 'veuillez reduire la liste des stations sélectionnées (maximun 250)';
             $('#idMessageSelection').empty().append(html);
@@ -1080,16 +888,7 @@
             {% for station in stations %}
                if ($('#check_{{ station.station.ouvFoncId }}').is(':checked')){
                     nbValider = nbValider + 1;
-                    html = html + '<tr>';
-                    html = html + '<td width="5%">';
-                    html = html + '<a class="btn btn-info btn-xs" href="{{ station.lien }}" target="_blank" title="Localisation">';
-                    html = html + '{{ station.station.code }}';
-                    html = html + '</a>';
-                    html = html + '<input type="hidden" name="idStationOk_{{ station.station.ouvFoncId }}" value ="{{station.station.ouvFoncId}}">';
-                    html = html + '<input type="hidden" name="idStationReseauOk_{{ station.station.ouvFoncId }}" value ="' + $('#idStationReseau_{{ station.station.ouvFoncId }}').val() + '">';
-                    html = html + '</td>';
-                    html = html + '<td>{{ station.station.libelle }}</td>';
-                    html = html + '</tr>';
+                    html = addHtmlStations('{{ station.station.code }}', '{{ station.lien }}', '{{ station.station.ouvFoncId }}', '{{ station.station.libelle }}');
                 };
             {% endfor %}
         {% endif %}
@@ -1102,33 +901,8 @@
             table.search(filtre).draw();
         };
         table.page.len( nbRecords ).draw();
-        table1 = $('#idTable1').DataTable(
-            {"stateSave": false,
-             "order": [[ 0, "asc" ]],
-            "oLanguage": {
-            "sSearch": "Filtre",
-            "sFirst": "1ere page",
-            "sLast": "Dernière page",
-            "sNext": "Prochaine page",
-            "sPrevious": "Page précédente",
-            "EmptyTable": "Pas de données",
-            "sInfo": "Nombre d'enregistrements :  _TOTAL_",
-            "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
-            "sZeroRecords": "Pas d'enregistrement à afficher",
-            "sInfoEmpty": "Pas d'enregistrement à afficher",
-            "sInfoThousands": " ",
-            "sLengthMenu": 'Afficher <select>' +
-                '<option value="10">10</option>' +
-                '<option value="20">20</option>' +
-                '<option value="30">30</option>' +
-                '<option value="40">40</option>' +
-                '<option value="50">50</option>' +
-                '<option value="-1">Tous</option>' +
-                '</select> enregistrements',
-            "sPaginationType": "full_numbers"
-            }
-            }
-            );
+        table1 = drawTable1();
+        
          if ( nbValider > 250 ){
             html = 'veuillez reduire la liste des stations sélectionnées (maximun 250)';
             $('#idMessageSelection').empty().append(html);
@@ -1159,16 +933,7 @@
             {% for station in stations %}
                if ($('#check_{{ station.station.ouvFoncId }}').is(':checked')){
                     nbValider = nbValider + 1;
-                    html = html + '<tr>';
-                    html = html + '<td width="5%">';
-                    html = html + '<a class="btn btn-info btn-xs" href="{{ station.lien }}" target="_blank" title="Localisation">';
-                    html = html + '{{ station.station.code }}';
-                    html = html + '</a>';
-                    html = html + '<input type="hidden" name="idStationOk_{{ station.station.ouvFoncId }}" value ="{{station.station.ouvFoncId}}">';
-                    html = html + '<input type="hidden" name="idStationReseauOk_{{ station.station.ouvFoncId }}" value ="' + $('#idStationReseau_{{ station.station.ouvFoncId }}').val() + '">';
-                    html = html + '</td>';
-                    html = html + '<td>{{ station.station.libelle }}</td>';
-                    html = html + '</tr>';
+                    html = addHtmlStations('{{ station.station.code }}', '{{ station.lien }}', '{{ station.station.ouvFoncId }}', '{{ station.station.libelle }}');
                 };
             {% endfor %}
         {% endif %}
@@ -1181,33 +946,8 @@
             table.search(filtre).draw();
         };
         table.page.len( nbRecords ).draw();
-        table1 = $('#idTable1').DataTable(
-            {"stateSave": false,
-             "order": [[ 0, "asc" ]],
-            "oLanguage": {
-            "sSearch": "Filtre",
-            "sFirst": "1ere page",
-            "sLast": "Dernière page",
-            "sNext": "Prochaine page",
-            "sPrevious": "Page précédente",
-            "EmptyTable": "Pas de données",
-            "sInfo": "Nombre d'enregistrements :  _TOTAL_",
-            "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
-            "sZeroRecords": "Pas d'enregistrement à afficher",
-            "sInfoEmpty": "Pas d'enregistrement à afficher",
-            "sInfoThousands": " ",
-            "sLengthMenu": 'Afficher <select>' +
-                '<option value="10">10</option>' +
-                '<option value="20">20</option>' +
-                '<option value="30">30</option>' +
-                '<option value="40">40</option>' +
-                '<option value="50">50</option>' +
-                '<option value="-1">Tous</option>' +
-                '</select> enregistrements',
-            "sPaginationType": "full_numbers"
-            }
-            }
-            );
+        table1 = drawTable1();
+        
          if ( nbValider > 250 ){
             html = 'veuillez reduire la liste des stations sélectionnées (maximun 250)';
             $('#idMessageSelection').empty().append(html);
@@ -1238,16 +978,7 @@
             {% for station in stations %}
                if ($('#check_{{ station.station.ouvFoncId }}').is(':checked')){
                     nbValider = nbValider + 1;
-                    html = html + '<tr>';
-                    html = html + '<td width="5%">';
-                    html = html + '<a class="btn btn-info btn-xs" href="{{ station.lien }}" target="_blank" title="Localisation">';
-                    html = html + '{{ station.station.code }}';
-                    html = html + '</a>';
-                    html = html + '<input type="hidden" name="idStationOk_{{ station.station.ouvFoncId }}" value ="{{station.station.ouvFoncId}}">';
-                    html = html + '<input type="hidden" name="idStationReseauOk_{{ station.station.ouvFoncId }}" value ="' + $('#idStationReseau_{{ station.station.ouvFoncId }}').val() + '">';
-                    html = html + '</td>';
-                    html = html + '<td>{{ station.station.libelle }}</td>';
-                    html = html + '</tr>';
+                    html = addHtmlStations('{{ station.station.code }}', '{{ station.lien }}', '{{ station.station.ouvFoncId }}', '{{ station.station.libelle }}');
                 };
             {% endfor %}
         {% endif %}
@@ -1260,33 +991,8 @@
             table.search(filtre).draw();
         };
         table.page.len( nbRecords ).draw();
-        table1 = $('#idTable1').DataTable(
-            {"stateSave": false,
-             "order": [[ 0, "asc" ]],
-            "oLanguage": {
-            "sSearch": "Filtre",
-            "sFirst": "1ere page",
-            "sLast": "Dernière page",
-            "sNext": "Prochaine page",
-            "sPrevious": "Page précédente",
-            "EmptyTable": "Pas de données",
-            "sInfo": "Nombre d'enregistrements :  _TOTAL_",
-            "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
-            "sZeroRecords": "Pas d'enregistrement à afficher",
-            "sInfoEmpty": "Pas d'enregistrement à afficher",
-            "sInfoThousands": " ",
-            "sLengthMenu": 'Afficher <select>' +
-                '<option value="10">10</option>' +
-                '<option value="20">20</option>' +
-                '<option value="30">30</option>' +
-                '<option value="40">40</option>' +
-                '<option value="50">50</option>' +
-                '<option value="-1">Tous</option>' +
-                '</select> enregistrements',
-            "sPaginationType": "full_numbers"
-            }
-            }
-            );
+        table1 = drawTable1();
+        
          if ( nbValider > 250 ){
             html = 'veuillez reduire la liste des stations sélectionnées (maximun 250)';
             $('#idMessageSelection').empty().append(html);
@@ -1326,11 +1032,6 @@
     $('#idForm').submit();
     });
 
-   
-
-
-    
-
     $(document).on('click','#cocherTout',function(e){
         var choix = 'O';
         if ($('#cocherTout').hasClass('btn-success')){
@@ -1369,8 +1070,55 @@
         };
         table.page.len( nbRecords ).draw();
     });
+    
+    
    
+  /* Déclaration de table1 avec dataTable */
+  function drawTable1() {
+    return $('#idTable1').DataTable(
+            {"stateSave": false,
+             "order": [[ 0, "asc" ]],
+            "oLanguage": {
+            "sSearch": "Filtre",
+            "sFirst": "1ere page",
+            "sLast": "Dernière page",
+            "sNext": "Prochaine page",
+            "sPrevious": "Page précédente",
+            "EmptyTable": "Pas de données",
+            "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+            "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+            "sZeroRecords": "Pas d'enregistrement à afficher",
+            "sInfoEmpty": "Pas d'enregistrement à afficher",
+            "sInfoThousands": " ",
+            "sLengthMenu": 'Afficher <select>' +
+                '<option value="10">10</option>' +
+                '<option value="20">20</option>' +
+                '<option value="30">30</option>' +
+                '<option value="40">40</option>' +
+                '<option value="50">50</option>' +
+                '<option value="-1">Tous</option>' +
+                '</select> enregistrements',
+            "sPaginationType": "full_numbers"
+            }
+            }
+            );
+  }
   
+  function addHtmlStations(lien, code, id, libelle){
+    var html = '';
+    html = html + '<tr>';
+    html = html + '<td width="5%">';
+    html = html + '<a class="btn btn-info btn-xs" href=">'+ lien +'" target="_blank" title="Localisation">';
+    html = html + code;
+    html = html + '</a>';
+    html = html + '<input type="hidden" name="idStationOk_'+id+'" value ="'+id+'">';
+    html = html + '<input type="hidden" name="idStationReseauOk_'+id+'" value ="' + $('#idStationReseau_'+id).val() + '">';
+    html = html + '</td>';
+    html = html + '<td>libelle</td>';
+    html = html + '</tr>';
+    
+    return html;
+  }
 
        
    /* Nombre de stations cocheées*/
