@@ -428,6 +428,8 @@
 {% block scripts %}
     
     var table1 = $('#idTable1').DataTable();
+    
+    var limitMaxStation = 100000;
 
     $(document).on('click', '#idSubmit',function(e){
         $('#modalTraitementEncours').modal();
@@ -660,8 +662,8 @@
         table.page.len( nbRecords ).draw();
         table1 = drawTable1();
         
-         if ( nbValider > 250 ){
-            html = 'veuillez reduire la liste des stations sélectionnées (maximun 250)';
+         if ( nbValider > limitMaxStation ){
+            html = 'veuillez reduire la liste des stations sélectionnées (maximum '+limitMaxStation+')';
             $('#idMessageSelection').empty().append(html);
             $('#idValiderSelection').hide();
             $('#idMessageSelection').show();
@@ -720,8 +722,8 @@
         table.page.len( nbRecords ).draw();
         table1 = drawTable1();
         
-         if ( nbValider > 250 ){
-            html = 'veuillez reduire la liste des stations sélectionnées (maximun 250)';
+         if ( nbValider > limitMaxStation ){
+            html = 'veuillez reduire la liste des stations sélectionnées (maximum '+limitMaxStation+')';
             $('#idMessageSelection').empty().append(html);
             $('#idValiderSelection').hide();
             $('#idMessageSelection').show();
@@ -766,8 +768,8 @@
         table.page.len( nbRecords ).draw();
         table1 = drawTable1();
         
-         if ( nbValider > 250 ){
-            html = 'veuillez reduire la liste des stations sélectionnées (maximun 250)';
+         if ( nbValider > limitMaxStation ){
+            html = 'veuillez reduire la liste des stations sélectionnées (maximum '+limitMaxStation+')';
             $('#idMessageSelection').empty().append(html);
             $('#idValiderSelection').hide();
             $('#idMessageSelection').show();
@@ -812,8 +814,8 @@
         table.page.len( nbRecords ).draw();
         table1 = drawTable1();
         
-         if ( nbValider > 250 ){
-            html = 'veuillez reduire la liste des stations sélectionnées (maximun 250)';
+         if ( nbValider > limitMaxStation ){
+            html = 'veuillez reduire la liste des stations sélectionnées (maximum '+limitMaxStation+')';
             $('#idMessageSelection').empty().append(html);
             $('#idValiderSelection').hide();
             $('#idMessageSelection').show();
@@ -858,8 +860,8 @@
         table.page.len( nbRecords ).draw();
         table1 = drawTable1();
         
-         if ( nbValider > 250 ){
-            html = 'veuillez reduire la liste des stations sélectionnées (maximun 250)';
+         if ( nbValider > limitMaxStation ){
+            html = 'veuillez reduire la liste des stations sélectionnées (maximum '+limitMaxStation+')';
             $('#idMessageSelection').empty().append(html);
             $('#idValiderSelection').hide();
             $('#idMessageSelection').show();
@@ -903,8 +905,8 @@
         table.page.len( nbRecords ).draw();
         table1 = drawTable1();
         
-         if ( nbValider > 250 ){
-            html = 'veuillez reduire la liste des stations sélectionnées (maximun 250)';
+         if ( nbValider > limitMaxStation ){
+            html = 'veuillez reduire la liste des stations sélectionnées (maximum '+limitMaxStation+')';
             $('#idMessageSelection').empty().append(html);
             $('#idValiderSelection').hide();
             $('#idMessageSelection').show();
@@ -948,8 +950,8 @@
         table.page.len( nbRecords ).draw();
         table1 = drawTable1();
         
-         if ( nbValider > 250 ){
-            html = 'veuillez reduire la liste des stations sélectionnées (maximun 250)';
+         if ( nbValider > limitMaxStation ){
+            html = 'veuillez reduire la liste des stations sélectionnées (maximum '+limitMaxStation+')';
             $('#idMessageSelection').empty().append(html);
             $('#idValiderSelection').hide();
             $('#idMessageSelection').show();
@@ -993,8 +995,8 @@
         table.page.len( nbRecords ).draw();
         table1 = drawTable1();
         
-         if ( nbValider > 250 ){
-            html = 'veuillez reduire la liste des stations sélectionnées (maximun 250)';
+         if ( nbValider > limitMaxStation ){
+            html = 'veuillez reduire la liste des stations sélectionnées (maximum '+limitMaxStation+')';
             $('#idMessageSelection').empty().append(html);
             $('#idValiderSelection').hide();
             $('#idMessageSelection').show();
@@ -1070,8 +1072,6 @@
         };
         table.page.len( nbRecords ).draw();
     });
-    
-    
    
   /* Déclaration de table1 avec dataTable */
   function drawTable1() {
