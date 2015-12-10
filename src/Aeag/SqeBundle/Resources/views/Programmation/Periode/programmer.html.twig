@@ -58,7 +58,7 @@
                     <thead>
                         <tr>
                             <th width="5%">Actions</th>
-                            <th>Groupe de paramatètres</th>
+                            <th>Groupe de paramètres</th>
                             <th>type</th>
                             <th>Support</th>
                             <th>Prestataire</th>
@@ -130,9 +130,9 @@
         <ul class="list-inline">
             <li> 
             {% set lot = null %}
+            {% set Compl = "N" %}
+            {% set EstCompl = "N" %}
              {%if groupes | length%}
-                 {% set Compl = "N" %}
-                 {% set EstCompl = "N" %}
                   {% for groupe in groupes %}
                       {% if groupe.autre | length %}
                           {% if lot != groupe.autre.id %}
@@ -257,33 +257,39 @@
         });
     });
     
+    
+    {%set groupeRenseigne = 'N' %}
+    {%set groupeExiste = 'N' %}
     {% if groupes | length %}  
-        {%set groupeRenseigne = 'N' %}
-        {%set groupeExiste = 'N' %}
         {% for groupe in groupes %}
-                 {% if groupe.renseigne == 'O' %}
-                      {%set groupeRenseigne = 'O' %}
-                 {% endif %}
-                  {% if groupe.existe == 'O' %}
-                      {%set groupeExiste = 'O' %}
-                 {% endif %}
-         {% endfor %}
-    {% endif %}
-     
-     
-   
-     
-     
+            {% if groupe.renseigne == 'O' %}
+                {%set groupeRenseigne = 'O' %}
+            {% endif %}
+            {% if groupe.existe == 'O' %}
+                {%set groupeExiste = 'O' %}
+            {% endif %}
+            {#Rajout VGU#}     
+            {% for obliSupport in groupe.obliSupport %} 
+                {% if obliSupport.support | length %}
+                    {% if obliSupport.obli == "O" %}
+                        {%set groupeRenseigne = 'O' %}
+                        {%set groupeExiste = 'O' %}
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+    {% endif %}     
+        
     {%if groupes | length%}  
        {% for groupe in groupes %}
             {%set nbErreurSite = 0 %}
-               {% if groupe.renseigne == 'N' %}
-                        $('#checkGroupe_{{ groupe.groupe.id }}').prop( "checked", false );
-                        $('#idGroupeCocher_{{ groupe.groupe.id }}').hide();
-                    {% else %}
-                        $('#checkGroupe_{{ groupe.groupe.id }}').prop( "checked", true );
-                        $('#idGroupeCocher_{{ groupe.groupe.id }}').show();
-                    {% endif %}
+            {% if groupe.renseigne == 'N' %}
+                     $('#checkGroupe_{{ groupe.groupe.id }}').prop( "checked", false );
+                     $('#idGroupeCocher_{{ groupe.groupe.id }}').hide();
+                 {% else %}
+                     $('#checkGroupe_{{ groupe.groupe.id }}').prop( "checked", true );
+                     $('#idGroupeCocher_{{ groupe.groupe.id }}').show();
+                 {% endif %}
             var html = '';
             {% for obliSupport in groupe.obliSupport %} 
                 {% if obliSupport.support | length %}
@@ -293,7 +299,6 @@
                     {% else %}
                         $('#checkGroupe_{{ groupe.groupe.id }}').prop( "disabled", false );
                     {% endif %}
-                    
                    {% if obliSupport.site == "ko" %}
                           $('#checkSupport_{{ obliSupport.support.codeSupport }}').prop( "checked", false );   
                           $('#checkSupport_{{ obliSupport.support.codeSupport }}').prop( "disabled", true );
@@ -307,7 +312,6 @@
                           {% set nbErreurSite = nbErreurSite + 1 %}
                           support = {{  obliSupport.support.codeSupport }};
                     {% endif %}
-                        
                    {% if groupeRenseigne == 'N' %}
                             $('#checkSupport_{{ obliSupport.support.codeSupport }}').prop( "checked", false );
                              $('#idSupportCocher_{{ obliSupport.support.codeSupport }}').hide();
@@ -323,52 +327,12 @@
                  $('#idSitePrelevement_' + support).empty().append(html).addClass("label-warning");
               {% endif %}
        {% endfor %}
-      
     {% endif %}
-   
-        
-    $(document).on('click', '#optionGroupes1', function(e){
-            $('#optionGroupes1').removeClass('btn-default').addClass('btn-primary');
-            $('#optionGroupes2').removeClass('btn-primary').addClass('btn-default');
-            $('#optionGroupes').val('C');
-           $('#idBlockAutrePeriodes').hide();
-            {%if groupes | length%}  
-                {% for groupe in groupes %}
-                    {% if groupe.autre | length %}
-                      $('#idTr_{{ groupe.groupe.id }}').addClass("label-warning");
-                      $('#idTdPresta_{{ groupe.groupe.id }}').empty();
-                      {% if groupe.autreGroupe.prestaDft %}
-                         $('#idTdPresta_{{ groupe.groupe.id }}').html('{{ groupe.autreGroupe.prestaDft.nomCorres }}');
-                      {% endif %}
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
-            });  
-                
-    $(document).on('click', '#optionGroupes2', function(e){
-            $('#optionGroupes2').removeClass('btn-default').addClass('btn-primary');
-            $('#optionGroupes1').removeClass('btn-primary').addClass('btn-default');
-            $('#optionGroupes').val('I');
-             $('#idBlockAutrePeriodes').show();
-            {%if groupes | length%}  
-                {% for groupe in groupes %}
-                    {% if groupe.autre | length %}
-                      $('#idTr_{{ groupe.groupe.id }}').removeClass("label-warning");
-                      $('#idTdPresta_{{ groupe.groupe.id }}').empty();
-                      {% if groupe.groupe.prestaDft %}
-                         $('#idTdPresta_{{ groupe.groupe.id }}').html('{{ groupe.groupe.prestaDft.nomCorres }}');
-                      {% endif %}
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
-            });   
-    
-    
-    
-    {#   traitement sur un support sélectionner   #}
-       $('#idChoisirGroupes').hide();
+       
+    {#   traitement sur un support sélectionné  #}
+       //$('#idChoisirGroupes').hide();
        {% for support in supports %}
-            {%if groupes | length%}  
+       {#     {%if groupes | length%}  
                 {% for groupe in groupes %}
                   {% for obliSupport in groupe.obliSupport %} 
                       {% if obliSupport.support | length %}
@@ -383,18 +347,19 @@
                         {% endif %}
                     {% endfor %}
                   {% endfor %}
-            {% endif %}
-    
-    $(document).on('click', '#checkSupport_{{ support.codeSupport }}', function(e){
-              {%if groupes | length%}  
-               {% for groupe in groupes %}
+            {% endif %}#}
+                
+          $(document).on('click', '#checkSupport_{{ support.codeSupport }}', function(e){
+                {#traitementGroupe({{ groupes|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},{{ support|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},'{{ action }}', '{{ maj }}', '{{ lotan.id }}');#}
+                 {%if groupes | length%}  
+                    {% for groupe in groupes %}
                    {% for obliSupport in groupe.obliSupport %} 
                       {% if obliSupport.support | length %}
                         {% if obliSupport.support.codeSupport == support.codeSupport %}
                                 if ($('#checkSupport_{{ support.codeSupport }}').is(':checked')){
-                                   $('#checkGroupe_{{ groupe.groupe.id }}').prop( "checked", true );
-                                   $('#idChoisirGroupes').show();
-                                   $('#idTr_{{ groupe.groupe.id }}').show();
+                                    $('#checkGroupe_{{ groupe.groupe.id }}').prop( "checked", true );
+                                    $('#idChoisirGroupes').show();
+                                    $('#idTr_{{ groupe.groupe.id }}').show();
                                 }else{
                                    $('#checkGroupe_{{ groupe.groupe.id }}').prop( "checked", false );
                                    $('#idTr_{{ groupe.groupe.id }}').hide();
@@ -403,41 +368,12 @@
                                     $('#checkGroupe_{{ groupe.groupe.id }}').prop( "disabled", true );
                                  {% else %}
                                     $('#checkGroupe_{{ groupe.groupe.id }}').prop( "disabled", false );
+                                    
                                     if ($('#checkGroupe_{{ groupe.groupe.id }}').is(':checked')){
-                                        var url = '{{ path("AeagSqeBundle_programmation_periode_autre_programmation",{"stationId":  "par1", "periodeId" : "par2", "groupeId" : "par3","action": "par4","maj":"par5","lotan":"par6"  }) }}';
-                                        url = url.replace("par1", $('#stationEncour').val());
-                                        url = url.replace("par2", $('#periodeEncour').val());
-                                        url = url.replace("amp;","");
-                                        url = url.replace("par3", {{ groupe.groupe.id }});
-                                        url = url.replace("amp;","");
-                                        url = url.replace("par4", '{{ action }}');
-                                         url = url.replace("amp;","");
-                                        url = url.replace("par5", '{{ maj }}');
-                                        url = url.replace("amp;","");
-                                        url = url.replace("par6", '{{ lotan.id }}');
-                                        url = url.replace("amp;","");
-                                        $.ajax({
-                                            url: url,
-                                            type: 'get', // La méthode indiquée dans le formulaire (get ou post)
-                                            success: function(reponse) { // Je récupère la réponse du fichier PHP
-                                                var message = JSON.parse(reponse);
-                                                $('#idTdCompl_{{ groupe.groupe.id }}').empty().append(message[1]);
-                                               
-                                            }
-                                        });
+                                        rqtAjaxProgPeriodeAutreProg($('#stationEncour').val(), $('#periodeEncour').val(), '{{ groupe.groupe.id }}', '{{ action }}', '{{ maj }}', '{{ lotan.id }}');
                                     }else{
                                         $('#checkSupport_{{ support.codeSupport }}').prop( "checked", false );
                                     };
-                                   {#{% if groupe.obliSupport | length %}
-                                        {% for obliSupport in groupe.obliSupport %} 
-                                            {% if groupe.groupe.grparRef.support.codeSupport == obliSupport.codeSupport %}
-                                                  $('#checkGroupe_{{ groupe.groupe.id }}').prop( "checked", true );
-                                                  $('#checkGroupe_{{ groupe.groupe.id }}').prop( "disabled", true );
-                                            {% else %}
-                                                  $('#checkGroupe_{{ groupe.groupe.id }}').prop( "disabled", false );
-                                            {% endif %}
-                                        {% endfor %}
-                                    {% endif %}#}
                                {% endif %}
                            {% endif %}
                                {% else %}
@@ -450,64 +386,16 @@
            });
        {% endfor %}
        
-       
-       {%if groupes | length%}  
+       // Traitement pour les groupes
+       {#{%if groupes | length%}  
             {% for groupe in groupes %}
-                
                 {% if groupe.nbParametres == 0  or groupe.obliSupport | length== 0%}
                              $('#idChoisirGroupes').show();
                              $('#idTr_{{ groupe.groupe.id }}').show();
                 {% endif %}
-                              
-               {# $('#checkGroupe_{{ groupe.groupe.id }}').prop( "disabled", false );
-                if ($('#checkGroupe_{{ groupe.groupe.id }}').is(':checked')){
-                       var url = '{{ path("AeagSqeBundle_programmation_periode_autre_programmation",{"stationId":  "par1", "periodeId" : "par2", "groupeId" : "par3" }) }}';
-                       url = url.replace("par1", $('#stationEncour').val());
-                       url = url.replace("par2", $('#periodeEncour').val());
-                       url = url.replace("par3", {{ groupe.groupe.id }});
-                       $.ajax({
-                           url: url,
-                           type: 'get', // La méthode indiquée dans le formulaire (get ou post)
-                           success: function(reponse) { // Je récupère la réponse du fichier PHP
-                               var message = JSON.parse(reponse);
-                               $('#idTdCompl_{{ groupe.groupe.id }}').empty().append(message[1]);
-                               if (message[0] == 'ko'){
-                                  {% if groupe.groupe.grparRef.support | length %}
-                                  $('#checkSupport_{{ groupe.groupe.grparRef.support.codeSupport }}').prop( "checked", false );
-                                  }else{
-                                  $('#checkSupport_{{ groupe.groupe.grparRef.support.codeSupport }}').prop( "checked", true );
-                                  {% endif %}
-                                  };
-                           }
-                       });
-               }else{
-                 {% if groupe.groupe.grparRef.support | length %}
-                   $('#checkSupport_{{ groupe.groupe.grparRef.support.codeSupport }}').prop( "checked", false );
-                  {% endif %}
-               };#}
                 $(document).on('click', '#checkGroupe_{{ groupe.groupe.id }}', function(e){
                     if ($('#checkGroupe_{{ groupe.groupe.id }}').is(':checked')){
-                         var url = '{{ path("AeagSqeBundle_programmation_periode_autre_programmation",{"stationId":  "par1", "periodeId" : "par2", "groupeId" : "par3","action": "par4","maj":"par5","lotan":"par6"  }) }}';
-                        url = url.replace("par1", $('#stationEncour').val());
-                        url = url.replace("par2", $('#periodeEncour').val());
-                        url = url.replace("amp;","");
-                        url = url.replace("par3", {{ groupe.groupe.id }});
-                        url = url.replace("amp;","");
-                        url = url.replace("par4", '{{ action }}');
-                         url = url.replace("amp;","");
-                        url = url.replace("par5", '{{ maj }}');
-                        url = url.replace("amp;","");
-                        url = url.replace("par6", '{{ lotan.id }}');
-                        url = url.replace("amp;","");
-                        $.ajax({
-                            url: url,
-                            type: 'get', // La méthode indiquée dans le formulaire (get ou post)
-                            success: function(reponse) { // Je récupère la réponse du fichier PHP
-                                var message = JSON.parse(reponse);
-                                $('#idTdCompl_{{ groupe.groupe.id }}').empty().append(message[1]);
-
-                            }
-                        });
+                        rqtAjaxProgPeriodeAutreProg($('#stationEncour').val(), $('#periodeEncour').val(), '{{ groupe.groupe.id }}', '{{ action }}', '{{ maj }}', '{{ lotan.id }}');
                         {% for autreGroupe in groupes %}
                             {% if groupe.groupe.id != autreGroupe.groupe.id %}
                                 {% for obliSupport in groupe.obliSupport %} 
@@ -518,27 +406,7 @@
                                                     {% if autreObliSupport.obli == "O" %}
                                                         $('#checkGroupe_{{ autreGroupe.groupe.id }}').prop( "checked", true );
                                                         $('#checkGroupe_{{ autreGroupe.groupe.id }}').prop( "disabled", true );
-                                                       var url = '{{ path("AeagSqeBundle_programmation_periode_autre_programmation",{"stationId":  "par1", "periodeId" : "par2", "groupeId" : "par3","action": "par4","maj":"par5","lotan":"par6"  }) }}';
-                                                        url = url.replace("par1", $('#stationEncour').val());
-                                                        url = url.replace("par2", $('#periodeEncour').val());
-                                                        url = url.replace("amp;","");
-                                                        url = url.replace("par3", {{ autreGroupe.groupe.id }});
-                                                        url = url.replace("amp;","");
-                                                        url = url.replace("par4", '{{ action }}');
-                                                         url = url.replace("amp;","");
-                                                        url = url.replace("par5", '{{ maj }}');
-                                                        url = url.replace("amp;","");
-                                                        url = url.replace("par6", '{{ lotan.id }}');
-                                                        url = url.replace("amp;","");
-                                                        $.ajax({
-                                                            url: url,
-                                                            type: 'get', // La méthode indiquée dans le formulaire (get ou post)
-                                                            success: function(reponse) { // Je récupère la réponse du fichier PHP
-                                                                var message = JSON.parse(reponse);
-                                                                $('#idTdCompl_{{ autreGroupe.groupe.id }}').empty().append(message[1]);
-
-                                                            }
-                                                        });
+                                                        rqtAjaxProgPeriodeAutreProg($('#stationEncour').val(), $('#periodeEncour').val(), '{{ autreGroupe.groupe.id }}', '{{ action }}', '{{ maj }}', '{{ lotan.id }}');
                                                     {% endif %}
                                                 {% endif %}
                                             {% endif %}
@@ -549,22 +417,10 @@
                         {% endfor %}
                      }
                 });
-               {# {% if groupe.groupe.grparRef.support | length %}
-                    {% if groupe.obliSupport | length %}
-                        {% for obliSupport in groupe.obliSupport %} 
-                            {% if groupe.groupe.grparRef.support.codeSupport == obliSupport.codeSupport %}
-                                  $('#checkGroupe_{{ groupe.groupe.id }}').prop( "checked", true );
-                                  $('#checkGroupe_{{ groupe.groupe.id }}').prop( "disabled", true );
-                            {% else %}
-                                  $('#checkGroupe_{{ groupe.groupe.id }}').prop( "disabled", false );
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
-                {% endif %}#}
            {% endfor %}
-     {% endif %}
+     {% endif %}#}
          
-     {%if groupes | length%}  
+{#     {%if groupes | length%}  
                 {% for groupe in groupes %}
                    {% if groupe.renseigne == 'N' %}
                         $('#checkGroupe_{{ groupe.groupe.id }}').prop( "checked", false );
@@ -572,9 +428,9 @@
                         $('#checkGroupe_{{ groupe.groupe.id }}').prop( "checked", true );
                      {% endif %}
                   {% endfor %}
-         {% endif %}
+         {% endif %}#}
 
-     {% if groupeExiste == 'N' %}
+{#     {% if groupeExiste == 'N' %}
         {% for support in supports %}
              {%if groupes | length%}  
                {% for groupe in groupes %}
@@ -582,9 +438,9 @@
                       {% if obliSupport.support | length %}
                         {% if obliSupport.support.codeSupport == support.codeSupport %}
                                 if ($('#checkSupport_{{ support.codeSupport }}').is(':checked')){
-                                     $('#checkGroupe_{{ groupe.groupe.id }}').prop( "checked", true );
-                                     $('#idChoisirGroupes').show();
-                                   $('#idTr_{{ groupe.groupe.id }}').show();
+                                        $('#checkGroupe_{{ groupe.groupe.id }}').prop( "checked", true );
+                                        $('#idChoisirGroupes').show();
+                                        $('#idTr_{{ groupe.groupe.id }}').show();
                                 }else{
                                    $('#checkGroupe_{{ groupe.groupe.id }}').prop( "checked", false );
                                    $('#idTr_{{ groupe.groupe.id }}').hide();
@@ -594,42 +450,12 @@
                                  {% else %}
                                     $('#checkGroupe_{{ groupe.groupe.id }}').prop( "disabled", false );
                                     if ($('#checkGroupe_{{ groupe.groupe.id }}').is(':checked')){
-                                        var url = '{{ path("AeagSqeBundle_programmation_periode_autre_programmation",{"stationId":  "par1", "periodeId" : "par2", "groupeId" : "par3","action": "par4","maj":"par5","lotan":"par6"  }) }}';
-                                        url = url.replace("par1", $('#stationEncour').val());
-                                        url = url.replace("par2", $('#periodeEncour').val());
-                                        url = url.replace("amp;","");
-                                        url = url.replace("par3", {{ groupe.groupe.id }});
-                                        url = url.replace("amp;","");
-                                        url = url.replace("par4", '{{ action }}');
-                                         url = url.replace("amp;","");
-                                        url = url.replace("par5", '{{ maj }}');
-                                        url = url.replace("amp;","");
-                                        url = url.replace("par6", '{{ lotan.id }}');
-                                        url = url.replace("amp;","");
-                                        $.ajax({
-                                            url: url,
-                                            type: 'get', // La méthode indiquée dans le formulaire (get ou post)
-                                            success: function(reponse) { // Je récupère la réponse du fichier PHP
-                                                var message = JSON.parse(reponse);
-                                                $('#idTdCompl_{{ groupe.groupe.id }}').empty().append(message[1]);
-                                               
-                                            }
-                                        });
+                                        rqtAjaxProgPeriodeAutreProg($('#stationEncour').val(), $('#periodeEncour').val(), '{{ groupe.groupe.id }}', '{{ action }}', '{{ maj }}', '{{ lotan.id }}');
                                     }else{
                                        {% if groupeRenseigne == 'N' %}
                                         $('#checkSupport_{{ support.codeSupport }}').prop( "checked", false );
                                         {% endif %}
                                     };
-                                   {#{% if groupe.obliSupport | length %}
-                                        {% for obliSupport in groupe.obliSupport %} 
-                                            {% if groupe.groupe.grparRef.support.codeSupport == obliSupport.codeSupport %}
-                                                  $('#checkGroupe_{{ groupe.groupe.id }}').prop( "checked", true );
-                                                  $('#checkGroupe_{{ groupe.groupe.id }}').prop( "disabled", true );
-                                            {% else %}
-                                                  $('#checkGroupe_{{ groupe.groupe.id }}').prop( "disabled", false );
-                                            {% endif %}
-                                        {% endfor %}
-                                    {% endif %}#}
                                {% endif %}
                            {% endif %}
                                {% else %}
@@ -640,8 +466,117 @@
                {% endfor %}
            {% endif %}
         {% endfor %}
-     {% endif %}       
+     {% endif %}  #}     
             
+    $(document).on('click', '#optionGroupes1', function(e){
+      $('#optionGroupes1').removeClass('btn-default').addClass('btn-primary');
+      $('#optionGroupes2').removeClass('btn-primary').addClass('btn-default');
+      $('#optionGroupes').val('C');
+     $('#idBlockAutrePeriodes').hide();
+      {%if groupes | length%}  
+          {% for groupe in groupes %}
+              {% if groupe.autre | length %}
+                $('#idTr_{{ groupe.groupe.id }}').addClass("label-warning");
+                $('#idTdPresta_{{ groupe.groupe.id }}').empty();
+                {% if groupe.autreGroupe.prestaDft %}
+                   $('#idTdPresta_{{ groupe.groupe.id }}').html('{{ groupe.autreGroupe.prestaDft.nomCorres }}');
+                {% endif %}
+              {% endif %}
+          {% endfor %}
+      {% endif %}
+      });  
+
+      $(document).on('click', '#optionGroupes2', function(e){
+      $('#optionGroupes2').removeClass('btn-default').addClass('btn-primary');
+      $('#optionGroupes1').removeClass('btn-primary').addClass('btn-default');
+      $('#optionGroupes').val('I');
+       $('#idBlockAutrePeriodes').show();
+      {%if groupes | length%}  
+          {% for groupe in groupes %}
+              {% if groupe.autre | length %}
+                $('#idTr_{{ groupe.groupe.id }}').removeClass("label-warning");
+                $('#idTdPresta_{{ groupe.groupe.id }}').empty();
+                {% if groupe.groupe.prestaDft %}
+                   $('#idTdPresta_{{ groupe.groupe.id }}').html('{{ groupe.groupe.prestaDft.nomCorres }}');
+                {% endif %}
+              {% endif %}
+          {% endfor %}
+      {% endif %}
+      });
+      
+      function rqtAjaxProgPeriodeAutreProg(station, periode, groupeId, action, maj, lotanId) {
+          var url = '{{ path("AeagSqeBundle_programmation_periode_autre_programmation",{"stationId":  "par1", "periodeId" : "par2", "groupeId" : "par3","action": "par4","maj":"par5","lotan":"par6"  }) }}';
+            url = url.replace("par1", station);
+            url = url.replace("par2", periode);
+            url = url.replace("amp;","");
+            url = url.replace("par3", groupeId);
+            url = url.replace("amp;","");
+            url = url.replace("par4", action);
+             url = url.replace("amp;","");
+            url = url.replace("par5", maj);
+            url = url.replace("amp;","");
+            url = url.replace("par6", lotanId);
+            url = url.replace("amp;","");
+            $.ajax({
+                url: url,
+                type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+                success: function(reponse) { // Je récupère la réponse du fichier PHP
+                    var message = JSON.parse(reponse);
+                    $('#idTdCompl_'+groupeId).empty().append(message[1]);
+
+                }
+            });
+      }
+      
+      function traitementGroupe(groupes, support, action, maj, lotanId) {          
+            {#{%if groupes | length%}  #}
+            if (groupes.length) {        
+                {#   {% for groupe in groupes %}#}
+                $.each(groupes, function (index, groupe) {
+                    {#{% for obliSupport in groupe.obliSupport %} #}
+                            console.log(groupe);
+                    $.each(groupe.obliSupport, function (index, obliSupport) {
+                        {#{% if obliSupport.support | length %}#}
+                                console.log(obliSupport.support);
+                        if (obliSupport.support != null && obliSupport.support.length) {
+                            if (obliSupport.support.codeSupport == support.codeSupport) {
+                            {#{% if obliSupport.support.codeSupport == support.codeSupport %}#}
+                                if ($('#checkSupport_'+ support.codeSupport ).is(':checked')){
+                                    $('#checkGroupe_' + groupe.groupe.id ).prop( "checked", true );
+                                    $('#idChoisirGroupes').show();
+                                    $('#idTr_' + groupe.groupe.id ).show();
+                                }else{
+                                   $('#checkGroupe_' + groupe.groupe.id).prop( "checked", false );
+                                   $('#idTr_' + groupe.groupe.id ).hide();
+                                };
+                                {#{% if obliSupport.obli == "O" %}#}
+                                if (obliSupport.obli === 'O') {
+                                    $('#checkGroupe_'+ groupe.groupe.id).prop( "disabled", true );
+                                } else {
+                                {#{% else %}#}
+                                    $('#checkGroupe_' + groupe.groupe.id).prop( "disabled", false );
+
+                                    if ($('#checkGroupe_' + groupe.groupe.id).is(':checked')){
+                                        rqtAjaxProgPeriodeAutreProg($('#stationEncour').val(), $('#periodeEncour').val(), groupe.groupe.id,  action, maj, lotanId);
+                                    }else{
+                                        $('#checkSupport_' + support.codeSupport).prop( "checked", false );
+                                    };
+                                }
+                                {#{% endif %}#}
+                            {#{% endif %}#}
+                            }
+                        } else {   {#{% else %}#}
+                            $('#idChoisirGroupes').show();
+                            $('#idTr_' + groupe.groupe.id).show();
+                        {#{% endif %}#}
+                        }
+                    {#{% endfor %}#}
+                    });
+              {#{% endfor %}#}
+                });
+            {#{% endif %}#}
+            }
+      }
       
         
 </script>

@@ -1333,7 +1333,7 @@ class ProgrammationPeriodeController extends Controller {
         $tabStationPeriode["station"] = $pgProgLotStationAn;
         $tabStationPeriode["periode"] = $pgProgLotPeriodeAn;
         $tabStationPeriode["sitePrelevemnts"] = $pgRefSitePrelevements;
-
+        
         $tabgroupes = array();
         $i = 0;
         foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
@@ -1344,9 +1344,7 @@ class ProgrammationPeriodeController extends Controller {
             if ($nbProgGrparRefLstParam == 0) {
                 $tabgroupes[$i]["renseigne"] = 'O';
             }
-            if (!$pgProgLotGrparAn->getGrparRef()->getSupport()) {
-                $tabgroupes[$i]["renseigne"] = 'O';
-            }
+            
             $tabgroupes[$i]["nbParametres"] = $nbProgGrparRefLstParam;
             $tabgroupes[$i]["Compl"] = 'N';
             $pgProgLotPeriodeProg = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByStationAnGrparAnPeriodeAn($pgProgLotStationAn, $pgProgLotGrparAn, $pgProgLotPeriodeAn);
@@ -1461,7 +1459,8 @@ class ProgrammationPeriodeController extends Controller {
         $pgProgLotStationAn = $repoPgProgLotStationAn->getPgProgLotStationAnById($stationId);
         $pgProgPeriode = $repoPgProgPeriodes->getPgProgPeriodesById($periodeId);
         $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnBySLotanPeriode($pgProgLotAn, $pgProgPeriode);
-
+        
+        //var_dump($tabgroupes);
 
         return $this->render('AeagSqeBundle:Programmation:Periode\programmer.html.twig', array(
                     'action' => $action,
