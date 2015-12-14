@@ -28,12 +28,12 @@
                                 <td>
                                     {% if action == 'P'  and maj != 'V' %}
                                         <div class="text-center">
-                                            <input type="checkbox" id="checkSupport_{{ support.codeSupport }}" name="checkSupport[]" value="{{ support.codeSupport }}" >
+                                            <input type="checkbox" id="checkSupport_{{ support.codeSupport }}" class="checkSupport" name="checkSupport[]" value="{{ support.codeSupport }}" >
                                             <div id ="idSitePrelevement_{{ support.codeSupport }}" class="label-warning"></div>
                                         </div>
                                     {% else %}
                                         <div id="idSupportCocher_{{ support.codeSupport }}">
-                                             <input type="hidden" id="idSupportCocherOk_{{ support.codeSupport }}"  value="" >
+                                             <input type="hidden" id="idSupportCocherOk_{{ support.codeSupport }}"  class="checkSupport" value="" >
                                              <span class="glyphicon glyphicon-check" aria-hidden="true"></span>
                                         </div>
                                     {% endif %}
@@ -94,12 +94,8 @@
                                         {{ groupe.groupe.grparRef.typeGrp }}
                                     </td>
                                     <td>
-                                        {% if groupe.obliSupport | length %}
-                                            {% for obliSupport in groupe.obliSupport %} 
-                                                {% if obliSupport.support | length %}
-                                                   {{ obliSupport.support.nomSupport }}&nbsp;&nbsp;
-                                                {% endif %}
-                                            {% endfor %}
+                                        {% if groupe.groupe.grparRef.support | length %}
+                                            {{ groupe.groupe.grparRef.support.nomSupport }}
                                        {% endif %}
                                     </td>
                                     <td id="idTdPresta_{{ groupe.groupe.id }}">
@@ -257,7 +253,6 @@
         });
     });
     
-    
     {%set groupeRenseigne = 'N' %}
     {%set groupeExiste = 'N' %}
     {% if groupes | length %}  
@@ -332,57 +327,42 @@
     {#   traitement sur un support sélectionné  #}
        //$('#idChoisirGroupes').hide();
        {% for support in supports %}
-       {#     {%if groupes | length%}  
-                {% for groupe in groupes %}
-                  {% for obliSupport in groupe.obliSupport %} 
-                      {% if obliSupport.support | length %}
-                        {% if obliSupport.support.codeSupport == support.codeSupport %}
-                                if ($('#checkSupport_{{ support.codeSupport }}').is(':checked') || $('#idSupportCocherOk_{{ obliSupport.support.codeSupport }}').val() == 'O'){
-                                   $('#idChoisirGroupes').show();
-                                    $('#idTr_{{ groupe.groupe.id }}').show();
-                                 }else{
-                                    $('#idTr_{{ groupe.groupe.id }}').hide();
-                                 };
-                        {% endif %}
-                        {% endif %}
-                    {% endfor %}
-                  {% endfor %}
-            {% endif %}#}
                 
           $(document).on('click', '#checkSupport_{{ support.codeSupport }}', function(e){
-                {#traitementGroupe({{ groupes|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},{{ support|json_encode(constant('JSON_PRETTY_PRINT'))|raw }},'{{ action }}', '{{ maj }}', '{{ lotan.id }}');#}
-                 {%if groupes | length%}  
+              // On récupère les supports cochés dans un tableau
+              var tabCodeSupports = new Array();
+              $('input:checkbox.checkSupport').each(function () {
+                    if (this.checked) {
+                        tabCodeSupports.push($(this).val());
+                    }
+               });
+               
+               // Pour chaque groupe, on vérifie les correspondances entre les codes supports et les codes supports du groupe
+              {%if groupes | length%}  
                     {% for groupe in groupes %}
-                   {% for obliSupport in groupe.obliSupport %} 
-                      {% if obliSupport.support | length %}
-                        {% if obliSupport.support.codeSupport == support.codeSupport %}
-                                if ($('#checkSupport_{{ support.codeSupport }}').is(':checked')){
-                                    $('#checkGroupe_{{ groupe.groupe.id }}').prop( "checked", true );
-                                    $('#idChoisirGroupes').show();
-                                    $('#idTr_{{ groupe.groupe.id }}').show();
-                                }else{
-                                   $('#checkGroupe_{{ groupe.groupe.id }}').prop( "checked", false );
-                                   $('#idTr_{{ groupe.groupe.id }}').hide();
-                                };
-                                {% if obliSupport.obli == "O" %}
-                                    $('#checkGroupe_{{ groupe.groupe.id }}').prop( "disabled", true );
-                                 {% else %}
-                                    $('#checkGroupe_{{ groupe.groupe.id }}').prop( "disabled", false );
-                                    
-                                    if ($('#checkGroupe_{{ groupe.groupe.id }}').is(':checked')){
-                                        rqtAjaxProgPeriodeAutreProg($('#stationEncour').val(), $('#periodeEncour').val(), '{{ groupe.groupe.id }}', '{{ action }}', '{{ maj }}', '{{ lotan.id }}');
-                                    }else{
-                                        $('#checkSupport_{{ support.codeSupport }}').prop( "checked", false );
-                                    };
-                               {% endif %}
-                           {% endif %}
-                               {% else %}
-                                   $('#idChoisirGroupes').show();
-                             $('#idTr_{{ groupe.groupe.id }}').show();
-                   {% endif %}
-                   {% endfor %}
-               {% endfor %}
-           {% endif %}
+                        var aAfficher = 'N';
+                        {% for obliSupport in groupe.obliSupport %}
+                            {% if obliSupport.support | length %}
+                                var codeSupportGroupe = '{{ obliSupport.support.codeSupport }}';
+                                if (tabCodeSupports.indexOf(codeSupportGroupe) !== -1) {
+                                     aAfficher = 'O';
+                                } else {
+                                }
+                            {% endif %}    
+                        {% endfor %}
+                        
+                        // if code support du groupe in tabCodeSupports, check sinon decheck
+                        if (aAfficher === 'O') {
+                            $('#checkGroupe_{{ groupe.groupe.id }}').prop( "checked", true );
+                            $('#idChoisirGroupes').show();
+                            $('#idTr_{{ groupe.groupe.id }}').show();
+                        } else {
+                            $('#checkGroupe_{{ groupe.groupe.id }}').prop( "checked", false );
+                            $('#idTr_{{ groupe.groupe.id }}').hide();
+                        }
+   
+                    {% endfor %}
+                {% endif %}                
            });
        {% endfor %}
        
