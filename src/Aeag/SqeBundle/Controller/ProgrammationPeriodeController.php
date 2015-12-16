@@ -1855,7 +1855,7 @@ class ProgrammationPeriodeController extends Controller {
         $tabMessage = array();
         $html = $pgProgLotGrparAn->getGrparRef()->getCodeGrp() . '  ' . $pgProgLotGrparAn->getGrparRef()->getLibelleGrp();
         if ($trouve) {
-//$html = $html . 'inclus dans la programmation ' . $trouvelot->getanneeProg() . ' du lot ' . $trouvelot->getLot()->getNomLot();
+            //$html = $html . 'inclus dans la programmation ' . $trouvelot->getanneeProg() . ' du lot ' . $trouvelot->getLot()->getNomLot();
             $tabMessage[0] = 'ko';
             $tabMessage[1] = $html;
             $tabMessage[2] = $trouvelot;
