@@ -1374,9 +1374,9 @@ class ProgrammationPeriodeController extends Controller {
                         foreach ($pgProgLotPeriodeAnAutres as $pgProgLotPeriodeAnAutre) {
                             if ($pgProgLotPeriodeAnAutre->getCodeStatut()->getCodeStatut() != 'INV') {
                                 if ($pgProgLotPeriodeAn->getLotAn()->getAnneeProg() == $pgProgLotPeriodeAnAutre->getLotAn()->getAnneeProg()) {
-                                    if ($pgProgLotPeriodeAnAutre->getLotan()->getid() != $pgProgLotPeriodeAnAutre->getLotan()->getid()) {
+                                    if ($pgProgLotPeriodeAn->getLotan()->getid() != $pgProgLotPeriodeAnAutre->getLotan()->getid()) {
                                         if ($pgProgLotPeriodeAnAutre->getLotan()->getPhase()->getCodePhase() >= 'P25') {
-                                            if ($pgProgLotPeriodeAnAutre->getLotan()->getLot()->getId() != $pgProgLotPeriodeAnAutre->getLotan()->getLot()->getId()) {
+                                            if ($pgProgLotPeriodeAn->getLotan()->getLot()->getId() != $pgProgLotPeriodeAnAutre->getLotan()->getLot()->getId()) {
                                                 $pgProgLotPeriodeProgAutres = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByGrparAnPeriodeAn($pgProgLotGrparAnAutre, $pgProgLotPeriodeAnAutre);
                                                 foreach ($pgProgLotPeriodeProgAutres as $pgProgLotPeriodeProgAutre) {
                                                     if ($pgProgLotPeriodeProgAutre->getStationAn()->getStation()->getOuvFoncId() == $pgProgLotStationAn->getStation()->getOuvFoncId()) {
@@ -1384,6 +1384,7 @@ class ProgrammationPeriodeController extends Controller {
                                                         $tabgroupes[$i]["autre"] = $trouvelot;
                                                         $tabgroupes[$i]["autreGroupe"] = $pgProgLotPeriodeProgAutre->getGrparAn();
                                                     }
+                                                    
                                                 }
                                             }
                                         }
