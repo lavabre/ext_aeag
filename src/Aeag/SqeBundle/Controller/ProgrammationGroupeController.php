@@ -638,6 +638,7 @@ class ProgrammationGroupeController extends Controller {
         $tabLaboratoires = array();
         $pgProgLotPrestas = $repoPgProgLotPresta->getPgProgLotPrestaByLotTypePresta($pgProgLotAn->getLot(), 'L');
         if ($pgProgLotPrestas) {
+            var_dump('ici');
             foreach ($pgProgLotPrestas as $pgProgLotPresta) {
                 $trouve = false;
                 $size = count($tabLaboratoires);

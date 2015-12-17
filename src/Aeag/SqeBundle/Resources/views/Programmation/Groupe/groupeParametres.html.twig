@@ -143,10 +143,7 @@
                          }
                         }
                        );
-               
-         
-   
-        
+        // ==> Partie du code qui ralentit la génération de la page
         {% if groupe.groupe.typeGrp  == 'ANA' %}
             {% if groupe.parametres | length %}
                 var info = tableGroupeParametres.page.info();
@@ -161,24 +158,22 @@
                     $(document).on('click','#check_{{ parametre.pgSandreParametre.codeParametre }}',function(e){
                              nbcocher();
                      });
-                   {%if laboratoires | length %}  
-                       {% for laboratoire in laboratoires %}
-                           {% if parametre.prestataire %}
-                                 {% if parametre.prestataire.adrCorId ==   laboratoire.adrCorId %}
-                                        $("#prestataire_{{ parametre.pgSandreParametre.codeParametre }} option[value='" + {{ laboratoire.adrCorId }} + "']").attr('selected','selected');
-                                        $("#prestataire_{{ parametre.pgSandreParametre.codeParametre }}").val({{ laboratoire.adrCorId }});
-                                      {% endif %}
-                                  {% endif %}
-                          {% endfor %}
-                      {% endif %}
+                    {%if laboratoires | length %}  
+                        {% if parametre.prestataire %}
+                            {% for laboratoire in laboratoires if parametre.prestataire.adrCorId == laboratoire.adrCorId %}
+                                $("#prestataire_{{ parametre.pgSandreParametre.codeParametre }} option[value='" + {{ laboratoire.adrCorId }} + "']").attr('selected','selected');
+                                $("#prestataire_{{ parametre.pgSandreParametre.codeParametre }}").val({{ laboratoire.adrCorId }});
+                            {% endfor %}
+                        {% endif %}
+                    {% endif %}
                 {% endfor %}
                    if (filtre != ''){
                         tableGroupeParametres.search(filtre).draw();
-                   };
-                    tableGroupeParametres.page.len( nbRecords ).draw();
+                   }
+                   tableGroupeParametres.page.len( nbRecords ).draw();
             {% endif %}   
         {% endif %}
-          
+        // <==  
        
         {% if valide == 'O' %}
             $('#cocherParametres').hide();
@@ -197,8 +192,6 @@
                         tableGroupeParametres.search(initval).draw();
                      };
                 tableGroupeParametres.page.len( -1 ).draw();
-            {#$('#cocherParametres').removeClass('btn-success').addClass('btn-danger');
-            $('#cocherParametres i').removeClass('fa-check').addClass('fa-eraser');#}
             $('#cocherParametres').hide();
             $('#decocherParametres').show();
             {% if groupe.parametres | length %}
@@ -222,8 +215,6 @@
                         tableGroupeParametres.search(initval).draw();
                      };
                 tableGroupeParametres.page.len( -1 ).draw();
-            {#$('#cocherParametres').removeClass('btn-danger').addClass('btn-success');
-            $('#cocherParametres i').removeClass('fa-eraser').addClass('fa-check');#}
             $('#cocherParametres').show();
             $('#decocherParametres').hide();
             {% if groupe.parametres | length %}
