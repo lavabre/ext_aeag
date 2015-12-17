@@ -1460,7 +1460,7 @@ class ProgrammationPeriodeController extends Controller {
         $pgProgLotStationAn = $repoPgProgLotStationAn->getPgProgLotStationAnById($stationId);
         $pgProgPeriode = $repoPgProgPeriodes->getPgProgPeriodesById($periodeId);
         $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnBySLotanPeriode($pgProgLotAn, $pgProgPeriode);
-        
+
         //var_dump($tabgroupes);
 
         return $this->render('AeagSqeBundle:Programmation:Periode\programmer.html.twig', array(

@@ -806,11 +806,22 @@ class ProgrammationBilanController extends Controller {
         $pgProgLotGrparAns = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotan($pgProgLotAn);
         $pgProgLotStationAns = $repoPgProgLotStationAn->getPgProgLotStationAnBylotan($pgProgLotAn);
         $pgProgLotPeriodeAns = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnByLotan($pgProgLotAn);
-
+        
         $tabPeriodes = array();
         $i = 0;
         foreach ($pgProgLotPeriodeAns as $pgProgLotPeriodeAn) {
             $tabPeriodes[$i]["periode"] = $pgProgLotPeriodeAn;
+            
+            if ($pgProgLot->getDelaiPrel()) {
+                $dateFin = clone($pgProgLotPeriodeAn->getPeriode()->getDateDeb());
+                $delai = $pgProgLot->getDelaiPrel();
+                $dateFin->add(new \DateInterval('P' . $delai . 'D'));
+            } else {
+                $dateFin = $pgProgLotPeriodeAn->getPeriode()->getDateFin();
+            }
+            $pgProgLotPeriodeAn->getPeriode()->setDateFin($dateFin);
+            
+            
             $pgProglotPeriodeProgsByPeriode = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByPeriodeAn($pgProgLotPeriodeAn);
             $tabProgs = array();
             $tabProgCompls = array();

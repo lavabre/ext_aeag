@@ -143,7 +143,6 @@
                          }
                         }
                        );
-        // ==> Partie du code qui ralentit la génération de la page
         {% if groupe.groupe.typeGrp  == 'ANA' %}
             {% if groupe.parametres | length %}
                 var info = tableGroupeParametres.page.info();
@@ -173,7 +172,6 @@
                    tableGroupeParametres.page.len( nbRecords ).draw();
             {% endif %}   
         {% endif %}
-        // <==  
        
         {% if valide == 'O' %}
             $('#cocherParametres').hide();
