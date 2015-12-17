@@ -391,8 +391,10 @@ class ProgrammationStationController extends Controller {
                         if ($pgProgLotStationAnAutre->getLotan()->getAnneeProg() == $pgProgLotAn->getAnneeProg()) {
                             if ($pgProgLotStationAnAutre->getLotan()->getPhase()->getCodePhase() >= 'P25') {
                                 if ($pgProgLotStationAnAutre->getLotan()->getLot()->getId() != $pgProgLotAn->getLot()->getId()) {
-                                    $tabStations[$i]['autreLot'] = $pgProgLotStationAnAutre->getLotan();
-                                    $tabStations[$i]['lienAutreLot'] = 'http://ext.eau-adour-garonne.fr/sqe/programmation/bilan/?action=V&maj=V&lotan=' . $pgProgLotStationAnAutre->getLotan()->getid();
+                                    if ($pgProgLotStationAnAutre->getLotan()->getLot()->getCodeMilieu() == $pgProgLotAn->getLot()->getCodeMilieu()) {
+                                        $tabStations[$i]['autreLot'] = $pgProgLotStationAnAutre->getLotan();
+                                        $tabStations[$i]['lienAutreLot'] = 'http://ext.eau-adour-garonne.fr/sqe/programmation/bilan/?action=V&maj=V&lotan=' . $pgProgLotStationAnAutre->getLotan()->getid();
+                                    }
                                 }
                             }
                         }
@@ -705,8 +707,10 @@ class ProgrammationStationController extends Controller {
                         if ($pgProgLotStationAnAutre->getLotan()->getAnneeProg() == $pgProgLotAn->getAnneeProg()) {
                             if ($pgProgLotStationAnAutre->getLotan()->getPhase()->getCodePhase() >= 'P25') {
                                 if ($pgProgLotStationAnAutre->getLotan()->getLot()->getId() != $pgProgLotAn->getLot()->getId()) {
-                                    $tabStations[$i]['autreLot'] = $pgProgLotStationAnAutre->getLotan();
-                                    $tabStations[$i]['lienAutreLot'] = 'http://ext.eau-adour-garonne.fr/sqe/programmation/bilan/?action=V&maj=V&lotan=' . $pgProgLotStationAnAutre->getLotan()->getid();
+                                    if ($pgProgLotStationAnAutre->getLotan()->getLot()->getCodeMilieu() == $pgProgLotAn->getLot()->getCodeMilieu()) {
+                                        $tabStations[$i]['autreLot'] = $pgProgLotStationAnAutre->getLotan();
+                                        $tabStations[$i]['lienAutreLot'] = 'http://ext.eau-adour-garonne.fr/sqe/programmation/bilan/?action=V&maj=V&lotan=' . $pgProgLotStationAnAutre->getLotan()->getid();
+                                    }
                                 }
                             }
                         }
