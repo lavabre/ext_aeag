@@ -207,17 +207,42 @@
 
 <script>
     
-    if ($('#optionGroupes').val() == 'C'){
-        $('#idBlockAutrePeriodes').hide();
-    }else{
-        $('#idBlockAutrePeriodes').show();
-    }
-    
     {% if Compl == 'O'%}
         $('#optionGroupes').val('C');
     {% else %}
          $('#optionGroupes').val('I');
     {% endif %}
+    
+    if ($('#optionGroupes').val() == 'C'){
+        $('#idBlockAutrePeriodes').hide();
+    }else{
+        $('#idBlockAutrePeriodes').show();
+    }
+
+    // Initialisation des tableaux en fonction du statut ignoré ou complété
+    {%if groupes | length%}  
+        {% for groupe in groupes %}
+            {% if groupe.autre | length %}
+                {% if Compl == 'O'%}
+                    $('#idTr_{{ groupe.groupe.id }}').addClass("label-warning");
+                {% else %}
+                    $('#idTr_{{ groupe.groupe.id }}').removeClass("label-warning");
+                {% endif %}
+                $('#idTdPresta_{{ groupe.groupe.id }}').empty();
+                {% if groupe.autreGroupe.prestaDft %}
+                    {% if Compl == 'O'%}
+                        {% if groupe.autreGroupe.prestaDft %}
+                            $('#idTdPresta_{{ groupe.groupe.id }}').html('{{ groupe.autreGroupe.prestaDft.nomCorres }}');
+                        {% endif %}
+                    {% else %}
+                        {% if groupe.groupe.prestaDft %}
+                            $('#idTdPresta_{{ groupe.groupe.id }}').html('{{ groupe.groupe.prestaDft.nomCorres }}');
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}    
     
       {# validation des groupes pour une periode#}
     $(document).on('click','#idValiderSelectionGroupe',function(e){

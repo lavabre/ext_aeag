@@ -1351,9 +1351,14 @@ class ProgrammationPeriodeController extends Controller {
             if ($pgProgLotPeriodeProg) {
                 $tabgroupes[$i]["renseigne"] = 'O';
                 $tabgroupes[$i]["existe"] = 'O';
-                if ($pgProgLotPeriodeProg->getPprogCompl()) {
+                /*if ($pgProgLotPeriodeProg->getPprogCompl()) {
+                    $tabgroupes[$i]["Compl"] = 'O';
+                }*/
+                
+                if ($pgProgLotPeriodeProg->getStatut() == 'C') {
                     $tabgroupes[$i]["Compl"] = 'O';
                 }
+                
                 $pgProgLotPeriodeProgCompls = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByPprogCompl($pgProgLotPeriodeProg);
                 if (count($pgProgLotPeriodeProgCompls) > 0) {
                     $tabgroupes[$i]["EstCompl"] = 'O';
@@ -1554,7 +1559,6 @@ class ProgrammationPeriodeController extends Controller {
                             if ($pgProgLotPeriodeProgAutre->getStationAn()->getLotan()->getPhase()->getCodePhase() >= 'P25') {
                                 if ($pgProgLotPeriodeProgAutre->getStationAn()->getLotan()->getLot()->getId() != $pgProgLotStationAn->getLotan()->getLot()->getId()) {
 
-
                                     foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
                                         if ($pgProgLotPeriodeProgAutre->getGrparAn()->getGrparRef()->getId() == $pgProgLotGrparAn->getGrparRef()->getId()) {
                                             $trouve = false;
@@ -1655,15 +1659,21 @@ class ProgrammationPeriodeController extends Controller {
                 $pgProgLotPeriodeProg->setStatut('N');
             }
 
-
             $emSqe->persist($pgProgLotPeriodeProg);
-
+            
             if (count($selAutrePeriodeAns) > 0) {
                 for ($i = 0; $i < count($selAutrePeriodeAns); $i++) {
                     if ($selAutrePeriodeAns[$i]) {
+                        
                         $autrePeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($selAutrePeriodeAns[$i]);
                         $autrePeriodeProg = clone($pgProgLotPeriodeProg);
                         $autrePeriodeProg->setPeriodAn($autrePeriodeAn);
+                        
+                        if ($optionGroupes == 'I') {
+                            $autrePeriodeProg->setStatut('N');
+                            $autrePeriodeProg->setPprogCompl(null);
+                        }
+                        
                         $emSqe->persist($autrePeriodeProg);
                     }
                 }
