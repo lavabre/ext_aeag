@@ -512,7 +512,7 @@
     
     reseauValeur = $('#reseau option:selected').val();
     reseauLibelle = $('#reseau option:selected').text();
-    {%if stations | length%}  
+    {%if stations | length%} 
         {% for station in stations %}
             {% if station.reseauSelectionne %}
                 $("#idStationReseau_{{ station.station.ouvFoncId }}").val({{ station.reseauSelectionne.groupementId }});

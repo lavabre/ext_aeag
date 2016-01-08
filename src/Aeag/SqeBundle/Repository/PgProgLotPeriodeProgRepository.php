@@ -154,7 +154,7 @@ class PgProgLotPeriodeProgRepository extends EntityRepository {
         return $qb->getResult();
     }
     
-    public function getPgProgLotPeriodeProgAutres($pgProgLotGrparAn, $pgProgPeriode, $pgProgLotStationAn, $pgProgLot) {
+    public function getPgProgLotPeriodeProgAutres($pgProgLotGrparAn, $pgProgPeriode, $pgProgLotStationAn, $pgProgLotAn, $phaseIdMin) {
         
         $query = "select p";
         $query .= " from Aeag\SqeBundle\Entity\PgProgLotPeriodeProg p";
@@ -162,10 +162,13 @@ class PgProgLotPeriodeProgRepository extends EntityRepository {
         $query .= " join p.grparAn gran";
         $query .= " join p.stationAn stan";
         $query .= " join stan.lotan lotan";
+        $query .= " join lotan.lot lot";
         $query .= " where pean.periode = ".$pgProgPeriode->getId()." AND pean.codeStatut <> 'INV' ";
         $query .= " and gran.grparRef = ".$pgProgLotGrparAn->getGrparRef()->getId();
         $query .= " and stan.station = ".$pgProgLotStationAn->getStation()->getOuvFoncId();
-        $query .= " and lotan.lot <> ".$pgProgLot->getId()." and lotan.phase > 3"; // phase >= P25
+        $query .= " and lotan.lot <> ".$pgProgLotAn->getLot()->getId()." and lotan.phase > ".$phaseIdMin; // phase >= P25
+        $query .= " and lot.codeMilieu = '".$pgProgLotAn->getLot()->getCodeMilieu()->getCodeMilieu()."'";
+        $query .= " and lotan.anneeProg = ".$pgProgLotAn->getAnneeProg();
         
         $qb = $this->_em->createQuery($query);
         return $qb->getResult();

@@ -931,7 +931,7 @@ class ProgrammationPeriodeController extends Controller {
             $pgProgLotPeriodeAnSelectionne = $pgProgLotPeriodeProgSelectionne->getPeriodan();
             $pgProgPeriodeSelectionne = $pgProgLotPeriodeProgSelectionne->getPeriodan()->getPeriode();
             
-            $pgProgLotPeriodeProgAutres = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgAutres($pgProgLotGrparAnSelectionne, $pgProgPeriodeSelectionne, $pgProgLotStationAnSelectionne, $pgProgLot);
+            $pgProgLotPeriodeProgAutres = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgAutres($pgProgLotGrparAnSelectionne, $pgProgPeriodeSelectionne, $pgProgLotStationAnSelectionne, $pgProgLotAn, 3);
             
             foreach ($pgProgLotPeriodeProgAutres as $pgProgLotPeriodeProgAutre) {
                             $pgProgLotPeriodeProgSelectionne->setPprogCompl($pgProgLotPeriodeProgAutre);
@@ -1257,36 +1257,14 @@ class ProgrammationPeriodeController extends Controller {
             }
             $tabgroupes[$i]["autre"] = null;
             $tabgroupes[$i]["autreGroupe"] = null;
-            $pgProgLotGrparAnAutres = $repoPgProgLotGrparAn->getPgProgLotGrparAnByGrpparref($pgProgLotGrparAn->getGrparRef());
-            foreach ($pgProgLotGrparAnAutres as $pgProgLotGrparAnAutre) {
-                if ($pgProgLotGrparAn->getLotAn()->getid() != $pgProgLotGrparAnAutre->getLotAn()->getid()) {
-                    if ($pgProgLotGrparAn->getLotAn()->getAnneeProg() == $pgProgLotGrparAnAutre->getLotAn()->getAnneeProg()) {
-                        $pgProgLotPeriodeAnAutres = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnByPeriode($pgProgLotPeriodeAn->getPeriode());
-                        foreach ($pgProgLotPeriodeAnAutres as $pgProgLotPeriodeAnAutre) {
-                            if ($pgProgLotPeriodeAnAutre->getCodeStatut()->getCodeStatut() != 'INV') {
-                                if ($pgProgLotPeriodeAn->getLotAn()->getAnneeProg() == $pgProgLotPeriodeAnAutre->getLotAn()->getAnneeProg()) {
-                                    if ($pgProgLotPeriodeAn->getLotan()->getid() != $pgProgLotPeriodeAnAutre->getLotan()->getid()) {
-                                        if ($pgProgLotPeriodeAnAutre->getLotan()->getPhase()->getCodePhase() >= 'P25') {
-                                            if ($pgProgLotPeriodeAn->getLotan()->getLot()->getId() != $pgProgLotPeriodeAnAutre->getLotan()->getLot()->getId()) {
-                                                if ($pgProgLotPeriodeAn->getLotan()->getLot()->getCodeMilieu() == $pgProgLotPeriodeAnAutre->getLotan()->getLot()->getCodeMilieu()) {
-                                                    $pgProgLotPeriodeProgAutres = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByGrparAnPeriodeAn($pgProgLotGrparAnAutre, $pgProgLotPeriodeAnAutre);
-                                                    foreach ($pgProgLotPeriodeProgAutres as $pgProgLotPeriodeProgAutre) {
-                                                        if ($pgProgLotPeriodeProgAutre->getStationAn()->getStation()->getOuvFoncId() == $pgProgLotStationAn->getStation()->getOuvFoncId()) {
-                                                            $trouvelot = $pgProgLotPeriodeProgAutre->getStationAn()->getlotAn();
-                                                            $tabgroupes[$i]["autre"] = $trouvelot;
-                                                            $tabgroupes[$i]["autreGroupe"] = $pgProgLotPeriodeProgAutre->getGrparAn();
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+            
+            $pgProgLotPeriodeProgAutres = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgAutres($pgProgLotGrparAn, $pgProgLotPeriodeAn->getPeriode(), $pgProgLotStationAn, $pgProgLotAn, 3);
+            foreach ($pgProgLotPeriodeProgAutres as $pgProgLotPeriodeProgAutre) {
+                $trouvelot = $pgProgLotPeriodeProgAutre->getStationAn()->getlotAn();
+                $tabgroupes[$i]["autre"] = $trouvelot;
+                $tabgroupes[$i]["autreGroupe"] = $pgProgLotPeriodeProgAutre->getGrparAn();
             }
+            
             $tabGrparAnSupports = array();
             $tabGrparAnSupports[0]["support"] = $pgProgLotGrparAn->getGrparRef()->getSupport();
             $tabGrparAnSupports[0]["obli"] = "N";
@@ -1369,6 +1347,8 @@ class ProgrammationPeriodeController extends Controller {
 
     public function validerAction($stationId = null, $periodeId = null, $optionGroupes = null) {
         
+        $logger = $this->get('logger');
+
         $user = $this->getUser();
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -1432,7 +1412,7 @@ class ProgrammationPeriodeController extends Controller {
         $tabGrparAns = Array();
         
         $this->createProgrammation($emSqe, $optionGroupes, $repoPgProgLotStationAn, $repoPgProgLotPeriodeProg, $repoPgProgLotPeriodeAn, 
-            $repoPgProgLotGrparAn, $pgProgLotStationAn, $pgProgPeriode, $pgProgLotGrparAns, $pgProgLotAn, $pgProgLotPeriodeAns, $selAutrePeriodeAns, $selGroupes, $tabStations, $tabGrparAns);
+            $repoPgProgLotGrparAn, $pgProgLotStationAn, $pgProgPeriode, $pgProgLotGrparAns, $pgProgLotAn, $pgProgLotPeriodeAns, $selAutrePeriodeAns, $selGroupes, $tabStations, $tabGrparAns, $logger);
         
         
         // Update PgProgLotAn
@@ -1458,7 +1438,6 @@ class ProgrammationPeriodeController extends Controller {
         }
         $emSqe->persist($pgProgLotAn);
         $emSqe->flush();
-        
         return $this->render('AeagSqeBundle:Programmation:Periode\valider.html.twig', array(
                     'action' => $action,
                     'maj' => $maj,
@@ -1470,44 +1449,9 @@ class ProgrammationPeriodeController extends Controller {
     }
     
     private function createProgrammation($emSqe, $optionGroupes, $repoPgProgLotStationAn, $repoPgProgLotPeriodeProg, $repoPgProgLotPeriodeAn, 
-            $repoPgProgLotGrparAn, $pgProgLotStationAn, $pgProgPeriode, $pgProgLotGrparAns, $pgProgLotAn, $pgProgLotPeriodeAns, $selAutrePeriodeAns, $selGroupes, &$tabStations, &$tabGrparAns) {
-        
+            $repoPgProgLotGrparAn, $pgProgLotStationAn, $pgProgPeriode, $pgProgLotGrparAns, $pgProgLotAn, $pgProgLotPeriodeAns, $selAutrePeriodeAns, $selGroupes, &$tabStations, &$tabGrparAns, $logger) {
         
         if (!$optionGroupes) {
-            $optionGroupes = 'N';
-        }
-
-        $tabGroupeAutres = array();
-        $k = 0;
-        $pgProgLotStationAnAutres = $repoPgProgLotStationAn->getPgProgLotStationAnByStation($pgProgLotStationAn->getStation());
-        foreach ($pgProgLotStationAnAutres as $pgProgLotStationAnAutre) {
-            $pgProgLotPeriodeProgAutres = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByStationAn($pgProgLotStationAnAutre);
-            foreach ($pgProgLotPeriodeProgAutres as $pgProgLotPeriodeProgAutre) {
-                if (($pgProgLotPeriodeProgAutre->getPeriodan()->getCodeStatut()->getCodeStatut() != 'INV') &&
-                    ($pgProgLotPeriodeProgAutre->getPeriodan()->getPeriode()->getId() == $pgProgPeriode->getid()) &&
-                        ($pgProgLotPeriodeProgAutre->getStationAn()->getLotan()->getid() != $pgProgLotStationAn->getLotan()->getid()) &&
-                            ($pgProgLotPeriodeProgAutre->getStationAn()->getLotan()->getPhase()->getCodePhase() >= 'P25') &&
-                                ($pgProgLotPeriodeProgAutre->getStationAn()->getLotan()->getLot()->getId() != $pgProgLotStationAn->getLotan()->getLot()->getId())) {
-                    foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
-                        if ($pgProgLotPeriodeProgAutre->getGrparAn()->getGrparRef()->getId() == $pgProgLotGrparAn->getGrparRef()->getId()) {
-                            $trouve = false;
-                            for ($l = 0; $l < count($tabGroupeAutres); $l++) {
-                                if ($pgProgLotGrparAn->getGrparRef()->getId() == $tabGroupeAutres[$l]) {
-                                    $trouve = true;
-                                    $l = count($tabGroupeAutres) + 1;
-                                }
-                            }
-                            if (!$trouve) {
-                                $tabGroupeAutres[$k] = $pgProgLotGrparAn->getGrparRef()->getId();
-                                $k++;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        $autreProgrammation = count($tabGroupeAutres);
-        if ($autreProgrammation == 0) {
             $optionGroupes = 'N';
         }
 
@@ -1556,25 +1500,12 @@ class ProgrammationPeriodeController extends Controller {
 
             $trouve = false;
             if ($optionGroupes != 'N') {
-                $pgProgLotGrparAnAutres = $repoPgProgLotGrparAn->getPgProgLotGrparAnByGrpparref($pgProgLotGrparAn->getGrparRef());
-                foreach ($pgProgLotGrparAnAutres as $pgProgLotGrparAnAutre) {
-                    if ($pgProgLotGrparAn->getLotAn()->getid() != $pgProgLotGrparAnAutre->getLotAn()->getid()) {
-                        if ($pgProgLotGrparAn->getLotAn()->getAnneeProg() == $pgProgLotGrparAnAutre->getLotAn()->getAnneeProg()) {
-                            $pgProgLotPeriodeAnAutres = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnByPeriode($pgProgPeriode);
-                            foreach ($pgProgLotPeriodeAnAutres as $pgProgLotPeriodeAnAutre) {
-                                if ($pgProgLotPeriodeAn->getLotAn()->getAnneeProg() == $pgProgLotPeriodeAnAutre->getLotAn()->getAnneeProg()) {
-                                    $pgProgLotPeriodeProgAutres = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByGrparAnPeriodeAn($pgProgLotGrparAnAutre, $pgProgLotPeriodeAnAutre);
-                                    foreach ($pgProgLotPeriodeProgAutres as $pgProgLotPeriodeProgAutre) {
-                                        if ($pgProgLotPeriodeProgAutre->getStationAn()->getStation()->getOuvFoncId() == $pgProgLotStationAn->getStation()->getOuvFoncId()) {
-                                            $pgProgLotPeriodeProg->setPprogCompl($pgProgLotPeriodeProgAutre);
-                                            $pgProgLotPeriodeProg->setStatut($optionGroupes);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                $pgProgLotPeriodeProgAutres = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgAutres($pgProgLotGrparAn, $pgProgLotPeriodeAn->getPeriode(), $pgProgLotStationAn, $pgProgLotAn, 3);
+                foreach ($pgProgLotPeriodeProgAutres as $pgProgLotPeriodeProgAutre) {
+                        $pgProgLotPeriodeProg->setPprogCompl($pgProgLotPeriodeProgAutre);
+                        $pgProgLotPeriodeProg->setStatut($optionGroupes);
                 }
+                
             } else {
                 $pgProgLotPeriodeProg->setStatut('N');
                 $pgProgLotPeriodeProg->setPprogCompl(null);
@@ -1596,10 +1527,8 @@ class ProgrammationPeriodeController extends Controller {
                         $autrePeriodeAns = array($autrePeriodeAn);
                         $autreTabStations = array();
                         $autreTabGrparAns = array();
-                        
                         $this->createProgrammation($emSqe, $optionGroupes, $repoPgProgLotStationAn, $repoPgProgLotPeriodeProg, $repoPgProgLotPeriodeAn, 
-                            $repoPgProgLotGrparAn, $pgProgLotStationAn, $autrePeriodeAn->getPeriode(), $pgProgLotGrparAns, $pgProgLotAn, $autrePeriodeAns, array(), $selGroupes, $autreTabStations, $autreTabGrparAns);
-                        
+                            $repoPgProgLotGrparAn, $pgProgLotStationAn, $autrePeriodeAn->getPeriode(), $pgProgLotGrparAns, $pgProgLotAn, $autrePeriodeAns, array(), $selGroupes, $autreTabStations, $autreTabGrparAns, $logger);
                     }
                 }
             }
