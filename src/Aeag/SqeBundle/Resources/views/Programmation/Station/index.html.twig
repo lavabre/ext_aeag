@@ -688,6 +688,20 @@
         table1.page.len( nbRecords ).draw();
     });
     
+    /*$(document).on('click', '#idValiderSelection',function(e){
+    $('#modal_valider').modal('hide');
+     var info = table.page.info();
+     var nbRecords = $('#idTable_length option:selected').val();
+     var filtre = $('#idTable_filter input').val();
+        if (filtre != ''){
+             var initval = '';
+             table.search(initval).draw();
+        };
+     table.page.len( -1 ).draw();
+    $('#modalTraitementEncours').modal();
+    $('#idForm').submit();
+    });*/
+    
     
     
     $(document).on('click', '#idMenuGroupe',function(e){
@@ -1020,20 +1034,6 @@
     {% endif %}
     });
 
-    $(document).on('click', '#idValiderSelection',function(e){
-    $('#modal_valider').modal('hide');
-     var info = table.page.info();
-     var nbRecords = $('#idTable_length option:selected').val();
-     var filtre = $('#idTable_filter input').val();
-        if (filtre != ''){
-             var initval = '';
-             table.search(initval).draw();
-        };
-     table.page.len( -1 ).draw();
-    $('#modalTraitementEncours').modal();
-    $('#idForm').submit();
-    });
-
     $(document).on('click','#cocherTout',function(e){
         var choix = 'O';
         if ($('#cocherTout').hasClass('btn-success')){
@@ -1120,7 +1120,7 @@
     return html;
   }
 
-   /* Nombre de stations cocheées*/
+   /* Nombre de stations cochées*/
    var nbcocher = function() {
      var info = table.page.info();
      var nbRecords = $('#idTable_length option:selected').val();
