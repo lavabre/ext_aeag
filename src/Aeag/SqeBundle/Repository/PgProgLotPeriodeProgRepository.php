@@ -175,5 +175,40 @@ class PgProgLotPeriodeProgRepository extends EntityRepository {
         
     }
     
+    public function getPgProgLotPeriodeProgAutresGroupesRef($pgProgLotStationAn, $pgProgPeriode, $pgProgLotGrparAns, $phaseIdMin) {
+        
+        $listGrparRef = Array();
+        foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
+            $listGrparRef[] = $pgProgLotGrparAn->getGrparRef();
+        }
+        
+        $query = "select distinct grparRefan.id";
+        $query .= " from Aeag\SqeBundle\Entity\PgProgLotPeriodeProg p";
+        $query .= " join p.periodan pean";
+        $query .= " join p.grparAn gran";
+        $query .= " join p.stationAn stan";
+        $query .= " join stan.lotan lotan";
+        $query .= " join lotan.lot lot";
+        $query .= " join gran.grparRef grparRefan";
+        $query .= " where pean.periode = :periodeId AND pean.codeStatut <> 'INV' ";
+        $query .= " and stan.station = :stationId";
+        $query .= " and lotan.phase > :phaseId"; // phase >= P25
+        $query .= " and lotan.anneeProg = :anneeProg";
+        $query .= " and lot.id <> :lotId";
+        $query .= " and lot.codeMilieu = :codeMilieu";
+        $query .= " and gran.id IN (:grparRefs)";
+        
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('periodeId', $pgProgPeriode->getId());
+        $qb->setParameter('stationId', $pgProgLotStationAn->getStation()->getOuvFoncId());
+        $qb->setParameter('phaseId', $phaseIdMin);
+        $qb->setParameter('anneeProg', $pgProgLotStationAn->getLotan()->getAnneeProg());
+        $qb->setParameter('lotId', $pgProgLotStationAn->getLotan()->getLot()->getId());
+        $qb->setParameter('codeMilieu', $pgProgLotStationAn->getLotan()->getLot()->getCodeMilieu()->getCodeMilieu());
+        $qb->setParameter('grparRefs', $listGrparRef);
+        
+        return $qb->getResult();
+    }
+    
   
 }
