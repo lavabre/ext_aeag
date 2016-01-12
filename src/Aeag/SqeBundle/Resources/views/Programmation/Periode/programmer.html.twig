@@ -244,38 +244,47 @@
         {% endfor %}
     {% endif %}    
     
+    // VGU : Je ne sais pas pour quelle raison mais lorsqu'on fait des duplications a répétitions sur la meme page, 
+    // l'action du onClick sur idValiderSelectionGroupe s'incrémente de 1. C'est a dire que si on fait une duplication, 
+    // on va faire un onClick, si on en fait deux, deux onClick, etc...
+    // Pour palier ce pb, j'ai mis en place ce compteur globalCpt qui fait en sorte de n'executer le onClick qu'une seule fois
+    var globalCpt = 0;
+    
       {# validation des groupes pour une periode#}
     $(document).on('click','#idValiderSelectionGroupe',function(e){
-        $('#modalTraitementEncours').modal('toggle');
-        $('#idModalProgrammer').modal('hide');
-         e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-        {%if groupes | length%}  
-           {% for groupe in groupes %}
-                $('#checkGroupe_{{ groupe.groupe.id }}').prop( "disabled", false );
-            {% endfor %}
-        {% endif %}
-        var $this = $('#idForm_groupe'); // L'objet jQuery du formulaire
-        var url = '{{ path("AeagSqeBundle_programmation_periode_valider",{"stationId":  "par1", "periodeId" : "par2", "optionGroupes" : "par3","action": "par4","maj":"par5","lotan":"par6" }) }}';
-        url = url.replace("par1", $('#stationEncour').val());
-        url = url.replace("par2", $('#periodeEncour').val());
-         url = url.replace("amp;","");
-        url = url.replace("par3", $('#optionGroupes').val());
-        url = url.replace("amp;","");
-        url = url.replace("par4", '{{ action }}');
-         url = url.replace("amp;","");
-        url = url.replace("par5", '{{ maj }}');
-        url = url.replace("amp;","");
-        url = url.replace("par6", '{{ lotan.id }}');
-        url = url.replace("amp;","");
-        $.ajax({
-            url: url,
-            type: 'post', // La méthode indiquée dans le formulaire (get ou post)
-            data: $this.serialize(),
-            success: function(html) { // Je récupère la réponse du fichier PHP
-                    $('#idStation_' + $('#stationEncour').val()).empty().append(html);
-                    $('#modalTraitementEncours').modal('hide');
-                }
-        });
+        if (globalCpt === 0) {
+            $('#modalTraitementEncours').modal('toggle');
+            $('#idModalProgrammer').modal('hide');
+             e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+            {%if groupes | length%}  
+               {% for groupe in groupes %}
+                    $('#checkGroupe_{{ groupe.groupe.id }}').prop( "disabled", false );
+                {% endfor %}
+            {% endif %}
+            var $this = $('#idForm_groupe'); // L'objet jQuery du formulaire
+            var url = '{{ path("AeagSqeBundle_programmation_periode_valider",{"stationId":  "par1", "periodeId" : "par2", "optionGroupes" : "par3","action": "par4","maj":"par5","lotan":"par6" }) }}';
+            url = url.replace("par1", $('#stationEncour').val());
+            url = url.replace("par2", $('#periodeEncour').val());
+             url = url.replace("amp;","");
+            url = url.replace("par3", $('#optionGroupes').val());
+            url = url.replace("amp;","");
+            url = url.replace("par4", '{{ action }}');
+             url = url.replace("amp;","");
+            url = url.replace("par5", '{{ maj }}');
+            url = url.replace("amp;","");
+            url = url.replace("par6", '{{ lotan.id }}');
+            url = url.replace("amp;","");
+            $.ajax({
+                url: url,
+                type: 'post', // La méthode indiquée dans le formulaire (get ou post)
+                data: $this.serialize(),
+                success: function(html) { // Je récupère la réponse du fichier PHP
+                        $('#idStation_' + $('#stationEncour').val()).empty().append(html);
+                        $('#modalTraitementEncours').modal('hide');
+                    }
+            });
+        }
+        globalCpt++;
     });
     
     {%set groupeRenseigne = 'N' %}
