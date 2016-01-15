@@ -109,6 +109,16 @@ class PgProgWebusers {
      * @ORM\Column(name="ext_id", type="integer", nullable=true)
      */
     private $extId;
+    
+    /**
+     * @var \PgRefCorresPresta
+     *
+     * @ORM\ManyToOne(targetEntity="PgRefCorresPresta")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="presta_id", referencedColumnName="adr_cor_id")
+     * })
+     */
+    private $prestataire;
 
     /**
      * Constructor
@@ -329,6 +339,29 @@ class PgProgWebusers {
 
     function setExtId($extId) {
         $this->extId = $extId;
+    }
+    
+        /**
+     * Set prestataire
+     *
+     * @param \Aeag\SqeBundle\Entity\PgRefCorresPresta $prestataire
+     * @return PgProgPrestaWebusers
+     */
+    public function setPrestataire(\Aeag\SqeBundle\Entity\PgRefCorresPresta $prestataire = null)
+    {
+        $this->prestataire = $prestataire;
+
+        return $this;
+    }
+
+    /**
+     * Get prestataire
+     *
+     * @return \Aeag\SqeBundle\Entity\PgRefCorresPresta 
+     */
+    public function getPrestataire()
+    {
+        return $this->prestataire;
     }
 
 }

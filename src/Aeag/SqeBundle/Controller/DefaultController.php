@@ -347,20 +347,18 @@ class DefaultController extends Controller {
                 $pgProgWebusersNbModifies++;
             }
             $tabRoles = array();
-            $i = 0;
-            $tabRoles[$i] = 'ROLE_AEAG';
-            $i++;
-            $tabRoles[$i] = 'ROLE_SQE';
-            $i++;
+            $tabRoles[] = 'ROLE_AEAG';
+            $tabRoles[] = 'ROLE_SQE';
             if ($pgProgWebuser->getTypeUser() == 'PROG') {
                 $entityUser->removeRole('ROLE_ADMINSQE');
-                $tabRoles[$i] = 'ROLE_PROGSQE';
-                $i++;
+                $tabRoles[] = 'ROLE_PROGSQE';
             }
             if ($pgProgWebuser->getTypeUser() == 'ADMIN') {
                 $entityUser->removeRole('ROLE_PROGSQE');
-                $tabRoles[$i] = 'ROLE_ADMINSQE';
-                $i++;
+                $tabRoles[] = 'ROLE_ADMINSQE';
+            }
+            if ($pgProgWebuser->getTypeUser() == 'PREST') {
+                $tabRoles[] = 'ROLE_PRESTASQE';
             }
             $entityUser->setRoles($tabRoles);
             $encoder = $factory->getEncoder($entityUser);

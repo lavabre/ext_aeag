@@ -19,4 +19,8 @@ aeag_sqe_envoyerMessage:
     defaults: { _controller: AeagSqeBundle:Default:envoyerMessage }
     requirements:
         methods:  GET|POST
+        
+aeag_sqe_echangeFichiers:
+    resource: "@AeagSqeBundle/Resources/config/routing_echangefichiers.yml"
+    prefix:   /echangefichiers        
  

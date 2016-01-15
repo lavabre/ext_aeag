@@ -1,0 +1,7 @@
+AeagSqeBundle_echangefichiers_index:
+    path:  /
+    defaults: { _controller: AeagSqeBundle:EchangeFichiers:index }
+    
+AeagSqeBundle_echangefichiers_demandes:
+    path:  /demandes
+    defaults: { _controller: AeagSqeBundle:EchangeFichiers:demandes }

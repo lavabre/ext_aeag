@@ -1,0 +1,33 @@
+{% extends "AeagSqeBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+    <li>
+        <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+    </li>
+    <li>
+           <a href="{{ path('AeagSqeBundle_echangefichiers_index') }}">Echange de fichiers</a> 
+    </li>
+    <li class="active">
+          Demandes
+    </li>
+{% endblock breadcrumb %} 
+
+{%block panel_heading %}
+    <h3 class="page-title">
+        Echange de fichiers - Liste des demandes
+    </h3>
+{%endblock panel_heading %}
+
+{%block content %}
+    <div class="form-body">        
+        {% for demande in demandes %}
+            {{ demande.id }}
+        {% endfor%}
+    </div>
+{%endblock content %}    
+
+{% block scripts %}
+    jQuery(document).ready(function() {
+    });
+    
+{%endblock scripts %}    

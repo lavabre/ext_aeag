@@ -1,0 +1,115 @@
+{% extends "AeagSqeBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+    <li>
+        <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+    </li>
+    <li class="active">
+          Echange de fichiers
+    </li>
+{% endblock breadcrumb %} 
+
+{%block panel_heading %}
+    <h3 class="page-title">
+        Echange de fichiers - Liste des lots
+    </h3>
+{%endblock panel_heading %}
+
+{%block content %}
+    <div class="form-body">        
+        <table class="table table-bordered table-condensed table-advance" id="idTable_lot">
+            <thead>
+                <tr>
+                    <th width="5%">Actions</th>
+                    <th>Nom</th>
+                    <th>Version</th>
+                    <th>marché</th>
+                    <th>Zone géographique</th>
+                    <th>Type de milieu</th>
+                    <th>Mandataire</th>
+                    <th>Etat</th>
+                    <th>Statut</th>
+                </tr>
+            </thead>
+            <tbody>
+                 {%if lotans | length%} 
+                    {% for lotan in lotans %}
+                       <tr>
+                            <td>
+                                <a id="id_{{lotan.id}}" class="btn btn-primary" href="{{path('AeagSqeBundle_echangefichiers_demandes',{ 'lotan': lotan.id })}}" title="Consulter la programmation">
+                                    <i class="fa fa-eye"></i> 
+                                </a>
+                            </td>
+                            <td nowrap>{{lotan.lot.nomLot}}</td>
+                            <td>{{ lotan.version }}</td>
+                            <td>{{ lotan.lot.marche.nomMarche }}</td>
+                            <td>{{ lotan.lot.zgeoRef.nomZoneGeo }}</td>
+                            <td>{% if lotan.lot.codeMilieu| length %}
+                                {{ lotan.lot.codeMilieu.nomMilieu }}
+                                {% endif %}
+                            </td>
+                            <td>{%if lotan.lot.titulaire %}
+                                {{ lotan.lot.titulaire.nomCorres }}
+                                {% endif %}
+                            </td>
+                            <td>{{lotan.phase.libellePhase}} </td>
+                            <td>{{lotan.codeStatut.libelleStatut}} le {{ lotan.dateModif | date("d/m/Y H:i:")}} par {{ lotan.utilModif.nom}} </td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+{%endblock content %}    
+
+{% block scripts %}
+
+    jQuery(document).ready(function() {
+          var table = $('#idTable_lot').DataTable(
+            {"stateSave": true,
+             "order": [[ 1, "desc" ]],
+            "oLanguage": {
+            "sSearch": "Filtre",
+            "sFirst": "1ere page",
+            "sLast": "Dernière page",
+            "sNext": "Prochaine page",
+            "sPrevious": "Page précédente",
+            "EmptyTable": "Pas de données",
+            "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+            "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+            "sZeroRecords": "Pas d'enregistrement à afficher",
+            "sInfoEmpty": "Pas d'enregistrement à afficher",
+            "sInfoThousands": " ",
+            "sLengthMenu": 'Afficher <select>' +
+                '<option value="10">10</option>' +
+                '<option value="20">20</option>' +
+                '<option value="30">30</option>' +
+                '<option value="40">40</option>' +
+                '<option value="50">50</option>' +
+                '<option value="-1">Tous</option>' +
+                '</select> enregistrements',
+            "sPaginationType": "full_numbers"
+            }
+            }
+            );
+
+            $("#idTable thead td").each( function ( i ) {
+
+            if (i != 0){
+            var select = $('<select><option value=""></option></select>')
+            .appendTo( $(this).empty() )
+            .on( 'change', function () {
+            table.column( i )
+            .search( $(this).val() )
+            .draw();
+            });
+
+            table.column( i ).data().unique().sort().each( function ( d, j ) {
+                select.append( '<option value="'+d+'">'+d+'</option>' )
+            });
+            };
+            }); 
+    });
+    
+{%endblock scripts %}    
+    
