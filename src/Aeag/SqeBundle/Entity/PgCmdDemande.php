@@ -193,7 +193,7 @@ class PgCmdDemande {
         $this->lotan = $lotan;
     }
 
-    function setCommanditaire(Aeag\SqeBundle\Entity\PgRefCorresProducteur $commanditaire) {
+    function setCommanditaire(\Aeag\SqeBundle\Entity\PgRefCorresProducteur $commanditaire) {
         $this->commanditaire = $commanditaire;
     }
 
@@ -201,7 +201,7 @@ class PgCmdDemande {
         $this->codeDemandePresta = $codeDemandePresta;
     }
 
-    function setPrestataire(Aeag\SqeBundle\Entity\PgRefCorresPresta $prestataire) {
+    function setPrestataire(\Aeag\SqeBundle\Entity\PgRefCorresPresta $prestataire) {
         $this->prestataire = $prestataire;
     }
 
@@ -209,7 +209,7 @@ class PgCmdDemande {
         $this->typeDemande = $typeDemande;
     }
 
-    function setDestAna(Aeag\SqeBundle\Entity\PgRefCorresProducteur $destAna) {
+    function setDestAna(\Aeag\SqeBundle\Entity\PgRefCorresProducteur $destAna) {
         $this->destAna = $destAna;
     }
 
@@ -221,11 +221,11 @@ class PgCmdDemande {
         $this->nomFichier = $nomFichier;
     }
 
-    function setPhaseDemande(Aeag\SqeBundle\Entity\PgProgPhases $phaseDemande) {
+    function setPhaseDemande(\Aeag\SqeBundle\Entity\PgProgPhases $phaseDemande) {
         $this->phaseDemande = $phaseDemande;
     }
 
-    function setEmetteur(Aeag\SqeBundle\Entity\PgProgWebusers $emetteur) {
+    function setEmetteur(\Aeag\SqeBundle\Entity\PgProgWebusers $emetteur) {
         $this->emetteur = $emetteur;
     }
     

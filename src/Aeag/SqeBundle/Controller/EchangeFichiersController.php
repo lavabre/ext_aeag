@@ -47,4 +47,46 @@ class EchangeFichiersController extends Controller{
         
     }
     
+    public function telechargerAction() {
+        $user = $this->getUser();
+        $session = $this->get('session');
+        $session->set('menu', 'echangeFichier');
+        $session->set('controller', 'EchangeFichier');
+        $session->set('fonction', 'index');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+        
+        $request = $this->container->get('request');
+        $demandeId = $request->get('demande');
+        
+        $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
+        $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
+        
+        $pgCmdDemandes = $repoPgCmdDemande->findById($demandeId);
+        if (count($pgCmdDemandes) > 0) {
+            $pgCmdDemande = $pgCmdDemandes[0];
+            // Récupération du fichier
+            $zipName = str_replace('xml', 'zip', $pgCmdDemande->getNomFichier());
+            $pathBase = "/base/extranet/Transfert/Sqe/Echanges/";
+            $pathBase .=$pgCmdDemande->getAnneeProg().'/'.$pgCmdDemande->getCommanditaire()->getNomCorres().
+                    '/'.$pgCmdDemande->getLotan()->getLot()->getId().'/'.$pgCmdDemande->getLotan()->getId().'/';
+            
+            // Changement de la phase s'il est téléchargé par un presta pour la première fois
+            if ($user->hasRole('ROLE_PRESTASQE') && $pgCmdDemande->getPhaseDemande()->getId() !== 12) {
+                $pgProgPhases = $repoPgProgPhases->findById(12);
+                if (count($pgProgPhases) > 0) {
+                    $pgCmdDemande->setPhaseDemande($pgProgPhases[0]);
+                    $emSqe->persist($pgCmdDemande);
+                    $emSqe->flush();
+                }
+            }
+            
+            header('Content-Type', 'application/zip');
+            header('Content-disposition: attachment; filename="' . $zipName . '"');
+            header('Content-Length: ' . filesize($pathBase.$zipName));
+            readfile($pathBase.$zipName);
+            
+        }
+
+    }
+    
 }
