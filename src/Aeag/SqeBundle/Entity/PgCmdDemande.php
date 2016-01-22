@@ -125,6 +125,23 @@ class PgCmdDemande {
      */
     private $emetteur;
     
+    /**
+     * @var \PgProgPeriodes
+     *
+     * @ORM\ManyToOne(targetEntity="PgProgPeriodes")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="periode_id", referencedColumnName="id")
+     * })
+     */
+    private $periode;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="format_fic", type="string", length=50, nullable=true)
+     */
+    private $formatFichier;
+    
     function getId() {
         return $this->id;
     }
@@ -189,7 +206,7 @@ class PgCmdDemande {
         $this->anneeProg = $anneeProg;
     }
 
-    function setLotan(\PgProgLotAn $lotan) {
+    function setLotan(\Aeag\SqeBundle\Entity\PgProgLotAn $lotan) {
         $this->lotan = $lotan;
     }
 
@@ -228,5 +245,23 @@ class PgCmdDemande {
     function setEmetteur(\Aeag\SqeBundle\Entity\PgProgWebusers $emetteur) {
         $this->emetteur = $emetteur;
     }
+    
+    function getPeriode() {
+        return $this->periode;
+    }
+
+    function getFormatFichier() {
+        return $this->formatFichier;
+    }
+
+    function setPeriode(\Aeag\SqeBundle\Entity\PgProgPeriodes $periode) {
+        $this->periode = $periode;
+    }
+
+    function setFormatFichier($formatFichier) {
+        $this->formatFichier = $formatFichier;
+    }
+
+
     
 }

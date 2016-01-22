@@ -1,0 +1,25 @@
+<div class="modal-dialog">
+    <div class="modal-content" id="modal-reponses-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">
+                Déposer une DAI
+            </h4>
+        </div>
+        <div id="body-modal-reponses"class="modal-body">
+             <form method="POST" enctype="multipart/form-data" action="{{path("AeagSqeBundle_echangefichiers_reponses_deposer",{"demandeId":  demande.id})}}" id="form-deposer">
+                <input class="form-control" type="file" name="fichier" accept="application/zip">
+              </form> 
+        </div>
+        <div class="modal-footer">
+            <button type="button" id="deposer" class="btn btn-success">Déposer</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+</div>
+                
+<script>
+    $('#deposer').click(function (){
+        $('#form-deposer').submit();
+    });
+</script>

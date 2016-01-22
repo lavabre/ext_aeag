@@ -14,7 +14,7 @@
 
 {%block panel_heading %}
     <h3 class="page-title">
-        Echange de fichiers - Liste des demandes
+        Echange de fichiers - Liste des DAI - {{ lotan.lot.nomLot }} - {{ lotan.anneeProg }}
     </h3>
 {%endblock panel_heading %}
 
@@ -24,32 +24,42 @@
             <thead>
                 <tr>
                     <th width="5%">Actions</th>
-                    <th>Date de la demande</th>
-                    <th>Année de programmation</th>
-                    <th>Code de la demande</th>
-                    <th>Nom du lot</th>
+                    <th>Date</th>
+                    <th>Code</th>
+                    <th>Prestataire</th>
                     <th>Producteur</th>
-                    <th>Phase de la demande</th>
+                    <th>Période</th>
+                    <th>Phase</th>
+                    <th>Format fichier</th>
                 </tr>
             </thead>
             <tbody>
                  {%if demandes | length%} 
                     {% for demande in demandes %}
-                       <tr>
+                       {% if demande.prestataire == user.prestataire %} 
+                       <tr style="background-color: #aac3f1">
+                        {% else %}
+                            <tr>
+                        {% endif %}
                             <td align="center" nowrap>
-                                <a id="id_{{demande.id}}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_echangefichiers_telecharger',{'demande' : demande.id})}}" title="Télécharger la demande">
+                                <a id="id_{{demande.id}}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_echangefichiers_telecharger',{'demandeId' : demande.id})}}" title="Télécharger la demande">
                                     <i class="fa fa-download"></i> 
                                 </a>
-                                <a id="id_{{demande.id}}" class="btn btn-primary" href="{{path('AeagSqeBundle_echangefichiers_telecharger')}}" title="Voir les réponses">
+                                <a id="{{demande.id}}" class="btn btn-primary btn-voir-reponses" data-toggle="modal" href="#" title="Voir les réponses">
                                     <i class="fa fa-eye"></i> 
                                 </a>
                             </td>
                             <td>{{ demande.dateDemande | date("d/m/Y H:i")}}</td>
-                            <td>{{ demande.anneeProg }}</td>
                             <td>{{ demande.codeDemandeCmd }}</td>
-                            <td>{{ demande.lotan.lot.nomLot }}</td>
+                            <td>{{ demande.prestataire.nomCorres }}</td>
                             <td>{{ demande.commanditaire.nomCorres }}</td>
+                            {% if demande.periode %}
+                                <td>{{ demande.periode.labelPeriode}}</td>
+                            {% else %}
+                                <td>An</td>
+                            {% endif%}
                             <td>{{ demande.phaseDemande.libellePhase }}</td>
+                            <td>{{ demande.formatFichier }}</td>
                         </tr>
                     {% endfor %}
                 {% endif %}
@@ -58,6 +68,15 @@
 
     </div>
 {%endblock content %}    
+
+{% block modal %}
+    <div class="modal fade" id="modal_reponses">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" id="modal-reponses-content">
+            </div>
+        </div>
+    </div>
+{%endblock modal %}
 
 {% block scripts %}
     jQuery(document).ready(function() {
@@ -89,7 +108,7 @@
             }
             );
 
-            $("#idTable thead td").each( function ( i ) {
+            $("#idTable_demandes thead td").each( function ( i ) {
 
             if (i != 0){
             var select = $('<select><option value=""></option></select>')
@@ -108,6 +127,22 @@
             
         $('.btn-telecharger').click(function (){
             setTimeout("window.location.reload()",2000);//or other value
+        });
+        
+        $('.btn-voir-reponses').click(function (){
+            $('#modalTraitementEncours').modal();
+            var url = '{{ path("AeagSqeBundle_echangefichiers_reponses",{"demandeId":  "par1" }) }}';
+            url = url.replace("par1", $(this).attr('id'));
+            $.ajax({
+                url: url,
+                type: 'get',
+                success: function(html) {
+                    $('#modal-reponses-content').empty().append(html);
+                    $('#modalTraitementEncours').modal('hide');
+                    $('#modal_reponses').modal();
+                }
+            });
+            
         });
     });
     

@@ -22,6 +22,7 @@
                 <tr>
                     <th width="5%">Actions</th>
                     <th>Nom</th>
+                    <th>Année de programmation</th>
                     <th>Version</th>
                     <th>Marché</th>
                     <th>Zone géographique</th>
@@ -36,11 +37,12 @@
                     {% for lotan in lotans %}
                        <tr>
                             <td>
-                                <a id="id_{{lotan.id}}" class="btn btn-primary" href="{{path('AeagSqeBundle_echangefichiers_demandes',{ 'lotan': lotan.id })}}" title="Consulter la programmation">
+                                <a id="id_{{lotan.id}}" class="btn btn-primary btn-demandes" href="{{path('AeagSqeBundle_echangefichiers_demandes',{ 'lotanId': lotan.id })}}" title="Consulter les demandes">
                                     <i class="fa fa-eye"></i> 
                                 </a>
                             </td>
                             <td nowrap>{{lotan.lot.nomLot}}</td>
+                            <td>{{ lotan.anneeProg }}</td>
                             <td>{{ lotan.version }}</td>
                             <td>{{ lotan.lot.marche.nomMarche }}</td>
                             <td>{{ lotan.lot.zgeoRef.nomZoneGeo }}</td>
@@ -109,6 +111,10 @@
             });
             };
             }); 
+            
+            $(".btn-demandes").click(function() {
+                $('#modalTraitementEncours').modal();
+            });
     });
     
 {%endblock scripts %}    

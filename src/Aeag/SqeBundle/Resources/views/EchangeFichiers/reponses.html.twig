@@ -1,0 +1,104 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title">
+        Liste des réponses - {{demande.lotAn.lot.nomLot}} - {{demande.codeDemandeCmd}}
+    </h4>
+</div>
+<div id="body-modal-reponses"class="modal-body">
+    {% if user.prestataire == demande.prestataire %}
+        <a class="btn btn-success btn-file" id="btn-deposer-reponse">
+            <i class="fa fa-plus"></i> Déposer une DAI
+        </a>
+    {% endif %}
+    <table class="table table-bordered table-condensed table-advance" id="idTable_reponses">
+        <thead>
+            <tr>
+                <th width="5%">Actions</th>
+                <th>Date</th>
+                <th>Fichier réponse</th>
+                <th>Phase</th>
+                <th>Fichier de compte-rendu</th>
+                <th>Fichier de données brutes associées</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reponse in reponses %}
+            <tr>
+                <td align="center" nowrap>
+                    <a id="id_{{reponse.id}}" class="btn btn-success btn-telecharger" href="{{path("AeagSqeBundle_echangefichiers_reponses_telecharger",{"reponseId":  reponse.id, "typeFichier" : "RPS"})}}" title="Télécharger la reponse">
+                        <i class="fa fa-download"></i> 
+                    </a>
+                </td>
+                <td>{{reponse.dateDepot | date("d/m/Y H:i")}}</td>
+                <td>{{reponse.nomFichier}}</td>
+                <td>{{reponse.phaseFichier.libellePhase}}</td>
+                <td><a href='{{path("AeagSqeBundle_echangefichiers_reponses_telecharger",{"reponseId":  reponse.id, "typeFichier" : "DB"})}}'>{{reponse.nomFichierDonneesBrutes}}</a></td>
+                <td><a href='{{path("AeagSqeBundle_echangefichiers_reponses_telecharger",{"reponseId":  reponse.id, "typeFichier" : "CR"})}}'>{{reponse.nomFichierCompteRendu}}</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+</div>
+
+{% block modal %}
+    <div class="modal fade" id="modal_deposer_reponse">
+        {{ include('AeagSqeBundle:EchangeFichiers:deposerReponse.html.twig') }}
+    </div>
+{%endblock modal %}
+
+<script>
+    var table1 = $('#idTable_reponses').DataTable(
+            {"stateSave": true,
+                "order": [[1, "desc"]],
+                "oLanguage": {
+                    "sSearch": "Filtre",
+                    "sFirst": "1ere page",
+                    "sLast": "Dernière page",
+                    "sNext": "Prochaine page",
+                    "sPrevious": "Page précédente",
+                    "EmptyTable": "Pas de données",
+                    "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+                    "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+                    "sZeroRecords": "Pas d'enregistrement à afficher",
+                    "sInfoEmpty": "Pas d'enregistrement à afficher",
+                    "sInfoThousands": " ",
+                    "sLengthMenu": 'Afficher <select>' +
+                            '<option value="10">10</option>' +
+                            '<option value="20">20</option>' +
+                            '<option value="30">30</option>' +
+                            '<option value="40">40</option>' +
+                            '<option value="50">50</option>' +
+                            '<option value="-1">Tous</option>' +
+                            '</select> enregistrements',
+                    "sPaginationType": "full_numbers"
+                }
+            }
+    );
+
+    $("idTable_reponses thead td").each(function (i) {
+
+        if (i != 0) {
+            var select = $('<select><option value=""></option></select>')
+                    .appendTo($(this).empty())
+                    .on('change', function () {
+                        table1.column(i)
+                                .search($(this).val())
+                                .draw();
+                    });
+
+            table1.column(i).data().unique().sort().each(function (d, j) {
+                select.append('<option value="' + d + '">' + d + '</option>')
+            });
+        }
+        ;
+    });
+    
+    $('#btn-deposer-reponse').click(function (){
+        $("#modal_deposer_reponse").modal();
+    });
+    
+    
+</script>

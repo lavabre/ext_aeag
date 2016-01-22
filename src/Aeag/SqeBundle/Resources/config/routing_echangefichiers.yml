@@ -3,9 +3,21 @@ AeagSqeBundle_echangefichiers_index:
     defaults: { _controller: AeagSqeBundle:EchangeFichiers:index }
     
 AeagSqeBundle_echangefichiers_demandes:
-    path:  /demandes
-    defaults: { _controller: AeagSqeBundle:EchangeFichiers:demandes }
+    path:  /demandes/{lotanId}
+    defaults: { _controller: AeagSqeBundle:EchangeFichiers:demandes, lotanId : null}
     
 AeagSqeBundle_echangefichiers_telecharger:
-    path:  /telecharger
-    defaults: { _controller: AeagSqeBundle:EchangeFichiers:telecharger }
+    path:  /telecharger/{demandeId}
+    defaults: { _controller: AeagSqeBundle:EchangeFichiers:telecharger, demandeId : null }
+    
+AeagSqeBundle_echangefichiers_reponses:
+    path:  /reponses/{demandeId}
+    defaults: { _controller: AeagSqeBundle:EchangeFichiers:reponses, demandeId : null }
+    
+AeagSqeBundle_echangefichiers_reponses_deposer:
+    path:  /reponses/deposer/{demandeId}
+    defaults: { _controller: AeagSqeBundle:EchangeFichiers:deposerReponse, demandeId : null }
+    
+AeagSqeBundle_echangefichiers_reponses_telecharger:
+    path:  /reponses/telecharger/{reponseId}/{typeFichier}
+    defaults: { _controller: AeagSqeBundle:EchangeFichiers:telechargerReponse, reponseId : null, typeFichier : null }
