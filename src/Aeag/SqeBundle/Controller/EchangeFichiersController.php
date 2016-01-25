@@ -112,7 +112,8 @@ class EchangeFichiersController extends Controller{
         $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
         
-        $pgCmdFichiersRps = $repoPgCmdFichiersRps->findByDemande($demandeId);
+        $pgCmdFichiersRps = $repoPgCmdFichiersRps->findBy(array('demande' => $demandeId,
+                                                                'suppr' => 'N'));
         $pgCmdDemande = $repoPgCmdDemande->findOneById($demandeId);
         $pgProgWebUser = $repoPgProgWebUsers->findOneByExtId($user->getId());
 
@@ -149,6 +150,7 @@ class EchangeFichiersController extends Controller{
         $reponse->setTypeFichier('RPS');
         $reponse->setPhaseFichier($pgProgPhases);
         $reponse->setUser($pgProgWebUser);
+        $reponse->setSuppr('N');
         
         $emSqe->persist($reponse);
         $emSqe->flush();
@@ -217,4 +219,57 @@ class EchangeFichiersController extends Controller{
         readfile($pathBase.'/'.$fileName);
     }
     
+    public function supprimerReponseAction($reponseId) {
+        
+        $user = $this->getUser();
+        $session = $this->get('session');
+        $session->set('menu', 'echangeFichier');
+        $session->set('controller', 'EchangeFichier');
+        $session->set('fonction', 'deposerReponse');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+        
+        $repoPgCmdFichiersRps = $emSqe->getRepository('AeagSqeBundle:PgCmdFichiersRps');
+        
+        $pgCmdFichiersRps = $repoPgCmdFichiersRps->findOneById($reponseId);
+        
+        // Suppression physique des fichiers
+        $pathBase = "/base/extranet/Transfert/Sqe/Echanges/";
+        $pathBase .= $pgCmdFichiersRps->getDemande()->getAnneeProg().'/'.$pgCmdFichiersRps->getDemande()->getCommanditaire()->getNomCorres().
+                '/'.$pgCmdFichiersRps->getDemande()->getLotan()->getLot()->getId().'/'.$pgCmdFichiersRps->getDemande()->getLotan()->getId().'/'.$reponseId;
+        
+        if ($this->_rmdirRecursive($pathBase)) {
+            // Suppression en base
+            $pgCmdFichiersRps->setSuppr('O');
+            $emSqe->flush();
+        }
+        
+        return $this->redirect($this->generateUrl('AeagSqeBundle_echangefichiers_demandes',array('lotanId' => $pgCmdFichiersRps->getDemande()->getLotan()->getId())));
+    }
+    
+    private function _rmdirRecursive($dir) {
+        //Liste le contenu du répertoire dans un tableau
+        $dir_content = scandir($dir);
+        //Est-ce bien un répertoire?
+        if ($dir_content !== FALSE) {
+            //Pour chaque entrée du répertoire
+            foreach ($dir_content as $entry) {
+                //Raccourcis symboliques sous Unix, on passe
+                if (!in_array($entry, array('.', '..'))) {
+                    //On retrouve le chemin par rapport au début
+                    $entry = $dir . '/' . $entry;
+                    //Cette entrée n'est pas un dossier: on l'efface
+                    if (!is_dir($entry)) {
+                        unlink($entry);
+                    }
+                    //Cette entrée est un dossier, on recommence sur ce dossier
+                    else {
+                        rmdir_recursive($entry);
+                    }
+                }
+            }
+        }
+        //On a bien effacé toutes les entrées du dossier, on peut à présent l'effacer
+        return rmdir($dir);
+    }
+
 }

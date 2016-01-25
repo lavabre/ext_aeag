@@ -88,6 +88,13 @@ class PgCmdFichiersRps {
      */
     private $nomFichierCompteRendu;
     
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="suppr", type="string", length=1, nullable=true)
+     */
+    private $suppr;
+    
     function getId() {
         return $this->id;
     }
@@ -159,6 +166,13 @@ class PgCmdFichiersRps {
     function setNomFichierCompteRendu($nomFichierCompteRendu) {
         $this->nomFichierCompteRendu = $nomFichierCompteRendu;
     }
+    
+    function getSuppr() {
+        return $this->suppr;
+    }
 
+    function setSuppr($suppr) {
+        $this->suppr = $suppr;
+    }
 
 }

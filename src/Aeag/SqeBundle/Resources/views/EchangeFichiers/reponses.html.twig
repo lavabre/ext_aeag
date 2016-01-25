@@ -28,6 +28,11 @@
                     <a id="id_{{reponse.id}}" class="btn btn-success btn-telecharger" href="{{path("AeagSqeBundle_echangefichiers_reponses_telecharger",{"reponseId":  reponse.id, "typeFichier" : "RPS"})}}" title="Télécharger la reponse">
                         <i class="fa fa-download"></i> 
                     </a>
+                    {%if reponse.phaseFichier.codePhase == 'R10' and user.prestataire == demande.prestataire%}
+                        <a id="supprimerReponseId_{{ reponse.id }}" class="btn btn-danger" href="{{path("AeagSqeBundle_echangefichiers_reponses_supprimer",{"reponseId":  reponse.id})}}" title="Supprimer la réponse">
+                            <i class="fa fa-eraser"></i> 
+                        </a>
+                    {% endif %}    
                 </td>
                 <td>{{reponse.dateDepot | date("d/m/Y H:i")}}</td>
                 <td>{{reponse.nomFichier}}</td>

@@ -21,3 +21,7 @@ AeagSqeBundle_echangefichiers_reponses_deposer:
 AeagSqeBundle_echangefichiers_reponses_telecharger:
     path:  /reponses/telecharger/{reponseId}/{typeFichier}
     defaults: { _controller: AeagSqeBundle:EchangeFichiers:telechargerReponse, reponseId : null, typeFichier : null }
+    
+AeagSqeBundle_echangefichiers_reponses_supprimer:
+    path:  /reponses/supprimer/{reponseId}
+    defaults: { _controller: AeagSqeBundle:EchangeFichiers:supprimerReponse, reponseId : null }
