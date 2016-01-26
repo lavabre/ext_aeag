@@ -19,9 +19,11 @@
      <div class="row">
             <div class="col-md-10 pull-right text-info">
                 <ul class="list-inline btn-group-lg">
-                    <li><a class="btn btn-primary btn-lg" href="{{ path('Aeag_sqe_programmation_lots', {'action': 'V'}) }}" title="Consulter"><i class="fa fa-eye fa-3x"></i> Consulter</a></li>
+                    {%if  not is_granted('ROLE_PRESTASQE') %}
+                        <li><a class="btn btn-primary btn-lg" href="{{ path('Aeag_sqe_programmation_lots', {'action': 'V'}) }}" title="Consulter"><i class="fa fa-eye fa-3x"></i> Consulter</a></li>
+                    {% endif %}
                     {%if  is_granted('ROLE_PROGSQE') %}
-                        <li><a class="btn btn-warning btn-lg active" href="{{ path('AeagSqeBundle_referentiel_webusers')}}" title="Programmer"><i class="fa fa-edit fa-3x"></i> Programmer</a></li>
+                        <li><a class="btn btn-warning btn-lg active" href="{{ path('Aeag_sqe_programmation_lots', {'action': 'P'}) }}" title="Programmer"><i class="fa fa-edit fa-3x"></i> Programmer</a></li>
                     {% endif %}
                     {%if  is_granted('ROLE_ADMINSQE') or is_granted('ROLE_PRESTASQE') %}
                         <li><a class="btn btn-success btn-lg" href="{{ path('AeagSqeBundle_echangefichiers_index')}}" title="Echange de fichiers"><i class="fa fa-download fa-3x"></i> Echange de fichiers</a></li>

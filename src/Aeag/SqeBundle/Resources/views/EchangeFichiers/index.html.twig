@@ -66,7 +66,8 @@
 
 {% block scripts %}
 
-    jQuery(document).ready(function() {
+    $(document).ready(function() {
+        $('#modalTraitementEncours').modal('hide');
           var table = $('#idTable_lot').DataTable(
             {"stateSave": true,
              "order": [[ 1, "desc" ]],

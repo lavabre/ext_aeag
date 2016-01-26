@@ -3,6 +3,9 @@
 namespace Aeag\SqeBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Aeag\AeagBundle\Entity\Notification;
+use Aeag\AeagBundle\Entity\Message;
+use Aeag\AeagBundle\Controller\AeagController;
 
 class EchangeFichiersController extends Controller{
     
@@ -40,15 +43,22 @@ class EchangeFichiersController extends Controller{
         $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
         $repoPgProgLotAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotAn');
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
+        $repoPgCmdFichiersRps = $emSqe->getRepository('AeagSqeBundle:PgCmdFichiersRps');
         
         $pgProgWebUser = $repoPgProgWebUsers->findOneByExtId($user->getId());
         $pgProgLotAn = $repoPgProgLotAn->findOneById($lotanId);
         $pgCmdDemandes = $repoPgCmdDemande->findBy(array('lotan' => $lotanId));
+        $reponses = array();
+        foreach($pgCmdDemandes as $pgCmdDemande) {
+            $reponses[$pgCmdDemande->getId()] = $repoPgCmdFichiersRps->findBy(array('demande' => $pgCmdDemande->getId(),
+                                                        'suppr' => 'N'));
+        }        
 
         return $this->render('AeagSqeBundle:EchangeFichiers:demandes.html.twig', 
                 array('user' => $pgProgWebUser, 
                     'demandes' => $pgCmdDemandes, 
-                    'lotan' => $pgProgLotAn));
+                    'lotan' => $pgProgLotAn,
+                    'reponses' => $reponses));
         
     }
     
@@ -130,6 +140,7 @@ class EchangeFichiersController extends Controller{
         $session->set('controller', 'EchangeFichier');
         $session->set('fonction', 'deposerReponse');
         $emSqe = $this->get('doctrine')->getManager('sqe');
+        $em = $this->get('doctrine')->getManager();
         
         // Récupération des valeurs du fichier
         $nomFichier = $_FILES["fichier"]["name"];
@@ -165,6 +176,13 @@ class EchangeFichiersController extends Controller{
         }
         
         if (move_uploaded_file($_FILES['fichier']['tmp_name'], $pathBase.'/'.$nomFichier)) {
+            
+            // Envoi d'un mail
+            $objetMessage = "RAI ".$reponse->getId()."soumise et en cours de validation";
+            $txtMessage = "Votre RAI (id ".$reponse->getId().") concernant la DAI ".$pgCmdDemande->getCodeDemandeCmd()." a été soumise. Le fichier ".$reponse->getNomFichier()." est en cours de validation. "
+                    . "Vous serez informé lorsque celle-ci sera validée. ";
+            $this->_envoiMessage($em, $txtMessage, $pgProgWebUser, $objetMessage);
+            
             return $this->redirect($this->generateUrl('AeagSqeBundle_echangefichiers_demandes',array('lotanId' => $pgCmdDemande->getLotan()->getId())));
         } else {
             echo "Attaque potentielle par téléchargement de fichiers.
@@ -244,6 +262,45 @@ class EchangeFichiersController extends Controller{
         }
         
         return $this->redirect($this->generateUrl('AeagSqeBundle_echangefichiers_demandes',array('lotanId' => $pgCmdFichiersRps->getDemande()->getLotan()->getId())));
+    }
+    
+    protected function _envoiMessage($em, $txtMessage, $destinataire, $objet, $expediteur = 'automate@eau-adour-garonne.fr'){
+        
+        $message = new Message();
+        $message->setRecepteur($destinataire->getId());
+        $message->setEmetteur($destinataire->getId());
+        $message->setNouveau(true);
+        $message->setIteration(2);
+        $texte = "Bonjour ," . PHP_EOL;
+        $texte .= " " . PHP_EOL;
+        $texte .= $txtMessage;
+        $texte .= " " . PHP_EOL;
+        $texte .= "Cordialement.";
+        $message->setMessage($texte);
+        $em->persist($message);
+
+        $notification = new Notification();
+        $notification->setRecepteur($destinataire->getId());
+        $notification->setEmetteur($destinataire->getId());
+        $notification->setNouveau(true);
+        $notification->setIteration(2);
+        $notification->setMessage($txtMessage);
+        $em->persist($notification);
+        
+        // Récupération du service
+        $mailer = $this->get('mailer');
+        // Création de l'e-mail : le service mailer utilise SwiftMailer, donc nous créons une instance de Swift_Message.
+        $mail = \Swift_Message::newInstance('Wonderful Subject')
+                ->setSubject($objet)
+                ->setFrom($expediteur)
+                ->setTo($destinataire->getMail())
+                ->setBody($this->renderView('AeagSqeBundle:EchangeFichiers:validerReponse.txt.twig', array(
+        )));
+
+        $mailer->send($mail);
+
+        $em->flush();
+        
     }
     
     private function _rmdirRecursive($dir) {

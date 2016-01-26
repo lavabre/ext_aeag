@@ -7,7 +7,7 @@
 <div id="body-modal-reponses"class="modal-body">
     {% if user.prestataire == demande.prestataire %}
         <a class="btn btn-success btn-file" id="btn-deposer-reponse">
-            <i class="fa fa-plus"></i> Déposer une DAI
+            <i class="fa fa-plus"></i> Déposer une RAI
         </a>
     {% endif %}
     <table class="table table-bordered table-condensed table-advance" id="idTable_reponses">
@@ -28,7 +28,7 @@
                     <a id="id_{{reponse.id}}" class="btn btn-success btn-telecharger" href="{{path("AeagSqeBundle_echangefichiers_reponses_telecharger",{"reponseId":  reponse.id, "typeFichier" : "RPS"})}}" title="Télécharger la reponse">
                         <i class="fa fa-download"></i> 
                     </a>
-                    {%if reponse.phaseFichier.codePhase == 'R10' and user.prestataire == demande.prestataire%}
+                    {%if is_granted('ROLE_ADMINSQE')%}
                         <a id="supprimerReponseId_{{ reponse.id }}" class="btn btn-danger" href="{{path("AeagSqeBundle_echangefichiers_reponses_supprimer",{"reponseId":  reponse.id})}}" title="Supprimer la réponse">
                             <i class="fa fa-eraser"></i> 
                         </a>

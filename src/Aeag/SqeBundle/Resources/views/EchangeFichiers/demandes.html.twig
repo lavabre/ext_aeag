@@ -31,6 +31,7 @@
                     <th>Période</th>
                     <th>Phase</th>
                     <th>Format fichier</th>
+                    <th>Réponses</th>
                 </tr>
             </thead>
             <tbody>
@@ -42,11 +43,8 @@
                             <tr>
                         {% endif %}
                             <td align="center" nowrap>
-                                <a id="id_{{demande.id}}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_echangefichiers_telecharger',{'demandeId' : demande.id})}}" title="Télécharger la demande">
+                                <a id="id_{{demande.id}}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_echangefichiers_telecharger',{'demandeId' : demande.id})}}" title="Télécharger la DAI">
                                     <i class="fa fa-download"></i> 
-                                </a>
-                                <a id="{{demande.id}}" class="btn btn-primary btn-voir-reponses" data-toggle="modal" href="#" title="Voir les réponses">
-                                    <i class="fa fa-eye"></i> 
                                 </a>
                             </td>
                             <td>{{ demande.dateDemande | date("d/m/Y H:i")}}</td>
@@ -60,6 +58,11 @@
                             {% endif%}
                             <td>{{ demande.phaseDemande.libellePhase }}</td>
                             <td>{{ demande.formatFichier }}</td>
+                            <td align="center" nowrap>
+                                <a id="{{demande.id}}" class="btn btn-primary btn-voir-reponses" data-toggle="modal" href="#" title="Voir les RAI">
+                                    <span class="badge">{{ reponses[demande.id] | length }}</span>
+                                </a>
+                            </td>
                         </tr>
                     {% endfor %}
                 {% endif %}
