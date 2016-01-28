@@ -5,7 +5,7 @@
     </h4>
 </div>
 <div id="body-modal-reponses"class="modal-body">
-    {% if user.prestataire == demande.prestataire %}
+    {% if user.prestataire == demande.prestataire and reponseMax < reponses | length %}
         <a class="btn btn-success btn-file" id="btn-deposer-reponse">
             <i class="fa fa-plus"></i> Déposer une RAI
         </a>

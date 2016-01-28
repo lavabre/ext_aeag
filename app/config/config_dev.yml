@@ -46,4 +46,5 @@ assetic:
     use_controller: true
 
 swiftmailer:
-    delivery_address: jle@eau-adour-garonne.fr
+    #delivery_address: jle@eau-adour-garonne.fr
+    delivery_address: vincent.guemene@eau-adour-garonne.fr

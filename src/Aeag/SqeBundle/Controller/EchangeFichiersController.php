@@ -49,16 +49,17 @@ class EchangeFichiersController extends Controller{
         $pgProgLotAn = $repoPgProgLotAn->findOneById($lotanId);
         $pgCmdDemandes = $repoPgCmdDemande->findBy(array('lotan' => $lotanId));
         $reponses = array();
+        $reponsesMax = array();
         foreach($pgCmdDemandes as $pgCmdDemande) {
-            $reponses[$pgCmdDemande->getId()] = $repoPgCmdFichiersRps->findBy(array('demande' => $pgCmdDemande->getId(),
-                                                        'suppr' => 'N'));
+            $reponses[$pgCmdDemande->getId()] = $repoPgCmdFichiersRps->getReponseByDemande($pgCmdDemande->getId());
+            $reponsesMax[$pgCmdDemande->getId()] = $repoPgCmdFichiersRps->findBy(array('demande' => $pgCmdDemande->getId(),'suppr' => 'N'));
         }        
-
         return $this->render('AeagSqeBundle:EchangeFichiers:demandes.html.twig', 
                 array('user' => $pgProgWebUser, 
                     'demandes' => $pgCmdDemandes, 
                     'lotan' => $pgProgLotAn,
-                    'reponses' => $reponses));
+                    'reponses' => $reponses,
+                    'reponsesMax' => $reponsesMax));
         
     }
     
@@ -130,7 +131,8 @@ class EchangeFichiersController extends Controller{
         return $this->render('AeagSqeBundle:EchangeFichiers:reponses.html.twig', 
                 array('reponses' => $pgCmdFichiersRps, 
                     'demande' => $pgCmdDemande,
-                    'user' => $pgProgWebUser));
+                    'user' => $pgProgWebUser, 
+                    'reponseMax' => $repoPgCmdDemande->getNbReponseByDemande($pgCmdDemande)));
     }
     
     public function deposerReponseAction($demandeId) {
@@ -178,7 +180,7 @@ class EchangeFichiersController extends Controller{
         if (move_uploaded_file($_FILES['fichier']['tmp_name'], $pathBase.'/'.$nomFichier)) {
             
             // Envoi d'un mail
-            $objetMessage = "RAI ".$reponse->getId()."soumise et en cours de validation";
+            $objetMessage = "RAI ".$reponse->getId()." soumise et en cours de validation";
             $txtMessage = "Votre RAI (id ".$reponse->getId().") concernant la DAI ".$pgCmdDemande->getCodeDemandeCmd()." a été soumise. Le fichier ".$reponse->getNomFichier()." est en cours de validation. "
                     . "Vous serez informé lorsque celle-ci sera validée. ";
             $this->_envoiMessage($em, $txtMessage, $pgProgWebUser, $objetMessage);
