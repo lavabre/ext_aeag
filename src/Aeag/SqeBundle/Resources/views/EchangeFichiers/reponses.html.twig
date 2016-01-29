@@ -37,8 +37,8 @@
                 <td>{{reponse.dateDepot | date("d/m/Y H:i")}}</td>
                 <td>{{reponse.nomFichier}}</td>
                 <td>{{reponse.phaseFichier.libellePhase}}</td>
-                <td><a href='{{path("AeagSqeBundle_echangefichiers_reponses_telecharger",{"reponseId":  reponse.id, "typeFichier" : "DB"})}}'>{{reponse.nomFichierDonneesBrutes}}</a></td>
                 <td><a href='{{path("AeagSqeBundle_echangefichiers_reponses_telecharger",{"reponseId":  reponse.id, "typeFichier" : "CR"})}}'>{{reponse.nomFichierCompteRendu}}</a></td>
+                <td><a href='{{path("AeagSqeBundle_echangefichiers_reponses_telecharger",{"reponseId":  reponse.id, "typeFichier" : "DB"})}}'>{{reponse.nomFichierDonneesBrutes}}</a></td>
             </tr>
             {% endfor %}
         </tbody>
