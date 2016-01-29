@@ -91,6 +91,20 @@ class PgCmdFichiersRps {
     /**
      * @var string
      *
+     * @ORM\Column(name="lien_acquit_sandre", type="string", length=255, nullable=true)
+     */
+    private $lienAcquitSandre;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="lien_certif_sandre", type="string", length=255, nullable=true)
+     */
+    private $lienCertifSandre;
+    
+    /**
+     * @var string
+     *
      * @ORM\Column(name="suppr", type="string", length=1, nullable=true)
      */
     private $suppr;
@@ -174,5 +188,23 @@ class PgCmdFichiersRps {
     function setSuppr($suppr) {
         $this->suppr = $suppr;
     }
+    
+    function getLienAcquitSandre() {
+        return $this->lienAcquitSandre;
+    }
+
+    function getLienCertifSandre() {
+        return $this->lienCertifSandre;
+    }
+
+    function setLienAcquitSandre($lienAcquitSandre) {
+        $this->lienAcquitSandre = $lienAcquitSandre;
+    }
+
+    function setLienCertifSandre($lienCertifSandre) {
+        $this->lienCertifSandre = $lienCertifSandre;
+    }
+
+
 
 }

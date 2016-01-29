@@ -51,7 +51,7 @@ class EchangeFichiersController extends Controller{
         $reponses = array();
         $reponsesMax = array();
         foreach($pgCmdDemandes as $pgCmdDemande) {
-            $reponses[$pgCmdDemande->getId()] = $repoPgCmdFichiersRps->getReponseByDemande($pgCmdDemande->getId());
+            $reponses[$pgCmdDemande->getId()] = $repoPgCmdFichiersRps->getReponsesValidesByDemande($pgCmdDemande->getId());
             $reponsesMax[$pgCmdDemande->getId()] = $repoPgCmdFichiersRps->findBy(array('demande' => $pgCmdDemande->getId(),'suppr' => 'N'));
         }        
         return $this->render('AeagSqeBundle:EchangeFichiers:demandes.html.twig', 
@@ -85,10 +85,10 @@ class EchangeFichiersController extends Controller{
                     '/'.$pgCmdDemande->getLotan()->getLot()->getId().'/'.$pgCmdDemande->getLotan()->getId().'/';
             
             // Changement de la phase s'il est téléchargé par un presta pour la première fois
-            if ($user->hasRole('ROLE_PRESTASQE') && $pgCmdDemande->getPhaseDemande()->getId() !== 12) {
-                $pgProgPhases = $repoPgProgPhases->findById(12);
+            if ($user->hasRole('ROLE_PRESTASQE') && substr($pgCmdDemande->getPhaseDemande()->getCodePhase(), 1) < '25') {
+                $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('D25');
                 if (count($pgProgPhases) > 0) {
-                    $pgCmdDemande->setPhaseDemande($pgProgPhases[0]);
+                    $pgCmdDemande->setPhaseDemande($pgProgPhases);
                     $emSqe->persist($pgCmdDemande);
                     $emSqe->flush();
                 }
@@ -131,8 +131,7 @@ class EchangeFichiersController extends Controller{
         return $this->render('AeagSqeBundle:EchangeFichiers:reponses.html.twig', 
                 array('reponses' => $pgCmdFichiersRps, 
                     'demande' => $pgCmdDemande,
-                    'user' => $pgProgWebUser, 
-                    'reponseMax' => $repoPgCmdDemande->getNbReponseByDemande($pgCmdDemande)));
+                    'user' => $pgProgWebUser));
     }
     
     public function deposerReponseAction($demandeId) {
@@ -144,10 +143,6 @@ class EchangeFichiersController extends Controller{
         $emSqe = $this->get('doctrine')->getManager('sqe');
         $em = $this->get('doctrine')->getManager();
         
-        // Récupération des valeurs du fichier
-        $nomFichier = $_FILES["fichier"]["name"];
-        
-        // Enregistrement des valeurs en base
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
         $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
         $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
@@ -156,6 +151,14 @@ class EchangeFichiersController extends Controller{
         $pgCmdDemande = $repoPgCmdDemande->findOneById($demandeId);
         $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R10');
         
+        // Récupération des valeurs du fichier
+        $nomFichier = $_FILES["fichier"]["name"];
+        if (substr($nomFichier, -3) != "zip") {
+            $session->getFlashBag()->add('notice-error', 'Le fichier déposé n\'est pas un fichier zip');
+            return $this->redirect($this->generateUrl('AeagSqeBundle_echangefichiers_demandes',array('lotanId' => $pgCmdDemande->getLotan()->getId())));
+        }
+
+        // Enregistrement des valeurs en base
         $reponse = new \Aeag\SqeBundle\Entity\PgCmdFichiersRps();
         $reponse->setDemande($pgCmdDemande);
         $reponse->setNomFichier($nomFichier);
@@ -178,18 +181,32 @@ class EchangeFichiersController extends Controller{
         }
         
         if (move_uploaded_file($_FILES['fichier']['tmp_name'], $pathBase.'/'.$nomFichier)) {
-            
-            // Envoi d'un mail
-            $objetMessage = "RAI ".$reponse->getId()." soumise et en cours de validation";
-            $txtMessage = "Votre RAI (id ".$reponse->getId().") concernant la DAI ".$pgCmdDemande->getCodeDemandeCmd()." a été soumise. Le fichier ".$reponse->getNomFichier()." est en cours de validation. "
-                    . "Vous serez informé lorsque celle-ci sera validée. ";
-            $this->_envoiMessage($em, $txtMessage, $pgProgWebUser, $objetMessage);
-            
-            return $this->redirect($this->generateUrl('AeagSqeBundle_echangefichiers_demandes',array('lotanId' => $pgCmdDemande->getLotan()->getId())));
+                        
+            // Envoi du fichier sur le serveur du sandre pour validationFormat
+            if ($this->envoiFichierValidationFormat($emSqe, $reponse, $pathBase.'/'.$nomFichier)) {
+                // Changement de la phase de la réponse 
+                $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R15');
+                $reponse->setPhaseFichier($pgProgPhases);
+                $emSqe->persist($reponse);
+                $emSqe->flush();
+                
+                // Envoi d'un mail
+                $objetMessage = "RAI ".$reponse->getId()." soumise et en cours de validation";
+                $txtMessage = "Votre RAI (id ".$reponse->getId().") concernant la DAI ".$pgCmdDemande->getCodeDemandeCmd()." a été soumise. Le fichier ".$reponse->getNomFichier()." est en cours de validation. "
+                        . "Vous serez informé lorsque celle-ci sera validée. ";
+                $this->_envoiMessage($em, $txtMessage, $pgProgWebUser, $objetMessage);
+
+                $session->getFlashBag()->add('notice-success', 'Le fichier '.$nomFichier. ' a été traité, un email vous a été envoyé');
+            } else {
+                $session->getFlashBag()->add('notice-error', 'Le fichier '.$nomFichier. ' a rencontré une erreur lors de la validation');    
+            }
         } else {
-            echo "Attaque potentielle par téléchargement de fichiers.
-                  Voici plus d'informations :\n";
+            $emSqe->remove($reponse);
+            $emSqe->flush();
+            
+            $session->getFlashBag()->add('notice-error', 'Erreur lors du téléchargement du fichier '.$nomFichier);
         }
+        return $this->redirect($this->generateUrl('AeagSqeBundle_echangefichiers_demandes',array('lotanId' => $pgCmdDemande->getLotan()->getId())));
     }
     
     public function telechargerReponseAction($reponseId, $typeFichier) {
@@ -222,7 +239,6 @@ class EchangeFichiersController extends Controller{
                 $fileName = $pgCmdFichiersRps->getNomFichierDonneesBrutes();
                 break;
         }
-        
         
         // On log le téléchargement
         $log = new \Aeag\SqeBundle\Entity\PgCmdDwnldUsrRps();
@@ -260,10 +276,93 @@ class EchangeFichiersController extends Controller{
         if ($this->_rmdirRecursive($pathBase)) {
             // Suppression en base
             $pgCmdFichiersRps->setSuppr('O');
+            $emSqe->persist($pgCmdFichiersRps);
             $emSqe->flush();
         }
         
         return $this->redirect($this->generateUrl('AeagSqeBundle_echangefichiers_demandes',array('lotanId' => $pgCmdFichiersRps->getDemande()->getLotan()->getId())));
+    }
+    
+    public function envoiFichierValidationFormat($em, $pgCmdFichierRps, $fullFileName) {
+            
+            $data = file_get_contents($fullFileName);
+
+            $r = $this->post("http://sandre.eaufrance.fr/PS/parseurSANDRE",  
+                array(
+                    "XSD"=>"COM_LABO;1", // A modifier peut etre
+                    "NomSI"=>"Logiciel version 1",
+                    "VersionSI"=>"4.3",
+                    "Transformation"=>"1"
+                ),
+                $data
+            );
+            
+            // Analyse de la réponse 
+            // Récupération des valeurs dans la réponse
+            $reponseTab = json_decode(json_encode(\simplexml_load_string($r)),true);
+            
+            // Stockage des valeurs en base
+            if (isset($reponseTab['LienAcquittement']) && isset($reponseTab['LienCertificat'])) {
+                $pgCmdFichierRps->setLienAcquitSandre($reponseTab['LienAcquittement']);
+                $pgCmdFichierRps->setLienCertifSandre($reponseTab['LienCertificat']);
+                $em->persist($pgCmdFichierRps);
+                $em->flush();
+                
+                return true;
+            }
+            return false;
+            
+    }
+    
+    protected function recursive_array_mpfd($array, $separator, &$output, $prefix = '') {
+        // Recurses through a multidimensional array and populates $output with a 
+        // multipart/form-data string representing the data
+        foreach ($array as $key => $val) {
+            $name = ($prefix) ? $prefix . "[" . $key . "]" : $key;
+            if (is_array($val)) {
+                $this->recursive_array_mpfd($val, $separator, $output, $name);
+            } else {
+                $output .= "--$separator\r\n"
+                        . "Content-Disposition: form-data; name=\"$name\"\r\n"
+                        . "Content-Type: text/plain\r\n"
+                        . "\r\n"
+                        . "$val\r\n";
+            }
+        }
+    }
+
+    protected function post($url, $params, $dataxml) {
+        // This will hold the request body string
+        $requestBody = '';
+
+        // We'll need a separator
+        $separator = '-----' . md5(microtime()) . '-----';
+
+        $this->recursive_array_mpfd($params, $separator, $requestBody);
+
+        // Now add the file
+        $filename = "data.xml"; // The name of the file
+        $requestBody .= "--$separator\r\n"
+                . "Content-Disposition: form-data; name=\"XML\"; filename=\"$filename\"\r\n"
+                . "Content-Length: " . strlen($dataxml) . "\r\n"
+                . "Content-Type: text/xml\r\n"
+                . "Content-Transfer-Encoding: binary\r\n"
+                . "\r\n"
+                . "$dataxml\r\n";
+
+        // Terminate the body
+        $requestBody .= "--$separator--";
+
+        // Let's go cURLing...
+        $ch = \curl_init($url);
+        \curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        \curl_setopt($ch, CURLOPT_POST, 1);
+        \curl_setopt($ch, CURLOPT_POSTFIELDS, $requestBody);
+        \curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Content-Type: multipart/form-data; boundary="' . $separator . '"'
+        ));
+        $response = \curl_exec($ch);
+        return $response;
     }
     
     protected function _envoiMessage($em, $txtMessage, $destinataire, $objet, $expediteur = 'automate@eau-adour-garonne.fr'){

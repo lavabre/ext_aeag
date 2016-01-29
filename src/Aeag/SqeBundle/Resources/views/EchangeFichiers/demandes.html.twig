@@ -59,7 +59,7 @@
                             <td>{{ demande.phaseDemande.libellePhase }}</td>
                             <td>{{ demande.formatFichier }}</td>
                             <td align="center" nowrap>
-                                <a id="{{demande.id}}"  {%if demande.phaseDemande.id >= 10 and demande.phaseDemande.id < 13%}class="btn btn-primary btn-voir-reponses"{%elseif demande.phaseDemande.id == 13%}class="btn btn-info btn-voir-reponses"{% elseif demande.phaseDemande.id >= 14%}class="btn btn-success btn-voir-reponses"{%endif%} data-toggle="modal" href="#" title="Voir les RAI">
+                                <a id="{{demande.id}}"  {%if demande.phaseDemande.id >= 110 and demande.phaseDemande.id < 130%}class="btn btn-primary btn-voir-reponses"{%elseif demande.phaseDemande.id == 130%}class="btn btn-info btn-voir-reponses"{% elseif demande.phaseDemande.id >= 140%}class="btn btn-success btn-voir-reponses"{%endif%} data-toggle="modal" href="#" title="Voir les RAI">
                                     {% if reponses[demande.id] | length == 0 and reponsesMax[demande.id] | length == 0 %}
                                         <span class="badge">0</span>
                                     {% else %}
