@@ -80,9 +80,8 @@ class EchangeFichiersController extends Controller{
         if ($pgCmdDemande) {
             // Récupération du fichier
             $zipName = str_replace('xml', 'zip', $pgCmdDemande->getNomFichier());
-            $pathBase = "/base/extranet/Transfert/Sqe/Echanges/";
-            $pathBase .=$pgCmdDemande->getAnneeProg().'/'.$pgCmdDemande->getCommanditaire()->getNomCorres().
-                    '/'.$pgCmdDemande->getLotan()->getLot()->getId().'/'.$pgCmdDemande->getLotan()->getId().'/';
+            
+            $pathBase = $this->getCheminEchange($pgCmdDemande);
             
             // Changement de la phase s'il est téléchargé par un presta pour la première fois
             if ($user->hasRole('ROLE_PRESTASQE') && substr($pgCmdDemande->getPhaseDemande()->getCodePhase(), 1) < '25') {
@@ -172,10 +171,7 @@ class EchangeFichiersController extends Controller{
         $emSqe->flush();
         
         // Enregistrement du fichier sur le serveur
-        $pathBase = "/base/extranet/Transfert/Sqe/Echanges/";
-        $pathBase .= $pgCmdDemande->getAnneeProg().'/'.$pgCmdDemande->getCommanditaire()->getNomCorres().
-                '/'.$pgCmdDemande->getLotan()->getLot()->getId().'/'.$pgCmdDemande->getLotan()->getId().'/'.$reponse->getId();
-        
+        $pathBase = $this->getCheminEchange($pgCmdDemande, $reponse->getId());
         if (!mkdir($pathBase)) {
             echo 'Le répertoire n\'a pas pu être créé';
         }
@@ -224,9 +220,7 @@ class EchangeFichiersController extends Controller{
         $pgCmdFichiersRps = $repoPgCmdFichiersRps->findOneById($reponseId);
         
         // Récupération du fichier
-        $pathBase = "/base/extranet/Transfert/Sqe/Echanges/";
-        $pathBase .= $pgCmdFichiersRps->getDemande()->getAnneeProg().'/'.$pgCmdFichiersRps->getDemande()->getCommanditaire()->getNomCorres().
-                '/'.$pgCmdFichiersRps->getDemande()->getLotan()->getLot()->getId().'/'.$pgCmdFichiersRps->getDemande()->getLotan()->getId().'/'.$reponseId;
+        $pathBase = $this->getCheminEchange($pgCmdFichiersRps->getDemande(), $reponseId);
         
         switch($typeFichier) {
             case "RPS" :
@@ -269,10 +263,7 @@ class EchangeFichiersController extends Controller{
         $pgCmdFichiersRps = $repoPgCmdFichiersRps->findOneById($reponseId);
         
         // Suppression physique des fichiers
-        $pathBase = "/base/extranet/Transfert/Sqe/Echanges/";
-        $pathBase .= $pgCmdFichiersRps->getDemande()->getAnneeProg().'/'.$pgCmdFichiersRps->getDemande()->getCommanditaire()->getNomCorres().
-                '/'.$pgCmdFichiersRps->getDemande()->getLotan()->getLot()->getId().'/'.$pgCmdFichiersRps->getDemande()->getLotan()->getId().'/'.$reponseId;
-        
+        $pathBase = $this->getCheminEchange($pgCmdFichiersRps->getDemande(), $reponseId);
         if ($this->_rmdirRecursive($pathBase)) {
             // Suppression en base
             $pgCmdFichiersRps->setSuppr('O');
@@ -312,6 +303,17 @@ class EchangeFichiersController extends Controller{
             }
             return false;
             
+    }
+    
+    protected function getCheminEchange($pgCmdDemande, $reponseId = null){
+        $chemin = $this->container->getParameter('repertoire_echange');
+        $chemin .= $pgCmdDemande->getAnneeProg().'/'.$pgCmdDemande->getCommanditaire()->getNomCorres().
+                '/'.$pgCmdDemande->getLotan()->getLot()->getId().'/'.$pgCmdDemande->getLotan()->getId().'/';
+        if (!is_null($reponseId)) {
+            $chemin .= $reponseId;
+        }
+        
+        return $chemin;
     }
     
     protected function recursive_array_mpfd($array, $separator, &$output, $prefix = '') {
@@ -395,7 +397,7 @@ class EchangeFichiersController extends Controller{
                 ->setSubject($objet)
                 ->setFrom($expediteur)
                 ->setTo($destinataire->getMail())
-                ->setBody($this->renderView('AeagSqeBundle:EchangeFichiers:validerReponse.txt.twig', array(
+                ->setBody($this->getContainer()->renderView('AeagSqeBundle:EchangeFichiers:reponseEmail.txt.twig', array('message' => $txtMessage
         )));
 
         $mailer->send($mail);

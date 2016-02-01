@@ -43,3 +43,5 @@ parameters:
     mailer_password: aeag31
     locale: fr
     secret: ThisTokenIsNotSoSecretChangeIt
+    
+    repertoire_echange : /base/extranet/Transfert/Sqe/Echanges/
