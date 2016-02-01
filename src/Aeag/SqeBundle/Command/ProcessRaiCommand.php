@@ -41,39 +41,20 @@ class ProcessRaiCommand extends ContainerAwareCommand {
                 //$output->writeln(var_dump($reponseTab));
                 $etatTraitement = $reponseTab['AccuseReception']['Acceptation'];
                 $erreurs = array();
-                $destinataires = array();
-                switch ($etatTraitement) {
-                    case '0' : // Le traitement est en cours
-                        // On ne fait rien
-                        break;
-                    case '1' : // Le traitement est terminé et le fichier est conforme
-                        if (!isset($reponseTab['AccuseReception']['Erreur'])) {
-                            $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R20');
-                            $pgCmdFichierRps->setPhaseFichier($pgProgPhases);
-
-                            $destinataires[] = $repoPgProgWebUsers->findOneByPrestataire($pgCmdFichierRps->getDemande()->getPrestataire());
-                            $objetMessage = "SQE - DAI " . $pgCmdFichierRps->getDemande()->getCodeDemandeCmd() . " : Fichier " . $pgCmdFichierRps->getId() . " conforme";
-                            $txtMessage = "La RAI " . $pgCmdFichierRps->getNomFichier() . " concernant la DAI " . $pgCmdFichierRps->getDemande()->getCodeDemandeCmd() . " a été analysé. Celui-ci possède un format conforme.";
+                if ($etatTraitement == 1 || $etatTraitement == 2) {
+                    $destinataires = array();
+                    
+                    if ($etatTraitement == 1 && !isset($reponseTab['AccuseReception']['Erreur'])) { // Le traitement est terminé et le fichier est conforme sans erreur
+                        $pgCmdFichierRps->setPhaseFichier($repoPgProgPhases->findOneByCodePhase('R20'));
+                        $validMessage = " conforme";
+                    } else if (($etatTraitement == 1 && isset($reponseTab['AccuseReception']['Erreur'])) || $etatTraitement == 2) {
+                        if ($etatTraitement == 1) {
+                            $pgCmdFichierRps->setPhaseFichier($repoPgProgPhases->findOneByCodePhase('R21'));
+                            $validMessage = " conforme avec erreurs";
                         } else {
-                            $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R21');
-                            $pgCmdFichierRps->setPhaseFichier($pgProgPhases);
-                            if (isset($reponseTab['AccuseReception']['Erreur']["DescriptifErreur"])) { // Une seule erreur
-                                $erreurs[] = $reponseTab['AccuseReception']['Erreur']["DescriptifErreur"];
-                            } else { // Plusieurs erreurs
-                                foreach ($reponseTab['AccuseReception']['Erreur'] as $erreurXml) {
-                                    $erreurs[] = $erreurXml["DescriptifErreur"];
-                                }
-                            }
-
-                            $destinataires = $repoPgProgWebUsers->findByTypeUser('ADMIN');
-                            $destinataires[] = $repoPgProgWebUsers->findOneByPrestataire($pgCmdFichierRps->getDemande()->getPrestataire());
-                            $objetMessage = "SQE - DAI " . $pgCmdFichierRps->getDemande()->getCodeDemandeCmd() . " : Fichier " . $pgCmdFichierRps->getId() . " conforme avec erreurs";
-                            $txtMessage = "La RAI " . $pgCmdFichierRps->getNomFichier() . " concernant la DAI " . $pgCmdFichierRps->getDemande()->getCodeDemandeCmd() . " a été analysé. Celui-ci possède un format conforme mais avec des erreurs.";
+                            $pgCmdFichierRps->setPhaseFichier($repoPgProgPhases->findOneByCodePhase('R80'));
+                            $validMessage = " non conforme";
                         }
-                        break;
-                    case '2' : // Le traitement est terminé et le fichier est non conforme
-                        $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R80');
-                        $pgCmdFichierRps->setPhaseFichier($pgProgPhases);
                         if (isset($reponseTab['AccuseReception']['Erreur']["DescriptifErreur"])) { // Une seule erreur
                             $erreurs[] = $reponseTab['AccuseReception']['Erreur']["DescriptifErreur"];
                         } else { // Plusieurs erreurs
@@ -81,25 +62,25 @@ class ProcessRaiCommand extends ContainerAwareCommand {
                                 $erreurs[] = $erreurXml["DescriptifErreur"];
                             }
                         }
-
                         $destinataires = $repoPgProgWebUsers->findByTypeUser('ADMIN');
-                        $destinataires[] = $repoPgProgWebUsers->findOneByPrestataire($pgCmdFichierRps->getDemande()->getPrestataire());
-                        $objetMessage = "SQE - DAI " . $pgCmdFichierRps->getDemande()->getCodeDemandeCmd() . " : Fichier " . $pgCmdFichierRps->getId() . " non conforme";
-                        $txtMessage = "La RAI " . $pgCmdFichierRps->getNomFichier() . " concernant la DAI " . $pgCmdFichierRps->getDemande()->getCodeDemandeCmd() . " a été analysé. Celui-ci possède un format non conforme.";
-                        break;
-                    default :
-                        break;
-                }
-                // Création du fichier de compte rendu
-                $this->_creationFichier($pgCmdFichierRps, $erreurs);
+                    } 
+                    
+                    // Création du fichier de compte rendu
+                    $this->_creationFichier($pgCmdFichierRps, $erreurs);
+                    
+                    // Envoi de mail au prestataire et à l'admin
+                    $objetMessage = "SQE - DAI " . $pgCmdFichierRps->getDemande()->getCodeDemandeCmd() . " : Fichier " . $pgCmdFichierRps->getId() . $validMessage;
+                    $txtMessage = "La RAI " . $pgCmdFichierRps->getNomFichier() . " concernant la DAI " . $pgCmdFichierRps->getDemande()->getCodeDemandeCmd() . " a été analysé. Celui-ci possède un format ".$validMessage.".";
+                    $destinataires[] = $repoPgProgWebUsers->findOneByPrestataire($pgCmdFichierRps->getDemande()->getPrestataire());
+                    foreach ($destinataires as $destinataire) {
+                        $this->_envoiMessage($em, $txtMessage, $destinataire, $objetMessage);
+                    }
 
-                // Envoi de mail au prestataire et à l'admin
-                foreach ($destinataires as $destinataire) {
-                    $this->_envoiMessage($em, $txtMessage, $destinataire, $objetMessage);
+                    $emSqe->persist($pgCmdFichierRps);
+                    $emSqe->flush();
+                    
                 }
-
-                $emSqe->persist($pgCmdFichierRps);
-                $emSqe->flush();
+                
             }
         }
     }
@@ -110,7 +91,7 @@ class ProcessRaiCommand extends ContainerAwareCommand {
         $pathBase .= $pgCmdFichierRps->getDemande()->getAnneeProg() . '/' . $pgCmdFichierRps->getDemande()->getCommanditaire()->getNomCorres() .
                 '/' . $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getId() . '/' . $pgCmdFichierRps->getDemande()->getLotan()->getId() . '/' . $pgCmdFichierRps->getId();
 
-        $fileName = str_replace('.', '_', $pgCmdFichierRps->getNomFichier() . '_CR');
+        $fileName = str_replace('.', '_', $pgCmdFichierRps->getNomFichier() . '_CR').'.txt';
         $fullFileName = $pathBase . '/' . $fileName;
         $cr = 'Fichier : ' . $pgCmdFichierRps->getNomFichier() . PHP_EOL;
         $cr .= 'Date dépot : ' . $pgCmdFichierRps->getDateDepot()->format('Y-m-d H:i:s') . PHP_EOL;
