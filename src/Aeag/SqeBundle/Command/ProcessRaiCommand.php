@@ -93,12 +93,15 @@ class ProcessRaiCommand extends ContainerAwareCommand {
 
         $fileName = str_replace('.', '_', $pgCmdFichierRps->getNomFichier() . '_CR').'.txt';
         $fullFileName = $pathBase . '/' . $fileName;
-        $cr = 'Fichier : ' . $pgCmdFichierRps->getNomFichier() . PHP_EOL;
-        $cr .= 'Date dépot : ' . $pgCmdFichierRps->getDateDepot()->format('Y-m-d H:i:s') . PHP_EOL;
-        $cr .= 'Demande : ' . $pgCmdFichierRps->getDemande()->getCodeDemandeCmd() . PHP_EOL;
-        $cr .= 'Lot : ' . $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getNomLot() . PHP_EOL;
-        $cr .= date("Y-m-d H:i:s") . ' - ' . $pgCmdFichierRps->getPhaseFichier()->getLibellePhase() . PHP_EOL;
-        $cr .= 'Erreurs : ' . implode(PHP_EOL, $erreurs);
+        $cr = 'Fichier : ' . $pgCmdFichierRps->getNomFichier() . "\r\n";
+        $cr .= 'Date dépot : ' . $pgCmdFichierRps->getDateDepot()->format('Y-m-d H:i:s') . "\r\n";
+        $cr .= 'Demande : ' . $pgCmdFichierRps->getDemande()->getCodeDemandeCmd() . "\r\n";
+        $cr .= 'Lot : ' . $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getNomLot() . "\r\n";
+        $cr .= date("Y-m-d H:i:s") . ' - ' . $pgCmdFichierRps->getPhaseFichier()->getLibellePhase() . "\r\n";
+        if (count($erreurs) > 0) {
+            $erreurs = array_unique($erreurs);
+            $cr .= 'Erreurs : ' . implode("\r\n", $erreurs);
+        }
         file_put_contents($fullFileName, $cr);
         // Enregistrement du fichier CR en base
         $pgCmdFichierRps->setNomFichierCompteRendu($fileName);

@@ -105,6 +105,7 @@ class EchangeFichiersController extends Controller{
             header('Content-disposition: attachment; filename="' . $zipName . '"');
             header('Content-Length: ' . filesize($pathBase.$zipName));
             readfile($pathBase.$zipName);
+            exit();
             
         }
 
@@ -210,7 +211,7 @@ class EchangeFichiersController extends Controller{
         $session = $this->get('session');
         $session->set('menu', 'echangeFichier');
         $session->set('controller', 'EchangeFichier');
-        $session->set('fonction', 'deposerReponse');
+        $session->set('fonction', 'telechargerReponse');
         $emSqe = $this->get('doctrine')->getManager('sqe');
         
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
@@ -224,16 +225,18 @@ class EchangeFichiersController extends Controller{
         
         switch($typeFichier) {
             case "RPS" :
+                $contentType = "application/zip";
                 $fileName = $pgCmdFichiersRps->getNomFichier();
                 break;
             case "CR" :
+                $contentType = "application/octet-stream";
                 $fileName = $pgCmdFichiersRps->getNomFichierCompteRendu();
                 break;
             case "DB" :    
+                $contentType = "application/octet-stream";
                 $fileName = $pgCmdFichiersRps->getNomFichierDonneesBrutes();
                 break;
         }
-        
         // On log le téléchargement
         $log = new \Aeag\SqeBundle\Entity\PgCmdDwnldUsrRps();
         $log->setUser($pgProgWebUser);
@@ -243,10 +246,11 @@ class EchangeFichiersController extends Controller{
         $emSqe->persist($log);
         $emSqe->flush();
         
-        header('Content-Type', 'application/zip');
+        header('Content-Type', $contentType);
         header('Content-disposition: attachment; filename="' . $fileName . '"');
         header('Content-Length: ' . filesize($pathBase.'/'.$fileName));
         readfile($pathBase.'/'.$fileName);
+        exit();
     }
     
     public function supprimerReponseAction($reponseId) {
