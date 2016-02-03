@@ -44,6 +44,9 @@
                         {% endif %}
                             <td align="center" nowrap>
                                 <a id="id_{{demande.id}}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_echangefichiers_telecharger',{'demandeId' : demande.id})}}" title="Télécharger la DAI">
+                                    <i class="fa fa-upload"></i> 
+                                </a>
+                                <a id="id_{{demande.id}}" class="btn btn-primary btn-deposer-reponse" data-id="{{demande.id}}" title="Déposer une RAI">
                                     <i class="fa fa-download"></i> 
                                 </a>
                             </td>
@@ -82,6 +85,13 @@
             <div class="modal-content" id="modal-reponses-content">
             </div>
         </div>
+    </div>
+    
+    <div class="modal modal-reponse fade" id="modal_reponses_selection">
+        <div class="modal-dialog">
+            <div class="modal-content" id="modal-reponses-selection-content">
+            </div>
+        </div>    
     </div>
 {%endblock modal %}
 
@@ -150,6 +160,23 @@
                 }
             });
             
+        });
+        
+        $('.btn-deposer-reponse').click(function (){
+            $('#modalTraitementEncours').modal();
+            var url = '{{ path("AeagSqeBundle_echangefichiers_reponses_selectionner",{"demandeId":  "par1" }) }}';
+            var demandeId = $(this).data('id');
+            url = url.replace("par1", demandeId);
+            $.ajax({
+                url: url,
+                type: 'get',
+                success: function(html) {
+                    $('#modal-reponses-selection-content').empty().append(html);
+                    $('#modalTraitementEncours').modal('hide');
+                    $('#modal_reponses_selection').modal();
+                }
+            });
+        
         });
     });
     

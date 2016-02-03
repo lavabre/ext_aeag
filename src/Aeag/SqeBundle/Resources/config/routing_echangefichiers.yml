@@ -17,6 +17,10 @@ AeagSqeBundle_echangefichiers_reponses:
 AeagSqeBundle_echangefichiers_reponses_deposer:
     path:  /reponses/deposer/{demandeId}
     defaults: { _controller: AeagSqeBundle:EchangeFichiers:deposerReponse, demandeId : null }
+
+AeagSqeBundle_echangefichiers_reponses_selectionner:
+    path:  /reponses/selectionner/{demandeId}
+    defaults: { _controller: AeagSqeBundle:EchangeFichiers:selectionnerReponse, demandeId : null }
     
 AeagSqeBundle_echangefichiers_reponses_telecharger:
     path:  /reponses/telecharger/{reponseId}/{typeFichier}

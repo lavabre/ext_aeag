@@ -6,8 +6,8 @@
 </div>
 <div id="body-modal-reponses"class="modal-body">
     {% if user.prestataire == demande.prestataire and (demande.phaseDemande.codePhase != 'D40' and demande.phaseDemande.codePhase != 'D50') %}
-        <a class="btn btn-success btn-file" id="btn-deposer-reponse">
-            <i class="fa fa-plus"></i> Déposer une RAI
+        <a class="btn btn-primary btn-file" id="btn-deposer-reponse" data-id="{{demande.id}}">
+            <i class="fa fa-download"></i> Déposer une RAI
         </a>
     {% endif %}
     <table class="table table-bordered table-condensed table-advance" id="idTable_reponses">
@@ -26,7 +26,7 @@
             <tr>
                 <td align="center" nowrap>
                     <a id="id_{{reponse.id}}" class="btn btn-success btn-telecharger" href="{{path("AeagSqeBundle_echangefichiers_reponses_telecharger",{"reponseId":  reponse.id, "typeFichier" : "RPS"})}}" title="Télécharger la reponse">
-                        <i class="fa fa-download"></i> 
+                        <i class="fa fa-upload"></i> 
                     </a>
                     {%if is_granted('ROLE_ADMINSQE')%}
                         <a id="supprimerReponseId_{{ reponse.id }}" class="btn btn-danger" href="{{path("AeagSqeBundle_echangefichiers_reponses_supprimer",{"reponseId":  reponse.id})}}" title="Supprimer la réponse">
@@ -49,10 +49,15 @@
 </div>
 
 {% block modal %}
-    <div class="modal fade" id="modal_deposer_reponse">
-        {{ include('AeagSqeBundle:EchangeFichiers:deposerReponse.html.twig') }}
+    <div class="modal modal-reponse fade" id="modal_reponses_selection_2">
+        <div class="modal-dialog">
+            <div class="modal-content" id="modal-reponses-selection-content">
+            </div>
+        </div>    
     </div>
 {%endblock modal %}
+
+
 
 <script>
     var table1 = $('#idTable_reponses').DataTable(
@@ -102,7 +107,20 @@
     });
     
     $('#btn-deposer-reponse').click(function (){
-        $("#modal_deposer_reponse").modal();
+        $('#modalTraitementEncours').modal();
+        var url = '{{ path("AeagSqeBundle_echangefichiers_reponses_selectionner",{"demandeId":  "par1" }) }}';
+        var demandeId = $(this).data('id');
+        url = url.replace("par1", demandeId);
+        $.ajax({
+            url: url,
+            type: 'get',
+            success: function(html) {
+                $('#modal-reponses-selection-content').empty().append(html);
+                $('#modalTraitementEncours').modal('hide');
+                $('#modal_reponses_selection_2').modal();
+            }
+        });
+
     });
     
     

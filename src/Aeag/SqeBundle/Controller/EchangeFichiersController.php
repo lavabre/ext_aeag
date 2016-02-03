@@ -134,6 +134,22 @@ class EchangeFichiersController extends Controller{
                     'user' => $pgProgWebUser));
     }
     
+    public function selectionnerReponseAction($demandeId) {
+        $user = $this->getUser();
+        $session = $this->get('session');
+        $session->set('menu', 'echangeFichier');
+        $session->set('controller', 'EchangeFichier');
+        $session->set('fonction', 'reponses');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+        
+        $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
+        
+        $pgCmdDemande = $repoPgCmdDemande->findOneById($demandeId);
+        
+         return $this->render('AeagSqeBundle:EchangeFichiers:selectionnerReponse.html.twig', 
+                array('demande' => $pgCmdDemande));
+    }
+    
     public function deposerReponseAction($demandeId) {
         $user = $this->getUser();
         $session = $this->get('session');
@@ -401,7 +417,7 @@ class EchangeFichiersController extends Controller{
                 ->setSubject($objet)
                 ->setFrom($expediteur)
                 ->setTo($destinataire->getMail())
-                ->setBody($this->getContainer()->renderView('AeagSqeBundle:EchangeFichiers:reponseEmail.txt.twig', array('message' => $txtMessage
+                ->setBody($this->renderView('AeagSqeBundle:EchangeFichiers:reponseEmail.txt.twig', array('message' => $txtMessage
         )));
 
         $mailer->send($mail);
