@@ -119,12 +119,14 @@ class DefaultController extends Controller {
             $nb = 0;
             foreach ($destinataires as $destinataire) {
                 // Création de l'e-mail : le service mailer utilise SwiftMailer, donc nous créons une instance de Swift_Message.
+                $bodyMsg = 'Envoyé par : '.$pgProgWebuser->getNom().' ('.$pgProgWebuser->getMail().')'.PHP_EOL.PHP_EOL;
+                $bodyMsg .= $envoyerMessage->getMessage();
                 $desti = explode(" ", $destinataire);
                 $mail = \Swift_Message::newInstance()
-                        ->setSubject($envoyerMessage->getSujet())
+                        ->setSubject('[SQE Question] - '.$envoyerMessage->getSujet())
                         ->setFrom(array('automate@eau-adour-garonne.fr'))
                         ->setTo(array($desti[0]))
-                        ->setBody($envoyerMessage->getMessage());
+                        ->setBody($bodyMsg);
                 if ($envoyerMessage->getCopie()) {
                     $mail->addCc($envoyerMessage->getCopie());
                 }
