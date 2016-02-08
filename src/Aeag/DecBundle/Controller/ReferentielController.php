@@ -385,8 +385,8 @@ class ReferentielController extends Controller {
         $tabFicent = explode('_', $ficent);
 
         $message = $this->chargeDeclarationcollecteurAction($ficent);
-         $declaration = $message[1];
-         return new Response ($declaration);
+        $declaration = $message[1];
+        return new Response($declaration);
         $message[1] = null;
         $fic_decprod = 'dec_decprod_' . $tabFicent[2] . '_' . $tabFicent[3] . '_' . $tabFicent[4];
         $message = $this->chargeDeclarationProducteurAction($fic_decprod);
@@ -695,7 +695,7 @@ class ReferentielController extends Controller {
         $emDec = $this->getDoctrine()->getManager('dec');
         $majDechet = new MajDechet();
         $form = $this->createForm(new MajDechetType(), $majDechet);
-         if ($request->getMethod() == 'POST') {
+        if ($request->getMethod() == 'POST') {
             $form->handleRequest($request);
             if ($form->isValid()) {
                 $dechet = new Dechet();
@@ -722,7 +722,7 @@ class ReferentielController extends Controller {
         $dechet = $repoDechet->getDechetByCode($code);
         $majDechet = clone($dechet);
         $form = $this->createForm(new MajDechetType(), $majDechet);
-         if ($request->getMethod() == 'POST') {
+        if ($request->getMethod() == 'POST') {
             $form->handleRequest($request);
             if ($form->isValid()) {
                 $dechet->setCode($majDechet->getCode());
@@ -1189,7 +1189,7 @@ class ReferentielController extends Controller {
         $emDec = $this->getDoctrine()->getManager('dec');
         $majNaf = new majNaf();
         $form = $this->createForm(new MajNafType(), $majNaf);
-         if ($request->getMethod() == 'POST') {
+        if ($request->getMethod() == 'POST') {
             $form->handleRequest($request);
             if ($form->isValid()) {
                 $naf = new Naf();
@@ -1802,7 +1802,11 @@ class ReferentielController extends Controller {
 
                     if (!$Ouvrage) {
                         if ($tab[4] != '000000000000000' and $tab[3] != 'ODEC') {
-                            $Ouvrage = $repoOuvrage->getOuvrageBySiretType($tab[4], $tab[3]);
+                            $Ouvrages = $repoOuvrage->getOuvragesBySiretType($tab[4], $tab[3]);
+                            $Ouvrage = null;
+                            if ($Ouvrages){
+                                $Ouvrage = $Ouvrages[0];
+                            }
                             if (!$Ouvrage) {
                                 $entity = new Ouvrage();
                                 $ajout = $ajout + 1;
@@ -2158,8 +2162,11 @@ class ReferentielController extends Controller {
                 if (!(is_null($tab[0]))) {
                     if ($tab[0] != '000000000000000') {
                         $tab[0] = str_replace("'", "", $tab[0]);
-                        $Ouvrage = $repoOuvrage->getOuvrageBySiretType($tab[0], 'PDEC');
-
+                        $Ouvrages = $repoOuvrage->getOuvragesBySiretType($tab[0], 'PDEC');
+                        $Ouvrage = null;
+                        if ($Ouvrages) {
+                            $Ouvrage = $Ouvrages[0];
+                        }
                         if (!$Ouvrage) {
                             $entity = new Ouvrage();
                             $ajout = $ajout + 1;
@@ -2288,7 +2295,11 @@ class ReferentielController extends Controller {
             foreach ($tabTri as $tab) {
                 if (!(is_null($tab[0]))) {
 
-                    $Producteur = $repoOuvrage->getOuvrageBySiretType($tab[0], 'PDEC');
+                    $Producteurs = $repoOuvrage->getOuvragesBySiretType($tab[0], 'PDEC');
+                    $Producteur = null;
+                    if ($Producteurs) {
+                        $Producteur = $Producteurs[0];
+                    }
                     $Collecteur = $repoOuvrage->getOuvrageByOuvIdType($tab[1], 'ODEC');
                     if ($Producteur and $Collecteur) {
                         $CollecteurProducteur = $repoCollecteurProducteur->getCollecteurProducteurByCollecteurProducteur($Collecteur->getId(), $Producteur->getId());
@@ -2508,7 +2519,7 @@ class ReferentielController extends Controller {
         $producteurNonPlafonne = $repoProducteurNonPlafonne->getProducteurNonPlafonneBySiret($siret);
         $majProducteurNonPlafonne = clone($producteurNonPlafonne);
         $form = $this->createForm(new MajProducteurNonPlafonneType(), $majProducteurNonPlafonne);
-         if ($request->getMethod() == 'POST') {
+        if ($request->getMethod() == 'POST') {
             $form->handleRequest($request);
             if ($form->isValid()) {
                 $producteurNonPlafonne->setLibelle($majProducteurNonPlafonne->getLibelle());
@@ -2605,7 +2616,11 @@ class ReferentielController extends Controller {
         foreach ($producteurs as $producteur) {
             $entities[$i][0] = $producteur;
             if ($producteur->getSiret()) {
-                $ouvrage = $repoOuvrage->getOuvrageBySiretType($producteur->getSiret(), 'PDEC');
+                $ouvrages = $repoOuvrage->getOuvragesBySiretType($producteur->getSiret(), 'PDEC');
+                $ouvrage = null;
+                if ($ouvrages) {
+                    $ouvrage = $ouvrages[0];
+                }
             } else {
                 $ouvrage = null;
             }
@@ -2636,7 +2651,11 @@ class ReferentielController extends Controller {
         foreach ($producteurs as $producteur) {
             $entities[$i][0] = $producteur;
             if ($producteur->getSiret()) {
-                $ouvrage = $repoOuvrage->getOuvrageBySiretType($producteur->getSiret(), 'PDEC');
+                $ouvrages = $repoOuvrage->getOuvragesBySiretType($producteur->getSiret(), 'PDEC');
+                $ouvrage = null;
+                if ($ouvrages){
+                    $ouvrage = $ouvrages[0];
+                }
             } else {
                 $ouvrage = null;
             }
@@ -2856,9 +2875,9 @@ class ReferentielController extends Controller {
         $prod = array();
         $i = 0;
         foreach ($producteurs as $producteur) {
-           // $nbCollecteurs = $repoCollecteurProducteur->getNbCollecteurProducteurByProducteur($producteur->getId());
+            // $nbCollecteurs = $repoCollecteurProducteur->getNbCollecteurProducteurByProducteur($producteur->getId());
             $prod[$i][0] = $producteur;
-           // $prod[$i][1] = $nbCollecteurs;
+            // $prod[$i][1] = $nbCollecteurs;
             $i++;
         }
 
@@ -2943,7 +2962,7 @@ class ReferentielController extends Controller {
         $message = null;
         $maj = false;
         $err = false;
-     
+
         if ($request->getMethod() == 'POST') {
 
             $form->handleRequest($request);
@@ -3286,7 +3305,11 @@ class ReferentielController extends Controller {
             foreach ($tabTri as $tab) {
 
                 if (!(is_null($tab[0]))) {
-                    $producteur = $repoOuvrage->getOuvrageBySiretType($tab[0], 'PDEC');
+                    $producteurs = $repoOuvrage->getOuvragesBySiretType($tab[0], 'PDEC');
+                    $producteur = null;
+                    if ($producteurs) {
+                        $producteur = $producteurs[0];
+                    }
                     if ($producteur) {
                         $declarationProducteur = $repoDeclarationProducteur->getDeclarationProducteurByProducteurAnnee($producteur->getId(), $tab[1]);
                         if (!$declarationProducteur) {
@@ -3371,7 +3394,11 @@ class ReferentielController extends Controller {
                 if (!(is_null($tab[0]))) {
                     //print_r('colelcteur : ' . $tab[0] . ' producteur : ' . $tab[1]);
                     $collecteur = $repoOuvrage->getOuvrageByOuvidType($tab[0], 'ODEC');
-                    $producteur = $repoOuvrage->getOuvrageBySiretType($tab[1], 'PDEC');
+                    $producteurs = $repoOuvrage->getOuvragesBySiretType($tab[1], 'PDEC');
+                    $producteur = null;
+                    if ($producteurs){
+                        $producteur = $producteurs[0];
+                    }
                     if ($producteur) {
                         $collecteurProducteur = $repoCollecteurProducteur->getCollecteurProducteurByCollecteurProducteur($collecteur->getId(), $producteur->getId());
                         if (!$collecteurProducteur) {
@@ -3392,7 +3419,11 @@ class ReferentielController extends Controller {
                     $tauxAide = $repoTaux->getTauxByAnneeCode($tab[2], 'TAUXAIDE');
                     $collecteur = $repoOuvrage->getOuvrageByOuvidType($tab[0], 'ODEC');
                     $declarationCollecteur = $repoDeclarationCollecteur->getDeclarationCollecteurByCollecteurAnnee($collecteur->getId(), $tab[2]);
-                    $producteur = $repoOuvrage->getOuvrageBySiretType($tab[1], 'PDEC');
+                    $producteurs = $repoOuvrage->getOuvragesBySiretType($tab[1], 'PDEC');
+                    $producteur = null;
+                    if ($producteurs){
+                        $producteur = $producteurs[0];
+                    }
                     if ($producteur) {
                         $declarationProducteur = $repoDeclarationProducteur->getDeclarationProducteurByProducteurAnnee($producteur->getId(), $tab[2]);
                         $sousDeclarationCollecteur = $repoSousDeclarationCollecteur->getSousDeclarationCollecteurByDeclarationCollecteurNumero($declarationCollecteur->getId(), $tab[3]);

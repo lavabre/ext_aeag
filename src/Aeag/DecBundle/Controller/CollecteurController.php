@@ -1490,7 +1490,9 @@ class CollecteurController extends Controller {
                         $declarationProducteur = $declarationDetail->getDeclarationProducteur();
                         $emDec->remove($declarationDetail);
                         $emDec->flush();
-                        $ok = $this->majStatutDeclarationProducteursAction($declarationProducteur->getId(), $user, $emDec, $session);
+                        if ($declarationProducteur) {
+                            $ok = $this->majStatutDeclarationProducteursAction($declarationProducteur->getId(), $user, $emDec, $session);
+                        }
                     }
                 }
 
@@ -1732,6 +1734,11 @@ class CollecteurController extends Controller {
                         if (strlen($tab[0]) <> 14) {
                             $err = true;
                             $response = $response . "Siret " . $tab[0] . " incorrect à la ligne " . $ligne . " \n";
+                        }else{
+                              if (substr($tab[0],9,5) == '00000') {
+                                $err = true;
+                                $response = $response . "Siret " . $tab[0] . " incorrect à la ligne " . $ligne . ".  \n";
+                            }
                         }
                     }
                 }
@@ -1849,7 +1856,11 @@ class CollecteurController extends Controller {
                             $tab[0] = str_replace(' ', '', $tab[0]);
                             if (strlen($tab[0]) <> 14) {
                                 $err = true;
-                                $message = $message . "dans le fichier CSV : siret " . $tab[0] . " incorrect à la ligne " . $ligne . ". Corriger le siret de ce producteur à partir du menu 'Producteurs'. \n";
+                                $message = $message . "dans le fichier CSV : siret " . $tab[0] . " incorrect à la ligne " . $ligne . ".  \n";
+                            }
+                            if (substr($tab[0],9,5) == '00000') {
+                                $err = true;
+                                $message = $message . "dans le fichier CSV : siret " . $tab[0] . " incorrect à la ligne " . $ligne . ".  \n";
                             }
                             $producteur = $repoOuvrage->getOuvrageBySiretType($tab[0], 'PDEC');
                             if (!$producteur) {

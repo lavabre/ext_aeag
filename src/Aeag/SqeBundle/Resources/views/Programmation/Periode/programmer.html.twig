@@ -65,6 +65,7 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {%set BtnCompleterIgnorer = 0 %}
                         {%if groupes | length%}  
                             {% for groupe in groupes %}
                                 {% if groupe.Compl == 'O' or ( groupe.Compl ==  null and groupe.autre | length) %}
@@ -103,6 +104,11 @@
                                             {% if groupe.autreGroupe %}
                                                 {% if groupe.autreGroupe.prestaDft %}
                                                    {{ groupe.autreGroupe.prestaDft.nomCorres }}
+                                                   {% if groupe.groupe.prestaDft %}
+                                                          {% if groupe.autreGroupe.prestaDft.adrCorId != groupe.groupe.prestaDft.adrCorId %}
+                                                              {%set BtnCompleterIgnorer = 1 %}
+                                                          {% endif  %}    
+                                                    {% endif %}
                                                 {% endif %}
                                             {% endif %}
                                         {% else %}
@@ -156,12 +162,17 @@
                     <div class="col-lg-6 col-lg-offset-3">
                         <div class="btn-group" data-toggle="buttons">
                             {% if Compl == 'O'%}
-                                <button type="button" id="optionGroupes1"  class="btn btn-primary" autocomplete="off">Complétez ce lot</button>
-                                <button type="button" id="optionGroupes2"  class="btn btn-default" autocomplete="off">Ignorer ce lot</button>
+                              {#  {% if BtnCompleterIgnorer ==  0 %}
+                                     <button type="button" id="optionGroupes1"  class="btn btn-primary" autocomplete="off">Complétez ce lot</button>
+                                     {% else %}
+                                      <button type="button" id="optionGroupes2"  class="btn btn-primary" autocomplete="off">Ignorer ce lot</button>   
+                                 {% endif %}   #}
+                                {#<button type="button" id="optionGroupes1"  class="btn btn-primary" autocomplete="off">Complétez ce lot</button>
+                                <button type="button" id="optionGroupes2"  class="btn btn-default" autocomplete="off">Ignorer ce lot</button>#}
                                 <input type="hidden" id="optionGroupes" value="C">
                             {% else %}
-                                <button type="button" id="optionGroupes1"  class="btn btn-default" autocomplete="off">Complétez ce lot</button>
-                                <button type="button" id="optionGroupes2"  class="btn btn-primary" autocomplete="off">Ignorer ce lot</button>
+                               {#<button type="button" id="optionGroupes1"  class="btn btn-default" autocomplete="off">Complétez ce lot</button>
+                                <button type="button" id="optionGroupes2"  class="btn btn-primary" autocomplete="off">Ignorer ce lot</button>#}
                                 <input type="hidden" id="optionGroupes" value="I">
                             {% endif %}
                         </div>
@@ -492,7 +503,7 @@
     {% endfor %}
 
     $(document).on('click', '#optionGroupes1', function(e){
-      $('#optionGroupes1').removeClass('btn-default').addClass('btn-primary');
+       $('#optionGroupes1').removeClass('btn-default').addClass('btn-primary');
       $('#optionGroupes2').removeClass('btn-primary').addClass('btn-default');
       $('#optionGroupes').val('C');
      $('#idBlockAutrePeriodes').hide();
@@ -508,8 +519,8 @@
           {% endfor %}
       {% endif %}
       });  
-
-      $(document).on('click', '#optionGroupes2', function(e){
+          
+       $(document).on('click', '#optionGroupes2', function(e){
       $('#optionGroupes2').removeClass('btn-default').addClass('btn-primary');
       $('#optionGroupes1').removeClass('btn-primary').addClass('btn-default');
       $('#optionGroupes').val('I');
@@ -526,6 +537,40 @@
           {% endfor %}
       {% endif %}
       });
+      
+        {% if BtnCompleterIgnorer ==  0 %}
+              $('#optionGroupes1').removeClass('btn-default').addClass('btn-primary');
+                $('#optionGroupes2').removeClass('btn-primary').addClass('btn-default');
+                $('#optionGroupes').val('C');
+               $('#idBlockAutrePeriodes').hide();
+                {%if groupes | length%}  
+                    {% for groupe in groupes %}
+                        {% if groupe.autre | length %}
+                          $('#idTr_{{ groupe.groupe.id }}').addClass("label-warning");
+                          $('#idTdPresta_{{ groupe.groupe.id }}').empty();
+                          {% if groupe.autreGroupe.prestaDft %}
+                             $('#idTdPresta_{{ groupe.groupe.id }}').html('{{ groupe.autreGroupe.prestaDft.nomCorres }}');
+                          {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+     {% else %}     
+                $('#optionGroupes2').removeClass('btn-default').addClass('btn-primary');
+                $('#optionGroupes1').removeClass('btn-primary').addClass('btn-default');
+                $('#optionGroupes').val('I');
+                 $('#idBlockAutrePeriodes').show();
+                {%if groupes | length%}  
+                    {% for groupe in groupes %}
+                        {% if groupe.autre | length %}
+                          $('#idTr_{{ groupe.groupe.id }}').removeClass("label-warning");
+                          $('#idTdPresta_{{ groupe.groupe.id }}').empty();
+                          {% if groupe.groupe.prestaDft %}
+                             $('#idTdPresta_{{ groupe.groupe.id }}').html('{{ groupe.groupe.prestaDft.nomCorres }}');
+                          {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+    {% endif %}   
         
 </script>
     

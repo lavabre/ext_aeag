@@ -127,6 +127,20 @@ class OuvrageRepository extends EntityRepository {
         $qb = $this->_em->createQuery($query);
         //print_r($query);
         return $qb->getOneOrNullResult();
+      }
+    
+      /**
+     * @return array
+     */
+    public function getOuvragesBySiretType($siret,$type) {
+        $query = "select distinct c";
+        $query = $query . " from Aeag\AeagBundle\Entity\Ouvrage c";
+        $query = $query . " where c.siret = '" . $siret . "'";
+        $query = $query . " and c.type = '" . $type . "'";
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+        //return $qb->getOneOrNullResult();
+         return $qb->getResult();
     }
     
      /**
