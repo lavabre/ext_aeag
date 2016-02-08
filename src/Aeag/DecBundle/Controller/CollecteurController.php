@@ -731,7 +731,10 @@ class CollecteurController extends Controller {
 
 
                 if (!$err) {
-                    $producteur = $repoOuvrage->getOuvrageBySiretType($majProducteur->getSiret(), 'PDEC');
+                    $producteurs = $repoOuvrage->getOuvragesBySiretType($majProducteur->getSiret(), 'PDEC');
+                    if ($producteurs) {
+                        $producteur = null;
+                    }
                     if (!$producteur) {
                         $producteur = new Ouvrage();
                         $producteur->setType('PDEC');
@@ -1734,8 +1737,8 @@ class CollecteurController extends Controller {
                         if (strlen($tab[0]) <> 14) {
                             $err = true;
                             $response = $response . "Siret " . $tab[0] . " incorrect à la ligne " . $ligne . " \n";
-                        }else{
-                              if (substr($tab[0],9,5) == '00000') {
+                        } else {
+                            if (substr($tab[0], 9, 5) == '00000') {
                                 $err = true;
                                 $response = $response . "Siret " . $tab[0] . " incorrect à la ligne " . $ligne . ".  \n";
                             }
@@ -1858,11 +1861,14 @@ class CollecteurController extends Controller {
                                 $err = true;
                                 $message = $message . "dans le fichier CSV : siret " . $tab[0] . " incorrect à la ligne " . $ligne . ".  \n";
                             }
-                            if (substr($tab[0],9,5) == '00000') {
+                            if (substr($tab[0], 9, 5) == '00000') {
                                 $err = true;
                                 $message = $message . "dans le fichier CSV : siret " . $tab[0] . " incorrect à la ligne " . $ligne . ".  \n";
                             }
-                            $producteur = $repoOuvrage->getOuvrageBySiretType($tab[0], 'PDEC');
+                            $producteurs = $repoOuvrage->getOuvragesBySiretType($tab[0], 'PDEC');
+                            if ($producteurs) {
+                                $producteur = null;
+                            }
                             if (!$producteur) {
                                 $producteur = new Ouvrage();
                                 $producteur->setLibelle($this->wd_remove_accents($tab[1]));
@@ -1989,7 +1995,10 @@ class CollecteurController extends Controller {
                                 }
                             } else {
                                 if (strlen($tab[9]) == 14) {
-                                    $centreTraitement = $repoOuvrage->getOuvrageBySiretType($tab[9], 'CTT');
+                                    $centreTraitements = $repoOuvrage->getOuvragesBySiretType($tab[9], 'CTT');
+                                    if ($centreTraitements){
+                                        $centreTraitement = null;
+                                    }
                                 } else {
                                     $centreTraitement = $repoOuvrage->getOuvrageByNumeroType($tab[9], 'CTT');
                                 }
@@ -2088,7 +2097,10 @@ class CollecteurController extends Controller {
                                 if ($tab[15]) {
                                     $tab[15] = str_replace(' ', '', $tab[15]);
                                     if (strlen($tab[15]) == 14) {
-                                        $centreTransit = $repoOuvrage->getOuvrageBySiretType($tab[15], 'CT');
+                                        $centreTransits = $repoOuvrage->getOuvragesBySiretType($tab[15], 'CT');
+                                        if ($centreTransits){
+                                            $centreTransit = null;
+                                        }
                                     } else {
                                         $centreTransit = $repoOuvrage->getOuvrageByNumeroType($tab[15], 'CT');
                                     }
@@ -2115,7 +2127,10 @@ class CollecteurController extends Controller {
                             if ($tab[14]) {
                                 $tab[14] = str_replace(' ', '', $tab[14]);
                                 if (strlen($tab[14]) == 14) {
-                                    $centreDepot = $repoOuvrage->getOuvrageBySiretType($tab[14], 'ODEC');
+                                    $centreDepots = $repoOuvrage->getOuvragesBySiretType($tab[14], 'ODEC');
+                                   if ($centreDepots){
+                                       $centreDepot = null;
+                                   }
                                 } else {
                                     $centreDepot = $repoOuvrage->getOuvrageByNumeroType($tab[14], 'ODEC');
                                 }
