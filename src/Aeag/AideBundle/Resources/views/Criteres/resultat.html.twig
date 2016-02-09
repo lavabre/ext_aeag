@@ -20,8 +20,7 @@
                     ligne : {{ criteres.ligne_libelle }}
                   {% endif %}
                    <br>Type de bénéficiaire : {{ criteres.categorie_libelle }}
-                {#   <br>{{ criteres.annee_libelle }}#}
-                   <br>{{ criteres.decision_libelle }}
+                   <br>{{ criteres.annee_libelle }}
                   {% if not(criteres.region_admin_libelle == null) %}
                       <br>Région administrative : {{ criteres.region_admin_libelle }}
                   {% endif %}
@@ -41,7 +40,7 @@
                             &nbsp;&nbsp;Montant total des aides : {{ criteres.total_dossiers | number_format( 2,","," ") }} &euro;
                        </h4>
                  {% endif %}
-        </div>
+             </div>
         </div>
          <div class="col-md-2">
              <div class="small pull-right">
@@ -58,6 +57,16 @@
  {%endblock panel_heading %}
 
 {%block content %}
+    
+    {% if full %}
+           <div class="row">
+                   <div class="alert alert-danger centered" role="alert">
+                            <h3>
+                                Télécharger le fichier PDF ou le fichier CSV pour visualiser les {{ criteres.nb_dossiers |number_format(0,'.',' ') }} dossiers sélectionnés</br></br>
+                             </h3>
+                     </div>
+          </div>
+    {% else %}
  
  <div class="row">
     <div class="col-md-12">
@@ -66,7 +75,7 @@
                <thead>
                       <tr>
                           <th nowrap>Dossiers&nbsp;&nbsp;&nbsp;&nbsp;</th>
-                         <th nowrap>Montant des travaux retenus&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                          <th nowrap>Montant des travaux retenus&nbsp;&nbsp;&nbsp;&nbsp;</th>
                           <th nowrap>Montant de l'aide&nbsp;&nbsp;&nbsp;&nbsp;</th>
                           <th nowrap>Nature de l'opération&nbsp;&nbsp;&nbsp;&nbsp;</th>
                           <th nowrap>Raison Sociale&nbsp;&nbsp;&nbsp;&nbsp;</th>
@@ -95,7 +104,15 @@
           </div>
       </div>
  </div>          
+    {% endif %}
  
+    <div class="row">
+        <div class="col-md-12">
+              <div class="col-md-offset-3 col-md-6 pull-right">
+                      <a class="btn btn-danger" href="{{ path('aeag_aide') }}"><i class="fa fa-power-off"></i> Retour</a> 
+                </div>
+         </div>
+ </div>            
  
 {% endblock %}
 

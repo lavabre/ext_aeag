@@ -58,7 +58,7 @@ class CriteresController extends Controller {
             } else {
                 $variables['ligne_libelle'] = " Toutes les lignes";
                 $where_ligne = "a.ligne";
-                $criteres->setDebutAnnee($criteres->getFinAnnee());
+                //$criteres->setDebutAnnee($criteres->getFinAnnee());
             }
             $session->set('ligne_libelle', $variables['ligne_libelle']);
 
@@ -94,36 +94,17 @@ class CriteresController extends Controller {
             $session->set('categorie_libelle', $variables['categorie_libelle']);
 
             // Critère annee
-//            if ($criteres->getDebutAnnee()) {
-//                if (!$criteres->getFinAnnee()) {
-//                    $criteres->setFinAnnee($criteres->getDebutAnnee());
-//                }
-//                $variables['annee_libelle'] = "décision prise entre le 1er janvier " . $criteres->getDebutAnnee()->getAnnee() . " et le 31 décembre " . $criteres->getFinAnnee()->getAnnee();
-//                $where_annee = " and a.annee >= " . $criteres->getDebutAnnee()->getAnnee() . " and a.annee <= " . $criteres->getFinAnnee()->getAnnee();
-//            } else {
-//                $variables['annee_libelle'] = "décision prise depuis le 1er janvier 2000";
-//                $where_annee = " and a.annee >= 2000 ";
-//            }
-//            $session->set('annee_libelle', $variables['annee_libelle']);
-            
-              // Critère date de decicion
-            if ($criteres->getDateDebut()) {
-                if (!$criteres->getDateFin()) {
-                    $criteres->setDateFin($criteres->getDateDebut());
+            if ($criteres->getDebutAnnee()) {
+                if (!$criteres->getFinAnnee()) {
+                    $criteres->setFinAnnee($criteres->getDebutAnnee());
                 }
-                $mois_fr = Array("", "janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", 
-                        "septembre", "octobre", "novembre", "décembre");
-                list( $jour, $mois, $annee) = explode('/', $criteres->getDateDebut()->format("d/n/Y"));
-                $dateDebut =  $jour.' '.$mois_fr[$mois].' '.$annee; 
-                list($jour, $mois, $annee) = explode('/', $criteres->getDateFin()->format("d/n/Y"));
-                $dateFin =  $jour.' '.$mois_fr[$mois].' '.$annee; 
-                $variables['decision_libelle'] = "décision prise entre le  " . $dateDebut . " et le  " . $dateFin;
-                $where_date_decision= " and a.date_decision >= '" . $criteres->getDateDebut()->format('Y-m-d') . "' and a.date_decision <= '" . $criteres->getDateFin()->format('Y-m-d') . "'";
+                $variables['annee_libelle'] = "décision prise entre le 1er janvier " . $criteres->getDebutAnnee()->getAnnee() . " et le 31 décembre " . $criteres->getFinAnnee()->getAnnee();
+                $where_annee = " and a.annee >= " . $criteres->getDebutAnnee()->getAnnee() . " and a.annee <= " . $criteres->getFinAnnee()->getAnnee();
             } else {
-                $variables['decision_libelle'] = "décision prise depuis le 1er janvier 2000";
-                $where_date_decision = " and a.annee >= 2000 ";
+                $variables['annee_libelle'] = "décision prise depuis le 1er janvier 2000";
+                $where_annee = " and a.annee >= 2000 ";
             }
-            $session->set('decicion_libelle', $variables['decision_libelle']);
+            $session->set('annee_libelle', $variables['annee_libelle']);
 
             // Critère Region administrative
             If ($criteres->getRegionAdmin()) {
@@ -162,8 +143,7 @@ class CriteresController extends Controller {
 
             $where = "a.ligne = " . $where_ligne;
             $where .= $where_cate;
-//            $where .= $where_annee;
-             $where .= $where_date_decision;
+            $where .= $where_annee;
             $where .= " and a.regadmin = " . $where_regionAdmin;
             $where .= " and a.dept = " . $where_departement;
             $where .= " and a.reghydro = " . $where_regionHydro;
@@ -187,7 +167,7 @@ class CriteresController extends Controller {
             $dossiers = $repoDossier->getDossiers($where);
 
 
-            usort($dossiers, array('self', 'tri_dossiers'));
+//            usort($dossiers, array('self', 'tri_dossiers'));
 
             $dos = array();
             $i = 0;
@@ -198,21 +178,24 @@ class CriteresController extends Controller {
             $fic_import = $repertoire . "/" . $nom_fichier;
             //ouverture fichier
             $fic = fopen($fic_import, "w");
-            $contenu = "DOSSIER;MONTANT TRAVAUX RETENUS;MONTANT AIDE;NATURE OPEREATION;RAISON SOCIALE;INTITULE;\n";
+            $contenu = "DOSSIER;MONTANT TARVAUX RETENUs;MONTANT AIDE;NATURE OPEREATION;RAISON SOCIALE;INTITULE;\n";
             fputs($fic, $contenu);
-
+            $full = false;
             foreach ($dossiers as $dossier) {
                 $montantRetenu = strval($dossier->getMontant_retenu());
                 $montant = strval($dossier->getMontant_aide_interne());
+                if ($i <= 250){
                 $dos[$i] = array(
                     'dossier' => $dossier->getLigne()->getLigne() . '-' . $dossier->getDept()->getDept() . '-' . $dossier->getNo_ordre(),
-                    'date_decision' => $dossier->getDate_decision()->format("d/m/Y"),
                     'montant_retenu' => $montantRetenu,
                     'montant_aide_interne' => $montant,
                     'forme_aide' => $dossier->getForme_aide(),
                     'raison_sociale' => $dossier->getRaison_sociale(),
                     'intitule' => $dossier->getIntitule());
                 $i++;
+                }else{
+                    $full = true;
+                }
                 $contenu = $dossier->getLigne()->getLigne() . '-' . $dossier->getDept()->getDept() . '-' . $dossier->getNo_ordre() . ";";
                 $contenu = $contenu . $montantRetenu . ";";
                 $contenu = $contenu . $montant . ";";
@@ -225,12 +208,13 @@ class CriteresController extends Controller {
             fclose($fic);
             $variables['fichier'] = $nom_fichier;
 
-          //  $session->set('Dossiers', serialize($dos));
+//            $session->set('Dossiers', serialize($dos));
 
             return $this->render('AeagAideBundle:Criteres:resultat.html.twig', array(
                         'dossiers' => $dos,
                         'nb_dossiers' => $nb_dossiers,
                         'criteres' => $variables,
+                       'full' => $full                   
             ));
         }
 
@@ -263,6 +247,9 @@ class CriteresController extends Controller {
      *  Fichier PDF
      */
     public function pdfAction() {
+        
+        $em = $this->getDoctrine()->getManager('aide');
+         $repoDossier = $em->getRepository('AeagAideBundle:Dossier');
 
         $session = $this->get('session');
 
@@ -298,7 +285,22 @@ class CriteresController extends Controller {
         $variables['total_dossiers'] = $session->get('total_dossiers');
 
         // Liste des dossiers selectionnés
-        $variables['Dossiers'] = unserialize($session->get('Dossiers'));
+         $dossiers = $repoDossier->getDossiers($session->get('where'));
+         $dos = array();
+          $i = 0;
+           foreach ($dossiers as $dossier) {
+                $montantRetenu = strval($dossier->getMontant_retenu());
+                $montant = strval($dossier->getMontant_aide_interne());
+                $dos[$i] = array(
+                    'dossier' => $dossier->getLigne()->getLigne() . '-' . $dossier->getDept()->getDept() . '-' . $dossier->getNo_ordre(),
+                    'montant_retenu' => $montantRetenu,
+                    'montant_aide_interne' => $montant,
+                    'forme_aide' => $dossier->getForme_aide(),
+                    'raison_sociale' => $dossier->getRaison_sociale(),
+                    'intitule' => $dossier->getIntitule());
+                $i++;
+                }
+           $variables['Dossiers'] = $dos;
 
 
         $pdf = new PdfAidesAccordees('L');

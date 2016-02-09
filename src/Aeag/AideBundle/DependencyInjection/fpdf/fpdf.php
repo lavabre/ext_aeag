@@ -550,12 +550,13 @@ class fpdf {
         return $this->AutoPageBreak;
     }
 
-    function Cell($w, $h = 0, $txt = '', $border = 0, $ln = 0, $align = '', $fill = false, $link = '') {
+    function Cell($w, $h = 0, $txt = null, $border = 0, $ln = 0, $align = '', $fill = false, $link = '') {
         // Output a cell
         //$txt = iconv('UTF-8', 'windows-1252', $txt);
         setlocale(LC_ALL,'fr_FR.UTF-8');
-        if ($txt != '') {
-            $txt = iconv('UTF-8', 'windows-1252//TRANSLIT//IGNORE', $txt);
+        $txt2 = str_replace(')', '\\)', str_replace('(', '\\(', str_replace('\\', '\\\\', $txt)));
+        if (count($txt2) > 0) {
+            $txt = iconv('UTF-8', 'windows-1252//TRANSLIT//IGNORE', $txt2);
         }
 
         $k = $this->k;

@@ -1,0 +1,162 @@
+{% extends "AeagAideBundle::layout.html.twig" %}
+
+{% block content %}
+
+<p>
+    <div class="grid_11"></div>
+    <div class="grid_1 right">
+        <a href="{{ path('pdf') }}">
+            <img src="{{ asset('bundles/aeagaide/images/pdf.png') }}"
+                alt="Format PDF" title="Format PDF" width="50" height="50" />
+        </a>
+   </div>
+</p>
+<div class="widget-panel grid_12">
+     <div class="widget-top">
+         <div class="grid_3"></div>
+         <div class="grid_9 right">
+            <h3>{% if nb_dossiers == 0 %} aucun dossier ne
+			r&eacute;pond aux crit&egrave;res suivants : {% else %} {{ nb_dossiers | number( 0,","," ") }}
+			dossiers r&eacute;pondent aux crit&egrave;res suivants : {% endif %}
+            </h3>
+          </div>
+    </div>
+  
+    <div class="grid_4"></div>
+    <div class="grid_8 right">
+    {% if ligne_libelle == ' Toutes les lignes' %} {{ ligne_libelle }}
+    {% else %} ligne : {{ ligne_libelle }} {% endif %}
+    </div>
+    </br>
+    <div class="grid_4"></div>
+    <div class="grid_8 right">
+    Type de bénéficiaire : {{ categorie_libelle }}
+    </div>
+    </br>
+    <div class="grid_4"></div>
+    <div class="grid_8 right">
+    {{ annee_libelle }}
+    </div>
+    {% if not(region_admin_libelle == null) %}
+    </br>
+    <div class="grid_4"></div>
+    <div class="grid_8 right">
+    Région administrative : {{ region_admin_libelle }}
+    </div>
+    {% endif %}
+    {% if not(departement_libelle == null) %}
+    </br>
+    <div class="grid_4"></div>
+    <div class="grid_8 right">
+    Département : {{ departement_libelle }}
+    </div>
+    {% endif %}
+    {% if not(region_hydro_libelle == null) %}
+    </br>
+        <div class="grid_4"></div>
+        <div class="grid_8 right">
+        {{ region_hydro_libelle }}
+        </div>
+    {% endif %}
+    {% if (categorie_libelle  == 'Association') %}
+    </br>
+        <div class="grid_4"></div>
+        <div class="grid_8 right">
+        Publication conform&eacute;ment au d&eacute;cretn&deg;2006-887 du 17 juillet 2006
+        </div>
+    {% endif %}
+ </div>
+    
+<div class="widget-panel grid_12">
+<div class="widget-content module">
+    
+<div class="grid_4"></div>
+<div class="grid_8 right">
+    {% if pager.isPaginable %}
+     {{ paginate(pager, 'resultat') }}
+    {% endif %}
+</div>
+    
+<table id="table_resultat" class="display data-table-noConfig">
+
+	<thead>
+		<th nowrap>Dossiers</th>
+		<th nowrap>Montant Aide</th>
+		<th nowrap>Nature Op&eacute;ration</th>
+		<th nowrap>Raison Sociale</th>
+		<th  nowrap>Intitul&eacute;</th>
+        </thead>
+	<tbody>
+		{% set montant = 0 %}
+		{% set i = 1 %}
+		{% for dossier in pager.getResults %}
+                {% if i == 1 %}
+		  <tr class="gradeB">
+                {%else%}
+                  <tr class="gradeA">        
+                {% endif %}
+			<td class="normal-text" align="left" nowrap>{{ dossier.ligne }} - {{ dossier.dept }}
+				- {{ dossier.no_ordre }}
+			</td>
+			<td class="normal-text" align="right" nowrap>{{ dossier.montant_aide_interne | number( 2,","," ") }}
+				&euro;</td>
+			<td class="normal-text" align="left" nowrap>{{ dossier.forme_aide }}
+			</td>
+			<td class="normal-text" align="left">{{ dossier.raison_sociale }}
+			</td>
+			<td class="normal-text" align="left">{{ dossier.intitule }}
+			</td>
+		
+		
+		<tr />
+		{% set montant = montant + dossier.montant_aide_interne  %}
+		{% set i = i + 1 %}
+		{% if i > 2 %}
+		{% set i = 1 %}
+		{% endif %}
+		{% endfor %}
+	</tbody>
+	<tfoot>
+		{% if nb_dossiers > 0 %}
+		<tr>
+			<th nowrap align="right">Total page {{ pager.getPage() }}&emsp;
+			</th>
+			<th nowrap align="right">{{ montant | number( 2,","," ") }}
+				&euro;</th>
+			<th></th>
+			<th></th>
+			<th></th>
+		</tr>
+		{% if (pager.getPage() == pager.getLastPage()) %}
+		<tr>
+			<th nowrap align="right">Total général&emsp;</th>
+			<th  nowrap align="right">{{ total_dossiers | number( 2,","," ") }}
+				&euro;</th>
+			<th></th>
+			<th></th>
+			<th></th>
+		</tr>
+		{% endif %}
+		{% endif %}
+	</tfoot>
+</table>
+
+<div class="grid_6"></div>
+<div class="grid_6 right">
+    <a href="{{ path('aide') }}"> <img
+        src="{{ asset('bundles/aeagaide/images/bouton-quitter.jpg') }}"
+        alt="Autre sélection" title="Autre sélection" />
+    </a>
+</div>
+
+</div>  
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+
+   {{ parent()}}
+     <script src="{{ asset('bundles/aeagaide/js/custom.script.js') }}"></script>
+   
+{% endblock %}

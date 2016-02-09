@@ -1,0 +1,25 @@
+aeag_aide:
+    path:  /
+    defaults: { _controller: AeagAideBundle:Criteres:criteres }
+    requirements:
+        methods:  GET|POST
+
+AeagAideBundle_region_departements:
+    path:  /region_departements
+    defaults: { _controller: AeagAideBundle:Criteres:regionDepartements}
+    requirements:
+        methods:  GET
+    
+AeagAideBundle_resultat:
+    path:  /resultat
+    defaults: { _controller: AeagAideBundle:Criteres:resultat}
+    requirements:
+        methods:  GET|POST
+        
+AeagAideBundle_pdf:
+    path:  /pdf
+    defaults: { _controller: AeagAideBundle:Criteres:pdf}
+    requirements:
+        methods:  GET|POST
+
+
