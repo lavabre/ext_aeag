@@ -553,11 +553,21 @@ class fpdf {
     function Cell($w, $h = 0, $txt = null, $border = 0, $ln = 0, $align = '', $fill = false, $link = '') {
         // Output a cell
         //$txt = iconv('UTF-8', 'windows-1252', $txt);
-        setlocale(LC_ALL,'fr_FR.UTF-8');
-        $txt2 = str_replace(')', '\\)', str_replace('(', '\\(', str_replace('\\', '\\\\', $txt)));
-        if (count($txt2) > 0) {
-            $txt = iconv('UTF-8', 'windows-1252//TRANSLIT//IGNORE', $txt2);
+        setlocale(LC_ALL, 'fr_FR.UTF-8');
+
+//        if (count($txt2) > 0) {
+//            $txt = iconv('UTF-8', 'windows-1252//TRANSLIT//IGNORE', $txt2);
+//        }
+
+        $encoding = mb_detect_encoding($txt, mb_detect_order(), false);
+
+        if ($encoding == "UTF-8") {
+            $txt = mb_convert_encoding($txt, 'UTF-8', 'UTF-8');
         }
+
+
+        $out = iconv(mb_detect_encoding($txt, mb_detect_order(), false), "windows-1252//TRANSLIT//IGNORE", $txt);
+        $txt = $out;
 
         $k = $this->k;
         /* if ($this->y + $h > $this->PageBreakTrigger && !$this->InHeader && !$this->InFooter && $this->AcceptPageBreak()) {

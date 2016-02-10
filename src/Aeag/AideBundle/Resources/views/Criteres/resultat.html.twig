@@ -60,9 +60,10 @@
     
     {% if full %}
            <div class="row">
-                   <div class="alert alert-danger centered" role="alert">
+                   <div class="alert alert-danger text-center" role="alert">
                             <h3>
-                                Télécharger le fichier PDF ou le fichier CSV pour visualiser les {{ criteres.nb_dossiers |number_format(0,'.',' ') }} dossiers sélectionnés</br></br>
+                                Désolé mais le nombre de dossiers étant trop important à afficher merci de </br>
+                                télécharger le fichier PDF ou le fichier CSV pour les visualiser. </br></br>
                              </h3>
                      </div>
           </div>
@@ -75,6 +76,9 @@
                <thead>
                       <tr>
                           <th nowrap>Dossiers&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                          {% if criteres.annees %}
+                            <th nowrap>Année&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                          {% endif %}
                           <th nowrap>Montant des travaux retenus&nbsp;&nbsp;&nbsp;&nbsp;</th>
                           <th nowrap>Montant de l'aide&nbsp;&nbsp;&nbsp;&nbsp;</th>
                           <th nowrap>Nature de l'opération&nbsp;&nbsp;&nbsp;&nbsp;</th>
@@ -87,6 +91,9 @@
                       {% for dossier in dossiers %}
                           <tr>        
                               <td align="left" nowrap>{{ dossier.dossier }}</td>
+                              {% if criteres.annees %}
+                                    <td align="center">{{ dossier.annee }}</td>
+                                {% endif %}
                               <td align="right" >{{ dossier.montant_retenu | number_format( 2,","," ") }}</td>
                               <td align="right" >{{ dossier.montant_aide_interne | number_format( 2,","," ") }}</td>
                               <td align="left">{{ dossier.forme_aide }}</td>
@@ -96,11 +103,7 @@
                       {% endfor %}
                   </tbody>
             </table>
-            
-             <div class="col-md-offset-3 col-md-6 pull-right">
-                   <a class="btn btn-danger" href="{{ path('aeag_aide') }}"><i class="fa fa-power-off"></i> Retour</a> 
-             </div>
-            
+       
           </div>
       </div>
  </div>          

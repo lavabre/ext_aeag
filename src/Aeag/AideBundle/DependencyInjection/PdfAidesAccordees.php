@@ -51,7 +51,8 @@ class PdfAidesAccordees extends PageGroup {
 
 // Tableau coloré
     function Formatage($data) {
-
+        
+    
         // Restauration des couleurs et de la police
         $this->SetFillColor(224, 235, 255);
         $this->SetTextColor(0, 0, 102);
@@ -98,8 +99,13 @@ class PdfAidesAccordees extends PageGroup {
         $this->SetLineWidth(.3);
         $this->SetFont('Arial', 'B');
         // En-tête des colonnes
-        $w = array(17, 30, 20, 30, 90, 90);
-        $header = array('Dossiers', 'Montant des travaux retenus ', 'Montant aide', 'Nature opération', 'Raison sociale', 'Intitulé');
+        if (!$data['annees']) {
+            $w = array(17, 30, 20, 30, 90, 90);
+            $header = array('Dossiers', 'Montant des travaux retenus ', 'Montant aide', 'Nature opération', 'Raison sociale', 'Intitulé');
+        } else {
+            $w = array(17, 10, 30, 20, 30, 85, 85);
+            $header = array('Dossiers', 'Année', 'Montant des travaux retenus ', 'Montant aide', 'Nature opération', 'Raison sociale', 'Intitulé');
+        }
         for ($i = 0; $i < count($header); $i++)
             $this->Cell($w[$i], 6, $header[$i], 1, 0, 'C', true);
         $this->Ln();
@@ -116,12 +122,22 @@ class PdfAidesAccordees extends PageGroup {
         $montantDocument = 0;
         foreach ($data['Dossiers'] as $row) {
             //print_r('dossier : ' . $row['dossier']);
-            $this->Cell($w[0], 3, $row['dossier'], 'LR', 0, 'C', $fill);
-            $this->Cell($w[1], 3, number_format($row['montant_retenu'], 2, ',', ' ') . ' €', 'LR', 0, 'R', $fill);
-            $this->Cell($w[2], 3, number_format($row['montant_aide_interne'], 2, ',', ' ') . ' €', 'LR', 0, 'R', $fill);
-            $this->Cell($w[3], 3, $row['forme_aide'], 'LR', 0, 'L', $fill);
-            $this->Cell($w[4], 3, substr($row['raison_sociale'], 0, 60), 'LR', 0, 'L', $fill);
-            $this->Cell($w[5], 3, substr($row['intitule'], 0, 80), 'LR', 0, 'L', $fill);
+            if (!$data['annees']) {
+                $this->Cell($w[0], 3, $row['dossier'], 'LR', 0, 'C', $fill);
+                $this->Cell($w[1], 3, number_format($row['montant_retenu'], 2, ',', ' ') . ' €', 'LR', 0, 'R', $fill);
+                $this->Cell($w[2], 3, number_format($row['montant_aide_interne'], 2, ',', ' ') . ' €', 'LR', 0, 'R', $fill);
+                $this->Cell($w[3], 3, $row['forme_aide'], 'LR', 0, 'L', $fill);
+                $this->Cell($w[4], 3, substr($row['raison_sociale'], 0, 60), 'LR', 0, 'L', $fill);
+                $this->Cell($w[5], 3, substr($row['intitule'], 0, 80), 'LR', 0, 'L', $fill);
+            } else {
+                $this->Cell($w[0], 3, $row['dossier'], 'LR', 0, 'C', $fill);
+                $this->Cell($w[1], 3, $row['annee'], 'LR', 0, 'C', $fill);
+                $this->Cell($w[2], 3, number_format($row['montant_retenu'], 2, ',', ' ') . ' €', 'LR', 0, 'R', $fill);
+                $this->Cell($w[3], 3, number_format($row['montant_aide_interne'], 2, ',', ' ') . ' €', 'LR', 0, 'R', $fill);
+                $this->Cell($w[4], 3, $row['forme_aide'], 'LR', 0, 'L', $fill);
+                $this->Cell($w[5], 3, substr($row['raison_sociale'], 0, 60), 'LR', 0, 'L', $fill);
+                $this->Cell($w[6], 3, substr($row['intitule'], 0, 80), 'LR', 0, 'L', $fill);
+            }
             $this->Ln();
             $fill = !$fill;
             $nbLignes += 1;
@@ -137,12 +153,22 @@ class PdfAidesAccordees extends PageGroup {
                 $this->SetLineWidth(.3);
                 $this->SetFont('Arial', 'B');
                 // total page
-                $this->Cell($w[0], 3, 'Total page ' . $this->GroupPageNo(), '1', 0, 'C', true);
-                $this->Cell($w[1], 3, number_format($montantRetenuPage, 2, ',', ' ') . ' €', '1', 0, 'R', true);
-                $this->Cell($w[2], 3, number_format($montantPage, 2, ',', ' ') . ' €', '1', 0, 'R', true);
-                $this->Cell($w[3], 3, '', '1', 0, 'C', true);
-                $this->Cell($w[4], 3, '', '1', 0, 'C', true);
-                $this->Cell($w[5], 3, '', '1', 0, 'C', true);
+                if (!$data['annees']) {
+                    $this->Cell($w[0], 3, 'Total page ' . $this->GroupPageNo(), '1', 0, 'C', true);
+                    $this->Cell($w[1], 3, number_format($montantRetenuPage, 2, ',', ' ') . ' €', '1', 0, 'R', true);
+                    $this->Cell($w[2], 3, number_format($montantPage, 2, ',', ' ') . ' €', '1', 0, 'R', true);
+                    $this->Cell($w[3], 3, '', '1', 0, 'C', true);
+                    $this->Cell($w[4], 3, '', '1', 0, 'C', true);
+                    $this->Cell($w[5], 3, '', '1', 0, 'C', true);
+                } else {
+                    $this->Cell($w[0], 3, 'Total page ' . $this->GroupPageNo(), '1', 0, 'C', true);
+                    $this->Cell($w[1], 3, ' ', '1', 0, 'C', true);
+                    $this->Cell($w[2], 3, number_format($montantRetenuPage, 2, ',', ' ') . ' €', '1', 0, 'R', true);
+                    $this->Cell($w[3], 3, number_format($montantPage, 2, ',', ' ') . ' €', '1', 0, 'R', true);
+                    $this->Cell($w[4], 3, '', '1', 0, 'C', true);
+                    $this->Cell($w[5], 3, '', '1', 0, 'C', true);
+                    $this->Cell($w[6], 3, '', '1', 0, 'C', true);
+                }
                 $this->Ln();
                 $this->SetFont('Arial', '', 6);
                 // Trait de terminaison
@@ -216,21 +242,41 @@ class PdfAidesAccordees extends PageGroup {
         $this->SetLineWidth(.3);
         $this->SetFont('Arial', 'B');
         // total page
-        $this->Cell($w[0], 3, 'Total page ' . $this->GroupPageNo(), '1', 0, 'C', true);
-        $this->Cell($w[1], 3, number_format($montantRetenuPage, 2, ',', ' ') . ' €', '1', 0, 'R', true);
-        $this->Cell($w[2], 3, number_format($montantPage, 2, ',', ' ') . ' €', '1', 0, 'R', true);
-        $this->Cell($w[3], 3, '', '1', 0, 'C', true);
-        $this->Cell($w[4], 3, '', '1', 0, 'C', true);
-        $this->Cell($w[5], 3, '', '1', 0, 'C', true);
+        if (!$data['annees']) {
+            $this->Cell($w[0], 3, 'Total page ' . $this->GroupPageNo(), '1', 0, 'C', true);
+            $this->Cell($w[1], 3, number_format($montantRetenuPage, 2, ',', ' ') . ' €', '1', 0, 'R', true);
+            $this->Cell($w[2], 3, number_format($montantPage, 2, ',', ' ') . ' €', '1', 0, 'R', true);
+            $this->Cell($w[3], 3, '', '1', 0, 'C', true);
+            $this->Cell($w[4], 3, '', '1', 0, 'C', true);
+            $this->Cell($w[5], 3, '', '1', 0, 'C', true);
+        } else {
+            $this->Cell($w[0], 3, 'Total page ' . $this->GroupPageNo(), '1', 0, 'C', true);
+            $this->Cell($w[1], 3, ' ', '1', 0, 'C', true);
+            $this->Cell($w[2], 3, number_format($montantRetenuPage, 2, ',', ' ') . ' €', '1', 0, 'R', true);
+            $this->Cell($w[3], 3, number_format($montantPage, 2, ',', ' ') . ' €', '1', 0, 'R', true);
+            $this->Cell($w[4], 3, '', '1', 0, 'C', true);
+            $this->Cell($w[5], 3, '', '1', 0, 'C', true);
+            $this->Cell($w[6], 3, '', '1', 0, 'C', true);
+        }
         $this->Ln();
         $fill = !$fill;
         // total document
-        $this->Cell($w[0], 3, 'Total général ', '1', 0, 'C', true);
-        $this->Cell($w[1], 3, number_format($montantRetenuDocument, 2, ',', ' ') . ' €', '1', 0, 'R', true);
-        $this->Cell($w[2], 3, number_format($montantDocument, 2, ',', ' ') . ' €', '1', 0, 'R', true);
-        $this->Cell($w[3], 3, '', '1', 0, 'C', true);
-        $this->Cell($w[4], 3, '', '1', 0, 'C', true);
-        $this->Cell($w[5], 3, '', '1', 0, 'C', true);
+        if (!$data['annees']) {
+            $this->Cell($w[0], 3, 'Total général ', '1', 0, 'C', true);
+            $this->Cell($w[1], 3, number_format($montantRetenuDocument, 2, ',', ' ') . ' €', '1', 0, 'R', true);
+            $this->Cell($w[2], 3, number_format($montantDocument, 2, ',', ' ') . ' €', '1', 0, 'R', true);
+            $this->Cell($w[3], 3, '', '1', 0, 'C', true);
+            $this->Cell($w[4], 3, '', '1', 0, 'C', true);
+            $this->Cell($w[5], 3, '', '1', 0, 'C', true);
+        } else {
+            $this->Cell($w[0], 3, 'Total général ', '1', 0, 'C', true);
+            $this->Cell($w[1], 3, ' ', '1', 0, 'C', true);
+            $this->Cell($w[2], 3, number_format($montantRetenuDocument, 2, ',', ' ') . ' €', '1', 0, 'R', true);
+            $this->Cell($w[3], 3, number_format($montantDocument, 2, ',', ' ') . ' €', '1', 0, 'R', true);
+            $this->Cell($w[4], 3, '', '1', 0, 'C', true);
+            $this->Cell($w[5], 3, '', '1', 0, 'C', true);
+            $this->Cell($w[6], 3, '', '1', 0, 'C', true);
+        }
         $this->Ln();
         $this->SetFont('Arial', '', 6);
     }

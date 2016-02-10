@@ -98,6 +98,12 @@ class CriteresController extends Controller {
                 if (!$criteres->getFinAnnee()) {
                     $criteres->setFinAnnee($criteres->getDebutAnnee());
                 }
+                if ($criteres->getDebutAnnee()->getAnnee() != $criteres->getFinAnnee()->getAnnee()) {
+                    $variables['annees'] = true;
+                } else {
+                    $variables['annees'] = false;
+                }
+                $session->set('annees', $variables['annees']);
                 $variables['annee_libelle'] = "décision prise entre le 1er janvier " . $criteres->getDebutAnnee()->getAnnee() . " et le 31 décembre " . $criteres->getFinAnnee()->getAnnee();
                 $where_annee = " and a.annee >= " . $criteres->getDebutAnnee()->getAnnee() . " and a.annee <= " . $criteres->getFinAnnee()->getAnnee();
             } else {
@@ -105,6 +111,8 @@ class CriteresController extends Controller {
                 $where_annee = " and a.annee >= 2000 ";
             }
             $session->set('annee_libelle', $variables['annee_libelle']);
+
+
 
             // Critère Region administrative
             If ($criteres->getRegionAdmin()) {
@@ -167,7 +175,7 @@ class CriteresController extends Controller {
             $dossiers = $repoDossier->getDossiers($where);
 
 
-//            usort($dossiers, array('self', 'tri_dossiers'));
+            usort($dossiers, array('self', 'tri_dossiers'));
 
             $dos = array();
             $i = 0;
@@ -178,25 +186,33 @@ class CriteresController extends Controller {
             $fic_import = $repertoire . "/" . $nom_fichier;
             //ouverture fichier
             $fic = fopen($fic_import, "w");
-            $contenu = "DOSSIER;MONTANT TARVAUX RETENUs;MONTANT AIDE;NATURE OPEREATION;RAISON SOCIALE;INTITULE;\n";
+            if (!$variables['annees']) {
+                $contenu = "DOSSIER;MONTANT TRAVAUX RETENUS;MONTANT AIDE;NATURE OPEREATION;RAISON SOCIALE;INTITULE;\n";
+            } else {
+                $contenu = "DOSSIER;ANNEE;MONTANT TRAVAUX RETENUS;MONTANT AIDE;NATURE OPEREATION;RAISON SOCIALE;INTITULE;\n";
+            }
             fputs($fic, $contenu);
             $full = false;
             foreach ($dossiers as $dossier) {
                 $montantRetenu = strval($dossier->getMontant_retenu());
                 $montant = strval($dossier->getMontant_aide_interne());
-                if ($i <= 250){
-                $dos[$i] = array(
-                    'dossier' => $dossier->getLigne()->getLigne() . '-' . $dossier->getDept()->getDept() . '-' . $dossier->getNo_ordre(),
-                    'montant_retenu' => $montantRetenu,
-                    'montant_aide_interne' => $montant,
-                    'forme_aide' => $dossier->getForme_aide(),
-                    'raison_sociale' => $dossier->getRaison_sociale(),
-                    'intitule' => $dossier->getIntitule());
-                $i++;
-                }else{
+                if ($i <= 10000) {
+                    $dos[$i] = array(
+                        'dossier' => $dossier->getLigne()->getLigne() . '-' . $dossier->getDept()->getDept() . '-' . $dossier->getNo_ordre(),
+                        'annee' => $dossier->getAnnee()->getAnnee(),
+                        'montant_retenu' => $montantRetenu,
+                        'montant_aide_interne' => $montant,
+                        'forme_aide' => $dossier->getForme_aide(),
+                        'raison_sociale' => $dossier->getRaison_sociale(),
+                        'intitule' => $dossier->getIntitule());
+                    $i++;
+                } else {
                     $full = true;
                 }
                 $contenu = $dossier->getLigne()->getLigne() . '-' . $dossier->getDept()->getDept() . '-' . $dossier->getNo_ordre() . ";";
+                if ($variables['annees']) {
+                    $contenu = $contenu . $dossier->getAnnee()->getAnnee() . ";";
+                }
                 $contenu = $contenu . $montantRetenu . ";";
                 $contenu = $contenu . $montant . ";";
                 $contenu = $contenu . $dossier->getForme_aide() . ";";
@@ -214,7 +230,7 @@ class CriteresController extends Controller {
                         'dossiers' => $dos,
                         'nb_dossiers' => $nb_dossiers,
                         'criteres' => $variables,
-                       'full' => $full                   
+                        'full' => $full
             ));
         }
 
@@ -247,9 +263,9 @@ class CriteresController extends Controller {
      *  Fichier PDF
      */
     public function pdfAction() {
-        
+
         $em = $this->getDoctrine()->getManager('aide');
-         $repoDossier = $em->getRepository('AeagAideBundle:Dossier');
+        $repoDossier = $em->getRepository('AeagAideBundle:Dossier');
 
         $session = $this->get('session');
 
@@ -264,6 +280,7 @@ class CriteresController extends Controller {
 
         // Critère annee
         $variables['annee_libelle'] = $session->get('annee_libelle');
+        $variables['annees'] = $session->get('annees');
 
         // Critère Region administrative
         $variables['region_admin_libelle'] = $session->get('region_admin_libelle');
@@ -285,12 +302,14 @@ class CriteresController extends Controller {
         $variables['total_dossiers'] = $session->get('total_dossiers');
 
         // Liste des dossiers selectionnés
-         $dossiers = $repoDossier->getDossiers($session->get('where'));
-         $dos = array();
-          $i = 0;
-           foreach ($dossiers as $dossier) {
-                $montantRetenu = strval($dossier->getMontant_retenu());
-                $montant = strval($dossier->getMontant_aide_interne());
+        $dossiers = $repoDossier->getDossiers($session->get('where'));
+        usort($dossiers, array('self', 'tri_dossiers'));
+        $dos = array();
+        $i = 0;
+        foreach ($dossiers as $dossier) {
+            $montantRetenu = strval($dossier->getMontant_retenu());
+            $montant = strval($dossier->getMontant_aide_interne());
+            if (!$session->get('annees')) {
                 $dos[$i] = array(
                     'dossier' => $dossier->getLigne()->getLigne() . '-' . $dossier->getDept()->getDept() . '-' . $dossier->getNo_ordre(),
                     'montant_retenu' => $montantRetenu,
@@ -298,9 +317,19 @@ class CriteresController extends Controller {
                     'forme_aide' => $dossier->getForme_aide(),
                     'raison_sociale' => $dossier->getRaison_sociale(),
                     'intitule' => $dossier->getIntitule());
-                $i++;
-                }
-           $variables['Dossiers'] = $dos;
+            } else {
+                $dos[$i] = array(
+                    'dossier' => $dossier->getLigne()->getLigne() . '-' . $dossier->getDept()->getDept() . '-' . $dossier->getNo_ordre(),
+                    'annee' => $dossier->getAnnee()->getAnnee(),
+                    'montant_retenu' => $montantRetenu,
+                    'montant_aide_interne' => $montant,
+                    'forme_aide' => $dossier->getForme_aide(),
+                    'raison_sociale' => $dossier->getRaison_sociale(),
+                    'intitule' => $dossier->getIntitule());
+            }
+            $i++;
+        }
+        $variables['Dossiers'] = $dos;
 
 
         $pdf = new PdfAidesAccordees('L');
