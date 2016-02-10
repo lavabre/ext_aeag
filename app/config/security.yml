@@ -43,8 +43,9 @@ security:
         ROLE_SQE: [ROLE_AEAG]
         ROLE_ADMINDEC: [ROLE_ODEC]
         ROLE_ADMINFRD: [ROLE_FRD]
-        ROLE_ADMINSQE: [ROLE_PROGSQE, ROLE_SQE]
-        ROLE_PROGSQE: [ROLE_SQE]
+        ROLE_ADMINSQE: [ROLE_PROGSQE]
+        ROLE_PROGSQE: [ ROLE_PRESTASQE]
+        ROLE_PRESTASQE: [ROLE_SQE]
         ROLE_ADMIN: [ROLE_ADMINDEC, ROLE_ADMINFRD, ROLE_ADMINSQE]
         ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
 
@@ -84,6 +85,7 @@ security:
          - { path: ^/adminsqe*, role: [ROLE_ADMINSQE] }
           # PAGES ACCESSIBLES AUX UTILISATEURS SQE
          - { path: ^/sqe/programmation/*, role: [ROLE_SQE] }
+         - { path: ^/sqe/echangefichiers/*, role: [ROLE_PRESTASQE] }
          - { path: ^/sqe*, role: [ROLE_SQE] }
 
            # PAGES ACCESSIBLES À TOUS
