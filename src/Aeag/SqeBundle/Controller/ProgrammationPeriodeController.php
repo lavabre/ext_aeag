@@ -959,7 +959,8 @@ class ProgrammationPeriodeController extends Controller {
                     $tabGroupes[$k] = $pgProgLotPeriodeProg;
                     if ($pgProgLotPeriodeProg->getPprogCompl()) {
                         $trouveCompl = true;
-                        $trouveStatut = $pgProgLotPeriodeProg->getStatut();
+                        //$trouveStatut = $pgProgLotPeriodeProg->getStatut();
+                        $trouveStatut = 'C';
                     }
                     $k++;
                 }
