@@ -954,7 +954,7 @@ class ProgrammationPeriodeController extends Controller {
                 $trouveCompl = false;
                 $trouveStatut = 'N';
                 $k = 0;
-                $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByStationAn($pgProgLotStationAnSelectionnee);
+                //$pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByStationAn($pgProgLotStationAnSelectionnee);
                 foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
                     $tabGroupes[$k] = $pgProgLotPeriodeProg;
                     if ($pgProgLotPeriodeProg->getPprogCompl()) {

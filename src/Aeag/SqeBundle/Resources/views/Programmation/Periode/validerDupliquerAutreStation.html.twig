@@ -3,8 +3,7 @@
                 
                 {% if periode.statut | length %}
                 {% if periode.statut.codeStatut == 'INV' %}
-                    
-                           {% if periode.nbGroupe > 0 %}
+                          {% if periode.nbGroupe > 0 %}
                                      $('#idDiv_{{ station.id }}_{{ periode.periode.id }}').addClass("danger");
                                     $('#idBt_{{ station.id }}_{{ periode.periode.id }}').addClass('btn-danger');
                                     $('#idNbParametres_{{ station.id }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
@@ -35,7 +34,7 @@
                                 $('#idBt_{{ station.id }}_{{ periode.periode.id }}').removeClass("btn-default").removeClass("btn-warning").removeClass("btn-info").addClass("btn-primary").removeClass('btn-success');
                                 $('#idNbParametres_{{ station.id }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
                             {% endif %}
-                      {% else %}
+                     {# {% else %}
                                {% if periode.autreProgrammation == 0 %}
                                     $('#idDiv_{{ station.id }}_{{ periode.periode.id }}').removeClass("warning").removeClass("info").removeClass("primary").removeClass("success");
                                     $('#idBt_{{ station.id }}_{{ periode.periode.id }}').addClass("btn-default").removeClass("btn-warning").removeClass("btn-info").removeClass("btn-primary").removeClass('btn-success');
@@ -44,7 +43,7 @@
                                     $('#idDiv_{{ station.id }}_{{ periode.periode.id }}').addClass("warning").removeClass("info").removeClass("primary").removeClass("success");
                                     $('#idBt_{{ station.id }}_{{ periode.periode.id }}').removeClass("btn-default").addClass("btn-warning").removeClass("btn-info").removeClass("btn-primary").removeClass('btn-success');
                                      $('#idNbParametres_{{ station.id }}_{{ periode.periode.id }}').empty().append({{ periode.autreProgrammation }} + '/' + {{ grparAns | length }} ).show();
-                                {% endif %}
+                                {% endif %}#}
                       {% endif %}
                 {%endif %}
                 {% else %}
