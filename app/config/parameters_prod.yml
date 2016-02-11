@@ -35,6 +35,12 @@ parameters:
     database_user5: sqe
     database_password5: sqeaeag31
     
+    database_driver6: pdo_pgsql
+    database_host6: slin30112
+    database_port6: null
+    database_name6: die
+    database_user6: postgres
+    database_password6: null
            
     
     mailer_transport: smtp

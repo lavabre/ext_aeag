@@ -23,6 +23,7 @@ class AppKernel extends Kernel
             new FOS\UserBundle\FOSUserBundle(),
             new Aeag\UserBundle\AeagUserBundle(),
             new Aeag\SqeBundle\AeagSqeBundle(),
+            new Aeag\DieBundle\AeagDieBundle(),
            );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

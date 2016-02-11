@@ -59,14 +59,14 @@ class ProgrammationPeriodeController extends Controller {
         $pgProgLotPeriodeAns = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnByLotan($pgProgLotAn);
 
         foreach ($pgProgPeriodes as $pgProgPeriode) {
-             if ($pgProgLot->getDelaiPrel()) {
+            if ($pgProgLot->getDelaiPrel()) {
                 $dateFin = clone($pgProgPeriode->getDateDeb());
                 $delai = $pgProgLot->getDelaiPrel();
-                $dateFin->add(new \DateInterval('P'. $delai . 'D'));
-              } else {
+                $dateFin->add(new \DateInterval('P' . $delai . 'D'));
+            } else {
                 $dateFin = $pgProgPeriode->getDateFin();
             }
-             $pgProgPeriode->setDateFin($dateFin);
+            $pgProgPeriode->setDateFin($dateFin);
         }
 
 
@@ -282,16 +282,16 @@ class ProgrammationPeriodeController extends Controller {
         $pgProgPeriodes = $repoPgProgPeriodes->getPgProgPeriodesByAnneeTypePeriode($annee, $pgProgTypeMilieu->getTypePeriode());
 
         foreach ($pgProgPeriodes as $pgProgPeriode) {
-             if ($pgProgLot->getDelaiPrel()) {
+            if ($pgProgLot->getDelaiPrel()) {
                 $dateFin = clone($pgProgPeriode->getDateDeb());
                 $delai = $pgProgLot->getDelaiPrel();
-                $dateFin->add(new \DateInterval('P'. $delai . 'D'));
-              } else {
+                $dateFin->add(new \DateInterval('P' . $delai . 'D'));
+            } else {
                 $dateFin = $pgProgPeriode->getDateFin();
             }
-             $pgProgPeriode->setDateFin($dateFin);
+            $pgProgPeriode->setDateFin($dateFin);
         }
-        
+
         $tabMessage = array();
         $tabStations = array();
         $i = 0;
@@ -575,9 +575,9 @@ class ProgrammationPeriodeController extends Controller {
                     $tabPeriodes[$j]["groupes"] = array();
                     $tabPeriodes[$j]["autreStatut"] = 'N';
                     $tabPeriodes[$j]["autreProgrammation"] = 0;
-                    
+
                     $tabGroupeAutres = $this->getAutreProgrammation($repoPgProgLotPeriodeProg, $pgProgLotStationAn, $pgProgPeriode, $pgProgLotGrparAns);
-                    
+
                     $tabPeriodes[$j]["autreProgrammation"] = count($tabGroupeAutres);
                     $j++;
                 }
@@ -661,7 +661,7 @@ class ProgrammationPeriodeController extends Controller {
                                 break;
                             }
                         }
-                    }    
+                    }
                 }
             }
             if ($site == 'ok') {
@@ -921,24 +921,24 @@ class ProgrammationPeriodeController extends Controller {
         $emSqe->flush();
         $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByStationAn($pgProgLotStationAn);
         foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
-            $pgProgLotPeriodeProgSelectionne = clone($pgProgLotPeriodeProg);
-            $pgProgLotPeriodeProgSelectionne->setStationAn($pgProgLotStationAnSelectionnee);
-            $pgProgLotPeriodeProgSelectionne->setPprogCompl(null);
-            $pgProgLotPeriodeProgSelectionne->setStatut('N');
-            $pgProgLotStationAnSelectionne = $pgProgLotPeriodeProgSelectionne->getStationAn();
-            $pgProgLotGrparAnSelectionne = $pgProgLotPeriodeProgSelectionne->getGrparAn();
-            $pgProgLotPeriodeAnSelectionne = $pgProgLotPeriodeProgSelectionne->getPeriodan();
-            $pgProgPeriodeSelectionne = $pgProgLotPeriodeProgSelectionne->getPeriodan()->getPeriode();
-            
-            $pgProgLotPeriodeProgAutres = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgAutres($pgProgLotGrparAnSelectionne, $pgProgPeriodeSelectionne, $pgProgLotStationAnSelectionne, $pgProgLotAn, 3);
-            
-            foreach ($pgProgLotPeriodeProgAutres as $pgProgLotPeriodeProgAutre) {
-                            $pgProgLotPeriodeProgSelectionne->setPprogCompl($pgProgLotPeriodeProgAutre);
+                 $pgProgLotPeriodeProgSelectionne = clone($pgProgLotPeriodeProg);
+                $pgProgLotPeriodeProgSelectionne->setStationAn($pgProgLotStationAnSelectionnee);
+                $pgProgLotPeriodeProgSelectionne->setPprogCompl(null);
+                $pgProgLotPeriodeProgSelectionne->setStatut('N');
+                $pgProgLotStationAnSelectionne = $pgProgLotPeriodeProgSelectionne->getStationAn();
+                $pgProgLotGrparAnSelectionne = $pgProgLotPeriodeProgSelectionne->getGrparAn();
+                $pgProgLotPeriodeAnSelectionne = $pgProgLotPeriodeProgSelectionne->getPeriodan();
+                $pgProgPeriodeSelectionne = $pgProgLotPeriodeProgSelectionne->getPeriodan()->getPeriode();
+
+                $pgProgLotPeriodeProgAutres = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgAutres($pgProgLotGrparAnSelectionne, $pgProgPeriodeSelectionne, $pgProgLotStationAnSelectionne, $pgProgLotAn, 3);
+
+                foreach ($pgProgLotPeriodeProgAutres as $pgProgLotPeriodeProgAutre) {
+                    $pgProgLotPeriodeProgSelectionne->setPprogCompl($pgProgLotPeriodeProgAutre);
                             $pgProgLotPeriodeProgSelectionne->setStatut('I');
+                }
+                $emSqe->persist($pgProgLotPeriodeProgSelectionne);
             }
-            $emSqe->persist($pgProgLotPeriodeProgSelectionne);
-        }
-        $emSqe->flush();
+         $emSqe->flush();
 
         $pgProgLotPeriodeAns = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnByLotan($pgProgLotAn);
         $tabPeriodes = array();
@@ -948,12 +948,13 @@ class ProgrammationPeriodeController extends Controller {
                 $tabPeriodes[$j]["ordre"] = $pgProgLotPeriodeAn->getPeriode()->getid();
                 $tabPeriodes[$j]["periode"] = $pgProgLotPeriodeAn->getPeriode();
                 $tabPeriodes[$j]["statut"] = $pgProgLotPeriodeAn->getCodeStatut();
-                $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByStationAnPeriodeAn($pgProgLotStationAnSelectionnee, $pgProgLotPeriodeAn);
+                 $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByStationAnPeriodeAn($pgProgLotStationAnSelectionnee, $pgProgLotPeriodeAn);
                 $tabPeriodes[$j]["nbGroupe"] = count($pgProgLotPeriodeProgs);
                 $tabGroupes = array();
                 $trouveCompl = false;
                 $trouveStatut = 'N';
                 $k = 0;
+                $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByStationAn($pgProgLotStationAnSelectionnee);
                 foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
                     $tabGroupes[$k] = $pgProgLotPeriodeProg;
                     if ($pgProgLotPeriodeProg->getPprogCompl()) {
@@ -1218,7 +1219,7 @@ class ProgrammationPeriodeController extends Controller {
         $tabStationPeriode["station"] = $pgProgLotStationAn;
         $tabStationPeriode["periode"] = $pgProgLotPeriodeAn;
         $tabStationPeriode["sitePrelevemnts"] = $pgRefSitePrelevements;
-        
+
         $tabgroupes = array();
         $i = 0;
         foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
@@ -1229,21 +1230,21 @@ class ProgrammationPeriodeController extends Controller {
             if ($nbProgGrparRefLstParam == 0) {
                 $tabgroupes[$i]["renseigne"] = 'O';
             }
-            
+
             $tabgroupes[$i]["nbParametres"] = $nbProgGrparRefLstParam;
             $tabgroupes[$i]["Compl"] = 'N';
             $pgProgLotPeriodeProg = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByStationAnGrparAnPeriodeAn($pgProgLotStationAn, $pgProgLotGrparAn, $pgProgLotPeriodeAn);
             if ($pgProgLotPeriodeProg) {
                 $tabgroupes[$i]["renseigne"] = 'O';
                 $tabgroupes[$i]["existe"] = 'O';
-                /*if ($pgProgLotPeriodeProg->getPprogCompl()) {
-                    $tabgroupes[$i]["Compl"] = 'O';
-                }*/
-                
+                /* if ($pgProgLotPeriodeProg->getPprogCompl()) {
+                  $tabgroupes[$i]["Compl"] = 'O';
+                  } */
+
                 if ($pgProgLotPeriodeProg->getStatut() == 'C') {
                     $tabgroupes[$i]["Compl"] = 'O';
                 }
-                
+
                 $pgProgLotPeriodeProgCompls = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByPprogCompl($pgProgLotPeriodeProg);
                 if (count($pgProgLotPeriodeProgCompls) > 0) {
                     $tabgroupes[$i]["EstCompl"] = 'O';
@@ -1256,14 +1257,14 @@ class ProgrammationPeriodeController extends Controller {
             }
             $tabgroupes[$i]["autre"] = null;
             $tabgroupes[$i]["autreGroupe"] = null;
-            
+
             $pgProgLotPeriodeProgAutres = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgAutres($pgProgLotGrparAn, $pgProgLotPeriodeAn->getPeriode(), $pgProgLotStationAn, $pgProgLotAn, 3);
             foreach ($pgProgLotPeriodeProgAutres as $pgProgLotPeriodeProgAutre) {
                 $trouvelot = $pgProgLotPeriodeProgAutre->getStationAn()->getlotAn();
                 $tabgroupes[$i]["autre"] = $trouvelot;
                 $tabgroupes[$i]["autreGroupe"] = $pgProgLotPeriodeProgAutre->getGrparAn();
             }
-            
+
             $tabGrparAnSupports = array();
             $tabGrparAnSupports[0]["support"] = $pgProgLotGrparAn->getGrparRef()->getSupport();
             $tabGrparAnSupports[0]["obli"] = "N";
@@ -1354,13 +1355,13 @@ class ProgrammationPeriodeController extends Controller {
         $session->set('fonction', 'valider');
         //$em = $this->get('doctrine')->getManager();
         $emSqe = $this->get('doctrine')->getManager('sqe');
-        
+
         $i = 0;
         $ok = 'ko';
         $tabMessage = array();
         $tabMessage[$i] = null;
         $i++;
-        
+
         $repoPgProgLotAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotAn');
         $repoPgProgLotGrparAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotGrparAn');
         $repoPgProgLotStationAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotStationAn');
@@ -1379,7 +1380,7 @@ class ProgrammationPeriodeController extends Controller {
         $action = $request->get('action');
         $maj = $request->get('maj');
         //$annee = $session->get('critAnnee');
-        
+
         $pgProgLotAn = $repoPgProgLotAn->getPgProgLotAnById($pgProgLotAnId);
         $pgProgLot = $pgProgLotAn->getLot();
         $annee = $pgProgLotAn->getAnneeProg();
@@ -1390,7 +1391,7 @@ class ProgrammationPeriodeController extends Controller {
         $pgProgPeriodes = $repoPgProgPeriodes->getPgProgPeriodesByAnneeTypePeriode($annee, $pgProgTypeMilieu->getTypePeriode());
         $pgProgLotStationAn = $repoPgProgLotStationAn->getPgProgLotStationAnById($stationId);
         $pgProgPeriode = $repoPgProgPeriodes->getPgProgPeriodesById($periodeId);
-        
+
         $selGroupes = Array();
         if (!empty($_POST['checkGroupe'])) {
             $selGroupes = $_POST['checkGroupe'];
@@ -1399,20 +1400,19 @@ class ProgrammationPeriodeController extends Controller {
             $tabMessage[$i] = 'Sélectionner au moins un groupe pour la station : ' . $pgProgLotStationAn->getStation()->getNumero() . ' et la période : ' . $pgProgPeriode->getLabelperiode() . '  svp.';
             $i++;
         }
-        
+
         $selAutrePeriodeAns = Array();
         $i = 0;
         if (!empty($_POST['autrePeriodes'])) {
             $selAutrePeriodeAns = $_POST['autrePeriodes'];
         }
-        
+
         $tabStations = Array();
         $tabGrparAns = Array();
-        
-        $this->createProgrammation($emSqe, $optionGroupes, $repoPgProgLotStationAn, $repoPgProgLotPeriodeProg, $repoPgProgLotPeriodeAn, 
-            $repoPgProgLotGrparAn, $pgProgLotStationAn, $pgProgPeriode, $pgProgLotGrparAns, $pgProgLotAn, $pgProgLotPeriodeAns, $selAutrePeriodeAns, $selGroupes, $tabStations, $tabGrparAns, $logger);
-        
-        
+
+        $this->createProgrammation($emSqe, $optionGroupes, $repoPgProgLotStationAn, $repoPgProgLotPeriodeProg, $repoPgProgLotPeriodeAn, $repoPgProgLotGrparAn, $pgProgLotStationAn, $pgProgPeriode, $pgProgLotGrparAns, $pgProgLotAn, $pgProgLotPeriodeAns, $selAutrePeriodeAns, $selGroupes, $tabStations, $tabGrparAns, $logger);
+
+
         // Update PgProgLotAn
         $nbPeriodes = 0;
         foreach ($pgProgLotPeriodeAns as $pgProgLotPeriodeAn) {
@@ -1445,10 +1445,9 @@ class ProgrammationPeriodeController extends Controller {
                     'grparAns' => $tabGrparAns,
         ));
     }
-    
-    private function createProgrammation($emSqe, $optionGroupes, $repoPgProgLotStationAn, $repoPgProgLotPeriodeProg, $repoPgProgLotPeriodeAn, 
-            $repoPgProgLotGrparAn, $pgProgLotStationAn, $pgProgPeriode, $pgProgLotGrparAns, $pgProgLotAn, $pgProgLotPeriodeAns, $selAutrePeriodeAns, $selGroupes, &$tabStations, &$tabGrparAns, $logger) {
-        
+
+    private function createProgrammation($emSqe, $optionGroupes, $repoPgProgLotStationAn, $repoPgProgLotPeriodeProg, $repoPgProgLotPeriodeAn, $repoPgProgLotGrparAn, $pgProgLotStationAn, $pgProgPeriode, $pgProgLotGrparAns, $pgProgLotAn, $pgProgLotPeriodeAns, $selAutrePeriodeAns, $selGroupes, &$tabStations, &$tabGrparAns, $logger) {
+
         if (!$optionGroupes) {
             $optionGroupes = 'N';
         }
@@ -1500,10 +1499,9 @@ class ProgrammationPeriodeController extends Controller {
             if ($optionGroupes != 'N') {
                 $pgProgLotPeriodeProgAutres = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgAutres($pgProgLotGrparAn, $pgProgLotPeriodeAn->getPeriode(), $pgProgLotStationAn, $pgProgLotAn, 3);
                 foreach ($pgProgLotPeriodeProgAutres as $pgProgLotPeriodeProgAutre) {
-                        $pgProgLotPeriodeProg->setPprogCompl($pgProgLotPeriodeProgAutre);
-                        $pgProgLotPeriodeProg->setStatut($optionGroupes);
+                    $pgProgLotPeriodeProg->setPprogCompl($pgProgLotPeriodeProgAutre);
+                    $pgProgLotPeriodeProg->setStatut($optionGroupes);
                 }
-                
             } else {
                 $pgProgLotPeriodeProg->setStatut('N');
                 $pgProgLotPeriodeProg->setPprogCompl(null);
@@ -1514,19 +1512,18 @@ class ProgrammationPeriodeController extends Controller {
             }
 
             $emSqe->persist($pgProgLotPeriodeProg);
-            
+
             // VGU : Pour les autres périodes
             if (count($selAutrePeriodeAns) > 0) {
                 for ($i = 0; $i < count($selAutrePeriodeAns); $i++) {
-                    
-                    if ($selAutrePeriodeAns[$i]) {    
-                        
-                        $autrePeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($selAutrePeriodeAns[$i]);                        
+
+                    if ($selAutrePeriodeAns[$i]) {
+
+                        $autrePeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($selAutrePeriodeAns[$i]);
                         $autrePeriodeAns = array($autrePeriodeAn);
                         $autreTabStations = array();
                         $autreTabGrparAns = array();
-                        $this->createProgrammation($emSqe, $optionGroupes, $repoPgProgLotStationAn, $repoPgProgLotPeriodeProg, $repoPgProgLotPeriodeAn, 
-                            $repoPgProgLotGrparAn, $pgProgLotStationAn, $autrePeriodeAn->getPeriode(), $pgProgLotGrparAns, $pgProgLotAn, $autrePeriodeAns, array(), $selGroupes, $autreTabStations, $autreTabGrparAns, $logger);
+                        $this->createProgrammation($emSqe, $optionGroupes, $repoPgProgLotStationAn, $repoPgProgLotPeriodeProg, $repoPgProgLotPeriodeAn, $repoPgProgLotGrparAn, $pgProgLotStationAn, $autrePeriodeAn->getPeriode(), $pgProgLotGrparAns, $pgProgLotAn, $autrePeriodeAns, array(), $selGroupes, $autreTabStations, $autreTabGrparAns, $logger);
                     }
                 }
             }
@@ -1618,9 +1615,8 @@ class ProgrammationPeriodeController extends Controller {
         $tabStations[$i]["periodes"] = $tabPeriodes;
         $i++;
         usort($tabStations, create_function('$a,$b', 'return $a[\'station\']->getStation()->getCode()-$b[\'station\']->getStation()->getCode();'));
-        
     }
-    
+
     public function getAutreProgrammation($repoPgProgLotPeriodeProg, $pgProgLotStationAn, $pgProgPeriode, $pgProgLotGrparAns) {
         $tabGroupeAutres = array();
         $k = 0;

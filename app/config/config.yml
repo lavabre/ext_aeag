@@ -93,6 +93,15 @@ doctrine:
                 user:     %database_user5%
                 password: %database_password5%
                 charset:  UTF8
+                
+            die:
+                driver:   %database_driver6%
+                host:     %database_host6%
+                port:     %database_port6%
+                dbname:   %database_name6%
+                user:     %database_user6%
+                password: %database_password6%
+                charset:  UTF8
            
             
                 
@@ -121,6 +130,11 @@ doctrine:
                     
             sqe:
                 connection:       sqe
+                mappings:
+                    AeagSqeBundle : ~
+                    
+            die:
+                connection:       die
                 mappings:
                     AeagSqeBundle : ~
                     

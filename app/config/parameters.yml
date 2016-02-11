@@ -35,6 +35,13 @@ parameters:
     database_user5: postgres
     database_password5: null
     
+    database_driver6: pdo_pgsql
+    database_host6: vslindev211
+    database_port6: null
+    database_name6: die
+    database_user6: postgres
+    database_password6: null
+    
            
     
     mailer_transport: smtp

@@ -542,7 +542,7 @@
               $('#optionGroupes1').removeClass('btn-default').addClass('btn-primary');
                 $('#optionGroupes2').removeClass('btn-primary').addClass('btn-default');
                 $('#optionGroupes').val('C');
-               $('#idBlockAutrePeriodes').hide();
+               $('#idBlockAutrePeriodes').show();
                 {%if groupes | length%}  
                     {% for groupe in groupes %}
                         {% if groupe.autre | length %}
