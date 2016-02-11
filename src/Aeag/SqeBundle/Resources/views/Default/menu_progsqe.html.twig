@@ -68,16 +68,21 @@
             </ul>
         </li>   
         
-         {%if app.session.get('menu') == 'echangeFichier'%}
-             <li class="active">
-          {% else %}
-             <li> 
-         {%endif%}
-               <a href="{{ path('AeagSqeBundle_echangefichiers_index')}}">Echange de fichiers</a>
-           </li>
-            <li>
-                <a href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur.pdf') }}" target="_blank">Suivi des prélèvements</a>
-            </li>
+         {% if  not app.session.get('evolution') %}
+        
+                {%if app.session.get('menu') == 'echangeFichier'%}
+                    <li class="active">
+                 {% else %}
+                    <li> 
+                {%endif%}
+                      <a href="{{ path('AeagSqeBundle_echangefichiers_index')}}">Echange de fichiers</a>
+                  </li>
+                   <li>
+                       <a href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur.pdf') }}" target="_blank">Suivi des prélèvements</a>
+                   </li>
+            
+            {% endif %}
+            
             <li>
                 <a href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur.pdf') }}" target="_blank">Aide</a>
             </li>

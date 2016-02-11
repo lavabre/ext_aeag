@@ -43,7 +43,12 @@ class DefaultController extends Controller {
 //        print_r($yourbrowser);
         $session->set('browser', $ua['name']);
 
-
+        $parametre = $repoParametre->getParametreByCode('EVOLUTION');
+        if ($parametre->getLibelle() == 'false'){
+                $session->set('evolution',false);
+        }else{
+               $session->set('evolution',true);
+        }
 
         $message = $repoParametre->getParametreByCode('LIB_MESSAGE');
         if (strlen($message->getLibelle()) > 0) {

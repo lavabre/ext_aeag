@@ -35,9 +35,13 @@
         {% include 'AeagSqeBundle:Default:menu_progsqe.html.twig'%}
         
     {%elseif is_granted('ROLE_PRESTASQE') %}
-        <!-- Menu presta sqe -->
-        {% include 'AeagSqeBundle:Default:menu_prestasqe.html.twig'%}
-   
+        {% if  not app.session.get('evolution')  %}
+                <!-- Menu presta sqe -->
+                {% include 'AeagSqeBundle:Default:menu_prestasqe.html.twig'%}
+        {% else %}
+                <!-- Menu sqe -->
+                {% include 'AeagSqeBundle:Default:menu_sqe.html.twig'%}
+        {% endif %}
     {% else %}
         <!-- Menu sqe -->
         {% include 'AeagSqeBundle:Default:menu_sqe.html.twig'%}
