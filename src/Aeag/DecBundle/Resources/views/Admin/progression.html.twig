@@ -1,0 +1,60 @@
+{% extends 'AeagDecBundle::layout.html.twig' %}
+
+
+{% block modal %}
+ {# modal progression #}
+    <div class="modal fade" id="modaProgression">
+        <div class="modal-dialog modal-sm">
+          <div class="modal-content">
+            <div class="modal-header">
+                 <h4 class="modal-title" id="myModalLabel">
+                    <div class="alert alert-warning" role="alert">
+                      <i class="fa fa-circle-o-notch fa-spin"></i>
+                     Traitement en cours. Merci de patienter
+                    </div>
+                 </h4>
+            </div>
+              <div class="modal-body">
+                  <div class="progress">
+                         <div id="idProgress" class="progress"></div>
+                   </div>
+              </div>
+          </div>
+        </div>
+     </div>
+  {% endblock modal %}
+  
+  {% block panel_heading %}{% endblock panel_heading %}
+  
+  {% block content %}{% endblock content %}
+
+    
+{% block javascripts %}
+        {{ parent() }}
+     
+       <script>
+       
+       jQuery(document).ready(function() {
+           
+                      $('#modaProgression').modal('toggle');
+                        
+                     html = '<div class="progress-bar progress-bar-success progress-bar-striped"';
+                    html = html  +  ' role="progressbar"';
+                    html = html + ' aria-valuenow="' +  nb + '"';
+                    html = html + ' aria-valuemin="0"';
+                    html = html + ' aria-valuemax="' +  total + '"';
+                    html = html + 'style="min-width: 2em;';
+                    html = html + ' width: ' + ((nb/ total)*100) + '%;">';
+                    html = html + nb  + '/' + total;
+                    html = html + '</div>';
+                   $('#idProgress').empty().append(html);
+                     if (  nb >=  total) {
+                           $('#modaProgression').modal('hide');
+                       }
+            
+            });
+       
+       
+  </script>
+
+{% endblock javascripts  %}

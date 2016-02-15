@@ -164,6 +164,14 @@ class CriteresController extends Controller {
             $variables['nb_dossiers'] = $nb_dossiers;
             $session->set('nb_dossiers', $variables['nb_dossiers']);
 
+            if ($nb_dossiers > 10000) {
+                $full = true;
+                $csv = false;
+            } else {
+                $full = false;
+                $csv =true;
+            }
+
             $total_retenu = $repoDossier->getSumMontantRetenu($where);
             $variables['total_retenu'] = $total_retenu;
             $session->set('total_retenu', $variables['total_retenu']);
@@ -172,31 +180,29 @@ class CriteresController extends Controller {
             $variables['total_dossiers'] = $total_dossiers;
             $session->set('total_dossiers', $variables['total_dossiers']);
 
-            $dossiers = $repoDossier->getDossiers($where);
-
-
-            usort($dossiers, array('self', 'tri_dossiers'));
-
             $dos = array();
-            $i = 0;
 
-            $repertoire = 'fichiers/';
-            $date_import = date('Ymd_His');
-            $nom_fichier = "aides_accordees_" . $date_import . ".csv";
-            $fic_import = $repertoire . "/" . $nom_fichier;
-            //ouverture fichier
-            $fic = fopen($fic_import, "w");
-            if (!$variables['annees']) {
-                $contenu = "DOSSIER;MONTANT TRAVAUX RETENUS;MONTANT AIDE;NATURE OPEREATION;RAISON SOCIALE;INTITULE;\n";
-            } else {
-                $contenu = "DOSSIER;ANNEE;MONTANT TRAVAUX RETENUS;MONTANT AIDE;NATURE OPEREATION;RAISON SOCIALE;INTITULE;\n";
-            }
-            fputs($fic, $contenu);
-            $full = false;
-            foreach ($dossiers as $dossier) {
-                $montantRetenu = strval($dossier->getMontant_retenu());
-                $montant = strval($dossier->getMontant_aide_interne());
-                if ($i <= 10000) {
+            if (!$full) {
+
+                $dossiers = $repoDossier->getDossiers($where);
+                usort($dossiers, array('self', 'tri_dossiers'));
+                $i = 0;
+
+                $repertoire = 'fichiers/';
+                $date_import = date('Ymd_His');
+                $nom_fichier = "aides_accordees_" . $date_import . ".csv";
+                $fic_import = $repertoire . "/" . $nom_fichier;
+                //ouverture fichier
+                $fic = fopen($fic_import, "w");
+                if (!$variables['annees']) {
+                    $contenu = "DOSSIER;MONTANT TRAVAUX RETENUS;MONTANT AIDE;NATURE OPEREATION;RAISON SOCIALE;INTITULE;\n";
+                } else {
+                    $contenu = "DOSSIER;ANNEE;MONTANT TRAVAUX RETENUS;MONTANT AIDE;NATURE OPEREATION;RAISON SOCIALE;INTITULE;\n";
+                }
+                fputs($fic, $contenu);
+                foreach ($dossiers as $dossier) {
+                    $montantRetenu = strval($dossier->getMontant_retenu());
+                    $montant = strval($dossier->getMontant_aide_interne());
                     $dos[$i] = array(
                         'dossier' => $dossier->getLigne()->getLigne() . '-' . $dossier->getDept()->getDept() . '-' . $dossier->getNo_ordre(),
                         'annee' => $dossier->getAnnee()->getAnnee(),
@@ -206,31 +212,32 @@ class CriteresController extends Controller {
                         'raison_sociale' => $dossier->getRaison_sociale(),
                         'intitule' => $dossier->getIntitule());
                     $i++;
-                } else {
-                    $full = true;
+                    $contenu = $dossier->getLigne()->getLigne() . '-' . $dossier->getDept()->getDept() . '-' . $dossier->getNo_ordre() . ";";
+                    if ($variables['annees']) {
+                        $contenu = $contenu . $dossier->getAnnee()->getAnnee() . ";";
+                    }
+                    $contenu = $contenu . $montantRetenu . ";";
+                    $contenu = $contenu . $montant . ";";
+                    $contenu = $contenu . $dossier->getForme_aide() . ";";
+                    $contenu = $contenu . iconv('UTF-8', 'windows-1252//TRANSLIT//IGNORE', $dossier->getRaison_sociale()) . ";";
+                    $contenu = $contenu . iconv('UTF-8', 'windows-1252//TRANSLIT//IGNORE', $dossier->getIntitule()) . ";\n";
+                    fputs($fic, $contenu);
                 }
-                $contenu = $dossier->getLigne()->getLigne() . '-' . $dossier->getDept()->getDept() . '-' . $dossier->getNo_ordre() . ";";
-                if ($variables['annees']) {
-                    $contenu = $contenu . $dossier->getAnnee()->getAnnee() . ";";
-                }
-                $contenu = $contenu . $montantRetenu . ";";
-                $contenu = $contenu . $montant . ";";
-                $contenu = $contenu . $dossier->getForme_aide() . ";";
-                $contenu = $contenu . iconv('UTF-8', 'windows-1252//TRANSLIT//IGNORE', $dossier->getRaison_sociale()) . ";";
-                $contenu = $contenu . iconv('UTF-8', 'windows-1252//TRANSLIT//IGNORE', $dossier->getIntitule()) . ";\n";
-                fputs($fic, $contenu);
+
+                fclose($fic);
+                $variables['fichier'] = $nom_fichier;
             }
 
-            fclose($fic);
-            $variables['fichier'] = $nom_fichier;
-
 //            $session->set('Dossiers', serialize($dos));
+
+
 
             return $this->render('AeagAideBundle:Criteres:resultat.html.twig', array(
                         'dossiers' => $dos,
                         'nb_dossiers' => $nb_dossiers,
                         'criteres' => $variables,
-                        'full' => $full
+                        'full' => $full,
+                        'csv' => $csv
             ));
         }
 
@@ -346,6 +353,100 @@ class CriteresController extends Controller {
 
 
         return $this->render('AeagAideBundle:Criteres:pdf.pdf.twig', $variables);
+    }
+
+    public function csvAction() {
+
+        $em = $this->getDoctrine()->getManager('aide');
+        $repoDossier = $em->getRepository('AeagAideBundle:Dossier');
+
+        $session = $this->get('session');
+
+        // Critère ligne
+
+        $variables['ligne_libelle'] = $session->get('ligne_libelle');
+        $variables['ligne_numero'] = $session->get('ligne_numero');
+
+
+        // Critère categorie
+        $variables['categorie_libelle'] = $session->get('categorie_libelle');
+
+        // Critère annee
+        $variables['annee_libelle'] = $session->get('annee_libelle');
+        $variables['annees'] = $session->get('annees');
+
+        // Critère Region administrative
+        $variables['region_admin_libelle'] = $session->get('region_admin_libelle');
+
+        // Critère département
+        $variables['departement_libelle'] = $session->get('departement_libelle');
+
+        // Critère Region hydrograhique
+        $variables['region_hydro_libelle'] = $session->get('region_hydro_libelle');
+
+
+        // Nombre de dossiers
+        $variables['nb_dossiers'] = $session->get('nb_dossiers');
+
+        // total montant retenu
+        $variables['total_retenu'] = $session->get('total_retenu');
+
+        // total montant aide
+        $variables['total_dossiers'] = $session->get('total_dossiers');
+
+        // Liste des dossiers selectionnés
+        $dossiers = $repoDossier->getDossiers($session->get('where'));
+        usort($dossiers, array('self', 'tri_dossiers'));
+        $i = 0;
+
+        $repertoire = 'fichiers/';
+        $date_import = date('Ymd_His');
+        $nom_fichier = "aides_accordees_" . $date_import . ".csv";
+        $fic_import = $repertoire . "/" . $nom_fichier;
+        //ouverture fichier
+        $fic = fopen($fic_import, "w");
+        if (!$variables['annees']) {
+            $contenu = "DOSSIER;MONTANT TRAVAUX RETENUS;MONTANT AIDE;NATURE OPEREATION;RAISON SOCIALE;INTITULE;\n";
+        } else {
+            $contenu = "DOSSIER;ANNEE;MONTANT TRAVAUX RETENUS;MONTANT AIDE;NATURE OPEREATION;RAISON SOCIALE;INTITULE;\n";
+        }
+        fputs($fic, $contenu);
+        $full = true;
+        $csv = true;
+        foreach ($dossiers as $dossier) {
+            $montantRetenu = strval($dossier->getMontant_retenu());
+            $montant = strval($dossier->getMontant_aide_interne());
+            $dos[$i] = array(
+                'dossier' => $dossier->getLigne()->getLigne() . '-' . $dossier->getDept()->getDept() . '-' . $dossier->getNo_ordre(),
+                'annee' => $dossier->getAnnee()->getAnnee(),
+                'montant_retenu' => $montantRetenu,
+                'montant_aide_interne' => $montant,
+                'forme_aide' => $dossier->getForme_aide(),
+                'raison_sociale' => $dossier->getRaison_sociale(),
+                'intitule' => $dossier->getIntitule());
+            $i++;
+            $contenu = $dossier->getLigne()->getLigne() . '-' . $dossier->getDept()->getDept() . '-' . $dossier->getNo_ordre() . ";";
+            if ($variables['annees']) {
+                $contenu = $contenu . $dossier->getAnnee()->getAnnee() . ";";
+            }
+            $contenu = $contenu . $montantRetenu . ";";
+            $contenu = $contenu . $montant . ";";
+            $contenu = $contenu . $dossier->getForme_aide() . ";";
+            $contenu = $contenu . iconv('UTF-8', 'windows-1252//TRANSLIT//IGNORE', $dossier->getRaison_sociale()) . ";";
+            $contenu = $contenu . iconv('UTF-8', 'windows-1252//TRANSLIT//IGNORE', $dossier->getIntitule()) . ";\n";
+            fputs($fic, $contenu);
+        }
+
+        fclose($fic);
+        $variables['fichier'] = $nom_fichier;
+
+         return $this->render('AeagAideBundle:Criteres:resultat.html.twig', array(
+                        'dossiers' => $dos,
+                        'nb_dossiers' => $session->get('nb_dossiers'),
+                        'criteres' => $variables,
+                        'full' => $full,
+                        'csv' => $csv
+            ));
     }
 
     static function tri_dossiers($a, $b) {

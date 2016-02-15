@@ -390,7 +390,7 @@ class AdminController extends Controller {
 
         if ($message == 'ko') {
             $session->getFlashBag()->add('notice-error', "ATTENTION : La déclaration n° " . $sousDeclarationCollecteur->getNumero() . " n'a pas été transférée à l'agence de l'eau  !");
-             return $this->redirect($this->generateUrl('AeagDecBundle_collecteur_listeSousDeclarations', array('declarationCollecteur_id' => $sousDeclarationCollecteur->getDeclarationCollecteur()->getId())));
+            return $this->redirect($this->generateUrl('AeagDecBundle_collecteur_listeSousDeclarations', array('declarationCollecteur_id' => $sousDeclarationCollecteur->getDeclarationCollecteur()->getId())));
         } else {
 
             $session->getFlashBag()->add('notice-success', "La déclaration n° " . $sousDeclarationCollecteur->getNumero() . " a été transférée à l'agence de l'eau avec succès !");
@@ -558,10 +558,17 @@ class AdminController extends Controller {
         $user = $this->getUser();
         $repoDeclarationProducteur = $emDec->getRepository('AeagDecBundle:DeclarationProducteur');
         $declarationProducteurs = $repoDeclarationProducteur->getDeclarationProducteursByAnnee($annee);
+        $nb = 0;
+        $total = count($declarationProducteurs);
         foreach ($declarationProducteurs as $declarationProducteur) {
             $ok = null;
             $ok = CollecteurController::majStatutDeclarationProducteursAction($declarationProducteur->getId(), $user, $emDec, $session);
             //print_r($ok);
+            $nb++;
+//            return $this->render('AeagDecBundle:Admin:progression.html.twig', array(
+//                        'nb' => $nb,
+//                        'total' => $total
+//            ));
         }
         return $this->redirect($this->generateUrl('AeagDecBundle_admin_listeDeclarationCollecteurs', array('annee' => $annee, 'statut' => '99')));
     }

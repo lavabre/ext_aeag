@@ -42,17 +42,19 @@
                  {% endif %}
              </div>
         </div>
-         <div class="col-md-2">
-             <div class="small pull-right">
-                 <a class="btn btn-primary" href="{{ path('AeagAideBundle_pdf') }}" title="Version PDF"> 
-                     <i class="fa fa-file-pdf-o"> Version PDF</i>
-                 </a>
-                     <br><br>
-                 <a class="btn btn-primary" href="{{ asset('fichiers/') }}{{ criteres.fichier }}" title="Version CSV">
-                    <i class="fa fa-file-excel-o "> Version CSV</i>
-                 </a>
-             </div>
-         </div>
+             {% if not full %}
+                  <div class="col-md-2">
+                                <div class="small pull-right">
+                                    <a class="btn btn-primary" href="{{ path('AeagAideBundle_pdf') }}" title="Version PDF"> 
+                                        <i class="fa fa-file-pdf-o"> Version PDF</i>
+                                    </a>
+                                        <br><br>
+                                    <a class="btn btn-primary" href="{{ asset('fichiers/') }}{{ criteres.fichier }}" title="Version CSV">
+                                       <i class="fa fa-file-excel-o "> Version CSV</i>
+                                    </a>
+                                </div>
+                 </div>
+            {% endif %}
     </div>
  {%endblock panel_heading %}
 
@@ -62,51 +64,63 @@
            <div class="row">
                    <div class="alert alert-danger text-center" role="alert">
                             <h3>
-                                Désolé mais le nombre de dossiers étant trop important à afficher merci de </br>
-                                télécharger le fichier PDF ou le fichier CSV pour les visualiser. </br></br>
+                                Désolé mais le nombre de dossiers étant trop important à afficher, si vous voulez la liste complète merci de </br>
+                                cliquer sur un des  boutons suivants : </br></br>
+                                {% if not csv %}
+                                    <a class="btn btn-primary" id="idPdf" href="{{ path('AeagAideBundle_pdf') }}" title="Version PDF"> 
+                                        <i class="fa fa-file-pdf-o"> Générer fichier PDF</i>
+                                    </a>
+                                        <br><br>
+                                     <a class="btn btn-primary" id="idCsv" href="{{ path('AeagAideBundle_csv') }}" title="Version CSV">
+                                       <i class="fa fa-file-excel-o "> Générer fichier CSV</i>
+                                    </a>
+                                    {% else %}
+                                           <a class="btn btn-success" href="{{ asset('fichiers/') }}{{ criteres.fichier }}" title="Version CSV">
+                                            <i class="fa fa-file-excel-o ">Récupérer Fichier CSV</i>
+                                         </a>
+                                    {% endif %}
                              </h3>
                      </div>
           </div>
     {% else %}
- 
- <div class="row">
-    <div class="col-md-12">
-        <div class="small ">
-            <table class="table table-bordered table-condensed table-advance table-hover" id="idTable">
-               <thead>
-                      <tr>
-                          <th nowrap>Dossiers&nbsp;&nbsp;&nbsp;&nbsp;</th>
-                          {% if criteres.annees %}
-                            <th nowrap>Année&nbsp;&nbsp;&nbsp;&nbsp;</th>
-                          {% endif %}
-                          <th nowrap>Montant des travaux retenus&nbsp;&nbsp;&nbsp;&nbsp;</th>
-                          <th nowrap>Montant de l'aide&nbsp;&nbsp;&nbsp;&nbsp;</th>
-                          <th nowrap>Nature de l'opération&nbsp;&nbsp;&nbsp;&nbsp;</th>
-                          <th nowrap>Raison Sociale&nbsp;&nbsp;&nbsp;&nbsp;</th>
-                          <th nowrap>Intitulé&nbsp;&nbsp;&nbsp;&nbsp;</th>
-                      </tr>
-                 </thead>
-                  <tbody>
+          <div class="row">
+                 <div class="col-md-12">
+                 <div class="small ">
+                     <table class="table table-bordered table-condensed table-advance table-hover" id="idTable">
+                        <thead>
+                               <tr>
+                                   <th nowrap>Dossiers&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                                   {% if criteres.annees %}
+                                     <th nowrap>Année&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                                   {% endif %}
+                                   <th nowrap>Montant des travaux retenus&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                                   <th nowrap>Montant de l'aide&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                                   <th nowrap>Nature de l'opération&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                                   <th nowrap>Raison Sociale&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                                   <th nowrap>Intitulé&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                               </tr>
+                          </thead>
+                           <tbody>
 
-                      {% for dossier in dossiers %}
-                          <tr>        
-                              <td align="left" nowrap>{{ dossier.dossier }}</td>
-                              {% if criteres.annees %}
-                                    <td align="center">{{ dossier.annee }}</td>
-                                {% endif %}
-                              <td align="right" >{{ dossier.montant_retenu | number_format( 2,","," ") }}</td>
-                              <td align="right" >{{ dossier.montant_aide_interne | number_format( 2,","," ") }}</td>
-                              <td align="left">{{ dossier.forme_aide }}</td>
-                              <td align="left">{{ dossier.raison_sociale }}</td>
-                              <td  align="left">{{ dossier.intitule }}</td>
-                          </tr>
-                      {% endfor %}
-                  </tbody>
-            </table>
-       
-          </div>
-      </div>
- </div>          
+                               {% for dossier in dossiers %}
+                                   <tr>        
+                                       <td align="left" nowrap>{{ dossier.dossier }}</td>
+                                       {% if criteres.annees %}
+                                             <td align="center">{{ dossier.annee }}</td>
+                                         {% endif %}
+                                       <td align="right" >{{ dossier.montant_retenu | number_format( 2,","," ") }}</td>
+                                       <td align="right" >{{ dossier.montant_aide_interne | number_format( 2,","," ") }}</td>
+                                       <td align="left">{{ dossier.forme_aide }}</td>
+                                       <td align="left">{{ dossier.raison_sociale }}</td>
+                                       <td  align="left">{{ dossier.intitule }}</td>
+                                   </tr>
+                               {% endfor %}
+                           </tbody>
+                     </table>
+
+                   </div>
+               </div>
+          </div>   
     {% endif %}
  
     <div class="row">
@@ -120,6 +134,14 @@
 {% endblock %}
 
 {% block scripts %}
+    
+    $(document).on('click', '#idPdf',function(e){
+        $('#modalTraitementEncours').modal('toggle');
+        });
+        
+     $(document).on('click', '#idCsv',function(e){
+        $('#modalTraitementEncours').modal('toggle');
+        });
      
        // DataTable
 

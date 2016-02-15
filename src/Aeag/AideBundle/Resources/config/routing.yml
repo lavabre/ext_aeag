@@ -21,5 +21,11 @@ AeagAideBundle_pdf:
     defaults: { _controller: AeagAideBundle:Criteres:pdf}
     requirements:
         methods:  GET|POST
+        
+AeagAideBundle_csv:
+    path:  /csv
+    defaults: { _controller: AeagAideBundle:Criteres:csv}
+    requirements:
+        methods:  GET|POST
 
 
