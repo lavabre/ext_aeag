@@ -1705,8 +1705,8 @@ class ProgrammationLotController extends Controller {
         $now = date('Y-m-d H:i');
         $now = new \DateTime($now);
         $pgProgLotAn->setDateModif($now);
-        $pgProgWebuser = $repoPgProgWebusers->getPgProgWebusersByLoginPassword($user->getUsername(), $user->getPassword());
-        if ($pgProgWebuser) {
+        $pgProgWebuser  = $repoPgProgWebusers->getPgProgWebusersByExtid($user->getId());
+         if ($pgProgWebuser) {
             $pgProgLotAn->setUtilModif($pgProgWebuser);
         }
         $emSqe->persist($pgProgLotAn);
@@ -1717,7 +1717,7 @@ class ProgrammationLotController extends Controller {
             $notification->setEmetteur($user->getId());
             $notification->setNouveau(true);
             $notification->setIteration(2);
-            $notification->setMessage("la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été soumise à la validation");
+            $notification->setMessage("la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été soumise à la validation par " . $pgProgWebuser->getNom() . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y') . PHP_EOL);
             $em->persist($notification);
         }
 
@@ -1731,7 +1731,7 @@ class ProgrammationLotController extends Controller {
             $message->setIteration(2);
             $texte = "Bonjour ," . PHP_EOL;
             $texte = $texte . "La programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL;
-            $texte = $texte . " a été soumise à la validation par " . $user->getUserName() . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y') . PHP_EOL;
+            $texte = $texte . " a été soumise à la validation par " . $pgProgWebuser->getNom() . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y') . PHP_EOL;
             $texte = $texte . " " . PHP_EOL;
             $texte = $texte . "Cordialement.";
             $message->setMessage($texte);
@@ -1742,7 +1742,7 @@ class ProgrammationLotController extends Controller {
             $notification->setEmetteur($user->getId());
             $notification->setNouveau(true);
             $notification->setIteration(2);
-            $notification->setMessage("la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été soumise à la validation par " . $user->getUserName());
+            $notification->setMessage("la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été soumise à la validation par " . $pgProgWebuser->getNom()  . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y') );
             $em->persist($notification);
             // Récupération du service.
             $mailer = $this->get('mailer');
@@ -1754,7 +1754,7 @@ class ProgrammationLotController extends Controller {
                     ->setFrom('automate@eau-adour-garonne.fr')
                     ->setTo($userAdmin->getEmail())
                     ->setBody($this->renderView('AeagSqeBundle:Programmation:Lot/prevaliderEmail.txt.twig', array(
-                        'emetteur' => $user,
+                        'emetteur' => $pgProgWebuser,
                         'lotan' => $pgProgLotAn,
             )));
 
@@ -1766,9 +1766,9 @@ class ProgrammationLotController extends Controller {
         $emSqe->flush();
 
         if ($pgProgWebuser) {
-            $this->get('session')->getFlashBag()->add('notice-success', "la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été soumise à la validation  par " . $pgProgWebuser->getNom());
+            $this->get('session')->getFlashBag()->add('notice-success', "la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été soumise à la validation  par " . $pgProgWebuser->getNom() . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y'));
         } else {
-            $this->get('session')->getFlashBag()->add('notice-success', "la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été soumise à la validation  par " . $user->getUserName());
+            $this->get('session')->getFlashBag()->add('notice-success', "la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été soumise à la validation  par " . $user->getUserName() . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y'));
         }
 
         // $session->set('critPhase', $pgProgPhase->getId());
@@ -1807,7 +1807,7 @@ class ProgrammationLotController extends Controller {
         $now = date('Y-m-d H:i');
         $now = new \DateTime($now);
         $pgProgLotAn->setDateModif($now);
-        $pgProgWebuser = $repoPgProgWebusers->getPgProgWebusersByLoginPassword($user->getUsername(), $user->getPassword());
+        $pgProgWebuser  = $repoPgProgWebusers->getPgProgWebusersByExtid($user->getId());
         if ($pgProgWebuser) {
             $pgProgLotAn->setUtilModif($pgProgWebuser);
         }
@@ -1851,17 +1851,17 @@ class ProgrammationLotController extends Controller {
 
         $pgProgWebuser = $pgProgLotAn->getUtilModif();
         $recepteur = $repoUsers->getUserByUsernamePassword($pgProgWebuser->getLogin(), $pgProgWebuser->getPwd());
-
-        $pgProgPhase = $repoPgProgPhases->getPgProgPhasesByCodePhase('P30');
+        
+         $pgProgPhase = $repoPgProgPhases->getPgProgPhasesByCodePhase('P30');
         $pgProgLotAn->setPhase($pgProgPhase);
         $pgProgStatut = $repoPgProgStatut->getPgProgStatutByCodeStatut('UPD');
         $pgProgLotAn->setCodeStatut($pgProgStatut);
         $now = date('Y-m-d H:i');
         $now = new \DateTime($now);
         $pgProgLotAn->setDateModif($now);
-        $pgProgWebuser = $repoPgProgWebusers->getPgProgWebusersByLoginPassword($user->getUsername(), $user->getPassword());
-        if ($pgProgWebuser) {
-            $pgProgLotAn->setUtilModif($pgProgWebuser);
+        $emetteur = $repoPgProgWebusers->getPgProgWebusersByExtid($user->getId());
+         if ($emetteur) {
+            $pgProgLotAn->setUtilModif($emetteur);
         }
         $emSqe->persist($pgProgLotAn);
         $emSqe->flush();
@@ -1874,7 +1874,7 @@ class ProgrammationLotController extends Controller {
         $texte = "Bonjour ," . PHP_EOL;
         $texte = $texte . " " . PHP_EOL;
         $texte = $texte . "La programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL;
-        $texte = $texte . " a été validée par l'administrateur " . $user->getUserName() . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y') . PHP_EOL;
+        $texte = $texte . " a été validée par l'administrateur " . $emetteur->getNom() . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y') . PHP_EOL;
         $texte = $texte . " " . PHP_EOL;
         $texte = $texte . "Cordialement.";
         $message->setMessage($texte);
@@ -1885,7 +1885,7 @@ class ProgrammationLotController extends Controller {
         $notification->setEmetteur($user->getId());
         $notification->setNouveau(true);
         $notification->setIteration(2);
-        $notification->setMessage("la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été validéz par l'administrateur " . $user->getUserName());
+        $notification->setMessage("la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été validéz par l'administrateur " . $emetteur->getNom());
         $em->persist($notification);
         // Récupération du service.
         $mailer = $this->get('mailer');
@@ -1895,7 +1895,7 @@ class ProgrammationLotController extends Controller {
                 ->setFrom('automate@eau-adour-garonne.fr')
                 ->setTo($recepteur->getEmail())
                 ->setBody($this->renderView('AeagSqeBundle:Programmation:Lot/validerEmail.txt.twig', array(
-                    'emetteur' => $user,
+                    'emetteur' => $emetteur,
                     'lotan' => $pgProgLotAn,
         )));
 
@@ -1904,8 +1904,8 @@ class ProgrammationLotController extends Controller {
 
         $em->flush();
 
-        if ($pgProgWebuser) {
-            $this->get('session')->getFlashBag()->add('notice-success', "la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été validée par " . $pgProgWebuser->getNom());
+        if ($emetteur) {
+            $this->get('session')->getFlashBag()->add('notice-success', "la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été validée par " . $emetteur->getNom());
         } else {
             $this->get('session')->getFlashBag()->add('notice-success', "la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été validée par " . $user->getUserName());
         }
@@ -1943,7 +1943,7 @@ class ProgrammationLotController extends Controller {
 
         $pgProgWebuser = $pgProgLotAn->getUtilModif();
         $recepteur = $repoUsers->getUserByUsernamePassword($pgProgWebuser->getLogin(), $pgProgWebuser->getPwd());
-
+        
         $pgProgPhase = $repoPgProgPhases->getPgProgPhasesByCodePhase('P15');
         $pgProgLotAn->setPhase($pgProgPhase);
         $pgProgStatut = $repoPgProgStatut->getPgProgStatutByCodeStatut('UPD');
@@ -1951,9 +1951,9 @@ class ProgrammationLotController extends Controller {
         $now = date('Y-m-d H:i');
         $now = new \DateTime($now);
         $pgProgLotAn->setDateModif($now);
-        $pgProgWebuser = $repoPgProgWebusers->getPgProgWebusersByLoginPassword($user->getUsername(), $user->getPassword());
-        if ($pgProgWebuser) {
-            $pgProgLotAn->setUtilModif($pgProgWebuser);
+        $emetteur = $repoPgProgWebusers->getPgProgWebusersByExtid($user->getId());
+        if ($emetteur) {
+            $pgProgLotAn->setUtilModif($emetteur);
         }
         $emSqe->persist($pgProgLotAn);
         $emSqe->flush();
@@ -1966,7 +1966,7 @@ class ProgrammationLotController extends Controller {
         $texte = "Bonjour ," . PHP_EOL;
         $texte = $texte . " " . PHP_EOL;
         $texte = $texte . "La programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL;
-        $texte = $texte . " a été refusée par l'administrateur " . $user->getUserName() . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y') . " pour la raision suivante : " . PHP_EOL;
+        $texte = $texte . " a été refusée par l'administrateur " . $emetteur->getNom() . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y') . " pour la raision suivante : " . PHP_EOL;
         $texte = $texte . " " . PHP_EOL;
         $texte = $texte . $motifRefus . PHP_EOL;
         $texte = $texte . " " . PHP_EOL;
@@ -1981,7 +1981,7 @@ class ProgrammationLotController extends Controller {
         $notification->setEmetteur($user->getId());
         $notification->setNouveau(true);
         $notification->setIteration(2);
-        $notification->setMessage("la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été refusée par l'administrateur " . $user->getUserName());
+        $notification->setMessage("la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été refusée par l'administrateur " . $emetteur->getNom()  . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y') );
         $em->persist($notification);
         // Récupération du service.
         $mailer = $this->get('mailer');
@@ -1991,7 +1991,7 @@ class ProgrammationLotController extends Controller {
                 ->setFrom('automate@eau-adour-garonne.fr')
                 ->setTo($recepteur->getEmail())
                 ->setBody($this->renderView('AeagSqeBundle:Programmation:Lot/refuserEmail.txt.twig', array(
-                    'emetteur' => $user,
+                    'emetteur' => $emetteur,
                     'lotan' => $pgProgLotAn,
                     'motifRefus' => $motifRefus,
         )));
@@ -2001,8 +2001,8 @@ class ProgrammationLotController extends Controller {
 
         $em->flush();
 
-        if ($pgProgWebuser) {
-            $this->get('session')->getFlashBag()->add('notice-error', "la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été refusée par " . $pgProgWebuser->getNom());
+        if ($emetteur) {
+            $this->get('session')->getFlashBag()->add('notice-error', "la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été refusée par " . $emetteur->getNom());
         } else {
             $this->get('session')->getFlashBag()->add('notice-error', "la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été refusée par " . $user->getUserName());
         }
@@ -2043,17 +2043,17 @@ class ProgrammationLotController extends Controller {
         $now = date('Y-m-d H:i');
         $now = new \DateTime($now);
         $pgProgLotAn->setDateModif($now);
-        $pgProgWebuser = $repoPgProgWebusers->getPgProgWebusersByLoginPassword($user->getUsername(), $user->getPassword());
-        if ($pgProgWebuser) {
-            $pgProgLotAn->setUtilModif($pgProgWebuser);
+        $emetteur = $repoPgProgWebusers->getPgProgWebusersByExtid($user->getId());
+        if ($emetteur) {
+            $pgProgLotAn->setUtilModif($emetteur);
         }
         $emSqe->persist($pgProgLotAn);
         $emSqe->flush();
 
         // $session->set('critPhase', $pgProgPhase->getId());
 
-        if ($pgProgWebuser) {
-            $this->get('session')->getFlashBag()->add('notice-success', "la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été dévalidée par " . $pgProgWebuser->getNom());
+        if ($emetteur) {
+            $this->get('session')->getFlashBag()->add('notice-success', "la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été dévalidée par " . $emetteur->getNom());
         } else {
             $this->get('session')->getFlashBag()->add('notice-success', "la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été dévalidée par " . $user->getUserName());
         }
@@ -2144,8 +2144,8 @@ class ProgrammationLotController extends Controller {
                 $now = date('Y-m-d H:i');
                 $now = new \DateTime($now);
                 $pgProgLotAnPrec->setDateModif($now);
-                $pgProgWebuser = $repoPgProgWebusers->getPgProgWebusersByLoginPassword($user->getUsername(), $user->getPassword());
-                $pgProgLotAnPrec->setUtilModif($pgProgWebuser);
+                 $pgProgWebuser = $repoPgProgWebusers->getPgProgWebusersByExtid($user->getId());
+                 $pgProgLotAnPrec->setUtilModif($pgProgWebuser);
                 $emSqe->persist($pgProgLotAnPrec);
                 // $session->set('critPhase', $pgProgPhase->getId());
             }
