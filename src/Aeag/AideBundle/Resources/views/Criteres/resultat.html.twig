@@ -57,6 +57,26 @@
             {% endif %}
     </div>
  {%endblock panel_heading %}
+ 
+ {% block modal %}
+   {# modal progression #}
+    <div class="modal fade" id="modaProgression">
+        <div class="modal-dialog modal-sm">
+          <div class="modal-content">
+            <div class="modal-header">
+                        <h4 class="modal-title" id="myModalLabel">
+                           <div class="alert alert-warning" role="alert">
+                             <i class="fa fa-circle-o-notch fa-spin"></i>
+                            Merci de patienter
+                           </div>
+                        </h4>
+                        <div id="idProgress" class="alert alert-warning text-center" role="alert"></div>
+                  </div>
+            </div>
+        </div>
+     </div>
+   
+{% endblock modal %}
 
 {%block content %}
     
@@ -66,20 +86,18 @@
                             <h3>
                                 Désolé mais le nombre de dossiers étant trop important à afficher, si vous voulez la liste complète merci de </br>
                                 cliquer sur un des  boutons suivants : </br></br>
-                                {% if not csv %}
-                                    <a class="btn btn-primary" id="idPdf" href="{{ path('AeagAideBundle_pdf') }}" title="Version PDF"> 
-                                        <i class="fa fa-file-pdf-o"> Générer fichier PDF</i>
-                                    </a>
-                                        <br><br>
-                                     <a class="btn btn-primary" id="idCsv" href="{{ path('AeagAideBundle_csv') }}" title="Version CSV">
-                                       <i class="fa fa-file-excel-o "> Générer fichier CSV</i>
-                                    </a>
-                                    {% else %}
-                                           <a class="btn btn-success" href="{{ asset('fichiers/') }}{{ criteres.fichier }}" title="Version CSV">
-                                            <i class="fa fa-file-excel-o ">Récupérer Fichier CSV</i>
-                                         </a>
-                                    {% endif %}
-                             </h3>
+                                 <div id="idBtPdf">
+                                        <a class="btn btn-primary" id="idPdf" href="#" title="Version PDF"> 
+                                            <i class="fa fa-file-pdf-o"> Générer fichier PDF</i>
+                                        </a>
+                                   </div>
+                                    <br><br>
+                                     <div id="idBtCsv">
+                                            <a class="btn btn-primary" id="idCsv" href="#" title="Version CSV">
+                                              <i class="fa fa-file-excel-o "> Générer fichier CSV</i>
+                                           </a>
+                                     </div>
+                           </h3>
                      </div>
           </div>
     {% else %}
@@ -136,12 +154,36 @@
 {% block scripts %}
     
     $(document).on('click', '#idPdf',function(e){
-        $('#modalTraitementEncours').modal('toggle');
-        });
+                   e.preventDefault();
+                   $('#modaProgression').modal('show');
+                   html = 'Génération de {{ criteres.nb_dossiers |number_format(0,'.',' ') }} lignes en cours';
+                  $('#idProgress').empty().append(html);
+                  var url = '{{ path('AeagAideBundle_pdf') }}'; 
+                  $.ajax({
+                        url: url,
+                        type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+                        success: function(html) { // Je récupère la réponse du fichier PHP
+                             $('#idBtPdf').empty().append(html);
+                              $('#modaProgression').modal('hide');
+                           }
+                       });
+     });
         
      $(document).on('click', '#idCsv',function(e){
-        $('#modalTraitementEncours').modal('toggle');
-        });
+                 e.preventDefault();
+                   $('#modaProgression').modal('show');
+                   html = 'Génération de {{ criteres.nb_dossiers |number_format(0,'.',' ') }} lignes en cours';
+                  $('#idProgress').empty().append(html);
+                 var url = '{{ path('AeagAideBundle_csv') }}'; 
+                 $.ajax({
+                        url: url,
+                        type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+                        success: function(html) { // Je récupère la réponse du fichier PHP
+                             $('#idBtCsv').empty().append(html);
+                              $('#modaProgression').modal('hide');
+                           }
+                   });
+     });
      
        // DataTable
 

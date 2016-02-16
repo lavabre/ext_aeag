@@ -348,11 +348,17 @@ class CriteresController extends Controller {
         $pdf->AddPage($variables);
         $pdf->SetFont('Arial', '', 10);
         $pdf->Formatage($variables);
+        
+        $repertoire = 'fichiers/';
+        $date_import = date('Ymd_His');
+        $nom_fichier = "aeag_aides_accordees_" . $date_import . ".pdf";
+        $fic_import = $repertoire . "/" . $nom_fichier;
+        
         $fichier = 'AEAG_AIDES_ACCORDEES.pdf';
-        $pdf->Output($fichier, 'D');
+        $pdf->Output($fic_import, 'F');
 
+         return $this->render('AeagAideBundle:Criteres:pdf.html.twig', array( 'fichier' => $nom_fichier ) );
 
-        return $this->render('AeagAideBundle:Criteres:pdf.pdf.twig', $variables);
     }
 
     public function csvAction() {
@@ -401,7 +407,7 @@ class CriteresController extends Controller {
 
         $repertoire = 'fichiers/';
         $date_import = date('Ymd_His');
-        $nom_fichier = "aides_accordees_" . $date_import . ".csv";
+        $nom_fichier = "aeag_aides_accordees_" . $date_import . ".csv";
         $fic_import = $repertoire . "/" . $nom_fichier;
         //ouverture fichier
         $fic = fopen($fic_import, "w");
@@ -411,9 +417,7 @@ class CriteresController extends Controller {
             $contenu = "DOSSIER;ANNEE;MONTANT TRAVAUX RETENUS;MONTANT AIDE;NATURE OPEREATION;RAISON SOCIALE;INTITULE;\n";
         }
         fputs($fic, $contenu);
-        $full = true;
-        $csv = true;
-        foreach ($dossiers as $dossier) {
+         foreach ($dossiers as $dossier) {
             $montantRetenu = strval($dossier->getMontant_retenu());
             $montant = strval($dossier->getMontant_aide_interne());
             $dos[$i] = array(
@@ -439,14 +443,7 @@ class CriteresController extends Controller {
 
         fclose($fic);
         $variables['fichier'] = $nom_fichier;
-
-         return $this->render('AeagAideBundle:Criteres:resultat.html.twig', array(
-                        'dossiers' => $dos,
-                        'nb_dossiers' => $session->get('nb_dossiers'),
-                        'criteres' => $variables,
-                        'full' => $full,
-                        'csv' => $csv
-            ));
+        return $this->render('AeagAideBundle:Criteres:csv.html.twig', array( 'fichier' => $nom_fichier ) );
     }
 
     static function tri_dossiers($a, $b) {
