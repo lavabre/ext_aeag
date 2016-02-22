@@ -10,6 +10,9 @@ class ReferentielAeagController extends Controller {
     public function pgRefCorresProducteursAction() {
 
         $user = $this->getUser();
+         if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
         $session->set('controller', 'ReferentielAeag');
@@ -52,6 +55,9 @@ class ReferentielAeagController extends Controller {
     public function pgRefCorresPrestatairesAction() {
 
         $user = $this->getUser();
+         if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
         $session->set('controller', 'ReferentielAeag');
@@ -94,6 +100,9 @@ class ReferentielAeagController extends Controller {
     public function pgRefStationMesuresAction() {
 
         $user = $this->getUser();
+         if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
         $session->set('controller', 'ReferentielAeag');
@@ -153,6 +162,9 @@ class ReferentielAeagController extends Controller {
     public function pgRefSationMesurePgRefSitePrelevementsAction($pgRefStationMesureOuvFoncId) {
 
         $user = $this->getUser();
+         if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
         $session->set('controller', 'ReferentielAeag');
@@ -192,6 +204,9 @@ class ReferentielAeagController extends Controller {
     public function pgRefStationMesurePgRefReseauMesuresAction($pgRefStationMesureOuvFoncId) {
 
         $user = $this->getUser();
+         if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
         $session->set('controller', 'ReferentielAeag');
@@ -229,6 +244,9 @@ class ReferentielAeagController extends Controller {
     public function pgRefReseauMesuresAction() {
 
         $user = $this->getUser();
+         if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
         $session->set('controller', 'ReferentielAeag');
@@ -298,6 +316,9 @@ class ReferentielAeagController extends Controller {
     public function pgRefReseauMesurePgRefStationMesuresAction($pgRefReseauMesureId) {
 
         $user = $this->getUser();
+         if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
         $session->set('controller', 'ReferentielAeag');
@@ -354,6 +375,9 @@ class ReferentielAeagController extends Controller {
     public function pgRefReseauMesurePgRefSationMesurePgRefSitePrelevementsAction($pgRefReseauMesureId, $pgRefStationMesureOuvFoncId) {
 
         $user = $this->getUser();
+         if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
         $session->set('controller', 'ReferentielAeag');
@@ -394,6 +418,9 @@ class ReferentielAeagController extends Controller {
     public function pgRefSitePrelevementsAction() {
 
         $user = $this->getUser();
+         if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
         $session->set('controller', 'ReferentielAeag');
@@ -421,6 +448,9 @@ class ReferentielAeagController extends Controller {
     public function pgRefSitePrelevementPgRefStationMesuresAction($pgRefSitePrelevementCode = null, $pgRefSitePrelevementNom = null) {
 
         $user = $this->getUser();
+         if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
         $session->set('controller', 'ReferentielAeag');

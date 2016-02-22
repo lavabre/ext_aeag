@@ -18,13 +18,16 @@ use Aeag\AeagBundle\Controller\AeagController;
 class ProgrammationLotController extends Controller {
 
     public function indexAction($action = null) {
+        
+         $user = $this->getUser();
+        if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
 
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'programmationLot');
         $session->set('fonction', 'index');
-
-        $user = $this->getUser();
 
         if (is_object($user)) {
             if ($action == 'V' && !$this->get('security.authorization_checker')->isGranted('ROLE_SQE')) {
@@ -244,6 +247,9 @@ class ProgrammationLotController extends Controller {
     public function filtresAction($action = null) {
 
         $user = $this->getUser();
+        if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'programmationLot');
@@ -665,8 +671,10 @@ class ProgrammationLotController extends Controller {
 
     public function resultatsAction($action = null, Request $request) {
 
-
-        $user = $this->getUser();
+         $user = $this->getUser();
+        if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'programmationLot');
@@ -1227,6 +1235,9 @@ class ProgrammationLotController extends Controller {
     public function resultatUniqueAction($action = null) {
 
         $user = $this->getUser();
+        if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'programmationLot');
@@ -1279,6 +1290,9 @@ class ProgrammationLotController extends Controller {
     public function retourAction($action = null) {
 
         $user = $this->getUser();
+        if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'programmationLot');
@@ -1677,6 +1691,9 @@ class ProgrammationLotController extends Controller {
     public function soumettreAction($lotAnId = null, $action = null) {
 
         $user = $this->getUser();
+        if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'ProgrammationLot');
@@ -1780,6 +1797,9 @@ class ProgrammationLotController extends Controller {
     public function debloquerAction($lotAnId = null, $action = null) {
 
         $user = $this->getUser();
+        if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'ProgrammationLot');
@@ -1828,6 +1848,9 @@ class ProgrammationLotController extends Controller {
     public function validerAction($lotAnId = null, $action = null) {
 
         $user = $this->getUser();
+        if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'ProgrammationLot');
@@ -1918,6 +1941,9 @@ class ProgrammationLotController extends Controller {
     public function refuserAction($lotAnId = null, $action = null) {
 
         $user = $this->getUser();
+        if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'ProgrammationLot');
@@ -2016,6 +2042,9 @@ class ProgrammationLotController extends Controller {
     public function devaliderAction($lotAnId = null, $action = null) {
 
         $user = $this->getUser();
+        if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'ProgrammationLot');
@@ -2064,6 +2093,9 @@ class ProgrammationLotController extends Controller {
     public function supprimerAction($lotAnId = null, $action = null) {
 
         $user = $this->getUser();
+        if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'ProgrammationLot');
@@ -2160,6 +2192,9 @@ class ProgrammationLotController extends Controller {
     public function dupliquerAction($lotAnId = null, $action = null) {
 
         $user = $this->getUser();
+        if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'ProgrammationLot');

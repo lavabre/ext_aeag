@@ -12,6 +12,9 @@ class ProgrammationPeriodeController extends Controller {
 
     public function indexAction() {
         $user = $this->getUser();
+         if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'ProgrammationPeriode');
@@ -254,6 +257,9 @@ class ProgrammationPeriodeController extends Controller {
     public function filtrerSemainesAction() {
 
         $user = $this->getUser();
+         if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'ProgrammationPeriode');
@@ -327,6 +333,9 @@ class ProgrammationPeriodeController extends Controller {
     public function semainesSelectionneesAction() {
 
         $user = $this->getUser();
+         if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'ProgrammationPeriode');
@@ -415,6 +424,9 @@ class ProgrammationPeriodeController extends Controller {
     public function filtrerAction() {
 
         $user = $this->getUser();
+         if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'ProgrammationPeriode');
@@ -602,6 +614,9 @@ class ProgrammationPeriodeController extends Controller {
 
     public function dupliquerStationAction($stationId = null) {
         $user = $this->getUser();
+         if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'ProgrammationPeriode');
@@ -763,6 +778,9 @@ class ProgrammationPeriodeController extends Controller {
     public function validerDupliquerStationAction($stationId = null) {
 
         $user = $this->getUser();
+         if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'ProgrammationPeriode');
@@ -875,6 +893,9 @@ class ProgrammationPeriodeController extends Controller {
     public function validerDupliquerStationSurAutreStationAction($stationId = null, $autreStationId = null) {
 
         $user = $this->getUser();
+         if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'ProgrammationPeriode');
@@ -1063,6 +1084,9 @@ class ProgrammationPeriodeController extends Controller {
     public function initialiserAction($stationId = null) {
 
         $user = $this->getUser();
+         if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'ProgrammationPeriode');
@@ -1205,6 +1229,9 @@ class ProgrammationPeriodeController extends Controller {
 
     public function programmerAction($stationId = null, $periodeId = null) {
         $user = $this->getUser();
+         if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'ProgrammationPeriode');
@@ -1374,6 +1401,9 @@ class ProgrammationPeriodeController extends Controller {
         $logger = $this->get('logger');
 
         $user = $this->getUser();
+         if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'ProgrammationPeriode');
@@ -1656,6 +1686,9 @@ class ProgrammationPeriodeController extends Controller {
     public function autreProgrammationAction($stationId = null, $periodeId = null, $groupeId = null) {
 
         $user = $this->getUser();
+         if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'ProgrammationPeriode');
@@ -1732,6 +1765,9 @@ class ProgrammationPeriodeController extends Controller {
     public function bilanAction() {
 
         $user = $this->getUser();
+         if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'ProgrammationPeriode');

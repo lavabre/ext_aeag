@@ -19,6 +19,9 @@ class ProgrammationStationController extends Controller {
     public function indexAction() {
 
         $user = $this->getUser();
+         if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'ProgrammationStation');
@@ -421,6 +424,9 @@ class ProgrammationStationController extends Controller {
     public function allStationsAction() {
 
         $user = $this->getUser();
+         if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'ProgrammationStation');
@@ -738,6 +744,9 @@ class ProgrammationStationController extends Controller {
     public function resultatAction() {
 
         $user = $this->getUser();
+         if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'ProgrammationStation');

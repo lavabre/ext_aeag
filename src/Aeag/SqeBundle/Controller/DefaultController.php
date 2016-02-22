@@ -36,6 +36,8 @@ class DefaultController extends Controller {
         if (is_object($user)) {
             $mes = AeagController::notificationAction($user, $em, $session);
             $mes1 = AeagController::messageAction($user, $em, $session);
+        }else{
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
 
         $ua = $this->getBrowser();
@@ -92,6 +94,8 @@ class DefaultController extends Controller {
         if (is_object($user)) {
             $mes = AeagController::notificationAction($user, $em, $session);
             $mes1 = AeagController::messageAction($user, $em, $session);
+        }else{
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'contact');

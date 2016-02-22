@@ -10,6 +10,9 @@ class ReferentielSandreController extends Controller {
     public function pgSandreParametresAction() {
 
         $user = $this->getUser();
+         if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
         $session->set('controller', 'ReferentielSandre');
@@ -54,6 +57,9 @@ class ReferentielSandreController extends Controller {
     public function pgSandreSupportsAction() {
 
         $user = $this->getUser();
+         if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
         $session->set('controller', 'referentielSandre');
@@ -95,6 +101,9 @@ class ReferentielSandreController extends Controller {
     public function pgSandreSupportsFractionsAction($support = null) {
 
         $user = $this->getUser();
+         if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
         $session->set('controller', 'referentielSandre');
@@ -130,6 +139,9 @@ class ReferentielSandreController extends Controller {
     public function pgSandreFractionsAction() {
 
         $user = $this->getUser();
+         if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
         $session->set('controller', 'referentielSandre');
@@ -157,6 +169,9 @@ class ReferentielSandreController extends Controller {
     public function pgSandreUnitesAction() {
 
         $user = $this->getUser();
+         if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
         $session->set('controller', 'referentielSandre');
@@ -198,6 +213,9 @@ class ReferentielSandreController extends Controller {
     public function pgSandreMethodesAction() {
 
         $user = $this->getUser();
+         if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
         $session->set('controller', 'referentielSandre');
@@ -239,6 +257,9 @@ class ReferentielSandreController extends Controller {
     public function pgSandreZoneVerticaleProspecteesAction() {
 
         $user = $this->getUser();
+         if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
         $session->set('controller', 'referentielSandre');

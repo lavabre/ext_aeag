@@ -13,6 +13,9 @@ class ProgrammationBilanController extends Controller {
     public function indexAction() {
 
         $user = $this->getUser();
+        if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'ProgrammationBilan');
@@ -110,6 +113,9 @@ class ProgrammationBilanController extends Controller {
     public function stationAction() {
 
         $user = $this->getUser();
+        if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'ProgrammationBilan');
@@ -250,6 +256,9 @@ class ProgrammationBilanController extends Controller {
     public function stationGroupeAction($stationAnId = null, $grparAnId = null) {
 
         $user = $this->getUser();
+        if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'ProgrammationBilan');
@@ -344,6 +353,9 @@ class ProgrammationBilanController extends Controller {
     public function prestataireAction() {
 
         $user = $this->getUser();
+        if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'ProgrammationBilan');
@@ -695,6 +707,9 @@ class ProgrammationBilanController extends Controller {
     public function prestataireGroupeAction($prestataireId = null, $grparAnId = null, $type = null) {
 
         $user = $this->getUser();
+        if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'ProgrammationBilan');
@@ -781,6 +796,9 @@ class ProgrammationBilanController extends Controller {
     public function periodeAction() {
 
         $user = $this->getUser();
+        if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'ProgrammationBilan');
@@ -890,6 +908,9 @@ class ProgrammationBilanController extends Controller {
     public function periodeGroupeAction($periodeAnId = null, $grparAnId = null) {
 
         $user = $this->getUser();
+        if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'ProgrammationBilan');

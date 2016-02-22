@@ -20,6 +20,9 @@ class ProgrammationGroupeController extends Controller {
     public function indexAction() {
 
         $user = $this->getUser();
+        if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'ProgrammationGroupe');
@@ -520,6 +523,9 @@ class ProgrammationGroupeController extends Controller {
     public function groupeParametresAction() {
 
         $user = $this->getUser();
+        if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'ProgrammationGroupe');
@@ -674,6 +680,9 @@ class ProgrammationGroupeController extends Controller {
     public function groupeParametrePrestatairesAction() {
 
         $user = $this->getUser();
+        if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'ProgrammationGroupe');
@@ -729,6 +738,9 @@ class ProgrammationGroupeController extends Controller {
     public function milieuGroupeParametresAction() {
 
         $user = $this->getUser();
+        if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'ProgrammationGroupe');
@@ -782,6 +794,9 @@ class ProgrammationGroupeController extends Controller {
     public function selectionnerAction() {
 
         $user = $this->getUser();
+        if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'ProgrammationGroupe');
@@ -857,6 +872,9 @@ class ProgrammationGroupeController extends Controller {
     public function ajouterAction() {
 
         $user = $this->getUser();
+        if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'ProgrammationGroupe');
@@ -1043,6 +1061,9 @@ class ProgrammationGroupeController extends Controller {
     public function supprimerAction($groupeId = null) {
 
         $user = $this->getUser();
+        if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'Programmationgroupe');
@@ -1139,6 +1160,9 @@ class ProgrammationGroupeController extends Controller {
     public function filtrerAction() {
 
         $user = $this->getUser();
+        if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'ProgrammationGroupe');
@@ -1329,6 +1353,9 @@ class ProgrammationGroupeController extends Controller {
     public function validerAction($groupeId = null) {
 
         $user = $this->getUser();
+        if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'ProgrammationGroupe');
@@ -1449,6 +1476,9 @@ class ProgrammationGroupeController extends Controller {
     public function ResultatAction() {
 
         $user = $this->getUser();
+        if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
         $session->set('controller', 'ProgrammationGroupe');
