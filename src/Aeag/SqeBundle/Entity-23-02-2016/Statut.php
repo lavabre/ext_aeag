@@ -5,26 +5,26 @@ namespace Aeag\SqeBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Parametre
+ * Statut
  *
- * @ORM\Table(name="parametre")
+ * @ORM\Table(name="statut")
  * @ORM\Entity
- * @ORM\Entity(repositoryClass="Aeag\SqeBundle\Repository\ParametreRepository")
+ * @ORM\Entity(repositoryClass="Aeag\SqeBundle\Repository\StatutRepository")
  */
-class Parametre
-{
+class Statut {
+
     /**
      * @var string
      *
-     * @ORM\Column(name="code", type="string", length=50, nullable=false)
+     * @ORM\Column(name="code", type="string", length=10, nullable=false)
      * @ORM\Id
-      */
+       */
     private $code;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="libelle", type="text", nullable=true)
+     * @ORM\Column(name="libelle", type="string", length=255, nullable=false)
      */
     private $libelle;
 
@@ -42,15 +42,16 @@ class Parametre
      */
     private $updated;
 
-
+    function setCode($code) {
+        $this->code = $code;
+    }
 
     /**
      * Get code
      *
-     * @return string
+     * @return string 
      */
-    public function getCode()
-    {
+    public function getCode() {
         return $this->code;
     }
 
@@ -58,11 +59,9 @@ class Parametre
      * Set libelle
      *
      * @param string $libelle
-     *
-     * @return Parametre
+     * @return Statut
      */
-    public function setLibelle($libelle)
-    {
+    public function setLibelle($libelle) {
         $this->libelle = $libelle;
 
         return $this;
@@ -71,10 +70,9 @@ class Parametre
     /**
      * Get libelle
      *
-     * @return string
+     * @return string 
      */
-    public function getLibelle()
-    {
+    public function getLibelle() {
         return $this->libelle;
     }
 
@@ -82,11 +80,9 @@ class Parametre
      * Set created
      *
      * @param \DateTime $created
-     *
-     * @return Parametre
+     * @return Statut
      */
-    public function setCreated($created)
-    {
+    public function setCreated($created) {
         $this->created = $created;
 
         return $this;
@@ -95,10 +91,9 @@ class Parametre
     /**
      * Get created
      *
-     * @return \DateTime
+     * @return \DateTime 
      */
-    public function getCreated()
-    {
+    public function getCreated() {
         return $this->created;
     }
 
@@ -106,11 +101,9 @@ class Parametre
      * Set updated
      *
      * @param \DateTime $updated
-     *
-     * @return Parametre
+     * @return Statut
      */
-    public function setUpdated($updated)
-    {
+    public function setUpdated($updated) {
         $this->updated = $updated;
 
         return $this;
@@ -119,10 +112,10 @@ class Parametre
     /**
      * Get updated
      *
-     * @return \DateTime
+     * @return \DateTime 
      */
-    public function getUpdated()
-    {
+    public function getUpdated() {
         return $this->updated;
     }
+
 }

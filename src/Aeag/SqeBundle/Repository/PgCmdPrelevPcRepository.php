@@ -5,19 +5,18 @@ namespace Aeag\SqeBundle\Repository;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * Class PgCmdDwnldUsrRpsRepository
+ * Class PgCmdPrelevPcRepository
  * @package Aeag\SqeBundle\Repository
  */
-class PgCmdDwnldUsrRpsRepository extends EntityRepository {
+class PgCmdPrelevPcRepository extends EntityRepository {
     
       
     /**
      * @return array
      */
-    public function getPPgCmdDwnldUsrRpss() {
+    public function getPgCmdPrelevPcs() {
         $query = "select c";
-        $query = $query . " from Aeag\SqeBundle\Entity\PPgCmdDwnldUsrRps c";
-        $query = $query . " order by c.date";
+        $query = $query . " from Aeag\SqeBundle\Entity\PPgCmdPrelevPc c";
         $qb = $this->_em->createQuery($query);
         //print_r($query);
         return $qb->getResult();
@@ -26,10 +25,10 @@ class PgCmdDwnldUsrRpsRepository extends EntityRepository {
     /**
      * @return array
      */
-    public function getPPgCmdDwnldUsrRpsByUser($pgProgWebusers) {
+    public function getPgCmdPrelevPcByPrelev($pgCmdPrelev) {
         $query = "select c";
-        $query = $query . " from Aeag\SqeBundle\Entity\PPgCmdDwnldUsrRps c";
-        $query = $query . " where c.user = " . $pgProgWebusers->getId() ;
+        $query = $query . " from Aeag\SqeBundle\Entity\PPgCmdPrelevPc c";
+        $query = $query . " where c.prelev = " . $pgCmdPrelev->getId() ;
         $qb = $this->_em->createQuery($query);
         //print_r($query);
         return $qb->getResult();

@@ -5,19 +5,18 @@ namespace Aeag\SqeBundle\Repository;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * Class PgCmdDwnldUsrRpsRepository
+ * Class PgCmdInvertListeRepository
  * @package Aeag\SqeBundle\Repository
  */
-class PgCmdDwnldUsrRpsRepository extends EntityRepository {
+class PgCmdInvertListeRepository extends EntityRepository {
     
       
     /**
      * @return array
      */
-    public function getPPgCmdDwnldUsrRpss() {
+    public function getPgCmdInvertListes() {
         $query = "select c";
-        $query = $query . " from Aeag\SqeBundle\Entity\PPgCmdDwnldUsrRps c";
-        $query = $query . " order by c.date";
+        $query = $query . " from Aeag\SqeBundle\Entity\PPgCmdInvertListe c";
         $qb = $this->_em->createQuery($query);
         //print_r($query);
         return $qb->getResult();
@@ -26,10 +25,10 @@ class PgCmdDwnldUsrRpsRepository extends EntityRepository {
     /**
      * @return array
      */
-    public function getPPgCmdDwnldUsrRpsByUser($pgProgWebusers) {
+    public function getPgCmdInvertListeByPrelev($pgCmdPrelevHbInvert) {
         $query = "select c";
-        $query = $query . " from Aeag\SqeBundle\Entity\PPgCmdDwnldUsrRps c";
-        $query = $query . " where c.user = " . $pgProgWebusers->getId() ;
+        $query = $query . " from Aeag\SqeBundle\Entity\PPgCmdInvertListe c";
+        $query = $query . " where c.prelev = " . $pgCmdPrelevHbInvert->getPrelev() ;
         $qb = $this->_em->createQuery($query);
         //print_r($query);
         return $qb->getResult();

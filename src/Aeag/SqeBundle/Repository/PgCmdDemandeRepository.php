@@ -9,7 +9,85 @@ use Doctrine\ORM\EntityRepository;
  * @package Aeag\SqeBundle\Repository
  */
 class PgCmdDemandeRepository extends EntityRepository {
-    //put your code here
+    
+     /**
+     * @return array
+     */
+    public function getPgCmdDemandes() {
+        $query = "select p";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdDemande p";
+        $query = $query . " order by p.anneeProg, p.codeDemandeCmd";
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+        return $qb->getResult();
+    }
+    
+     public function getPgCmdDemandeById($id) {
+        $query = "select p";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdDemande p";
+        $query = $query . " where p.id = " . $id;
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+         return $qb->getOneOrNullResult();
+     }
+     
+     public function getPgCmdDemandeByCodeDemandeCmd($codeDemandeCmd) {
+        $query = "select p";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdDemande p";
+        $query = $query . " where p.codeDemandeCmd = " . $codeDemandeCmd;
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+         return $qb->getOneOrNullResult();
+     }
+     
+      public function getPgCmdDemandeByAnneeProg($anneeProg) {
+        $query = "select p";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdDemande p";
+        $query = $query . " where p.anneeProg = " . $anneeProg;
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+         return $qb->getResult();
+     }
+     
+      public function getPgCmdDemandeByCommanditaire($pgRefCorresProducteur) {
+        $query = "select p";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdDemande p";
+        $query = $query . " where p.commanditaire = " . $pgRefCorresProducteur->getAdrCorid();
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+         return $qb->getResult();
+     }
+     
+     public function getPgCmdDemandeByCommanditaireAnneeProg($pgRefCorresProducteur, $anneeProg) {
+        $query = "select p";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdDemande p";
+        $query = $query . " where p.commanditaire = " . $pgRefCorresProducteur->getAdrCorid();
+        $query = $query . " and p.anneeProg = " . $anneeProg;
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+         return $qb->getResult();
+     }
+     
+       public function getPgCmdDemandeByPrestataire($pgRefCorresPresta) {
+        $query = "select p";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdDemande p";
+        $query = $query . " where p.prestataire = " . $pgRefCorresPresta->getAdrCorid();
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+         return $qb->getResult();
+     }
+     
+     
+     
+      public function getPgCmdDemandeByPrestataireAnneeProg($pgRefCorresPresta, $anneeProg) {
+        $query = "select p";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdDemande p";
+        $query = $query . " where p.prestataire = " . $pgRefCorresPresta->getAdrCorid();
+        $query = $query . " and p.anneeProg = " . $anneeProg;
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+         return $qb->getResult();
+     }
     
     public function getNbReponseByDemande($demande) {
         $query = "SELECT count(pean.periode)";

@@ -5,19 +5,18 @@ namespace Aeag\SqeBundle\Repository;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * Class PgCmdDwnldUsrRpsRepository
+ * Class PgCmdMesureEnvRepository
  * @package Aeag\SqeBundle\Repository
  */
-class PgCmdDwnldUsrRpsRepository extends EntityRepository {
+class PgCmdMesureEnvRepository extends EntityRepository {
     
       
     /**
      * @return array
      */
-    public function getPPgCmdDwnldUsrRpss() {
+    public function getPPgCmdMesureEnvs() {
         $query = "select c";
-        $query = $query . " from Aeag\SqeBundle\Entity\PPgCmdDwnldUsrRps c";
-        $query = $query . " order by c.date";
+        $query = $query . " from Aeag\SqeBundle\Entity\PPgCmdMesureEnv c";
         $qb = $this->_em->createQuery($query);
         //print_r($query);
         return $qb->getResult();
@@ -26,10 +25,10 @@ class PgCmdDwnldUsrRpsRepository extends EntityRepository {
     /**
      * @return array
      */
-    public function getPPgCmdDwnldUsrRpsByUser($pgProgWebusers) {
+    public function getPPgCmdMesureEnvByPrelev($pgCmdPrelev) {
         $query = "select c";
-        $query = $query . " from Aeag\SqeBundle\Entity\PPgCmdDwnldUsrRps c";
-        $query = $query . " where c.user = " . $pgProgWebusers->getId() ;
+        $query = $query . " from Aeag\SqeBundle\Entity\PPgCmdMesureEnv c";
+        $query = $query . " where c.prelev = " . $pgCmdPrelev->getId() ;
         $qb = $this->_em->createQuery($query);
         //print_r($query);
         return $qb->getResult();
