@@ -1,0 +1,11 @@
+AeagSqeBundle_suiviPrelevements_index:
+    path:  /lots
+    defaults: { _controller: AeagSqeBundle:SuiviPrelevements:index }
+    
+AeagSqeBundle_suiviPrelevements_stations:
+    path:  /lots/stations/{lotanId}
+    defaults: { _controller: AeagSqeBundle:SuiviPrelevements:stations, lotanId : null}
+    
+AeagSqeBundle_suiviPrelevements_periodes:
+    path:  /lots/stations/periodes/{stationAnId}
+    defaults: { _controller: AeagSqeBundle:SuiviPrelevements:stations, stationAnId : null}

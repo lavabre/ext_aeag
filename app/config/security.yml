@@ -86,6 +86,7 @@ security:
           # PAGES ACCESSIBLES AUX UTILISATEURS SQE
          - { path: ^/sqe/programmation/*, role: [ROLE_SQE] }
          - { path: ^/sqe/echangefichiers/*, role: [ROLE_PRESTASQE] }
+         - { path: ^/sqe/suiviPrelevements/*, role: [ROLE_PRESTASQE] }
          - { path: ^/sqe*, role: [ROLE_SQE] }
 
            # PAGES ACCESSIBLES À TOUS
