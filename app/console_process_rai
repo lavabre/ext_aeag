@@ -10,7 +10,8 @@ set_time_limit(0);
 require_once __DIR__.'/bootstrap.php.cache';
 require_once __DIR__.'/AppKernel.php';
 
-use Aeag\SqeBundle\Command\ProcessRaiCommand;
+use Aeag\SqeBundle\Command\CheckProcessRaiCommand;
+use Aeag\SqeBundle\Command\CheckSandreFormatCommand;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Debug\Debug;
@@ -25,5 +26,6 @@ if ($debug) {
 
 $kernel = new AppKernel($env, $debug);
 $application = new Application($kernel);
-$application->add(new ProcessRaiCommand);
+$application->add(new CheckProcessRaiCommand);
+$application->add(new CheckSandreFormatCommand);
 $application->run($input);
