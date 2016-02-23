@@ -8,4 +8,8 @@ AeagSqeBundle_suiviPrelevements_stations:
     
 AeagSqeBundle_suiviPrelevements_periodes:
     path:  /lots/stations/periodes/{stationAnId}
-    defaults: { _controller: AeagSqeBundle:SuiviPrelevements:stations, stationAnId : null}
+    defaults: { _controller: AeagSqeBundle:SuiviPrelevements:periodes, stationAnId : null}
+    
+AeagSqeBundle_suiviPrelevements_suivi:
+    path:  /lots/stations/periodes/suivi/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SuiviPrelevements:periodes, periodeAnId : null}

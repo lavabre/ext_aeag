@@ -56,15 +56,17 @@ class SuiviPrelevementsController extends Controller {
         $pgProgLotStationAns = $repoPgProgLotStationAn->getPgProgLotStationAnBylotan($pgProgLotAn);
         $tabStations = array();
         $i = 0;
-        foreach ($pgProgLotStationAns as $pgProgLotStationAn){
-             $tabStations[$i]['pgProgLotStationAn'] = $pgProgLotStationAn;
-             $tabStations[$i]['lien'] = '/sqe_fiches_stations/' . $pgProgLotStationAn->getStation()->getCode() . '.pdf';
+        foreach ($pgProgLotStationAns as $pgProgLotStationAn) {
+            $tabStations[$i]['pgProgLotStationAn'] = $pgProgLotStationAn;
+            $tabStations[$i]['lien'] = '/sqe_fiches_stations/' . $pgProgLotStationAn->getStation()->getCode() . '.pdf';
+            $i++;
         }
+
         return $this->render('AeagSqeBundle:SuiviPrelevements:stations.html.twig', array('user' => $pgProgWebUser,
                     'lotan' => $pgProgLotAn,
                     'stations' => $tabStations));
     }
-    
+
     public function periodesAction($stationAnId) {
         $user = $this->getUser();
         if (!$user) {
@@ -87,15 +89,27 @@ class SuiviPrelevementsController extends Controller {
         $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByStationAn($pgProgLotStationAn);
         $tabPeriodes = array();
         $i = 0;
-        foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg){
-                $tabPeriodes[$j]["ordre"] = $pgProgLotPeriodeAn->getPeriode()->getid();
-                $tabPeriodes[$j]["periode"] = $pgProgLotPeriodeAn->getPeriode();
+        foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
+            $trouve = false;
+            for ($j = 0; $j < count($tabPeriodes); $j++) {
+                if ($tabPeriodes[$j]["ordre"] == $pgProgLotPeriodeProg->getPeriodAn()->getPeriode()->getid()) {
+                    $trouve = true;
+                    break;
+                }
+            }
+            if (!$trouve) {
+                $tabPeriodes[$i]["ordre"] = $pgProgLotPeriodeProg->getPeriodAn()->getPeriode()->getid();
+                $tabPeriodes[$i]["pgProgLotPeriodeAn"] = $pgProgLotPeriodeProg->getPeriodAn();
+                $i++;
+            }
         }
-        sort($tabPeriodes);
-        return $this->render('AeagSqeBundle:SuiviPrelevements:stations.html.twig', array(
+
+
+        return $this->render('AeagSqeBundle:SuiviPrelevements:periodes.html.twig', array(
                     'user' => $pgProgWebUser,
                     'lotan' => $pgProgLotAn,
-                    'stations' => $tabStations));
+                    'station' => $pgProgLotStationAn,
+                    'periodes' => $tabPeriodes));
     }
 
 }
