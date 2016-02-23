@@ -122,7 +122,7 @@ class PgTmpValidEdilaboRepository extends EntityRepository {
             $qb->setParameter('reponse', $reponseId);
         }
         $qb->setParameter('codePrelevement', $codePrelevement);
-        return $qb->getResult();
+        return $qb->getOneOrNullResult();
     }
     
     public function getStationsByCodePrelevement($codePrelevement, $demandeId, $reponseId = null) {

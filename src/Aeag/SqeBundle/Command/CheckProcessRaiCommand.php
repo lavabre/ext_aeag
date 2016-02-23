@@ -69,7 +69,6 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
             $datePrelDmdMax = clone $datePrelDmdMin;
             $datePrelDmdMax->add(new \DateInterval('P'.$delaiPrel.'D'));
             
-            $output->writeln(var_dump($datePrelRps, $datePrelDmdMin, $datePrelDmdMax));
             if ($datePrelDmdMin > $datePrelRps || $datePrelRps > $datePrelDmdMax) {
                 return false;
             }
