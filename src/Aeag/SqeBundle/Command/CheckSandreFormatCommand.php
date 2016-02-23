@@ -2,7 +2,6 @@
 
 namespace Aeag\SqeBundle\Command;
 
-//use Symfony\Component\Console\Command\Command;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -11,12 +10,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Aeag\AeagBundle\Entity\Notification;
 use Aeag\AeagBundle\Entity\Message;
 
-class ProcessRaiCommand extends ContainerAwareCommand {
+class CheckSandreFormatCommand extends ContainerAwareCommand {
 
     protected function configure() {
         $this
-                ->setName('rai:process')
-                ->setDescription('Validation des RAI')
+                ->setName('rai:check_sandre')
+                ->setDescription('Validation Sandre des RAI')
         ;
     }
 
@@ -63,10 +62,14 @@ class ProcessRaiCommand extends ContainerAwareCommand {
                             }
                         }
                         $destinataires = $repoPgProgWebUsers->findByTypeUser('ADMIN');
-                    } 
+                    }
                     
                     // Création du fichier de compte rendu
-                    $this->_creationFichier($pgCmdFichierRps, $erreurs);
+                    $this->_creationFichierCr($pgCmdFichierRps, $erreurs);
+                    
+                    $emSqe->persist($pgCmdFichierRps);
+                    $emSqe->flush();
+                    
                     
                     // Envoi de mail au prestataire et à l'admin
                     $objetMessage = "SQE - DAI " . $pgCmdFichierRps->getDemande()->getCodeDemandeCmd() . " : Fichier " . $pgCmdFichierRps->getId() . $validMessage;
@@ -76,16 +79,19 @@ class ProcessRaiCommand extends ContainerAwareCommand {
                         $this->_envoiMessage($em, $txtMessage, $destinataire, $objetMessage);
                     }
 
-                    $emSqe->persist($pgCmdFichierRps);
-                    $emSqe->flush();
+                    
                     
                 }
                 
             }
         }
+        if (count($pgCmdFichiersRps) > 0) {
+            $date = new \DateTime();
+            $output->writeln($date->format('d/m/Y H:i:s').': '.count($pgCmdFichiersRps)." RAI(s) traitée(s)");
+        }
     }
 
-    protected function _creationFichier($pgCmdFichierRps, $erreurs) {
+    protected function _creationFichierCr($pgCmdFichierRps, $erreurs) {
         // Création du fichier de compte rendu
         $pathBase = $this->getContainer()->getParameter('repertoire_echange');
         $pathBase .= $pgCmdFichierRps->getDemande()->getAnneeProg() . '/' . $pgCmdFichierRps->getDemande()->getCommanditaire()->getNomCorres() .
