@@ -10,51 +10,76 @@
     <li>
            <a href="{{ path('AeagSqeBundle_suiviPrelevements_index') }}">Lots</a> 
     </li>
+    <li>
+           <a href="{{path('AeagSqeBundle_suiviPrelevements_lot_periodes',{ 'lotanId': lotan.id })}}">Périodes</a> 
+    </li>
      <li class="active">
           Stations
     </li>
 {% endblock breadcrumb %} 
 
 {%block panel_heading %}
-    <h3 class="page-title">
-        Suivi des prélèvements - Liste des stations du lot  {{ lotan.lot.nomLot }} - {{ lotan.anneeProg }}
+    <h3 class="page-title text-center">
+        Suivi des prélèvements - Liste des stations de la période {{ periodeAn.periode.labelPeriode }} (du {{ periodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;au&nbsp;&nbsp; {{ periodeAn.periode.dateFin | date("d/m/Y") }}) </br>du lot  {{ lotan.lot.nomLot }} - {{ lotan.anneeProg }}
     </h3>
 {%endblock panel_heading %}
 
 {%block content %}
+    
+   
     <div class="form-body">        
         <table class="table table-bordered table-condensed table-advance" id="idTable_demandes">
             <thead>
                 <tr>
                     <th width="5%">Actions</th>
-                    <th>Code</th>
-                    <th>Libelle</th>
-                    <th>Type</th>
-                    <th>Commune</th>
-                    <th>Cours d'eau</th>
-                    <th>Masse d'eau</th>
-                </tr>
+                    <th>Stations</th>
+                   {% if datePrels | length %}
+                            {% for datePrel in datePrels %}
+                            <th> {{ datePrel | date("d/m/Y") }} </th>
+                            {% endfor %}
+                    {% endif %}
+                  </tr>
             </thead>
             <tbody>
                  {%if stations | length%} 
                     {% for station in stations %}
                           <tr>
                             <td align="center" nowrap> 
-                                 <a id="id_{{ station.pgProgLotStationAn.id }}" class="btn btn-primary" href="{{path('AeagSqeBundle_suiviPrelevements_station_periodes',{ 'stationAnId': station.pgProgLotStationAn.id })}}" title="Consulter les stations">
-                                    <i class="fa fa-eye"></i> 
-                                </a>
+                                {% if  station.cmdPrelev | length %}
+                                    <a id="id_{{ station.station.ouvFoncId }}" class="btn btn-primary" href="{{path('AeagSqeBundle_suiviPrelevements_lot_periode_station_suivis',{ 'cmdPrelevId': station.cmdPrelev.id })}}" title="Suivis des prélèvements">
+                                       <i class="fa fa-eye"></i> 
+                                   </a>
+                                {% endif %}
                             </td>
                              <td>
                                     <a  href="{{ station.lien }}" target="_blank" title="Localisation">
-                                             {{ station.pgProgLotStationAn.station.code }}
+                                             {{ station.station.code }} {{ station.station.libelle }}
                                     </a>
-                                 </td>
-                                <td>{{ station.pgProgLotStationAn.station.libelle }}</td>
-                                <td>{{ station.pgProgLotStationAn.station.type }}</td>
-                                <td>{{ station.pgProgLotStationAn.station.nomCommune }}</td>
-                                <td>{{ station.pgProgLotStationAn.station.nomCoursEau }}</td>
-                                <td>{{ station.pgProgLotStationAn.station.nomMasdo }}</td>
-                        </tr>
+                             </td>
+                            {% if station.suiviPrels | length %}
+                                    {% for suiviPrel in station.suiviPrels %}
+                                          <td class="text-center"> 
+                                            {% if suiviPrel.statutPrel == "P" %}
+                                                 <a id="idBt_{{ suiviPrel.id }}" class="btn btn-default">
+                                                    <span id="idbadge_{{suiviPrel.id }}" class="badge"></span>
+                                                </a>
+                                            {% elseif suiviPrel.statutPrel == "F" %}
+                                                 <a id="idBt_{{ suiviPrel.id }}" class="btn btn-sucess">
+                                                    <span id="idbadge_{{suiviPrel.id }}" class="badge"></span>
+                                                </a>
+                                             {% elseif suiviPrel.statutPrel == "N" %}
+                                                 <a id="idBt_{{ suiviPrel.id }}" class="btn btn-warning">
+                                                    <span id="idbadge_{{suiviPrel.id }}" class="badge"></span>
+                                                 </a>
+                                             {% else %}
+                                                  <a id="idBt_{{ suiviPrel.id }}" class="btn btn-danger">
+                                                    <span id="idbadge_{{suiviPrel.id }}" class="badge"></span>
+                                                 </a>
+                                              {% endif %}
+                                          </td>
+                                    {% endfor %}
+                           {% endif %}
+                           </tr>
                     {% endfor %}
                 {% endif %}
             </tbody>

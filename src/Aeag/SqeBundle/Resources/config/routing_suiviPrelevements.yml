@@ -2,11 +2,23 @@ AeagSqeBundle_suiviPrelevements_index:
     path:  /lots
     defaults: { _controller: AeagSqeBundle:SuiviPrelevements:index }
     
+AeagSqeBundle_suiviPrelevements_lot_periodes:
+    path:  /lot/periodes/{lotanId}
+    defaults: { _controller: AeagSqeBundle:SuiviPrelevements:lotPeriodes, lotanId : null}    
+
+AeagSqeBundle_suiviPrelevements_lot_periode_stations:
+    path:  /lot/periode/stations/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SuiviPrelevements:lotPeriodeStations, periodeAnId : null}
+    
+AeagSqeBundle_suiviPrelevements_lot_periode_station_suivis:
+    path:  /lot/periode/station/suivi/{cmdPrelevId}
+    defaults: { _controller: AeagSqeBundle:SuiviPrelevements:lotPeriodeStations, cmdPrelevId : null}
+    
 AeagSqeBundle_suiviPrelevements_stations:
     path:  /lots/stations/{lotanId}
     defaults: { _controller: AeagSqeBundle:SuiviPrelevements:stations, lotanId : null}
     
-AeagSqeBundle_suiviPrelevements_periodes:
+AeagSqeBundle_suiviPrelevements_station_periodes:
     path:  /lots/stations/periodes/{stationAnId}
     defaults: { _controller: AeagSqeBundle:SuiviPrelevements:periodes, stationAnId : null}
     

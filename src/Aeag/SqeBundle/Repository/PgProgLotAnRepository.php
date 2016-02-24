@@ -112,7 +112,7 @@ class PgProgLotAnRepository extends EntityRepository {
         $query .= " and lotan.lot = lot.id";
         $query .= " and users.extId = :aeagUser";
         $query .= " and lotan.codeStatut <> 'INV'";
-        $query .= " and lotan.phase >= 5 and lotan.phase <= 7";
+        $query .= " and lotan.phase >= 5 and lotan.phase <= 8";
                 
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('aeagUser', $user->getId()); // Id de l'utilisateur 
@@ -125,7 +125,7 @@ class PgProgLotAnRepository extends EntityRepository {
         $query .= " from Aeag\SqeBundle\Entity\PgProgLotAn lotan, Aeag\SqeBundle\Entity\PgProgLot lot";
         $query .= " where lotan.lot = lot.id";
         $query .= " and lotan.codeStatut <> 'INV'";
-        $query .= " and lotan.phase >= 5 and lotan.phase <= 7";
+        $query .= " and lotan.phase >= 5 and lotan.phase <= 8";
         
         $qb = $this->_em->createQuery($query);
         
@@ -139,7 +139,7 @@ class PgProgLotAnRepository extends EntityRepository {
         $query .= " and mu.marche = lot.marche";
         $query .= " and users.id = mu.webuser";
         $query .= " and lotan.codeStatut <> 'INV'";
-        $query .= " and lotan.phase >= 5 and lotan.phase <= 7";
+        $query .= " and lotan.phase >= 5 and lotan.phase <= 8";
         $query .= " and users.extId = :aeagUser";
         
         $qb = $this->_em->createQuery($query);

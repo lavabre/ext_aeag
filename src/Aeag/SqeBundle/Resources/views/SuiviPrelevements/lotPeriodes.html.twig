@@ -10,14 +10,14 @@
     <li>
            <a href="{{ path('AeagSqeBundle_suiviPrelevements_index') }}">Lots</a> 
     </li>
-     <li class="active">
-          Stations
+    <li class="active">
+          Périodes
     </li>
 {% endblock breadcrumb %} 
 
 {%block panel_heading %}
-    <h3 class="page-title">
-        Suivi des prélèvements - Liste des stations du lot  {{ lotan.lot.nomLot }} - {{ lotan.anneeProg }}
+    <h3 class="page-title text-center">
+        Suivi des prélèvements - Liste des périodes</br>du lot  {{ lotan.lot.nomLot }} - {{ lotan.anneeProg }}
     </h3>
 {%endblock panel_heading %}
 
@@ -27,34 +27,26 @@
             <thead>
                 <tr>
                     <th width="5%">Actions</th>
-                    <th>Code</th>
-                    <th>Libelle</th>
-                    <th>Type</th>
-                    <th>Commune</th>
-                    <th>Cours d'eau</th>
-                    <th>Masse d'eau</th>
-                </tr>
+                    <th>Périodes</th>
+                    <th>Nombre de stations</th>
+                  </tr>
             </thead>
             <tbody>
-                 {%if stations | length%} 
-                    {% for station in stations %}
+                 {%if periodeAns | length%} 
+                    {% for periodeAn in periodeAns %}
                           <tr>
                             <td align="center" nowrap> 
-                                 <a id="id_{{ station.pgProgLotStationAn.id }}" class="btn btn-primary" href="{{path('AeagSqeBundle_suiviPrelevements_station_periodes',{ 'stationAnId': station.pgProgLotStationAn.id })}}" title="Consulter les stations">
+                                 <a id="id_{{ periodeAn.pgProgLotPeriodeAn.id }}" class="btn btn-primary" href="{{path('AeagSqeBundle_suiviPrelevements_lot_periode_stations',{ 'periodeAnId': periodeAn.pgProgLotPeriodeAn.id })}}" title="Stations">
                                     <i class="fa fa-eye"></i> 
                                 </a>
                             </td>
-                             <td>
-                                    <a  href="{{ station.lien }}" target="_blank" title="Localisation">
-                                             {{ station.pgProgLotStationAn.station.code }}
-                                    </a>
-                                 </td>
-                                <td>{{ station.pgProgLotStationAn.station.libelle }}</td>
-                                <td>{{ station.pgProgLotStationAn.station.type }}</td>
-                                <td>{{ station.pgProgLotStationAn.station.nomCommune }}</td>
-                                <td>{{ station.pgProgLotStationAn.station.nomCoursEau }}</td>
-                                <td>{{ station.pgProgLotStationAn.station.nomMasdo }}</td>
-                        </tr>
+                               <td>{{ periodeAn.pgProgLotPeriodeAn.periode.labelPeriode }} (du {{ periodeAn.pgProgLotPeriodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;au&nbsp;&nbsp; {{ periodeAn.pgProgLotPeriodeAn.periode.dateFin | date("d/m/Y") }})</td>
+                               <td class="text-right">{{ periodeAn.nbStations }}{#</br>
+                                      {% for station in periodeAn.stations %}
+                                          {{ station.code }} {{ station.libelle }}</br>
+                                      {% endfor %}#}
+                               </td>
+                          </tr>
                     {% endfor %}
                 {% endif %}
             </tbody>
@@ -71,7 +63,7 @@
     jQuery(document).ready(function() {
         var table = $('#idTable_demandes').DataTable(
             {"stateSave": true,
-             "order": [[ 1, "desc" ]],
+             "order": [[ 1, "asc" ]],
             "oLanguage": {
             "sSearch": "Filtre",
             "sFirst": "1ere page",

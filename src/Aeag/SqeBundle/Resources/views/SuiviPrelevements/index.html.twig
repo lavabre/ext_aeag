@@ -37,10 +37,10 @@
                     {% for lotan in lotans %}
                        <tr>
                             <td>
-                                <a id="id_{{lotan.id}}" class="btn btn-primary btn-demandes" href="{{path('AeagSqeBundle_suiviPrelevements_stations',{ 'lotanId': lotan.id })}}" title="Consulter les stations">
+                                <a id="id_{{lotan.id}}" class="btn btn-primary btn-demandes" href="{{path('AeagSqeBundle_suiviPrelevements_lot_periodes',{ 'lotanId': lotan.id })}}" title="Périodes">
                                     <i class="fa fa-eye"></i> 
                                 </a>
-                            </td>
+                             </td>
                             <td nowrap>{{lotan.lot.nomLot}}</td>
                             <td>{{ lotan.anneeProg }}</td>
                             <td>{{ lotan.version }}</td>
