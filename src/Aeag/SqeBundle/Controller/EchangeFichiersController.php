@@ -11,6 +11,9 @@ class EchangeFichiersController extends Controller {
 
     public function indexAction() {
         $user = $this->getUser();
+        if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'echangeFichier');
         $session->set('controller', 'EchangeFichier');
@@ -34,6 +37,9 @@ class EchangeFichiersController extends Controller {
 
     public function demandesAction($lotanId) {
         $user = $this->getUser();
+        if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'echangeFichier');
         $session->set('controller', 'EchangeFichier');
@@ -63,6 +69,9 @@ class EchangeFichiersController extends Controller {
 
     public function telechargerAction($demandeId) {
         $user = $this->getUser();
+        if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'echangeFichier');
         $session->set('controller', 'EchangeFichier');
@@ -109,6 +118,9 @@ class EchangeFichiersController extends Controller {
 
     public function reponsesAction($demandeId) {
         $user = $this->getUser();
+        if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'echangeFichier');
         $session->set('controller', 'EchangeFichier');
@@ -131,6 +143,9 @@ class EchangeFichiersController extends Controller {
 
     public function selectionnerReponseAction($demandeId) {
         $user = $this->getUser();
+        if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'echangeFichier');
         $session->set('controller', 'EchangeFichier');
@@ -146,6 +161,9 @@ class EchangeFichiersController extends Controller {
 
     public function deposerReponseAction($demandeId) {
         $user = $this->getUser();
+        if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'echangeFichier');
         $session->set('controller', 'EchangeFichier');
@@ -221,6 +239,9 @@ class EchangeFichiersController extends Controller {
 
     public function telechargerReponseAction($reponseId, $typeFichier) {
         $user = $this->getUser();
+        if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'echangeFichier');
         $session->set('controller', 'EchangeFichier');
@@ -269,6 +290,9 @@ class EchangeFichiersController extends Controller {
     public function supprimerReponseAction($reponseId) {
 
         $user = $this->getUser();
+        if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'echangeFichier');
         $session->set('controller', 'EchangeFichier');

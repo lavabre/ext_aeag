@@ -22,5 +22,9 @@ aeag_sqe_envoyerMessage:
         
 aeag_sqe_echangeFichiers:
     resource: "@AeagSqeBundle/Resources/config/routing_echangefichiers.yml"
-    prefix:   /echangefichiers        
+    prefix:   /echangefichiers   
+    
+aeag_sqe_suiviPrelevements:
+    resource: "@AeagSqeBundle/Resources/config/routing_suiviPrelevements.yml"
+    prefix:   /suiviPrelevements   
  

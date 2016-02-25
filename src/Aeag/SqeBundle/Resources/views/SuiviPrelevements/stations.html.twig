@@ -1,0 +1,155 @@
+{% extends "AeagSqeBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+    <li>
+        <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+    </li>
+    <li>
+           <a href="{{ path('AeagSqeBundle_suiviPrelevements_index') }}">Suivi des prélèvements</a> 
+    </li>
+    <li>
+           <a href="{{ path('AeagSqeBundle_suiviPrelevements_index') }}">Lots</a> 
+    </li>
+     <li class="active">
+          Stations
+    </li>
+{% endblock breadcrumb %} 
+
+{%block panel_heading %}
+    <h3 class="page-title">
+        Suivi des prélèvements - Liste des stations du lot  {{ lotan.lot.nomLot }} - {{ lotan.anneeProg }}
+    </h3>
+{%endblock panel_heading %}
+
+{%block content %}
+    <div class="form-body">        
+        <table class="table table-bordered table-condensed table-advance" id="idTable_demandes">
+            <thead>
+                <tr>
+                    <th width="5%">Actions</th>
+                    <th>Code</th>
+                    <th>Libelle</th>
+                    <th>Type</th>
+                    <th>Commune</th>
+                    <th>Cours d'eau</th>
+                    <th>Masse d'eau</th>
+                </tr>
+            </thead>
+            <tbody>
+                 {%if stations | length%} 
+                    {% for station in stations %}
+                          <tr>
+                            <td align="center" nowrap> 
+                                 <a id="id_{{ station.pgProgLotStationAn.id }}" class="btn btn-primary" href="{{path('AeagSqeBundle_suiviPrelevements_station_periodes',{ 'stationAnId': station.pgProgLotStationAn.id })}}" title="Consulter les stations">
+                                    <i class="fa fa-eye"></i> 
+                                </a>
+                            </td>
+                             <td>
+                                    <a  href="{{ station.lien }}" target="_blank" title="Localisation">
+                                             {{ station.pgProgLotStationAn.station.code }}
+                                    </a>
+                                 </td>
+                                <td>{{ station.pgProgLotStationAn.station.libelle }}</td>
+                                <td>{{ station.pgProgLotStationAn.station.type }}</td>
+                                <td>{{ station.pgProgLotStationAn.station.nomCommune }}</td>
+                                <td>{{ station.pgProgLotStationAn.station.nomCoursEau }}</td>
+                                <td>{{ station.pgProgLotStationAn.station.nomMasdo }}</td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+
+    </div>
+{%endblock content %}    
+
+{% block modal %}
+   
+{%endblock modal %}
+
+{% block scripts %}
+    jQuery(document).ready(function() {
+        var table = $('#idTable_demandes').DataTable(
+            {"stateSave": true,
+             "order": [[ 1, "desc" ]],
+            "oLanguage": {
+            "sSearch": "Filtre",
+            "sFirst": "1ere page",
+            "sLast": "Dernière page",
+            "sNext": "Prochaine page",
+            "sPrevious": "Page précédente",
+            "EmptyTable": "Pas de données",
+            "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+            "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+            "sZeroRecords": "Pas d'enregistrement à afficher",
+            "sInfoEmpty": "Pas d'enregistrement à afficher",
+            "sInfoThousands": " ",
+            "sLengthMenu": 'Afficher <select>' +
+                '<option value="10">10</option>' +
+                '<option value="20">20</option>' +
+                '<option value="30">30</option>' +
+                '<option value="40">40</option>' +
+                '<option value="50">50</option>' +
+                '<option value="-1">Tous</option>' +
+                '</select> enregistrements',
+            "sPaginationType": "full_numbers"
+            }
+            }
+            );
+
+            $("#idTable_demandes thead td").each( function ( i ) {
+
+            if (i != 0){
+            var select = $('<select><option value=""></option></select>')
+            .appendTo( $(this).empty() )
+            .on( 'change', function () {
+            table.column( i )
+            .search( $(this).val() )
+            .draw();
+            });
+
+            table.column( i ).data().unique().sort().each( function ( d, j ) {
+                select.append( '<option value="'+d+'">'+d+'</option>' )
+            });
+            };
+            }); 
+            
+        $('.btn-telecharger').click(function (){
+            setTimeout("window.location.reload()",2000);//or other value
+        });
+        
+        $('.btn-voir-reponses').click(function (){
+            $('#modalTraitementEncours').modal();
+            var url = '{{ path("AeagSqeBundle_echangefichiers_reponses",{"demandeId":  "par1" }) }}';
+            url = url.replace("par1", $(this).attr('id'));
+            $.ajax({
+                url: url,
+                type: 'get',
+                success: function(html) {
+                    $('#modal-reponses-content').empty().append(html);
+                    $('#modalTraitementEncours').modal('hide');
+                    $('#modal_reponses').modal();
+                }
+            });
+            
+        });
+        
+        $('.btn-deposer-reponse').click(function (){
+            $('#modalTraitementEncours').modal();
+            var url = '{{ path("AeagSqeBundle_echangefichiers_reponses_selectionner",{"demandeId":  "par1" }) }}';
+            var demandeId = $(this).data('id');
+            url = url.replace("par1", demandeId);
+            $.ajax({
+                url: url,
+                type: 'get',
+                success: function(html) {
+                    $('#modal-reponses-selection-content').empty().append(html);
+                    $('#modalTraitementEncours').modal('hide');
+                    $('#modal_reponses_selection').modal();
+                }
+            });
+        
+        });
+    });
+    
+{%endblock scripts %}    
