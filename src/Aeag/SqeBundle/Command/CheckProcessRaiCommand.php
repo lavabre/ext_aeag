@@ -12,6 +12,12 @@ use Aeag\AeagBundle\Entity\Message;
 
 class CheckProcessRaiCommand extends ContainerAwareCommand {
 
+    private $emSqe;
+    
+    private $em;
+    
+    private $output;
+    
     protected function configure() {
         $this
                 ->setName('rai:check_process')
@@ -20,20 +26,23 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) {
-        $emSqe = $this->getContainer()->get('doctrine')->getManager('sqe');
-        $em = $this->getContainer()->get('doctrine')->getManager();
+        $this->em = $this->getContainer()->get('doctrine')->getManager();
+        $this->emSqe = $this->getContainer()->get('doctrine')->getManager('sqe');
         
-        $repoPgCmdFichiersRps = $emSqe->getRepository('AeagSqeBundle:PgCmdFichiersRps');
-        $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
-        $repoPgTmpValidEdilabo = $emSqe->getRepository('AeagSqeBundle:PgTmpValidEdilabo');
+        $this->output = $output;
+        
+        $repoPgCmdFichiersRps = $this->emSqe->getRepository('AeagSqeBundle:PgCmdFichiersRps');
+        $repoPgProgPhases = $this->emSqe->getRepository('AeagSqeBundle:PgProgPhases');
+        $repoPgTmpValidEdilabo = $this->emSqe->getRepository('AeagSqeBundle:PgTmpValidEdilabo');
         
         // On récupère les RAIs dont les phases sont en R25
         $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R25');
         $pgCmdFichiersRps = $repoPgCmdFichiersRps->findBy(array('phaseFichier' => $pgProgPhases, 'suppr' => 'N'));
         
-        foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
+        //foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
             
-            $this->coherenceRaiDai($output, $pgCmdFichierRps, $repoPgTmpValidEdilabo);
+            //$this->coherenceRaiDai(86, $repoPgTmpValidEdilabo);
+            $this->coherenceRaiDai($pgCmdFichiersRps, $repoPgTmpValidEdilabo);
             
             /*if ($this->controleVraisemblance($output, $pgCmdFichierRps, $repoPgTmpValidEdilabo)) {
                 $output->writeln('Controle vraisemblance OK');
@@ -42,24 +51,26 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
             }*/
             
             // TODO Changement de la phase en fonction des retours
-        }
+        //}
     }
     
     protected function coherenceRaiDai($pgCmdFichierRps, $repoPgTmpValidEdilabo) {
         $demandeId = $pgCmdFichierRps->getDemande()->getId();
+        //$demandeId = 14;
         $reponseId = $pgCmdFichierRps->getId();
-        // Vérif code demande => Avertissement
-        if (count($repoPgTmpValidEdilabo->getDiffCodeDemande($demandeId, $reponseId)) > 0) {
-            $this->addLog('warning', $demandeId, $reponseId, "Incoherence RAI/DAI: code demande");
+        //$reponseId = 86;
+        // Vérif code demande
+        if (count($diff = $repoPgTmpValidEdilabo->getDiffCodeDemande($demandeId, $reponseId)) > 0) {
+            $this->addLog('warning', $demandeId, $reponseId, "Incoherence RAI/DAI: code demande", null, $diff);
         }
         
         // Vérif code prélèvement
-        if (count($repoPgTmpValidEdilabo->getDiffCodePrelevementAdd($demandeId, $reponseId)) > 0) {
-            $this->addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: codes prélèvement RAI en trop");
+        if (count($diff = $repoPgTmpValidEdilabo->getDiffCodePrelevementAdd($demandeId, $reponseId)) > 0) {
+            $this->addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: codes prélèvement RAI en trop", null, $diff);
         }
         
-        if (count($repoPgTmpValidEdilabo->getDiffCodePrelevementMissing($demandeId, $reponseId)) > 0) {
-            $this->addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: code prélèvement RAI manquant");
+        if (count($diff = $repoPgTmpValidEdilabo->getDiffCodePrelevementMissing($demandeId, $reponseId)) > 0) {
+            $this->addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: code prélèvement RAI manquant", null, $diff);
         }
         
         // Vérif Date prélèvement, si hors période
@@ -73,7 +84,7 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
             $datePrelDmdMin = new \DateTime($datePrelDmd["datePrel"]);
             
             $delaiPrel = $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getDelaiPrel();
-            
+            //$delaiPrel = 7;
             if (is_null($delaiPrel) || $delaiPrel == 0) {
                 $delaiPrel = 7;
             }
@@ -86,17 +97,25 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
             }
             
             // Vérif code intervenant
-            if (count($repoPgTmpValidEdilabo->getDiffPreleveur($codePrelev["codePrelevement"], $demandeId, $reponseId)) > 0) {
-                $this->addLog('warning', $demandeId, $reponseId, "Incoherence RAI/DAI: Preleveur", $codePrelev["codePrelevement"]);
+            if (count($diff = $repoPgTmpValidEdilabo->getDiffPreleveur($codePrelev["codePrelevement"], $demandeId, $reponseId)) > 0) {
+                if ($this->existePresta($diff)) {
+                    $this->addLog('warning', $demandeId, $reponseId, "Incoherence RAI/DAI: Preleveur", $codePrelev["codePrelevement"], $diff);
+                } else {
+                    $this->addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: Preleveur", $codePrelev["codePrelevement"], $diff);
+                }
             }
             
-            if (count($repoPgTmpValidEdilabo->getDiffLabo($codePrelev["codePrelevement"], $demandeId, $reponseId)) > 0) {
-                $this->addLog('warning', $demandeId, $reponseId, "Incoherence RAI/DAI: Laboratoire",$codePrelev["codePrelevement"]);
+            if (count($diff = $repoPgTmpValidEdilabo->getDiffLabo($codePrelev["codePrelevement"], $demandeId, $reponseId)) > 0) {
+                if ($this->existePresta($diff)) {
+                    $this->addLog('warning', $demandeId, $reponseId, "Incoherence RAI/DAI: Laboratoire",$codePrelev["codePrelevement"], $diff);
+                } else {
+                    $this->addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: Laboratoire",$codePrelev["codePrelevement"], $diff);
+                }
             }
             
             // Vérif STQ : concordance STQ RAI (unique ou multiple) / DAI : stations rajoutées => Erreur
-            if (count($repoPgTmpValidEdilabo->getDiffCodeStation($codePrelev["codePrelevement"], $demandeId, $reponseId)) > 0) {
-                $this->addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: Date Prelevement",$codePrelev["codePrelevement"]);
+            if (count($diff = $repoPgTmpValidEdilabo->getDiffCodeStation($codePrelev["codePrelevement"], $demandeId, $reponseId)) > 0) {
+                $this->addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: Date Prelevement",$codePrelev["codePrelevement"], $diff);
             }
             
             // paramètres/unité : si unité changée => erreur
@@ -110,26 +129,39 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
             }
             
             // paramètres/unité : rajout de paramètres => avertissement
-            if (count($repoPgTmpValidEdilabo->getDiffCodeParametreAdd($codePrelev["codePrelevement"], $demandeId, $reponseId)) > 0) {
+            if (count($diff = $repoPgTmpValidEdilabo->getDiffCodeParametreAdd($codePrelev["codePrelevement"], $demandeId, $reponseId)) > 0) {
                 //Avertissement
-                $this->addLog('warning', $demandeId, $reponseId, "Incoherence RAI/DAI: Rajout de paramètre",$codePrelev["codePrelevement"]);
+                $this->addLog('warning', $demandeId, $reponseId, "Incoherence RAI/DAI: Rajout de paramètre",$codePrelev["codePrelevement"], $diff);
             }
             
             // paramètres/unité : paramètre manquant => erreur
-            if (count($repoPgTmpValidEdilabo->getDiffCodeParametreMissing($codePrelev["codePrelevement"], $demandeId, $reponseId)) > 0) {
-                $this->addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: Paramètre manquant",$codePrelev["codePrelevement"]);
+            if (count($diff = $repoPgTmpValidEdilabo->getDiffCodeParametreMissing($codePrelev["codePrelevement"], $demandeId, $reponseId)) > 0) {
+                $this->addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: Paramètre manquant",$codePrelev["codePrelevement"], $diff);
             }
             
         }
     }
     
+    protected function existePresta($codeIntervenants) {
+        foreach($codeIntervenants as $codeIntervenant) {
+            $repoPgRefCorresPresta = $this->emSqe->getRepository('AeagSqeBundle:PgRefCorresPresta');
+            $pgRefCorresPrestas = $repoPgRefCorresPresta->findByCodeSiret($codeIntervenant);
+            if (count($pgRefCorresPrestas) == 0) {
+                $pgRefCorresPrestas = $repoPgRefCorresPresta->findByCodeSandre($codeIntervenant);
+                if (count($pgRefCorresPrestas) == 0) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+    
     protected function addLog($typeErreur, $demandeId, $fichierRpsId, $message, $codePrelevement = null) {
-        $emSqe = $this->getContainer()->get('doctrine')->getManager('sqe');
         
         $pgLogValidEdilabo = new \Aeag\SqeBundle\Entity\PgLogValidEdilabo($demandeId, $fichierRpsId, $typeErreur, $message, $codePrelevement);
         
-        $emSqe->persist($pgLogValidEdilabo);
-        $emSqe->flush();
+        $this->emSqe->persist($pgLogValidEdilabo);
+        $this->emSqe->flush();
     }
     
 //    protected function controleVraisemblance($output, $pgCmdFichierRps, $repoPgTmpValidEdilabo) {
