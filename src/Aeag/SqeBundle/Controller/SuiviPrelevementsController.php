@@ -164,6 +164,80 @@ class SuiviPrelevementsController extends Controller {
                     'datePrels' => $tabDates,
                     'stations' => $tabStations));
     }
+    
+    public function lotPeriodeStationSuivisAction($cmdPrelevId) {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'suiviPrelevements');
+        $session->set('controller', 'SuiviPrelevements');
+        $session->set('fonction', 'lotPeriodeStations');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
+        $repoPgProgLotPeriodeProg = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeProg');
+        $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
+        $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
+        $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
+        $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
+
+        $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
+        $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($periodeAnId);
+        $pgProgLotAn = $pgProgLotPeriodeAn->getLotAn();
+        $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByPeriodeAn($pgProgLotPeriodeAn);
+        $tabStations = array();
+        $tabDatePrels = array();
+        $i = 0;
+        $j = 0;
+        $k = 0;
+        foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
+            $trouve = false;
+            if (count($tabStations) > 0) {
+                for ($k = 0; $k < count($tabStations); $k++) {
+                    if ($tabStations[$k]['station']->getOuvFoncId() == $pgProgLotPeriodeProg->getStationAn()->getStation()->getOuvFoncId()) {
+                        $trouve = true;
+                        break;
+                    }
+                }
+            }
+            if (!$trouve) {
+                $tabStations[$i]['station'] = $pgProgLotPeriodeProg->getStationAn()->getStation();
+                $tabStations[$i]['lien'] = '/sqe_fiches_stations/' . $pgProgLotPeriodeProg->getStationAn()->getStation()->getCode() . '.pdf';
+                $tabStations[$i]['cmdPrelev'] = null;
+                $tabSuiviPrels = array();
+                $j = 0;
+                $pgCmdDemande = $repoPgCmdDemande->getPgCmdDemandeByLotanPrestatairePeriode($pgProgLotAn, $pgProgLotPeriodeProg->getGrparAn()->getPrestaDft(), $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
+                if ($pgCmdDemande) {
+                    $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($pgProgLotPeriodeProg->getGrparAn()->getPrestaDft(), $pgCmdDemande, $pgProgLotPeriodeProg->getStationAn()->getStation(), $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
+                    if ($pgCmdPrelev) {
+                        $tabStations[$i]['cmdPrelev'] = $pgCmdPrelev;
+                        $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelev($pgCmdPrelev);
+                        foreach ($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
+                            $tabSuiviPrels[$j] = $pgCmdSuiviPrel;
+                            $tabDatePrels[$k] = $pgCmdSuiviPrel->getDatePrel();
+                            $k++;
+                            $j++;
+                        }
+                    }
+                }
+                $tabDates = array_unique($tabDatePrels);
+                $tabStations[$i]['suiviPrels'] = $tabSuiviPrels;
+                $i++;
+            }
+        }
+
+//        dump($tabStations);
+//        return new Response ('');
+
+        return $this->render('AeagSqeBundle:SuiviPrelevements:lotPeriodeStations.html.twig', array(
+                    'user' => $pgProgWebUser,
+                    'lotan' => $pgProgLotAn,
+                    'periodeAn' => $pgProgLotPeriodeAn,
+                    'datePrels' => $tabDates,
+                    'stations' => $tabStations));
+    }
 
     public function stationsAction($lotanId) {
         $user = $this->getUser();

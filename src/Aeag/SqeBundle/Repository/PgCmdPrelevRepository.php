@@ -24,7 +24,7 @@ class PgCmdPrelevRepository extends EntityRepository {
 
      public function getPgCmdPrelevByPrestaPrel($pgRefCorresPresta) {
         $query = "select p";
-        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdDemande p";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelev p";
         $query = $query . " where p.prestaPrel = " . $pgRefCorresPresta->getAdrCorid();
         $qb = $this->_em->createQuery($query);
         //print_r($query);
@@ -33,7 +33,7 @@ class PgCmdPrelevRepository extends EntityRepository {
      
      public function getPgCmdPrelevByDemande($pgCmdDemande) {
         $query = "select p";
-        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdDemande p";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelev p";
         $query = $query . " where p.demande = " . $pgCmdDemande->getId();
         $qb = $this->_em->createQuery($query);
         //print_r($query);
@@ -41,18 +41,18 @@ class PgCmdPrelevRepository extends EntityRepository {
      }
      
            
- public function getPgCmdDemandeByStation($pgRefStationMesure) {
+ public function getPgCmdPrelevByStation($pgRefStationMesure) {
         $query = "select p";
-        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdDemande p";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelev p";
         $query = $query . " where p.station = " . $pgRefStationMesure->getOuvFoncId();
         $qb = $this->_em->createQuery($query);
         //print_r($query);
          return $qb->getResult();
      }      
      
-     public function getPgCmdDemandeByPeriode($pgProgPeriodes) {
+     public function getPgCmdPrelevByPeriode($pgProgPeriodes) {
         $query = "select p";
-        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdDemande p";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelev p";
         $query = $query . " where p.periode = " . $pgProgPeriodes->getId();
         $qb = $this->_em->createQuery($query);
         //print_r($query);
@@ -61,7 +61,7 @@ class PgCmdPrelevRepository extends EntityRepository {
 
     public function getPgCmdPrelevByPrestaPrelDemandeStationPeriode($pgRefCorresPresta, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes) {
         $query = "select p";
-        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdDemande p";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelev p";
         $query = $query . " where p.prestaPrel = " . $pgRefCorresPresta->getAdrCorid();
         $query = $query . " and p.demande = " . $pgCmdDemande->getId();
         $query = $query . " and p.station = " . $pgRefStationMesure->getOuvFoncId();

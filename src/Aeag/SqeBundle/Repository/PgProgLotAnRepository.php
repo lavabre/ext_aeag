@@ -43,7 +43,7 @@ class PgProgLotAnRepository extends EntityRepository {
         if ($anneeProg) {
             $query = $query . " where p.anneeProg = " . $anneeProg;
         }
-        $query = $query . " order by p.anneeProg, p.version";
+        $query = $query . " order by p.anneeProg, p.lot, p.version";
         $qb = $this->_em->createQuery($query);
         //print_r($query);
         return $qb->getResult();

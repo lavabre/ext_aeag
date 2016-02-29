@@ -16,7 +16,7 @@ class PgCmdSuiviPrelRepository extends EntityRepository {
      */
     public function getPgCmdSuiviPrels() {
         $query = "select c";
-        $query = $query . " from Aeag\SqeBundle\Entity\PPgCmdSuiviPrel c";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdSuiviPrel c";
         $qb = $this->_em->createQuery($query);
         //print_r($query);
         return $qb->getResult();
@@ -27,7 +27,7 @@ class PgCmdSuiviPrelRepository extends EntityRepository {
      */
     public function getPgCmdSuiviPrelByPrelev($pgCmdPrelev) {
         $query = "select c";
-        $query = $query . " from Aeag\SqeBundle\Entity\PPgCmdSuiviPrel c";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdSuiviPrel c";
         $query = $query . " where c.prelev = " . $pgCmdPrelev->getId() ;
         $qb = $this->_em->createQuery($query);
         //print_r($query);
