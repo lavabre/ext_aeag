@@ -12,7 +12,7 @@ AeagSqeBundle_suiviPrelevements_lot_periode_stations:
     
 AeagSqeBundle_suiviPrelevements_lot_periode_station_suivis:
     path:  /lot/periode/station/suivi/{cmdPrelevId}
-    defaults: { _controller: AeagSqeBundle:SuiviPrelevements:lotPeriodeStations, cmdPrelevId : null}
+    defaults: { _controller: AeagSqeBundle:SuiviPrelevements:lotPeriodeStationSuivis, cmdPrelevId : null}
     
 AeagSqeBundle_suiviPrelevements_stations:
     path:  /lots/stations/{lotanId}
