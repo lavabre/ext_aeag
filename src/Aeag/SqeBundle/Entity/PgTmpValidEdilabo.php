@@ -174,7 +174,7 @@ class PgTmpValidEdilabo
     /**
      * @var string
      *
-     * @ORM\Column(name="commentaire", type="string", length=2000, nullable=true)
+     * @ORM\Column(name="commentaire", type="string", length=20000, nullable=true)
      */
     private $commentaire;
 

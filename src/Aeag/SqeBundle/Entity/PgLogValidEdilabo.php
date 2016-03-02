@@ -64,13 +64,21 @@ class PgLogValidEdilabo {
      */
     private $commentaire;
     
-    public function __construct($demandeId, $fichierRpsId, $typeErreur, $message, $codePrelevement = null, $commentaire = null) {
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="date_log", type="datetime", nullable=false)
+     */
+    private $dateLog;
+    
+    public function __construct($demandeId, $fichierRpsId, $typeErreur, $message, \DateTime $dateLog, $codePrelevement = null, $commentaire = null) {
         $this->demandeId = $demandeId;
         $this->fichierRpsId = $fichierRpsId;
         $this->codePrelevement = $codePrelevement;
         $this->typeErreur = $typeErreur;
         $this->message = $message;
         $this->commentaire = $commentaire;
+        $this->dateLog = $dateLog;
     }
     
     public function getId() {
@@ -128,7 +136,13 @@ class PgLogValidEdilabo {
     public function setCommentaire($commentaire) {
         $this->commentaire = $commentaire;
     }
+    
+    public function getDateLog() {
+        return $this->dateLog;
+    }
 
-
+    public function setDateLog(\DateTime $dateLog) {
+        $this->dateLog = $dateLog;
+    }
     
 }
