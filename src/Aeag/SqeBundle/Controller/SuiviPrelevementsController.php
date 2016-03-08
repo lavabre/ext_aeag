@@ -5,8 +5,11 @@ namespace Aeag\SqeBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Aeag\AeagBundle\Entity\Notification;
 use Aeag\AeagBundle\Entity\Message;
+use Aeag\SqeBundle\Entity\PgCmdSuiviPrel;
+use Aeag\SqeBundle\Form\PgCmdSuiviPrelType;
 use Aeag\AeagBundle\Controller\AeagController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 
 class SuiviPrelevementsController extends Controller {
 
@@ -136,14 +139,13 @@ class SuiviPrelevementsController extends Controller {
                 $j = 0;
                 $pgCmdDemande = $repoPgCmdDemande->getPgCmdDemandeByLotanPrestatairePeriode($pgProgLotAn, $pgProgLotPeriodeProg->getGrparAn()->getPrestaDft(), $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
                 if ($pgCmdDemande) {
+                    $tabStations[$i]['cmdDemande'] = $pgCmdDemande;
                     $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($pgProgLotPeriodeProg->getGrparAn()->getPrestaDft(), $pgCmdDemande, $pgProgLotPeriodeProg->getStationAn()->getStation(), $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
                     if ($pgCmdPrelev) {
                         $tabStations[$i]['cmdPrelev'] = $pgCmdPrelev;
                         $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelev($pgCmdPrelev);
                         foreach ($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
                             $tabSuiviPrels[$j] = $pgCmdSuiviPrel;
-                            $tabDatePrels[$k] = $pgCmdSuiviPrel->getDatePrel();
-                            $k++;
                             $j++;
                         }
                     }
@@ -164,8 +166,8 @@ class SuiviPrelevementsController extends Controller {
                     'datePrels' => $tabDates,
                     'stations' => $tabStations));
     }
-    
-    public function lotPeriodeStationSuivisAction($cmdPrelevId) {
+
+    public function lotPeriodeStationDemandeAction($stationId = null, $periodeAnId = null, $cmdDemandeId = null) {
         $user = $this->getUser();
         if (!$user) {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
@@ -173,73 +175,124 @@ class SuiviPrelevementsController extends Controller {
         $session = $this->get('session');
         $session->set('menu', 'suiviPrelevements');
         $session->set('controller', 'SuiviPrelevements');
-        $session->set('fonction', 'lotPeriodeStations');
+        $session->set('fonction', 'lotPeriodeStationDemande');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
-        $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
-        $repoPgProgLotPeriodeProg = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeProg');
         $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
+        $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
+        $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
+        $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
+        $repoPgRefStationMesure = $emSqe->getRepository('AeagSqeBundle:PgRefStationMesure');
+        $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
+        $repoPgProgPeriodes = $emSqe->getRepository('AeagSqeBundle:PgProgPeriodes');
+
+        $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
+        $pgCmdDemande = $repoPgCmdDemande->getPgCmdDemandeById($cmdDemandeId);
+        $pgRefStationMesure = $repoPgRefStationMesure->getPgRefStationMesureByOuvFoncId($stationId);
+        $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($periodeAnId);
+        $pgProgPeriode = $pgProgLotPeriodeAn->getPeriode();
+
+        $tabDemande = array();
+
+        if ($pgCmdDemande) {
+            $pgProgLotAn = $pgCmdDemande->getLotan();
+            $tabDemande['cmdDemande'] = $pgCmdDemande;
+            $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByDemande($pgCmdDemande);
+            $tabCmdPrelevs = array();
+            if ($pgCmdPrelevs) {
+                $i = 0;
+                foreach ($pgCmdPrelevs as $pgCmdPrelev) {
+                    if ($pgCmdPrelev->getStation()->getOuvFoncId() == $stationId and $pgCmdPrelev->getPeriode()->getId() == $pgProgPeriode->getId()) {
+                        $tabCmdPrelevs[$i]['cmdPrelev'] = $pgCmdPrelev;
+                        $tabCmdPrelevs[$i]['maj'] = 'N';
+                        $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelev($pgCmdPrelev);
+                        $tabSuiviPrels = array();
+                        $j = 0;
+                        foreach ($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
+                            $tabSuiviPrels[$j]['suiviPrel'] = $pgCmdSuiviPrel;
+                            if ($pgProgWebUser->getPrestataire()) {
+                                if ($pgProgWebUser->getPrestataire()->getAdrCorId() == $pgCmdSuiviPrel->getPrestaPrel()->getAdrCorId()) {
+                                    $tabSuiviPrels[$j]['maj'] = 'O';
+                                    $tabDemande[$i]['maj'] = 'O';
+                                } else {
+                                    $tabSuiviPrels[$j]['maj'] = 'N';
+                                }
+                            } else {
+                                $tabSuiviPrels[$j]['maj'] = 'N';
+                            }
+                            $j++;
+                        }
+                        $tabCmdPrelevs[$i]['suiviPrels'] = $tabSuiviPrels;
+                        $i++;
+                    }
+                }
+            }
+            $tabDemande['cmdPrelevs'] = $tabCmdPrelevs;
+        }
+
+
+
+//          \Symfony\Component\VarDumper\VarDumper::dump($tabDemande);
+//        return new Response ('');
+
+        return $this->render('AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemande.html.twig', array(
+                    'user' => $pgProgWebUser,
+                    'lotan' => $pgProgLotAn,
+                    'station' => $pgRefStationMesure,
+                    'periodeAn' => $pgProgLotPeriodeAn,
+                    'demande' => $tabDemande));
+    }
+
+    public function lotPeriodeStationDemandeSuiviNewAction($prelevId = null, $periodeAnId = null, Request $request) {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'suiviPrelevements');
+        $session->set('controller', 'SuiviPrelevements');
+        $session->set('fonction', 'lotPeriodeStationDemandeSuiviNew');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
         $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
         $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
 
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
-        $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($periodeAnId);
-        $pgProgLotAn = $pgProgLotPeriodeAn->getLotAn();
-        $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByPeriodeAn($pgProgLotPeriodeAn);
-        $tabStations = array();
-        $tabDatePrels = array();
-        $i = 0;
-        $j = 0;
-        $k = 0;
-        foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
-            $trouve = false;
-            if (count($tabStations) > 0) {
-                for ($k = 0; $k < count($tabStations); $k++) {
-                    if ($tabStations[$k]['station']->getOuvFoncId() == $pgProgLotPeriodeProg->getStationAn()->getStation()->getOuvFoncId()) {
-                        $trouve = true;
-                        break;
-                    }
-                }
-            }
-            if (!$trouve) {
-                $tabStations[$i]['station'] = $pgProgLotPeriodeProg->getStationAn()->getStation();
-                $tabStations[$i]['lien'] = '/sqe_fiches_stations/' . $pgProgLotPeriodeProg->getStationAn()->getStation()->getCode() . '.pdf';
-                $tabStations[$i]['cmdPrelev'] = null;
-                $tabSuiviPrels = array();
-                $j = 0;
-                $pgCmdDemande = $repoPgCmdDemande->getPgCmdDemandeByLotanPrestatairePeriode($pgProgLotAn, $pgProgLotPeriodeProg->getGrparAn()->getPrestaDft(), $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
-                if ($pgCmdDemande) {
-                    $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($pgProgLotPeriodeProg->getGrparAn()->getPrestaDft(), $pgCmdDemande, $pgProgLotPeriodeProg->getStationAn()->getStation(), $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
-                    if ($pgCmdPrelev) {
-                        $tabStations[$i]['cmdPrelev'] = $pgCmdPrelev;
-                        $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelev($pgCmdPrelev);
-                        foreach ($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
-                            $tabSuiviPrels[$j] = $pgCmdSuiviPrel;
-                            $tabDatePrels[$k] = $pgCmdSuiviPrel->getDatePrel();
-                            $k++;
-                            $j++;
-                        }
-                    }
-                }
-                $tabDates = array_unique($tabDatePrels);
-                $tabStations[$i]['suiviPrels'] = $tabSuiviPrels;
-                $i++;
-            }
+        $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevById($prelevId);
+        $pgCmdSuiviPrel = new PgCmdSuiviPrel();
+        $form = $this->createForm(new PgCmdSuiviPrelType(), $pgCmdSuiviPrel);
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            $pgCmdSuiviPrel->setPrelev($pgCmdPrelev);
+            $pgCmdSuiviPrel->setUser($pgProgWebUser);
+            $datePrel = $pgCmdSuiviPrel->getDatePrel();
+            $emSqe->persist($pgCmdSuiviPrel);
+            $emSqe->flush();
+            $session->getFlashBag()->add('notice-success', 'le suivi du ' . $datePrel->format('d/m/Y') .  ' a été créé !');
+
+            return $this->redirect($this->generateUrl('AeagSqeBundle_suiviPrelevements_lot_periode_station_demande', 
+                                            array('stationId' => $pgCmdPrelev->getStation()->getOuvFoncId(),
+                                                     'periodeAnId' => $periodeAnId,
+                                                     'cmdDemandeId' => $pgCmdPrelev->getDemande()->getId())));
         }
 
-//        dump($tabStations);
+        return $this->render('AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemandeSuiviNew.html.twig', array(
+                    'prelev' => $pgCmdPrelev,
+                    'periodeAnId' => $periodeAnId,
+                    'form' => $form->createView(),
+        ));
+
+
+
+//          \Symfony\Component\VarDumper\VarDumper::dump($tabDemande);
 //        return new Response ('');
-
-        return $this->render('AeagSqeBundle:SuiviPrelevements:lotPeriodeStations.html.twig', array(
-                    'user' => $pgProgWebUser,
-                    'lotan' => $pgProgLotAn,
-                    'periodeAn' => $pgProgLotPeriodeAn,
-                    'datePrels' => $tabDates,
-                    'stations' => $tabStations));
     }
+    
+     public function lotPeriodeStationDemandeSuiviMajAction($suiviPrelId = null, $periodeAnId = null, Request $request) {
 
-    public function stationsAction($lotanId) {
         $user = $this->getUser();
         if (!$user) {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
@@ -247,30 +300,46 @@ class SuiviPrelevementsController extends Controller {
         $session = $this->get('session');
         $session->set('menu', 'suiviPrelevements');
         $session->set('controller', 'SuiviPrelevements');
-        $session->set('fonction', 'stations');
+        $session->set('fonction', 'lotPeriodeStationDemandeSuiviNew');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
-        $repoPgProgLotAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotAn');
-        $repoPgProgLotStationAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotStationAn');
+        $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
+        $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
 
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
-        $pgProgLotAn = $repoPgProgLotAn->getPgProgLotAnById($lotanId);
-        $pgProgLotStationAns = $repoPgProgLotStationAn->getPgProgLotStationAnBylotan($pgProgLotAn);
-        $tabStations = array();
-        $i = 0;
-        foreach ($pgProgLotStationAns as $pgProgLotStationAn) {
-            $tabStations[$i]['pgProgLotStationAn'] = $pgProgLotStationAn;
-            $tabStations[$i]['lien'] = '/sqe_fiches_stations/' . $pgProgLotStationAn->getStation()->getCode() . '.pdf';
-            $i++;
+        $pgCmdSuiviPrel = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelById($suiviPrelId);
+        $pgCmdPrelev = $pgCmdSuiviPrel->getPrelev();
+        $form = $this->createForm(new PgCmdSuiviPrelType(), $pgCmdSuiviPrel);
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+           $datePrel = $pgCmdSuiviPrel->getDatePrel();
+           $emSqe->persist($pgCmdSuiviPrel);
+            $emSqe->flush();
+            $session->getFlashBag()->add('notice-success', 'le suivi du ' . $datePrel->format('d/m/Y') .  ' a été modifié !');
+
+            return $this->redirect($this->generateUrl('AeagSqeBundle_suiviPrelevements_lot_periode_station_demande', 
+                                         array('stationId' => $pgCmdPrelev->getStation()->getOuvFoncId(),
+                                                  'periodeAnId' => $periodeAnId,
+                                                 'cmdDemandeId' => $pgCmdPrelev->getDemande()->getId())));
         }
 
-        return $this->render('AeagSqeBundle:SuiviPrelevements:stations.html.twig', array('user' => $pgProgWebUser,
-                    'lotan' => $pgProgLotAn,
-                    'stations' => $tabStations));
+        return $this->render('AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemandeSuiviMaj.html.twig', array(
+                    'prelev' => $pgCmdPrelev,
+                    'periodeAnId' => $periodeAnId,
+                    'suiviPrel' => $pgCmdSuiviPrel,
+                    'form' => $form->createView(),
+        ));
+
+
+
+//          \Symfony\Component\VarDumper\VarDumper::dump($tabDemande);
+//        return new Response ('');
     }
 
-    public function periodesAction($stationAnId) {
+    public function lotPeriodeStationDemandeSuiviSupprimerAction($suiviPrelId = null, $periodeAnId = null) {
+
         $user = $this->getUser();
         if (!$user) {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
@@ -278,41 +347,27 @@ class SuiviPrelevementsController extends Controller {
         $session = $this->get('session');
         $session->set('menu', 'suiviPrelevements');
         $session->set('controller', 'SuiviPrelevements');
-        $session->set('fonction', 'periodes');
+        $session->set('fonction', 'lotPeriodeStationDemandeSuiviSupprimer');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
-        $repoPgProgLotAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotAn');
-        $repoPgProgLotStationAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotStationAn');
-        $repoPgProgLotPeriodeProg = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeProg');
-        $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
+         $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
+         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
 
-        $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
-        $pgProgLotStationAn = $repoPgProgLotStationAn->getPgProgLotStationAnById($stationAnId);
-        $pgProgLotAn = $pgProgLotStationAn->getLotan();
-        $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByStationAn($pgProgLotStationAn);
-        $tabPeriodes = array();
-        $i = 0;
-        foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
-            $trouve = false;
-            for ($j = 0; $j < count($tabPeriodes); $j++) {
-                if ($tabPeriodes[$j]["ordre"] == $pgProgLotPeriodeProg->getPeriodAn()->getPeriode()->getid()) {
-                    $trouve = true;
-                    break;
-                }
-            }
-            if (!$trouve) {
-                $tabPeriodes[$i]["ordre"] = $pgProgLotPeriodeProg->getPeriodAn()->getPeriode()->getid();
-                $tabPeriodes[$i]["pgProgLotPeriodeAn"] = $pgProgLotPeriodeProg->getPeriodAn();
-                $i++;
-            }
-        }
+        $pgCmdSuiviPrel = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelById($suiviPrelId);
+        $pgCmdPrelev = $pgCmdSuiviPrel->getPrelev();
+        $datePrel = $pgCmdSuiviPrel->getDatePrel();
+        $emSqe->remove($pgCmdSuiviPrel);
+        $emSqe->flush();
+       
+        $session->getFlashBag()->add('notice-success', 'le suivi du prélèvement du   : ' . $datePrel->format('d/m/Y') . ' a été supprimé !');
+
+        return $this->redirect($this->generateUrl('AeagSqeBundle_suiviPrelevements_lot_periode_station_demande', array('stationId' => $pgCmdPrelev->getStation()->getOuvFoncId(),
+                            'periodeAnId' =>$periodeAnId,
+                            'cmdDemandeId' => $pgCmdPrelev->getDemande()->getId())));
 
 
-        return $this->render('AeagSqeBundle:SuiviPrelevements:periodes.html.twig', array(
-                    'user' => $pgProgWebUser,
-                    'lotan' => $pgProgLotAn,
-                    'station' => $pgProgLotStationAn,
-                    'periodes' => $tabPeriodes));
+//          \Symfony\Component\VarDumper\VarDumper::dump($tabDemande);
+//        return new Response ('');
     }
 
 }

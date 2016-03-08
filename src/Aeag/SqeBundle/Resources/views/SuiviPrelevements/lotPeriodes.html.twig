@@ -26,8 +26,8 @@
         <table class="table table-bordered table-condensed table-advance" id="idTable_demandes">
             <thead>
                 <tr>
-                    <th width="5%">Actions</th>
-                    <th>Périodes</th>
+                    <th width="1%">Actions</th>
+                    <th width="90%">Périodes</th>
                     <th>Nombre de stations</th>
                   </tr>
             </thead>
@@ -41,7 +41,7 @@
                                 </a>
                             </td>
                                <td>{{ periodeAn.pgProgLotPeriodeAn.periode.labelPeriode }} (du {{ periodeAn.pgProgLotPeriodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;au&nbsp;&nbsp; {{ periodeAn.pgProgLotPeriodeAn.periode.dateFin | date("d/m/Y") }})</td>
-                               <td class="text-right">{{ periodeAn.nbStations }}{#</br>
+                               <td class="text-center">{{ periodeAn.nbStations }}{#</br>
                                       {% for station in periodeAn.stations %}
                                           {{ station.code }} {{ station.libelle }}</br>
                                       {% endfor %}#}
