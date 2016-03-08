@@ -179,6 +179,66 @@ class PgTmpValidEdilaboRepository extends EntityRepository {
         return $qb->getResult();
     }
     
+    public function getMesureByCodeParametre($codeParametre, $demandeId, $reponseId, $codePrelevement) {
+        $query = "select p.resM";
+        $query .= " from Aeag\SqeBundle\Entity\PgTmpValidEdilabo p";
+        $query .= " where p.demandeId = :demande";
+        $query .= " and p.fichierRpsId = :reponse";
+        $query .= " and p.codeParametre = :codeParametre";
+        $query .= " and p.codePrelevement = :codePrelevement";
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('demande', $demandeId);
+        $qb->setParameter('reponse', $reponseId);
+        $qb->setParameter('codeParametre', $codeParametre);
+        $qb->setParameter('codePrelevement', $codePrelevement);
+        $result = $qb->getOneOrNullResult();
+        
+        if (!is_null($result)) {
+            $result = $result['resM'];
+        }
+        return $result;
+    }
+    
+    public function getLqByCodeParametre($codeParametre, $demandeId, $reponseId, $codePrelevement) {
+        $query = "select p.lqM";
+        $query .= " from Aeag\SqeBundle\Entity\PgTmpValidEdilabo p";
+        $query .= " where p.demandeId = :demande";
+        $query .= " and p.fichierRpsId = :reponse";
+        $query .= " and p.codeParametre = :codeParametre";
+        $query .= " and p.codePrelevement = :codePrelevement";
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('demande', $demandeId);
+        $qb->setParameter('reponse', $reponseId);
+        $qb->setParameter('codeParametre', $codeParametre);
+        $qb->setParameter('codePrelevement', $codePrelevement);
+        $result = $qb->getOneOrNullResult();
+        
+        if (!is_null($result)) {
+            $result = $result['lqM'];
+        }
+        return $result;
+    }
+    
+    public function getCodeRqByCodeParametre($codeParametre, $demandeId, $reponseId, $codePrelevement) {
+        $query = "select p.codeRqM";
+        $query .= " from Aeag\SqeBundle\Entity\PgTmpValidEdilabo p";
+        $query .= " where p.demandeId = :demande";
+        $query .= " and p.fichierRpsId = :reponse";
+        $query .= " and p.codeParametre = :codeParametre";
+        $query .= " and p.codePrelevement = :codePrelevement";
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('demande', $demandeId);
+        $qb->setParameter('reponse', $reponseId);
+        $qb->setParameter('codeParametre', $codeParametre);
+        $qb->setParameter('codePrelevement', $codePrelevement);
+        $result = $qb->getOneOrNullResult();
+        
+        if (!is_null($result)) {
+            $result = $result['codeRqM'];
+        }
+        return $result;
+    }
+    
     public function getDiffCodeParametreAdd($codePrelevement, $demandeId, $reponseId) {
          $query = " select rps.codeParametre";
         $query .= " from Aeag\SqeBundle\Entity\PgTmpValidEdilabo rps";

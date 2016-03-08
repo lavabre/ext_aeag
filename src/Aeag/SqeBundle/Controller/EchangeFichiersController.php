@@ -305,8 +305,14 @@ class EchangeFichiersController extends Controller {
 
         // Suppression physique des fichiers
         $pathBase = $this->getCheminEchange($pgCmdFichiersRps->getDemande(), $reponseId);
-        if ($this->_rmdirRecursive($pathBase)) {
-            // Suppression en base
+        if (file_exists($pathBase)) {
+            if ($this->_rmdirRecursive($pathBase)) {
+                // Suppression en base
+                $pgCmdFichiersRps->setSuppr('O');
+                $emSqe->persist($pgCmdFichiersRps);
+                $emSqe->flush();
+            }
+        } else {
             $pgCmdFichiersRps->setSuppr('O');
             $emSqe->persist($pgCmdFichiersRps);
             $emSqe->flush();
