@@ -152,6 +152,14 @@ class CheckSandreFormatCommand extends ContainerAwareCommand {
         $pgProgPhases = $repoPgProgPhases->findOneByCodePhase($phase);
         $pgCmdFichierRps->setPhaseFichier($pgProgPhases);
         $this->emSqe->persist($pgCmdFichierRps);
+        
+        $pgProgSuiviPhases = new \Aeag\SqeBundle\Entity\PgProgSuiviPhases;
+        $pgProgSuiviPhases->setTypeObjet('RPS');
+        $pgProgSuiviPhases->setObjId($pgCmdFichierRps->getId());
+        $pgProgSuiviPhases->setDatePhase(new \DateTime());
+        $pgProgSuiviPhases->setPhase($pgProgPhases);
+        $this->emSqe->persist($pgProgSuiviPhases);
+        
         $this->emSqe->flush();
     }
 
