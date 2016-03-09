@@ -1,0 +1,279 @@
+"Code Sandre 
+du paramètre";Libellé du paramètre;Fraction support à analyser;"Limite 
+quantification souhaitée
+(LQ)";"Libellé
+Unité"
+1670;Métazachlore;Eau brute;0,005;µg/l
+1136;Chlortoluron;Eau brute;0,03;µg/l
+1105;Aminotriazole;Eau brute;0,02;µg/l
+1882;Nicosulfuron;Eau brute;0,01;µg/l
+1667;Oxadiazon;Eau brute;0,03;µg/l
+1907;AMPA;Eau brute;0,03;µg/l
+1506;Glyphosate;Eau brute;0,03;µg/l
+1113;Bentazone;Eau brute;0,03;µg/l
+1212;2,4 MCPA;Eau brute;0,03;µg/l
+1814;Diflufenicanil;Eau brute;0,003;µg/l
+1359;Cyprodinil;Eau brute;0,01;µg/l
+1877;Imidaclopride;Eau brute;0,02;µg/l
+1206;Iprodione;Eau brute;0,03;µg/l
+1141;2,4D;Eau brute;0,03;µg/l
+1951;Azoxystrobine;Eau brute;0,03;µg/l
+1584;Biphényle;Eau brute;0,05;µg/l
+5526;Boscalid;Eau brute;0,03;µg/l
+1796;Métaldéhyde;Eau brute;0,03;µg/l
+1694;Tebuconazole;Eau brute;0,03;µg/l
+1474;Chlorprophame;Eau brute;0,03;µg/l
+1234;Pendiméthaline;Eau brute;0,005;µg/l
+1209;Linuron;Eau brute;0,03;µg/l
+1713;Thiabendazole;Eau brute;0,03;µg/l
+1101;Alachlore;Eau brute;0,03;µg/l
+1107;Atrazine;Eau brute;0,01;µg/l
+1464;Chlorfenvinphos;Eau brute;0,03;µg/l
+1083;Chlorpyrifos (éthylchlorpyrifos);Eau brute;0,01;µg/l
+1103;Aldrine;Eau brute;0,001;µg/l
+1173;Dieldrine;Eau brute;0,001;µg/l
+1181;Endrine;Eau brute;0,001;µg/l
+1207;Isodrine;Eau brute;0,001;µg/l
+1177;Diuron;Eau brute;0,03;µg/l
+1743;Endosulfan;Eau brute;0,002;µg/l
+1208;Isoproturon;Eau brute;0,02;µg/l
+1263;Simazine;Eau brute;0,01;µg/l
+1289;Trifluraline;Eau brute;0,01;µg/l
+1172;Dicofol;Eau brute;0,01;µg/l
+2028;Quinoxyfène;Eau brute;0,03;µg/l
+1688;Aclonifène;Eau brute;0,03;µg/l
+1119;Bifénox;Eau brute;0,01;µg/l
+1140;Cyperméthrine;Eau brute;0,02;µg/l
+1170;Dichlorvos;Eau brute;0,01;µg/l
+1197;Heptachlore;Eau brute;0,01;µg/l
+1748;Heptachlore époxyde exo cis;Eau brute;0,01;µg/l
+1129;Carbendazime;Eau brute;0,005;µg/l
+1149;Deltaméthrine;Eau brute;0,001;µg/l
+1221;Métolachlore;Eau brute;0,01;µg/l
+1414;Propyzamide;Eau brute;0,01;µg/l
+1700;Fenpropidine;Eau brute;0,03;µg/l
+1709;Piperonyl butoxyde;Eau brute;0,005;µg/l
+1903;Acétochlore;Eau brute;0,005;µg/l
+6853;Métolachlore OXA;Eau brute;0,01;µg/l
+6854;Métolachlore ESA;Eau brute;0,01;µg/l
+1108;Atrazine déséthyl;Eau brute;0,01;µg/l
+1109;Atrazine déisopropyl;Eau brute;0,01;µg/l
+1125;Bromoxynil;Eau brute;0,03;µg/l
+1175;Diméthoate;Eau brute;0,03;µg/l
+1210;Malathion;Eau brute;0,005;µg/l
+1230;Ométhoate;Eau brute;0,0005;µg/l
+1253;Prochloraz;Eau brute;0,001;µg/l
+1261;Pyrimiphos-méthyl;Eau brute;0,03;µg/l
+1268;Terbuthylazine;Eau brute;0,02;µg/l
+1480;Dicamba;Eau brute;0,03;µg/l
+1528;Pirimicarbe;Eau brute;0,03;µg/l
+1586;Dichloroaniline-3,4;Eau brute;0,015;µg/l
+1675;Flurochloridone;Eau brute;0,02;µg/l
+1678;Diméthénamide;Eau brute;0,03;µg/l
+1744;Epoxiconazole;Eau brute;0,03;µg/l
+1830;Atrazine déisopropyl déséthyl;Eau brute;0,03;µg/l
+1892;Rimsulfuron;Eau brute;0,005;µg/l
+1929;1-(3,4-dichlorophenyl)-3-methyl-uree;Eau brute;0,02;µg/l
+1945;Isoxaflutole;Eau brute;0,02;µg/l
+2023;Flumioxazine;Eau brute;0,03;µg/l
+3159;Atrazine 2-hydroxy-desethyl;Eau brute;0,03;µg/l
+1130;Carbofuran;Eau brute;0,007;µg/l
+1214;Mécoprop;Eau brute;10;µg/l
+1952;OXYFLUORFENE;Eau brute;0,002;µg/l
+1712;Propachlore;Eau brute;0,002;µg/l
+1143;DDD 24';Eau brute;0,01;µg/l
+1169;Dichlorprop;Eau brute;0,01;µg/l
+1179;Endosulfan B;Eau brute;0,01;µg/l
+1187;Fénitrothion;Eau brute;0,01;µg/l
+1200;HCH alpha;Eau brute;0,01;µg/l
+1203;HCH gamma;Eau brute;0,01;µg/l
+1227;Monolinuron;Eau brute;0,01;µg/l
+1231;Oxydéméton-méthyl;Eau brute;0,01;µg/l
+1665;Phoxime;Eau brute;0,0004;µg/l
+1679;Dichlobenil;Eau brute;0,01;µg/l
+1779;Triphénylétain;Eau brute;0,01;µg/l
+1092;Prosulfocarbe;Eau brute;0,01;µg/l
+1094;Lambda-cyhalothrine;Eau brute;0,00005;µg/l
+1102;Aldicarbe;Eau brute;0,01;µg/l
+1112;Benfluraline;Eau brute;0,01;µg/l
+1128;Captane;Eau brute;0,01;µg/l
+1133;Chloridazone;Eau brute;0,01;µg/l
+1134;Chlorméphos;Eau brute;0,01;µg/l
+1137;Cyanazine;Eau brute;0,01;µg/l
+1139;Cymoxanil;Eau brute;0,01;µg/l
+1157;Diazinon;Eau brute;0,01;µg/l
+1171;Diclofop méthyl;Eau brute;0,01;µg/l
+1176;Dinoterbe;Eau brute;0,01;µg/l
+1184;Ethofumésate;Eau brute;0,01;µg/l
+1188;Fenpropathrine;Eau brute;0,01;µg/l
+1189;Fenpropimorphe;Eau brute;0,01;µg/l
+1190;Fenthion;Eau brute;0,01;µg/l
+1192;Folpel;Eau brute;0,01;µg/l
+1193;Fluvalinate-tau;Eau brute;0,01;µg/l
+1194;Flusilazole;Eau brute;0,01;µg/l
+1205;Ioxynil;Eau brute;0,01;µg/l
+1211;Mancozèbe;Eau brute;0,01;µg/l
+1215;Métamitrone;Eau brute;0,01;µg/l
+1216;Méthabenzthiazuron;Eau brute;0,01;µg/l
+1217;Méthidation;Eau brute;0,01;µg/l
+1218;Méthomyl;Eau brute;0,01;µg/l
+1225;Métribuzine;Eau brute;0,01;µg/l
+1232;Parathion éthyl;Eau brute;0,01;µg/l
+1233;Parathion méthyl;Eau brute;0,01;µg/l
+1236;Phenmédiphame;Eau brute;0,01;µg/l
+1255;Propargite;Eau brute;0,01;µg/l
+1257;Propiconazole;Eau brute;0,01;µg/l
+1259;Pyridate;Eau brute;0,01;µg/l
+1264;2,4,5-T;Eau brute;0,01;µg/l
+1267;Terbuphos;Eau brute;0,01;µg/l
+1280;Triadiménol;Eau brute;0,01;µg/l
+1281;Triallate;Eau brute;0,01;µg/l
+1287;Trichlorfon;Eau brute;0,01;µg/l
+1288;Triclopyr;Eau brute;0,01;µg/l
+1291;Vinclozoline;Eau brute;0,01;µg/l
+1333;Carbétamide;Eau brute;0,01;µg/l
+1943;2,6-DIETHYLANILINE;Eau brute;0,01;µg/l
+1832;2-HYDROXY ATRAZINE;Eau brute;0,01;µg/l
+1930;3,4-DICHLOROPHÉNYLURÉE;Eau brute;0,01;µg/l
+1932;4-ISOPROPYLANILINE;Eau brute;0,01;µg/l
+6856;ACETOCHLOR ESA;Eau brute;0,1;µg/l
+6862;ACETOCHLOR OXA;Eau brute;0,01;µg/l
+6883;ACETOCHLOR SAA;Eau brute;0,01;µg/l
+6800;ALACHLORESA;Eau brute;0,01;µg/l
+6855;ALACHLOROXA;Eau brute;0,01;µg/l
+1812;ALPHAMETHRINE;Eau brute;0,01;µg/l
+2012;AMIDOSULFURON;Eau brute;0,01;µg/l
+2013;ANTHRAQUINONE;Eau brute;0,01;µg/l
+1965;ASULAME;Eau brute;0,01;µg/l
+3160;ATRAZINE DÉISOPROPYL-2-HYDROXY;Eau brute;0,01;µg/l
+1687;BENALAXYL;Eau brute;0,01;µg/l
+2924;BENFURACARBE;Eau brute;0,01;µg/l
+2074;BENOXACOR;Eau brute;0,01;µg/l
+3209;BETA-CYFLUTHRINE;Eau brute;0,01;µg/l
+1529;BITERTANOL;Eau brute;0,01;µg/l
+1686;BROMACIL;Eau brute;0,01;µg/l
+1941;BROMOXINYL OCTANOATE;Eau brute;0,01;µg/l
+1860;BROMUCONAZOLE;Eau brute;0,01;µg/l
+1861;BUPIRIMATE;Eau brute;0,01;µg/l
+1862;BUPROFEZINE;Eau brute;0,01;µg/l
+1863;CADUSAPHOS;Eau brute;0,01;µg/l
+1463;CARBARYL;Eau brute;0,01;µg/l
+2975;CARBOXINE;Eau brute;0,01;µg/l
+5749;CARFENTRAZONE ETHYL;Eau brute;0,01;µg/l
+5554;CHLORMEQUAT CHLORURE;Eau brute;0,01;µg/l
+1473;CHLOROTHALONIL;Eau brute;0,01;µg/l
+2978;CLETHODIME;Eau brute;0,01;µg/l
+2095;CLODINAFOP-PROPARGYL;Eau brute;0,01;µg/l
+2017;CLOMAZONE;Eau brute;0,01;µg/l
+1810;CLOPYRALID;Eau brute;0,01;µg/l
+5567;CYAZOFAMIDE;Eau brute;0,01;µg/l
+2729;CYCLOXYDIME;Eau brute;0,01;µg/l
+1681;CYFLUTHRINE;Eau brute;0,01;µg/l
+4365;CYHEXATIN;Eau brute;0,01;µg/l
+1680;CYPROCONAZOLE;Eau brute;0,01;µg/l
+1869;DAZOMET;Eau brute;0,01;µg/l
+5750;DESETHYLTERBUTYLAZINE-2-HYDROXY;Eau brute;0,01;µg/l
+2738;DESMETHYLISOPROTURON;Eau brute;0,01;µg/l
+2929;DICHLORMIDE;Eau brute;0,01;µg/l
+2544;DICHLORPROP-P (SEL DE DMA);Eau brute;0,01;µg/l
+1905;DIFENOCONAZOLE;Eau brute;0,01;µg/l
+1488;DIFLUBENZURON;Eau brute;0,01;µg/l
+1403;DIMÉTHOMORPHE;Eau brute;0,01;µg/l
+5748;DIMOXYSTROBINE;Eau brute;0,01;µg/l
+5619;DINOCAP;Eau brute;0,01;µg/l
+5478;DIPHENYLAMINE;Eau brute;0,01;µg/l
+1699;DIQUAT;Eau brute;0,01;µg/l
+2933;DODINE;Eau brute;0,01;µg/l
+2093;ETHEPHON;Eau brute;0,01;µg/l
+1495;ETHOPROPHOS;Eau brute;0,01;µg/l
+2742;FENAZAQUIN;Eau brute;0,01;µg/l
+1906;FENBUCONAZOLE;Eau brute;0,01;µg/l
+2078;FENBUTATIN OXYDEF;Eau brute;0,01;µg/l
+2743;FENHEXAMID;Eau brute;3;µg/l
+1967;FÉNOXICARBE;Eau brute;0,01;µg/l
+2009;FIPRONIL;Eau brute;0,03;µg/l
+1939;FLAZASULFURON;Eau brute;0,01;µg/l
+1404;FLUAZIFOP-P-BUTYL;Eau brute;0,01;µg/l
+2022;FLUDIOXONIL;Eau brute;0,1;µg/l
+1676;FLUFENOXURON;Eau brute;0,01;µg/l
+2056;FLUQUINCONAZOLE;Eau brute;0,01;µg/l
+1765;FLUROXYPYR ;Eau brute;0,01;µg/l
+1503;FLUTRIAFOL;Eau brute;0,01;µg/l
+1703;FORMETÉNATE;Eau brute;0,01;µg/l
+1975;FOSÉTHYL-ALUMINIUM;Eau brute;0,01;µg/l
+2744;FOSTHIAZATE;Eau brute;0,01;µg/l
+1526;GLUFOSINATE;Eau brute;0,01;µg/l
+1405;HÉXACONAZOLE;Eau brute;0,01;µg/l
+1673;HEXAZINONE;Eau brute;0,01;µg/l
+5645;HYDRAZIDE MALEIQUE;Eau brute;0,01;µg/l
+1954;HYDROXYTERBUTHYLAZINE;Eau brute;0,01;µg/l
+1695;IMAZAMÉTHABENZ;Eau brute;0,01;µg/l
+5125;INDOXACARBE;Eau brute;0,01;µg/l
+2563;IODOSULFURON-METHYL-SODIUM;Eau brute;0,01;µg/l
+2951;IPROVALICARBE;Eau brute;0,01;µg/l
+1672;ISOXABEN;Eau brute;0,01;µg/l
+2807;ISOXADIFEN-ETHYL;Eau brute;0,01;µg/l
+1950;KRESOXIM MÉTHYL;Eau brute;0,01;µg/l
+2026;LUFENURON;Eau brute;0,01;µg/l
+1705;MANEBE;Eau brute;0,01;µg/l
+2089;MEPIQUAT-CHLORURE;Eau brute;0,01;µg/l
+2076;MESOTRIONE;Eau brute;0,01;µg/l
+1706;MÉTALAXYL;Eau brute;0,01;µg/l
+2088;METAM-SODIUM;Eau brute;0,01;µg/l
+6895;METAZACHLOR ESA;Eau brute;0,01;µg/l
+6894;METAZACHLOR OXA;Eau brute;0,01;µg/l
+1879;METCONAZOLE;Eau brute;0,01;µg/l
+1671;MÉTHAMIDOPHOS;Eau brute;0,01;µg/l
+2067;METIRAME;Eau brute;0,01;µg/l
+1797;METSULFURON-METHYL;Eau brute;0,01;µg/l
+1707;MOLINATE;Eau brute;0,01;µg/l
+1881;MYCLOBUTANIL;Eau brute;0,01;µg/l
+1519;NAPROPAMIDE;Eau brute;0,01;µg/l
+1669;NORFLURAZON;Eau brute;0,01;µg/l
+1668;ORYZALIN;Eau brute;0,01;µg/l
+2068;OXADIARGYL;Eau brute;0,01;µg/l
+1666;OXADIXYL;Eau brute;0,01;µg/l
+1522;PARAQUAT;Eau brute;0,01;µg/l
+2669;PICOXYSTROBINE;Eau brute;0,01;µg/l
+1664;PROCTMIDONE;Eau brute;0,01;µg/l
+5668;PROHEXADIONE-CALCIUM;Eau brute;0,01;µg/l
+2988;PROPAMOCARBE HCL;Eau brute;0,01;µg/l
+2989;PROPINEBE;Eau brute;0,01;µg/l
+2534;PROSULFURON;Eau brute;0,01;µg/l
+5603;PROTHIOCONAZOLE;Eau brute;0,01;µg/l
+1890;PYRIDABENE;Eau brute;0,01;µg/l
+1663;PYRIFENOX;Eau brute;0,01;µg/l
+1432;PYRIMÉTHANYL;Eau brute;0,01;µg/l
+2087;QUINMERAC;Eau brute;0,01;µg/l
+2069;QUIZALOFOP-P-ETHYL;Eau brute;0,01;µg/l
+1831;SIMAZINE-HYDROXY;Eau brute;0,01;µg/l
+2664;SPIROXAMINE;Eau brute;0,2;µg/l
+1662;SULCOTRIONE;Eau brute;0,01;µg/l
+2077;SULFOSATE;Eau brute;0,01;µg/l
+1895;TEBUFENOZIDE;Eau brute;0,01;µg/l
+1661;TÉBUTAME;Eau brute;0,01;µg/l
+1897;TEFLUBENZURON;Eau brute;0,01;µg/l
+1953;TEFLUTHRINE;Eau brute;0,01;µg/l
+2045;TERBUTHYLAZINE DÉSÉTHYL;Eau brute;0,01;µg/l
+1660;TÉTRACONAZOLE;Eau brute;0,01;µg/l
+5671;THIACLOPRIDE;Eau brute;0,01;µg/l
+1913;THIFENSULFURON-METHYLE;Eau brute;0,01;µg/l
+1718;THIRAME;Eau brute;0,01;µg/l
+1544;TRIADIMEFON;Eau brute;0,01;µg/l
+2990;TRIAZOXIDE;Eau brute;0,01;µg/l
+2064;TRIBENURON-METHYLE;Eau brute;0,01;µg/l
+1290;VAMIDOTHION;Eau brute;0,01;µg/l
+1722;ZIRAME;Eau brute;0,01;µg/l
+2858;ZOXAMIDE;Eau brute;0,01;µg/l
+1966;DITHIANON;Eau brute;0,4;µg/l
+2984;FLUAZINAM;Eau brute;0,01;µg/l
+2008;FLURTAMONE;Eau brute;0,01;µg/l
+2986;IMAZAMOX;Eau brute;0,01;µg/l
+6863;FLUFENACET OXALATE;Eau brute;0,01;µg/l
+5533;MEPANIPYRIM;Eau brute;0,01;µg/l
+2678;TRIFLOXYSTROBINE;Eau brute;0,01;µg/l
+5638;FLUOXASTROBINE;Eau brute;0,01;µg/l
+7057;PINOXADEN;Eau brute;0,01;µg/l
+5654;METRAFENONE;Eau brute;7;µg/l
+6399;MANDIPROPAMID;Eau brute;0,01;µg/l
+7521;ZETACYPERMETHRINE;Eau brute;0,01;µg/l

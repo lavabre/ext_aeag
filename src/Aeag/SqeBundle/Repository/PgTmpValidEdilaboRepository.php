@@ -199,6 +199,54 @@ class PgTmpValidEdilaboRepository extends EntityRepository {
         return $result;
     }
     
+    public function getMesureByCodeUnite($codeUnite, $demandeId, $reponseId, $codePrelevement, $excludeCodeParam = null) {
+        $query = "select p.resM";
+        $query .= " from Aeag\SqeBundle\Entity\PgTmpValidEdilabo p";
+        $query .= " where p.demandeId = :demande";
+        $query .= " and p.fichierRpsId = :reponse";
+        $query .= " and p.codeUnite = :codeUnite";
+        $query .= " and p.codePrelevement = :codePrelevement";
+        if (!is_null($excludeCodeParam)) {
+            $query .= " and p.codeParametre <> :codeParametre";
+        }
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('demande', $demandeId);
+        $qb->setParameter('reponse', $reponseId);
+        $qb->setParameter('codeUnite', $codeUnite);
+        $qb->setParameter('codePrelevement', $codePrelevement);
+        if (!is_null($excludeCodeParam)) {
+            $qb->setParameter('codeParametre', $excludeCodeParam);
+        }
+        $results = $qb->getResult();
+        
+        if (count($results)>0) {
+            foreach($results as &$result) {
+                $result = $result['resM'];
+            }
+        }
+        return $results;
+    }
+    
+    public function getCodesParametres($demandeId, $reponseId, $codePrelevement) {
+        $query = "select distinct p.codeParametre";
+        $query .= " from Aeag\SqeBundle\Entity\PgTmpValidEdilabo p";
+        $query .= " where p.demandeId = :demande";
+        $query .= " and p.fichierRpsId = :reponse";
+        $query .= " and p.codePrelevement = :codePrelevement";
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('demande', $demandeId);
+        $qb->setParameter('reponse', $reponseId);
+        $qb->setParameter('codePrelevement', $codePrelevement);
+        $results = $qb->getResult();
+        
+        if (count($results)>0) {
+            foreach($results as &$result) {
+                $result = $result['codeParametre'];
+            }
+        }
+        return $results;
+    }
+    
     public function getLqByCodeParametre($codeParametre, $demandeId, $reponseId, $codePrelevement) {
         $query = "select p.lqM";
         $query .= " from Aeag\SqeBundle\Entity\PgTmpValidEdilabo p";

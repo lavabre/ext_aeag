@@ -32,6 +32,7 @@ class CheckSandreFormatCommand extends ContainerAwareCommand {
         $pgCmdFichiersRps = $repoPgCmdFichiersRps->findBy(array('phaseFichier' => $pgProgPhases, 'suppr' => 'N'));
 
         foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
+            $this->_updatePhase($pgCmdFichierRps, 'R16');
             // recuperation du lien d'acquittement
             $lienAcquit = $pgCmdFichierRps->getLienAcquitSandre();
             // Récupération du fichier xml correspondant
@@ -44,14 +45,14 @@ class CheckSandreFormatCommand extends ContainerAwareCommand {
                     $destinataires = array();
                     
                     if ($etatTraitement == 1 && !isset($reponseTab['AccuseReception']['Erreur'])) { // Le traitement est terminé et le fichier est conforme sans erreur
-                        $pgCmdFichierRps->setPhaseFichier($repoPgProgPhases->findOneByCodePhase('R20'));
+                        $this->_updatePhase($pgCmdFichierRps, 'R20');
                         $validMessage = " conforme";
                     } else if (($etatTraitement == 1 && isset($reponseTab['AccuseReception']['Erreur'])) || $etatTraitement == 2) {
                         if ($etatTraitement == 1) {
-                            $pgCmdFichierRps->setPhaseFichier($repoPgProgPhases->findOneByCodePhase('R21'));
+                            $this->_updatePhase($pgCmdFichierRps, 'R21');
                             $validMessage = " conforme avec erreurs";
                         } else {
-                            $pgCmdFichierRps->setPhaseFichier($repoPgProgPhases->findOneByCodePhase('R80'));
+                            $this->_updatePhase($pgCmdFichierRps, 'R80');
                             $validMessage = " non conforme";
                         }
                         if (isset($reponseTab['AccuseReception']['Erreur']["DescriptifErreur"])) { // Une seule erreur
@@ -70,7 +71,6 @@ class CheckSandreFormatCommand extends ContainerAwareCommand {
                     $emSqe->persist($pgCmdFichierRps);
                     $emSqe->flush();
                     
-                    
                     // Envoi de mail au prestataire et à l'admin
                     $objetMessage = "SQE - DAI " . $pgCmdFichierRps->getDemande()->getCodeDemandeCmd() . " : Fichier " . $pgCmdFichierRps->getId() . $validMessage;
                     $txtMessage = "La RAI " . $pgCmdFichierRps->getNomFichier() . " concernant la DAI " . $pgCmdFichierRps->getDemande()->getCodeDemandeCmd() . " a été analysé. Celui-ci possède un format ".$validMessage.".";
@@ -78,9 +78,6 @@ class CheckSandreFormatCommand extends ContainerAwareCommand {
                     foreach ($destinataires as $destinataire) {
                         $this->_envoiMessage($em, $txtMessage, $destinataire, $objetMessage);
                     }
-
-                    
-                    
                 }
                 
             }
@@ -148,6 +145,14 @@ class CheckSandreFormatCommand extends ContainerAwareCommand {
         $mailer->send($mail);
 
         $em->flush();
+    }
+    
+    protected function _updatePhase($pgCmdFichierRps, $phase) {
+        $repoPgProgPhases = $this->emSqe->getRepository('AeagSqeBundle:PgProgPhases');
+        $pgProgPhases = $repoPgProgPhases->findOneByCodePhase($phase);
+        $pgCmdFichierRps->setPhaseFichier($pgProgPhases);
+        $this->emSqe->persist($pgCmdFichierRps);
+        $this->emSqe->flush();
     }
 
 }
