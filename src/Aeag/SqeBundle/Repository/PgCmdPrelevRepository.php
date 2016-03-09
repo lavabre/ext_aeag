@@ -21,6 +21,15 @@ class PgCmdPrelevRepository extends EntityRepository {
         //print_r($query);
         return $qb->getResult();
     }
+    
+      public function getPgCmdPrelevById($id) {
+        $query = "select p";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelev p";
+        $query = $query . " where p.id = " . $id;
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+          return $qb->getOneOrNullResult();
+     }
 
      public function getPgCmdPrelevByPrestaPrel($pgRefCorresPresta) {
         $query = "select p";

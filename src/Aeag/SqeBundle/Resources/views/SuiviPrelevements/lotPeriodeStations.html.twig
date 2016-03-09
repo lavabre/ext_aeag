@@ -31,8 +31,10 @@
         <table class="table table-bordered table-condensed table-advance" id="idTable_demandes">
             <thead>
                 <tr>
-                    <th width="5%">Actions</th>
+                    <th width="1%">Actions</th>
                     <th>Stations</th>
+                    <th>Date de la demande</th>
+                    <th>Date du prélèvement</th>
                    {% if datePrels | length %}
                             {% for datePrel in datePrels %}
                             <th> {{ datePrel | date("d/m/Y") }} </th>
@@ -46,16 +48,17 @@
                           <tr>
                             <td align="center" nowrap> 
                                 {% if  station.cmdPrelev | length %}
-                                    <a id="id_{{ station.station.ouvFoncId }}" class="btn btn-primary" href="{{path('AeagSqeBundle_suiviPrelevements_lot_periode_station_suivis',{ 'cmdPrelevId': station.cmdPrelev.id })}}" title="Suivis des prélèvements">
+                                    <a id="id_{{ station.station.ouvFoncId }}" class="btn btn-primary" href="{{path('AeagSqeBundle_suiviPrelevements_lot_periode_station_demande',{  'stationId': station.station.ouvFoncId,  'periodeAnId': periodeAn.id, 'cmdDemandeId': station.cmdDemande.id })}}" title="demande">
                                        <i class="fa fa-eye"></i> 
                                    </a>
                                 {% endif %}
                             </td>
                              <td>
-                                    <a  href="{{ station.lien }}" target="_blank" title="Localisation">
-                                             {{ station.station.code }} {{ station.station.libelle }}
-                                    </a>
+                                    <a  href="{{ station.lien }}" target="_blank" title="Localisation">{{ station.station.code }}</a>
+                                    {{ station.station.libelle }}
                              </td>
+                             <td align="center">{{ station.cmdDemande.dateDemande | date("d/m/Y") }}</td>
+                             <td align="center">{{ station.cmdPrelev.datePrelev | date("d/m/Y") }}</td>
                             {% if station.suiviPrels | length %}
                                     {% for suiviPrel in station.suiviPrels %}
                                           <td class="text-center"> 

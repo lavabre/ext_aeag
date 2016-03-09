@@ -21,6 +21,18 @@ class PgCmdSuiviPrelRepository extends EntityRepository {
         //print_r($query);
         return $qb->getResult();
     }
+    
+     /**
+     * @return array
+     */
+    public function getPgCmdSuiviPrelById($id) {
+        $query = "select c";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdSuiviPrel c";
+        $query = $query . " where c.id = " . $id;
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+        return $qb->getOneOrNullResult();
+    }
 
     /**
      * @return array
