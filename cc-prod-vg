@@ -1,0 +1,10 @@
+#!/bin/bash
+
+php /base/extranet/ext_aeag/app/console assets:install /base/extranet/ext_aeag/web
+php /base/extranet/ext_aeag/app/console cache:clear
+
+php /base/extranet/ext_aeag/app/console doctrine:cache:clear-metadata
+php /base/extranet/ext_aeag/app/console doctrine:cache:clear-query
+php /base/extranet/ext_aeag/app/console doctrine:cache:clear-result  
+
+chmod -R 777 /base/extranet/ext_aeag/app/logs /base/extranet/ext_aeag/app/cache
