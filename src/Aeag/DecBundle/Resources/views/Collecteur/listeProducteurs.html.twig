@@ -82,8 +82,10 @@
                                 <th>Adresse</th>
                                 <th>Code postal</th>
                                 <th>Ville</th>
+                                <th>taux bonnifié</th>
                              </tr>
                              <tr>
+                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
@@ -116,6 +118,11 @@
                                     <td>{{ entity.0.adresse }}</td>
                                     <td>{{ entity.0.cp }}</td>
                                     <td>{{ entity.0.ville }}</td>
+                                    <td align="center">
+                                        {% if entity.2 == 'O' %}
+                                            {{ entity.3  * 100}} %
+                                        {% endif %}
+                                    </td>
                                   </tr>
                              {% endfor %}
                             {%endif%}

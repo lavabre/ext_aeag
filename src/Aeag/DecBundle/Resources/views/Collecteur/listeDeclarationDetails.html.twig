@@ -208,7 +208,9 @@
                          {% for entity in entities %}
                            {%if  entity.statutCode == '11' %}
                             <tr id="tr_{{entity.id}}" style="background-color:#f2dede;">
-                           {%else%}
+                           {%elseif entity.bonnifie == 'O' %}
+                             <tr id="tr_{{entity.id}}" class="warning">
+                            {% else %}
                             <tr id="tr_{{entity.id}}">
                             {%endif%}
                                 <td nowrap>
@@ -252,6 +254,14 @@
                            {% endfor %}
                         </tbody>
                       </table>
+                        
+                       <div class="row">
+                            <div class="col-md-6 pull-left text-info">
+                              <ul class="list-inline">
+                               <li><a class="btn btn-warning btn-lg" href="#" title="Bonnifier"></a> aide bonnifiée</li>
+                              </ul>  
+                           </div>
+                         </div>  
                      
                    <div class="col-md-offset-3 col-md-9 pull-right">
                       <a class="btn btn-danger" href="{{ path('AeagDecBundle_collecteur_listeSousDeclarations', { 'declarationCollecteur_id': sousDeclarationCollecteur.DeclarationCollecteur.id }) }}"><i class="fa fa-power-off"></i> Retour</a>

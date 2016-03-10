@@ -90,7 +90,7 @@
 {%block panel_heading %}
     <h3 class="page-title text-center">
         Suivi des prélèvements de la demande  du {{ demande.cmdDemande.dateDemande | date("d/m/Y") }} </br>
-        de la station {{ station.code }} {{ station.libelle }} entre le  {{ periodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;et&nbsp;&nbsp; {{periodeAn.periode.dateFin | date("d/m/Y") }}) </br>
+        de la station {{ station.code }} {{ station.libelle }} entre le  {{ periodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;et&nbsp;&nbsp; {{periodeAn.periode.dateFin | date("d/m/Y") }} </br>
         du lot  {{ lotan.lot.nomLot }} - {{ lotan.anneeProg }}
     </h3>
 {%endblock panel_heading %}
@@ -101,8 +101,11 @@
     <div class="form-body">  
         {% for cmdPrelev  in  demande.cmdPrelevs %}
         <table class="table table-bordered table-condensed table-advance" id="idTable_cmdPrelev{{ cmdPrelev.cmdPrelev.id }}">
-            <caption align="top"><h3>Prélèvement du {{ cmdPrelev.cmdPrelev.datePrelev | date("d/m/Y") }}</h3>
-                     {% if is_granted('ROLE_PRESTASQE')  and cmdPrelev.maj == 'N' %}
+            <caption align="top">
+                    {% if  cmdPrelev.cmdPrelev.datePrelev %}
+                    <h3>Prélèvement du {{ cmdPrelev.cmdPrelev.datePrelev | date("d/m/Y") }}</h3>
+                    {% endif %}
+                     {% if is_granted('ROLE_ADMINSQE')  or cmdPrelev.maj == 'O' %}
                                  <a class="btn btn-success" id="idNouveauSuivi{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Nouveau suivi">
                                       <i class="fa fa-plus"> Nouveau</i>
                                  </a>
@@ -121,7 +124,7 @@
                     {% for suiviPrel  in cmdPrelev.suiviPrels %}
                           <tr>
                             <td align="center" nowrap> 
-                                {% if  suiviPrel.maj == 'N' %}
+                                {% if  suiviPrel.maj == 'O' %}
                                      <a class="btn btn-success" id="idMajSuivi{{ suiviPrel.suiviPrel.id  }}" href="#" title="Maj suivi">
                                       <i class="fa fa-edit"> </i>
                                      </a>

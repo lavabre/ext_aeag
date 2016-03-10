@@ -119,6 +119,18 @@ class CrudDeclarationDetail {
      */
     private $montAide;
     
+     /**
+     *
+     * @Assert\Type(type="numeric")
+     */
+    private $tauxAide;
+    
+     /**
+     *
+     * @Assert\Type(type="boolean")
+     */
+    private $bonnifie;
+    
     /**
      *
      * 
@@ -293,5 +305,30 @@ class CrudDeclarationDetail {
     public function setMontAide($montAide) {
         $this->montAide = $montAide;
     }
+
+    function getTauxAide() {
+        return $this->tauxAide;
+    }
+
+    function getBonnifie() {
+        return $this->bonnifie;
+    }
+
+    function getMessage() {
+        return $this->message;
+    }
+
+    function setTauxAide($tauxAide) {
+        $this->tauxAide = $tauxAide;
+    }
+
+    function setBonnifie($bonnifie) {
+        $this->bonnifie = $bonnifie;
+    }
+
+    function setMessage($message) {
+        $this->message = $message;
+    }
+
 
 }

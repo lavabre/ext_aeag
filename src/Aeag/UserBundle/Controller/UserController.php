@@ -286,6 +286,10 @@ class UserController extends Controller {
         if ($security->isGranted('ROLE_ADMINFRD')) {
             $role = 'ROLE_FRD';
         };
+        
+           if ($security->isGranted('ROLE_ADMINSQE')) {
+            $role = 'ROLE_SQE';
+        };
 
         $entity = $em->getRepository('AeagUserBundle:User')->find($id);
 

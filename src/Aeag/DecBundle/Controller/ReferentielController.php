@@ -401,9 +401,12 @@ class ReferentielController extends Controller {
         $modif = 0;
         $fic_decdet = 'dec_decdet_' . $tabFicent[2] . '_' . $tabFicent[3] . '_' . $tabFicent[4];
         $message = $this->chargeDeclarationDetailAction($fic_decdet, $ajout, $modif);
+//         \Symfony\Component\VarDumper\VarDumper::dump($message);
+//        return new Response ('');   
+        
         $message4 = $this->chargeFiliereAideAction();
 
-        $ok = CollecteurController::majStatutDeclarationCollecteursAction($declaration->getId(), $user, $emDec, $session);
+        //$ok = CollecteurController::majStatutDeclarationCollecteursAction($declaration->getId(), $user, $emDec, $session);
 
         /* $statut = $repoStatut->getStatutByCode('60');
           $totQuantiteReel = 0;
@@ -3361,6 +3364,8 @@ class ReferentielController extends Controller {
         $repoConditionnement = $emDec->getRepository('AeagDecBundle:Conditionnement');
         $repoNaf = $emDec->getRepository('AeagDecBundle:Naf');
         $repoTaux = $emDec->getRepository('AeagDecBundle:Taux');
+        $repoProducteurTauxSpecial = $emDec->getRepository('AeagDecBundle:ProducteurTauxSpecial');
+    
         $anneeDecl = $repoParametre->getParametreByCode('ANNEE');
         if (substr($ficent, 0, 4) == 'init') {
             $parametre = $repoParametre->getParametreByCode('REP_REFERENTIEL');
@@ -3372,7 +3377,8 @@ class ReferentielController extends Controller {
         //chmod($fichierEncours, 0775);
 
 
-        $message3 = null;
+        $message3 = array();
+        $nbMessage3 = 0;
 
         if (file_exists($fichierEncours)) {
             $fic = fopen($fichierEncours, "r");
@@ -3425,6 +3431,15 @@ class ReferentielController extends Controller {
                         $producteur = $producteurs[0];
                     }
                     if ($producteur) {
+                            $producteurTauxSpecial = $repoProducteurTauxSpecial->getProducteurTauxSpecialBySiret($producteur->getSiret());
+                          if ($producteurTauxSpecial) {
+                              $tauxAide = $producteurTauxSpecial->getTaux() / 100;
+                              $bonnifier = true;
+                          } else {
+                              $tauxAeag =$repoTaux->getTauxByAnneeCode($tab[2], 'TAUXAIDE');
+                              $tauxAide =  $tauxAeag->getValeur();
+                              $bonnifier = false;
+                          }
                         $declarationProducteur = $repoDeclarationProducteur->getDeclarationProducteurByProducteurAnnee($producteur->getId(), $tab[2]);
                         $sousDeclarationCollecteur = $repoSousDeclarationCollecteur->getSousDeclarationCollecteurByDeclarationCollecteurNumero($declarationCollecteur->getId(), $tab[3]);
                         if ($tab[4]) {
@@ -3527,7 +3542,7 @@ class ReferentielController extends Controller {
                             $entity->setMontAide($tab[20]);
                         }
                         if ($entity->getMontAide() and $entity->getQuantiteAide()) {
-                            $entity->setCoutFacture(round((($entity->getMontAide() / $entity->getQuantiteAide()) / $tauxAide->getValeur()), 4));
+                            $entity->setCoutFacture(round((($entity->getMontAide() / $entity->getQuantiteAide()) / $tauxAide), 4));
                         }
                         if (!($tab[21] == "")) {
                             $entity->setNature($this->wd_remove_accents($tab[21]));
@@ -3570,12 +3585,19 @@ class ReferentielController extends Controller {
 
                         //$emDec->flush();
                     } else {
-                        $message3 = 'producteur inconnu : ' . $tab[1];
-                        $messages = array($message3, null, null, null);
-                        return $messages;
+                        $message3[$nbMessage3] = 'producteur inconnu : ' . $tab[1];
+                        $nbMessage3++;
                     }
                 }
             };
+             if (count($message3) > 0){
+                    $messages = array($message3, null, null, null);
+                   // \Symfony\Component\VarDumper\VarDumper::dump($messages);
+                    //        return new Response ('');   
+                    return $messages;
+             }
+            
+            
             fclose($fic);
             $message3 = $ajout . " producteurs par déclaration créés et " . $modif . " producteurs par déclaration mis à jour";
             if (substr($ficent, 0, 4) == 'init') {

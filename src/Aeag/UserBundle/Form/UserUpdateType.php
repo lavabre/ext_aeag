@@ -11,7 +11,7 @@ class UserUpdateType extends AbstractType {
     public function buildForm(FormBuilderInterface $builder, array $options) {
        $builder
                 ->add('username', 'text', array('label' => 'Login', 'required' => false, 'read_only' => true))
-                ->add('password', 'text', array('label' => 'password', 'required' => true))
+                ->add('password', 'text', array('label' => 'password', 'required' => false, 'read_only' => true))
                 ->add('email', 'email', array('label' => 'Email', 'required' => true))
                 ->add('email1', 'email', array('label' => 'Email1', 'required' => false))
                 ->add('email2', 'email', array('label' => 'Email2', 'required' => false))
@@ -26,7 +26,8 @@ class UserUpdateType extends AbstractType {
                         'ROLE_ADMINDEC' => 'Administrateur Déchet',
                         'ROLE_ADMINFRD' => 'Administrateur Frd',
                         'ROLE_ADMINSQE' => 'Administrateur Sqe',
-                        'ROLE_PROGSQE' => 'Programmeur Sqe',
+                       'ROLE_PROGSQE' => 'Programmeur Sqe',
+                       'ROLE_PRESTASQE' => 'Prestataire Sqe',
                         'ROLE_ODEC' => 'Collecteur  Déchet',
                         'ROLE_FRD' => 'Membre Frd ',
                         'ROLE_SQE' => 'Consultant Sqe ',),
