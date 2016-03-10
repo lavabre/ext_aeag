@@ -331,8 +331,6 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
             if ($mPh < 1 || $mPh > 14) {
                 $this->_addLog('error', $demandeId, $reponseId, "Le pH n\'est pas entre 1 et 14", $codePrelevement, $mPh);
             }
-        } else {
-            $this->_addLog('error', $demandeId, $reponseId, "CodeParametre inexistant", $codePrelevement, 1302);
         }
     }
 
@@ -362,9 +360,6 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
                 //error
                 $this->_addLog('error', $demandeId, $reponseId, "Modele de Weiss : Conductivité supérieur à 10000", $codePrelevement, $mConductivite);
             }
-        } else {
-            // error 
-            $this->_addLog('error', $demandeId, $reponseId, "Modele de Weiss : Code Parametre inexistant", $codePrelevement);
         }
     }
 
@@ -532,9 +527,6 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
                     $this->_addLog('error', $demandeId, $reponseId, "Ortophosphate : Valeur non conforme", $codePrelevement);
                 }
             }
-        } else {
-            $this->_addLog('error', $demandeId, $reponseId, "Ortophosphate : code paramètre inexistant", $codePrelevement);
-            
         }
     }
     
@@ -556,8 +548,6 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
                     $this->_addLog('error', $demandeId, $reponseId, "Ammonium : Valeur non conforme", $codePrelevement);
                 }
             }
-        } else {
-            $this->_addLog('error', $demandeId, $reponseId, "Ammonium : code paramètre inexistant", $codePrelevement);
         }
     }
     
@@ -566,15 +556,13 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
         $tabMesures = array(243 => $this->repoPgTmpValidEdilabo->getMesureByCodeUnite(243, $demandeId, $reponseId, $codePrelevement, 1312),
                             246 => $this->repoPgTmpValidEdilabo->getMesureByCodeUnite(246, $demandeId, $reponseId, $codePrelevement, 1312));
         
-        foreach($tabMesures as $codeUnite => $tabMesure) {
+        foreach($tabMesures as $tabMesure) {
             if (!is_null($tabMesure) && count($tabMesure) > 0) {
                 foreach($tabMesure as $mesure) {
                     if ($mesure > 100 && $mesure < 0) {
                         $this->_addLog('error', $demandeId, $reponseId, "Valeur pourcentage : pourcentage n'est pas entre 0 et 100", $mesure);
                     }
                 }    
-            } else {
-                $this->_addLog('error', $demandeId, $reponseId, "Valeur pourcentage : Pas de mesure pour ce code unité", $codeUnite);
             }
         }
         
@@ -641,8 +629,6 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
                         if ($mesure > ($data[1] * 2)) {
                             $this->_addLog('warning', $demandeId, $reponseId, "Controle Vraisemblance Macro Polluants : Le résultat est supérieur à la valeur attendue",$codePrelevement, $mesure);
                         }    
-                    } else {
-                        $this->_addLog('error', $demandeId, $reponseId, "Controle Vraisemblance Macro Polluants : Le code paramètre n'existe pas ",$codePrelevement, $data[0]);
                     }
                 }
                 $row++;
