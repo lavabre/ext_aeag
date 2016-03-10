@@ -1,5 +1,5 @@
 #!/bin/bash
-cp -R /base/extranet/preprod/ext_aeag /base/extranet/preprod/ext_aeag_release
+cp -Rf /base/extranet/preprod/ext_aeag /base/extranet/preprod/ext_aeag_release
 
 find /base/extranet/preprod/ext_aeag_release | grep .git | xargs rm -rf
 rm -Rf /base/extranet/preprod/ext_aeag_release/app/logs/*
@@ -7,7 +7,7 @@ rm -Rf /base/extranet/preprod/ext_aeag_release/app/cache/*
 rm -Rf /base/extranet/preprod/ext_aeag_release/mise-en-prod.sh
 
 
-scp -rp /base/extranet/preprod/ext_aeag_release root@vslin30112:/base/extranet/ext_aeag_release
-ssh root@vslin30112 '/usr/local/bin/update_site_sqe.sh'
+scp -rp /base/extranet/preprod/ext_aeag_release root@slin30112:/base/extranet/ext_aeag_release
+ssh root@slin30112 '/usr/local/bin/update_site_sqe.sh'
 rm -Rf /base/extranet/preprod/ext_aeag_release
 
