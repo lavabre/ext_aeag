@@ -143,6 +143,18 @@ class DeclarationDetail {
      * @ORM\Column(name="montAide", type="float", length=15, nullable=true)
      */
     private $montAide;
+    
+    /**
+     *
+     * @ORM\Column(name="tauxAide", type="float", length=15, nullable=true)
+     */
+    private $tauxAide;
+    
+     /**
+     *
+     * @ORM\Column(name="bonnifie",  type="boolean")
+     */
+    private $bonnifie;
 
     /**
      * @ORM\Column(type="string", length=20, nullable=true)
@@ -398,5 +410,23 @@ class DeclarationDetail {
     public function setUpdated($updated) {
         $this->updated = $updated;
     }
+    
+    function getTauxAide() {
+        return $this->tauxAide;
+    }
+
+    function getBonnifie() {
+        return $this->bonnifie;
+    }
+
+    function setTauxAide($tauxAide) {
+        $this->tauxAide = $tauxAide;
+    }
+
+    function setBonnifie($bonnifie) {
+        $this->bonnifie = $bonnifie;
+    }
+
+
 
 }

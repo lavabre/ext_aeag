@@ -416,7 +416,8 @@ class CollecteurController extends Controller {
 
         $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
         $repoCollecteurProducteur = $emDec->getRepository('AeagDecBundle:CollecteurProducteur');
-
+        $repoProducteurTauxSpecial = $emDec->getRepository('AeagDecBundle:ProducteurTauxSpecial');
+      
         $collecteur = $repoOuvrage->getOuvrageByUserIdType($user->getId(), 'ODEC');
 
         $collecteurProducteurs = $repoCollecteurProducteur->getCollecteurProducteurByCollecteur($collecteur->getId());
@@ -427,8 +428,18 @@ class CollecteurController extends Controller {
             $producteur = $repoOuvrage->getOuvrageById($collecteurProducteur->getProducteur());
             if ($producteur) {
                 $nbCollecteurs = $repoCollecteurProducteur->getNbCollecteurProducteurByProducteur($producteur->getId());
+               $producteurTauxSpecial = $repoProducteurTauxSpecial->getProducteurTauxSpecialBySiret($producteur->getSiret());
+                if ($producteurTauxSpecial) {
+                    $tauxAide = $producteurTauxSpecial->getTaux() / 100;
+                    $bonnifier = true;
+                } else {
+                    $tauxAide = null;
+                    $bonnifier = false;
+                }
                 $prod[$i][0] = $producteur;
                 $prod[$i][1] = $nbCollecteurs;
+                $prod[$i][2] = $bonnifier;
+                $prod[$i][3] = $tauxAide;
                 $i++;
             }
         }
@@ -455,7 +466,8 @@ class CollecteurController extends Controller {
 
         $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
         $repoCollecteurProducteur = $emDec->getRepository('AeagDecBundle:CollecteurProducteur');
-
+        $repoProducteurTauxSpecial = $emDec->getRepository('AeagDecBundle:ProducteurTauxSpecial');
+    
         $collecteur = $repoOuvrage->getOuvrageById($collecteur_id);
         $collecteurProducteurs = $repoCollecteurProducteur->getCollecteurProducteurByCollecteur($collecteur->getId());
         $producteurs = array();
@@ -463,7 +475,17 @@ class CollecteurController extends Controller {
         foreach ($collecteurProducteurs as $collecteurProducteur) {
             $producteur = $repoOuvrage->getOuvrageById($collecteurProducteur->getProducteur());
             if ($producteur) {
-                $producteurs[$i] = $producteur;
+                $producteurTauxSpecial = $repoProducteurTauxSpecial->getProducteurTauxSpecialBySiret($producteur->getSiret());
+                if ($producteurTauxSpecial) {
+                    $tauxAide = $producteurTauxSpecial->getTaux() / 100;
+                    $bonnifier = true;
+                } else {
+                    $tauxAide = null;
+                    $bonnifier = false;
+                }
+                $producteurs[$i]['producteur'] = $producteur;
+                $producteurs[$i]['bonnifier'] = $bonnifier;
+                $producteurs[$i]['tauxAide'] = $tauxAide;
                 $i++;
             }
         }
@@ -1089,6 +1111,15 @@ class CollecteurController extends Controller {
         if (is_object($user)) {
             $mes = AeagController::notificationAction($user, $em, $session);
             $mes1 = AeagController::messageAction($user, $em, $session);
+            $tabMail = split("@", $user->getEmail());
+           if ($tabMail[1] == "a-renseigner-merci.svp"){
+                $valider = 'N';
+            }else{
+                $valider = 'O';
+            }
+           //\Symfony\Component\VarDumper\VarDumper::dump($tabMail);
+          // return new Response ('');
+   
         }
 
         $repoDeclarationCollecteur = $emDec->getRepository('AeagDecBundle:DeclarationCollecteur');
@@ -1111,11 +1142,12 @@ class CollecteurController extends Controller {
             $i++;
         }
 
-        return $this->render('AeagDecBundle:Collecteur:listeSousDeclarations.html.twig', array(
+          return $this->render('AeagDecBundle:Collecteur:listeSousDeclarations.html.twig', array(
                     'annee' => $declarationCollecteur->getAnnee(),
                     'collecteur' => $collecteur,
                     'declarationCollecteur' => $declarationCollecteur,
                     'entities' => $tabSousDeclarationCollecteurs,
+                    'valider' => $valider
         ));
     }
 
@@ -1610,6 +1642,12 @@ class CollecteurController extends Controller {
                 $tab[$i]['quantiteReel'] = $declaration->getQuantiteReel();
                 $tab[$i]['quantiteRet'] = $declaration->getQuantiteRet();
                 $tab[$i]['montAide'] = $declaration->getMontAide();
+                $tab[$i]['tauxAide'] = $declaration->getTauxAide();
+                if ($declaration->getBonnifie()) {
+                    $tab[$i]['bonnifie'] = 'O';
+                } else {
+                    $tab[$i]['bonnifie'] = 'N';
+                }
                 $tab[$i]['montReel'] = $declaration->getMontReel();
                 $i++;
             }
@@ -1996,7 +2034,7 @@ class CollecteurController extends Controller {
                             } else {
                                 if (strlen($tab[9]) == 14) {
                                     $centreTraitements = $repoOuvrage->getOuvragesBySiretType($tab[9], 'CTT');
-                                    if ($centreTraitements){
+                                    if ($centreTraitements) {
                                         $centreTraitement = null;
                                     }
                                 } else {
@@ -2098,7 +2136,7 @@ class CollecteurController extends Controller {
                                     $tab[15] = str_replace(' ', '', $tab[15]);
                                     if (strlen($tab[15]) == 14) {
                                         $centreTransits = $repoOuvrage->getOuvragesBySiretType($tab[15], 'CT');
-                                        if ($centreTransits){
+                                        if ($centreTransits) {
                                             $centreTransit = null;
                                         }
                                     } else {
@@ -2128,9 +2166,9 @@ class CollecteurController extends Controller {
                                 $tab[14] = str_replace(' ', '', $tab[14]);
                                 if (strlen($tab[14]) == 14) {
                                     $centreDepots = $repoOuvrage->getOuvragesBySiretType($tab[14], 'ODEC');
-                                   if ($centreDepots){
-                                       $centreDepot = null;
-                                   }
+                                    if ($centreDepots) {
+                                        $centreDepot = null;
+                                    }
                                 } else {
                                     $centreDepot = $repoOuvrage->getOuvrageByNumeroType($tab[14], 'ODEC');
                                 }
@@ -2214,10 +2252,12 @@ class CollecteurController extends Controller {
                             $quantiteAide = $quantiteRet;
                             $producteurTauxSpecial = $repoProducteurTauxSpecial->getProducteurTauxSpecialBySiret($producteur->getSiret());
                             if ($producteurTauxSpecial) {
-                                $tauxAide = $producteurTauxSpecial->getTaux();
+                                $tauxAide = $producteurTauxSpecial->getTaux() / 100;
+                                $bonnifie = true;
                             } else {
                                 $tauxAideAgence = $repoTaux->getTauxByAnneeCode($declarationCollecteur->getAnnee(), 'TAUXAIDE');
                                 $tauxAide = $tauxAideAgence->getValeur();
+                                $bonnifie = false;
                             }
                             if ($tab[12] != "") {
                                 $tab[12] = str_replace(',', '.', $tab[12]);
@@ -2266,6 +2306,8 @@ class CollecteurController extends Controller {
                                 $declarationDetail->setMontRet($montRet);
                                 $declarationDetail->setQuantiteAide($quantiteAide);
                                 $declarationDetail->setMontAide($montAide);
+                                $declarationDetail->settauxAide($tauxAide);
+                                $declarationDetail->setBonnifie($bonnifie);
                                 $declarationDetail->setCoutFacture(round($tab[12], 5));
                                 $declarationDetail->setDossierAide($sousDeclarationCollecteur->getDossierAide());
                                 $declarationDetail->setMontantAp($sousDeclarationCollecteur->getMontantAp());
@@ -2395,12 +2437,23 @@ class CollecteurController extends Controller {
                 $ancDeclarationDetail->setMontRet(0);
                 $ancDeclarationDetail->setQuantiteAide(0);
                 $ancDeclarationDetail->setMontAide(0);
+                $ancDeclarationDetail->setTauxAide(0);
+                $ancDeclarationDetail->setBonnifie(false);
                 $ancDeclarationDetail->setDossierAide(0);
                 $ancDeclarationDetail->setMontantAp(0);
                 $ancDeclarationDetail->setMontantApDispo(0);
             }
             $declarationProducteur = $repoDeclarationProducteur->getDeclarationProducteurById($declarationDetail->getDeclarationProducteur()->getId());
             $producteur = $repoOuvrage->getOuvrageById($declarationProducteur->getProducteur());
+            $producteurTauxSpecial = $repoProducteurTauxSpecial->getProducteurTauxSpecialBySiret($producteur->getSiret());
+            if ($producteurTauxSpecial) {
+                $tauxAide = $producteurTauxSpecial->getTaux() / 100;
+                $bonnifie = true;
+            } else {
+                $tauxAideAgence = $repoTaux->getTauxByAnneeCode($declarationCollecteur->getAnnee(), 'TAUXAIDE');
+                $tauxAide = $tauxAideAgence->getValeur();
+                $bonnifie = false;
+            }
         }
 
         if ($crud == 'D') {
@@ -2489,6 +2542,8 @@ class CollecteurController extends Controller {
         }
         if ($declarationDetail->getMontAide()) {
             $crudDeclarationDetail->setMontAide($declarationDetail->getMontAide());
+            $crudDeclarationDetail->setTauxAide($declarationDetail->getTauxAide());
+            $crudDeclarationDetail->setBonnifie($declarationDetail->getBonnifie());
         }
 
         $collecteurPoducteurs = $repoCollecteurProducteur->getCollecteurProducteurByCollecteur($collecteur->getId());
@@ -2637,10 +2692,12 @@ class CollecteurController extends Controller {
 
                             $producteurTauxSpecial = $repoProducteurTauxSpecial->getProducteurTauxSpecialBySiret($producteur->getSiret());
                             if ($producteurTauxSpecial) {
-                                $tauxAide = $producteurTauxSpecial->getTaux();
+                                $tauxAide = $producteurTauxSpecial->getTaux() / 100;
+                                $bonnifie = true;
                             } else {
                                 $tauxAideAgence = $repoTaux->getTauxByAnneeCode($declarationCollecteur->getAnnee(), 'TAUXAIDE');
                                 $tauxAide = $tauxAideAgence->getValeur();
+                                $bonnifie = false;
                             }
 
                             if ($crudDeclarationDetail->getFiliereAide()) {
@@ -2721,6 +2778,8 @@ class CollecteurController extends Controller {
                                 $declarationDetail->setMontRet($crudDeclarationDetail->getMontRet());
                                 $declarationDetail->setQuantiteAide($crudDeclarationDetail->getQuantiteAide());
                                 $declarationDetail->setMontAide($crudDeclarationDetail->getMontAide());
+                                $declarationDetail->setTauxAide($tauxAide);
+                                $declarationDetail->setBonnifie($bonnifie);
                                 $declarationDetail->setDossierAide($sousDeclarationCollecteur->getDossierAide());
                                 $declarationDetail->setMontantAp($sousDeclarationCollecteur->getMontantAp());
                                 $declarationDetail->setMontantApDispo($sousDeclarationCollecteur->getMontantAp() - $crudDeclarationDetail->getMontAide());

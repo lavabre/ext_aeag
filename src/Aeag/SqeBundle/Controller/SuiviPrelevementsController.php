@@ -117,7 +117,6 @@ class SuiviPrelevementsController extends Controller {
         $pgProgLotAn = $pgProgLotPeriodeAn->getLotAn();
         $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByPeriodeAn($pgProgLotPeriodeAn);
         $tabStations = array();
-        $tabDatePrels = array();
         $i = 0;
         $j = 0;
         $k = 0;
@@ -150,21 +149,19 @@ class SuiviPrelevementsController extends Controller {
                         }
                     }
                 }
-                $tabDates = array_unique($tabDatePrels);
-                $tabStations[$i]['suiviPrels'] = $tabSuiviPrels;
+               $tabStations[$i]['suiviPrels'] = $tabSuiviPrels;
                 $i++;
             }
         }
 
-//        dump($tabStations);
-//        return new Response ('');
+//        \Symfony\Component\VarDumper\VarDumper::dump($tabDates);
+//        return new Response ('');   
 
         return $this->render('AeagSqeBundle:SuiviPrelevements:lotPeriodeStations.html.twig', array(
                     'user' => $pgProgWebUser,
                     'lotan' => $pgProgLotAn,
                     'periodeAn' => $pgProgLotPeriodeAn,
-                    'datePrels' => $tabDates,
-                    'stations' => $tabStations));
+                   'stations' => $tabStations));
     }
 
     public function lotPeriodeStationDemandeAction($stationId = null, $periodeAnId = null, $cmdDemandeId = null) {
@@ -218,7 +215,12 @@ class SuiviPrelevementsController extends Controller {
                                     $tabSuiviPrels[$j]['maj'] = 'N';
                                 }
                             } else {
-                                $tabSuiviPrels[$j]['maj'] = 'N';
+                                if ($user->hasRole('ROLE_ADMINSQE')) {
+                                    $tabSuiviPrels[$j]['maj'] = 'O';
+                                    $tabDemande[$i]['maj'] = 'O';
+                                } else {
+                                    $tabSuiviPrels[$j]['maj'] = 'N';
+                                }
                             }
                             $j++;
                         }
@@ -271,12 +273,11 @@ class SuiviPrelevementsController extends Controller {
             $datePrel = $pgCmdSuiviPrel->getDatePrel();
             $emSqe->persist($pgCmdSuiviPrel);
             $emSqe->flush();
-            $session->getFlashBag()->add('notice-success', 'le suivi du ' . $datePrel->format('d/m/Y') .  ' a été créé !');
+            $session->getFlashBag()->add('notice-success', 'le suivi du ' . $datePrel->format('d/m/Y') . ' a été créé !');
 
-            return $this->redirect($this->generateUrl('AeagSqeBundle_suiviPrelevements_lot_periode_station_demande', 
-                                            array('stationId' => $pgCmdPrelev->getStation()->getOuvFoncId(),
-                                                     'periodeAnId' => $periodeAnId,
-                                                     'cmdDemandeId' => $pgCmdPrelev->getDemande()->getId())));
+            return $this->redirect($this->generateUrl('AeagSqeBundle_suiviPrelevements_lot_periode_station_demande', array('stationId' => $pgCmdPrelev->getStation()->getOuvFoncId(),
+                                'periodeAnId' => $periodeAnId,
+                                'cmdDemandeId' => $pgCmdPrelev->getDemande()->getId())));
         }
 
         return $this->render('AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemandeSuiviNew.html.twig', array(
@@ -290,8 +291,8 @@ class SuiviPrelevementsController extends Controller {
 //          \Symfony\Component\VarDumper\VarDumper::dump($tabDemande);
 //        return new Response ('');
     }
-    
-     public function lotPeriodeStationDemandeSuiviMajAction($suiviPrelId = null, $periodeAnId = null, Request $request) {
+
+    public function lotPeriodeStationDemandeSuiviMajAction($suiviPrelId = null, $periodeAnId = null, Request $request) {
 
         $user = $this->getUser();
         if (!$user) {
@@ -314,15 +315,14 @@ class SuiviPrelevementsController extends Controller {
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-           $datePrel = $pgCmdSuiviPrel->getDatePrel();
-           $emSqe->persist($pgCmdSuiviPrel);
+            $datePrel = $pgCmdSuiviPrel->getDatePrel();
+            $emSqe->persist($pgCmdSuiviPrel);
             $emSqe->flush();
-            $session->getFlashBag()->add('notice-success', 'le suivi du ' . $datePrel->format('d/m/Y') .  ' a été modifié !');
+            $session->getFlashBag()->add('notice-success', 'le suivi du ' . $datePrel->format('d/m/Y') . ' a été modifié !');
 
-            return $this->redirect($this->generateUrl('AeagSqeBundle_suiviPrelevements_lot_periode_station_demande', 
-                                         array('stationId' => $pgCmdPrelev->getStation()->getOuvFoncId(),
-                                                  'periodeAnId' => $periodeAnId,
-                                                 'cmdDemandeId' => $pgCmdPrelev->getDemande()->getId())));
+            return $this->redirect($this->generateUrl('AeagSqeBundle_suiviPrelevements_lot_periode_station_demande', array('stationId' => $pgCmdPrelev->getStation()->getOuvFoncId(),
+                                'periodeAnId' => $periodeAnId,
+                                'cmdDemandeId' => $pgCmdPrelev->getDemande()->getId())));
         }
 
         return $this->render('AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemandeSuiviMaj.html.twig', array(
@@ -350,19 +350,19 @@ class SuiviPrelevementsController extends Controller {
         $session->set('fonction', 'lotPeriodeStationDemandeSuiviSupprimer');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
-         $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
-         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
+        $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
+        $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
 
         $pgCmdSuiviPrel = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelById($suiviPrelId);
         $pgCmdPrelev = $pgCmdSuiviPrel->getPrelev();
         $datePrel = $pgCmdSuiviPrel->getDatePrel();
         $emSqe->remove($pgCmdSuiviPrel);
         $emSqe->flush();
-       
+
         $session->getFlashBag()->add('notice-success', 'le suivi du prélèvement du   : ' . $datePrel->format('d/m/Y') . ' a été supprimé !');
 
         return $this->redirect($this->generateUrl('AeagSqeBundle_suiviPrelevements_lot_periode_station_demande', array('stationId' => $pgCmdPrelev->getStation()->getOuvFoncId(),
-                            'periodeAnId' =>$periodeAnId,
+                            'periodeAnId' => $periodeAnId,
                             'cmdDemandeId' => $pgCmdPrelev->getDemande()->getId())));
 
 

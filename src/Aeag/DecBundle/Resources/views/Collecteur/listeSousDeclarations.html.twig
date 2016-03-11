@@ -58,23 +58,42 @@
                           <div class="modal-content">
                             <div class="modal-header">
                               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                              <h4 class="modal-title" id="valLabel-{{entity.sousDec.id}}">Validation de la déclaration trimestrielle n° {{ entity.sousDec.numero }}</h4>
+                              <h4 class="modal-title" id="valLabel-{{entity.sousDec.id}}">Validation de la déclaration trimestrielle n° {{ entity.sousDec.numero }} </h4>
                             </div>
-                            <div class="modal-body">
-                                <h4>Cliquer sur le bouton vert pour valider la déclaration N° {{ entity.sousDec.numero }} et la mettre à la disposition de l'agence de l'eau</h4>
-                                </br></br>
-                                <div class="alert alert-danger">
-                                    <p>
-                                       Attention : Une fois validée, la déclaration N° {{ entity.sousDec.numero }} ne sera plus modifiable.
-                                     </p>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                             <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
-                              <a class="btn btn-success" href="{{ path('AeagDecBundle_collecteur_validerSousDeclaration', { 'sousDeclarationCollecteur_id': entity.sousDec.id }) }}" title="Valider">
-                                 <i class="fa fa-check"> Valider</i>
-                              </a>
-                             </div>
+                              {% if valider ==  'O' %}
+                                      <div class="modal-body">
+                                            <h4>Cliquer sur le bouton vert pour valider la déclaration N° {{ entity.sousDec.numero }} et la mettre à la disposition de l'agence de l'eau</h4>
+                                              </br></br>
+                                              <div class="alert alert-danger">
+                                                  <p>
+                                                     Attention : Une fois validée, la déclaration N° {{ entity.sousDec.numero }} ne sera plus modifiable.
+                                                   </p>
+                                              </div>
+                                      </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
+                                             <a class="btn btn-success" href="{{ path('AeagDecBundle_collecteur_validerSousDeclaration', { 'sousDeclarationCollecteur_id': entity.sousDec.id }) }}" title="Valider">
+                                                <i class="fa fa-check"> Valider</i>
+                                             </a>
+                                         </div>
+                                {% else %}
+                                       <div class="modal-body">
+                                            <h4>Vous devez dabord renseigner votre mail  afin de pouvoir vous contacter par la suite</h4>
+                                            </br></br>
+                                            <div class="alert alert-danger">
+                                                Cliquer sur : 
+                                                <ol>
+                                                    <dl>1)  <i class="fa fa-user fa-fw"></i> {{ app.user.username }}</dl>
+                                                    <dl>2) <i class="fa fa-user fa-fw"></i>&nbsp; Compte</a></dl>
+                                                    <dl>3)   <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">Actions<span class="caret"></span></button></dl>
+                                                    <dl>4)  <i class="fa fa-pencil-square-o fa-lg"></i> Modifier le compte</dl>
+                                                </ol>
+                                             </div>
+                                       </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
+                                        </div> 
+                                {% endif %}
                           </div>
                         </div>
                 </div>

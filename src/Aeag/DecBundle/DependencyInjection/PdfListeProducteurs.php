@@ -72,8 +72,8 @@ class PdfListeProducteurs extends PageGroup {
         // Entete
         $this->SetFont('Arial', 'B');
         // En-tête des colonnes
-        $w = array(15, 25, 75, 75);
-        $header = array('Numéro', 'Siret', 'Libellé', 'Adresse');
+        $w = array(15, 25, 65, 65,20);
+        $header = array('Numéro', 'Siret', 'Libellé', 'Adresse', 'Taux bonnifié');
         // En-tête
         for ($i = 0; $i < count($header); $i++)
             $this->Cell($w[$i], 7, $header[$i], 1, 0, 'C');
@@ -93,10 +93,15 @@ class PdfListeProducteurs extends PageGroup {
         $fill = false;
         // Chargement des données
         foreach ($producteurs as $producteur) {
-            $this->Cell($w[0], 4, $producteur->getNumero(), 'LR', 0, 'C', $fill);
-            $this->Cell($w[1], 4, $producteur->getSiret(), 'LR', 0, 'C', $fill);
-            $this->Cell($w[2], 4, $producteur->getLibelle(), 'LR', 0, 'L', $fill);
-            $this->Cell($w[3], 4, $producteur->getAdresse() . ' ' . $producteur->getCp() . ' ' . $producteur->getVille(), 'LR', 0, 'L', $fill);
+            $this->Cell($w[0], 4, $producteur['producteur']->getNumero(), 'LR', 0, 'C', $fill);
+            $this->Cell($w[1], 4, $producteur['producteur']->getSiret(), 'LR', 0, 'C', $fill);
+            $this->Cell($w[2], 4, $producteur['producteur']->getLibelle(), 'LR', 0, 'L', $fill);
+            $this->Cell($w[3], 4, $producteur['producteur']->getAdresse() . ' ' . $producteur['producteur']->getCp() . ' ' . $producteur['producteur']->getVille(), 'LR', 0, 'L', $fill);
+            if ($producteur['bonnifier'] == 'O'){
+                 $this->Cell($w[4], 4, ($producteur['tauxAide'] * 100) . '%', 'LR', 0, 'C', $fill);
+            }else{
+                $this->Cell($w[4], 4, '', 'LR', 0, 'C', $fill);
+            }
             $this->Ln();
             $h = $h + 4;
             $fill = !$fill;
@@ -118,8 +123,8 @@ class PdfListeProducteurs extends PageGroup {
                // Entete
                 $this->SetFont('Arial', 'B');
                 // En-tête des colonnes
-                $w = array(15, 25, 75, 75);
-                $header = array('Numéro', 'Siret', 'Libellé', 'Adresse');
+                $w = array(15, 25, 65, 65,20);
+                $header = array('Numéro', 'Siret', 'Libellé', 'Adresse', 'Taux bonnifié');
                 // En-tête
                 for ($i = 0; $i < count($header); $i++)
                     $this->Cell($w[$i], 7, $header[$i], 1, 0, 'C');

@@ -20,7 +20,7 @@
 
 {%block panel_heading %}
     <h3 class="page-title text-center">
-        Suivi des prélèvements - Liste des stations de la période {{ periodeAn.periode.labelPeriode }} (du {{ periodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;au&nbsp;&nbsp; {{ periodeAn.periode.dateFin | date("d/m/Y") }}) </br>du lot  {{ lotan.lot.nomLot }} - {{ lotan.anneeProg }}
+        Suivi des prélèvements - Liste des stations  prévues du {{ periodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;au&nbsp;&nbsp; {{ periodeAn.periode.dateFin | date("d/m/Y") }}</br>du lot  {{ lotan.lot.nomLot }} - {{ lotan.anneeProg }}
     </h3>
 {%endblock panel_heading %}
 
@@ -33,13 +33,7 @@
                 <tr>
                     <th width="1%">Actions</th>
                     <th>Stations</th>
-                    <th>Date de la demande</th>
-                    <th>Date du prélèvement</th>
-                   {% if datePrels | length %}
-                            {% for datePrel in datePrels %}
-                            <th> {{ datePrel | date("d/m/Y") }} </th>
-                            {% endfor %}
-                    {% endif %}
+                    <th>Suivis</th>
                   </tr>
             </thead>
             <tbody>
@@ -57,31 +51,13 @@
                                     <a  href="{{ station.lien }}" target="_blank" title="Localisation">{{ station.station.code }}</a>
                                     {{ station.station.libelle }}
                              </td>
-                             <td align="center">{{ station.cmdDemande.dateDemande | date("d/m/Y") }}</td>
-                             <td align="center">{{ station.cmdPrelev.datePrelev | date("d/m/Y") }}</td>
-                            {% if station.suiviPrels | length %}
-                                    {% for suiviPrel in station.suiviPrels %}
-                                          <td class="text-center"> 
-                                            {% if suiviPrel.statutPrel == "P" %}
-                                                 <a id="idBt_{{ suiviPrel.id }}" class="btn btn-default">
-                                                    <span id="idbadge_{{suiviPrel.id }}" class="badge"></span>
-                                                </a>
-                                            {% elseif suiviPrel.statutPrel == "F" %}
-                                                 <a id="idBt_{{ suiviPrel.id }}" class="btn btn-sucess">
-                                                    <span id="idbadge_{{suiviPrel.id }}" class="badge"></span>
-                                                </a>
-                                             {% elseif suiviPrel.statutPrel == "N" %}
-                                                 <a id="idBt_{{ suiviPrel.id }}" class="btn btn-warning">
-                                                    <span id="idbadge_{{suiviPrel.id }}" class="badge"></span>
-                                                 </a>
-                                             {% else %}
-                                                  <a id="idBt_{{ suiviPrel.id }}" class="btn btn-danger">
-                                                    <span id="idbadge_{{suiviPrel.id }}" class="badge"></span>
-                                                 </a>
-                                              {% endif %}
-                                          </td>
-                                    {% endfor %}
-                           {% endif %}
+                             <td align="center">
+                             {% if station.suiviPrels | length %}
+                                     <button class="btn btn-primary" type="button">
+                                        <span class="badge">{{ station.suiviPrels | length }}</span>
+                                      </button
+                                  {% endif %}
+                             </td>
                            </tr>
                     {% endfor %}
                 {% endif %}
