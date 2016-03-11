@@ -24,9 +24,7 @@
                          <li><a class="btn btn-warning btn-lg active" href="{{ path('Aeag_sqe_programmation_lots', {'action': 'P'}) }}" title="Programmer"><i class="fa fa-edit fa-3x"></i> Programmer</a></li>
                     {% endif %}
                     {%if   is_granted('ROLE_PRESTASQE') %}
-                         {% if  not app.session.get('evolution')  %}
-                                 <li><a class="btn btn-success btn-lg" href="{{ path('AeagSqeBundle_echangefichiers_index')}}" title="Echange de fichiers"><i class="fa fa-download fa-3x"></i> Echange de fichiers</a></li>
-                           {% endif %}
+                        <li><a class="btn btn-success btn-lg" href="{{ path('AeagSqeBundle_echangefichiers_index')}}" title="Echange de fichiers"><i class="fa fa-download fa-3x"></i> Echange de fichiers</a></li>
                     {% endif %}
                   </ul>  
             </div>

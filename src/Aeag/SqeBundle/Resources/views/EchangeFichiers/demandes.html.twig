@@ -24,11 +24,11 @@
             <thead>
                 <tr>
                     <th width="5%">Actions</th>
-                    <th>Date</th>
-                    <th>Code</th>
+                    <th>Période</th>
                     <th>Prestataire</th>
                     <th>Producteur</th>
-                    <th>Période</th>
+                    <th>Code</th>
+                    <th>Date</th>
                     <th>Phase</th>
                     <th>Format fichier</th>
                     <th>Réponses</th>
@@ -50,15 +50,15 @@
                                     <i class="fa fa-download"></i> 
                                 </a>
                             </td>
-                            <td>{{ demande.dateDemande | date("d/m/Y H:i")}}</td>
-                            <td>{{ demande.codeDemandeCmd }}</td>
-                            <td>{{ demande.prestataire.nomCorres }}</td>
-                            <td>{{ demande.commanditaire.nomCorres }}</td>
                             {% if demande.periode %}
                                 <td>{{ demande.periode.labelPeriode}}</td>
                             {% else %}
                                 <td>An</td>
                             {% endif%}
+                            <td>{{ demande.prestataire.nomCorres }}</td>
+                            <td>{{ demande.commanditaire.nomCorres }}</td>
+                            <td>{{ demande.codeDemandeCmd }}</td>
+                            <td>{{ demande.dateDemande | date("d/m/Y H:i")}}</td>
                             <td>{{ demande.phaseDemande.libellePhase }}</td>
                             <td>{{ demande.formatFichier }}</td>
                             <td align="center" nowrap>
