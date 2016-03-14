@@ -30,3 +30,9 @@ AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_supprimer:
     defaults: { _controller: AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemandeSuiviSupprimer, suiviPrelId : null, periodeAnId : null}
     requirements:
         methods:  GET|POST
+        
+AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_saisir:
+    path:  /saisir/{prelevId}/{periodeAnId}/{stationId}
+    defaults: { _controller: AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemandeSuiviSaisir, prelevId : null, periodeAnId : null, stationId : null}
+    requirements:
+        methods:  GET|POST

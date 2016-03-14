@@ -406,7 +406,8 @@ class ReferentielController extends Controller {
         
         $message4 = $this->chargeFiliereAideAction();
 
-        //$ok = CollecteurController::majStatutDeclarationCollecteursAction($declaration->getId(), $user, $emDec, $session);
+        $ok = CollecteurController::majStatutDeclarationCollecteursAction($declaration->getId(), $user, $emDec, $session);
+        //return new Response ('aide disponible : ' . $ok);
 
         /* $statut = $repoStatut->getStatutByCode('60');
           $totQuantiteReel = 0;

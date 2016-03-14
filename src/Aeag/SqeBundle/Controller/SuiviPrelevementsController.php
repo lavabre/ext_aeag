@@ -149,7 +149,7 @@ class SuiviPrelevementsController extends Controller {
                         }
                     }
                 }
-               $tabStations[$i]['suiviPrels'] = $tabSuiviPrels;
+                $tabStations[$i]['suiviPrels'] = $tabSuiviPrels;
                 $i++;
             }
         }
@@ -161,7 +161,7 @@ class SuiviPrelevementsController extends Controller {
                     'user' => $pgProgWebUser,
                     'lotan' => $pgProgLotAn,
                     'periodeAn' => $pgProgLotPeriodeAn,
-                   'stations' => $tabStations));
+                    'stations' => $tabStations));
     }
 
     public function lotPeriodeStationDemandeAction($stationId = null, $periodeAnId = null, $cmdDemandeId = null) {
@@ -202,27 +202,40 @@ class SuiviPrelevementsController extends Controller {
                     if ($pgCmdPrelev->getStation()->getOuvFoncId() == $stationId and $pgCmdPrelev->getPeriode()->getId() == $pgProgPeriode->getId()) {
                         $tabCmdPrelevs[$i]['cmdPrelev'] = $pgCmdPrelev;
                         $tabCmdPrelevs[$i]['maj'] = 'N';
+                        $tabCmdPrelevs[$i]['saisie'] = 'N';
                         $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelev($pgCmdPrelev);
                         $tabSuiviPrels = array();
                         $j = 0;
-                        foreach ($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
-                            $tabSuiviPrels[$j]['suiviPrel'] = $pgCmdSuiviPrel;
-                            if ($pgProgWebUser->getPrestataire()) {
-                                if ($pgProgWebUser->getPrestataire()->getAdrCorId() == $pgCmdSuiviPrel->getPrestaPrel()->getAdrCorId()) {
-                                    $tabSuiviPrels[$j]['maj'] = 'O';
-                                    $tabDemande[$i]['maj'] = 'O';
+                        if (count($pgCmdSuiviPrels) == 0) {
+                            $tabSuiviPrels[$j]['suiviPrel'] = array();
+                            $tabSuiviPrels[$j]['maj'] = 'O';
+                            $tabCmdPrelevs[$i]['maj'] = 'O';
+                            $tabDemande[$i]['maj'] = 'O';
+                        } else {
+                            foreach ($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
+                                $tabSuiviPrels[$j]['suiviPrel'] = $pgCmdSuiviPrel;
+                                if ($pgProgWebUser->getPrestataire()) {
+                                    if ($pgProgWebUser->getPrestataire()->getAdrCorId() == $pgCmdSuiviPrel->getUser()->getPrestataire()->getAdrCorId()) {
+                                        $tabSuiviPrels[$j]['maj'] = 'O';
+                                        $tabCmdPrelevs[$i]['maj'] = 'O';
+                                        $tabDemande[$i]['maj'] = 'O';
+                                         if ($pgCmdSuiviPrel->getStatutPrel() == 'F') {
+                                            $tabCmdPrelevs[$i]['saisie'] = 'O';
+                                        }
+                                    } else {
+                                        $tabSuiviPrels[$j]['maj'] = 'N';
+                                    }
                                 } else {
-                                    $tabSuiviPrels[$j]['maj'] = 'N';
+                                    if ($user->hasRole('ROLE_ADMINSQE')) {
+                                        $tabSuiviPrels[$j]['maj'] = 'O';
+                                        $tabCmdPrelevs[$i]['maj'] = 'O';
+                                        $tabDemande[$i]['maj'] = 'O';
+                                    } else {
+                                        $tabSuiviPrels[$j]['maj'] = 'N';
+                                    }
                                 }
-                            } else {
-                                if ($user->hasRole('ROLE_ADMINSQE')) {
-                                    $tabSuiviPrels[$j]['maj'] = 'O';
-                                    $tabDemande[$i]['maj'] = 'O';
-                                } else {
-                                    $tabSuiviPrels[$j]['maj'] = 'N';
-                                }
+                                $j++;
                             }
-                            $j++;
                         }
                         $tabCmdPrelevs[$i]['suiviPrels'] = $tabSuiviPrels;
                         $i++;
@@ -234,8 +247,8 @@ class SuiviPrelevementsController extends Controller {
 
 
 
-//          \Symfony\Component\VarDumper\VarDumper::dump($tabDemande);
-//        return new Response ('');
+//        \Symfony\Component\VarDumper\VarDumper::dump($tabDemande);
+//        return new Response('');
 
         return $this->render('AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemande.html.twig', array(
                     'user' => $pgProgWebUser,
@@ -367,6 +380,81 @@ class SuiviPrelevementsController extends Controller {
 
 
 //          \Symfony\Component\VarDumper\VarDumper::dump($tabDemande);
+//        return new Response ('');
+    }
+
+    public function lotPeriodeStationDemandeSuiviSaisirAction($prelevId = null, $periodeAnId = null, $stationId = null, Request $request) {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'suiviPrelevements');
+        $session->set('controller', 'SuiviPrelevements');
+        $session->set('fonction', 'lotPeriodeStationDemandeSuiviNew');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
+        $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
+        $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
+        $repoPgRefStationMesure = $emSqe->getRepository('AeagSqeBundle:PgRefStationMesure');
+        $repoPgProgLotStationAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotStationAn');
+        $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
+        $repoPgProgLotPeriodeProg = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeProg');
+        $repoPgProgLotParamAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotParamAn');
+        $repoPgSandreUnites = $emSqe->getRepository('AeagSqeBundle:PgSandreUnites');
+
+        $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
+        $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevById($prelevId);
+
+        $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($periodeAnId);
+        $pgProgLotAn = $pgProgLotPeriodeAn->getLotAn();
+        $pgProgLot = $pgProgLotAn->getLot();
+        $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
+        $pgRefStationMesure = $repoPgRefStationMesure->getPgRefStationMesureByOuvFoncId($stationId);
+        $pgProgLotStationAn = $repoPgProgLotStationAn->getPgProgLotStationAnByLotAnStation($pgProgLotAn, $pgRefStationMesure);
+        $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByStationAnPeriodeAn($pgProgLotStationAn, $pgProgLotPeriodeAn);
+        $tabGroupes = array();
+        $nbGroupes = 0;
+        foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
+            $pgProgLotGrparAn = $pgProgLotPeriodeProg->getGrparAn();
+            if ($pgProgLotGrparAn->getvalide() == 'O') {
+                $pgProgGrpParamRef = $pgProgLotGrparAn->getGrparRef();
+                // if ($pgProgGrpParamRef->getCodeMilieu()->getCodeMilieu() == $pgProgTypeMilieu->getCodeMilieu()) {
+                $tabGroupes[$nbGroupes]['grparAn'] = $pgProgLotGrparAn;
+                $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
+                $tabParamAns = array();
+                $nbParamAns = 0;
+                foreach( $pgProgLotParamAns as  $pgProgLotParamAn){
+                    $tabParamAns[$nbParamAns]['paramAn'] = $pgProgLotParamAn;
+                    if ($pgProgLotParamAn->getCodeUnite()){
+                        $pgSandreUnite = $repoPgSandreUnites->getPgSandreUnitesByCodeUnite($pgProgLotParamAn->getCodeUnite());
+                        $tabParamAns[$nbParamAns]['unite'] = $pgSandreUnite;
+                        $tabParamAns[$nbParamAns]['unites'] = array();
+                    }else{
+                        $tabParamAns[$nbParamAns]['unite'] = null;
+                        $tabParamAns[$nbParamAns]['unites'] = $pgProgLotParamAn->getCodeParametre()->getCodeUnite();
+                    }
+                    $nbParamAns++;
+                }
+                $tabGroupes[$nbGroupes]['paramAns'] = $tabParamAns;
+                $nbGroupes++;
+                // }
+            }
+        }
+
+        return $this->render('AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemandeSuiviSaisir.html.twig', array(
+                    'user' => $pgProgWebUser,
+                    'lotan' => $pgProgLotAn,
+                    'station' => $pgRefStationMesure,
+                    'periodeAn' => $pgProgLotPeriodeAn,
+                    'demande' => $pgCmdPrelev->getDemande(),
+                    'cmdPrelev' => $pgCmdPrelev,
+                    'groupes' => $tabGroupes));
+
+
+//          \Symfony\Component\VarDumper\VarDumper::dump($tabGroupes);
 //        return new Response ('');
     }
 

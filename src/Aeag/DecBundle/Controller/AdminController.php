@@ -545,8 +545,8 @@ class AdminController extends Controller {
         $declarations = $repoDeclarationCollecteur->getDeclarationCollecteursByAnnee($annee);
         $ok = null;
         foreach ($declarations as $declaration) {
-            $ok = CollecteurController::majStatutDeclarationCollecteursAction($declaration->getId(), $user, $emDec, $session);
-            //  print_r($declaration->getId() . ' statut : ' . $declaration->getStatut()->getCode());
+                $ok = CollecteurController::majStatutDeclarationCollecteursAction($declaration->getId(), $user, $emDec, $session);
+              //  print_r($declaration->getId() . ' statut : ' . $declaration->getStatut()->getCode());
         }
         return $this->redirect($this->generateUrl('AeagDecBundle_admin_listeDeclarationCollecteurs', array('annee' => $annee, 'statut' => '99')));
     }
