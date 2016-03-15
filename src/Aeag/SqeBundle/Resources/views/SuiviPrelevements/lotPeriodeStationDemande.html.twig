@@ -30,7 +30,7 @@
          
         {#modal nouveau suivi #}
               <div class="modal fade" id="modalNouveauSuivi{{cmdPrelev.cmdPrelev.id}}" >
-                  <div class="modal-dialog">
+                  <div class="modal-dialog modal-lg">
                              <div class="modal-content" >
                                       <div class="modal-header">
                                           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -39,13 +39,14 @@
                                       <div class="modal-body">
                                           <div id="idModalContentNouveauSuivi{{ cmdPrelev.cmdPrelev.id }}"></div>
                                         </div>   
+                                      <div class="modal-footer"></div>
                              </div>
                   </div>
               </div>
                                         
             {#modal saisie des résultats #}
               <div class="modal fade" id="modalSaisir{{ cmdPrelev.cmdPrelev.id }}" >
-                  <div class="modal-dialog">
+                  <div class="modal-dialog modal-lg">
                              <div class="modal-content" >
                                       <div class="modal-header">
                                           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -62,6 +63,7 @@
                                       <div class="modal-body">
                                           <div id="idModalContentSaisir{{ cmdPrelev.cmdPrelev.id }}"></div>
                                         </div>   
+                                      <div class="modal-footer"></div>
                              </div>
                   </div>
               </div>
@@ -80,7 +82,8 @@
                                                              </div>
                                                            <div class="modal-body">
                                                                <div id="idModalContentMajSuivi{{ suiviPrel.suiviPrel.id }}"></div>
-                                                             </div>   
+                                                             </div>  
+                                                             <div class="modal-footer"></div>
                                                   </div>
                                        </div>
                                    </div>
@@ -137,12 +140,12 @@
                     {% endif %}
                     {% if is_granted('ROLE_ADMINSQE')  or cmdPrelev.maj == 'O' %}
                             <a class="btn btn-success" id="idNouveauSuivi{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Nouveau suivi">
-                                 <i class="fa fa-plus"> Nouveau</i>
+                                 <i class="fa fa-comment"> Ajouter un suivi</i>
                             </a>
                      {% endif %}
                      {% if is_granted('ROLE_ADMINSQE')  or cmdPrelev.saisie == 'O' %}
-                            <a class="btn btn-success" id="idSaisir{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Saisie des résultats">
-                               <i class="fa fa-plus"> Saisie des résultats</i>
+                            <a class="btn btn-warning" id="idSaisir{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Saisie des résultats">
+                               <i class="fa fa-pencil"> Saisir des résultats</i>
                            </a>
                     {% endif %}
             </caption> 
@@ -161,14 +164,14 @@
                                 <tr>
                                         <td align="center" nowrap> 
                                             {% if  suiviPrel.maj == 'O' %}
-                                                 <a class="btn btn-success" id="idMajSuivi{{ suiviPrel.suiviPrel.id  }}" href="#" title="Maj suivi">
+                                                 <a class="btn btn-success" id="idMajSuivi{{ suiviPrel.suiviPrel.id  }}" href="#" title="Modifier le suivi">
                                                   <i class="fa fa-edit"> </i>
                                                  </a>
                                                    <a class="btn btn-danger" data-toggle="modal" href="#sup-{{ suiviPrel.suiviPrel.id }}" title="Supprimer le suivi">
                                                             <i class="fa fa-trash-o"></i>
                                                     </a>
                                             {% else %}
-                                                  <a id="id_{{ suiviPrel.suiviPrel.id }}" class="btn btn-primary" href="#" title="consulter suivi prélèvement">
+                                                  <a id="id_{{ suiviPrel.suiviPrel.id }}" class="btn btn-primary" href="#" title="consulter le suivi">
                                                    <i class="fa fa-eye"></i> 
                                                </a>
                                             {% endif %}
@@ -293,11 +296,16 @@
                                                       }
                                                });
                                      });
+                                     
+                                     
+                                     
+                                     
                              {% endif %}     
                    {% endfor %}
                              
             
          {% endfor %}
+         
          
       });
     

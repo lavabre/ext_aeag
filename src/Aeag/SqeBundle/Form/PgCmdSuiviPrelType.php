@@ -18,7 +18,7 @@ class PgCmdSuiviPrelType extends AbstractType {
                         'choices'   => array('P' => 'Prévisionnel', 'F' => 'Effectué', 'N' => 'Non effectué', 'V' => 'Validé', 'R' => 'Réfusé'),
                         'required'  => true,
                     ))
-                ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => false))
+                ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
 
         ;
     }
