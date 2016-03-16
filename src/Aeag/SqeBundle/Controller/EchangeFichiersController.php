@@ -58,7 +58,7 @@ class EchangeFichiersController extends Controller {
         $reponsesMax = array();
         foreach ($pgCmdDemandes as $pgCmdDemande) {
             $reponses[$pgCmdDemande->getId()] = $repoPgCmdFichiersRps->getReponsesValidesByDemande($pgCmdDemande->getId());
-            $reponsesMax[$pgCmdDemande->getId()] = $repoPgCmdFichiersRps->findBy(array('demande' => $pgCmdDemande->getId(), 'suppr' => 'N'));
+            $reponsesMax[$pgCmdDemande->getId()] = $repoPgCmdFichiersRps->findBy(array('demande' => $pgCmdDemande->getId(), 'typeFichier' => 'RPS','suppr' => 'N'));
         }
         return $this->render('AeagSqeBundle:EchangeFichiers:demandes.html.twig', array('user' => $pgProgWebUser,
                     'demandes' => $pgCmdDemandes,
@@ -132,6 +132,7 @@ class EchangeFichiersController extends Controller {
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
 
         $pgCmdFichiersRps = $repoPgCmdFichiersRps->findBy(array('demande' => $demandeId,
+            'typeFichier' => 'RPS',
             'suppr' => 'N'));
         $pgCmdDemande = $repoPgCmdDemande->findOneById($demandeId);
         $pgProgWebUser = $repoPgProgWebUsers->findOneByExtId($user->getId());

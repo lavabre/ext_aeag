@@ -45,13 +45,13 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
 
         // On récupère les RAIs dont les phases sont en R25
         $pgProgPhases = $this->repoPgProgPhases->findOneByCodePhase('R25');
-        $pgCmdFichiersRps = $this->repoPgCmdFichiersRps->findBy(array('phaseFichier' => $pgProgPhases, 'suppr' => 'N'));
+        $pgCmdFichiersRps = $this->repoPgCmdFichiersRps->findBy(array('phaseFichier' => $pgProgPhases, 'typeFichier' => 'RPS', 'suppr' => 'N'));
 
         foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
 
             $this->_coherenceRaiDai($pgCmdFichierRps);
 
-            // TODO Changement de la phase en fonction des retours
+            // Changement de la phase en fonction des retours
             $logErrors = $this->repoPgLogValidEdilabo->findBy(array('demandeId' => $pgCmdFichierRps->getDemande()->getId(), 'fichierRpsId' => $pgCmdFichierRps->getId(), 'typeErreur' => 'error'));
             $logWarnings = $this->repoPgLogValidEdilabo->findBy(array('demandeId' => $pgCmdFichierRps->getDemande()->getId(), 'fichierRpsId' => $pgCmdFichierRps->getId(), 'typeErreur' => 'warning'));
 
@@ -68,7 +68,7 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
 
             $this->_controleVraisemblance($pgCmdFichierRps);
 
-            // TODO Changement de la phase en fonction des retours
+            // Changement de la phase en fonction des retours
             $logErrors = $this->repoPgLogValidEdilabo->findBy(array('demandeId' => $pgCmdFichierRps->getDemande()->getId(), 'fichierRpsId' => $pgCmdFichierRps->getId(), 'typeErreur' => 'error'));
             $logWarnings = $this->repoPgLogValidEdilabo->findBy(array('demandeId' => $pgCmdFichierRps->getDemande()->getId(), 'fichierRpsId' => $pgCmdFichierRps->getId(), 'typeErreur' => 'warning'));
 
@@ -84,6 +84,8 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
             }
 
             // TODO Vider la table tempo des lignes correspondant à la RAI
+            
+            // TODO On en fait quoi des logs ?
         }
     }
 

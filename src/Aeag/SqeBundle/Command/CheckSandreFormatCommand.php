@@ -12,6 +12,13 @@ use Aeag\AeagBundle\Entity\Message;
 
 class CheckSandreFormatCommand extends ContainerAwareCommand {
 
+    private $emSqe;
+    private $em;
+    private $output;
+    private $repoPgCmdFichiersRps;
+    private $repoPgProgPhases;
+    private $repoPgProgWebUsers;
+    
     protected function configure() {
         $this
                 ->setName('rai:check_sandre')
@@ -20,16 +27,17 @@ class CheckSandreFormatCommand extends ContainerAwareCommand {
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) {
-        $emSqe = $this->getContainer()->get('doctrine')->getManager('sqe');
-        $em = $this->getContainer()->get('doctrine')->getManager();
+        $this->emSqe = $this->getContainer()->get('doctrine')->getManager('sqe');
+        $this->em = $this->getContainer()->get('doctrine')->getManager();
+        $this->output = $output;
         
         // Récupération des programmations
-        $repoPgCmdFichiersRps = $emSqe->getRepository('AeagSqeBundle:PgCmdFichiersRps');
-        $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
-        $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
+        $this->repoPgCmdFichiersRps = $this->emSqe->getRepository('AeagSqeBundle:PgCmdFichiersRps');
+        $this->repoPgProgPhases = $this->emSqe->getRepository('AeagSqeBundle:PgProgPhases');
+        $this->repoPgProgWebUsers = $this->emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
 
-        $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R15');
-        $pgCmdFichiersRps = $repoPgCmdFichiersRps->findBy(array('phaseFichier' => $pgProgPhases, 'suppr' => 'N'));
+        $pgProgPhases = $this->repoPgProgPhases->findOneByCodePhase('R15');
+        $pgCmdFichiersRps = $this->repoPgCmdFichiersRps->findBy(array('phaseFichier' => $pgProgPhases, 'typeFichier' => 'RPS', 'suppr' => 'N'));
 
         foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
             $this->_updatePhase($pgCmdFichierRps, 'R16');
@@ -62,21 +70,23 @@ class CheckSandreFormatCommand extends ContainerAwareCommand {
                                 $erreurs[] = $erreurXml["DescriptifErreur"];
                             }
                         }
-                        $destinataires = $repoPgProgWebUsers->findByTypeUser('ADMIN');
+                        $destinataires = $this->repoPgProgWebUsers->findByTypeUser('ADMIN');
                     }
                     
                     // Création du fichier de compte rendu
                     $this->_creationFichierCr($pgCmdFichierRps, $erreurs);
                     
-                    $emSqe->persist($pgCmdFichierRps);
-                    $emSqe->flush();
+                    $this->emSqe->persist($pgCmdFichierRps);
+                    $this->emSqe->flush();
                     
                     // Envoi de mail au prestataire et à l'admin
                     $objetMessage = "SQE - DAI " . $pgCmdFichierRps->getDemande()->getCodeDemandeCmd() . " : Fichier " . $pgCmdFichierRps->getId() . $validMessage;
                     $txtMessage = "La RAI " . $pgCmdFichierRps->getNomFichier() . " concernant la DAI " . $pgCmdFichierRps->getDemande()->getCodeDemandeCmd() . " a été analysé. Celui-ci possède un format ".$validMessage.".";
-                    $destinataires[] = $repoPgProgWebUsers->findOneByPrestataire($pgCmdFichierRps->getDemande()->getPrestataire());
+                    $destinataires[] = $this->repoPgProgWebUsers->findOneByPrestataire($pgCmdFichierRps->getDemande()->getPrestataire());
                     foreach ($destinataires as $destinataire) {
-                        $this->_envoiMessage($em, $txtMessage, $destinataire, $objetMessage);
+                        if (!is_null($destinataire)) {
+                            $this->_envoiMessage($txtMessage, $destinataire, $objetMessage);
+                        }
                     }
                 }
                 
@@ -110,7 +120,7 @@ class CheckSandreFormatCommand extends ContainerAwareCommand {
         $pgCmdFichierRps->setNomFichierCompteRendu($fileName);
     }
 
-    protected function _envoiMessage($em, $txtMessage, $destinataire, $objet, $expediteur = 'automate@eau-adour-garonne.fr') {
+    protected function _envoiMessage($txtMessage, $destinataire, $objet, $expediteur = 'automate@eau-adour-garonne.fr') {
 
         $message = new Message();
         $message->setRecepteur($destinataire->getId());
@@ -123,7 +133,7 @@ class CheckSandreFormatCommand extends ContainerAwareCommand {
         $texte .= " " . PHP_EOL;
         $texte .= "Cordialement.";
         $message->setMessage($texte);
-        $em->persist($message);
+        $this->em->persist($message);
 
         $notification = new Notification();
         $notification->setRecepteur($destinataire->getId());
@@ -131,7 +141,7 @@ class CheckSandreFormatCommand extends ContainerAwareCommand {
         $notification->setNouveau(true);
         $notification->setIteration(2);
         $notification->setMessage($txtMessage);
-        $em->persist($notification);
+        $this->em->persist($notification);
 
         // Récupération du service
         $mailer = $this->getContainer()->get('mailer');
@@ -144,12 +154,11 @@ class CheckSandreFormatCommand extends ContainerAwareCommand {
 
         $mailer->send($mail);
 
-        $em->flush();
+        $this->em->flush();
     }
     
     protected function _updatePhase($pgCmdFichierRps, $phase) {
-        $repoPgProgPhases = $this->emSqe->getRepository('AeagSqeBundle:PgProgPhases');
-        $pgProgPhases = $repoPgProgPhases->findOneByCodePhase($phase);
+        $pgProgPhases = $this->repoPgProgPhases->findOneByCodePhase($phase);
         $pgCmdFichierRps->setPhaseFichier($pgProgPhases);
         $this->emSqe->persist($pgCmdFichierRps);
         

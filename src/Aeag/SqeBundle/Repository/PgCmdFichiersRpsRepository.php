@@ -16,19 +16,11 @@ class PgCmdFichiersRpsRepository extends EntityRepository {
         $query .= " where rps.demande = :demande"; 
         $query .= " and rps.phaseFichier = pha.id";
         $query .= " and pha.codePhase IN (:phase)";
+        $query .= " and rps.typeFichier = 'RPS'";
         $query .= " and rps.suppr = 'N'";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('demande', $demande);
         $qb->setParameter('phase', array('R40','R41','R50','R51'));
         return $qb->getResult();
-    }
-    
-     public function getFichierRpsById($id) {
-        $query = "select rps";
-        $query .= " from Aeag\SqeBundle\Entity\PgCmdFichiersRps rps";
-        $query .= " where rps.id  = :id"; 
-        $qb = $this->_em->createQuery($query);
-        $qb->setParameter('id', $id);
-       return $qb->getOneOrNullResult();
     }
 }
