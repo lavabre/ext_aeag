@@ -7,7 +7,7 @@
         {% else %}
              <div class="col-xs-8 input-group">
          {% endif %}
-           {{ form_widget(form.datePrel, { 'attr': {'class': 'form-control ', 'placeholder': 'Date'} }) }}
+           {{ form_widget(form.datePrel, { 'attr': {'class': 'form-control ', 'placeholder': 'Date', 'readonly': 'readonly'} }) }}
          </div>
  </div> 
          
@@ -32,23 +32,7 @@
            {{ form_widget(form.commentaire, { 'attr': {'class': 'form-control ', 'placeholder': 'Commentaire'} }) }}
          </div>
  </div> 
-         
-         
-     <div class="form-group">
-         <label class="col-xs-3 control-label">Fichier terrain : </label>
-         <div id="idResultat">
-                <div id="idSelection" class="col-xs-7">
-                       <form method="POST" enctype="multipart/form-data" action="#" id="idFormFichier">
-                          <input class="form-control" type="file" name="file" >
-                      </form> 
-                </div>
-                 <div class="col-xs-1">
-                     <button type="button" id="idDeposer" class="btn btn-success" >Déposer</button> 
-                  </div>
-            </div>
-         <div id="idProgress" class="col-xs-7 info"><progress></progress></div>
-      </div>
-         
+           
      <div class="form-group">
         <div class="col-xs-offset-4 col-xs-8">
            <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
@@ -65,107 +49,23 @@
             
              jQuery(document).ready(function() {
             
-              $('#datePrel').datepicker();
-            
-                    $(document).on('change','#statutPrel',function(e){
-                       e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                       if ($('#statutPrel').val() == 'F'){
-                           $('#commentaire').removeAttr('required');
-                      }else{
-                          $('#commentaire').attr('required', ''); 
-                      };
-                  });
-                  
-                 {# $('#idDeposer').click(function (){
-                            $('#modalTraitementEncours').modal();
-                            $('#idFormFichier').submit();
-                           $('#idSelection').hide();
-                            $('#idResultat').empty().append('Fichier déposé');
-                            $('#modalTraitementEncours').modal('hide');
-                });#}
-            
-               $('#idProgress').hide();
-               $('#idDeposer').on('click', function (e) {
-                         e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                         $('#modalTraitementEncours').modal('toggle');
-                         $('#idPprogress').show();
-                        var url = '{{ path("AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_fichier_deposer",{"suiviPrelId":  "par1", "periodeAnId": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
-                         url = url.replace("par1", {{ suiviPrel.id }});
-                         url = url.replace("par2", {{ periodeAnId }});
-                         url = url.replace("amp;","");
-                         var formulaire = new FormData($('form')[0]);
-                         $.ajax({
-                                      url: url,
-                                      type: 'post',
-                                      xhr: function() { // xhr qui traite la barre de progression
-                                            myXhr = $.ajaxSettings.xhr();
-                                            if(myXhr.upload){ // vérifie si l'upload existe
-                                            myXhr.upload.addEventListener('progress',afficherAvancement, false); // Pour ajouter l'évènement progress sur l'upload de fichier
-                                            }
-                                            return myXhr;
-                                       },
-                                      //Traitements AJAX
-                                      success: function(html) { // Je récupère la réponse du fichier PHP
-                                            $('#idResultat').empty().append(html);
-                                            $('#modalTraitementEncours').modal('hide');
-                                            $('#idProgress').hide();
-                                      },
-                                       error: function(html) { // Je récupère la réponse du fichier PHP
-                                                $('#idResultat').empty().append('erreur lors du dépot');
-                                                $('#modalTraitementEncours').modal('hide');
-                                                 $('#idProgress').hide();
-                                      },
-                                      data: formulaire,
-                                      cache: false,
-                                      contentType: false,
-                                      processData: false
-                             });
-                   });
-                   
-                     $('#idSupprimer').on('click', function (e) {
-                         e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                         $('#modalTraitementEncours').modal('toggle');
-                         $('#idPprogress').show();
-                        var url = '{{ path("AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_fichier_supprimer",{"suiviPrelId":  "par1", "periodeAnId": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
-                         url = url.replace("par1", {{ suiviPrel.id }});
-                         url = url.replace("par2", {{ periodeAnId }});
-                         url = url.replace("amp;","");
-                         var formulaire = new FormData($('form')[0]);
-                         $.ajax({
-                                      url: url,
-                                      type: 'post',
-                                      xhr: function() { // xhr qui traite la barre de progression
-                                            myXhr = $.ajaxSettings.xhr();
-                                            if(myXhr.upload){ // vérifie si l'upload existe
-                                            myXhr.upload.addEventListener('progress',afficherAvancement, false); // Pour ajouter l'évènement progress sur l'upload de fichier
-                                            }
-                                            return myXhr;
-                                       },
-                                      //Traitements AJAX
-                                      success: function(html) { // Je récupère la réponse du fichier PHP
-                                            $('#idResultat').empty().append(html);
-                                            $('#modalTraitementEncours').modal('hide');
-                                            $('#idProgress').hide();
-                                      },
-                                       error: function(html) { // Je récupère la réponse du fichier PHP
-                                                $('#idResultat').empty().append('erreur lors du dépot');
-                                                $('#modalTraitementEncours').modal('hide');
-                                                 $('#idProgress').hide();
-                                      },
-                                      data: formulaire,
-                                      cache: false,
-                                      contentType: false,
-                                      processData: false
-                             });
-                   });
-                   
-                   
-                   function afficherAvancement(e){
-                        if(e.lengthComputable){
-                                  $('progress').attr({value:e.loaded,max:e.total});
-                        }
-                   }
               
+                if ($('#statutPrel').val() != 'N'){
+                       $('#commentaire').removeAttr('required');
+                   }else{
+                      $('#commentaire').attr('required', ''); 
+                  };
+            
+                $(document).on('change','#statutPrel',function(e){
+                   e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                   if ($('#statutPrel').val() != 'N'){
+                       $('#commentaire').removeAttr('required');
+                  }else{
+                      $('#commentaire').attr('required', ''); 
+                  };
+              });
+           
+        
        });
             
         </script>

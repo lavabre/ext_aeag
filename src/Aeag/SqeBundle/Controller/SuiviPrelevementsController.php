@@ -7,7 +7,8 @@ use Aeag\AeagBundle\Entity\Notification;
 use Aeag\AeagBundle\Entity\Message;
 use Aeag\SqeBundle\Entity\PgCmdSuiviPrel;
 use Aeag\SqeBundle\Entity\PgCmdFichiersRps;
-use Aeag\SqeBundle\Form\PgCmdSuiviPrelType;
+use Aeag\SqeBundle\Form\PgCmdSuiviPrelMajType;
+use Aeag\SqeBundle\Form\PgCmdSuiviPrelVoirType;
 use Aeag\AeagBundle\Controller\AeagController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -278,7 +279,7 @@ class SuiviPrelevementsController extends Controller {
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevById($prelevId);
         $pgCmdSuiviPrel = new PgCmdSuiviPrel();
-        $form = $this->createForm(new PgCmdSuiviPrelType(), $pgCmdSuiviPrel);
+        $form = $this->createForm(new PgCmdSuiviPrelMajType($user), $pgCmdSuiviPrel);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
@@ -286,6 +287,17 @@ class SuiviPrelevementsController extends Controller {
             $pgCmdSuiviPrel->setUser($pgProgWebUser);
             $datePrel = $pgCmdSuiviPrel->getDatePrel();
             $emSqe->persist($pgCmdSuiviPrel);
+            if ($pgCmdSuiviPrel->getStatutPrel() == 'F') {
+                $pgCmdPrelev->setDatePrelev($datePrel);
+                $pgCmdPrelev->setRealise('O');
+            } elseif ($pgCmdSuiviPrel->getStatutPrel() == 'N') {
+                $pgCmdPrelev->setDatePrelev($datePrel);
+                $pgCmdPrelev->setRealise('N');
+            } else {
+                $pgCmdPrelev->setDatePrelev(null);
+                $pgCmdPrelev->setRealise(null);
+            }
+            $emSqe->persist($pgCmdPrelev);
             $emSqe->flush();
             $session->getFlashBag()->add('notice-success', 'le suivi du ' . $datePrel->format('d/m/Y') . ' a été créé !');
 
@@ -315,7 +327,7 @@ class SuiviPrelevementsController extends Controller {
         $session = $this->get('session');
         $session->set('menu', 'suiviPrelevements');
         $session->set('controller', 'SuiviPrelevements');
-        $session->set('fonction', 'lotPeriodeStationDemandeSuiviNew');
+        $session->set('fonction', 'lotPeriodeStationDemandeSuiviMaj');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
         $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
@@ -325,7 +337,7 @@ class SuiviPrelevementsController extends Controller {
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgCmdSuiviPrel = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelById($suiviPrelId);
         $pgCmdPrelev = $pgCmdSuiviPrel->getPrelev();
-        $form = $this->createForm(new PgCmdSuiviPrelType(), $pgCmdSuiviPrel);
+        $form = $this->createForm(new PgCmdSuiviPrelMajType($user), $pgCmdSuiviPrel);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
@@ -363,7 +375,7 @@ class SuiviPrelevementsController extends Controller {
 //        return new Response ('');
     }
 
-    public function lotPeriodeStationDemandeSuiviFichierDeposerAction($suiviPrelId = null, $periodeAnId = null) {
+    public function lotPeriodeStationDemandeSuiviVoirAction($suiviPrelId = null, $periodeAnId = null) {
 
         $user = $this->getUser();
         if (!$user) {
@@ -372,101 +384,39 @@ class SuiviPrelevementsController extends Controller {
         $session = $this->get('session');
         $session->set('menu', 'suiviPrelevements');
         $session->set('controller', 'SuiviPrelevements');
-        $session->set('fonction', 'lotPeriodeStationDemandeSuiviNew');
+        $session->set('fonction', 'lotPeriodeStationDemandeSuiviVoir');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
         $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
         $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
-         $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
 
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgCmdSuiviPrel = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelById($suiviPrelId);
-        $pgCmdPrelev = $pgCmdSuiviPrel->getPrelev();
-        $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R10');
-
-        // Récupération des valeurs du fichier
-
-        $name = $_FILES['file']['name'];
-        $tmpName = $_FILES['file']['tmp_name'];
-        $error = $_FILES['file']['error'];
-        $size = $_FILES['file']['size'];
-        $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
-        $response = null;
-
-        switch ($error) {
-            case UPLOAD_ERR_OK:
-                $valid = true;
-//validate file size
-                if ($size / 1024 / 1024 > 2) {
-                    $valid = false;
-                    $response = 'La taille du fichier est plus grande que la taille autorisée.';
-                }
-//upload file
-                if ($valid) {
-                    // Enregistrement des valeurs en base
-                    $pgCmdFichiersRps = new PgCmdFichiersRps();
-                    $pgCmdFichiersRps->setDemande($pgCmdPrelev->getDemande());
-                    $pgCmdFichiersRps->setNomFichier($name);
-                    $pgCmdFichiersRps->setDateDepot(new \DateTime());
-                    $pgCmdFichiersRps->setTypeFichier('SUI');
-                    $pgCmdFichiersRps->setPhaseFichier($pgProgPhases);
-                    $pgCmdFichiersRps->setUser($pgProgWebUser);
-                    $pgCmdFichiersRps->setSuppr('N');
-
-                    $emSqe->persist($pgCmdFichiersRps);
-                    $emSqe->flush();
-                   // Enregistrement du fichier sur le serveur
-                    $pathBase = $this->getCheminEchange($pgCmdSuiviPrel, $pgCmdFichiersRps->getId());
-                   if (!mkdir($pathBase, 0777, true)) {
-                        $session->getFlashBag()->add('notice-error', 'Le répertoire : '  . $pathBase . ' n\'a pas pu être créé');;
-                    }else{
-                        move_uploaded_file($_FILES['file']['tmp_name'], $pathBase . '/' . $name);
-                        $tabResponse = array();
-                        $tabResponse[0] =  $name;
-                        $tabResponse[1] = 
-                        $html =  $name . " <button type='button' id='idSupprimer' class='btn btn-danger' >Supprimer</button>";
-                        $response = $html;
-                    }
-               }
-                break;
-            case UPLOAD_ERR_INI_SIZE:
-                $response = 'Le fichier téléchargé excède la taille de upload_max_filesize dans php.ini.';
-                break;
-            case UPLOAD_ERR_FORM_SIZE:
-                $response = 'Le fichier téléchargé excède la taille de MAX_FILE_SIZE qui a été spécifié dans le formulaire HTML.';
-                break;
-            case UPLOAD_ERR_PARTIAL:
-                $response = 'Le fichier n\'a été que partiellement téléchargé.';
-                break;
-            case UPLOAD_ERR_NO_FILE:
-                $response = 'Aucun fichier sélectionné.';
-                break;
-            case UPLOAD_ERR_NO_TMP_DIR:
-                $response = 'Manquantes dans un dossier temporaire. Introduit en PHP 4.3.10 et PHP 5.0.3.';
-                break;
-            case UPLOAD_ERR_CANT_WRITE:
-                $response = 'Impossible d\'écrire le fichier sur le disque. Introduit en PHP 5.1.0.';
-                break;
-            case UPLOAD_ERR_EXTENSION:
-                $response = 'Le téléchargement du fichier arrêté par extension. Introduit en PHP 5.2.0.';
-                break;
-            default:
-                $response = 'erreur inconnue';
-                break;
+        if ($pgCmdSuiviPrel->getFichierRps()) {
+            $pgCmdFichiersRps = $pgCmdSuiviPrel->getFichierRps();
+            $pathBase = $this->getCheminEchange($pgCmdSuiviPrel, $pgCmdFichiersRps->getId());
+        } else {
+            $pathBase = null;
         }
+        $pgCmdPrelev = $pgCmdSuiviPrel->getPrelev();
+        $form = $this->createForm(new PgCmdSuiviPrelVoirType($user), $pgCmdSuiviPrel);
+
+        return $this->render('AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemandeSuiviVoir.html.twig', array(
+                    'prelev' => $pgCmdPrelev,
+                    'periodeAnId' => $periodeAnId,
+                    'suiviPrel' => $pgCmdSuiviPrel,
+                    'chemin' => $pathBase,
+                    'form' => $form->createView(),
+        ));
 
 
 
-//        if (substr($nomFichier, -3) != "zip") {
-//            $session->getFlashBag()->add('notice-error', 'Le fichier déposé n\'est pas un fichier zip');
-//            return $this->redirect($this->generateUrl('AeagSqeBundle_echangefichiers_demandes', array('lotanId' => $pgCmdDemande->getLotan()->getId())));
-//        }
-
-        return new Response($response);
+//          \Symfony\Component\VarDumper\VarDumper::dump($tabDemande);
+//        return new Response ('');
     }
-    
-    public function lotPeriodeStationDemandeSuiviFichierSupprimerAction($suiviPrelId = null, $periodeAnId = null) {
+
+    public function lotPeriodeStationDemandeSuiviDeposerAction($suiviPrelId = null, $periodeAnId = null, Request $request) {
 
         $user = $this->getUser();
         if (!$user) {
@@ -475,22 +425,26 @@ class SuiviPrelevementsController extends Controller {
         $session = $this->get('session');
         $session->set('menu', 'suiviPrelevements');
         $session->set('controller', 'SuiviPrelevements');
-        $session->set('fonction', 'lotPeriodeStationDemandeSuiviNew');
+        $session->set('fonction', 'lotPeriodeStationDemandeSuiviDeposer');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
-        $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
         $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
-         $repoPgCmdFichiersRps = $emSqe->getRepository('AeagSqeBundle:PgCmdFichiersRps');
 
-        $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgCmdSuiviPrel = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelById($suiviPrelId);
         $pgCmdPrelev = $pgCmdSuiviPrel->getPrelev();
-        
-        $pathBase = $this->getCheminEchange($pgCmdSuiviPrel, $pgCmdFichiersRps->getId());
-        $response = null;
-     
-        return new Response($response);
+
+
+        return $this->render('AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemandeSuiviDeposer.html.twig', array(
+                    'prelev' => $pgCmdPrelev,
+                    'periodeAnId' => $periodeAnId,
+                    'suiviPrel' => $pgCmdSuiviPrel
+        ));
+
+
+
+//          \Symfony\Component\VarDumper\VarDumper::dump($tabDemande);
+//        return new Response ('');
     }
 
     public function lotPeriodeStationDemandeSuiviSupprimerAction($suiviPrelId = null, $periodeAnId = null) {
@@ -511,6 +465,25 @@ class SuiviPrelevementsController extends Controller {
         $pgCmdSuiviPrel = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelById($suiviPrelId);
         $pgCmdPrelev = $pgCmdSuiviPrel->getPrelev();
         $datePrel = $pgCmdSuiviPrel->getDatePrel();
+        if ($pgCmdSuiviPrel->getFichierRps()) {
+            $pgCmdFichiersRps = $pgCmdSuiviPrel->getFichierRps();
+            $dossier = $this->getCheminEchange($pgCmdSuiviPrel);
+            $dir_iterator = new \RecursiveDirectoryIterator($dossier);
+            $iterator = new \RecursiveIteratorIterator($dir_iterator, \RecursiveIteratorIterator::CHILD_FIRST);
+
+            // On supprime chaque dossier et chaque fichier	du dossier cible
+            foreach ($iterator as $fichier) {
+                if ($fichier != "." && $fichier != "..") {
+                    is_dir($fichier) ? null : unlink($fichier);
+                }
+            }
+            // On supprime le dossier cible
+            rmdir($dossier);
+            // On supprime l'enregistrement  $pgCmdFichiersRps
+            $pgCmdSuiviPrel->setFichierRps(null);
+            $emSqe->persist($pgCmdSuiviPrel);
+            $emSqe->remove($pgCmdFichiersRps);
+        }
         $emSqe->remove($pgCmdSuiviPrel);
         $emSqe->flush();
 
@@ -600,14 +573,197 @@ class SuiviPrelevementsController extends Controller {
 //        return new Response ('');
     }
 
-    protected function getCheminEchange($pgCmdSuiviPrel, $reponseId = null) {
+    public function lotPeriodeStationDemandeSuiviFichierDeposerAction($suiviPrelId = null, $periodeAnId = null) {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'suiviPrelevements');
+        $session->set('controller', 'SuiviPrelevements');
+        $session->set('fonction', 'lotPeriodeStationDemandeSuiviFichierDeposer');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
+        $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
+        $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
+        $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
+
+        $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
+        $pgCmdSuiviPrel = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelById($suiviPrelId);
+        $pgCmdPrelev = $pgCmdSuiviPrel->getPrelev();
+        $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R10');
+
+        // Récupération des valeurs du fichier
+
+        $name = $_FILES['file']['name'];
+        $tmpName = $_FILES['file']['tmp_name'];
+        $error = $_FILES['file']['error'];
+        $size = $_FILES['file']['size'] / 1024;
+        $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+        $response = null;
+
+        switch ($error) {
+            case UPLOAD_ERR_OK:
+                $valid = true;
+//validate file size
+                if ($size / 1024 / 1024 > 2) {
+                    $valid = false;
+                    $response = 'La taille du fichier est plus grande que la taille autorisée.';
+                }
+//upload file
+                if ($valid) {
+                    // Enregistrement des valeurs en base
+                    if ($pgCmdSuiviPrel->getFichierRps()) {
+                        $pgCmdFichiersRps = $pgCmdSuiviPrel->getFichierRps();
+                        $emSqe->remove($pgCmdFichiersRps);
+                    }
+                    $pgCmdFichiersRps = new PgCmdFichiersRps();
+                    $pgCmdFichiersRps->setDemande($pgCmdPrelev->getDemande());
+                    $pgCmdFichiersRps->setNomFichier($name);
+                    $pgCmdFichiersRps->setDateDepot(new \DateTime());
+                    $pgCmdFichiersRps->setTypeFichier('SUI');
+                    $pgCmdFichiersRps->setPhaseFichier($pgProgPhases);
+                    $pgCmdFichiersRps->setUser($pgProgWebUser);
+                    $pgCmdFichiersRps->setSuppr('N');
+
+                    $emSqe->persist($pgCmdFichiersRps);
+                    $pgCmdSuiviPrel->setFichierRps($pgCmdFichiersRps);
+                    $emSqe->persist($pgCmdSuiviPrel);
+                    $emSqe->flush();
+                    // Enregistrement du fichier sur le serveur
+                    $pathBase = $this->getCheminEchange($pgCmdSuiviPrel, $pgCmdFichiersRps->getId());
+                    if (!is_dir($pathBase)) {
+                        if (!mkdir($pathBase, 0777, true)) {
+                            $session->getFlashBag()->add('notice-error', 'Le répertoire : ' . $pathBase . ' n\'a pas pu être créé');
+                            ;
+                        }
+                    }
+                    move_uploaded_file($_FILES['file']['tmp_name'], $pathBase . '/' . $name);
+
+                    $dateDepot = $pgCmdFichiersRps->getDateDepot();
+                    $response = $name . ' déposé le ' . $dateDepot->format('d/m/Y');
+                    break;
+                }
+            case UPLOAD_ERR_INI_SIZE:
+                $response = 'La taille (' .   $size    . ' octets' . ') du fichier téléchargé excède la taille de upload_max_filesize dans php.ini.';
+                break;
+            case UPLOAD_ERR_FORM_SIZE:
+                $response = 'La taille (' . $size . ') du fichier téléchargé excède la taille de MAX_FILE_SIZE qui a été spécifié dans le formulaire HTML.';
+                break;
+            case UPLOAD_ERR_PARTIAL:
+                $response = 'Le fichier n\'a été que partiellement téléchargé.';
+                break;
+            case UPLOAD_ERR_NO_FILE:
+                $response = 'Aucun fichier sélectionné.';
+                break;
+            case UPLOAD_ERR_NO_TMP_DIR:
+                $response = 'Manquantes dans un dossier temporaire. Introduit en PHP 4.3.10 et PHP 5.0.3.';
+                break;
+            case UPLOAD_ERR_CANT_WRITE:
+                $response = 'Impossible d\'écrire le fichier sur le disque. Introduit en PHP 5.1.0.';
+                break;
+            case UPLOAD_ERR_EXTENSION:
+                $response = 'Le téléchargement du fichier arrêté par extension. Introduit en PHP 5.2.0.';
+                break;
+            default:
+                $response = 'erreur inconnue';
+                break;
+        }
+
+
+        return new Response($response);
+    }
+
+    public function lotPeriodeStationDemandeSuiviFichierSupprimerAction($suiviPrelId = null, $periodeAnId = null) {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'suiviPrelevements');
+        $session->set('controller', 'SuiviPrelevements');
+        $session->set('fonction', 'lotPeriodeStationDemandeSuiviFichierSupprimer');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
+        $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
+        $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
+        $repoPgCmdFichiersRps = $emSqe->getRepository('AeagSqeBundle:PgCmdFichiersRps');
+
+        $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
+        $pgCmdSuiviPrel = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelById($suiviPrelId);
+        $pgCmdPrelev = $pgCmdSuiviPrel->getPrelev();
+        $pgCmdFichiersRps = $pgCmdSuiviPrel->getFichierRps();
+
+        $dossier = $this->getCheminEchange($pgCmdSuiviPrel);
+        $dir_iterator = new \RecursiveDirectoryIterator($dossier);
+        $iterator = new \RecursiveIteratorIterator($dir_iterator, \RecursiveIteratorIterator::CHILD_FIRST);
+
+// On supprime chaque dossier et chaque fichier	du dossier cible
+        foreach ($iterator as $fichier) {
+            if ($fichier != "." && $fichier != "..") {
+                is_dir($fichier) ? null : unlink($fichier);
+            }
+        }
+// On supprime le dossier cible
+        rmdir($dossier);
+// On supprime l'enregistrement  $pgCmdFichiersRps
+        $pgCmdSuiviPrel->setFichierRps(null);
+        $emSqe->persist($pgCmdSuiviPrel);
+        $emSqe->remove($pgCmdFichiersRps);
+        $emSqe->flush();
+        $response = null;
+
+//        $html = '<div id="idSelection" class="col-xs-7">';
+//        $html += '<form method="POST" enctype="multipart/form-data" action="#" id="idFormFichier">';
+//        $html += '<input class="form-control" type="file" name="file" >';
+//        $html += '</form>';
+//        $html += '</div>';
+//        $html += '<div class="col-xs-1">';
+//        $html += '<button type="button" id="idDeposer" class="btn btn-success" >Déposer</button>';
+//        $html += '</div>';
+//
+//        $response = $html;
+
+        return new Response($response);
+    }
+
+    public function lotPeriodeStationDemandeSuiviFichierTelechargerAction($suiviPrelId = null) {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'suiviPrelevements');
+        $session->set('controller', 'SuiviPrelevements');
+        $session->set('fonction', 'lotPeriodeStationDemandeSuiviFichierTelecharger');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
+
+        $pgCmdSuiviPrel = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelById($suiviPrelId);
+        $pgCmdPrelev = $pgCmdSuiviPrel->getPrelev();
+        $pgCmdFichiersRps = $pgCmdSuiviPrel->getFichierRps();
+        $chemin = $this->getCheminEchange($pgCmdSuiviPrel);
+        $fichier = $pgCmdFichiersRps->getNomFichier();
+        $ext = strtolower(pathinfo($fichier, PATHINFO_EXTENSION));
+
+        header('Content-Type', 'application/' . $ext);
+        header('Content-disposition: attachment; filename="' . $fichier . '"');
+        header('Content-Length: ' . filesize($chemin . '/' . $fichier));
+        readfile($chemin . '/' . $fichier);
+        exit();
+    }
+
+    protected function getCheminEchange($pgCmdSuiviPrel) {
         $chemin = $this->container->getParameter('repertoire_echange');
         $chemin .= $pgCmdSuiviPrel->getPrelev()->getDemande()->getAnneeProg() . '/' . $pgCmdSuiviPrel->getPrelev()->getDemande()->getCommanditaire()->getNomCorres();
-         $chemin  .=   '/' . $pgCmdSuiviPrel->getPrelev()->getDemande()->getLotan()->getLot()->getId() . '/' . $pgCmdSuiviPrel->getPrelev()->getDemande()->getLotan()->getId();
-        $chemin  .=    '/' . $pgCmdSuiviPrel->getPrelev()->getId() . '/SUIVI/' . $pgCmdSuiviPrel->getId();
-        if (!is_null($reponseId)) {
-            $chemin .= '/' . $reponseId;
-        }
+        $chemin .= '/' . $pgCmdSuiviPrel->getPrelev()->getDemande()->getLotan()->getLot()->getId() . '/' . $pgCmdSuiviPrel->getPrelev()->getDemande()->getLotan()->getId();
+        $chemin .= '/SUIVI/' . $pgCmdSuiviPrel->getPrelev()->getId() . '/' . $pgCmdSuiviPrel->getId();
 
         return $chemin;
     }

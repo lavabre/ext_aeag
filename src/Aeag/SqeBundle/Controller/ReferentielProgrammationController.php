@@ -12,8 +12,8 @@ class ReferentielProgrammationController extends Controller {
     public function typeMilieuxAction() {
 
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
@@ -42,8 +42,8 @@ class ReferentielProgrammationController extends Controller {
     public function typeMilieuTypePeriodesAction($progTypeMilieuCode = null) {
 
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
@@ -82,8 +82,8 @@ class ReferentielProgrammationController extends Controller {
     public function zoneGeographiquesAction() {
 
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
@@ -111,8 +111,8 @@ class ReferentielProgrammationController extends Controller {
     public function zoneGeographiqueStationsAction($progZoneGeoRefId) {
 
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
@@ -120,8 +120,8 @@ class ReferentielProgrammationController extends Controller {
         $session->set('fonction', 'zoneGeographiqueStations');
         $em = $this->get('doctrine')->getManager();
         $emSqe = $this->get('doctrine')->getManager('sqe');
-        
-         $repoPgProgZoneGeoRef = $emSqe->getRepository('AeagSqeBundle:PgProgZoneGeoRef');
+
+        $repoPgProgZoneGeoRef = $emSqe->getRepository('AeagSqeBundle:PgProgZoneGeoRef');
         $repoPgProgZgeorrefStation = $emSqe->getRepository('AeagSqeBundle:PgProgZgeorefStation');
         $repoPgRefStationMesure = $emSqe->getRepository('AeagSqeBundle:PgRefStationMesure');
         $repoCommune = $em->getRepository('AeagAeagBundle:Commune');
@@ -137,7 +137,7 @@ class ReferentielProgrammationController extends Controller {
                 foreach ($pgProgZgeorrefStations as $pgProgZgeorrefStation) {
                     $pgRefStationMesure = $repoPgRefStationMesure->getPgRefStationMesureByOuvFoncId($pgProgZgeorrefStation->getStationMesure()->getOuvFoncId());
                     $tabStationMesures[$i]['pgRefStationMesure'] = $pgRefStationMesure;
-                   $tabStationMesures[$i]['lien'] = '/sqe_fiches_stations/' . $pgRefStationMesure->getCode() . '.pdf';
+                    $tabStationMesures[$i]['lien'] = '/sqe_fiches_stations/' . $pgRefStationMesure->getCode() . '.pdf';
 //                    if ($pgRefStationMesure->getType() == 'STQ') {
 //                        $tabStationMesures[$i]['lien'] = 'http://adour-garonne.eaufrance.fr/station/' . $pgRefStationMesure->getCode() . '/print';
 //                    }
@@ -172,8 +172,8 @@ class ReferentielProgrammationController extends Controller {
     public function zoneGeographiqueStationSitePrelevementsAction($pgRefStationMesureOuvFoncId) {
 
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
@@ -214,8 +214,8 @@ class ReferentielProgrammationController extends Controller {
     public function webusersAction() {
 
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
@@ -269,8 +269,8 @@ class ReferentielProgrammationController extends Controller {
     public function webuserMarchesAction($webuserId) {
 
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
@@ -310,8 +310,8 @@ class ReferentielProgrammationController extends Controller {
     public function webuserMarcheLotsAction($pgProgMarcheId) {
 
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
@@ -358,8 +358,8 @@ class ReferentielProgrammationController extends Controller {
     public function webuserMarcheLotGroupesAction($pgProgLotId) {
 
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
@@ -415,8 +415,8 @@ class ReferentielProgrammationController extends Controller {
     public function webuserMarcheLotGroupeParametresAction($pgProgGrpParamRefId = null) {
 
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
@@ -469,8 +469,8 @@ class ReferentielProgrammationController extends Controller {
     public function webuserwReseauxAction($webuserId) {
 
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
@@ -513,8 +513,8 @@ class ReferentielProgrammationController extends Controller {
     public function webuserReseauStationsAction($pgRefReseauMesureId) {
 
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
@@ -573,8 +573,8 @@ class ReferentielProgrammationController extends Controller {
     public function webuserReseauStationSitePrelevementsAction($pgRefStationMesureOuvFoncId) {
 
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
@@ -615,8 +615,8 @@ class ReferentielProgrammationController extends Controller {
     public function webuserZoneGeographiquesAction($webuserId) {
 
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
@@ -656,8 +656,8 @@ class ReferentielProgrammationController extends Controller {
     public function webuserZoneGeographiqueStationsAction($progZoneGeoRefId) {
 
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
@@ -716,8 +716,8 @@ class ReferentielProgrammationController extends Controller {
     public function webuserZoneGeographiqueStationSitePrelevementsAction($pgRefStationMesureOuvFoncId) {
 
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
@@ -754,12 +754,12 @@ class ReferentielProgrammationController extends Controller {
         return $this->render('AeagSqeBundle:Referentiel:Programmation/webuserZoneGeographiqueStationSitePrelevements.html.twig', array('entities' => $tabSitePrelevements,
                     'pgRefStationMesure' => $pgRefStationMesure));
     }
-    
+
     public function groupesAction() {
 
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
@@ -769,11 +769,24 @@ class ReferentielProgrammationController extends Controller {
 
         $repoPgProGrpParamRef = $emSqe->getRepository('AeagSqeBundle:PgProgGrpParamRef');
         $repoPgProGrparObligSupport = $emSqe->getRepository('AeagSqeBundle:PgProgGrparObligSupport');
+        $repoPgProGrparRefLstParam = $emSqe->getRepository('AeagSqeBundle:PgProgGrparRefLstParam');
+        $repoPgSandreParametres = $emSqe->getRepository('AeagSqeBundle:PgSandreParametres');
+        $repoPgSandreUnites = $emSqe->getRepository('AeagSqeBundle:PgSandreUnites');
+        $repoPgSandreFractions = $emSqe->getRepository('AeagSqeBundle:PgSandreFractions');
 
         $pgProGrpParamRefs = $repoPgProGrpParamRef->getPgProgGrpParamRefs();
         $tabGrpParamRefs = array();
         $i = 0;
+        $nom_fichier = "groupes.csv";
         if (count($pgProGrpParamRefs) > 0) {
+            $repertoire = "fichiers";
+            $date_import = date('Ymd_His');
+            $nom_fichier = "groupes.csv";
+            $fic_import = $repertoire . "/" . $nom_fichier;
+            //ouverture fichier
+            $fic = fopen($fic_import, "w");
+            $contenu = "Code groupe;Libelle groupe;Type groupe;Milieu groupe;Support groupe;Code paramètre;Libelle paramètre;Fraction paramètre;Unite parametre;Defaut parametre;\n";
+            fputs($fic, $contenu);
             foreach ($pgProGrpParamRefs as $pgProGrpParamRef) {
                 $tabGrpParamRefs[$i]['pgProGrpParamRef'] = $pgProGrpParamRef;
                 if ($pgProGrpParamRef) {
@@ -788,20 +801,55 @@ class ReferentielProgrammationController extends Controller {
                     $tabGrpParamRefs[$i]['pgProgGrparObligSupport'] = null;
                 }
                 $i++;
+                $pgProgGrparRefLstParams = $repoPgProGrparRefLstParam->getPgProgGrparRefLstParamByGrparRef($pgProGrpParamRef);
+                if (count($pgProgGrparRefLstParams) > 0) {
+                    foreach ($pgProgGrparRefLstParams as $pgProgGrparRefLstParam) {
+                        $pgSandreParametre = $pgProgGrparRefLstParam->getCodeParametre();
+                        if ($pgProgGrparRefLstParam->getCodeFraction()) {
+                            $pgSandreFraction = $repoPgSandreFractions->getPgSandreFractionsByCodeFraction($pgProgGrparRefLstParam->getCodeFraction()->getCodeFraction());
+                        } else {
+                            $pgSandreFraction = null;
+                        }
+                        $pgSandreUnite = $pgProgGrparRefLstParam->getUniteDefaut();
+                        $contenu = $pgProGrpParamRef->getCodeGrp() . ";";
+                        $contenu = $contenu . $pgProGrpParamRef->getLibelleGrp() . ";";
+                        $contenu = $contenu . $pgProGrpParamRef->getTypeGrp() . ";";
+                        $contenu = $contenu . $pgProgTypeMilieu->getNomMilieu() . ";";
+                        if ($pgProGrpParamRef->getSupport()) {
+                            $contenu = $contenu . $pgProGrpParamRef->getSupport()->getNomSupport() . ";";
+                        } else {
+                            $contenu = $contenu . ";";
+                        }
+                        $contenu = $contenu . $pgSandreParametre->getCodeParametre() . ";";
+                        $contenu = $contenu . $pgSandreParametre->getLibelleCourt() . ";";
+                        if ($pgSandreFraction) {
+                            $contenu = $contenu . $pgSandreFraction->getNomFraction() . ";";
+                        } else {
+                            $contenu = $contenu . ";";
+                        }
+                        if ($pgSandreUnite) {
+                            $contenu = $contenu . $pgSandreUnite->getNomUnite() . ";";
+                        } else {
+                            $contenu = $contenu . ";";
+                        }
+                        $contenu = $contenu . $pgProgGrparRefLstParam->getParamDefaut() . ";\n";
+                        fputs($fic, $contenu);
+                    }
+                }
             }
         } else {
             $session->getFlashBag()->add('notice-warning', 'pas d\'enregistrements dans la table pg_prog_grp_param_ref');
             return $this->redirect($this->generateUrl('aeag_sqe'));
         }
         $session->set('niveau1', $this->generateUrl('AeagSqeBundle_referentiel_groupes'));
-        return $this->render('AeagSqeBundle:Referentiel:Programmation/groupes.html.twig', array('entities' => $tabGrpParamRefs));
+        return $this->render('AeagSqeBundle:Referentiel:Programmation/groupes.html.twig', array('entities' => $tabGrpParamRefs, 'fichier' => $nom_fichier));
     }
 
     public function groupeParametresAction($pgProgGrpParamRefId = null) {
 
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
@@ -822,7 +870,16 @@ class ReferentielProgrammationController extends Controller {
 
         $tabLstParams = array();
         $i = 0;
+        $nom_fichier = "groupeParametres.csv";
         if ($pgProGrpParamRef) {
+             $repertoire = "fichiers";
+            $date_import = date('Ymd_His');
+            $nom_fichier = "groupeParametres.csv";
+            $fic_import = $repertoire . "/" . $nom_fichier;
+            //ouverture fichier
+            $fic = fopen($fic_import, "w");
+            $contenu = "Code groupe;Libelle groupe;Type groupe;Milieu groupe;Support groupe;Code paramètre;Libelle paramètre;Fraction paramètre;Unite parametre;Defaut parametre;\n";
+            fputs($fic, $contenu);
             $pgProgGrparRefLstParams = $repoPgProGrparRefLstParam->getPgProgGrparRefLstParamByGrparRef($pgProGrpParamRef);
             if (count($pgProgGrparRefLstParams) > 0) {
                 foreach ($pgProgGrparRefLstParams as $pgProgGrparRefLstParam) {
@@ -832,11 +889,35 @@ class ReferentielProgrammationController extends Controller {
                         $pgSandreFraction = $repoPgSandreFractions->getPgSandreFractionsByCodeFraction($pgProgGrparRefLstParam->getCodeFraction()->getCodeFraction());
                     } else {
                         $pgSandreFraction = null;
-                    } $pgSandreUnite = $pgProgGrparRefLstParam->getUniteDefaut();
+                    }
+                    $pgSandreUnite = $pgProgGrparRefLstParam->getUniteDefaut();
                     $tabLstParams[$i]['pgSandreParametre'] = $pgSandreParametre;
                     $tabLstParams[$i]['pgSandreFraction'] = $pgSandreFraction;
                     $tabLstParams[$i]['pgSandreUnite'] = $pgSandreUnite;
                     $i++;
+                     $contenu = $pgProGrpParamRef->getCodeGrp() . ";";
+                        $contenu = $contenu . $pgProGrpParamRef->getLibelleGrp() . ";";
+                        $contenu = $contenu . $pgProGrpParamRef->getTypeGrp() . ";";
+                        $contenu = $contenu . $pgProGrpParamRef->getCodeMilieu()->getNomMilieu() . ";";
+                        if ($pgProGrpParamRef->getSupport()) {
+                            $contenu = $contenu . $pgProGrpParamRef->getSupport()->getNomSupport() . ";";
+                        } else {
+                            $contenu = $contenu . ";";
+                        }
+                        $contenu = $contenu . $pgSandreParametre->getCodeParametre() . ";";
+                        $contenu = $contenu . $pgSandreParametre->getLibelleCourt() . ";";
+                        if ($pgSandreFraction) {
+                            $contenu = $contenu . $pgSandreFraction->getNomFraction() . ";";
+                        } else {
+                            $contenu = $contenu . ";";
+                        }
+                        if ($pgSandreUnite) {
+                            $contenu = $contenu . $pgSandreUnite->getNomUnite() . ";";
+                        } else {
+                            $contenu = $contenu . ";";
+                        }
+                        $contenu = $contenu . $pgProgGrparRefLstParam->getParamDefaut() . ";\n";
+                        fputs($fic, $contenu);
                 }
             } else {
                 $session->getFlashBag()->add('notice-warning', 'pas de paramètres pour l\analyse ' . $pgProGrpParamRef->getCodeGrp() . ' ' . $pgProGrpParamRef->getLibelleGrp());
@@ -847,14 +928,15 @@ class ReferentielProgrammationController extends Controller {
             return $this->redirect($session->get('niveau1'));
         }
         return $this->render('AeagSqeBundle:Referentiel:Programmation/groupeParametres.html.twig', array('entities' => $tabLstParams,
-                    'pgProgGrpParamRef' => $pgProGrpParamRef));
+                    'pgProgGrpParamRef' => $pgProGrpParamRef,
+                    'fichier' => $nom_fichier));
     }
 
     public function marchesAction() {
 
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
@@ -922,8 +1004,8 @@ class ReferentielProgrammationController extends Controller {
     public function marcheLotsAction($pgProgMarcheId) {
 
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
@@ -967,8 +1049,8 @@ class ReferentielProgrammationController extends Controller {
     public function marcheLotgroupesAction($pgProgLotId) {
 
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
@@ -1020,8 +1102,8 @@ class ReferentielProgrammationController extends Controller {
     public function marcheLotGroupeParametresAction($pgProgGrpParamRefId = null) {
 
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
@@ -1073,8 +1155,8 @@ class ReferentielProgrammationController extends Controller {
     public function lotsAction() {
 
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
@@ -1115,8 +1197,8 @@ class ReferentielProgrammationController extends Controller {
     public function lotGroupesAction($pgProgLotId) {
 
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');
@@ -1168,8 +1250,8 @@ class ReferentielProgrammationController extends Controller {
     public function lotGroupeParametresAction($pgProgGrpParamRefId = null) {
 
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'referentiel');

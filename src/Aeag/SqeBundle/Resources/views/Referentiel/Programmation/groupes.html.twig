@@ -17,6 +17,9 @@
         {# <a class="btn btn-primary pull-right" href="{{ path('AeagDecBundle_admin_pdfListeDechets') }}" title="Imprimer la lister"> 
                 <i class="fa fa-print"> Imprimer la liste</i>
          </a>#}
+         <a class="btn btn-primary pull-right" href="{{ asset('fichiers/') }}{{ fichier }}">
+            <i class="fa fa-file-excel-o "> CSV</i>
+        </a>
     </h3>
 {%endblock panel_heading %}
 
