@@ -30,7 +30,7 @@ class ProducteurTauxSpecial {
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\SequenceGenerator(sequenceName="producteurTauxSpecial_seq", initialValue=1, allocationSize=1)
+     * @ORM\SequenceGenerator(sequenceName="producteurtauxspecial_seq", initialValue=1, allocationSize=1)
      * ORM\GeneratedValue
      */
     private $id;

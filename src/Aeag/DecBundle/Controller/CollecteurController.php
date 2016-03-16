@@ -753,8 +753,8 @@ class CollecteurController extends Controller {
 
 
                 if (!$err) {
-                    $producteurs = $repoOuvrage->getOuvragesBySiretType($majProducteur->getSiret(), 'PDEC');
-                    if ($producteurs) {
+                    $producteur = $repoOuvrage->getOuvragesBySiretType($majProducteur->getSiret(), 'PDEC');
+                    if ($producteur) {
                         $producteur = null;
                     }
                     if (!$producteur) {
@@ -2306,7 +2306,7 @@ class CollecteurController extends Controller {
                                 $declarationDetail->setMontRet($montRet);
                                 $declarationDetail->setQuantiteAide($quantiteAide);
                                 $declarationDetail->setMontAide($montAide);
-                                $declarationDetail->settauxAide($tauxAide);
+                                $declarationDetail->setTauxAide($tauxAide);
                                 $declarationDetail->setBonnifie($bonnifie);
                                 $declarationDetail->setCoutFacture(round($tab[12], 5));
                                 $declarationDetail->setDossierAide($sousDeclarationCollecteur->getDossierAide());
@@ -2354,6 +2354,7 @@ class CollecteurController extends Controller {
         }
 
         $ok = $this->majStatutDeclarationCollecteursAction($declarationCollecteur->getid(), $user, $emDec, $session);
+        
 
 
         if ($erreur == 0) {
@@ -2915,7 +2916,8 @@ class CollecteurController extends Controller {
         $declaration->setMontantApDispo($declaration->getMontantAp() - $totMontAide);
         $emDec->persist($declaration);
         $emDec->flush();
-        return 'ok';
+        //return 'ok';
+       return  $declaration->getMontantApDispo();
     }
 
     public static function majStatutDeclarationProducteursAction($declarationProducteur_id = null, $user, $emDec, $session) {

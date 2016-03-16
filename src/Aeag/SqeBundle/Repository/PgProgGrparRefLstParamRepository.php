@@ -64,6 +64,16 @@ class PgProgGrparRefLstParamRepository extends EntityRepository {
         //print_r($query);
         return $qb->getSingleScalarResult();
     }
+    
+      public function getPgProgGrparRefLstParamValideByGrparRef($PgProgGrpParamRef) {
+       $query = "select p";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgProgGrparRefLstParam p";
+        $query = $query . " where p.grparRef = " . $PgProgGrpParamRef->getid();
+        $query = $query . " and p.valide = 'O'";
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+        return $qb->getResult();
+    }
 
     public function getPgProgGrparRefLstParamByCodeFraction($PgSandreFractions) {
         $query = "select p";

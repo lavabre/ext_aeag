@@ -17,27 +17,25 @@
  {% block content %}
      
      <div class="row">
-            <div class="col-md-10 pull-right text-info">
-                <ul class="list-inline btn-group-lg">
+             <div class="col-md-8 pull-right text-info">
+                <ul class="list-unstyled btn-group-lg">
                     {%if   is_granted('ROLE_PROGSQE') %}
-                        <li><a class="btn btn-primary btn-lg" href="{{ path('Aeag_sqe_programmation_lots', {'action': 'V'}) }}" title="Consulter"><i class="fa fa-eye fa-3x"></i> Consulter</a></li>
-                         <li><a class="btn btn-warning btn-lg active" href="{{ path('Aeag_sqe_programmation_lots', {'action': 'P'}) }}" title="Programmer"><i class="fa fa-edit fa-3x"></i> Programmer</a></li>
+                        <li><a class="btn btn-primary btn-lg" href="{{ path('Aeag_sqe_programmation_lots', {'action': 'V'}) }}" title="Consulter"><i class="fa fa-eye fa-2x"></i> Consulter</a></li>
+                        </br>
+                         <li><a class="btn btn-primary btn-lg" href="{{ path('Aeag_sqe_programmation_lots', {'action': 'P'}) }}" title="Programmer"><i class="fa fa-edit fa-2x"></i> Programmer</a></li>
+                         </br>
                     {% endif %}
                     {%if   is_granted('ROLE_PRESTASQE') %}
-                        <li><a class="btn btn-success btn-lg" href="{{ path('AeagSqeBundle_echangefichiers_index')}}" title="Echange de fichiers"><i class="fa fa-download fa-3x"></i> Echange de fichiers</a></li>
+                        <li><a class="btn btn-primary btn-lg" href="{{ path('AeagSqeBundle_echangefichiers_index')}}" title="Echange de fichiers"><i class="fa fa-download fa-2x"></i> Echange de fichiers</a></li>
+                        </br>
+                         <li><a class="btn btn-primary btn-lg" href="{{ path('AeagSqeBundle_suiviPrelevements_index')}}" title="Suivi des prélèvements"><i class="fa fa-dashboard fa-2x"></i> Suivi des prélèvements</a></li>
+                         </br>
                     {% endif %}
+                    <li><a class="btn btn-info  btn-lg" href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur.pdf') }}" target="_blank" title="Aide"><i class="fa fa-book fa-2x"></i> Aide</a></li>
                   </ul>  
             </div>
          </div>       
-                  </br></br>
-         <div class="row">
-            <div class="col-md-8 pull-right text-info">
-                  <ul class="list-inline btn-group-lg">
-                    <li><a class="btn btn-info  btn-lg" href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur.pdf') }}" target="_blank" title="Aide"><i class="fa fa-book fa-3x"></i> Aide</a></li>
-                  </ul>  
-            </div>
-         </div>       
-      
+           
    
  {% endblock content %}
    
