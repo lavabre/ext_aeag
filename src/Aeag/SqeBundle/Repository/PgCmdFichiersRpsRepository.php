@@ -16,6 +16,7 @@ class PgCmdFichiersRpsRepository extends EntityRepository {
         $query .= " where rps.demande = :demande"; 
         $query .= " and rps.phaseFichier = pha.id";
         $query .= " and pha.codePhase IN (:phase)";
+        $query .= " and rps.typeFichier = 'RPS'";
         $query .= " and rps.suppr = 'N'";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('demande', $demande);
