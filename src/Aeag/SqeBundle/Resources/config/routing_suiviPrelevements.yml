@@ -24,7 +24,21 @@ AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_maj:
     path:  /maj/{suiviPrelId}/{periodeAnId}
     defaults: { _controller: AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemandeSuiviMaj, suiviPrelId : null, periodeAnId : null}
     requirements:
-        
+         methods:  GET|POST
+         
+AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_voir:
+    path:  /voir/{suiviPrelId}/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemandeSuiviVoir, suiviPrelId : null, periodeAnId : null}
+    requirements:
+         methods:  GET|POST
+         
+AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_deposer:
+    path:  /deposer/{suiviPrelId}/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemandeSuiviDeposer, suiviPrelId : null, periodeAnId : null}
+    requirements:
+         methods:  GET|POST
+         
+   
 AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_supprimer:
     path:  /supprimer/{suiviPrelId}/{periodeAnId}
     defaults: { _controller: AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemandeSuiviSupprimer, suiviPrelId : null, periodeAnId : null}
@@ -48,3 +62,9 @@ AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_fichier_suppri
     defaults: { _controller: AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemandeSuiviFichierSupprimer, suiviPrelId : null, periodeAnId : null }
     requirements:
         methods:  GET|POST
+        
+AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_fichier_telecharger:
+    path:  /fichier/telecharger/{suiviPrelId}
+    defaults: { _controller: AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemandeSuiviFichierTelecharger, suiviPrelId : null}
+    requirements:
+         methods:  GET|POST

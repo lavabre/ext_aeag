@@ -39,8 +39,7 @@
                                       <div class="modal-body">
                                           <div id="idModalContentNouveauSuivi{{ cmdPrelev.cmdPrelev.id }}"></div>
                                         </div>   
-                                      <div class="modal-footer"></div>
-                             </div>
+                              </div>
                   </div>
               </div>
                                         
@@ -74,7 +73,7 @@
                         {% if suiviPrel.suiviPrel %}
                                     {#modal maj suivi #}
                                    <div class="modal fade" id="modalMajSuivi{{ suiviPrel.suiviPrel.id }}" >
-                                       <div class="modal-dialog">
+                                       <div class="modal-dialog modal-lg">
                                                   <div class="modal-content" >
                                                            <div class="modal-header">
                                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -155,6 +154,7 @@
                     <th>Suivi</th>
                     <th>statut</th>
                     <th>commentaire</th>
+                    <th>Fichier terrain</th>
                   </tr>
             </thead>
             <tbody>
@@ -164,14 +164,27 @@
                                 <tr>
                                         <td align="center" nowrap> 
                                             {% if  suiviPrel.maj == 'O' %}
+                                                {% if suiviPrel.suiviPrel.statutPrel  != 'F' %}
                                                  <a class="btn btn-success" id="idMajSuivi{{ suiviPrel.suiviPrel.id  }}" href="#" title="Modifier le suivi">
                                                   <i class="fa fa-edit"> </i>
                                                  </a>
+                                                 {% else %}
+                                                         <a id="idVoirSuivi{{ suiviPrel.suiviPrel.id }}" class="btn btn-primary" href="#" title="consulter le suivi">
+                                                         <i class="fa fa-eye"></i> 
+                                                         </a>
+                                                         {% if  not suiviPrel.suiviPrel.fichierRps %}
+                                                              <a id="idDeposerSuivi{{ suiviPrel.suiviPrel.id }}" class="btn btn-primary btn-deposer-reponse"  title="Déposer un fichier terrain">
+                                                                  <i class="fa fa-download"></i> 
+                                                              </a>
+                                                          {% endif %}
+                                                 {% endif %}
+                                                 {% if is_granted('ROLE_ADMINSQE') %}
                                                    <a class="btn btn-danger" data-toggle="modal" href="#sup-{{ suiviPrel.suiviPrel.id }}" title="Supprimer le suivi">
                                                             <i class="fa fa-trash-o"></i>
                                                     </a>
+                                                 {% endif %}
                                             {% else %}
-                                                  <a id="id_{{ suiviPrel.suiviPrel.id }}" class="btn btn-primary" href="#" title="consulter le suivi">
+                                                  <a id="idVoirSuivi{{ suiviPrel.suiviPrel.id }}" class="btn btn-primary" href="#" title="consulter le suivi">
                                                    <i class="fa fa-eye"></i> 
                                                </a>
                                             {% endif %}
@@ -188,8 +201,14 @@
                                                   Validé
                                              {% elseif suiviPrel.suiviPrel.statutPrel == 'R' %}
                                                   Réfusé
-                                             {% endif %}</td>
-                                         <td align="center">{{ suiviPrel.suiviPrel.commentaire}}</td>
+                                             {% endif %}
+                                         </td>
+                                         <td>{{ suiviPrel.suiviPrel.commentaire}}</td>
+                                         <td id="tdFichierRps{{ suiviPrel.suiviPrel.id }}">
+                                            {% if  suiviPrel.suiviPrel.fichierRps %}
+                                                   {{ suiviPrel.suiviPrel.fichierRps.nomFichier}} déposé le {{ suiviPrel.suiviPrel.fichierRps.dateDepot | date('d/m/Y')}}
+                                           {% endif %}
+                                        </td>
                                  </tr>
                            {% endif  %}
                     {% endfor %}
@@ -297,8 +316,43 @@
                                                });
                                      });
                                      
+                                       $(document).on('click','#idVoirSuivi{{ suiviPrel.suiviPrel.id }}',function(e){
+                                           e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                                           $('#modalTraitementEncours').modal('toggle');
+                                          var url = '{{ path("AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_voir",{"suiviPrelId":  "par1", "periodeAnId": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                           url = url.replace("par1", {{ suiviPrel.suiviPrel.id }});
+                                            url = url.replace("par2", {{ periodeAn.id }});
+                                           url = url.replace("amp;","");
+                                          $.ajax({
+                                                   url: url,
+                                                   type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+                                                   success: function(html) { // Je récupère la réponse du fichier PHP
+                                                        $('#idModalContentMajSuivi{{ suiviPrel.suiviPrel.id }}').empty().append(html);
+                                                        $('#modalMajSuivi{{ suiviPrel.suiviPrel.id }}').modal('show');
+                                                        $('#modalTraitementEncours').modal('hide');
+                                                      }
+                                               });
+                                     });
                                      
+                                      $(document).on('click','#idDeposerSuivi{{ suiviPrel.suiviPrel.id }}',function(e){
+                                           e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                                           $('#modalTraitementEncours').modal('toggle');
+                                          var url = '{{ path("AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_deposer",{"suiviPrelId":  "par1", "periodeAnId": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                           url = url.replace("par1", {{ suiviPrel.suiviPrel.id }});
+                                            url = url.replace("par2", {{ periodeAn.id }});
+                                           url = url.replace("amp;","");
+                                          $.ajax({
+                                                   url: url,
+                                                   type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+                                                   success: function(html) { // Je récupère la réponse du fichier PHP
+                                                        $('#idModalContentMajSuivi{{ suiviPrel.suiviPrel.id }}').empty().append(html);
+                                                        $('#modalMajSuivi{{ suiviPrel.suiviPrel.id }}').modal('show');
+                                                        $('#modalTraitementEncours').modal('hide');
+                                                      }
+                                               });
+                                     });
                                      
+         
                                      
                              {% endif %}     
                    {% endfor %}
@@ -306,6 +360,8 @@
             
          {% endfor %}
          
+               
+        
          
       });
     

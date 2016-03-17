@@ -22,6 +22,7 @@ class PgProgGrpParamRefRepository extends EntityRepository {
     public function getPgProgGrpParamRefs() {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgGrpParamRef p";
+        $query = $query . " where p.valide = 'O'";
         $query = $query . " order by p.codeGrp";
         $qb = $this->_em->createQuery($query);
         //print_r($query);

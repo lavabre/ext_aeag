@@ -49,11 +49,12 @@
    </form>      
         
         <script type="text/javascript" language="javascript">
-            $('#datePrel').datepicker();
+            
+             $('#datePrel').datepicker();
             
             $(document).on('change','#statutPrel',function(e){
                  e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                 if ($('#statutPrel').val() == 'F'){
+                 if ($('#statutPrel').val() != 'N'){
                      $('#commentaire').removeAttr('required');
                 }else{
                     $('#commentaire').attr('required', ''); 
