@@ -145,4 +145,8 @@ class PgLogValidEdilabo {
         $this->dateLog = $dateLog;
     }
     
+    public function __toString() {
+        return '['.$this->dateLog->format('d-m-Y H:i:s').'] - '.$this->codePrelevement.' - '.$this->typeErreur.' - '.$this->message.' - '.$this->commentaire;
+    }
+    
 }
