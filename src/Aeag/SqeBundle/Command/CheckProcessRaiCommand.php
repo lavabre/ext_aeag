@@ -21,6 +21,9 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
     private $repoPgLogValidEdilabo;
     private $repoPgCmdDemande;
     private $repoPgRefCorresPresta;
+    private $repoPgProgLotLqParam;
+    private $repoPgProgUnitesPossiblesParam;
+    private $repoPgSandreFractions;
 
     protected function configure() {
         $this
@@ -41,6 +44,9 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
         $this->repoPgTmpValidEdilabo = $this->emSqe->getRepository('AeagSqeBundle:PgTmpValidEdilabo');
         $this->repoPgLogValidEdilabo = $this->emSqe->getRepository('AeagSqeBundle:PgLogValidEdilabo');
         $this->repoPgRefCorresPresta = $this->emSqe->getRepository('AeagSqeBundle:PgRefCorresPresta');
+        $this->repoPgProgLotLqParam = $this->emSqe->getRepository('AeagSqeBundle:PgProgLotLqParam');
+        $this->repoPgProgUnitesPossiblesParam = $this->emSqe->getRepository('AeagSqeBundle:PgProgUnitesPossiblesParam');
+        $this->repoPgSandreFractions = $this->emSqe->getRepository('AeagSqeBundle:PgSandreFractions');
 
 
         // On récupère les RAIs dont les phases sont en R25
@@ -164,23 +170,11 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
             if (count($mesuresRps) > 0 && count($mesuresDmd) > 0) {
                 foreach ($mesuresRps as $idx => $mesureRps) {
                     if (($mesureRps['codeParametre'] == $mesuresDmd[$idx]['codeParametre']) && ($mesureRps['codeUnite'] != $mesuresDmd[$idx]['codeUnite'])) {
-                        $nomFichier = getcwd() . "/web/tablesCorrespondancesRai/corresUnites.csv";
-                        if (($handle = fopen($nomFichier, "r")) !== FALSE) {
-                            $row = 0;
-                            $found = false;
-                            while ((($data = fgetcsv($handle, 1000, ";")) !== FALSE) && $found == false) {
-                                if ($row !== 0) {
-                                    if (($mesureRps['codeParametre'] == $data[0]) && ($mesureRps['codeFraction'] == $data[1]) && ($mesureRps['codeUnite'] == $data[3])) {
-                                        $found = true;
-                                    }
-                                }
-                                $row++;
-                            }
-                            if ($found == false) {
-                                $this->_addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: Unité changée", $codePrelev["codePrelevement"], $mesureRps['codeUnite']);
-                            }
-                        } else {
-                            $this->_addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: Fichier csv inaccessible", $codePrelev["codePrelevement"], $nomFichier);
+
+                        $pgSandreFractions = $this->repoPgSandreFractions->findOneByCodeFraction($mesureRps['codeFraction']);
+                        $pgProgUnitesPossiblesParam = $this->repoPgProgUnitesPossiblesParam->findOneBy(array('codeParametre' => $mesureRps['codeParametre'], 'codeUnite' => $mesureRps['codeUnite'], 'natureFraction' => $pgSandreFractions->getNatureFraction()));
+                        if (!$pgProgUnitesPossiblesParam) {
+                            $this->_addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: Unité changée", $codePrelev["codePrelevement"], $mesureRps['codeUnite']);
                         }
                     }
                 }
@@ -314,6 +308,7 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
             $this->_detectionCodeRemarqueLot8($demandeId, $reponseId, $codePrelevement);
 
             // III.17
+            $this->_controleLqAeag($pgCmdFichierRps, $codePrelevement);
         }
     }
 
@@ -765,6 +760,23 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
                     $this->_addLog('error', $demandeId, $reponseId, "Detection Code Remarque : La majorité des codes remarque sont à 1", $codePrelevement, $nomFichier);
                 }
             }
+        }
+    }
+    
+    // III.17
+    protected function _controleLqAeag($pgCmdFichierRps, $codePrelevement) {
+        $demandeId = $pgCmdFichierRps->getDemande()->getId();
+        $reponseId = $pgCmdFichierRps->getId();
+        $pgTmpValidEdilabos = $this->repoPgTmpValidEdilabo->findBy(array('demande' => $demandeId, 'reponse' => $reponseId, 'codePrelevement' => $codePrelevement));
+        if ($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getTypeMarche() == 'MOA') {
+            foreach($pgTmpValidEdilabos as $pgTmpValidEdilabo) {
+                if (!is_null($pgTmpValidEdilabo->getLqM())) {
+                    $lq = $this->repoPgProgLotLqParam->isValidLq($pgCmdFichierRps->getDemande()->getLotan()->getLot(), $pgTmpValidEdilabo->getCodeParametre(), $pgTmpValidEdilabo->getCodeFraction(), $pgTmpValidEdilabo->getLqM());
+                    if (count($lq) == 0) {
+                        $this->_addLog('error', $demandeId, $reponseId, "Controle Lq AEAG : Lq invalide", $codePrelevement, $pgTmpValidEdilabo->getLqM());
+                    }
+                }
+            }    
         }
     }
 

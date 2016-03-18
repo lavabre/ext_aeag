@@ -160,7 +160,7 @@ class PgTmpValidEdilaboRepository extends EntityRepository {
     }
     
     public function getMesures($codePrelevement, $demandeId, $reponseId = null) {
-        $query = "select p.codeFraction, p.codeUnite, p.codeParametre";
+        $query = "select p.codeFraction, p.codeUnite, p.codeParametre, p.lqM";
         $query .= " from Aeag\SqeBundle\Entity\PgTmpValidEdilabo p";
         $query .= " where p.demandeId = :demande";
         if (!is_null($reponseId)) {
