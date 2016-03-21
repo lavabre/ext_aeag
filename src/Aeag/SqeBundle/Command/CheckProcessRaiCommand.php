@@ -767,7 +767,7 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
     protected function _controleLqAeag($pgCmdFichierRps, $codePrelevement) {
         $demandeId = $pgCmdFichierRps->getDemande()->getId();
         $reponseId = $pgCmdFichierRps->getId();
-        $pgTmpValidEdilabos = $this->repoPgTmpValidEdilabo->findBy(array('demande' => $demandeId, 'reponse' => $reponseId, 'codePrelevement' => $codePrelevement));
+        $pgTmpValidEdilabos = $this->repoPgTmpValidEdilabo->findBy(array('demandeId' => $demandeId, 'fichierRpsId' => $reponseId, 'codePrelevement' => $codePrelevement));
         if ($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getTypeMarche() == 'MOA') {
             foreach($pgTmpValidEdilabos as $pgTmpValidEdilabo) {
                 if (!is_null($pgTmpValidEdilabo->getLqM())) {
