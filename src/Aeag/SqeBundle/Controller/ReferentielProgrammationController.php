@@ -786,7 +786,8 @@ class ReferentielProgrammationController extends Controller {
             //ouverture fichier
             $fic = fopen($fic_import, "w");
             $contenu = "Code groupe;Libelle groupe;Type groupe;Milieu groupe;Support groupe;Code paramètre;Libelle paramètre;Fraction paramètre;Unite parametre;Defaut parametre;\n";
-            fputs($fic, $contenu);
+            $message = utf8_decode($contenu);
+            fputs($fic, $message);
             foreach ($pgProGrpParamRefs as $pgProGrpParamRef) {
                 $tabGrpParamRefs[$i]['pgProGrpParamRef'] = $pgProGrpParamRef;
                 if ($pgProGrpParamRef) {
@@ -833,7 +834,8 @@ class ReferentielProgrammationController extends Controller {
                             $contenu = $contenu . ";";
                         }
                         $contenu = $contenu . $pgProgGrparRefLstParam->getParamDefaut() . ";\n";
-                        fputs($fic, $contenu);
+                        $message = utf8_decode($contenu);
+                        fputs($fic, $message);
                     }
                 }
             }
@@ -872,14 +874,15 @@ class ReferentielProgrammationController extends Controller {
         $i = 0;
         $nom_fichier = "groupeParametres.csv";
         if ($pgProGrpParamRef) {
-             $repertoire = "fichiers";
+            $repertoire = "fichiers";
             $date_import = date('Ymd_His');
             $nom_fichier = "groupeParametres.csv";
             $fic_import = $repertoire . "/" . $nom_fichier;
             //ouverture fichier
             $fic = fopen($fic_import, "w");
             $contenu = "Code groupe;Libelle groupe;Type groupe;Milieu groupe;Support groupe;Code paramètre;Libelle paramètre;Fraction paramètre;Unite parametre;Defaut parametre;\n";
-            fputs($fic, $contenu);
+            $message = utf8_decode($contenu);
+            fputs($fic, $message);
             $pgProgGrparRefLstParams = $repoPgProGrparRefLstParam->getPgProgGrparRefLstParamByGrparRef($pgProGrpParamRef);
             if (count($pgProgGrparRefLstParams) > 0) {
                 foreach ($pgProgGrparRefLstParams as $pgProgGrparRefLstParam) {
@@ -895,29 +898,30 @@ class ReferentielProgrammationController extends Controller {
                     $tabLstParams[$i]['pgSandreFraction'] = $pgSandreFraction;
                     $tabLstParams[$i]['pgSandreUnite'] = $pgSandreUnite;
                     $i++;
-                     $contenu = $pgProGrpParamRef->getCodeGrp() . ";";
-                        $contenu = $contenu . $pgProGrpParamRef->getLibelleGrp() . ";";
-                        $contenu = $contenu . $pgProGrpParamRef->getTypeGrp() . ";";
-                        $contenu = $contenu . $pgProGrpParamRef->getCodeMilieu()->getNomMilieu() . ";";
-                        if ($pgProGrpParamRef->getSupport()) {
-                            $contenu = $contenu . $pgProGrpParamRef->getSupport()->getNomSupport() . ";";
-                        } else {
-                            $contenu = $contenu . ";";
-                        }
-                        $contenu = $contenu . $pgSandreParametre->getCodeParametre() . ";";
-                        $contenu = $contenu . $pgSandreParametre->getLibelleCourt() . ";";
-                        if ($pgSandreFraction) {
-                            $contenu = $contenu . $pgSandreFraction->getNomFraction() . ";";
-                        } else {
-                            $contenu = $contenu . ";";
-                        }
-                        if ($pgSandreUnite) {
-                            $contenu = $contenu . $pgSandreUnite->getNomUnite() . ";";
-                        } else {
-                            $contenu = $contenu . ";";
-                        }
-                        $contenu = $contenu . $pgProgGrparRefLstParam->getParamDefaut() . ";\n";
-                        fputs($fic, $contenu);
+                    $contenu = $pgProGrpParamRef->getCodeGrp() . ";";
+                    $contenu = $contenu . $pgProGrpParamRef->getLibelleGrp() . ";";
+                    $contenu = $contenu . $pgProGrpParamRef->getTypeGrp() . ";";
+                    $contenu = $contenu . $pgProGrpParamRef->getCodeMilieu()->getNomMilieu() . ";";
+                    if ($pgProGrpParamRef->getSupport()) {
+                        $contenu = $contenu . $pgProGrpParamRef->getSupport()->getNomSupport() . ";";
+                    } else {
+                        $contenu = $contenu . ";";
+                    }
+                    $contenu = $contenu . $pgSandreParametre->getCodeParametre() . ";";
+                    $contenu = $contenu . $pgSandreParametre->getNomParametre() . ";";
+                    if ($pgSandreFraction) {
+                        $contenu = $contenu . $pgSandreFraction->getNomFraction() . ";";
+                    } else {
+                        $contenu = $contenu . ";";
+                    }
+                    if ($pgSandreUnite) {
+                        $contenu = $contenu . $pgSandreUnite->getNomUnite() . ";";
+                    } else {
+                        $contenu = $contenu . ";";
+                    }
+                    $contenu = $contenu . $pgProgGrparRefLstParam->getParamDefaut() . ";\n";
+                    $message = utf8_decode($contenu);
+                    fputs($fic, $message);
                 }
             } else {
                 $session->getFlashBag()->add('notice-warning', 'pas de paramètres pour l\analyse ' . $pgProGrpParamRef->getCodeGrp() . ' ' . $pgProGrpParamRef->getLibelleGrp());

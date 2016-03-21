@@ -32,7 +32,7 @@ class ReferentielSandreController extends Controller {
             //ouverture fichier
             $fic = fopen($fic_import, "w");
             $contenu = "Code;Nom;Libellé court;Type;Cas;\n";
-            fputs($fic, $contenu);
+            fputs($fic, utf8_decode($contenu));
             foreach ($pgSandreParametres as $pgSandreParametre) {
                 $tabSandreParametres[$i]['pgSandreParametre'] = $pgSandreParametre;
                 $i++;
@@ -41,7 +41,7 @@ class ReferentielSandreController extends Controller {
                 $contenu = $contenu . $pgSandreParametre->getLibelleCourt() . ";";
                 $contenu = $contenu . $pgSandreParametre->getTypeParametre() . ";";
                 $contenu = $contenu . $pgSandreParametre->getCodeCas() . ";\n";
-                fputs($fic, $contenu);
+                fputs($fic, utf8_decode($contenu));
             }
             fclose($fic);
         } else {
@@ -80,13 +80,13 @@ class ReferentielSandreController extends Controller {
             //ouverture fichier
             $fic = fopen($fic_import, "w");
             $contenu = "Code;Nom;\n";
-            fputs($fic, $contenu);
+            fputs($fic, utf8_decode($contenu));
             foreach ($pgSandreSupports as $pgSandreSupport) {
                 $tabSandreSupports[$i]['pgSandreSupport'] = $pgSandreSupport;
                 $i++;
                 $contenu = $pgSandreSupport->getCodeSupport() . ";";
                 $contenu = $contenu . $pgSandreSupport->getNomSupport() . ";\n";
-                fputs($fic, $contenu);
+                fputs($fic, utf8_decode($contenu));
             }
             fclose($fic);
         } else {
@@ -192,13 +192,13 @@ class ReferentielSandreController extends Controller {
             //ouverture fichier
             $fic = fopen($fic_import, "w");
             $contenu = "Code;Nom;\n";
-            fputs($fic, $contenu);
+            fputs($fic, utf8_decode($contenu));
             foreach ($pgSandreUnites as $pgSandreUnite) {
                 $tabSandreUnites[$i]['pgSandreUnite'] = $pgSandreUnite;
                 $i++;
                 $contenu = $pgSandreUnite->getCodeUnite() . ";";
                 $contenu = $contenu . $pgSandreUnite->getNomUnite() . ";\n";
-                fputs($fic, $contenu);
+                fputs($fic, utf8_decode($contenu));
             }
             fclose($fic);
         } else {
@@ -236,13 +236,13 @@ class ReferentielSandreController extends Controller {
             //ouverture fichier
             $fic = fopen($fic_import, "w");
             $contenu = "Code;Nom;\n";
-            fputs($fic, $contenu);
+            fputs($fic, utf8_decode($contenu));
             foreach ($pgSandreMethodes as $pgSandreMethode) {
                 $tabSandreMethodes[$i]['pgSandreMethode'] = $pgSandreMethode;
                 $i++;
                 $contenu = $pgSandreMethode->getCodeMethode() . ";";
                 $contenu = $contenu . $pgSandreMethode->getNomMethode() . ";\n";
-                fputs($fic, $contenu);
+                fputs($fic, utf8_decode($contenu));
             }
             fclose($fic);
         } else {
@@ -279,13 +279,13 @@ class ReferentielSandreController extends Controller {
             //ouverture fichier
             $fic = fopen($fic_import, "w");
             $contenu = "Code;Nom;\n";
-            fputs($fic, $contenu);
+            fputs($fic, utf8_decode($contenu));
             foreach ($pgSandreZoneVerticaleProspectees as $pgSandreZoneVerticaleProspectee) {
                 $tabSandreZoneVerticaleProspectees[$i]['pgSandreZoneVerticaleProspectee'] = $pgSandreZoneVerticaleProspectee;
                 $i++;
                 $contenu = $pgSandreZoneVerticaleProspectee->getCodeZone() . ";";
                 $contenu = $contenu . $pgSandreZoneVerticaleProspectee->getNomZone() . ";\n";
-                fputs($fic, $contenu);
+                fputs($fic, utf8_decode($contenu));
             }
             fclose($fic);
         } else {
