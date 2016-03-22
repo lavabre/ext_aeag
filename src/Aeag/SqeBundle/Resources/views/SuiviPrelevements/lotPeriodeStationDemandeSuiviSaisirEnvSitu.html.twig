@@ -17,23 +17,24 @@
            <a href="{{path('AeagSqeBundle_suiviPrelevements_lot_periode_stations',{ 'periodeAnId': periodeAn.id })}}">Stations</a> 
     </li>
      <li>
-           <a href="{{path('AeagSqeBundle_suiviPrelevements_lot_periode_station_demande',{'stationId': station.ouvFoncId, 'periodeAnId': periodeAn.id, 'cmdDemandeId': demande.id })}}">Demande
+           <a href="{{path('AeagSqeBundle_suiviPrelevements_lot_periode_station_demande',{'stationId': station.ouvFoncId, 'periodeAnId': periodeAn.id, 'cmdDemandeId': demande.id })}}">Demande</a>
     </li>
      <li class="active">
-          Saisie des résultats
+          Saisie des données terrain
     </li>
 {% endblock breadcrumb %} 
 
 {%block panel_heading %}
         <div class="row">
-                <div class="col-md-10">
-                     <h3 class="page-title text-justify">
-                         Saisie des résultats</br>
-                         Prélèvement du {{ cmdPrelev.datePrelev | date("d/m/Y") }} </br>
-                         Demande  du {{ demande.dateDemande | date("d/m/Y") }} </br>
-                         Station {{ station.code }} {{ station.libelle }} </br>
-                         entre le  {{ periodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;et&nbsp;&nbsp; {{periodeAn.periode.dateFin | date("d/m/Y") }} </br>
-                         Lot  {{ lotan.lot.nomLot }} - {{ lotan.anneeProg }}
+                <div class="col-md-offset-3 col-md-7">
+                     <h3 class="page-title ">
+                         <table>
+                             <tr><td>Prélèvement du {{ cmdPrelev.datePrelev | date("d/m/Y") }}</td></tr>
+                             <tr><td>Demande  du {{ demande.dateDemande | date("d/m/Y") }}</td></tr>
+                             <tr><td>Station {{ station.code }} {{ station.libelle }}</td></tr>
+                             <tr><td>entre le  {{ periodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;et&nbsp;&nbsp; {{periodeAn.periode.dateFin | date("d/m/Y") }}</td></tr>
+                             <tr><td>Lot  {{ lotan.lot.nomLot }} - {{ lotan.anneeProg }}  - version :  {{ lotan.version }}</td></tr>
+                         </table>
                     </h3>
                 </div>
                 <div class="col-md-1  pull-left">
@@ -45,29 +46,50 @@
 
 {%block content %}
  
-    <form class="form" id="idForm" role="form" action="{{ path("AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_resultat",{"prelevId":  cmdPrelev.id, "periodeAnId":  periodeAn.id, "stationId": station.ouvFoncId}) }}" method="post">
+    <form class="form" id="idForm" role="form" action="{{ path("AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_env_situ_resultat",{"prelevId":  cmdPrelev.id, "periodeAnId":  periodeAn.id, "stationId": station.ouvFoncId}) }}" method="post">
     
     <div class="form-body">  
         {% for groupe   in  groupes %}
              <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
                     <div class="panel panel-default">
-                             <div class="panel-heading" role="tab" id="heading{{groupe.grparAn.id}}">
-                                      <h4 class="panel-title h4-default">
-                                              <div class="row">
-                                                 <div class="col-md-10">
-                                                     <a id="idCollapse{{ groupe.grparAn.id}}" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ groupe.grparAn.id}}" aria-expanded="true" aria-controls="collapse{{ groupe.grparAn.id}}">
-                                                         <i id="idCollapseI{{ groupe.grparAn.id}}" class="btn btn-default fa fa-compress text-center"></i>
-                                                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ groupe.grparAn.grparRef.codeGrp }} {{ groupe.grparAn.grparRef.libelleGrp }} {{ groupe.grparAn.grparRef.typeGrp }} 
-                                                   </a>
-                                                </div>
-                                                 <div class="col-md-2 pull-right text-info">
-                                                       <ul class="list-inline">
-                                                          <li><span  class="label label-primary"><span id="paramSaisis{{ groupe.grparAn.id}}" class="label label-success">0</span>/{{ groupe.paramAns | length}}</span></li>
-                                                        </ul>  
-                                                  </div>
-                                            </div>            
-                                       </h4>
-                             </div>
+                            {% if is_granted('ROLE_ADMINSQE') or  (user.prestataire.adrCorId == groupe.grparAn.prestaDft.adrCorId)  %}
+                                    <div class="panel-heading" role="tab" id="heading{{groupe.grparAn.id}}">
+                                             <h4 class="panel-title h4-default">
+                                                     <div class="row">
+                                                        <div class="col-md-10">
+                                                            <a id="idCollapse{{ groupe.grparAn.id}}" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ groupe.grparAn.id}}" aria-expanded="true" aria-controls="collapse{{ groupe.grparAn.id}}">
+                                                                <i id="idCollapseI{{ groupe.grparAn.id}}" class="btn btn-default fa fa-compress text-center"></i>
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ groupe.grparAn.grparRef.codeGrp }} {{ groupe.grparAn.grparRef.libelleGrp }}
+                                                          </a>
+                                                       </div>
+                                                        <div class="col-md-2 pull-right text-info">
+                                                              <ul class="list-inline">
+                                                                 <li><span  class="label label-primary"><span id="paramSaisis{{ groupe.grparAn.id}}">0</span>/{{ groupe.paramAns | length}}</span></li>
+                                                               </ul>  
+                                                         </div>
+                                                   </div>            
+                                              </h4>
+                                    </div>
+                           {% else %}
+                                        <div class="panel-heading" role="tab" id="heading{{groupe.grparAn.id}}">
+                                             <h4 class="panel-title h4-default">
+                                                     <div class="row">
+                                                        <div class="col-md-10">
+                                                            <a id="idCollapse{{ groupe.grparAn.id}}" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ groupe.grparAn.id}}" aria-expanded="true" aria-controls="collapse{{ groupe.grparAn.id}}">
+                                                                <i id="idCollapseI{{ groupe.grparAn.id}}" class="btn btn-default fa fa-compress text-center"></i>
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ groupe.grparAn.grparRef.codeGrp }} {{ groupe.grparAn.grparRef.libelleGrp }}
+                                                                &nbsp;renseigné par le prestataire {{ groupe.grparAn.prestaDft.nomCorres }}
+                                                          </a>
+                                                       </div>
+                                                        <div class="col-md-2 pull-right text-info">
+                                                              <ul class="list-inline">
+                                                                 <li><span  class="label label-primary"><span id="paramSaisis{{ groupe.grparAn.id}}">0</span>/{{ groupe.paramAns | length}}</span></li>
+                                                               </ul>  
+                                                         </div>
+                                                   </div>            
+                                              </h4>
+                                    </div>
+                            {% endif %}
                              <div id="collapse{{ groupe.grparAn.id}}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading{{ groupe.grparAn.id}}">
                                       <div class="panel-body">
                                                 <div class="row">
@@ -80,6 +102,7 @@
                                                                                         <th>Libelle</th> 
                                                                                         <th>valeur</th> 
                                                                                         <th>Unité</th> 
+                                                                                        <th>Remarque</th> 
                                                                                         <th>Fraction</th> 
                                                                                       </tr>
                                                                                 </thead>
@@ -87,11 +110,11 @@
                                                                                          {% for paramAn in groupe.paramAns %}
                                                                                                      {% if  paramAn.paramAn %}
                                                                                                           {% if is_granted('ROLE_ADMINSQE') or  (user.prestataire.adrCorId == paramAn.paramAn.prestataire.adrCorId)  %}
-                                                                                                               {% if groupe.grparAn.grparRef.typeGrp == 'ENV' or groupe.grparAn.grparRef.typeGrp == 'SIT' %}
+                                                                                                               {% if groupe.grparAn.grparRef.typeGrp == 'ENV'  %}
                                                                                                                 <tr>
                                                                                                                   <td nowrap>{{ paramAn.paramAn.codeParametre.codeParametre }}</td>
-                                                                                                                  <td>{{ paramAn.paramAn.codeParametre.nomParametre }}</td>
-                                                                                                                  <td class="center">
+                                                                                                                  <td align="left">{{ paramAn.paramAn.codeParametre.nomParametre }}</td>
+                                                                                                                  <td align="right">
                                                                                                                         <div class="form-group">
                                                                                                                              <div class="input-group">
                                                                                                                                  {% if paramAn.valeurs  %}
@@ -118,8 +141,8 @@
                                                                                                                                    {% endif %}
                                                                                                                               </div>
                                                                                                                           </div> 
-                                                                                                                      </td>
-                                                                                                                    <td class="center">
+                                                                                                                     </td>
+                                                                                                                      <td align="left">
                                                                                                                         <div class="form-group">
                                                                                                                              <div  class="input-group">
                                                                                                                                  {% if paramAn.unites  %}
@@ -145,15 +168,26 @@
                                                                                                                                   {% else %}
                                                                                                                                        {% if paramAn.pgCmdMesureEnv %}
                                                                                                                                              <input id="idUniteCode{{ paramAn.paramAn.id}}" type="hidden" class="form-control" placeholder="unite" name ="uniteCode{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdMesureEnv.codeUnite.codeUnite }}">
-                                                                                                                                              <input id="idUnite{{ paramAn.paramAn.id}}" type="text" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdMesureEnv.codeUnite.nomUnite }}">
+                                                                                                                                              <input id="idUnite{{ paramAn.paramAn.id}}" type="text" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdMesureEnv.codeUnite.nomUnite }}" readonly="readonly">
                                                                                                                                          {% else %}
-                                                                                                                                               <input id="idUnite{{ paramAn.paramAn.id}}" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="">
+                                                                                                                                              <input id="idUniteCode{{ paramAn.paramAn.id}}" type="hidden" class="form-control" placeholder="unite" name ="uniteCode{{ paramAn.paramAn.id}}" value="{{ paramAn.unite.codeUnite }}">
+                                                                                                                                               <input id="idUnite{{ paramAn.paramAn.id}}" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{ paramAn.unite.nomUnite }}" readonly="readonly">
                                                                                                                                        {% endif %}
                                                                                                                                   {% endif %}
                                                                                                                               </div>
                                                                                                                           </div> 
                                                                                                                       </td>
-                                                                                                                  <td>
+                                                                                                                      <td align="right">
+                                                                                                                        <div class="form-group">
+                                                                                                                             <div class="input-group">
+                                                                                                                                       <select class="form-control" id="idRemarque{{ paramAn.paramAn.id}}" name="remarque{{ paramAn.paramAn.id}}"   >    
+                                                                                                                                             <option value="1"  selected>Donnée renseignée</option> 
+                                                                                                                                             <option value="0">Donnée absente</option> 
+                                                                                                                                       </select>
+                                                                                                                                </div>
+                                                                                                                          </div> 
+                                                                                                                      </td>
+                                                                                                                   <td align="left">
                                                                                                                       {% if paramAn.fraction %}
                                                                                                                             {{ paramAn.fraction.nomFraction }}
                                                                                                                       {% endif %}
@@ -162,8 +196,8 @@
                                                                                                                 {% else %}
                                                                                                                     <tr>
                                                                                                                         <td nowrap>{{ paramAn.paramAn.codeParametre.codeParametre }}</td>
-                                                                                                                        <td>{{ paramAn.paramAn.codeParametre.nomParametre }}</td>
-                                                                                                                        <td class="center">
+                                                                                                                        <td align="left">{{ paramAn.paramAn.codeParametre.nomParametre }}</td>
+                                                                                                                        <td align="right">
                                                                                                                               <div class="form-group">
                                                                                                                                    <div class="input-group">
                                                                                                                                        {% if paramAn.valeurs  %}
@@ -190,8 +224,8 @@
                                                                                                                                          {% endif %}
                                                                                                                                     </div>
                                                                                                                                 </div> 
-                                                                                                                            </td>
-                                                                                                                          <td class="center">
+                                                                                                                         </td>
+                                                                                                                         <td align="left">
                                                                                                                               <div class="form-group">
                                                                                                                                    <div  class="input-group">
                                                                                                                                        {% if paramAn.unites  %}
@@ -215,23 +249,77 @@
                                                                                                                                                  <input id="idUnite{{ paramAn.paramAn.id}}" type="text" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{paramAn.unites.0.codeUnite.nomUnite}}" readonly="readonly">
                                                                                                                                              {% endif %}
                                                                                                                                         {% else %}
-                                                                                                                                             {% if paramAn.pgCmdMesureEnv %}
-                                                                                                                                                   <input id="idUniteCode{{ paramAn.paramAn.id}}" type="hidden" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdMesureEnv.codeUnite.codeUnite }}">
-                                                                                                                                                   <input id="idUnite{{ paramAn.paramAn.id}}" type="text" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdMesureEnv.codeUnite.nomUnite }}">
+                                                                                                                                             {% if paramAn.pgCmdAnalyse %}
+                                                                                                                                                   <input id="idUniteCode{{ paramAn.paramAn.id}}" type="hidden" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdAnalyse.codeUnite.codeUnite }}">
+                                                                                                                                                   <input id="idUnite{{ paramAn.paramAn.id}}" type="text" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdAnalyse.codeUnite.nomUnite }}">
                                                                                                                                                {% else %}
-                                                                                                                                                     <input id="idUnite{{ paramAn.paramAn.id}}" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="">
+                                                                                                                                                     <input id="idUnite{{ paramAn.paramAn.id}}" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{ paramAn.unite.nomUnite }}" readonly="readonly">
                                                                                                                                              {% endif %}
                                                                                                                                         {% endif %}
                                                                                                                                     </div>
                                                                                                                                 </div> 
-                                                                                                                            </td>
-                                                                                                                        <td>
+                                                                                                                         </td>
+                                                                                                                        <td align="right">
+                                                                                                                        <div class="form-group">
+                                                                                                                             <div class="input-group">
+                                                                                                                                       <select class="form-control" id="idRemarque{{ paramAn.paramAn.id}}" name="remarque{{ paramAn.paramAn.id}}"   >    
+                                                                                                                                             <option value="1"  selected>Donnée renseignée</option> 
+                                                                                                                                             <option value="0">Donnée absente</option> 
+                                                                                                                                       </select>
+                                                                                                                                </div>
+                                                                                                                          </div> 
+                                                                                                                       </td>
+                                                                                                                        <td align="left">
                                                                                                                             {% if paramAn.fraction %}
                                                                                                                                   {{ paramAn.fraction.nomFraction }}
                                                                                                                             {% endif %}
                                                                                                                         </td>
                                                                                                                     </tr>
                                                                                                                 {% endif %}
+                                                                                                          {% else %}
+                                                                                                                {% if groupe.grparAn.grparRef.typeGrp == 'ENV'  %}
+                                                                                                                <tr>
+                                                                                                                  <td nowrap>{{ paramAn.paramAn.codeParametre.codeParametre }}</td>
+                                                                                                                  <td align="left">{{ paramAn.paramAn.codeParametre.nomParametre }}</td>
+                                                                                                                  <td align="right">
+                                                                                                                         {% if paramAn.pgCmdMesureEnv %}
+                                                                                                                             {{ paramAn.pgCmdMesureEnv.resultat }}
+                                                                                                                          {% endif %}
+                                                                                                                   </td>
+                                                                                                                    <td align="left">
+                                                                                                                            {% if paramAn.pgCmdMesureEnv %}
+                                                                                                                               {{ paramAn.pgCmdMesureEnv.codeUnite.nomUnite }}
+                                                                                                                            {% endif %}
+                                                                                                                   </td>
+                                                                                                                    <td align="left"></td>
+                                                                                                                   <td align="left">
+                                                                                                                      {% if paramAn.fraction %}
+                                                                                                                            {{ paramAn.fraction.nomFraction }}
+                                                                                                                      {% endif %}
+                                                                                                                  </td>
+                                                                                                              </tr>
+                                                                                                                {% else %}
+                                                                                                                    <tr>
+                                                                                                                        <td nowrap>{{ paramAn.paramAn.codeParametre.codeParametre }}</td>
+                                                                                                                        <td align="left">{{ paramAn.paramAn.codeParametre.nomParametre }}</td>
+                                                                                                                        <td align="right">
+                                                                                                                            {% if paramAn.pgCmdAnalyse %}
+                                                                                                                                 {{ paramAn.pgCmdAnalyse.resultat }}
+                                                                                                                            {% endif %}
+                                                                                                                        </td>
+                                                                                                                        <td align="left">
+                                                                                                                               {% if paramAn.pgCmdAnalyse %}
+                                                                                                                                       {{ paramAn.pgCmdAnalyse.codeUnite.nomUnite }}
+                                                                                                                         </td>
+                                                                                                                         <td align="left"></td>
+                                                                                                                        <td align="left">
+                                                                                                                            {% if paramAn.fraction %}
+                                                                                                                                  {{ paramAn.fraction.nomFraction }}
+                                                                                                                            {% endif %}
+                                                                                                                        </td>
+                                                                                                                    </tr>
+                                                                                                                {% endif %}
+                                                                                                         {% endif %}
                                                                                                          {% endif %}
                                                                                                       {% endif %}
                                                                                             {% endfor %}
@@ -311,20 +399,27 @@
                     
                    var nbParamSaisis{{groupe.grparAn.id }} = parseInt($('#paramSaisis{{ groupe.grparAn.id}}').html());
                 
-                   {% if groupe.grparAn.grparRef.typeGrp == 'ENV' or groupe.grparAn.grparRef.typeGrp == 'SIT' %}
+                   {% if groupe.grparAn.grparRef.typeGrp == 'ENV'  %}
                             {% for paramAn in groupe.paramAns %}
-                                    {% for valeur in paramAn.valeurs %}
-                                            {% if paramAn.pgCmdMesureEnv %}
+                                    {% if paramAn.pgCmdMesureEnv %}
+                                           nbParamSaisis{{groupe.grparAn.id }} = nbParamSaisis{{groupe.grparAn.id }} + 1;
+                                           $('#paramSaisis{{ groupe.grparAn.id}}').empty().html(nbParamSaisis{{groupe.grparAn.id }});
+                                           {% for valeur in paramAn.valeurs %}
                                                     {% if paramAn.pgCmdMesureEnv.resultat == valeur.valeur %}
                                                             var valeur =   $('#idValeur{{ paramAn.paramAn.id}} option:selected').val();
                                                             $("#idValeur{{ paramAn.paramAn.id}} option[value='" + valeur + "']").attr('selected','selected');
                                                             $("#idValeur{{ paramAn.paramAn.id}}").val(valeur);
-                                                            nbParamSaisis{{groupe.grparAn.id }} = nbParamSaisis{{groupe.grparAn.id }} + 1;
-                                                            $('#paramSaisis{{ groupe.grparAn.id}}').empty().html(nbParamSaisis{{groupe.grparAn.id }});
+
                                                     {% endif %}
-                                            {% endif %}
-                                    {% endfor %}
+                                           {% endfor %}
+                                   {% endif %}
                                     $(document).on('change','#idValeur{{ paramAn.paramAn.id}}',function(e){
+                                            if ($("#idValeur{{ paramAn.paramAn.id}}").val() != "" ){
+                                                     $('#idRemarque{{ paramAn.paramAn.id}} option:selected').removeAttr('selected');
+                                                      var remarque =  "1";
+                                                      $("#idRemarque{{ paramAn.paramAn.id}} option[value='" + remarque + "']").attr('selected','selected');
+                                                     $("#idRemarque{{ paramAn.paramAn.id}}").val(remarque);
+                                             }
                                             if ($("#idValeur{{ paramAn.paramAn.id}}").val() == "" ){
                                                 nbParamSaisis{{groupe.grparAn.id }} = nbParamSaisis{{groupe.grparAn.id }} - 1;
                                              }else{
@@ -332,6 +427,13 @@
                                              };
                                              $('#paramSaisis{{ groupe.grparAn.id}}').empty().html(nbParamSaisis{{groupe.grparAn.id }});
                                        });
+                                       
+                                       $(document).on('change','#idRemarque{{ paramAn.paramAn.id}}',function(e){
+                                            if ($("#idRemarque{{ paramAn.paramAn.id}}").val() == "0" ){
+                                                 $("#idValeur{{ paramAn.paramAn.id}}").val(null);
+                                            }
+                                        });
+                                       
                                     {% for unite in paramAn.unites %}
                                             {% if paramAn.pgCmdMesureEnv %}
                                                     {% if paramAn.pgCmdMesureEnv.codeUnite.codeUnite == unite.codeUnite %}
@@ -344,25 +446,39 @@
                              {% endfor %}
                    {% else %}
                             {% for paramAn in groupe.paramAns %}
-                                    {% for valeur in paramAn.valeurs %}
-                                            {% if paramAn.pgCmdAnalyse %}
-                                                    {% if paramAn.pgCmdAnalyse.resultat == valeur.valeur %}
-                                                            var valeur =   $('#idValeur{{ paramAn.paramAn.id}} option:selected').val();
-                                                            $("#idValeur{{ paramAn.paramAn.id}} option[value='" + valeur + "']").attr('selected','selected');
-                                                            $("#idValeur{{ paramAn.paramAn.id}}").val(valeur);
-                                                       {% endif %}
-                                            {% endif %}
-                                    {% endfor %}
-                                     if ($("#idValeur{{ paramAn.paramAn.id}}").val() != null ){
-                                       nbParamSaisis{{groupe.grparAn.id }} = nbParamSaisis{{groupe.grparAn.id }} + 1;
-                                    };
+                                    {% if paramAn.pgCmdAnalyse %}
+                                             nbParamSaisis{{groupe.grparAn.id }} = nbParamSaisis{{groupe.grparAn.id }} + 1;
+                                            $('#paramSaisis{{ groupe.grparAn.id}}').empty().html(nbParamSaisis{{groupe.grparAn.id }});
+                                            {% for valeur in paramAn.valeurs %}
+                                                        {% if paramAn.pgCmdAnalyse.resultat == valeur.valeur %}
+                                                                var valeur =   $('#idValeur{{ paramAn.paramAn.id}} option:selected').val();
+                                                                $("#idValeur{{ paramAn.paramAn.id}} option[value='" + valeur + "']").attr('selected','selected');
+                                                                $("#idValeur{{ paramAn.paramAn.id}}").val(valeur);
+                                                         {% endif %}
+                                              {% endfor %}
+                                    {% endif %}
+                                    
                                      $(document).on('change','#idValeur{{ paramAn.paramAn.id}}',function(e){
-                                            if ($("#idValeur{{ paramAn.paramAn.id}}").val() != null ){
-                                                nbParamSaisis{{groupe.grparAn.id }} = nbParamSaisis{{groupe.grparAn.id }} + 1;
-                                             }else{
+                                            if ($("#idValeur{{ paramAn.paramAn.id}}").val() != "" ){
+                                               $('#idRemarque{{ paramAn.paramAn.id}} option:selected').removeAttr('selected');
+                                                var remarque =  "1";
+                                                $("#idRemarque{{ paramAn.paramAn.id}} option[value='" + remarque + "']").attr('selected','selected');
+                                               $("#idRemarque{{ paramAn.paramAn.id}}").val(remarque);
+                                            }
+                                      
+                                            if ($("#idValeur{{ paramAn.paramAn.id}}").val() == "" ){
                                                 nbParamSaisis{{groupe.grparAn.id }} = nbParamSaisis{{groupe.grparAn.id }} - 1;
+                                             }else{
+                                                nbParamSaisis{{groupe.grparAn.id }} = nbParamSaisis{{groupe.grparAn.id }} + 1;
                                              };
-                                     });
+                                             $('#paramSaisis{{ groupe.grparAn.id}}').empty().html(nbParamSaisis{{groupe.grparAn.id }});
+                                       });
+                                    
+                                      $(document).on('change','#idRemarque{{ paramAn.paramAn.id}}',function(e){
+                                            if ($("#idRemarque{{ paramAn.paramAn.id}}").val() == "0" ){
+                                                 $("#idValeur{{ paramAn.paramAn.id}}").val(null);
+                                            }
+                                        });
                                     {% for unite in paramAn.unites %}
                                             {% if paramAn.pgCmdAnalyse %}
                                                     {% if paramAn.pgCmdAnalyse.codeUnite.codeUnite == unite.codeUnite %}
@@ -374,11 +490,18 @@
                                     {% endfor %}
                              {% endfor %}
                    {% endif %}
+                   
+                    $('#idCollapseI{{groupe.grparAn.id}}').removeClass("fa-compress").addClass("fa-expand");
+                    $('#collapse{{groupe.grparAn.id}}').collapse('hide');
+                    $('#expandAll{{groupe.grparAn.id}}').show();
+                    $('#collapseAll{{groupe.grparAn.id}}').hide(); 
+                   
+                   
           {% endfor %}
              
                                
-            $('#expandAll').hide();
-            $('#collapseAll').show();          
+            $('#expandAll').show();
+            $('#collapseAll').hide();          
 
            $('#expandAll').on('click',function(){
                    {% for groupe   in  groupes %}

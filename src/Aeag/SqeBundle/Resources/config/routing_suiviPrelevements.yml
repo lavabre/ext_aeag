@@ -45,15 +45,27 @@ AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_supprimer:
     requirements:
         methods:  GET|POST
         
-AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_saisir:
-    path:  /saisir/{prelevId}/{periodeAnId}/{stationId}
-    defaults: { _controller: AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemandeSuiviSaisir, prelevId : null, periodeAnId : null, stationId : null}
+AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_saisir_env_situ:
+    path:  /saisir/env/{prelevId}/{periodeAnId}/{stationId}
+    defaults: { _controller: AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemandeSuiviSaisirEnvSitu, prelevId : null, periodeAnId : null, stationId : null}
     requirements:
         methods:  GET|POST
         
-AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_resultat:
-    path:  /resultat/{prelevId}/{periodeAnId}/{stationId}
-    defaults: { _controller: AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemandeSuiviResultat, prelevId : null, periodeAnId : null, stationId : null}
+AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_saisir_ana:
+    path:  /saisir/ana/{prelevId}/{periodeAnId}/{stationId}
+    defaults: { _controller: AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemandeSuiviSaisirAna, prelevId : null, periodeAnId : null, stationId : null}
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_env_situ_resultat:
+    path:  /resultat/env/{prelevId}/{periodeAnId}/{stationId}
+    defaults: { _controller: AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemandeSuiviResultatEnvSitu, prelevId : null, periodeAnId : null, stationId : null}
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_ana_resultat:
+    path:  /resultat/ana/{prelevId}/{periodeAnId}/{stationId}
+    defaults: { _controller: AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemandeSuiviResultatAna, prelevId : null, periodeAnId : null, stationId : null}
     requirements:
         methods:  GET|POST
         

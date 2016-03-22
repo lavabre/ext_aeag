@@ -120,11 +120,19 @@
 {% endblock modal %}
 
 {%block panel_heading %}
-    <h3 class="page-title text-center">
-        Suivi des prélèvements de la demande  du {{ demande.cmdDemande.dateDemande | date("d/m/Y") }} </br>
-        de la station {{ station.code }} {{ station.libelle }} entre le  {{ periodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;et&nbsp;&nbsp; {{periodeAn.periode.dateFin | date("d/m/Y") }} </br>
-        du lot  {{ lotan.lot.nomLot }} - {{ lotan.anneeProg }}
-    </h3>
+      <div class="row">
+            <div class="col-md-offset-3 col-md-7">
+                        <h3 class="page-title">
+                            <table>
+                                <tr><td>Suivi des prélèvements </td></tr>
+                                <tr><td>demande  du {{ demande.cmdDemande.dateDemande | date("d/m/Y") }}</td></tr>
+                                <tr><td>Station {{ station.code }} {{ station.libelle }}</td></tr>
+                                <tr><td>entre le  {{ periodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;et&nbsp;&nbsp; {{periodeAn.periode.dateFin | date("d/m/Y") }}</td></tr>
+                                <tr><td>Lot  {{ lotan.lot.nomLot }} - {{ lotan.anneeProg }}  - version :  {{ lotan.version }}</td></tr>
+                            </table>
+                        </h3>
+               </div>
+        </div>
 {%endblock panel_heading %}
 
 {%block content %}
@@ -142,9 +150,14 @@
                                  <i class="fa fa-comment"> Ajouter un suivi</i>
                             </a>
                      {% endif %}
-                     {% if is_granted('ROLE_ADMINSQE')  or cmdPrelev.saisie == 'O' %}
-                            <a class="btn btn-warning" id="idSaisir{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Saisie des résultats">
-                               <i class="fa fa-pencil"> Saisir des résultats</i>
+                     {% if is_granted('ROLE_ADMINSQE')  or cmdPrelev.saisieTerrain == 'O' %}
+                            <a class="btn btn-warning" id="idSaisirDonneesTerrain{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Saisie des données terrains">
+                                <i class="fa fa-pencil"> Saisir des données terrain <span class="badge">{{ cmdPrelev.nbSaisisParametresTerrain  }}/{{ cmdPrelev.nbParametresTerrain }}</span></i>
+                           </a>
+                     {% endif %}
+                     {% if is_granted('ROLE_ADMINSQE')  or cmdPrelev.saisieAnalyse == 'O' %}
+                            <a class="btn btn-warning" id="idSaisirAnalyses{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Saisie des analyses">
+                               <i class="fa fa-pencil"> Saisir des analyse  <span class="badge">{{ cmdPrelev.nbSaisisParametresAnalyse }}/{{ cmdPrelev.nbParametresAnalyse }}</span></i>
                            </a>
                     {% endif %}
             </caption> 
@@ -197,6 +210,8 @@
                                                   Effectué
                                              {% elseif suiviPrel.suiviPrel.statutPrel == 'N' %}
                                                   Non effectué
+                                             {% elseif suiviPrel.suiviPrel.statutPrel == 'A' %}
+                                                  Analyses effectuées
                                              {% elseif suiviPrel.suiviPrel.statutPrel == 'V' %}
                                                   Validé
                                              {% elseif suiviPrel.suiviPrel.statutPrel == 'R' %}
@@ -275,16 +290,28 @@
                                 });
                     });
                     
-                      $(document).on('click','#idSaisir{{ cmdPrelev.cmdPrelev.id }}',function(e){
+                      $(document).on('click','#idSaisirDonneesTerrain{{ cmdPrelev.cmdPrelev.id }}',function(e){
                             e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
                             $('#modalTraitementEncours').modal('toggle');
-                           var url = '{{ path("AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_saisir",{"prelevId":  "par1", "periodeAnId": "par2", "stationId": "par3"}) }}', // Le nom du fichier indiqué dans le formulaire
+                           var url = '{{ path("AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_saisir_env_situ",{"prelevId":  "par1", "periodeAnId": "par2", "stationId": "par3"}) }}', // Le nom du fichier indiqué dans le formulaire
                             url = url.replace("par1", {{ cmdPrelev.cmdPrelev.id }});
                             url = url.replace("par2", {{ periodeAn.id }});
                             url = url.replace("par3", {{ station.ouvFoncId }});
                             url = url.replace("amp;","");
                             window.location.replace(url);
                       });
+                      
+                         $(document).on('click','#idSaisirAnalyses{{ cmdPrelev.cmdPrelev.id }}',function(e){
+                            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                            $('#modalTraitementEncours').modal('toggle');
+                           var url = '{{ path("AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_saisir_ana",{"prelevId":  "par1", "periodeAnId": "par2", "stationId": "par3"}) }}', // Le nom du fichier indiqué dans le formulaire
+                            url = url.replace("par1", {{ cmdPrelev.cmdPrelev.id }});
+                            url = url.replace("par2", {{ periodeAn.id }});
+                            url = url.replace("par3", {{ station.ouvFoncId }});
+                            url = url.replace("amp;","");
+                            window.location.replace(url);
+                      });
+                    
                     
                 
                     

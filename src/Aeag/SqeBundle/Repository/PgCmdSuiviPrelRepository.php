@@ -46,5 +46,18 @@ class PgCmdSuiviPrelRepository extends EntityRepository {
         return $qb->getResult();
     }
     
+     /**
+     * @return array
+     */
+    public function getPgCmdSuiviPrelByPrelevStatutPrel($pgCmdPrelev, $statutPrel) {
+        $query = "select c";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdSuiviPrel c";
+        $query = $query . " where c.prelev = " . $pgCmdPrelev->getId() ;
+        $query = $query . " and c.statutPrel = '" . $statutPrel . "'" ;
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+        return $qb->getOneOrNullResult();
+    }
+    
     
 }

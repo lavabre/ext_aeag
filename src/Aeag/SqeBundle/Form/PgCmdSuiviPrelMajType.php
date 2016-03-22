@@ -19,7 +19,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                                       'format' => 'dd/MM/yyyy',
                                                       'required' => true,))
                         ->add('statutPrel', 'choice', array(
-                                'choices'   => array('P' => 'Prévisionnel', 'F' => 'Effectué', 'N' => 'Non effectué', 'V' => 'Validé', 'R' => 'Réfusé'),
+                                'choices'   => array('P' => 'Prévisionnel', 'F' => 'Effectué', 'N' => 'Non effectué', 'A' => 'Analyses effectuées', 'V' => 'Validé', 'R' => 'Réfusé'),
                                 'required'  => false,
                             ))
                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
@@ -30,7 +30,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                                       'format' => 'dd/MM/yyyy',
                                                       'required' => true,))
                         ->add('statutPrel', 'choice', array(
-                                'choices'   => array('P' => 'Prévisionnel', 'F' => 'Effectué', 'N' => 'Non effectué'),
+                                'choices'   => array('P' => 'Prévisionnel', 'F' => 'Effectué', 'N' => 'Non effectué', 'A' => 'Analyses effectuées'),
                                 'required'  => false,
                             ))
                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))

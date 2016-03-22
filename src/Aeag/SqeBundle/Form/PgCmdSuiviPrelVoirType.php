@@ -20,7 +20,7 @@ class PgCmdSuiviPrelVoirType extends AbstractType {
                                                       'required' => false,
                                                       'read_only' => true))
                         ->add('statutPrel', 'choice', array(
-                                'choices'   => array('P' => 'Prévisionnel', 'F' => 'Effectué', 'N' => 'Non effectué', 'V' => 'Validé', 'R' => 'Réfusé'),
+                                'choices'   => array('P' => 'Prévisionnel', 'F' => 'Effectué', 'N' => 'Non effectué', 'A' => 'Analyses effectuées', 'V' => 'Validé', 'R' => 'Réfusé'),
                                 'required'  =>false,
                             'read_only' => true
                             ))
@@ -33,7 +33,7 @@ class PgCmdSuiviPrelVoirType extends AbstractType {
                                                       'required' => false,
                                                       'read_only' => true))
                         ->add('statutPrel', 'choice', array(
-                                'choices'   => array('P' => 'Prévisionnel', 'F' => 'Effectué', 'N' => 'Non effectué'),
+                                'choices'   => array('P' => 'Prévisionnel', 'F' => 'Effectué', 'N' => 'Non effectué', 'A' => 'Analyses effectuées'),
                                 'required'  =>false,
                             'read_only' => true
                             ))
