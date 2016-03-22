@@ -113,14 +113,16 @@ class PgCmdDemandeRepository extends EntityRepository {
         return $qb->getOneOrNullResult();
     }
     
-    public function getPgCmdDemandesMarcheAeag() {
+    public function isPgCmdDemandesMarcheAeag($demandeId) {
         $query = "select dmd";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdDemande dmd, Aeag\SqeBundle\Entity\PgProgLotAn lotan, Aeag\SqeBundle\Entity\PgProgLot lot, Aeag\SqeBundle\Entity\PgProgMarche m";
         $query .= " where lotan = dmd.lotan";
         $query .= " and lot = lotan.lot";
         $query .= " and m = lot.marche ";
         $query .= " and m.typeMarche = 'MOA'";
+        $query .= " and dmd.id = :demande";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('demande', $demandeId);
         //print_r($query);
         return $qb->getResult();
     }
