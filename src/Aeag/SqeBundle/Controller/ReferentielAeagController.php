@@ -32,7 +32,7 @@ class ReferentielAeagController extends Controller {
             //ouverture fichier
             $fic = fopen($fic_import, "w");
             $contenu = "Identifiant;Nom;Siret;sandre;\n";
-            fputs($fic, $contenu);
+            fputs($fic, utf8_decode($contenu));
             foreach ($pgRefCorresProducteurs as $pgRefCorresProducteur) {
                 $tabSRefCorresProducteurs[$i]['pgRefCorresProducteur'] = $pgRefCorresProducteur;
                 $i++;
@@ -40,7 +40,7 @@ class ReferentielAeagController extends Controller {
                 $contenu = $contenu . $pgRefCorresProducteur->getNomCorres() . ";";
                 $contenu = $contenu . $pgRefCorresProducteur->getCodeSiret() . ";";
                 $contenu = $contenu . $pgRefCorresProducteur->getCodeSandre() . ";\n";
-                fputs($fic, $contenu);
+                fputs($fic, utf8_decode($contenu));
             }
             fclose($fic);
         } else {
@@ -77,7 +77,7 @@ class ReferentielAeagController extends Controller {
             //ouverture fichier
             $fic = fopen($fic_import, "w");
             $contenu = "Identifiant;Nom;Siret;sandre;\n";
-            fputs($fic, $contenu);
+            fputs($fic, utf8_decode($contenu));
             foreach ($pgRefCorresPrestataires as $pgRefCorresPrestataire) {
                 $tabSRefCorresPrestataires[$i]['pgRefCorresPrestataire'] = $pgRefCorresPrestataire;
                 $i++;
@@ -85,7 +85,7 @@ class ReferentielAeagController extends Controller {
                 $contenu = $contenu . $pgRefCorresPrestataire->getNomCorres() . ";";
                 $contenu = $contenu . $pgRefCorresPrestataire->getCodeSiret() . ";";
                 $contenu = $contenu . $pgRefCorresPrestataire->getCodeSandre() . ";\n";
-                fputs($fic, $contenu);
+                fputs($fic, utf8_decode($contenu));
             }
             fclose($fic);
         } else {
@@ -292,7 +292,7 @@ class ReferentielAeagController extends Controller {
             //ouverture fichier
             $fic = fopen($fic_import, "w");
             $contenu = "Code aeag;code Sandre;Nom;\n";
-            fputs($fic, $contenu);
+            fputs($fic, utf8_decode($contenu));
             foreach ($pgRefReseauMesures as $pgRefReseauMesure) {
                 $tabReseauMesures[$i]['pgRefReseauMesure'] = $pgRefReseauMesure;
                 $pgRefStationRsxs = $repoPgRefStationRsx->getPgRefStationRsxByResauMesure($pgRefReseauMesure);
@@ -301,7 +301,7 @@ class ReferentielAeagController extends Controller {
                 $contenu = $pgRefReseauMesure->getCodeAeagRsx() . ";";
                 $contenu = $contenu . $pgRefReseauMesure->getCodeSandre() . ";";
                 $contenu = $contenu . $pgRefReseauMesure->getNomRsx() . ";\n";
-                fputs($fic, $contenu);
+                fputs($fic, utf8_decode($contenu));
             }
             fclose($fic);
         } else {

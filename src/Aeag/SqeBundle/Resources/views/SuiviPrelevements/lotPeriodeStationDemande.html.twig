@@ -283,16 +283,8 @@
                             url = url.replace("par2", {{ periodeAn.id }});
                             url = url.replace("par3", {{ station.ouvFoncId }});
                             url = url.replace("amp;","");
-                           $.ajax({
-                                    url: url,
-                                    type: 'get', // La méthode indiquée dans le formulaire (get ou post)
-                                    success: function(html) { // Je récupère la réponse du fichier PHP
-                                         $('#idModalContentSaisir{{ cmdPrelev.cmdPrelev.id }}').empty().append(html);
-                                         $('#modalSaisir{{ cmdPrelev.cmdPrelev.id }}').modal('show');
-                                         $('#modalTraitementEncours').modal('hide');
-                                       }
-                                });
-                    });
+                            window.location.replace(url);
+                      });
                     
                 
                     

@@ -51,6 +51,12 @@ AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_saisir:
     requirements:
         methods:  GET|POST
         
+AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_resultat:
+    path:  /resultat/{prelevId}/{periodeAnId}/{stationId}
+    defaults: { _controller: AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemandeSuiviResultat, prelevId : null, periodeAnId : null, stationId : null}
+    requirements:
+        methods:  GET|POST
+        
 AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_fichier_deposer:
     path:  /fichier/deposer/{suiviPrelId}/{periodeAnId}
     defaults: { _controller: AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemandeSuiviFichierDeposer, suiviPrelId : null, periodeAnId : null }
