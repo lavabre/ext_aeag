@@ -34,6 +34,15 @@ class PgCmdMesureEnvRepository extends EntityRepository {
         return $qb->getResult();
     }
     
+     public function getNbCmdMesureEnvByPrelev($pgCmdPrelev) {
+        $query = "select count(c.prelev)";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdMesureEnv c";
+        $query = $query . " where c.prelev = " . $pgCmdPrelev->getId() ;
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+       return $qb->getSingleScalarResult();
+    }
+    
     /**
      * @return array
      */

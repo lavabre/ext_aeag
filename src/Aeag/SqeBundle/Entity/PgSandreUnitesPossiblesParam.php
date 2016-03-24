@@ -83,7 +83,7 @@ class PgSandreUnitesPossiblesParam {
         $this->natureFraction = $natureFraction;
     }
 
-    function setUniteDefaut(\PgSandreUnites $uniteDefaut) {
+    function setUniteDefaut($uniteDefaut) {
         $this->uniteDefaut = $uniteDefaut;
     }
 

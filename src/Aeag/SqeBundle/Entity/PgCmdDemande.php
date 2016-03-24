@@ -206,11 +206,11 @@ class PgCmdDemande {
         $this->anneeProg = $anneeProg;
     }
 
-    function setLotan(\Aeag\SqeBundle\Entity\PgProgLotAn $lotan) {
+    function setLotan($lotan) {
         $this->lotan = $lotan;
     }
 
-    function setCommanditaire(\Aeag\SqeBundle\Entity\PgRefCorresProducteur $commanditaire) {
+    function setCommanditaire($commanditaire) {
         $this->commanditaire = $commanditaire;
     }
 
@@ -218,7 +218,7 @@ class PgCmdDemande {
         $this->codeDemandePresta = $codeDemandePresta;
     }
 
-    function setPrestataire(\Aeag\SqeBundle\Entity\PgRefCorresPresta $prestataire) {
+    function setPrestataire($prestataire) {
         $this->prestataire = $prestataire;
     }
 
@@ -226,7 +226,7 @@ class PgCmdDemande {
         $this->typeDemande = $typeDemande;
     }
 
-    function setDestAna(\Aeag\SqeBundle\Entity\PgRefCorresProducteur $destAna) {
+    function setDestAna($destAna) {
         $this->destAna = $destAna;
     }
 
@@ -238,11 +238,11 @@ class PgCmdDemande {
         $this->nomFichier = $nomFichier;
     }
 
-    function setPhaseDemande(\Aeag\SqeBundle\Entity\PgProgPhases $phaseDemande) {
+    function setPhaseDemande($phaseDemande) {
         $this->phaseDemande = $phaseDemande;
     }
 
-    function setEmetteur(\Aeag\SqeBundle\Entity\PgProgWebusers $emetteur) {
+    function setEmetteur($emetteur) {
         $this->emetteur = $emetteur;
     }
     
@@ -254,7 +254,7 @@ class PgCmdDemande {
         return $this->formatFichier;
     }
 
-    function setPeriode(\Aeag\SqeBundle\Entity\PgProgPeriodes $periode) {
+    function setPeriode($periode) {
         $this->periode = $periode;
     }
 

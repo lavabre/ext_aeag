@@ -66,7 +66,7 @@ class PgProgLotParamAnRepository extends EntityRepository {
         //print_r($query);
         return $qb->getResult();
     }
-    
+
     public function getPgProgLotParamAnByGrparAnCodeParametre($PgProgLotGrparAn, $PgSandreParametre) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotParamAn p";
@@ -76,7 +76,7 @@ class PgProgLotParamAnRepository extends EntityRepository {
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-    
+
     public function getPgProgLotParamAnByPrestataireGrparan($PgRefCorresPresta, $PgProgLotGrparAn) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotParamAn p";
@@ -87,8 +87,7 @@ class PgProgLotParamAnRepository extends EntityRepository {
         return $qb->getResult();
     }
 
-    
-     public function getPrestatairesByGrparan($PgProgLotGrparAn) {
+    public function getPrestatairesByGrparan($PgProgLotGrparAn) {
         $query = "select distinct(p.prestataire)";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotParamAn p";
         $query = $query . " where p.grparan = " . $PgProgLotGrparAn->getId();
@@ -96,5 +95,42 @@ class PgProgLotParamAnRepository extends EntityRepository {
         //print_r($query);
         return $qb->getResult();
     }
+
+    public function getNbProgLotParamAnEnvSituByStationAnPeriodeAnPrestataire($PgProgLotStationAn, $PgProglotPeriodeAn, $prestataire) {
+        $query = "select count(par.id)";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotParamAn par";
+        $query = $query . " , Aeag\SqeBundle\Entity\PgProgLotPeriodeProg per";
+        $query = $query . " , Aeag\SqeBundle\Entity\PgProgLotGrparAn gran";
+        $query = $query . " , Aeag\SqeBundle\Entity\PgProgGrpParamRef grou";
+        $query = $query . " where per.stationAn = " . $PgProgLotStationAn->getId();
+        $query = $query . " and per.periodan = " . $PgProglotPeriodeAn->getId();
+        $query = $query . " and par.grparan  = per.grparAn";
+        $query = $query . " and par.prestataire  = " . $prestataire->getAdrCorId();
+        $query = $query . " and gran.id  = per.grparAn";
+        $query = $query . " and grou.id  = gran.grparRef";
+        $query = $query . " and grou.typeGrp  in ('ENV','SIT')";
+        $qb = $this->_em->createQuery($query);
+        // print_r($query);
+        return $qb->getSingleScalarResult();
+    }
     
+    public function getNbProgLotParamAnAnaByStationAnPeriodeAnPrestataire($PgProgLotStationAn, $PgProglotPeriodeAn, $prestataire) {
+        $query = "select count(par.id)";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotParamAn par";
+        $query = $query . " , Aeag\SqeBundle\Entity\PgProgLotPeriodeProg per";
+        $query = $query . " , Aeag\SqeBundle\Entity\PgProgLotGrparAn gran";
+        $query = $query . " , Aeag\SqeBundle\Entity\PgProgGrpParamRef grou";
+        $query = $query . " where per.stationAn = " . $PgProgLotStationAn->getId();
+        $query = $query . " and per.periodan = " . $PgProglotPeriodeAn->getId();
+        $query = $query . " and par.grparan  = per.grparAn";
+        $query = $query . " and par.prestataire  = " . $prestataire->getAdrCorId();
+        $query = $query . " and gran.id  = per.grparAn";
+        $query = $query . " and grou.id  = gran.grparRef";
+        $query = $query . " and grou.typeGrp  = 'ANA'";
+        $qb = $this->_em->createQuery($query);
+        // print_r($query);
+        return $qb->getSingleScalarResult();
+    }
+
+
 }

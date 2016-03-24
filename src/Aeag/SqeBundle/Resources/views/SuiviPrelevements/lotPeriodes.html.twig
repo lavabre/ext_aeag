@@ -16,9 +16,17 @@
 {% endblock breadcrumb %} 
 
 {%block panel_heading %}
-    <h3 class="page-title text-center">
-        Suivi des prélèvements - Liste des périodes</br>du lot  {{ lotan.lot.nomLot }} - {{ lotan.anneeProg }}
-    </h3>
+    <div class="row">
+            <div class="col-md-offset-3 col-md-7">
+                    <h3 class="page-title">
+                        <table>
+                            <tr><td>Suivi des prélèvements </td></tr>
+                            <tr><td>Liste des périodes</td></tr>
+                             <tr><td>Lot  {{ lotan.lot.nomLot }} - {{ lotan.anneeProg }} - version :  {{ lotan.version }}</td></tr>
+                        </table>
+                    </h3>
+            </div>
+    </div>
 {%endblock panel_heading %}
 
 {%block content %}
@@ -64,28 +72,14 @@
         var table = $('#idTable_demandes').DataTable(
             {"stateSave": true,
              "order": [[ 1, "asc" ]],
-            "oLanguage": {
-            "sSearch": "Filtre",
-            "sFirst": "1ere page",
-            "sLast": "Dernière page",
-            "sNext": "Prochaine page",
-            "sPrevious": "Page précédente",
-            "EmptyTable": "Pas de données",
-            "sInfo": "Nombre d'enregistrements :  _TOTAL_",
-            "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
-            "sZeroRecords": "Pas d'enregistrement à afficher",
-            "sInfoEmpty": "Pas d'enregistrement à afficher",
-            "sInfoThousands": " ",
-            "sLengthMenu": 'Afficher <select>' +
-                '<option value="10">10</option>' +
-                '<option value="20">20</option>' +
-                '<option value="30">30</option>' +
-                '<option value="40">40</option>' +
-                '<option value="50">50</option>' +
-                '<option value="-1">Tous</option>' +
-                '</select> enregistrements',
-            "sPaginationType": "full_numbers"
-            }
+            "language": {
+                                 "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
+                             },
+            "aLengthMenu": [
+                                [10, 25, 50, 100, -1],
+                                [10, 25, 50, 100, "Tous"]
+                            ],
+             "iDisplayLength": -1
             }
             );
 

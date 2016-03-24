@@ -18,7 +18,7 @@
         {% else %}
              <div class="col-xs-8 input-group">
          {% endif %}
-           {{ form_widget(form.statutPrel, { 'attr': {'class': 'form-control ', 'placeholder': 'Statut'} }) }}
+           {{ form_widget(form.statutPrel, { 'attr': {'class': 'form-control ', 'placeholder': 'Statut', 'readonly': 'readonly'} }) }}
          </div>
  </div> 
          
@@ -29,7 +29,7 @@
         {% else %}
              <div class="col-xs-8 input-group">
          {% endif %}
-           {{ form_widget(form.commentaire, { 'attr': {'class': 'form-control ', 'placeholder': 'Commentaire'} }) }}
+           {{ form_widget(form.commentaire, { 'attr': {'class': 'form-control ', 'placeholder': 'Commentaire', 'readonly': 'readonly'} }) }}
          </div>
  </div> 
            

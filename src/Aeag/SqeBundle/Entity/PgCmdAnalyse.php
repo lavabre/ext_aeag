@@ -11,8 +11,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Entity(repositoryClass="Aeag\SqeBundle\Repository\PgCmdAnalyseRepository")
  */
-class PgCmdAnalyse
-{
+class PgCmdAnalyse {
+
     /**
      * @var string
      *
@@ -30,27 +30,6 @@ class PgCmdAnalyse
      * @ORM\GeneratedValue(strategy="NONE")
      */
     private $numOrdre;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="lieu_ana", type="string", length=1, nullable=false)
-     */
-    private $lieuAna;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="date_ana", type="datetime", nullable=true)
-     */
-    private $dateAna;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="resultat", type="decimal", precision=20, scale=10, nullable=true)
-     */
-    private $resultat;
 
     /**
      * @var \PgSandreParametres
@@ -75,6 +54,27 @@ class PgCmdAnalyse
     private $codeFraction;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="lieu_ana", type="string", length=1, nullable=false)
+     */
+    private $lieuAna;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="date_ana", type="datetime", nullable=true)
+     */
+    private $dateAna;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="resultat", type="decimal", precision=20, scale=10, nullable=true)
+     */
+    private $resultat;
+
+    /**
      * @var \PgSandreUnites
      *
      * @ORM\ManyToOne(targetEntity="PgSandreUnites")
@@ -83,6 +83,62 @@ class PgCmdAnalyse
      * })
      */
     private $codeUnite;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="code_remarque", type="string", length=1, nullable=true)
+     */
+    private $codeRemarque;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="lq_ana", type="decimal", precision=20, scale=10, nullable=true)
+     */
+    private $lqAna;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="ref_ana_labo", type="string", length=100, nullable=true)
+     */
+    private $refAnaLabo;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="code_methode", type="string", length=5, nullable=true)
+     */
+    private $codeMethode;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="accreditation", type="string", length=1, nullable=true)
+     */
+    private $accreditation;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="confirmation", type="string", length=1, nullable=true)
+     */
+    private $confirmation;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="reserve", type="string", length=1, nullable=true)
+     */
+    private $reserve;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="code_statut", type="string", length=1, nullable=true)
+     */
+    private $codeStatut;
 
     /**
      * @var \PgProgLotParamAn
@@ -94,221 +150,140 @@ class PgCmdAnalyse
      */
     private $paramProg;
 
-
-
-    /**
-     * Set prelevId
-     *
-     * @param string $prelevId
-     *
-     * @return PgCmdAnalyse
-     */
-    public function setPrelevId($prelevId)
-    {
-        $this->prelevId = $prelevId;
-
-        return $this;
-    }
-
-    /**
-     * Get prelevId
-     *
-     * @return string
-     */
-    public function getPrelevId()
-    {
+    function getPrelevId() {
         return $this->prelevId;
     }
 
-    /**
-     * Set numOrdre
-     *
-     * @param string $numOrdre
-     *
-     * @return PgCmdAnalyse
-     */
-    public function setNumOrdre($numOrdre)
-    {
-        $this->numOrdre = $numOrdre;
-
-        return $this;
-    }
-
-    /**
-     * Get numOrdre
-     *
-     * @return string
-     */
-    public function getNumOrdre()
-    {
+    function getNumOrdre() {
         return $this->numOrdre;
     }
 
-    /**
-     * Set lieuAna
-     *
-     * @param string $lieuAna
-     *
-     * @return PgCmdAnalyse
-     */
-    public function setLieuAna($lieuAna)
-    {
-        $this->lieuAna = $lieuAna;
-
-        return $this;
-    }
-
-    /**
-     * Get lieuAna
-     *
-     * @return string
-     */
-    public function getLieuAna()
-    {
-        return $this->lieuAna;
-    }
-
-    /**
-     * Set dateAna
-     *
-     * @param \DateTime $dateAna
-     *
-     * @return PgCmdAnalyse
-     */
-    public function setDateAna($dateAna)
-    {
-        $this->dateAna = $dateAna;
-
-        return $this;
-    }
-
-    /**
-     * Get dateAna
-     *
-     * @return \DateTime
-     */
-    public function getDateAna()
-    {
-        return $this->dateAna;
-    }
-
-    /**
-     * Set resultat
-     *
-     * @param string $resultat
-     *
-     * @return PgCmdAnalyse
-     */
-    public function setResultat($resultat)
-    {
-        $this->resultat = $resultat;
-
-        return $this;
-    }
-
-    /**
-     * Get resultat
-     *
-     * @return string
-     */
-    public function getResultat()
-    {
-        return $this->resultat;
-    }
-
-    /**
-     * Set codeParametre
-     *
-     * @param \Aeag\SqeBundle\Entity\PgSandreParametres $codeParametre
-     *
-     * @return PgCmdAnalyse
-     */
-    public function setCodeParametre(\Aeag\SqeBundle\Entity\PgSandreParametres $codeParametre)
-    {
-        $this->codeParametre = $codeParametre;
-
-        return $this;
-    }
-
-    /**
-     * Get codeParametre
-     *
-     * @return \Aeag\SqeBundle\Entity\PgSandreParametres
-     */
-    public function getCodeParametre()
-    {
+    function getCodeParametre() {
         return $this->codeParametre;
     }
 
-    /**
-     * Set codeFraction
-     *
-     * @param \Aeag\SqeBundle\Entity\PgSandreFractions $codeFraction
-     *
-     * @return PgCmdAnalyse
-     */
-    public function setCodeFraction(\Aeag\SqeBundle\Entity\PgSandreFractions $codeFraction = null)
-    {
-        $this->codeFraction = $codeFraction;
-
-        return $this;
-    }
-
-    /**
-     * Get codeFraction
-     *
-     * @return \Aeag\SqeBundle\Entity\PgSandreFractions
-     */
-    public function getCodeFraction()
-    {
+    function getCodeFraction() {
         return $this->codeFraction;
     }
 
-    /**
-     * Set codeUnite
-     *
-     * @param \Aeag\SqeBundle\Entity\PgSandreUnites $codeUnite
-     *
-     * @return PgCmdAnalyse
-     */
-    public function setCodeUnite(\Aeag\SqeBundle\Entity\PgSandreUnites $codeUnite = null)
-    {
-        $this->codeUnite = $codeUnite;
-
-        return $this;
+    function getLieuAna() {
+        return $this->lieuAna;
     }
 
-    /**
-     * Get codeUnite
-     *
-     * @return \Aeag\SqeBundle\Entity\PgSandreUnites
-     */
-    public function getCodeUnite()
-    {
+    function getDateAna() {
+        return $this->dateAna;
+    }
+
+    function getResultat() {
+        return $this->resultat;
+    }
+
+    function getCodeUnite() {
         return $this->codeUnite;
     }
 
-    /**
-     * Set paramProg
-     *
-     * @param \Aeag\SqeBundle\Entity\PgProgLotParamAn $paramProg
-     *
-     * @return PgCmdAnalyse
-     */
-    public function setParamProg(\Aeag\SqeBundle\Entity\PgProgLotParamAn $paramProg = null)
-    {
-        $this->paramProg = $paramProg;
-
-        return $this;
+    function getCodeRemarque() {
+        return $this->codeRemarque;
     }
 
-    /**
-     * Get paramProg
-     *
-     * @return \Aeag\SqeBundle\Entity\PgProgLotParamAn
-     */
-    public function getParamProg()
-    {
+    function getLqAna() {
+        return $this->lqAna;
+    }
+
+    function getRefAnaLabo() {
+        return $this->refAnaLabo;
+    }
+
+    function getCodeMethode() {
+        return $this->codeMethode;
+    }
+
+    function getAccreditation() {
+        return $this->accreditation;
+    }
+
+    function getConfirmation() {
+        return $this->confirmation;
+    }
+
+    function getReserve() {
+        return $this->reserve;
+    }
+
+    function getCodeStatut() {
+        return $this->codeStatut;
+    }
+
+    function getParamProg() {
         return $this->paramProg;
     }
+
+    function setPrelevId($prelevId) {
+        $this->prelevId = $prelevId;
+    }
+
+    function setNumOrdre($numOrdre) {
+        $this->numOrdre = $numOrdre;
+    }
+
+    function setCodeParametre($codeParametre) {
+        $this->codeParametre = $codeParametre;
+    }
+
+    function setCodeFraction($codeFraction) {
+        $this->codeFraction = $codeFraction;
+    }
+
+    function setLieuAna($lieuAna) {
+        $this->lieuAna = $lieuAna;
+    }
+
+    function setDateAna(\DateTime $dateAna) {
+        $this->dateAna = $dateAna;
+    }
+
+    function setResultat($resultat) {
+        $this->resultat = $resultat;
+    }
+
+    function setCodeUnite($codeUnite) {
+        $this->codeUnite = $codeUnite;
+    }
+
+    function setCodeRemarque($codeRemarque) {
+        $this->codeRemarque = $codeRemarque;
+    }
+
+    function setLqAna($lqAna) {
+        $this->lqAna = $lqAna;
+    }
+
+    function setRefAnaLabo($refAnaLabo) {
+        $this->refAnaLabo = $refAnaLabo;
+    }
+
+    function setCodeMethode($codeMethode) {
+        $this->codeMethode = $codeMethode;
+    }
+
+    function setAccreditation($accreditation) {
+        $this->accreditation = $accreditation;
+    }
+
+    function setConfirmation($confirmation) {
+        $this->confirmation = $confirmation;
+    }
+
+    function setReserve($reserve) {
+        $this->reserve = $reserve;
+    }
+
+    function setCodeStatut($codeStatut) {
+        $this->codeStatut = $codeStatut;
+    }
+
+    function setParamProg($paramProg) {
+        $this->paramProg = $paramProg;
+    }
+
 }

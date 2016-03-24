@@ -178,6 +178,9 @@
                <div class="col-md-12">
                   <div class="small">
                       <table class="table table-bordered table-striped table-condensed table-advance table-hover">
+                            {% if dec_montApDispo < 0 %}
+                                <caption><div class="alert alert-danger" role="alert"><h4><b>Vous avez dépassé le montant de l'aide prévisionnelle de {{ dec_montApDispo  | abs | number_format(2,'.',' ') }} €. veuillez contacter l'Agence de l'Eau.</b></h4></div></caption>
+                             {% endif %}
                                  <thead>
                                       <tr>
                                            <th class="text-center">Quantité déclarée (kg)</th>
@@ -193,7 +196,13 @@
                                         <td align="right">{{ (dec_quantiteRet) | number_format(0,'.',' ')}}</td>
                                         <td align="right">{{ dec_montAide | number_format(2,'.',' ')}}</td>
                                         <td align="right">{{ declarationCollecteur.montantAp | number_format(2,'.',' ')}}</td>
-                                        <td align="right">{{ dec_montApDispo | number_format(2,'.',' ')}}</td>
+                                        
+                                            {% if dec_montApDispo < 0 %}
+                                                <td align="right" class="alert alert-danger"> {{ dec_montApDispo | number_format(2,'.',' ')}}</td>
+                                            {% else %}
+                                                <td align="right">{{ dec_montApDispo | number_format(2,'.',' ')}}</td>
+                                            {% endif %}
+                                        </td>
                                     </tr>
                         </table>
                     </div>
