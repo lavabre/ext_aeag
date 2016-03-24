@@ -30,6 +30,8 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
     private $codeSandreMacroPolluants;
     private $detectionCodeRemarqueComplet;
     private $detectionCodeRemarqueMoitie;
+    
+    private $phase82atteinte = false;
 
     protected function configure() {
         $this
@@ -71,10 +73,10 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
             $logErrorsCoherence = $this->repoPgLogValidEdilabo->findBy(array('demandeId' => $pgCmdFichierRps->getDemande()->getId(), 'fichierRpsId' => $pgCmdFichierRps->getId(), 'typeErreur' => 'error'));
             $logWarningsCoherence = $this->repoPgLogValidEdilabo->findBy(array('demandeId' => $pgCmdFichierRps->getDemande()->getId(), 'fichierRpsId' => $pgCmdFichierRps->getId(), 'typeErreur' => 'warning'));
             
-            $phase82atteinte = false;
+            
             if (count($logErrorsCoherence) > 0) {
                 $this->_updatePhase($pgCmdFichierRps, 'R82');
-                $phase82atteinte = true;
+                $this->phase82atteinte = true;
             } else {
                 if (count($logWarningsCoherence) > 0) { // Avec avertissements
                     $this->_updatePhase($pgCmdFichierRps, 'R31');
@@ -91,12 +93,12 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
             
             if (count($logErrorsVraisemblance) > 0) {
                 // Erreur
-                $this->_updatePhase($pgCmdFichierRps, 'R84', $phase82atteinte);
+                $this->_updatePhase($pgCmdFichierRps, 'R84', $this->phase82atteinte);
             } else { // Succes
                 if (count($logWarningsVraisemblance) > 0) { // Avec avertissements
-                    $this->_updatePhase($pgCmdFichierRps, 'R41', $phase82atteinte);
+                    $this->_updatePhase($pgCmdFichierRps, 'R41', $this->phase82atteinte);
                 } else { // Sans avertissements
-                    $this->_updatePhase($pgCmdFichierRps, 'R40', $phase82atteinte);
+                    $this->_updatePhase($pgCmdFichierRps, 'R40', $this->phase82atteinte);
                 }
             }
 
@@ -226,7 +228,7 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
 
     protected function _controleVraisemblance($pgCmdFichierRps) {
 
-        $this->_updatePhase($pgCmdFichierRps, 'R36');
+        $this->_updatePhase($pgCmdFichierRps, 'R36', $this->phase82atteinte);
 
         $demandeId = $pgCmdFichierRps->getDemande()->getId();
         $reponseId = $pgCmdFichierRps->getId();
@@ -291,7 +293,7 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
 
             // III.5 Valeurs avec code remarque '> (3)' hors bactério (1147,1448,1449,1451,5479,6455); code remarque ="Trace (7)"
             $codeParamsBacterio = array(
-                1147, 1448, 1449, 1451, 5479, 6455
+                1447, 1448, 1449, 1451, 5479, 6455
             );
             if (($codeRq == 3 && !in_array($codeParametre, $codeParamsBacterio)) || $codeRq == 7) {
                 $this->_addLog('error', $demandeId, $reponseId, "Code Remarque > 3 ou == 7 impossible pour ce paramètre", $codePrelevement, $codeParametre);
@@ -780,8 +782,8 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
 
     protected function _updatePhase($pgCmdFichierRps, $phase, $phaseExclu = false) {
         
+        $pgProgPhases = $this->repoPgProgPhases->findOneByCodePhase($phase);
         if (!$phaseExclu) {
-            $pgProgPhases = $this->repoPgProgPhases->findOneByCodePhase($phase);
             $pgCmdFichierRps->setPhaseFichier($pgProgPhases);
             $this->emSqe->persist($pgCmdFichierRps);
         }
