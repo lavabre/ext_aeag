@@ -54,14 +54,19 @@
                 </div>
                    
                 <div class="form-group">
-                    <label class="col-md-10 col-md-offset-2 left"><h4>Administrative</h4></label>
+                    <label class="col-md-10 col-md-offset-1 left"><h4>Administrative</h4></label>
                 </div>
                    
-                <div class="form-group">
-                    <label class="col-md-2 col-md-offset-3 left">Région</label>
-                      <div class="col-md-4 input-group left">
+                <div class="form-group form-inline">
+                    {#<label class="col-md-2 col-md-offset-2 left">Région</label>#}
+                    <div class="col-md-3 col-md-offset-2 left input-group text-right">
+                        <div id="francemap" style="width: 200px; height: 200px;"></div>
+                     </div>
+                     ou
+                      <div class="col-md-5 input-group left">
                        {{ form_widget(form.regionAdmin, { 'attr': {'class': 'form-control ', 'placeholder': 'Région administrative'} }) }}
                      </div>
+                 
                      <label  class="col-md-2 col-md-offset-3 left">Département</label>
                     <div class="col-md-4 input-group left">
                        <div id="idDepartements">
@@ -98,11 +103,15 @@
             </div>
              
          </form>
- 
 
+       
+              
 {% endblock content %}
 
-{% block scripts %}                    
+{% block scripts %}          
+      
+    
+    
        $('#btFermer').click(function (e) {
            e.preventDefault();
            $('#criteres_ligne').val(null);
@@ -130,6 +139,34 @@
             $('#idAttente').hide();
             });
     } );  
-      
+    
+   	$(document).ready(function() {
+		$('#francemap').vectorMap({
+		    map: 'france_fr',
+			hoverOpacity: 0.5,
+			hoverColor: "#426cfa",
+			backgroundColor: "#ffffff",
+			color: "#abbdfd",
+			borderColor: "#000000",
+			selectedColor: "#426cfa",
+			enableZoom: false,
+			showTooltip: true,
+		    onRegionClick: function(element, code, region)
+		    {
+		         $('#idAttente').show();
+                                                $('#criteres_regionAdmin').val(code);
+                                                cache: false  
+                                               var requestData = {
+                                               region :  code
+                                               }
+                                               $.get( "{{path("AeagAideBundle_region_departements")}}", requestData , function( responseData ) { 
+                                               $("#idDepartements" ).empty().html( responseData ); 
+                                               $('#idAttente').hide();
+                                               });
+                        
+		    }
+		});
+	});
+
       
 {% endblock scripts %}
