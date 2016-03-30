@@ -141,6 +141,13 @@ class PgCmdAnalyse {
     private $codeStatut;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="libelle_statut", type="string", length=255, nullable=true)
+     */
+    private $libelleStatut;
+
+    /**
      * @var \PgProgLotParamAn
      *
      * @ORM\ManyToOne(targetEntity="PgProgLotParamAn")
@@ -284,6 +291,14 @@ class PgCmdAnalyse {
 
     function setParamProg($paramProg) {
         $this->paramProg = $paramProg;
+    }
+
+    function getLibelleStatut() {
+        return $this->libelleStatut;
+    }
+
+    function setLibelleStatut($libelleStatut) {
+        $this->libelleStatut = $libelleStatut;
     }
 
 }

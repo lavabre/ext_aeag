@@ -41,11 +41,33 @@ class PgCmdAnalyseRepository extends EntityRepository {
          return $qb->getSingleScalarResult();
      }
      
+      public function getNbCmdAnalyseSituByPrelevStatut($pgCmdPrelev, $statut) {
+        $query = "select count(p.prelevId)";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdAnalyse p";
+        $query = $query . " where p.prelevId = " . $pgCmdPrelev->getId() ;
+        $query = $query . " and p.lieuAna = '1'" ;
+        $query = $query . " and  p.codeStatut = '" . $statut . "'" ;
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+         return $qb->getSingleScalarResult();
+     }
+     
      public function getNbCmdAnalyseAnaByPrelev($pgCmdPrelev) {
         $query = "select count(p.prelevId)";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdAnalyse p";
         $query = $query . " where p.prelevId = " . $pgCmdPrelev->getId() ;
         $query = $query . " and p.lieuAna = '2'" ;
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+         return $qb->getSingleScalarResult();
+     }
+     
+     public function getNbCmdAnalyseAnaByPrelevStatut($pgCmdPrelev, $statut) {
+        $query = "select count(p.prelevId)";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdAnalyse p";
+        $query = $query . " where p.prelevId = " . $pgCmdPrelev->getId() ;
+        $query = $query . " and p.lieuAna = '2'" ;
+        $query = $query . " and  p.codeStatut = '" . $statut . "'" ;
         $qb = $this->_em->createQuery($query);
         //print_r($query);
          return $qb->getSingleScalarResult();

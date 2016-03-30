@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass="Aeag\SqeBundle\Repository\PgProgUnitesPossiblesParamRepository")
  */
 class PgProgUnitesPossiblesParam {
-    
+
     /**
      * @var \PgSandreParametres
      *
@@ -23,7 +23,7 @@ class PgProgUnitesPossiblesParam {
      * })
      */
     private $codeParametre;
-    
+
     /**
      * @var \PgSandreUnites
      * @ORM\Id
@@ -33,21 +33,28 @@ class PgProgUnitesPossiblesParam {
      * })
      */
     private $codeUnite;
-    
+
     /**
      * @var string
      *
      * @ORM\Column(name="nature_fraction", type="string", length=1, nullable=true)
      */
     private $natureFraction;
-    
+
     /**
      * @var string
      *
      * @ORM\Column(name="unite_defaut", type="string", length=1, nullable=true)
      */
     private $uniteDefaut;
-    
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="val_max", type="decimal", precision=8, scale=2, nullable=true)
+     */
+    private $valMax;
+
     public function getCodeParametre() {
         return $this->codeParametre;
     }
@@ -80,5 +87,12 @@ class PgProgUnitesPossiblesParam {
         $this->uniteDefaut = $uniteDefaut;
     }
 
+    function getValMax() {
+        return $this->valMax;
+    }
+
+    function setValMax($valMax) {
+        $this->valMax = $valMax;
+    }
 
 }

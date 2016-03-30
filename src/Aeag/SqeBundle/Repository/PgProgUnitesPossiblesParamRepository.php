@@ -9,7 +9,7 @@ use Doctrine\ORM\EntityRepository;
  * @package Aeag\SqeBundle\Repository
  */
 class PgProgUnitesPossiblesParamRepository extends EntityRepository {
-    
+
     /**
      * @return array
      */
@@ -31,5 +31,17 @@ class PgProgUnitesPossiblesParamRepository extends EntityRepository {
         return $qb->getResult();
     }
 
-    
+    public function getPgProgUnitesPossiblesParamByCodeParametreCodeUniteNatureFraction($codeParametre, $codeUnite, $pgSandreFraction) {
+        $query = "select p";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgProgUnitesPossiblesParam p";
+        $query = $query . " where p.codeParametre = '" . $codeParametre . "'";
+        $query = $query . " and p.codeUnite = '" . $codeUnite . "'";
+        if ($pgSandreFraction) {
+            $query = $query . " and p.natureFraction = '" . $pgSandreFraction->getNatureFraction() . "'";
+        }
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+        return $qb->getOneOrNullResult();
+    }
+
 }

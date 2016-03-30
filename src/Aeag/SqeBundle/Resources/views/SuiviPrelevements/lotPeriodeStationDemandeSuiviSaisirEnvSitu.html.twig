@@ -118,9 +118,9 @@
                                                                                                                    {% if paramAn.pgCmdMesureEnv.codeStatut == '0' %}
                                                                                                                         <tr class="success">
                                                                                                                    {% elseif paramAn.pgCmdMesureEnv.codeStatut == '1' %}
-                                                                                                                        <tr class="warning">
+                                                                                                                        <tr class="warning" data-toggle="tooltip" data-placement="bottom" title="{{ paramAn.pgCmdMesureEnv.libelleStatut}}">
                                                                                                                    {% else %}
-                                                                                                                        <tr class="danger">
+                                                                                                                        <tr class="danger" data-toggle="tooltip" data-placement="bottom" title="{{ paramAn.pgCmdMesureEnv.libelleStatut}}">
                                                                                                                    {% endif %}
                                                                                                              {% else %}
                                                                                                                 <tr>
@@ -136,19 +136,19 @@
                                                                                                                                       {% for valeur in paramAn.valeurs %}
                                                                                                                                               {% if paramAn.pgCmdMesureEnv %}
                                                                                                                                                       {% if paramAn.pgCmdMesureEnv.resultat == valeur.valeur %}
-                                                                                                                                                               <option value="{{valeur.valeur  | replace({".00" : ""}) | trim('0')}}" selected>{{valeur.libelle }}</option> 
+                                                                                                                                                               <option value="{{valeur.valeur  | replace({".00" : ""})}}" selected>{{valeur.libelle }}</option> 
                                                                                                                                                       {% else %}
-                                                                                                                                                               <option value="{{valeur.valeur  | replace({".00" : ""}) | trim('0')}}">{{ valeur.libelle }}</option> 
+                                                                                                                                                               <option value="{{valeur.valeur  | replace({".00" : ""}) }}">{{ valeur.libelle }}</option> 
                                                                                                                                                       {% endif %}
                                                                                                                                                 {% else %}
-                                                                                                                                                       <option value="{{valeur.valeur  | replace({".00" : ""}) | trim('0')}}">{{ valeur.libelle}}</option> 
+                                                                                                                                                       <option value="{{valeur.valeur  | replace({".00" : ""})}}">{{ valeur.libelle}}</option> 
                                                                                                                                                {% endif %}
                                                                                                                                       {% endfor %}
                                                                                                                                     </select>
                                                                                                                              {% else %}
                                                                                                                                  {% if paramAn.pgCmdMesureEnv %}
-                                                                                                                                       <input id="idValeur{{ paramAn.paramAn.id}}" class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdMesureEnv.resultat | replace({".0000000000" : ""}) | trim('0')}}">
-                                                                                                                                   {% else %}
+                                                                                                                                       <input id="idValeur{{ paramAn.paramAn.id}}"  class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdMesureEnv.resultat | replace({".0000000000" : ""})}}">
+                                                                                                                                    {% else %}
                                                                                                                                          <input id="idValeur{{ paramAn.paramAn.id}}" class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}" value="">
                                                                                                                                  {% endif %}
                                                                                                                              {% endif %}
@@ -202,9 +202,9 @@
                                                                                                                    {% if paramAn.pgCmdAnalyse.codeStatut == '0' %}
                                                                                                                         <tr class="success">
                                                                                                                    {% elseif paramAn.pgCmdAnalyse.codeStatut == '1' %}
-                                                                                                                        <tr class="warning">
+                                                                                                                        <tr class="warning" data-toggle="tooltip" data-placement="bottom" title="{{ paramAn.pgCmdAnalyse.libelleStatut}}">
                                                                                                                    {% else %}
-                                                                                                                        <tr class="danger">
+                                                                                                                        <tr class="danger" data-toggle="tooltip" data-placement="bottom" title="{{ paramAn.pgCmdAnalyse.libelleStatut}}" >
                                                                                                                    {% endif %}
                                                                                                              {% else %}
                                                                                                                 <tr>
@@ -220,18 +220,18 @@
                                                                                                                                             {% for valeur in paramAn.valeurs %}
                                                                                                                                                     {% if paramAn.pgCmdAnalyse %}
                                                                                                                                                             {% if paramAn.pgCmdAnalyse.resultat == valeur.valeur %}
-                                                                                                                                                                     <option value="{{valeur.valeur  | replace({".00" : ""}) | trim('0')}}" selected>{{valeur.libelle }}</option> 
+                                                                                                                                                                     <option value="{{valeur.valeur  | replace({".00" : ""}) }}" selected>{{valeur.libelle }}</option> 
                                                                                                                                                             {% else %}
-                                                                                                                                                                     <option value="{{valeur.valeur  | replace({".00" : ""}) | trim('0')}}">{{ valeur.libelle }}</option> 
+                                                                                                                                                                     <option value="{{valeur.valeur  | replace({".00" : ""}) }}">{{ valeur.libelle }}</option> 
                                                                                                                                                             {% endif %}
                                                                                                                                                       {% else %}
-                                                                                                                                                             <option value="{{valeur.valeur  | replace({".00" : ""}) | trim('0')}}">{{ valeur.libelle}}</option> 
+                                                                                                                                                             <option value="{{valeur.valeur  | replace({".00" : ""}) }}">{{ valeur.libelle}}</option> 
                                                                                                                                                      {% endif %}
                                                                                                                                             {% endfor %}
                                                                                                                                           </select>
                                                                                                                                    {% else %}
                                                                                                                                        {% if paramAn.pgCmdAnalyse %}
-                                                                                                                                             <input id="idValeur{{ paramAn.paramAn.id}}" class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdAnalyse.resultat | replace({".0000000000" : ""}) | trim('0') }}">
+                                                                                                                                             <input id="idValeur{{ paramAn.paramAn.id}}" class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdAnalyse.resultat | replace({".0000000000" : ""}) }}">
                                                                                                                                          {% else %}
                                                                                                                                                <input id="idValeur{{ paramAn.paramAn.id}}" class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}" value="">
                                                                                                                                        {% endif %}
@@ -289,7 +289,7 @@
                                                                                                             <td align="left">{{ paramAn.paramAn.codeParametre.nomParametre }}</td>
                                                                                                             <td align="right">
                                                                                                                    {% if paramAn.pgCmdMesureEnv %}
-                                                                                                                       <span class="text-right">{{ paramAn.pgCmdMesureEnv.resultat | replace({".0000000000" : ""})  | trim('0') }}</span>
+                                                                                                                       <span class="text-right">{{ paramAn.pgCmdMesureEnv.resultat | replace({".0000000000" : ""}) }}</span>
                                                                                                                     {% endif %}
                                                                                                              </td>
                                                                                                               <td align="left">
@@ -310,7 +310,7 @@
                                                                                                                   <td align="left">{{ paramAn.paramAn.codeParametre.nomParametre }}</td>
                                                                                                                   <td align="right">
                                                                                                                       {% if paramAn.pgCmdAnalyse %}
-                                                                                                                          <span class="text-right">{{ paramAn.pgCmdAnalyse.resultat | replace({".0000000000" : ""})  | trim('0') }}</span>
+                                                                                                                          <span class="text-right">{{ paramAn.pgCmdAnalyse.resultat | replace({".0000000000" : ""})  }}</span>
                                                                                                                       {% endif %}
                                                                                                                   </td>
                                                                                                                   <td align="left">
@@ -357,7 +357,7 @@
     
     
         <div class="col-md-offset-3 col-md-8">
-            <button id="idEnregistrer" type="submit" class="btn btn-success"> 
+            <button id="idEnregistrer" type="button" class="btn btn-success"> 
                 <i class="fa fa-check"> Enregister</i>
             </button>
            <a class="btn btn-danger" href="{{path('AeagSqeBundle_suiviPrelevements_lot_periode_station_demande',{'stationId': station.ouvFoncId, 'periodeAnId': periodeAn.id, 'cmdDemandeId': demande.id })}}">
@@ -417,11 +417,11 @@
                                                 var remarque =  "0";
                                                 $("#idRemarque{{ paramAn.paramAn.id}} option[value='" + remarque + "']").attr('selected','selected');
                                                 $("#idRemarque{{ paramAn.paramAn.id}}").val(remarque);
-                                            };
+                                             };
                                            {% for valeur in paramAn.valeurs %}
-                                                    {% if paramAn.pgCmdMesureEnv.resultat | replace({".0000000000" : ""})  | trim('0')  == valeur.valeur  | replace({".00" : ""}) | trim('0') %}
+                                                    {% if paramAn.pgCmdMesureEnv.resultat | replace({".0000000000" : ""})   == valeur.valeur  | replace({".00" : ""}) %}
                                                             $('#idValeur{{ paramAn.paramAn.id}} option:selected').removeAttr('selected');
-                                                            var valeur =   {{ valeur.valeur |  replace({".00" : ""}) | trim('0')}}
+                                                            var valeur =   {{ valeur.valeur |  replace({".00" : ""})}}
                                                             $("#idValeur{{ paramAn.paramAn.id}} option[value='" + valeur + "']").attr('selected','selected');
                                                             $("#idValeur{{ paramAn.paramAn.id}}").val(valeur);
                                                     {% endif %}
@@ -452,14 +452,14 @@
                                             {% if paramAn.pgCmdMesureEnv %}
                                                     {% if paramAn.pgCmdMesureEnv.codeUnite.codeUnite == unite.codeUnite.codeUnite %}
                                                             $('#idUniteCode{{ paramAn.paramAn.id}} option:selected').removeAttr('selected');
-                                                            var valeur =   {{ paramAn.pgCmdMesureEnv.codeUnite.codeUnite }};
+                                                            var valeur =   '{{ paramAn.pgCmdMesureEnv.codeUnite.codeUnite }}';
                                                               $("#idUniteCode{{ paramAn.paramAn.id}} option[value='" + valeur + "']").attr('selected','selected');
                                                               $("#idUniteCode{{ paramAn.paramAn.id}}").val(valeur);
                                                       {% endif %}
                                             {% elseif paramAn.unite %}
                                                     {% if paramAn.unite.codeUnite == unite.codeUnite.codeUnite %}
                                                              $('#idUniteCode{{ paramAn.paramAn.id}} option:selected').removeAttr('selected');
-                                                            var valeur =   {{ paramAn.unite.codeUnite }};
+                                                            var valeur =   '{{ paramAn.unite.codeUnite }}';
                                                             $("#idUniteCode{{ paramAn.paramAn.id}} option[value='" + valeur + "']").attr('selected','selected');
                                                             $("#idUniteCode{{ paramAn.paramAn.id}}").val(valeur);
                                                       {% endif %}
@@ -478,9 +478,9 @@
                                                 $("#idRemarque{{ paramAn.paramAn.id}}").val(remarque);
                                             };
                                             {% for valeur in paramAn.valeurs %}
-                                                         {% if paramAn.pgCmdAnalyse.resultat | replace({".0000000000" : ""})  | trim('0')  == valeur.valeur  | replace({".00" : ""}) | trim('0') %}
+                                                         {% if paramAn.pgCmdAnalyse.resultat | replace({".0000000000" : ""})  == valeur.valeur  | replace({".00" : ""}) %}
                                                                 $('#idValeur{{ paramAn.paramAn.id}} option:selected').removeAttr('selected');
-                                                                var valeur =   {{ valeur.valeur |  replace({".00" : ""}) | trim('0')}}
+                                                                var valeur =   {{ valeur.valeur |  replace({".00" : ""}) }}
                                                                 $("#idValeur{{ paramAn.paramAn.id}} option[value='" + valeur + "']").attr('selected','selected');
                                                                 $("#idValeur{{ paramAn.paramAn.id}}").val(valeur);
                                                        {% endif %}
@@ -512,14 +512,14 @@
                                             {% if paramAn.pgCmdAnalyse %}
                                                     {% if paramAn.pgCmdAnalyse.codeUnite.codeUnite == unite.codeUnite.codeUnite %}
                                                            $('#idUniteCode{{ paramAn.paramAn.id}} option:selected').removeAttr('selected');
-                                                            var valeur =   {{ unite.codeUnite.codeUnite }};
+                                                            var valeur =   '{{ unite.codeUnite.codeUnite }}';
                                                            $("#idUniteCode{{ paramAn.paramAn.id}} option[value='" + valeur + "']").attr('selected','selected');
                                                            $("#idUniteCode{{ paramAn.paramAn.id}}").val(valeur);
                                                       {% endif %}
                                             {% elseif paramAn.unite %}
                                                     {% if paramAn.unite.codeUnite == unite.codeUnite.codeUnite %}
                                                              $('#idUniteCode{{ paramAn.paramAn.id}} option:selected').removeAttr('selected');
-                                                            var valeur =   {{ paramAn.unite.codeUnite }};
+                                                            var valeur =   '{{ paramAn.unite.codeUnite }}';
                                                              $("#idUniteCode{{ paramAn.paramAn.id}} option[value='" + valeur + "']").attr('selected','selected');
                                                              $("#idUniteCode{{ paramAn.paramAn.id}}").val(valeur);
                                                        {% endif %}
@@ -560,6 +560,16 @@
                      {% endfor %}
                       $('#expandAll').show();
                       $('#collapseAll').hide();
+           });
+           
+           $(document).on('click', '#idEnregistrer',function(e){
+                  {% for groupe   in  groupes %}
+                          $('#collapse{{groupe.grparAn.id}}').collapse('show');
+                           var nbRecords = $('#iidTable{{ groupe.grparAn.id}}_length option:selected').val();
+                           table{{groupe.grparAn.id }}.page.len( -1 ).draw();
+                            $('#modalTraitementEncours').modal();
+                            $('#idForm').submit();
+                     {% endfor %}
            });
 
    
