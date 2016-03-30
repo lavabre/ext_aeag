@@ -59,6 +59,10 @@ class CriteresRequestType extends AbstractType {
                     'required' => false,
                     'label' => "",
                     'choice_label' => 'Libelle',
+                     'query_builder' => function(\Doctrine\ORM\EntityRepository $er) {
+                        return $er->createQueryBuilder('a')
+                                ->where('a.reg > \'94\'');
+                    }
                   
                 )) 
                 ->add('departement', 'entity', array(

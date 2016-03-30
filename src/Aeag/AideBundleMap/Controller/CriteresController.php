@@ -260,11 +260,18 @@ class CriteresController extends Controller {
             $departements = $repoDepartement->getDepartements();
         }
 
+        if ($critRegion == '76') {
+            return $this->render('AeagAideBundle:Criteres:region76.html.twig', array(
+                        'region' => $critRegion,
+                        'departements' => $departements
+            ));
+        } else {
             return $this->render('AeagAideBundle:Criteres:regionDepartements.html.twig', array(
                         'region' => $critRegion,
                         'departements' => $departements
             ));
         }
+    }
 
     /**
      *  Fichier PDF
