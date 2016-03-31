@@ -96,4 +96,15 @@ class PgCmdAnalyseRepository extends EntityRepository {
        return $qb->getOneOrNullResult();
     }
     
+     public function getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, $parametre, $numOrdre) {
+        $query = "select c";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdAnalyse c";
+        $query = $query . " where c.prelevId = " . $pgCmdPrelev->getId() ;
+        $query = $query . " and  c.codeParametre = '" . $parametre  . "'";
+        $query = $query . " and  c.numOrdre = " . $numOrdre ;
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+       return $qb->getOneOrNullResult();
+    }
+    
 }
