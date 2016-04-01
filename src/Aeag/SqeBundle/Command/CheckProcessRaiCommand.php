@@ -108,7 +108,7 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
 
             // Insertion données brutes
             //if ((count($logErrorsVraisemblance) == 0) && (count($logErrorsCoherence) == 0 )) {
-                $this->_integrationDonneesBrutes($pgCmdFichierRps);
+                //$this->_integrationDonneesBrutes($pgCmdFichierRps);
             //}
 
             // TODO Vider la table tempo des lignes correspondant à la RAI
