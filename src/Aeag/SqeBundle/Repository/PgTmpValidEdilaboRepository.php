@@ -179,6 +179,28 @@ class PgTmpValidEdilaboRepository extends EntityRepository {
         return $qb->getResult();
     }
     
+    public function getMesuresByCodeParametre($codeParametre, $codePrelevement, $demandeId, $reponseId = null) {
+        $query = "select p.codeFraction, p.codeUnite, p.codeParametre, p.lqM";
+        $query .= " from Aeag\SqeBundle\Entity\PgTmpValidEdilabo p";
+        $query .= " where p.demandeId = :demande";
+        if (!is_null($reponseId)) {
+            $query .= " and p.fichierRpsId = :reponse";
+        } else {
+            $query .= " and p.fichierRpsId IS NULL";
+        }
+        $query .= " and p.codePrelevement = :codePrelevement";
+        $query .= " and p.codeParametre = :codeParametre";
+        $query .= " order by p.codeParametre ASC";
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('demande', $demandeId);
+        if (!is_null($reponseId)) {
+            $qb->setParameter('reponse', $reponseId);
+        }
+        $qb->setParameter('codePrelevement', $codePrelevement);
+        $qb->setParameter('codeParametre', $codeParametre);
+        return $qb->getOneOrNullResult();
+    }
+    
     public function getMesureByCodeParametre($codeParametre, $demandeId, $reponseId, $codePrelevement) {
         $query = "select p.resM";
         $query .= " from Aeag\SqeBundle\Entity\PgTmpValidEdilabo p";

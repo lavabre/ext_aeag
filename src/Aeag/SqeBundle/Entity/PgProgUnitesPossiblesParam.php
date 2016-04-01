@@ -48,6 +48,13 @@ class PgProgUnitesPossiblesParam {
      */
     private $uniteDefaut;
     
+    /**
+     * @var decimal
+     *
+     * @ORM\Column(name="val_max", type="decimal", precision=38, scale=0, nullable=true)
+     */
+    private $valMax;
+    
     public function getCodeParametre() {
         return $this->codeParametre;
     }
@@ -79,6 +86,12 @@ class PgProgUnitesPossiblesParam {
     public function setUniteDefaut($uniteDefaut) {
         $this->uniteDefaut = $uniteDefaut;
     }
+    
+    public function getValMax() {
+        return $this->valMax;
+    }
 
-
+    public function setValMax($valMax) {
+        $this->valMax = $valMax;
+    }
 }

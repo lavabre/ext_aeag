@@ -12,8 +12,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass="Aeag\SqeBundle\Repository\PgTmpValidEdilaboRepository")
  * 
  */
-class PgTmpValidEdilabo
-{
+class PgTmpValidEdilabo {
+
     /**
      * @var string
      *
@@ -178,15 +178,166 @@ class PgTmpValidEdilabo
      */
     private $commentaire;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="num_ordre", type="string", length=4, nullable=true)
+     */
+    private $numOrdre;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="meth_prel", type="string", length=5, nullable=true)
+     */
+    private $methPrel;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="conform_prel", type="string", length=1, nullable=true)
+     */
+    private $conformPrel;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="accred_prel", type="string", length=1, nullable=true)
+     */
+    private $accredPrel;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="agre_prel", type="string", length=1, nullable=true)
+     */
+    private $agrePrel;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="reserv_prel", type="string", length=1, nullable=true)
+     */
+    private $reservPrel;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="x_prel", type="string", length=20, nullable=true)
+     */
+    private $xPrel;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="y_prel", type="string", length=20, nullable=true)
+     */
+    private $yPrel;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="localisation", type="string", length=80, nullable=true)
+     */
+    private $localisation;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="meth_ana", type="string", length=5, nullable=true)
+     */
+    private $methAna;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="ref_ana_labo", type="string", length=100, nullable=true)
+     */
+    private $refAnaLabo;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="accred_ana", type="string", length=1, nullable=true)
+     */
+    private $accredAna;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="confirm_ana", type="string", length=1, nullable=true)
+     */
+    private $confirmAna;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="reserv_ana", type="string", length=1, nullable=true)
+     */
+    private $reservAna;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="ref_ech_cmd", type="string", length=100, nullable=true)
+     */
+    private $refEchCmd;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="ref_ech_prel", type="string", length=100, nullable=true)
+     */
+    private $refEchPrel;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="ref_ech_labo", type="string", length=100, nullable=true)
+     */
+    private $refEchLabo;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="complet_ech", type="string", length=1, nullable=true)
+     */
+    private $completEch;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="accept_ech", type="string", length=1, nullable=true)
+     */
+    private $acceptEch;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="date_recep_ech", type="string", length=50, nullable=true)
+     */
+    private $dateRecepEch;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="code_statut", type="string", length=1, nullable=true)
+     */
+    private $codeStatut;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="param_prog_id", type="decimal", precision=38, scale=0, nullable=true)
+     */
+    private $paramProgId;
 
     /**
      * Get id
      *
      * @return string
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -197,8 +348,7 @@ class PgTmpValidEdilabo
      *
      * @return PgTmpValidEdilabo
      */
-    public function setDemandeId($demandeId)
-    {
+    public function setDemandeId($demandeId) {
         $this->demandeId = $demandeId;
 
         return $this;
@@ -209,8 +359,7 @@ class PgTmpValidEdilabo
      *
      * @return string
      */
-    public function getDemandeId()
-    {
+    public function getDemandeId() {
         return $this->demandeId;
     }
 
@@ -221,8 +370,7 @@ class PgTmpValidEdilabo
      *
      * @return PgTmpValidEdilabo
      */
-    public function setFichierRpsId($fichierRpsId)
-    {
+    public function setFichierRpsId($fichierRpsId) {
         $this->fichierRpsId = $fichierRpsId;
 
         return $this;
@@ -233,8 +381,7 @@ class PgTmpValidEdilabo
      *
      * @return string
      */
-    public function getFichierRpsId()
-    {
+    public function getFichierRpsId() {
         return $this->fichierRpsId;
     }
 
@@ -245,8 +392,7 @@ class PgTmpValidEdilabo
      *
      * @return PgTmpValidEdilabo
      */
-    public function setCodeDemande($codeDemande)
-    {
+    public function setCodeDemande($codeDemande) {
         $this->codeDemande = $codeDemande;
 
         return $this;
@@ -257,8 +403,7 @@ class PgTmpValidEdilabo
      *
      * @return string
      */
-    public function getCodeDemande()
-    {
+    public function getCodeDemande() {
         return $this->codeDemande;
     }
 
@@ -269,8 +414,7 @@ class PgTmpValidEdilabo
      *
      * @return PgTmpValidEdilabo
      */
-    public function setCodePrelevement($codePrelevement)
-    {
+    public function setCodePrelevement($codePrelevement) {
         $this->codePrelevement = $codePrelevement;
 
         return $this;
@@ -281,8 +425,7 @@ class PgTmpValidEdilabo
      *
      * @return string
      */
-    public function getCodePrelevement()
-    {
+    public function getCodePrelevement() {
         return $this->codePrelevement;
     }
 
@@ -293,8 +436,7 @@ class PgTmpValidEdilabo
      *
      * @return PgTmpValidEdilabo
      */
-    public function setCodeStation($codeStation)
-    {
+    public function setCodeStation($codeStation) {
         $this->codeStation = $codeStation;
 
         return $this;
@@ -305,8 +447,7 @@ class PgTmpValidEdilabo
      *
      * @return string
      */
-    public function getCodeStation()
-    {
+    public function getCodeStation() {
         return $this->codeStation;
     }
 
@@ -317,8 +458,7 @@ class PgTmpValidEdilabo
      *
      * @return PgTmpValidEdilabo
      */
-    public function setDatePrel($datePrel)
-    {
+    public function setDatePrel($datePrel) {
         $this->datePrel = $datePrel;
 
         return $this;
@@ -329,8 +469,7 @@ class PgTmpValidEdilabo
      *
      * @return string
      */
-    public function getDatePrel()
-    {
+    public function getDatePrel() {
         return $this->datePrel;
     }
 
@@ -341,8 +480,7 @@ class PgTmpValidEdilabo
      *
      * @return PgTmpValidEdilabo
      */
-    public function setHeurePrel($heurePrel)
-    {
+    public function setHeurePrel($heurePrel) {
         $this->heurePrel = $heurePrel;
 
         return $this;
@@ -353,8 +491,7 @@ class PgTmpValidEdilabo
      *
      * @return string
      */
-    public function getHeurePrel()
-    {
+    public function getHeurePrel() {
         return $this->heurePrel;
     }
 
@@ -365,8 +502,7 @@ class PgTmpValidEdilabo
      *
      * @return PgTmpValidEdilabo
      */
-    public function setCodeSupport($codeSupport)
-    {
+    public function setCodeSupport($codeSupport) {
         $this->codeSupport = $codeSupport;
 
         return $this;
@@ -377,8 +513,7 @@ class PgTmpValidEdilabo
      *
      * @return string
      */
-    public function getCodeSupport()
-    {
+    public function getCodeSupport() {
         return $this->codeSupport;
     }
 
@@ -389,8 +524,7 @@ class PgTmpValidEdilabo
      *
      * @return PgTmpValidEdilabo
      */
-    public function setZoneVert($zoneVert)
-    {
+    public function setZoneVert($zoneVert) {
         $this->zoneVert = $zoneVert;
 
         return $this;
@@ -401,8 +535,7 @@ class PgTmpValidEdilabo
      *
      * @return string
      */
-    public function getZoneVert()
-    {
+    public function getZoneVert() {
         return $this->zoneVert;
     }
 
@@ -413,8 +546,7 @@ class PgTmpValidEdilabo
      *
      * @return PgTmpValidEdilabo
      */
-    public function setProf($prof)
-    {
+    public function setProf($prof) {
         $this->prof = $prof;
 
         return $this;
@@ -425,8 +557,7 @@ class PgTmpValidEdilabo
      *
      * @return string
      */
-    public function getProf()
-    {
+    public function getProf() {
         return $this->prof;
     }
 
@@ -437,8 +568,7 @@ class PgTmpValidEdilabo
      *
      * @return PgTmpValidEdilabo
      */
-    public function setPreleveur($preleveur)
-    {
+    public function setPreleveur($preleveur) {
         $this->preleveur = $preleveur;
 
         return $this;
@@ -449,8 +579,7 @@ class PgTmpValidEdilabo
      *
      * @return string
      */
-    public function getPreleveur()
-    {
+    public function getPreleveur() {
         return $this->preleveur;
     }
 
@@ -461,8 +590,7 @@ class PgTmpValidEdilabo
      *
      * @return PgTmpValidEdilabo
      */
-    public function setInSitu($inSitu)
-    {
+    public function setInSitu($inSitu) {
         $this->inSitu = $inSitu;
 
         return $this;
@@ -473,8 +601,7 @@ class PgTmpValidEdilabo
      *
      * @return string
      */
-    public function getInSitu()
-    {
+    public function getInSitu() {
         return $this->inSitu;
     }
 
@@ -485,8 +612,7 @@ class PgTmpValidEdilabo
      *
      * @return PgTmpValidEdilabo
      */
-    public function setDateM($dateM)
-    {
+    public function setDateM($dateM) {
         $this->dateM = $dateM;
 
         return $this;
@@ -497,8 +623,7 @@ class PgTmpValidEdilabo
      *
      * @return string
      */
-    public function getDateM()
-    {
+    public function getDateM() {
         return $this->dateM;
     }
 
@@ -509,8 +634,7 @@ class PgTmpValidEdilabo
      *
      * @return PgTmpValidEdilabo
      */
-    public function setHeureM($heureM)
-    {
+    public function setHeureM($heureM) {
         $this->heureM = $heureM;
 
         return $this;
@@ -521,8 +645,7 @@ class PgTmpValidEdilabo
      *
      * @return string
      */
-    public function getHeureM()
-    {
+    public function getHeureM() {
         return $this->heureM;
     }
 
@@ -533,8 +656,7 @@ class PgTmpValidEdilabo
      *
      * @return PgTmpValidEdilabo
      */
-    public function setCodeParametre($codeParametre)
-    {
+    public function setCodeParametre($codeParametre) {
         $this->codeParametre = $codeParametre;
 
         return $this;
@@ -545,8 +667,7 @@ class PgTmpValidEdilabo
      *
      * @return string
      */
-    public function getCodeParametre()
-    {
+    public function getCodeParametre() {
         return $this->codeParametre;
     }
 
@@ -557,8 +678,7 @@ class PgTmpValidEdilabo
      *
      * @return PgTmpValidEdilabo
      */
-    public function setResM($resM)
-    {
+    public function setResM($resM) {
         $this->resM = $resM;
 
         return $this;
@@ -569,8 +689,7 @@ class PgTmpValidEdilabo
      *
      * @return string
      */
-    public function getResM()
-    {
+    public function getResM() {
         return $this->resM;
     }
 
@@ -581,8 +700,7 @@ class PgTmpValidEdilabo
      *
      * @return PgTmpValidEdilabo
      */
-    public function setCodeRqM($codeRqM)
-    {
+    public function setCodeRqM($codeRqM) {
         $this->codeRqM = $codeRqM;
 
         return $this;
@@ -593,8 +711,7 @@ class PgTmpValidEdilabo
      *
      * @return string
      */
-    public function getCodeRqM()
-    {
+    public function getCodeRqM() {
         return $this->codeRqM;
     }
 
@@ -605,8 +722,7 @@ class PgTmpValidEdilabo
      *
      * @return PgTmpValidEdilabo
      */
-    public function setLqM($lqM)
-    {
+    public function setLqM($lqM) {
         $this->lqM = $lqM;
 
         return $this;
@@ -617,8 +733,7 @@ class PgTmpValidEdilabo
      *
      * @return string
      */
-    public function getLqM()
-    {
+    public function getLqM() {
         return $this->lqM;
     }
 
@@ -629,8 +744,7 @@ class PgTmpValidEdilabo
      *
      * @return PgTmpValidEdilabo
      */
-    public function setCodeFraction($codeFraction)
-    {
+    public function setCodeFraction($codeFraction) {
         $this->codeFraction = $codeFraction;
 
         return $this;
@@ -641,8 +755,7 @@ class PgTmpValidEdilabo
      *
      * @return string
      */
-    public function getCodeFraction()
-    {
+    public function getCodeFraction() {
         return $this->codeFraction;
     }
 
@@ -653,8 +766,7 @@ class PgTmpValidEdilabo
      *
      * @return PgTmpValidEdilabo
      */
-    public function setCodeUnite($codeUnite)
-    {
+    public function setCodeUnite($codeUnite) {
         $this->codeUnite = $codeUnite;
 
         return $this;
@@ -665,8 +777,7 @@ class PgTmpValidEdilabo
      *
      * @return string
      */
-    public function getCodeUnite()
-    {
+    public function getCodeUnite() {
         return $this->codeUnite;
     }
 
@@ -677,8 +788,7 @@ class PgTmpValidEdilabo
      *
      * @return PgTmpValidEdilabo
      */
-    public function setLabo($labo)
-    {
+    public function setLabo($labo) {
         $this->labo = $labo;
 
         return $this;
@@ -689,8 +799,7 @@ class PgTmpValidEdilabo
      *
      * @return string
      */
-    public function getLabo()
-    {
+    public function getLabo() {
         return $this->labo;
     }
 
@@ -701,8 +810,7 @@ class PgTmpValidEdilabo
      *
      * @return PgTmpValidEdilabo
      */
-    public function setCommentaire($commentaire)
-    {
+    public function setCommentaire($commentaire) {
         $this->commentaire = $commentaire;
 
         return $this;
@@ -713,8 +821,184 @@ class PgTmpValidEdilabo
      *
      * @return string
      */
-    public function getCommentaire()
-    {
+    public function getCommentaire() {
         return $this->commentaire;
     }
+
+    public function getNumOrdre() {
+        return $this->numOrdre;
+    }
+
+    public function getMethPrel() {
+        return $this->methPrel;
+    }
+
+    public function getConformPrel() {
+        return $this->conformPrel;
+    }
+
+    public function getAccredPrel() {
+        return $this->accredPrel;
+    }
+
+    public function getReservPrel() {
+        return $this->reservPrel;
+    }
+
+    public function getXPrel() {
+        return $this->xPrel;
+    }
+
+    public function getYPrel() {
+        return $this->yPrel;
+    }
+
+    public function getMethAna() {
+        return $this->methAna;
+    }
+
+    public function getRefAnaLabo() {
+        return $this->refAnaLabo;
+    }
+
+    public function getAccredAna() {
+        return $this->accredAna;
+    }
+
+    public function getConfirmAna() {
+        return $this->confirmAna;
+    }
+
+    public function getReservAna() {
+        return $this->reservAna;
+    }
+
+    public function getRefEchCmd() {
+        return $this->refEchCmd;
+    }
+
+    public function getRefEchPrel() {
+        return $this->refEchPrel;
+    }
+
+    public function getRefEchLabo() {
+        return $this->refEchLabo;
+    }
+
+    public function getCompletEch() {
+        return $this->completEch;
+    }
+
+    public function getAcceptEch() {
+        return $this->acceptEch;
+    }
+
+    public function getDateRecepEch() {
+        return $this->dateRecepEch;
+    }
+
+    public function getCodeStatut() {
+        return $this->codeStatut;
+    }
+
+    public function getParamProgId() {
+        return $this->paramProgId;
+    }
+
+    public function setNumOrdre($numOrdre) {
+        $this->numOrdre = $numOrdre;
+    }
+
+    public function setMethPrel($methPrel) {
+        $this->methPrel = $methPrel;
+    }
+
+    public function setConformPrel($conformPrel) {
+        $this->conformPrel = $conformPrel;
+    }
+
+    public function setAccredPrel($accredPrel) {
+        $this->accredPrel = $accredPrel;
+    }
+
+    public function setReservPrel($reservPrel) {
+        $this->reservPrel = $reservPrel;
+    }
+
+    public function setXPrel($xPrel) {
+        $this->xPrel = $xPrel;
+    }
+
+    public function setYPrel($yPrel) {
+        $this->yPrel = $yPrel;
+    }
+
+    public function setMethAna($methAna) {
+        $this->methAna = $methAna;
+    }
+
+    public function setRefAnaLabo($refAnaLabo) {
+        $this->refAnaLabo = $refAnaLabo;
+    }
+
+    public function setAccredAna($accredAna) {
+        $this->accredAna = $accredAna;
+    }
+
+    public function setConfirmAna($confirmAna) {
+        $this->confirmAna = $confirmAna;
+    }
+
+    public function setReservAna($reservAna) {
+        $this->reservAna = $reservAna;
+    }
+
+    public function setRefEchCmd($refEchCmd) {
+        $this->refEchCmd = $refEchCmd;
+    }
+
+    public function setRefEchPrel($refEchPrel) {
+        $this->refEchPrel = $refEchPrel;
+    }
+
+    public function setRefEchLabo($refEchLabo) {
+        $this->refEchLabo = $refEchLabo;
+    }
+
+    public function setCompletEch($completEch) {
+        $this->completEch = $completEch;
+    }
+
+    public function setAcceptEch($acceptEch) {
+        $this->acceptEch = $acceptEch;
+    }
+
+    public function setDateRecepEch($dateRecepEch) {
+        $this->dateRecepEch = $dateRecepEch;
+    }
+
+    public function setCodeStatut($codeStatut) {
+        $this->codeStatut = $codeStatut;
+    }
+
+    public function setParamProgId($paramProgId) {
+        $this->paramProgId = $paramProgId;
+    }
+    
+    public function getAgrePrel() {
+        return $this->agrePrel;
+    }
+
+    public function getLocalisation() {
+        return $this->localisation;
+    }
+
+    public function setAgrePrel($agrePrel) {
+        $this->agrePrel = $agrePrel;
+    }
+
+    public function setLocalisation($localisation) {
+        $this->localisation = $localisation;
+    }
+
 }

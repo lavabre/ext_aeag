@@ -105,6 +105,27 @@ class PgCmdPrelevPc
      * @ORM\Column(name="ref_ech_labo", type="string", length=100, nullable=true)
      */
     private $refEchLabo;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="completude_ech", type="string", length=1, nullable=true)
+     */
+    private $completudeEch;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="acceptabilite_ech", type="string", length=1, nullable=true)
+     */
+    private $acceptabiliteEch;
+    
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="date_recep_ech", type="datetime", nullable=true)
+     */
+    private $dateRecepEch;
 
     /**
      * @var \PgCmdPrelev
@@ -488,5 +509,29 @@ class PgCmdPrelevPc
     public function getZoneVerticale()
     {
         return $this->zoneVerticale;
+    }
+    
+    public function getCompletudeEch() {
+        return $this->completudeEch;
+    }
+
+    public function getAcceptabiliteEch() {
+        return $this->acceptabiliteEch;
+    }
+
+    public function getDateRecepEch() {
+        return $this->dateRecepEch;
+    }
+
+    public function setCompletudeEch($completudeEch) {
+        $this->completudeEch = $completudeEch;
+    }
+
+    public function setAcceptabiliteEch($acceptabiliteEch) {
+        $this->acceptabiliteEch = $acceptabiliteEch;
+    }
+
+    public function setDateRecepEch(\DateTime $dateRecepEch) {
+        $this->dateRecepEch = $dateRecepEch;
     }
 }

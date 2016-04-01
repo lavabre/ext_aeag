@@ -30,6 +30,16 @@ class PgProgUnitesPossiblesParamRepository extends EntityRepository {
         //print_r($query);
         return $qb->getResult();
     }
+    
+    public function getPgProgUnitesPossiblesParamWithValeurMax() {
+        $query = "select p";
+        $query .= " from Aeag\SqeBundle\Entity\PgProgUnitesPossiblesParam p";
+        $query .= " where p.valMax IS NOT NULL";
+        $query .= " order by p.codeParametre,  p.codeUnite";
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+        return $qb->getResult();
+    }
 
     
 }
