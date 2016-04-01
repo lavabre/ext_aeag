@@ -1,0 +1,7 @@
+<select id="criteres_departement" class="form-control " placeholder="Département" name="criteres[departement]">
+   <option value=""></option> 
+   {%for dept in departements %}
+         <option value="{{dept.dept}}">{{dept.dept}} : {{ dept.libelle}}</option> 
+   {% endfor %}
+</select>
+   

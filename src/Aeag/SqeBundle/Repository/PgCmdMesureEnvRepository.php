@@ -43,6 +43,16 @@ class PgCmdMesureEnvRepository extends EntityRepository {
        return $qb->getSingleScalarResult();
     }
     
+     public function getNbCmdMesureEnvByPrelevStatut($pgCmdPrelev, $statut) {
+        $query = "select count(c.prelev)";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdMesureEnv c";
+        $query = $query . " where c.prelev = " . $pgCmdPrelev->getId() ;
+        $query = $query . " and  c.codeStatut = '" . $statut . "'" ;
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+       return $qb->getSingleScalarResult();
+    }
+    
     /**
      * @return array
      */
@@ -56,5 +66,14 @@ class PgCmdMesureEnvRepository extends EntityRepository {
        return $qb->getOneOrNullResult();
     }
     
+    public function getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, $parametre) {
+        $query = "select c";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdMesureEnv c";
+        $query = $query . " where c.prelev = " . $pgCmdPrelev->getId();
+        $query = $query . " and  c.codeParametre = '" . $parametre  . "'";
+         $qb = $this->_em->createQuery($query);
+        //print_r($query);
+       return $qb->getOneOrNullResult();
+    }
     
 }

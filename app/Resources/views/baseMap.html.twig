@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="icon" type="image/x-icon" href="{{ asset('bundles/aeagaeag/images/favicon.ico') }}" />
+        <title>{% block title %}Sites Extranet de l'agence de l'eau 'Adour-garonne'{% endblock %}</title>
+        <!--<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.0/css/jquery.dataTables.css">-->
+        <link href="{{ asset('bundles/aeagaeag/bootstrap/js/jquery-ui/jquery-ui.css') }}" rel="stylesheet">
+        <link href="{{ asset('bundles/aeagaeag/DataTables/media/css/jquery.dataTables.min.css') }}" rel="stylesheet">
+        <link href="{{ asset('bundles/aeagaeag/DataTables/extensions/TableTools/css/dataTables.tableTools.min.css') }}" rel="stylesheet">
+        <link href="{{ asset('bundles/aeagaeag/DataTables/extensions/ColVis/css/dataTables.colVis.min.css') }}" rel="stylesheet">
+        <link href="{{ asset('bundles/aeagaeag/DataTables/extensions/FixedHeader/css/dataTables.fixedHeader.min.css') }}" rel="stylesheet">
+        <link href="{{ asset('bundles/aeagaeag/DataTables/extensions/FixedColumns/css/dataTables.fixedColumns.min.css') }}" rel="stylesheet">
+        <link href="{{ asset('bundles/aeagaeag/font-awesome/css/font-awesome.css') }}" rel="stylesheet">
+        <link href="{{ asset('bundles/aeagaeag/bootstrap/css/datepicker.css') }}" rel="stylesheet">
+        <link href="{{ asset('bundles/aeagaeag/bootstrap/css/timepicker.css') }}" rel="stylesheet">
+        <link href="{{ asset('bundles/aeagaeag/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+         <link href="{{ asset('bundles/aeagaeag/bootstrap/css/Autocomplete.css') }}" rel="stylesheet">
+         <link href="{{ asset('bundles/aeagaeag/jquery-validation/demo/css/screen.css') }}" rel="stylesheet">
+         <link href="{{ asset('bundles/aeagaeag/bootstrap/css/aeag.css') }}" rel="stylesheet">
+         <link href="{{ asset('bundles/aeagaeag/bootstrap/css/jqvmap.css') }}" rel="stylesheet">
+        
+        <!-- Javascript -->
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+          <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+          <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+       
+        {% block stylesheets %} {% endblock %}
+         
+    </head>
+    <body id="body" class="responsive">
+        <header class="page-header">
+            <!--[if lt IE 9]>
+            <div class="page-header-ie8">
+            <![endif]-->
+             <div class="row">
+                 <div class="col-xs-1">
+                     <a class="navbar-brand" href="http://www.eau-adour-garonne.fr" target="_target">
+                        <img class=img-responsive" id="logo" src="{{ asset('bundles/aeagaeag/images/logoAEAG2010.jpg') }}" alt="Site Aeag">
+                     </a> 
+                 </div>
+                 <div class="col-xs-7 hidden-xs text-center">
+                     <h2>{% block titre %}Sites extranet de l'agence de l'eau 'Adour-Garonne'{% endblock titre %}</h2>
+                 </div>
+                 <div class="col-xs-3 hidden-xs text-center">
+                     {% block message_admin %}{% endblock message_admin %}
+                 </div>
+             </div>
+          <!--[if lt IE 9]>
+           </div>
+           <![endif]-->
+         </header>
+          
+           {% block navbar %}
+             <nav class="navbar navbar-default" >
+                 <div class="container-fluid">
+                      <div class="navbar-header "> 
+                            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                              </button>
+                         </div>  
+                        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                            <ul class="nav target navbar-nav">
+                                    {% block menu %}   
+                                    <li><a href="{{ path('aeag_homepage') }}"><i class="fa fa-home"></i>&nbsp; Accueil</a></li>
+                                    {% endblock menu %}
+                            </ul>
+                          <ul class="nav navbar-nav navbar-right">
+                                <!-- BEGIN USER LOGIN DROPDOWN -->
+                                {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+
+                                     <li class="dropdown user pull-right">
+                                       <a class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" href="#">
+                                           <span class="username"><i class="fa fa-user fa-fw"></i> {{ app.user.username }}</span>
+                                           <span class="fa fa-caret-down"></span>
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="{{ path('AeagUserBundle_compte_show') }}"><i class="fa fa-user fa-fw"></i>&nbsp; Compte</a></li>
+                                            <li><a href="{{ path('fos_user_security_logout') }}"><i class="fa fa-power-off fa-fw"></i>&nbsp; Quitter</a></li>
+                                        </ul>
+                                     </li>
+                                 {%endif%}
+                                  <!-- END USER LOGIN DROPDOWN -->
+                                  <!-- BEGIN INBOX DROPDOWN -->
+                                    {#if (app.session.get('Messages') | length) > 0 #}
+
+                                         <li class="dropdown pull-right" id="header_inbox_bar">
+
+                                              <a href="#"  class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown"  data-close-others="true">
+                                              <i class="fa fa-envelope"></i>
+                                              <span class="badge badge-important ">{{app.session.get('Messages') | length}}</span>
+                                              </a>
+                                                <ul class="dropdown-menu    inbox-form-group" style="width: 350px;">
+                                                    {% if app.session.get('Messages') %}
+                                                      {% for message in app.session.get('Messages') %} 
+                                                         {% if message.message %}
+                                                             <li>
+                                                              <div class="btn-group">
+
+                                                                  <a href="#" id="messageVoir_{{message.message.id}}" data-target="#ajax_{{message.message.id}}" data-toggle="modal" title="Consulter">
+                                                                       <button type="button" class="btn btn-primary">
+                                                                           <i class="fa fa-eye info"> Message de {{ message.emetteur.username }} émis le {{ message.message.created|date("d/m/Y H:i:s") }}</i>
+                                                                       </button>
+                                                                   </a>
+                                                                  <a href="#" id="messageSupprimer_{{ message.message.id }}" title="Supprimer">
+                                                                        <button type="button" class="btn btn-danger">
+                                                                             <i class="fa fa-trash-o warning"></i>
+                                                                        </button>
+                                                                  </a>
+                                                                </div>
+                                                               </li>
+                                                            {% endif %}
+                                                       {% endfor %} 
+                                                     {% endif %}
+                                                 </ul>
+                                       </li>
+                                      <script type="text/javascript" src="{{ asset('bundles/aeagaeag/bootstrap/js/jquery-2.1.4.js') }}"> </script>
+                                       <script type="text/javascript" language="javascript">
+                                            jQuery(document).ready(function() {
+                                                {%if (app.session.get('Messages') | length) > 0 %}
+                                                    {% for message in app.session.get('Messages') %} 
+                                                         $('#messageSupprimer_{{ message.message.id }}').click(function() {
+                                                             var $url = "{{ path('Aeag_supprimerMessage', { 'id': message.message.id}) }}";
+                                                                               $.ajax({
+                                                                                        type: "POST",
+                                                                                        async: false,
+                                                                                        url: $url,
+                                                                                        success: function (data) {
+                                                                                            $('#header_inbox_bar').empty();
+                                                                                            $('#header_inbox_bar').append(data);
+                                                                                         },
+                                                                                        error: function (jqXHR, textStatus, errorThrown) {
+                                                                                            $('#header_inbox_bar').empty();
+                                                                                            $('#header_inbox_bar').append('<div class="error">' + jqXHR.responseText + '</div>');
+                                                                                        }
+                                                                                        });    
+                                                                                return false;
+                                                                        });
+                                                         {%endfor%}
+                                                  {%endif%}  
+                                       
+                                            });
+                                         </script>
+
+                                  {# endif #}
+
+                                  <!-- END INBOX DROPDOWN -->
+                            <!-- BEGIN NOTIFICATION DROPDOWN -->
+                        
+                            {# if app.session.get('Notifications') #}
+                                  <li class="dropdown pull-right" id="header_notification_bar">
+                                          <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown"
+                                                  data-close-others="true">
+                                                  <i class="fa fa-bullhorn"></i>
+                                                  <span class="badge badge-important">
+                                                      {{app.session.get('Notifications') | length}}
+                                                  </span>
+                                          </a>
+                                              <ul class="dropdown-menu" >
+                                                {% for notification in app.session.get('Notifications') %}
+                                                        <li>
+                                                            <a href="#">
+                                                                {%if notification.emetteur.id != notification.recepteur.id %}
+                                                                       {{notification.emetteur.username}}
+                                                                       {%endif%}
+                                                                       <i class="fa fa-caret-right"></i>
+                                                                       {{ notification.notification.message | nl2br }} 
+                                                                       <span class="time">{{ notification.notification.created | date("d/m/Y H:i:s")  }}</span>
+                                                            </a>
+                                                      </li>
+                                                  {% endfor %} 
+                                                
+                                              </ul>
+                                          {#<ul class="dropdown-menu extended notification">
+                                                  <li>
+                                                          <p>Notifications</p>
+                                                  </li>
+                                                  <li>
+                                                      <ul class="dropdown-menu-list scroller" style="height: 250px;">
+                                                           {%if app.session.get('Notifications') %}
+                                                             {% for notification in app.session.get('Notifications') %} 
+                                                                <li>  
+                                                                      <a href="#">
+                                                                      {%if notification.Emetteur != notification.Recepteur %}
+                                                                       {{notification.Emetteur.username}}
+                                                                       {%endif%}
+                                                                       <i class="fa fa-caret-right"></i>
+                                                                      {{ notification.message }} 
+                                                                       <span class="time">{{ notification.created | date("d/m/Y H:i:s")  }}</span>
+                                                                      </a>
+                                                                </li>
+                                                             {% endfor %} 
+                                                           {% endif %}
+                                                      </ul>
+                                                  </li>
+                                          </ul>#}
+                                  </li>
+
+                              {#endif#}
+                          <!-- END NOTIFICATION DROPDOWN -->
+                      
+                     
+                          </ul> 
+                     </div> 
+                  </div>
+              </nav> 
+           {% endblock navbar %}
+          
+                 <ol class="breadcrumb"> 
+                    {% block breadcrumb %}
+                      <li><a href="{{ path('aeag_homepage') }}">Accueil</a></li> 
+                      <li class="active">page active</li> 
+                    {% endblock breadcrumb %}
+                </ol> 
+            
+            <div class="container">
+                    
+                     	{#<!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+                         {%if (app.session.get('messageAdmin') | length) > 0 and is_granted('ROLE_SQE') and not is_granted('ROLE_ADMINSQE') %}
+                               <div class="alert alert-danger">
+                               <p> {{ app.session.get('messageAdmin') }} </p>
+                               </div>
+                         {%endif%}#}
+                       {%if (app.session.get('Messages') | length) > 0 %}
+                            {% for message in app.session.get('Messages') %} 
+                                <div class="modal fade" id="ajax_{{message.message.id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                      <div class="modal-content">
+                                        <div class="modal-header">
+                                          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                          <h4 class="modal-title" id="myModalLabel">Message de {{ message.emetteur.username }} émis le {{ message.message.created|date("d/m/Y H:i:s") }}</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            {{message.message.message | nl2br}}
+                                        </div>
+                                        <div class="modal-footer">
+                                          <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+                                        </div>
+                                      </div>
+                                    </div>
+                                </div>
+                               {%endfor%}
+                        {%endif%}
+                        
+                        {% for flashMessage in app.session.flashbag.get('notice-error') %}
+                           <div class="alert alert-danger">
+                                <p> {{ flashMessage }} </p>
+                            </div>
+                         {% endfor %}
+                        {% for flashMessage in app.session.flashbag.get('notice-warning') %}
+                           <div class="alert alert-warning">
+                                <p> {{ flashMessage }} </p>
+                            </div>
+                        {% endfor %}
+                        {% for flashMessage in app.session.flashbag.get('notice-success') %}
+                           <div class="alert alert-success">
+                                <p> {{ flashMessage }} </p>
+                            </div>
+                         {% endfor %}
+                        {% for flashMessage in app.session.flashbag.get('notice-info') %}
+                           <div class="note note-info">
+                                <h4 class="block">Information</h4>
+                                <p> {{ flashMessage }} </p>
+                            </div>
+                         {% endfor %}
+                        
+                        {% block modal %}
+                 	   <div class="modal fade" id="{% block modal_id %}modal_id{% endblock modal_id %}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                      <div class="modal-content">
+                                        <div class="modal-header">
+                                          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                          <h4 class="modal-title" id="myModalLabel">{% block modal_header %}{% endblock modal_header %}</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                          {% block modal_body %}{% endblock modal_body %}
+                                        </div>
+                                        <div class="modal-footer">
+                                          {% block modal_footer %}
+                                          <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+                                          {% endblock modal_footer %}
+                                        </div>
+                                      </div>
+                                    </div>
+                            </div>
+                          {% endblock modal %}
+                          
+                          
+                         <div class="modal fade" id="modalTraitementEncours">
+                            <div class="modal-dialog modal-sm">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                     <h4 class="modal-title" id="myModalLabel">
+                                        <div class="alert alert-warning" role="alert">
+                                          <i class="fa fa-circle-o-notch fa-spin"></i>
+                                         Traitement en cours. Merci de patienter
+                                        </div>
+                                     </h4>
+                                </div>
+                              </div>
+                            </div>
+                         </div>
+                          
+                           <div class="modal fade" id="modalMessageErreur" >
+                            <div class="modal-dialog modal-sm">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                     <h4 class="modal-title" id="myModalLabel">
+                                      <div id="idModalMessageErreur" class="alert alert-danger" role="alert"></div>
+                                     </h4>
+                                </div>
+                              </div>
+                            </div>
+                         </div>
+                                
+                        <div class="panel panel-group">
+                           <div id="idPanelHeading" class="panel-heading">{% block panel_heading %}panel title{% endblock panel_heading %}</div>
+                           <div id="panel-body" class="panel-body">
+                                {% block content %}Panel content {% endblock content %}
+                           </div>
+                        </div>
+                                 
+                 </div>
+           
+              <footer class="page-footer hidden-xs hidden-sm">
+                <!--[if lt IE 9]>
+                 <div class="page-footer-ie8 hidden-xs hidden-sm">
+                 <![endif]-->
+                <h4 class="small text-center">
+                        Agence de l'eau Adour-Garonne - 90, rue du f&eacute;r&eacute;tra - CS 87801 - 31078 Toulouse Cedex 4 - T&eacute;l. : 05 61 36 37 38
+                        &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;   Webmaster : {{ webmaster }}
+                        &nbsp; &nbsp; &nbsp; &nbsp; Symfony : {{ symfony }}
+                        &nbsp; &nbsp; &nbsp; &nbsp; version : {{ version }}
+                </h4>
+               <!--[if lt IE 9]>
+                </div>
+                <![endif]-->
+              </footer>
+       
+        {% block javascripts %}
+        <script type="text/javascript" src="{{ asset('bundles/aeagaeag/bootstrap/js/jquery-2.1.4.js') }}"> </script>
+        <script type="text/javascript" src="{{ asset('bundles/aeagaeag/bootstrap/js/jquery-ui/jquery-ui.js') }}"> </script>
+        <script type="text/javascript" src="{{ asset('bundles/aeagaeag/bootstrap/js/jquery.form.js') }}"> </script>
+        <script type="text/javascript" src="{{ asset('bundles/aeagaeag/bootstrap/js/bootstrap.js') }}"> </script>
+         <script type="text/javascript" src="{{ asset('bundles/aeagaeag/jquery-validation/dist/jquery.validate.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('bundles/aeagaeag/jquery-validation/dist/additional-methods.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('bundles/aeagaeag/jquery-validation/dist/localization/messages_fr.js') }}"></script>
+        {#<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script> #}
+        <script src="{{ asset('bundles/aeagaeag/DataTables/media/js/jquery.dataTables.js') }}" type="text/javascript"></script>
+        <script src="{{ asset('bundles/aeagaeag/DataTables/extensions/FixedHeader/js/dataTables.fixedHeader.min.js') }}" type="text/javascript"></script>
+        <script src="{{ asset('bundles/aeagaeag/DataTables/extensions/FixedColumns/js/dataTables.fixedColumns.min.js') }}" type="text/javascript"></script>
+        <script src="{{ asset('bundles/aeagaeag/DataTables/extensions/ColVis/js/dataTables.colVis.min.js') }}" type="text/javascript"></script>
+        <script src="{{ asset('bundles/aeagaeag/DataTables/extensions/TableTools/js/dataTables.tableTools.min.js') }}" type="text/javascript"></script>
+        <script type="text/javascript" src="{{ asset('bundles/aeagaeag/bootstrap/js/bootstrap-filestyle.min.js') }}"> </script>
+        <script type="text/javascript" src="{{ asset('bundles/aeagaeag/bootstrap/js/bootstrap-datepicker.js') }}"> </script>
+        <script type="text/javascript" src="{{ asset('bundles/aeagaeag/bootstrap/js/bootstrap-timepicker.js') }}"> </script>
+        <script type="text/javascript" src="{{ asset('bundles/aeagaeag/bootstrap/js/Autocomplete.js') }}"> </script>
+         <script type="text/javascript" src="{{ asset('bundles/aeagaeag/bootstrap/js/jquery.vmap.js') }}"> </script>
+        <script type="text/javascript" src="{{ asset('bundles/aeagaeag/bootstrap/js/jquery.vmap.france.js') }}"> </script>
+        <script type="text/javascript" src="{{ asset('bundles/aeagaeag/bootstrap/js/jquery.vmap.colorsRegion.js') }}"> </script>
+        <script type="text/javascript" src="{{ asset('bundles/aeagaeag/bootstrap/js/jquery.vmap.colorsDept.js') }}"> </script>
+        <script type="text/javascript" language="javascript">
+              
+           jQuery(document).ready(function() {
+           
+                $('#idAttente').hide();
+                $('#modalTraitementEncours').hide();
+                
+                 // controle formulaire
+                  $("#idForm").validate();
+       
+                   $("#modalTraitementEncours").draggable({
+                        handle: ".modal-header"
+                    });  
+                    
+                   $("#modalMessageErreur").draggable({
+                        handle: ".modal-header"
+                    });  
+
+
+                 $('#idTable tbody').on('click', 'tr', function () {
+                      $('#idTable tbody tr').removeClass('alert alert-info');
+                      $('#idTable tbody tr').css({'background-color':'#fff'});
+                      $(this).addClass('alert alert-info');
+                      $(this).css({'background-color':'#d9edf7'});
+                  } );
+
+                
+                $(document).on('click', 'li ul ul li a',function(e){
+                   {#$('#idAttente').show();#}
+                   $('#modalTraitementEncours').modal('toggle');
+                });
+                
+                 $(document).on('click', 'ol li a',function(e){
+                   {#$('#idAttente').show();#}
+                   $('#modalTraitementEncours').modal('toggle');
+                });
+                
+              {#  $(document).on('click', 'tr td a',function(e){
+                    $('#modalTraitementEncours').modal('toggle');
+                });#}
+                
+                 $(document).on('click', '#idBtVoirMessage',function(e){
+                   $('#idAttente').hide();
+                   $('#modalTraitementEncours').modal('hide');
+                });
+                
+                {%if (app.session.get('Messages') | length) > 0 %}
+                   {% for message in app.session.get('Messages') %} 
+                       $('#ajax_{{message.message.id}}').on('shown.bs.modal', function (e) {
+                            $('#modalTraitementEncours').modal('hide');
+                          })
+                    {% endfor %}
+                {% endif %}
+                
+                
+                {% block scriptsTr %}{% endblock scriptsTr %} 
+                         
+                 {% block scripts %}{% endblock scripts %}  
+                }
+           );
+        </script>
+        
+        {% endblock javascripts %}
+    </body>
+</html>

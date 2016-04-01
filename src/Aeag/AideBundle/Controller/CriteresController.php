@@ -169,7 +169,7 @@ class CriteresController extends Controller {
                 $csv = false;
             } else {
                 $full = false;
-                $csv =true;
+                $csv = true;
             }
 
             $total_retenu = $repoDossier->getSumMontantRetenu($where);
@@ -260,11 +260,11 @@ class CriteresController extends Controller {
             $departements = $repoDepartement->getDepartements();
         }
 
-        return $this->render('AeagAideBundle:Criteres:regionDepartements.html.twig', array(
-                    'region' => $critRegion,
-                    'departements' => $departements
-        ));
-    }
+            return $this->render('AeagAideBundle:Criteres:regionDepartements.html.twig', array(
+                        'region' => $critRegion,
+                        'departements' => $departements
+            ));
+        }
 
     /**
      *  Fichier PDF
@@ -309,6 +309,7 @@ class CriteresController extends Controller {
         $variables['total_dossiers'] = $session->get('total_dossiers');
 
         // Liste des dossiers selectionnés
+        $nb_dossiers = $repoDossier->getNbDossiers($session->get('where'));
         $dossiers = $repoDossier->getDossiers($session->get('where'));
         usort($dossiers, array('self', 'tri_dossiers'));
         $dos = array();
@@ -348,17 +349,20 @@ class CriteresController extends Controller {
         $pdf->AddPage($variables);
         $pdf->SetFont('Arial', '', 10);
         $pdf->Formatage($variables);
-        
+
         $repertoire = 'fichiers/';
         $date_import = date('Ymd_His');
         $nom_fichier = "aeag_aides_accordees_" . $date_import . ".pdf";
         $fic_import = $repertoire . "/" . $nom_fichier;
-        
+
         $fichier = 'AEAG_AIDES_ACCORDEES.pdf';
-        $pdf->Output($fic_import, 'F');
+        if ($nb_dossiers > 10000) {
+            $pdf->Output($fic_import, 'F');
+        } else {
+            $pdf->Output($fic_import, 'D');
+        }
 
-         return $this->render('AeagAideBundle:Criteres:pdf.html.twig', array( 'fichier' => $nom_fichier ) );
-
+        return $this->render('AeagAideBundle:Criteres:pdf.html.twig', array('fichier' => $nom_fichier));
     }
 
     public function csvAction() {
@@ -417,7 +421,7 @@ class CriteresController extends Controller {
             $contenu = "DOSSIER;ANNEE;MONTANT TRAVAUX RETENUS;MONTANT AIDE;NATURE OPEREATION;RAISON SOCIALE;INTITULE;\n";
         }
         fputs($fic, $contenu);
-         foreach ($dossiers as $dossier) {
+        foreach ($dossiers as $dossier) {
             $montantRetenu = strval($dossier->getMontant_retenu());
             $montant = strval($dossier->getMontant_aide_interne());
             $dos[$i] = array(
@@ -443,7 +447,7 @@ class CriteresController extends Controller {
 
         fclose($fic);
         $variables['fichier'] = $nom_fichier;
-        return $this->render('AeagAideBundle:Criteres:csv.html.twig', array( 'fichier' => $nom_fichier ) );
+        return $this->render('AeagAideBundle:Criteres:csv.html.twig', array('fichier' => $nom_fichier));
     }
 
     static function tri_dossiers($a, $b) {

@@ -151,13 +151,27 @@
                             </a>
                      {% endif %}
                      {% if is_granted('ROLE_ADMINSQE')  or cmdPrelev.saisieTerrain == 'O' %}
-                            <a class="btn btn-warning" id="idSaisirDonneesTerrain{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Saisie des données terrains">
-                                <i class="fa fa-pencil"> Saisir des données terrain <span class="badge">{{ cmdPrelev.nbSaisisParametresTerrain  }}/{{ cmdPrelev.nbParametresTerrain }}</span></i>
+                            <a class="btn btn-primary" id="idSaisirDonneesTerrain{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Saisie des données terrains">
+                                <i class="fa fa-pencil"> Saisir des données terrain 
+                                    <ul class="list-inline">
+                                         <li><span  class="label label-success">{{ cmdPrelev.nbSaisisParametresTerrainCorrect}}</li>
+                                          <li><span  class="label label-warning">{{ cmdPrelev.nbSaisisParametresTerrainIncorrect}}</li>
+                                          <li><span  class="label label-danger">{{ cmdPrelev.nbSaisisParametresTerrainErreur}}</li>
+                                     <li><span  class="label label-default">{{ cmdPrelev.nbSaisisParametresTerrain  }}/{{ cmdPrelev.nbParametresTerrain }}</li>
+                                   </ul>  
+                              </i>
                            </a>
                      {% endif %}
                      {% if is_granted('ROLE_ADMINSQE')  or cmdPrelev.saisieAnalyse == 'O' %}
-                            <a class="btn btn-warning" id="idSaisirAnalyses{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Saisie des analyses">
-                               <i class="fa fa-pencil"> Saisir des analyse  <span class="badge">{{ cmdPrelev.nbSaisisParametresAnalyse }}/{{ cmdPrelev.nbParametresAnalyse }}</span></i>
+                            <a class="btn btn-primary" id="idSaisirAnalyses{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Saisie des analyses">
+                               <i class="fa fa-pencil"> Saisir des analyse 
+                                    <ul class="list-inline">
+                                        <li><span  class="label label-success">{{ cmdPrelev.nbSaisisParametresAnalyseCorrect}}</li>
+                                         <li><span  class="label label-warning">{{ cmdPrelev.nbSaisisParametresAnalyseIncorrect}}</li>
+                                         <li><span  class="label label-danger">{{ cmdPrelev.nbSaisisParametresAnalyseErreur}}</li>
+                                    <li><span  class="label label-default">{{ cmdPrelev.nbSaisisParametresAnalyse }}/{{ cmdPrelev.nbParametresAnalyse }}</li>
+                                  </ul> 
+                              </i>
                            </a>
                     {% endif %}
             </caption> 
@@ -226,6 +240,16 @@
                 {% endif %}
             </tbody>
         </table>
+            
+         <div class="row">
+                <div class="col-md-12 pull-right text-info">
+                  <ul class="list-inline">
+                      <li><span class="label label-success">Correct</span></li>
+                      <li><span class="label label-warning">Avertissement</span></li>
+                       <li><span class="label label-danger">Erreur</span></li>
+                  </ul>  
+                </div>
+         </div>      
      {% endfor %}
     </div>
 {%endblock content %}    

@@ -1,0 +1,28 @@
+    <script type="text/javascript" src="{{ asset('bundles/aeagaeag/bootstrap/js/jquery.vmap.76.js') }}"> </script>
+    
+    <script type="text/javascript">
+	$(document).ready(function() {
+		$('#region76map').vectorMap({
+		    map: 'france_fr',
+			hoverOpacity: 0.5,
+			hoverColor: "#426cfa",
+			backgroundColor: "#ffffff",
+			color: "#abbdfd",
+			borderColor: "#000000",
+			selectedColor: "#426cfa",
+			enableZoom: false,
+			showTooltip: true,
+		    onRegionClick: function(element, code, region)
+		    {
+		        var message = 'Département : "'
+		            + region 
+		            + '" || Code : "'
+		            + code
+					+ '"';
+             
+		        alert(message);
+		    }
+		});
+	});
+   </script>
+   
