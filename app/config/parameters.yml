@@ -42,8 +42,6 @@ parameters:
     database_user6: postgres
     database_password6: null
     
-           
-    
     mailer_transport: smtp
     mailer_host: exhubcas
     mailer_user: automate

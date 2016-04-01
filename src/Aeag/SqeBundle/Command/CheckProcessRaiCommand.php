@@ -59,9 +59,9 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
         $this->pgCmdPrelevPc = $this->emSqe->getRepository('AeagSqeBundle:PgCmdPrelevPc');
 
         // Chargement des fichiers csv dans des tableaux 
-        $this->detectionCodeRemarqueComplet = $this->_csvToArray(getcwd() . "/web/tablesCorrespondancesRai/detectionCodeRemarqueComplet.csv");
-        $this->detectionCodeRemarqueMoitie = $this->_csvToArray(getcwd() . "/web/tablesCorrespondancesRai/detectionCodeRemarqueMoitie.csv");
-
+        $cheminCourant = __DIR__.'/../../../../';
+        $this->detectionCodeRemarqueComplet = $this->_csvToArray($cheminCourant . "/web/tablesCorrespondancesRai/detectionCodeRemarqueComplet.csv");
+        $this->detectionCodeRemarqueMoitie = $this->_csvToArray($cheminCourant . "/web/tablesCorrespondancesRai/detectionCodeRemarqueMoitie.csv");
         // On récupère les RAIs dont les phases sont en R25
         $pgProgPhases = $this->repoPgProgPhases->findOneByCodePhase('R25');
         $pgCmdFichiersRps = $this->repoPgCmdFichiersRps->findBy(array('phaseFichier' => $pgProgPhases, 'typeFichier' => 'RPS', 'suppr' => 'N'));
@@ -926,6 +926,7 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
                 if ($row !== 0) {
                     $result[] = $data;
                 }
+                $row++;
             }
         }
 
