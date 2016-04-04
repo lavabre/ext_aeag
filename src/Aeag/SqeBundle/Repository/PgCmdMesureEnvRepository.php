@@ -9,8 +9,7 @@ use Doctrine\ORM\EntityRepository;
  * @package Aeag\SqeBundle\Repository
  */
 class PgCmdMesureEnvRepository extends EntityRepository {
-    
-      
+
     /**
      * @return array
      */
@@ -28,52 +27,63 @@ class PgCmdMesureEnvRepository extends EntityRepository {
     public function getPgCmdMesureEnvByPrelev($pgCmdPrelev) {
         $query = "select c";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdMesureEnv c";
-        $query = $query . " where c.prelev = " . $pgCmdPrelev->getId() ;
+        $query = $query . " where c.prelev = " . $pgCmdPrelev->getId();
         $qb = $this->_em->createQuery($query);
         //print_r($query);
         return $qb->getResult();
     }
-    
-     public function getNbCmdMesureEnvByPrelev($pgCmdPrelev) {
+
+    public function getNbCmdMesureEnvByPrelev($pgCmdPrelev) {
         $query = "select count(c.prelev)";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdMesureEnv c";
-        $query = $query . " where c.prelev = " . $pgCmdPrelev->getId() ;
+        $query = $query . " where c.prelev = " . $pgCmdPrelev->getId();
         $qb = $this->_em->createQuery($query);
         //print_r($query);
-       return $qb->getSingleScalarResult();
+        return $qb->getSingleScalarResult();
     }
-    
-     public function getNbCmdMesureEnvByPrelevStatut($pgCmdPrelev, $statut) {
+
+    public function getNbCmdMesureEnvByPrelevStatut($pgCmdPrelev, $statut) {
         $query = "select count(c.prelev)";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdMesureEnv c";
-        $query = $query . " where c.prelev = " . $pgCmdPrelev->getId() ;
-        $query = $query . " and  c.codeStatut = '" . $statut . "'" ;
+        $query = $query . " where c.prelev = " . $pgCmdPrelev->getId();
+        $query = $query . " and  c.codeStatut = '" . $statut . "'";
         $qb = $this->_em->createQuery($query);
         //print_r($query);
-       return $qb->getSingleScalarResult();
+        return $qb->getSingleScalarResult();
     }
-    
+
     /**
      * @return array
      */
     public function getPgCmdMesureEnvByPrelevParamProg($pgCmdPrelev, $pgProgLotParamAn) {
         $query = "select c";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdMesureEnv c";
-        $query = $query . " where c.prelev = " . $pgCmdPrelev->getId() ;
-        $query = $query . " and  c.paramProg = " .$pgProgLotParamAn->getId() ;
+        $query = $query . " where c.prelev = " . $pgCmdPrelev->getId();
+        $query = $query . " and  c.paramProg = " . $pgProgLotParamAn->getId();
         $qb = $this->_em->createQuery($query);
         //print_r($query);
-       return $qb->getOneOrNullResult();
+        return $qb->getOneOrNullResult();
     }
-    
+
     public function getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, $parametre) {
         $query = "select c";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdMesureEnv c";
         $query = $query . " where c.prelev = " . $pgCmdPrelev->getId();
-        $query = $query . " and  c.codeParametre = '" . $parametre  . "'";
-         $qb = $this->_em->createQuery($query);
+        $query = $query . " and  c.codeParametre = '" . $parametre . "'";
+        $qb = $this->_em->createQuery($query);
         //print_r($query);
-       return $qb->getOneOrNullResult();
+        return $qb->getOneOrNullResult();
     }
-    
+
+    public function getPgCmdMesureEnvByPrelevCodeUniteParametre($pgCmdPrelev, $codeUnite, $parametre) {
+        $query = "select c";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdMesureEnv c";
+        $query = $query . " where c.prelev = " . $pgCmdPrelev->getId();
+        $query = $query . " and  c.codeUnite = '" . $codeUnite . "'";
+        $query = $query . " and  c.codeParametre <> '" . $parametre . "'";
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+        return  $qb->getResult();
+    }
+
 }

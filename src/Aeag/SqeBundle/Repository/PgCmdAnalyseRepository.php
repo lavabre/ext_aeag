@@ -107,4 +107,15 @@ class PgCmdAnalyseRepository extends EntityRepository {
        return $qb->getOneOrNullResult();
     }
     
+     public function getPgCmdAnalyseByPrelevCodeUniteParametre($pgCmdPrelev, $codeUnite, $parametre) {
+        $query = "select c";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdAnalyse c";
+        $query = $query . " where c.prelevId = " . $pgCmdPrelev->getId() ;
+        $query = $query . " and  c.codeUnite = '" . $codeUnite  . "'";
+        $query = $query . " and  c.codeParametre <> '" . $parametre  . "'";
+         $qb = $this->_em->createQuery($query);
+        //print_r($query);
+        return $qb->getResult();
+    }
+    
 }
