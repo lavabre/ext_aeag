@@ -19,8 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class SuiviPrelevementsController extends Controller {
 
-    private $phase82atteinte = false;
-
+   
     public function indexAction() {
         $user = $this->getUser();
         if (!$user) {
@@ -33,7 +32,7 @@ class SuiviPrelevementsController extends Controller {
         $session->set('fonction', 'index');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
-        // Récupération des programmations
+// Récupération des programmations
         $repoPgProgLotAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotAn');
         if ($user->hasRole('ROLE_ADMINSQE')) {
             $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByAdmin();
@@ -119,10 +118,16 @@ class SuiviPrelevementsController extends Controller {
         $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
         $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
+        $repoPgProgLotParamAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotParamAn');
+         $repoPgProgPrestaTypfic = $emSqe->getRepository('AeagSqeBundle:PgProgPrestaTypfic');
+        $repoPgCmdMesureEnv = $emSqe->getRepository('AeagSqeBundle:PgCmdMesureEnv');
+        $repoPgCmdAnalyse = $emSqe->getRepository('AeagSqeBundle:PgCmdAnalyse');
 
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($periodeAnId);
         $pgProgLotAn = $pgProgLotPeriodeAn->getLotAn();
+        $pgProgLot = $pgProgLotAn->getLot();
+        $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
         $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByPeriodeAn($pgProgLotPeriodeAn);
         $tabStations = array();
         $i = 0;
@@ -139,7 +144,8 @@ class SuiviPrelevementsController extends Controller {
                 }
             }
             if (!$trouve) {
-                $tabStations[$i]['station'] = $pgProgLotPeriodeProg->getStationAn()->getStation();
+                $pgProgLotStationAn = $pgProgLotPeriodeProg->getStationAn();
+                $tabStations[$i]['station'] = $pgProgLotStationAn->getStation();
                 $tabStations[$i]['lien'] = '/sqe_fiches_stations/' . $pgProgLotPeriodeProg->getStationAn()->getStation()->getCode() . '.pdf';
                 $tabStations[$i]['cmdPrelev'] = null;
                 $tabSuiviPrels = array();
@@ -149,12 +155,61 @@ class SuiviPrelevementsController extends Controller {
                     $tabStations[$i]['cmdDemande'] = $pgCmdDemande;
                     $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($pgProgLotPeriodeProg->getGrparAn()->getPrestaDft(), $pgCmdDemande, $pgProgLotPeriodeProg->getStationAn()->getStation(), $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
                     if ($pgCmdPrelev) {
-                        $tabStations[$i]['cmdPrelev'] = $pgCmdPrelev;
+                        $tabStations[$i]['cmdPrelev']['cmdPrelev'] = $pgCmdPrelev;
+                        $tabStations[$i]['cmdPrelev']['saisieTerrain'] = 'N';
+                        $tabStations[$i]['cmdPrelev']['nbParametresTerrain'] = 0;
+                        $tabStations[$i]['cmdPrelev']['nbSaisisParametresTerrain'] = 0;
+                        $tabStations[$i]['cmdPrelev']['nbSaisisParametresTerrainCorrect'] = 0;
+                        $tabStations[$i]['cmdPrelev']['nbSaisisParametresTerrainIncorrect'] = 0;
+                        $tabStations[$i]['cmdPrelev']['nbSaisisParametresTerrainErreur'] = 0;
+                        $tabStations[$i]['cmdPrelev']['saisieAnalyse'] = 'N';
+                        $tabStations[$i]['cmdPrelev']['nbParametresAnalyse'] = 0;
+                        $tabStations[$i]['cmdPrelev']['nbSaisisParametresAnalyse'] = 0;
+                        $tabStations[$i]['cmdPrelev']['nbSaisisParametresAnalyseCorrect'] = 0;
+                        $tabStations[$i]['cmdPrelev']['nbSaisisParametresAnalyseIncorrect'] = 0;
+                        $tabStations[$i]['cmdPrelev']['nbSaisisParametresAnalyseErreur'] = 0;
                         $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelev($pgCmdPrelev);
                         foreach ($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
                             $tabSuiviPrels[$j] = $pgCmdSuiviPrel;
+//                             if ($pgCmdSuiviPrel->getStatutPrel() == 'F') {
+                                        $pgProgPrestaTypfic = $repoPgProgPrestaTypfic->getPgProgPrestaTypficByCodeMilieu($pgProgTypeMilieu, $pgCmdSuiviPrel->getUser()->getPrestataire());
+                                        if ($pgProgPrestaTypfic) {
+                                            $NbProgLotParamAn = $repoPgProgLotParamAn->getNbProgLotParamAnEnvSituByStationAnPeriodeAnPrestataire($pgProgLotStationAn, $pgProgLotPeriodeAn, $pgCmdSuiviPrel->getUser()->getPrestataire());
+                                            $tabStations[$i]['cmdPrelev']['nbParametresTerrain'] = $NbProgLotParamAn;
+                                            $NbCmdMesureEnv = $repoPgCmdMesureEnv->getNbCmdMesureEnvByPrelev($pgCmdPrelev);
+                                            $NbCmdMesureEnvCorrect = $repoPgCmdMesureEnv->getNbCmdMesureEnvByPrelevStatut($pgCmdPrelev, '0');
+                                            $NbCmdMesureEnvIncorrect = $repoPgCmdMesureEnv->getNbCmdMesureEnvByPrelevStatut($pgCmdPrelev, '1');
+                                            $NbCmdMesureEnvErreur = $repoPgCmdMesureEnv->getNbCmdMesureEnvByPrelevStatut($pgCmdPrelev, '2');
+                                            $NbCmdAnalyse = $repoPgCmdAnalyse->getNbCmdAnalyseSituByPrelev($pgCmdPrelev);
+                                            $NbCmdAnalyseCorrect = $repoPgCmdAnalyse->getNbCmdAnalyseSituByPrelevStatut($pgCmdPrelev, '0');
+                                            $NbCmdAnalyseIncorrect = $repoPgCmdAnalyse->getNbCmdAnalyseSituByPrelevStatut($pgCmdPrelev, '1');
+                                            $NbCmdAnalyseErreur = $repoPgCmdAnalyse->getNbCmdAnalyseSituByPrelevStatut($pgCmdPrelev, '2');
+                                            $tabStations[$i]['cmdPrelev']['nbSaisisParametresTerrain'] = $NbCmdMesureEnv + $NbCmdAnalyse;
+                                            $tabStations[$i]['cmdPrelev']['nbSaisisParametresTerrainCorrect'] = $NbCmdMesureEnvCorrect + $NbCmdAnalyseCorrect;
+                                            $tabStations[$i]['cmdPrelev']['nbSaisisParametresTerrainIncorrect'] = $NbCmdMesureEnvIncorrect + $NbCmdAnalyseIncorrect;
+                                            $tabStations[$i]['cmdPrelev']['nbSaisisParametresTerrainErreur'] = $NbCmdMesureEnvErreur + $NbCmdAnalyseErreur;
+                                            $tabStations[$i]['cmdPrelev']['saisieTerrain'] = 'O';
+                                        }
+//                                    }
+//                                      if ($pgCmdSuiviPrel->getStatutPrel() == 'A') {
+                                        $pgProgPrestaTypfic = $repoPgProgPrestaTypfic->getPgProgPrestaTypficByCodeMilieu($pgProgTypeMilieu, $pgCmdSuiviPrel->getUser()->getPrestataire());
+                                        if ($pgProgPrestaTypfic) {
+                                            $NbProgLotParamAn = $repoPgProgLotParamAn->getNbProgLotParamAnAnaByStationAnPeriodeAnPrestataire($pgProgLotStationAn, $pgProgLotPeriodeAn, $pgCmdSuiviPrel->getUser()->getPrestataire());
+                                            $tabStations[$i]['cmdPrelev']['nbParametresAnalyse'] = $NbProgLotParamAn;
+                                            $NbCmdAnalyse = $repoPgCmdAnalyse->getNbCmdAnalyseAnaByPrelev($pgCmdPrelev);
+                                            $NbCmdAnalyseCorrect = $repoPgCmdAnalyse->getNbCmdAnalyseAnaByPrelevStatut($pgCmdPrelev, '0');
+                                            $NbCmdAnalyseIncorrect = $repoPgCmdAnalyse->getNbCmdAnalyseAnaByPrelevStatut($pgCmdPrelev, '1');
+                                            $NbCmdAnalyseErreur = $repoPgCmdAnalyse->getNbCmdAnalyseAnaByPrelevStatut($pgCmdPrelev, '2');
+                                            $tabStations[$i]['cmdPrelev']['nbSaisisParametresAnalyse'] = $NbCmdAnalyse;
+                                            $tabStations[$i]['cmdPrelev']['nbSaisisParametresAnalyseCorrect'] = $NbCmdAnalyseCorrect;
+                                            $tabStations[$i]['cmdPrelev']['nbSaisisParametresAnalyseIncorrect'] = $NbCmdAnalyseIncorrect;
+                                            $tabStations[$i]['cmdPrelev']['nbSaisisParametresAnalyseErreur'] = $NbCmdAnalyseErreur;
+                                            $tabStations[$i]['cmdPrelev']['saisieAnalyse'] = 'O';
+                                        }
+//                                    }
                             $j++;
                         }
+                      
                     }
                 }
                 $tabStations[$i]['suiviPrels'] = $tabSuiviPrels;
@@ -240,49 +295,46 @@ class SuiviPrelevementsController extends Controller {
                         } else {
                             foreach ($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
                                 $tabSuiviPrels[$j]['suiviPrel'] = $pgCmdSuiviPrel;
-                                if ($pgProgWebUser->getPrestataire() and $pgCmdSuiviPrel->getUser()->getPrestataire()) {
-                                    if ($pgProgWebUser->getPrestataire()->getAdrCorId() == $pgCmdSuiviPrel->getUser()->getPrestataire()->getAdrCorId()) {
-                                        $tabSuiviPrels[$j]['maj'] = 'O';
-                                        $tabCmdPrelevs[$i]['maj'] = 'O';
-                                        $tabDemande[$i]['maj'] = 'O';
-                                        if ($pgCmdSuiviPrel->getStatutPrel() == 'F') {
-                                            $pgProgPrestaTypfic = $repoPgProgPrestaTypfic->getPgProgPrestaTypficByCodeMilieu($pgProgTypeMilieu, $pgProgWebUser->getPrestataire());
-                                            if ($pgProgPrestaTypfic) {
-                                                $NbProgLotParamAn = $repoPgProgLotParamAn->getNbProgLotParamAnEnvSituByStationAnPeriodeAnPrestataire($pgProgLotStationAn, $pgProgLotPeriodeAn, $pgProgWebUser->getPrestataire());
-                                                $tabCmdPrelevs[$i]['nbParametresTerrain'] = $NbProgLotParamAn;
-                                                $NbCmdMesureEnv = $repoPgCmdMesureEnv->getNbCmdMesureEnvByPrelev($pgCmdPrelev);
-                                                $NbCmdMesureEnvCorrect = $repoPgCmdMesureEnv->getNbCmdMesureEnvByPrelevStatut($pgCmdPrelev, '0');
-                                                $NbCmdMesureEnvIncorrect = $repoPgCmdMesureEnv->getNbCmdMesureEnvByPrelevStatut($pgCmdPrelev, '1');
-                                                $NbCmdMesureEnvErreur = $repoPgCmdMesureEnv->getNbCmdMesureEnvByPrelevStatut($pgCmdPrelev, '2');
-                                                $NbCmdAnalyse = $repoPgCmdAnalyse->getNbCmdAnalyseSituByPrelev($pgCmdPrelev);
-                                                $NbCmdAnalyseCorrect = $repoPgCmdAnalyse->getNbCmdAnalyseSituByPrelevStatut($pgCmdPrelev, '0');
-                                                $NbCmdAnalyseIncorrect = $repoPgCmdAnalyse->getNbCmdAnalyseSituByPrelevStatut($pgCmdPrelev, '1');
-                                                $NbCmdAnalyseErreur = $repoPgCmdAnalyse->getNbCmdAnalyseSituByPrelevStatut($pgCmdPrelev, '2');
-                                                $tabCmdPrelevs[$i]['nbSaisisParametresTerrain'] = $NbCmdMesureEnv + $NbCmdAnalyse;
-                                                $tabCmdPrelevs[$i]['nbSaisisParametresTerrainCorrect'] = $NbCmdMesureEnvCorrect + $NbCmdAnalyseCorrect;
-                                                $tabCmdPrelevs[$i]['nbSaisisParametresTerrainIncorrect'] = $NbCmdMesureEnvIncorrect + $NbCmdAnalyseIncorrect;
-                                                $tabCmdPrelevs[$i]['nbSaisisParametresTerrainErreur'] = $NbCmdMesureEnvErreur + $NbCmdAnalyseErreur;
-                                                $tabCmdPrelevs[$i]['saisieTerrain'] = 'O';
-                                            }
+                                $tabSuiviPrels[$j]['maj'] = 'N';
+                                if ($user->hasRole('ROLE_ADMINSQE') or $pgCmdSuiviPrel->getUser()->getPrestataire()) {
+                                    $tabSuiviPrels[$j]['maj'] = 'O';
+                                    $tabCmdPrelevs[$i]['maj'] = 'O';
+                                    $tabDemande[$i]['maj'] = 'O';
+                                    if ($pgCmdSuiviPrel->getStatutPrel() == 'F') {
+                                        $pgProgPrestaTypfic = $repoPgProgPrestaTypfic->getPgProgPrestaTypficByCodeMilieu($pgProgTypeMilieu, $pgCmdSuiviPrel->getUser()->getPrestataire());
+                                        if ($pgProgPrestaTypfic) {
+                                            $NbProgLotParamAn = $repoPgProgLotParamAn->getNbProgLotParamAnEnvSituByStationAnPeriodeAnPrestataire($pgProgLotStationAn, $pgProgLotPeriodeAn, $pgCmdSuiviPrel->getUser()->getPrestataire());
+                                            $tabCmdPrelevs[$i]['nbParametresTerrain'] = $NbProgLotParamAn;
+                                            $NbCmdMesureEnv = $repoPgCmdMesureEnv->getNbCmdMesureEnvByPrelev($pgCmdPrelev);
+                                            $NbCmdMesureEnvCorrect = $repoPgCmdMesureEnv->getNbCmdMesureEnvByPrelevStatut($pgCmdPrelev, '0');
+                                            $NbCmdMesureEnvIncorrect = $repoPgCmdMesureEnv->getNbCmdMesureEnvByPrelevStatut($pgCmdPrelev, '1');
+                                            $NbCmdMesureEnvErreur = $repoPgCmdMesureEnv->getNbCmdMesureEnvByPrelevStatut($pgCmdPrelev, '2');
+                                            $NbCmdAnalyse = $repoPgCmdAnalyse->getNbCmdAnalyseSituByPrelev($pgCmdPrelev);
+                                            $NbCmdAnalyseCorrect = $repoPgCmdAnalyse->getNbCmdAnalyseSituByPrelevStatut($pgCmdPrelev, '0');
+                                            $NbCmdAnalyseIncorrect = $repoPgCmdAnalyse->getNbCmdAnalyseSituByPrelevStatut($pgCmdPrelev, '1');
+                                            $NbCmdAnalyseErreur = $repoPgCmdAnalyse->getNbCmdAnalyseSituByPrelevStatut($pgCmdPrelev, '2');
+                                            $tabCmdPrelevs[$i]['nbSaisisParametresTerrain'] = $NbCmdMesureEnv + $NbCmdAnalyse;
+                                            $tabCmdPrelevs[$i]['nbSaisisParametresTerrainCorrect'] = $NbCmdMesureEnvCorrect + $NbCmdAnalyseCorrect;
+                                            $tabCmdPrelevs[$i]['nbSaisisParametresTerrainIncorrect'] = $NbCmdMesureEnvIncorrect + $NbCmdAnalyseIncorrect;
+                                            $tabCmdPrelevs[$i]['nbSaisisParametresTerrainErreur'] = $NbCmdMesureEnvErreur + $NbCmdAnalyseErreur;
+                                            $tabCmdPrelevs[$i]['saisieTerrain'] = 'O';
                                         }
-                                        if ($pgCmdSuiviPrel->getStatutPrel() == 'A') {
-                                            $pgProgPrestaTypfic = $repoPgProgPrestaTypfic->getPgProgPrestaTypficByCodeMilieu($pgProgTypeMilieu, $pgProgWebUser->getPrestataire());
-                                            if ($pgProgPrestaTypfic) {
-                                                $NbProgLotParamAn = $repoPgProgLotParamAn->getNbProgLotParamAnAnaByStationAnPeriodeAnPrestataire($pgProgLotStationAn, $pgProgLotPeriodeAn, $pgProgWebUser->getPrestataire());
-                                                $tabCmdPrelevs[$i]['nbParametresAnalyse'] = $NbProgLotParamAn;
-                                                $NbCmdAnalyse = $repoPgCmdAnalyse->getNbCmdAnalyseAnaByPrelev($pgCmdPrelev);
-                                                $NbCmdAnalyseCorrect = $repoPgCmdAnalyse->getNbCmdAnalyseAnaByPrelevStatut($pgCmdPrelev, '0');
-                                                $NbCmdAnalyseIncorrect = $repoPgCmdAnalyse->getNbCmdAnalyseAnaByPrelevStatut($pgCmdPrelev, '1');
-                                                $NbCmdAnalyseErreur = $repoPgCmdAnalyse->getNbCmdAnalyseAnaByPrelevStatut($pgCmdPrelev, '2');
-                                                $tabCmdPrelevs[$i]['nbSaisisParametresAnalyse'] = $NbCmdAnalyse;
-                                                $tabCmdPrelevs[$i]['nbSaisisParametresAnalyseCorrect'] = $NbCmdAnalyseCorrect;
-                                                $tabCmdPrelevs[$i]['nbSaisisParametresAnalyseIncorrect'] = $NbCmdAnalyseIncorrect;
-                                                $tabCmdPrelevs[$i]['nbSaisisParametresAnalyseErreur'] = $NbCmdAnalyseErreur;
-                                                $tabCmdPrelevs[$i]['saisieAnalyse'] = 'O';
-                                            }
+                                    }
+                                    if ($pgCmdSuiviPrel->getStatutPrel() == 'A') {
+                                        $pgProgPrestaTypfic = $repoPgProgPrestaTypfic->getPgProgPrestaTypficByCodeMilieu($pgProgTypeMilieu, $pgCmdSuiviPrel->getUser()->getPrestataire());
+                                        if ($pgProgPrestaTypfic) {
+                                            $NbProgLotParamAn = $repoPgProgLotParamAn->getNbProgLotParamAnAnaByStationAnPeriodeAnPrestataire($pgProgLotStationAn, $pgProgLotPeriodeAn, $pgCmdSuiviPrel->getUser()->getPrestataire());
+                                            $tabCmdPrelevs[$i]['nbParametresAnalyse'] = $NbProgLotParamAn;
+                                            $NbCmdAnalyse = $repoPgCmdAnalyse->getNbCmdAnalyseAnaByPrelev($pgCmdPrelev);
+                                            $NbCmdAnalyseCorrect = $repoPgCmdAnalyse->getNbCmdAnalyseAnaByPrelevStatut($pgCmdPrelev, '0');
+                                            $NbCmdAnalyseIncorrect = $repoPgCmdAnalyse->getNbCmdAnalyseAnaByPrelevStatut($pgCmdPrelev, '1');
+                                            $NbCmdAnalyseErreur = $repoPgCmdAnalyse->getNbCmdAnalyseAnaByPrelevStatut($pgCmdPrelev, '2');
+                                            $tabCmdPrelevs[$i]['nbSaisisParametresAnalyse'] = $NbCmdAnalyse;
+                                            $tabCmdPrelevs[$i]['nbSaisisParametresAnalyseCorrect'] = $NbCmdAnalyseCorrect;
+                                            $tabCmdPrelevs[$i]['nbSaisisParametresAnalyseIncorrect'] = $NbCmdAnalyseIncorrect;
+                                            $tabCmdPrelevs[$i]['nbSaisisParametresAnalyseErreur'] = $NbCmdAnalyseErreur;
+                                            $tabCmdPrelevs[$i]['saisieAnalyse'] = 'O';
                                         }
-                                    } else {
-                                        $tabSuiviPrels[$j]['maj'] = 'N';
                                     }
                                 } else {
                                     if ($user->hasRole('ROLE_ADMINSQE')) {
@@ -306,7 +358,7 @@ class SuiviPrelevementsController extends Controller {
 
 
 
-        //       \Symfony\Component\VarDumper\VarDumper::dump($tabDemande);
+//       \Symfony\Component\VarDumper\VarDumper::dump($tabDemande);
 //        return new Response('');
 
         return $this->render('AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemande.html.twig', array(
@@ -528,15 +580,15 @@ class SuiviPrelevementsController extends Controller {
             $dir_iterator = new \RecursiveDirectoryIterator($dossier);
             $iterator = new \RecursiveIteratorIterator($dir_iterator, \RecursiveIteratorIterator::CHILD_FIRST);
 
-            // On supprime chaque dossier et chaque fichier	du dossier cible
+// On supprime chaque dossier et chaque fichier	du dossier cible
             foreach ($iterator as $fichier) {
                 if ($fichier != "." && $fichier != "..") {
                     is_dir($fichier) ? null : unlink($fichier);
                 }
             }
-            // On supprime le dossier cible
+// On supprime le dossier cible
             rmdir($dossier);
-            // On supprime l'enregistrement  $pgCmdFichiersRps
+// On supprime l'enregistrement  $pgCmdFichiersRps
             $pgCmdSuiviPrel->setFichierRps(null);
             $emSqe->persist($pgCmdSuiviPrel);
             $emSqe->remove($pgCmdFichiersRps);
@@ -597,7 +649,7 @@ class SuiviPrelevementsController extends Controller {
             $pgProgLotGrparAn = $pgProgLotPeriodeProg->getGrparAn();
             if ($pgProgLotGrparAn->getvalide() == 'O' and ( $pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'ENV' or $pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'SIT')) {
                 $pgProgGrpParamRef = $pgProgLotGrparAn->getGrparRef();
-                // if ($pgProgGrpParamRef->getCodeMilieu()->getCodeMilieu() == $pgProgTypeMilieu->getCodeMilieu()) {
+// if ($pgProgGrpParamRef->getCodeMilieu()->getCodeMilieu() == $pgProgTypeMilieu->getCodeMilieu()) {
                 $tabGroupes[$nbGroupes]['grparAn'] = $pgProgLotGrparAn;
                 $tabGroupes[$nbGroupes]['correct'] = 0;
                 $tabGroupes[$nbGroupes]['warning'] = 0;
@@ -678,12 +730,12 @@ class SuiviPrelevementsController extends Controller {
                 }
                 $tabGroupes[$nbGroupes]['paramAns'] = $tabParamAns;
                 $nbGroupes++;
-                // }
+// }
             }
         }
 
-        //\Symfony\Component\VarDumper\VarDumper::dump($tabParamAns);
-        //return new Response ('');
+//\Symfony\Component\VarDumper\VarDumper::dump($tabParamAns);
+//return new Response ('');
 
         return $this->render('AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemandeSuiviSaisirEnvSitu.html.twig', array(
                     'user' => $pgProgWebUser,
@@ -737,13 +789,17 @@ class SuiviPrelevementsController extends Controller {
         $pgProgLotStationAn = $repoPgProgLotStationAn->getPgProgLotStationAnByLotAnStation($pgProgLotAn, $pgRefStationMesure);
         $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByStationAnPeriodeAn($pgProgLotStationAn, $pgProgLotPeriodeAn);
         $nbErreurs = 0;
+        $okControlesSpecifiques = 0;
+        $okControleVraisemblance = 0;
+
         foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
             $pgProgLotGrparAn = $pgProgLotPeriodeProg->getGrparAn();
             if ($pgProgLotGrparAn->getvalide() == 'O' and ( $pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'ENV' or $pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'SIT')) {
                 $pgProgGrpParamRef = $pgProgLotGrparAn->getGrparRef();
-                // if ($pgProgGrpParamRef->getCodeMilieu()->getCodeMilieu() == $pgProgTypeMilieu->getCodeMilieu()) {
+// if ($pgProgGrpParamRef->getCodeMilieu()->getCodeMilieu() == $pgProgTypeMilieu->getCodeMilieu()) {
                 $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
                 foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
+
                     if (isset($_POST['valeur' . $pgProgLotParamAn->getId()])) {
                         $valeur = $_POST['valeur' . $pgProgLotParamAn->getId()];
                     } else {
@@ -765,22 +821,14 @@ class SuiviPrelevementsController extends Controller {
                     $tabStatut['libelle'] = null;
                     $parametre = $pgProgLotParamAn->getCodeParametre()->getCodeparametre();
                     $inSitu = 1;
-                    $ok = 0;
+
+
                     if (strlen($valeur) > 0) {
-
-                        $tabStatut = $this->_controleVraisemblance($parametre, $valeur, $remarque, $unite, $inSitu, $tabStatut);
-
                         $pgSandreFraction = $repoPgSandreFractions->getPgSandreFractionsByCodeFraction($pgProgLotParamAn->getCodeFraction());
-                        $pgProgUnitesPossiblesParam = $repoPgProgUnitesPossiblesParam->getPgProgUnitesPossiblesParamByCodeParametreCodeUniteNatureFraction($pgProgLotParamAn->getCodeParametre()->getCodeParametre(), $unite, $pgSandreFraction);
-                        if ($pgProgUnitesPossiblesParam) {
-                            if (strlen($pgProgUnitesPossiblesParam->getValMax()) > 0) {
-                                if ($valeur > $pgProgUnitesPossiblesParam->getValMax()) {
-                                    $tabStatut['statut'] = 2;
-                                    $tabStatut['libelle'] = 'Valeur doit être inferieure à ' . $pgProgUnitesPossiblesParam->getValMax();
-                                }
-                            }
+                        $tabStatut = $this->_controleVraisemblance($parametre, $valeur, $remarque, $unite, $inSitu, $pgSandreFraction, $tabStatut);
+                        if ($tabStatut['statut'] != 0) {
+                            $okControleVraisemblance++;
                         }
-                        $ok = $tabStatut['statut'];
                     }
 
                     $pgCmdMesureEnv = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParamProg($pgCmdPrelev, $pgProgLotParamAn);
@@ -926,60 +974,57 @@ class SuiviPrelevementsController extends Controller {
                 }
                 $emSqe->flush();
 
-                $NbCmdMesureEnv = $repoPgCmdMesureEnv->getNbCmdMesureEnvByPrelev($pgCmdPrelev);
-                $NbCmdMesureEnvCorrect = $repoPgCmdMesureEnv->getNbCmdMesureEnvByPrelevStatut($pgCmdPrelev, '0');
-                $NbCmdMesureEnvIncorrect = $repoPgCmdMesureEnv->getNbCmdMesureEnvByPrelevStatut($pgCmdPrelev, '1');
-                $NbCmdAnalyseSitu = $repoPgCmdAnalyse->getNbCmdAnalyseSituByPrelev($pgCmdPrelev);
-                $NbCmdAnalyseSituCorrect = $repoPgCmdAnalyse->getNbCmdAnalyseSituByPrelevStatut($pgCmdPrelev, '0');
-                $NbCmdAnalyseSituIncorrect = $repoPgCmdAnalyse->getNbCmdAnalyseSituByPrelevStatut($pgCmdPrelev, '1');
-                $NbCmdAnalyseAna = $repoPgCmdAnalyse->getNbCmdAnalyseAnaByPrelev($pgCmdPrelev);
-                $NbCmdAnalyseAnaCorrect = $repoPgCmdAnalyse->getNbCmdAnalyseAnaByPrelevStatut($pgCmdPrelev, '0');
-                $NbCmdAnalyseAnaIncorrect = $repoPgCmdAnalyse->getNbCmdAnalyseAnaByPrelevStatut($pgCmdPrelev, '1');
-                $NbCmdTot = $NbCmdMesureEnv + $NbCmdAnalyseSitu + $NbCmdAnalyseAna;
-                $NbCmdTotSaisis = $NbCmdMesureEnvCorrect + $NbCmdMesureEnvIncorrect + $NbCmdAnalyseSituCorrect + $NbCmdAnalyseSituIncorrect + $NbCmdAnalyseAnaCorrect + $NbCmdAnalyseAnaIncorrect;
-                if ($NbCmdTot == $NbCmdTotSaisis) {
-                    $ok = $this->_controlesSpecifiques($pgCmdPrelev);
-                } else {
-                    $ok = 1;
-                }
-
-                if (!$pgCmdPrelev->getFichierRps()) {
-                    $pgCmdFichiersRps = new PgCmdFichiersRps();
-                    $pgCmdFichiersRps->setDemande($pgCmdPrelev->getDemande());
-                    $pgCmdFichiersRps->setNomFichier('SAISIE_' . $pgCmdPrelev->getId());
-                    $pgCmdFichiersRps->setDateDepot(new \DateTime());
-                    $pgCmdFichiersRps->setTypeFichier('SAI');
-                    $pgCmdFichiersRps->setUser($pgProgWebUser);
-                    $pgCmdFichiersRps->setSuppr('N');
-                } else {
-                    $pgCmdFichiersRps = $pgCmdPrelev->getFichierRps();
-                }
-                if ($ok == 0) {
-                    $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R45');
-                } else {
-                    $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R10');
-                }
-                $pgCmdFichiersRps->setPhaseFichier($pgProgPhases);
-                $emSqe->persist($pgCmdFichiersRps);
-                $pgCmdPrelev->setFichierRps($pgCmdFichiersRps);
-
-                if ($ok == 0) {
-                    $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M40');
-                } else {
-                    $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M20');
-                }
-                $pgCmdPrelev->setPhaseDmd($pgProgPhases);
-                $emSqe->persist($pgCmdPrelev);
-
-                $emSqe->flush();
-                // }
+// }
             }
         }
 
-        //  return new Response(  \Symfony\Component\VarDumper\VarDumper::dump($tabParamAns));
-        //return new Response ('');
+        if ($okControleVraisemblance != 0) {
+            $nbErreurs++;
+        }
 
-        if ($ok == 0) {
+        $okControlesSpecifiques = $this->_controlesSpecifiques($pgCmdPrelev);
+
+        if ($okControlesSpecifiques != 0) {
+            $nbErreurs++;
+        }
+
+        if (!$pgCmdPrelev->getFichierRps()) {
+            $pgCmdFichiersRps = new PgCmdFichiersRps();
+            $pgCmdFichiersRps->setDemande($pgCmdPrelev->getDemande());
+            $pgCmdFichiersRps->setNomFichier('SAISIE_' . $pgCmdPrelev->getId());
+            $pgCmdFichiersRps->setDateDepot(new \DateTime());
+            $pgCmdFichiersRps->setTypeFichier('SAI');
+            $pgCmdFichiersRps->setUser($pgProgWebUser);
+            $pgCmdFichiersRps->setSuppr('N');
+        } else {
+            $pgCmdFichiersRps = $pgCmdPrelev->getFichierRps();
+        }
+        if ($nbErreurs == 0) {
+            $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R45');
+        } else {
+            $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R10');
+        }
+        $pgCmdFichiersRps->setPhaseFichier($pgProgPhases);
+        $emSqe->persist($pgCmdFichiersRps);
+        $pgCmdPrelev->setFichierRps($pgCmdFichiersRps);
+
+        if ($nbErreurs == 0) {
+            $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M40');
+        } else {
+            $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M20');
+        }
+        $pgCmdPrelev->setPhaseDmd($pgProgPhases);
+        $emSqe->persist($pgCmdPrelev);
+
+        $emSqe->flush();
+
+
+
+
+//  return new Response(  \Symfony\Component\VarDumper\VarDumper::dump($tabParamAns));
+//return new Response ('');
+
+        if ($nbErreurs == 0) {
             return $this->redirect($this->generateUrl('AeagSqeBundle_suiviPrelevements_lot_periode_station_demande', array('stationId' => $pgCmdPrelev->getStation()->getOuvFoncId(),
                                 'periodeAnId' => $pgProgLotPeriodeAn->getId(),
                                 'cmdDemandeId' => $pgCmdPrelev->getDemande()->getId())));
@@ -1034,7 +1079,7 @@ class SuiviPrelevementsController extends Controller {
             $pgProgLotGrparAn = $pgProgLotPeriodeProg->getGrparAn();
             if ($pgProgLotGrparAn->getvalide() == 'O' and $pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'ANA') {
                 $pgProgGrpParamRef = $pgProgLotGrparAn->getGrparRef();
-                // if ($pgProgGrpParamRef->getCodeMilieu()->getCodeMilieu() == $pgProgTypeMilieu->getCodeMilieu()) {
+// if ($pgProgGrpParamRef->getCodeMilieu()->getCodeMilieu() == $pgProgTypeMilieu->getCodeMilieu()) {
                 $tabGroupes[$nbGroupes]['grparAn'] = $pgProgLotGrparAn;
                 $tabGroupes[$nbGroupes]['correct'] = 0;
                 $tabGroupes[$nbGroupes]['warning'] = 0;
@@ -1090,12 +1135,12 @@ class SuiviPrelevementsController extends Controller {
 
                 $tabGroupes[$nbGroupes]['paramAns'] = $tabParamAns;
                 $nbGroupes++;
-                // }
+// }
             }
         }
 
-        //return new Response(  \Symfony\Component\VarDumper\VarDumper::dump($tabParamAns));
-        //return new Response ('');
+//return new Response(  \Symfony\Component\VarDumper\VarDumper::dump($tabParamAns));
+//return new Response ('');
 
         return $this->render('AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemandeSuiviSaisirAna.html.twig', array(
                     'user' => $pgProgWebUser,
@@ -1149,12 +1194,16 @@ class SuiviPrelevementsController extends Controller {
         $pgProgLotStationAn = $repoPgProgLotStationAn->getPgProgLotStationAnByLotAnStation($pgProgLotAn, $pgRefStationMesure);
         $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByStationAnPeriodeAn($pgProgLotStationAn, $pgProgLotPeriodeAn);
         $nbErreurs = 0;
+        $okControlesSpecifiques = 0;
+        $okControleVraisemblance = 0;
+
         foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
             $pgProgLotGrparAn = $pgProgLotPeriodeProg->getGrparAn();
             if ($pgProgLotGrparAn->getvalide() == 'O' and $pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'ANA') {
                 $pgProgGrpParamRef = $pgProgLotGrparAn->getGrparRef();
-                // if ($pgProgGrpParamRef->getCodeMilieu()->getCodeMilieu() == $pgProgTypeMilieu->getCodeMilieu()) {
+// if ($pgProgGrpParamRef->getCodeMilieu()->getCodeMilieu() == $pgProgTypeMilieu->getCodeMilieu()) {
                 $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
+
                 foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
                     if (isset($_POST['valeur' . $pgProgLotParamAn->getId()])) {
                         $valeur = $_POST['valeur' . $pgProgLotParamAn->getId()];
@@ -1179,24 +1228,14 @@ class SuiviPrelevementsController extends Controller {
                     $tabStatut['libelle'] = null;
                     $parametre = $pgProgLotParamAn->getCodeParametre()->getCodeparametre();
                     $inSitu = 2;
-                    $ok = 0;
+
                     if (strlen($valeur) > 0) {
-
-                        $tabStatut = $this->_controleVraisemblance($parametre, $valeur, $remarque, $unite, $inSitu, $tabStatut);
-
                         $pgSandreFraction = $repoPgSandreFractions->getPgSandreFractionsByCodeFraction($pgProgLotParamAn->getCodeFraction());
-                        $pgProgUnitesPossiblesParam = $repoPgProgUnitesPossiblesParam->getPgProgUnitesPossiblesParamByCodeParametreCodeUniteNatureFraction($pgProgLotParamAn->getCodeParametre()->getCodeParametre(), $unite, $pgSandreFraction);
-                        if ($pgProgUnitesPossiblesParam) {
-                            if (strlen($pgProgUnitesPossiblesParam->getValMax()) > 0) {
-                                if ($valeur > $pgProgUnitesPossiblesParam->getValMax()) {
-                                    $tabStatut['statut'] = 2;
-                                    $tabStatut['libelle'] = 'Valeur doit être inferieure à ' . $pgProgUnitesPossiblesParam->getValMax();
-                                }
-                            }
+                        $tabStatut = $this->_controleVraisemblance($parametre, $valeur, $remarque, $unite, $inSitu, $pgSandreFraction, $tabStatut);
+                        if ($tabStatut['statut'] != 0) {
+                            $okControleVraisemblance++;
                         }
-                        $ok = $tabStatut['statut'];
                     }
-
 
                     $pgCmdAnalyse = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParamProg($pgCmdPrelev, $pgProgLotParamAn);
                     if ($pgProgLotParamAn->getCodeFraction()) {
@@ -1242,60 +1281,57 @@ class SuiviPrelevementsController extends Controller {
 
                 $emSqe->flush();
 
-                $NbCmdMesureEnv = $repoPgCmdMesureEnv->getNbCmdMesureEnvByPrelev($pgCmdPrelev);
-                $NbCmdMesureEnvCorrect = $repoPgCmdMesureEnv->getNbCmdMesureEnvByPrelevStatut($pgCmdPrelev, '0');
-                $NbCmdMesureEnvIncorrect = $repoPgCmdMesureEnv->getNbCmdMesureEnvByPrelevStatut($pgCmdPrelev, '1');
-                $NbCmdAnalyseSitu = $repoPgCmdAnalyse->getNbCmdAnalyseSituByPrelev($pgCmdPrelev);
-                $NbCmdAnalyseSituCorrect = $repoPgCmdAnalyse->getNbCmdAnalyseSituByPrelevStatut($pgCmdPrelev, '0');
-                $NbCmdAnalyseSituIncorrect = $repoPgCmdAnalyse->getNbCmdAnalyseSituByPrelevStatut($pgCmdPrelev, '1');
-                $NbCmdAnalyseAna = $repoPgCmdAnalyse->getNbCmdAnalyseAnaByPrelev($pgCmdPrelev);
-                $NbCmdAnalyseAnaCorrect = $repoPgCmdAnalyse->getNbCmdAnalyseAnaByPrelevStatut($pgCmdPrelev, '0');
-                $NbCmdAnalyseAnaIncorrect = $repoPgCmdAnalyse->getNbCmdAnalyseAnaByPrelevStatut($pgCmdPrelev, '1');
-                $NbCmdTot = $NbCmdMesureEnv + $NbCmdAnalyseSitu + $NbCmdAnalyseAna;
-                $NbCmdTotSaisis = $NbCmdMesureEnvCorrect + $NbCmdMesureEnvIncorrect + $NbCmdAnalyseSituCorrect + $NbCmdAnalyseSituIncorrect + $NbCmdAnalyseAnaCorrect + $NbCmdAnalyseAnaIncorrect;
-                if ($NbCmdTot == $NbCmdTotSaisis) {
-                    $ok = $this->_controlesSpecifiques($pgCmdPrelev);
-                } else {
-                    $ok = 1;
-                }
 
-                if (!$pgCmdPrelev->getFichierRps()) {
-                    $pgCmdFichiersRps = new PgCmdFichiersRps();
-                    $pgCmdFichiersRps->setDemande($pgCmdPrelev->getDemande());
-                    $pgCmdFichiersRps->setNomFichier('SAISIE_' . $pgCmdPrelev->getId());
-                    $pgCmdFichiersRps->setDateDepot(new \DateTime());
-                    $pgCmdFichiersRps->setTypeFichier('SAI');
-                    $pgCmdFichiersRps->setUser($pgProgWebUser);
-                    $pgCmdFichiersRps->setSuppr('N');
-                } else {
-                    $pgCmdFichiersRps = $pgCmdPrelev->getFichierRps();
-                }
-                if ($ok == 0) {
-                    $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R45');
-                } else {
-                    $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R10');
-                }
-                $pgCmdFichiersRps->setPhaseFichier($pgProgPhases);
-                $emSqe->persist($pgCmdFichiersRps);
-                $pgCmdPrelev->setFichierRps($pgCmdFichiersRps);
 
-                if ($ok == 0) {
-                    $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M40');
-                } else {
-                    $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M20');
-                }
-                $pgCmdPrelev->setPhaseDmd($pgProgPhases);
-                $emSqe->persist($pgCmdPrelev);
-
-                $emSqe->flush();
-                // }
+// }
             }
         }
 
-        //  return new Response(  \Symfony\Component\VarDumper\VarDumper::dump($tabParamAns));
-        //return new Response ('');
 
-        if ($ok == 0) {
+        if ($okControleVraisemblance != 0) {
+            $nbErreurs++;
+        }
+
+        $okControlesSpecifiques = $this->_controlesSpecifiques($pgCmdPrelev);
+        if ($okControlesSpecifiques != 0) {
+            $nbErreurs++;
+        }
+
+        if (!$pgCmdPrelev->getFichierRps()) {
+            $pgCmdFichiersRps = new PgCmdFichiersRps();
+            $pgCmdFichiersRps->setDemande($pgCmdPrelev->getDemande());
+            $pgCmdFichiersRps->setNomFichier('SAISIE_' . $pgCmdPrelev->getId());
+            $pgCmdFichiersRps->setDateDepot(new \DateTime());
+            $pgCmdFichiersRps->setTypeFichier('SAI');
+            $pgCmdFichiersRps->setUser($pgProgWebUser);
+            $pgCmdFichiersRps->setSuppr('N');
+        } else {
+            $pgCmdFichiersRps = $pgCmdPrelev->getFichierRps();
+        }
+
+        if ($nbErreurs == 0) {
+            $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R45');
+        } else {
+            $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R10');
+        }
+        $pgCmdFichiersRps->setPhaseFichier($pgProgPhases);
+        $emSqe->persist($pgCmdFichiersRps);
+        $pgCmdPrelev->setFichierRps($pgCmdFichiersRps);
+
+        if ($nbErreurs == 0) {
+            $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M40');
+        } else {
+            $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M20');
+        }
+        $pgCmdPrelev->setPhaseDmd($pgProgPhases);
+        $emSqe->persist($pgCmdPrelev);
+
+        $emSqe->flush();
+
+//  return new Response(  \Symfony\Component\VarDumper\VarDumper::dump($tabParamAns));
+//return new Response ('');
+
+        if ($nbErreurs == 0) {
             return $this->redirect($this->generateUrl('AeagSqeBundle_suiviPrelevements_lot_periode_station_demande', array('stationId' => $pgCmdPrelev->getStation()->getOuvFoncId(),
                                 'periodeAnId' => $pgProgLotPeriodeAn->getId(),
                                 'cmdDemandeId' => $pgCmdPrelev->getDemande()->getId())));
@@ -1330,7 +1366,7 @@ class SuiviPrelevementsController extends Controller {
         $pgCmdPrelev = $pgCmdSuiviPrel->getPrelev();
         $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R10');
 
-        // Récupération des valeurs du fichier
+// Récupération des valeurs du fichier
 
         $name = $_FILES['file']['name'];
         $tmpName = $_FILES['file']['tmp_name'];
@@ -1349,7 +1385,7 @@ class SuiviPrelevementsController extends Controller {
                 }
 //upload file
                 if ($valid) {
-                    // Enregistrement des valeurs en base
+// Enregistrement des valeurs en base
                     if ($pgCmdSuiviPrel->getFichierRps()) {
                         $pgCmdFichiersRps = $pgCmdSuiviPrel->getFichierRps();
                         $emSqe->remove($pgCmdFichiersRps);
@@ -1367,7 +1403,7 @@ class SuiviPrelevementsController extends Controller {
                     $pgCmdSuiviPrel->setFichierRps($pgCmdFichiersRps);
                     $emSqe->persist($pgCmdSuiviPrel);
                     $emSqe->flush();
-                    // Enregistrement du fichier sur le serveur
+// Enregistrement du fichier sur le serveur
                     $pathBase = $this->getCheminEchange($pgCmdSuiviPrel, $pgCmdFichiersRps->getId());
                     if (!is_dir($pathBase)) {
                         if (!mkdir($pathBase, 0777, true)) {
@@ -1503,16 +1539,23 @@ class SuiviPrelevementsController extends Controller {
         return $chemin;
     }
 
-    protected function _controleVraisemblance($parametre, $valeur, $remarque, $unite, $inSitu, $tabStatut) {
+    protected function _controleVraisemblance($parametre, $valeur, $remarque, $unite, $inSitu, $fraction, $tabStatut) {
 
+        $session = $this->get('session');
+        $session->set('menu', 'suiviPrelevements');
+        $session->set('controller', 'SuiviPrelevements');
+        $session->set('fonction', '_controleVraisemblance');
 
-        // Contrôles sur toutes les valeurs insérées
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+        $repoPgProgUnitesPossiblesParam = $emSqe->getRepository('AeagSqeBundle:PgProgUnitesPossiblesParam');
+
+// Contrôles sur toutes les valeurs insérées
         $mesure = $valeur;
         $codeRq = $remarque;
         $codeParametre = $parametre;
 
 
-        // III.1 Champs non renseignés (valeurs et code remarque) ou valeurs non numériques ou valeurs impossibles params env / code remarque peut ne pas être renseigné pour cette liste (car réponse en edilabo 1.0) => avertissement
+// III.1 Champs non renseignés (valeurs et code remarque) ou valeurs non numériques ou valeurs impossibles params env / code remarque peut ne pas être renseigné pour cette liste (car réponse en edilabo 1.0) => avertissement
         if (is_null($mesure)) {
             if ($codeRq != 0 || is_null($codeRq)) { // III.2 Si valeur "vide" avec code remarque "0" hors lecture échelle (1429),,,,,,,'ABSENT' / on doit avoir un code remarque = 0 pour les valeurs vides, sinon avertissement, sauf pour le 1429 (cote échelle) => Avertissement
                 if ($codeParametre == 1429 || $inSitu == 1) {
@@ -1542,15 +1585,15 @@ class SuiviPrelevementsController extends Controller {
             }
         }
 
-        // Codes Params Env
-        // TODO Utiliser champ in_situ == 0
+// Codes Params Env
+// TODO Utiliser champ in_situ == 0
         $codeParamsEnv = array(
             1015, 1018, 1408, 1409, 1410, 1411, 1412, 1413, 1415, 1416,
             1420, 1422, 1423, 1424, 1425, 1427, 1428, 1429, 1434, 1726,
             1799, 1841, 1947, 1948, 5915, 6565, 6566, 6567, 7036
         );
 
-        // III.3 Valeurs =0 (hors TH (1345), TA (1346), TAC (1347), Temp(1301)) hors codes observations environnementales / résultat = 0 possible pour les paramètres de cette liste (et pour 1345, 1346, 1347 et 1301) => Erreur
+// III.3 Valeurs =0 (hors TH (1345), TA (1346), TAC (1347), Temp(1301)) hors codes observations environnementales / résultat = 0 possible pour les paramètres de cette liste (et pour 1345, 1346, 1347 et 1301) => Erreur
         if ($mesure == 0) {
             if ($codeParametre !== 1345 && $codeParametre !== 1346 && $codeParametre !== 1347 && $codeParametre !== 1301 && $inSitu != 1) {
                 $tabStatut['statut'] = 2;
@@ -1558,7 +1601,7 @@ class SuiviPrelevementsController extends Controller {
             }
         }
 
-        // III.4 Valeurs < 0 (hors température de air 1409, potentiel REDOX 1330)
+// III.4 Valeurs < 0 (hors température de air 1409, potentiel REDOX 1330)
         if ($mesure < 0) {
             if ($codeParametre != 1409 && $codeParametre != 1330 && $codeParametre != 1420 && $codeParametre != 1429) {
                 $tabStatut['statut'] = 2;
@@ -1566,7 +1609,7 @@ class SuiviPrelevementsController extends Controller {
             }
         }
 
-        // III.5 Valeurs avec code remarque '> (3)' hors bactério (1147,1448,1449,1451,5479,6455); code remarque ="Trace (7)"
+// III.5 Valeurs avec code remarque '> (3)' hors bactério (1147,1448,1449,1451,5479,6455); code remarque ="Trace (7)"
         $codeParamsBacterio = array(
             1447, 1448, 1449, 1451, 5479, 6455
         );
@@ -1575,7 +1618,7 @@ class SuiviPrelevementsController extends Controller {
             $tabStatut['libelle'] = 'Code Remarque > 3 ou == 7 impossible pour ce paramètre';
         }
 
-        // III.6 1 < pH(1302) < 14
+// III.6 1 < pH(1302) < 14
         if ($codeParametre == '1302') {
             $mPh = $mesure;
             if (!is_null($mPh)) {
@@ -1586,7 +1629,7 @@ class SuiviPrelevementsController extends Controller {
             }
         }
 
-        // III.12 Valeur de pourcentage hors 1312 oxygène (ex : matière sèche ou granulo) : non compris entre 0 et 100 si code unité = 243 ou 246
+// III.12 Valeur de pourcentage hors 1312 oxygène (ex : matière sèche ou granulo) : non compris entre 0 et 100 si code unité = 243 ou 246
         if ($unite == '243' or $unite == '246') {
             if ($codeParametre != '1312') {
                 if ($mesure < 0 or $mesure > 100) {
@@ -1596,58 +1639,60 @@ class SuiviPrelevementsController extends Controller {
             }
         }
 
+        //  Résultat d’analyse< Valeur max de la base  
+
+        $pgProgUnitesPossiblesParam = $repoPgProgUnitesPossiblesParam->getPgProgUnitesPossiblesParamByCodeParametreCodeUniteNatureFraction($codeParametre, $unite, $fraction);
+        if ($pgProgUnitesPossiblesParam) {
+            if (strlen($pgProgUnitesPossiblesParam->getValMax()) > 0) {
+                if ($mesure > $pgProgUnitesPossiblesParam->getValMax()) {
+                    $tabStatut['statut'] = 2;
+                    $tabStatut['libelle'] = 'Valeur doit être inferieure à ' . $pgProgUnitesPossiblesParam->getValMax();
+                }
+            }
+        }
+
         return $tabStatut;
     }
 
     protected function _controlesSpecifiques($pgCmdPrelev) {
-        // Contrôles spécifiques  
+// Contrôles spécifiques  
 
         $okControles = 0;
 
-        // III.7
-        $okControles = $this->_modeleWeiss($pgCmdPrelev);
+// III.7
+        $okControles += $this->_modeleWeiss($pgCmdPrelev);
 
-        // III.8 
-        // $this->_balanceIonique($pgCmdPrelev);
-//
-//            // III.9
-//            $this->_balanceIoniqueTds2($demandeId, $reponseId, $codePrelevement);
-//
-//            // III.10
-//            $this->_ortophosphate($demandeId, $reponseId, $codePrelevement);
-//
-//            // III.11
-//            $this->_ammonium($demandeId, $reponseId, $codePrelevement);
-//
-//            // III.12
-//            $this->_pourcentageHorsOxygene($demandeId, $reponseId, $codePrelevement);
-//
-//            // III.13
-//            $this->_sommeParametresDistincts($demandeId, $reponseId, $codePrelevement);
-//
-//            // III.14
-//            $this->_controleVraisemblanceMacroPolluants($demandeId, $reponseId, $codePrelevement);
-//
-//
-//
-//
-//
-//            // III.15
-//            $this->_detectionCodeRemarqueLot7($demandeId, $reponseId, $codePrelevement);
-//
-//            // III.16
-//            $this->_detectionCodeRemarqueLot8($demandeId, $reponseId, $codePrelevement);
-//
-//            // III.17
-//            $this->_controleLqAeag($pgCmdFichierRps, $codePrelevement);
-//            
-//    
+// III.8 
+        $okControles += $this->_balanceIonique($pgCmdPrelev);
+
+// III.9
+        $okControles += $this->_balanceIoniqueTds2($pgCmdPrelev);
+
+// III.10
+        $okControles += $this->_ortophosphate($pgCmdPrelev);
+
+// III.11
+        $okControles += $this->_ammonium($pgCmdPrelev);
+
+// III.12
+        $okControles += $this->_pourcentageHorsOxygene($pgCmdPrelev);
+
+        // III.13
+        $okControles += $this->_sommeParametresDistincts($pgCmdPrelev);
+
+        // III.14
+        $okControles += $this->_controleVraisemblanceMacroPolluants($pgCmdPrelev);
+
         return $okControles;
     }
 
-    // III.7 modèle  de WEISS : cohérence Teau, % O2, Concentration O2  sauf si Conductivité > 10 000
+// III.7 modèle  de WEISS : cohérence Teau, % O2, Concentration O2  sauf si Conductivité > 10 000
     protected function _modeleWeiss($pgCmdPrelev) {
 
+        $session = $this->get('session');
+        $session->set('menu', 'suiviPrelevements');
+        $session->set('controller', 'SuiviPrelevements');
+        $session->set('fonction', '_modeleWeiss');
         $emSqe = $this->get('doctrine')->getManager('sqe');
         $repoPgCmdMesureEnv = $emSqe->getRepository('AeagSqeBundle:PgCmdMesureEnv');
         $repoPgCmdAnalyse = $emSqe->getRepository('AeagSqeBundle:PgCmdAnalyse');
@@ -1683,17 +1728,19 @@ class SuiviPrelevementsController extends Controller {
                 $indVraiWess = $txSatModel - $mTxSatOx->getResultat();
 
                 if (abs($indVraiWess) > 25) {
-                    //error
-                    $okWeiss = 1;
+//error
+                    $okWeiss = 2;
                     $tabStatut['statut'] = 2;
                     $tabStatut['libelle'] = 'Modele de Weiss : valeurs non conformes (' . abs($indVraiWess) . ')';
                 } else if (10 < abs($indVraiWess) && abs($indVraiWess) <= 25) {
-                    // Avertissement
+// Avertissement
+                    $okWeiss = 1;
                     $tabStatut['statut'] = 1;
                     $tabStatut['libelle'] = 'Modele de Weiss : valeur réservée (' . abs($indVraiWess) . ')';
                 }
             } else {
-                //error ou avertissement ?
+//error ou avertissement ?
+                $okWeiss = 1;
                 $tabStatut['statut'] = 1;
                 $tabStatut['libelle'] = 'Modele de Weiss : Conductivité supérieur à 10000  (' . abs($indVraiWess) . ')';
             }
@@ -1715,10 +1762,15 @@ class SuiviPrelevementsController extends Controller {
         }
     }
 
-    // III.8 Balance ionique (meq) sauf si tous les résultats < LQ
+// III.8 Balance ionique (meq) sauf si tous les résultats < LQ
     protected function _balanceIonique($pgCmdPrelev) {
 
+        $session = $this->get('session');
+        $session->set('menu', 'suiviPrelevements');
+        $session->set('controller', 'SuiviPrelevements');
+        $session->set('fonction', '_balanceIonique');
         $emSqe = $this->get('doctrine')->getManager('sqe');
+
         $repoPgCmdMesureEnv = $emSqe->getRepository('AeagSqeBundle:PgCmdMesureEnv');
         $repoPgCmdAnalyse = $emSqe->getRepository('AeagSqeBundle:PgCmdAnalyse');
 
@@ -1846,14 +1898,14 @@ class SuiviPrelevementsController extends Controller {
         );
 
         $cAnionParams = array(1433 => $par1433Resultat,
-            1340 => $par1380Resultat,
+            1340 => $par1340Resultat,
             1338 => $par1338Resultat,
             1337 => $par1337Resultat,
             1327 => $par1327Resultat,
             1339 => $par1339Resultat
         );
 
-        // Vérification de l'existence des paramètres
+// Vérification de l'existence des paramètres
         $valid = true;
         $cpt = 0;
         $keys = array_keys($cCationParams);
@@ -1879,13 +1931,31 @@ class SuiviPrelevementsController extends Controller {
         if ($valid) {
             $countLq = 0;
             foreach ($cCationParams as $idx => $cCationParam) {
-                if ($this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre($idx, $demandeId, $reponseId, $codePrelevement) == 10) {
+                $parIdx = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, $idx);
+                if (!$parIdx) {
+                    $parIdx = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, $idx, 1);
+                }
+                if ($parIdx) {
+                    $parIdxResultat = $parIdx->getResultat();
+                } else {
+                    $parIdxResultat = null;
+                }
+                if ($parIdxResultat == 10) {
                     $countLq++;
                 }
             }
 
             foreach ($cAnionParams as $idx => $cAnionParam) {
-                if ($this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre($idx, $demandeId, $reponseId, $codePrelevement) == 10) {
+                $parIdx = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, $idx);
+                if (!$parIdx) {
+                    $parIdx = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, $idx, 1);
+                }
+                if ($parIdx) {
+                    $parIdxResultat = $parIdx->getResultat();
+                } else {
+                    $parIdxResultat = null;
+                }
+                if ($parIdxResultat == 10) {
                     $countLq++;
                 }
             }
@@ -1924,6 +1994,7 @@ class SuiviPrelevementsController extends Controller {
                 $indVraiBion = ($cCation - $cAnion);
 
                 if (0.5 < $indVraiBion && $indVraiBion <= 1.25) {
+                    $okBalanceIonique = 1;
                     $tabStatut['statut'] = 1;
                     $tabStatut['libelle'] = 'Balance Ionique : Valeur réservée';
                 } else if ($indVraiBion > 1.25) {
@@ -1932,30 +2003,203 @@ class SuiviPrelevementsController extends Controller {
                     $tabStatut['libelle'] = 'Balance Ionique : Valeur non conforme';
                 }
             }
+
+
+            $par1374->setCodeStatut($tabStatut['statut']);
+            $par1374->setLibelleStatut($tabStatut['libelle']);
+            $emSqe->persist($par1374);
+            $par1335->setCodeStatut($tabStatut['statut']);
+            $par1335->setLibelleStatut($tabStatut['libelle']);
+            $emSqe->persist($par1335);
+            $par13721->setCodeStatut($tabStatut['statut']);
+            $par1372->setLibelleStatut($tabStatut['libelle']);
+            $emSqe->persist($par1372);
+            $par1367->setCodeStatut($tabStatut['statut']);
+            $par1367->setLibelleStatut($tabStatut['libelle']);
+            $emSqe->persist($par1367);
+            $par1375->setCodeStatut($tabStatut['statut']);
+            $par1375->setLibelleStatut($tabStatut['libelle']);
+            $emSqe->persist($par1375);
+
+            $par1433->setCodeStatut($tabStatut['statut']);
+            $par1433->setLibelleStatut($tabStatut['libelle']);
+            $emSqe->persist($par1433);
+            $par1340->setCodeStatut($tabStatut['statut']);
+            $par1340->setLibelleStatut($tabStatut['libelle']);
+            $emSqe->persist($par1340);
+            $par1338->setCodeStatut($tabStatut['statut']);
+            $par1338->setLibelleStatut($tabStatut['libelle']);
+            $emSqe->persist($par1338);
+            $par1337->setCodeStatut($tabStatut['statut']);
+            $par1337->setLibelleStatut($tabStatut['libelle']);
+            $emSqe->persist($par1337);
+            $par1327->setCodeStatut($tabStatut['statut']);
+            $par1327->setLibelleStatut($tabStatut['libelle']);
+            $emSqe->persist($par1327);
+            $par1339->setCodeStatut($tabStatut['statut']);
+            $par1339->setLibelleStatut($tabStatut['libelle']);
+            $emSqe->persist($par1339);
+
+            $emSqe->flush();
         }
         return $okBalanceIonique;
     }
 
-    // III.9 Comparaison Balance ionique / conductivité (Feret)
-    protected function _balanceIoniqueTds2($demandeId, $reponseId, $codePrelevement) {
-        $cCationParams = array(1374 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1374, $demandeId, $reponseId, $codePrelevement),
-            1335 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1335, $demandeId, $reponseId, $codePrelevement),
-            1372 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1372, $demandeId, $reponseId, $codePrelevement),
-            1367 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1367, $demandeId, $reponseId, $codePrelevement),
-            1375 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1375, $demandeId, $reponseId, $codePrelevement)
+// III.9 Comparaison Balance ionique / conductivité (Feret)
+    protected function _balanceIoniqueTds2($pgCmdPrelev) {
+
+        $session = $this->get('session');
+        $session->set('menu', 'suiviPrelevements');
+        $session->set('controller', 'SuiviPrelevements');
+        $session->set('fonction', '_balanceIoniqueTds2');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        $repoPgCmdMesureEnv = $emSqe->getRepository('AeagSqeBundle:PgCmdMesureEnv');
+        $repoPgCmdAnalyse = $emSqe->getRepository('AeagSqeBundle:PgCmdAnalyse');
+
+        $tabStatut = array();
+        $tabStatut['statut'] = 0;
+        $tabStatut['libelle'] = null;
+        $okBalanceIoniqueTds2 = 0;
+
+        $par1374 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1374');
+        if (!$par1374) {
+            $par1374 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1374', 1);
+        }
+        if ($par1374) {
+            $par1374Resultat = $par1374->getResultat();
+        } else {
+            $par1374Resultat = null;
+        }
+
+        $par1335 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1335');
+        if (!$par1335) {
+            $par1335 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1335', 1);
+        }
+        if ($par1335) {
+            $par1335Resultat = $par1335->getResultat();
+        } else {
+            $par1335Resultat = null;
+        }
+
+        $par1372 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1372');
+        if (!$par1372) {
+            $par1372 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1372', 1);
+        }
+        if ($par1372) {
+            $par1372Resultat = $par1372->getResultat();
+        } else {
+            $par1372Resultat = null;
+        }
+
+        $par1367 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1367');
+        if (!$par1367) {
+            $par1367 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1367', 1);
+        }
+        if ($par1367) {
+            $par1367Resultat = $par1367->getResultat();
+        } else {
+            $par1367Resultat = null;
+        }
+
+        $par1375 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1375');
+        if (!$par1375) {
+            $par1375 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1375', 1);
+        }
+        if ($par1375) {
+            $par1375Resultat = $par1375->getResultat();
+        } else {
+            $par1375Resultat = null;
+        }
+
+        $par1433 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1433');
+        if (!$par1433) {
+            $par1433 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1433', 1);
+        }
+        if ($par1433) {
+            $par1433Resultat = $par1433->getResultat();
+        } else {
+            $par1433Resultat = null;
+        }
+
+
+        $par1340 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1340');
+        if (!$par1340) {
+            $par1340 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1340', 1);
+        }
+        if ($par1340) {
+            $par1340Resultat = $par1340->getResultat();
+        } else {
+            $par1340Resultat = null;
+        }
+
+        $par1338 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1338');
+        if (!$par1338) {
+            $par1338 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1338', 1);
+        }
+        if ($par1338) {
+            $par1338Resultat = $par1338->getResultat();
+        } else {
+            $par1338Resultat = null;
+        }
+
+        $par1337 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1337');
+        if (!$par1337) {
+            $par1337 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1337', 1);
+        }
+        if ($par1337) {
+            $par1337Resultat = $par1337->getResultat();
+        } else {
+            $par1337Resultat = null;
+        }
+
+        $par1327 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1327');
+        if (!$par1327) {
+            $par1327 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1327', 1);
+        }
+        if ($par1327) {
+            $par1327Resultat = $par1327->getResultat();
+        } else {
+            $par1327Resultat = null;
+        }
+
+        $par1339 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1339');
+        if (!$par1339) {
+            $par1339 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1339', 1);
+        }
+        if ($par1339) {
+            $par1339Resultat = $par1339->getResultat();
+        } else {
+            $par1339Resultat = null;
+        }
+
+        $cCationParams = array(1374 => $par1374Resultat,
+            1335 => $par1335Resultat,
+            1372 => $par1372Resultat,
+            1367 => $par1367Resultat,
+            1375 => $par1375Resultat
         );
 
-        $cAnionParams = array(1433 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1433, $demandeId, $reponseId, $codePrelevement),
-            1340 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1340, $demandeId, $reponseId, $codePrelevement),
-            1338 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1338, $demandeId, $reponseId, $codePrelevement),
-            1337 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1337, $demandeId, $reponseId, $codePrelevement),
-            1327 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1327, $demandeId, $reponseId, $codePrelevement),
-            1339 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1339, $demandeId, $reponseId, $codePrelevement)
+        $cAnionParams = array(1433 => $par1433Resultat,
+            1340 => $par1340Resultat,
+            1338 => $par1338Resultat,
+            1337 => $par1337Resultat,
+            1327 => $par1327Resultat,
+            1339 => $par1339Resultat
         );
 
-        $mConductivite = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1303, $demandeId, $reponseId, $codePrelevement);
+        $mConductivite = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1303');
+        if (!$mConductivite) {
+            $mConductivite = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1303', 1);
+        }
+        if ($mConductivite) {
+            $mConductiviteResultat = $mConductivite->getResultat();
+        } else {
+            $mConductiviteResultat = null;
+        }
 
-        // Vérification de l'existence des paramètres
+
+// Vérification de l'existence des paramètres
         $valid = true;
         $cpt = 0;
         $keys = array_keys($cCationParams);
@@ -1986,19 +2230,39 @@ class SuiviPrelevementsController extends Controller {
         if ($valid) {
             $countLq = 0;
             foreach ($cCationParams as $idx => $cCationParam) {
-                if ($this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre($idx, $demandeId, $reponseId, $codePrelevement) == 10) {
+                $parIdx = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, $idx);
+                if (!$parIdx) {
+                    $parIdx = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, $idx, 1);
+                }
+                if ($parIdx) {
+                    $parIdxResultat = $parIdx->getResultat();
+                } else {
+                    $parIdxResultat = null;
+                }
+                if ($parIdxResultat == 10) {
                     $countLq++;
                 }
             }
 
             foreach ($cAnionParams as $idx => $cAnionParam) {
-                if ($this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre($idx, $demandeId, $reponseId, $codePrelevement) == 10) {
+                $parIdx = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, $idx);
+                if (!$parIdx) {
+                    $parIdx = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, $idx, 1);
+                }
+                if ($parIdx) {
+                    $parIdxResultat = $parIdx->getResultat();
+                } else {
+                    $parIdxResultat = null;
+                }
+                if ($parIdxResultat == 10) {
                     $countLq++;
                 }
             }
 
             if ($countLq >= (count($cAnionParams) + count($cCationParams))) {
-                $this->_addLog('error', $demandeId, $reponseId, "Balance Ionique TDS 2 : Tous les dosages sont en LQ", $codePrelevement);
+                $okBalanceIoniqueTds2 = 2;
+                $tabStatut['statut'] = 2;
+                $tabStatut['libelle'] = 'Balance Ionique TDS 2 : Tous les dosages sont en LQ';
             } else {
                 $cCation = 0;
                 foreach ($cCationParams as $idx => $cCationParam) {
@@ -2016,98 +2280,491 @@ class SuiviPrelevementsController extends Controller {
                 $indVraiTds = $tdsEstime - $tdsModele;
 
                 if (175 <= abs($indVraiTds) && abs($indVraiTds) < 280) {
-                    $this->_addLog('warning', $demandeId, $reponseId, "Balance Ionique TDS 2 : Réserve", $codePrelevement);
+                    $okBalanceIoniqueTds2 = 1;
+                    $tabStatut['statut'] = 1;
+                    $tabStatut['libelle'] = 'Balance Ionique TDS 2 : Réserve';
                 } else if (abs($indVraiTds) >= 280) {
-                    $this->_addLog('warning', $demandeId, $reponseId, "Balance Ionique TDS 2 : Valeur non conforme", $codePrelevement);
+                    $okBalanceIoniqueTds2 = 2;
+                    $tabStatut['statut'] = 2;
+                    $tabStatut['libelle'] = 'Balance Ionique TDS 2 : Valeur non conforme';
                 }
             }
+
+            $par1374->setCodeStatut($tabStatut['statut']);
+            $par1374->setLibelleStatut($tabStatut['libelle']);
+            $emSqe->persist($par1374);
+            $par1335->setCodeStatut($tabStatut['statut']);
+            $par1335->setLibelleStatut($tabStatut['libelle']);
+            $emSqe->persist($par1335);
+            $par13721->setCodeStatut($tabStatut['statut']);
+            $par1372->setLibelleStatut($tabStatut['libelle']);
+            $emSqe->persist($par1372);
+            $par1367->setCodeStatut($tabStatut['statut']);
+            $par1367->setLibelleStatut($tabStatut['libelle']);
+            $emSqe->persist($par1367);
+            $par1375->setCodeStatut($tabStatut['statut']);
+            $par1375->setLibelleStatut($tabStatut['libelle']);
+            $emSqe->persist($par1375);
+
+            $par1433->setCodeStatut($tabStatut['statut']);
+            $par1433->setLibelleStatut($tabStatut['libelle']);
+            $emSqe->persist($par1433);
+            $par1340->setCodeStatut($tabStatut['statut']);
+            $par1340->setLibelleStatut($tabStatut['libelle']);
+            $emSqe->persist($par1340);
+            $par1338->setCodeStatut($tabStatut['statut']);
+            $par1338->setLibelleStatut($tabStatut['libelle']);
+            $emSqe->persist($par1338);
+            $par1337->setCodeStatut($tabStatut['statut']);
+            $par1337->setLibelleStatut($tabStatut['libelle']);
+            $emSqe->persist($par1337);
+            $par1327->setCodeStatut($tabStatut['statut']);
+            $par1327->setLibelleStatut($tabStatut['libelle']);
+            $emSqe->persist($par1327);
+            $par1339->setCodeStatut($tabStatut['statut']);
+            $par1339->setLibelleStatut($tabStatut['libelle']);
+            $emSqe->persist($par1339);
+
+            $emSqe->flush();
         }
+
+        return $okBalanceIoniqueTds2;
     }
 
-    // III.10 [PO4] (1433) en P < [P total](1350) 
-    protected function _ortophosphate($demandeId, $reponseId, $codePrelevement) {
-        $mPo4 = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1433, $demandeId, $reponseId, $codePrelevement);
-        $mP = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1350, $demandeId, $reponseId, $codePrelevement);
+// III.10 [PO4] (1433) en P < [P total](1350) 
+    protected function _ortophosphate($pgCmdPrelev) {
 
-        if (!is_null($mPo4) && !is_null($mP)) {
-            if (($this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre(1433, $demandeId, $reponseId, $codePrelevement) == 10) &&
-                    ($this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre(1350, $demandeId, $reponseId, $codePrelevement) == 10)) {
-                $this->_addLog('error', $demandeId, $reponseId, "Ortophosphate : Tous les dosages sont en LQ", $codePrelevement);
+        $session = $this->get('session');
+        $session->set('menu', 'suiviPrelevements');
+        $session->set('controller', 'SuiviPrelevements');
+        $session->set('fonction', '_ortophosphate');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        $repoPgCmdMesureEnv = $emSqe->getRepository('AeagSqeBundle:PgCmdMesureEnv');
+        $repoPgCmdAnalyse = $emSqe->getRepository('AeagSqeBundle:PgCmdAnalyse');
+
+        $tabStatut = array();
+        $tabStatut['statut'] = 0;
+        $tabStatut['libelle'] = null;
+        $okOrtophosphate = 0;
+
+        $mPo4 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1433');
+        if (!$mPo4) {
+            $mPo4 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1433', 1);
+        }
+        if ($mPo4) {
+            $mPo4Resultat = $mPo4->getResultat();
+        } else {
+            $mPo4Resultat = null;
+        }
+
+        $mP = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1350');
+        if (!$mP) {
+            $mP = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1350', 1);
+        }
+        if ($mP) {
+            $mPResultat = $mP->getResultat();
+        } else {
+            $mPResultat = null;
+        }
+
+        if (!is_null($mPo4Resultat) && !is_null($mPResultat)) {
+            if ($mPo4Resultat == 10 && $mPResultat == 10) {
+                $okOrtophosphate = 2;
+                $tabStatut['statut'] = 2;
+                $tabStatut['libelle'] = 'Ortophosphate : Tous les dosages sont en LQ';
             } else {
-                $indP = $mPo4 / $mP;
+                $indP = $mPo4Resultat / $mPResultat;
                 if (1 < $indP && $indP <= 1.25) {
-                    $this->_addLog('warning', $demandeId, $reponseId, "Ortophosphate : Réserve", $codePrelevement);
+                    $okOrtophosphate = 1;
+                    $tabStatut['statut'] = 1;
+                    $tabStatut['libelle'] = 'Ortophosphate : Réserve';
                 } else if ($indP > 1.25) {
-                    $this->_addLog('error', $demandeId, $reponseId, "Ortophosphate : Valeur non conforme", $codePrelevement);
+                    $okOrtophosphate = 2;
+                    $tabStatut['statut'] = 2;
+                    $tabStatut['libelle'] = 'Ortophosphate : Valeur non conforme';
                 }
             }
+
+            $mPo4->setCodeStatut($tabStatut['statut']);
+            $mPo4->setLibelleStatut($tabStatut['libelle']);
+            $emSqe->persist($mPo4);
+            $mP->setCodeStatut($tabStatut['statut']);
+            $mP->setLibelleStatut($tabStatut['libelle']);
+            $emSqe->persist($mP);
+
+            $emSqe->flush();
         }
+        return $okOrtophosphate;
     }
 
-    // III.11 NH4 (1335) en N < Nkj (1319)
-    protected function _ammonium($demandeId, $reponseId, $codePrelevement) {
-        $mNh4 = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1335, $demandeId, $reponseId, $codePrelevement);
-        $mNkj = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1319, $demandeId, $reponseId, $codePrelevement);
+// III.11 NH4 (1335) en N < Nkj (1319)
+    protected function _ammonium($pgCmdPrelev) {
 
-        if (!is_null($mNh4) && !is_null($mNkj)) {
-            if (($this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre(1335, $demandeId, $reponseId, $codePrelevement) == 10) &&
-                    ($this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre(1319, $demandeId, $reponseId, $codePrelevement) == 10)) {
-                $this->_addLog('error', $demandeId, $reponseId, "Ammonium : tous les dosages sont en LQ", $codePrelevement);
+        $session = $this->get('session');
+        $session->set('menu', 'suiviPrelevements');
+        $session->set('controller', 'SuiviPrelevements');
+        $session->set('fonction', '_ammonium');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        $repoPgCmdMesureEnv = $emSqe->getRepository('AeagSqeBundle:PgCmdMesureEnv');
+        $repoPgCmdAnalyse = $emSqe->getRepository('AeagSqeBundle:PgCmdAnalyse');
+
+        $tabStatut = array();
+        $tabStatut['statut'] = 0;
+        $tabStatut['libelle'] = null;
+        $okAmmonium = 0;
+
+        $mNh4 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1335');
+        if (!$mNh4) {
+            $mNh4 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1335', 1);
+        }
+        if ($mNh4) {
+            $mNh4Resultat = $mNh4->getResultat();
+        } else {
+            $mNh4Resultat = null;
+        }
+
+        $mNkj = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1319');
+        if (!$mNkj) {
+            $mNkj = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1319', 1);
+        }
+        if ($mNkj) {
+            $mNkjResultat = $mNkj->getResultat();
+        } else {
+            $mNkjResultat = null;
+        }
+
+
+        if (!is_null($mNh4Resultat) && !is_null($mNkjResultat)) {
+            if ($mNh4Resultat == 10 && $mNkjResultat == 10) {
+                $okAmmonium = 2;
+                $tabStatut['statut'] = 2;
+                $tabStatut['libelle'] = 'Ammonium : tous les dosages sont en LQ';
             } else {
-                $indP = $mNh4 / $mNkj;
+                $indP = $mNh4Resultat / $mNkjResultat;
                 if (1 < $indP && $indP <= 1.25) {
-                    $this->_addLog('warning', $demandeId, $reponseId, "Ammonium : Réserve", $codePrelevement);
+                    $tabStatut['statut'] = 1;
+                    $tabStatut['libelle'] = 'Ammonium : Réserve';
                 } else if ($indP > 1.25) {
-                    $this->_addLog('error', $demandeId, $reponseId, "Ammonium : Valeur non conforme", $codePrelevement);
+                    $okAmmonium = 2;
+                    $tabStatut['statut'] = 2;
+                    $tabStatut['libelle'] = 'Ammonium : Valeur non conforme';
                 }
             }
+
+            $mNh4->setCodeStatut($tabStatut['statut']);
+            $mNh4->setLibelleStatut($tabStatut['libelle']);
+            $emSqe->persist($mNh4);
+            $mNkj->setCodeStatut($tabStatut['statut']);
+            $mNkj->setLibelleStatut($tabStatut['libelle']);
+            $emSqe->persist($mNkj);
+
+            $emSqe->flush();
         }
+
+        return $okAmmonium;
     }
 
-    // III.12 Valeur de pourcentage hors 1312 oxygène (ex : matière sèche ou granulo) : non compris entre 0 et 100 si code unité = 243 ou 246
-    protected function _pourcentageHorsOxygene($demandeId, $reponseId, $codePrelevement) {
-        $tabMesures = array(243 => $this->repoPgTmpValidEdilabo->getMesureByCodeUnite(243, $demandeId, $reponseId, $codePrelevement, 1312),
-            246 => $this->repoPgTmpValidEdilabo->getMesureByCodeUnite(246, $demandeId, $reponseId, $codePrelevement, 1312));
+// III.12 Valeur de pourcentage hors 1312 oxygène (ex : matière sèche ou granulo) : non compris entre 0 et 100 si code unité = 243 ou 246
+    protected function _pourcentageHorsOxygene($pgCmdPrelev) {
 
-        foreach ($tabMesures as $tabMesure) {
-            if (!is_null($tabMesure) && count($tabMesure) > 0) {
-                foreach ($tabMesure as $mesure) {
-                    if ($mesure > 100 || $mesure < 0) {
-                        $this->_addLog('error', $demandeId, $reponseId, "Valeur pourcentage : pourcentage n'est pas entre 0 et 100", $mesure);
+        $session = $this->get('session');
+        $session->set('menu', 'suiviPrelevements');
+        $session->set('controller', 'SuiviPrelevements');
+        $session->set('fonction', '_pourcentageHorsOxygene');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        $repoPgCmdMesureEnv = $emSqe->getRepository('AeagSqeBundle:PgCmdMesureEnv');
+        $repoPgCmdAnalyse = $emSqe->getRepository('AeagSqeBundle:PgCmdAnalyse');
+
+        $tabStatut = array();
+        $tabStatut['statut'] = 0;
+        $tabStatut['libelle'] = null;
+        $okPourcentageHorsOxygene = 0;
+
+        $par243 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevCodeUniteParametre($pgCmdPrelev, '243', '1312');
+        if (!$par243) {
+            $par243 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevCodeUniteParametre($pgCmdPrelev, '243', '1312');
+        }
+        if ($par243) {
+            foreach ($par243 as $par) {
+                $parResultat = $par->getResultat();
+                if (!is_null($parResultat)) {
+                    if ($parResultat > 100 || $parResultat < 0) {
+                        $okPourcentageHorsOxygene = 2;
+                        $tabStatut['statut'] = 2;
+                        $tabStatut['libelle'] = 'Valeur pourcentage : pourcentage n\'est pas entre 0 et 100';
+                        $par->setCodeStatut($tabStatut['statut']);
+                        $par->setLibelleStatut($tabStatut['libelle']);
+                        $emSqe->persist($par);
                     }
                 }
             }
         }
+
+        $par246 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevCodeUniteParametre($pgCmdPrelev, '246', '1312');
+        if (!$par246) {
+            $par246 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevCodeUniteParametre($pgCmdPrelev, '246', '1312');
+        }
+        if ($par246) {
+            foreach ($par246 as $par) {
+                $parResultat = $par->getResultat();
+                if (!is_null($parResultat)) {
+                    if ($parResultat > 100 || $parResultat < 0) {
+                        $okPourcentageHorsOxygene = 2;
+                        $tabStatut['statut'] = 2;
+                        $tabStatut['libelle'] = 'Valeur pourcentage : pourcentage n\'est pas entre 0 et 100';
+                        $par->setCodeStatut($tabStatut['statut']);
+                        $par->setLibelleStatut($tabStatut['libelle']);
+                        $emSqe->persist($par);
+                    }
+                }
+            }
+        }
+
+        $emSqe->flush();
+
+        return $okPourcentageHorsOxygene;
     }
 
-    // III.13 Somme des paramètres distincts (1200+1201+1202+1203=5537; 1178+1179 = 1743; 1144+1146+ 1147+1148 = 7146; 2925 + 1292 =  1780) à  (+/- 20%)
-    protected function _sommeParametresDistincts($demandeId, $reponseId, $codePrelevement) {
-        $sommeParams = array(0 => array(1200 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1200, $demandeId, $reponseId, $codePrelevement),
-                1201 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1201, $demandeId, $reponseId, $codePrelevement),
-                1202 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1202, $demandeId, $reponseId, $codePrelevement),
-                1203 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1203, $demandeId, $reponseId, $codePrelevement)
+// III.13 Somme des paramètres distincts (1200+1201+1202+1203=5537; 1178+1179 = 1743; 1144+1146+ 1147+1148 = 7146; 2925 + 1292 =  1780) à  (+/- 20%)
+    protected function _sommeParametresDistincts($pgCmdPrelev) {
+
+        $session = $this->get('session');
+        $session->set('menu', 'suiviPrelevements');
+        $session->set('controller', 'SuiviPrelevements');
+        $session->set('fonction', '_sommeParametresDistincts');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        $repoPgCmdMesureEnv = $emSqe->getRepository('AeagSqeBundle:PgCmdMesureEnv');
+        $repoPgCmdAnalyse = $emSqe->getRepository('AeagSqeBundle:PgCmdAnalyse');
+
+        $tabStatut = array();
+        $tabStatut['statut'] = 0;
+        $tabStatut['libelle'] = null;
+        $okSommeParametresDistincts = 0;
+        $pars = array();
+        $i = 0;
+
+        $par1200 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1200');
+        if (!$par1200) {
+            $par1200 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1200', 1);
+        }
+        if ($par1200) {
+            $par1200Resultat = $par1200->getResultat();
+            $pars[$i] = $par1200;
+            $i++;
+        } else {
+            $par1200Resultat = null;
+        }
+
+        $par1201 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1201');
+        if (!$par1201) {
+            $par1201 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1201', 1);
+        }
+        if ($par1201) {
+            $par1201Resultat = $par1201->getResultat();
+            $pars[$i] = $par1201;
+            $i++;
+        } else {
+            $par1201Resultat = null;
+        }
+
+        $par1202 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1202');
+        if (!$par1202) {
+            $par1202 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1202', 1);
+        }
+        if ($par1202) {
+            $par1202Resultat = $par1202->getResultat();
+            $pars[$i] = $par1202;
+            $i++;
+        } else {
+            $par1202Resultat = null;
+        }
+
+        $par1203 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1203');
+        if (!$par1203) {
+            $par1203 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1203', 1);
+        }
+        if ($par1203) {
+            $par1203Resultat = $par1203->getResultat();
+            $pars[$i] = $par1203;
+            $i++;
+        } else {
+            $par1203Resultat = null;
+        }
+
+        $par1178 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1178');
+        if (!$par1178) {
+            $par1178 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1178', 1);
+        }
+        if ($par1178) {
+            $par1178Resultat = $par1178->getResultat();
+            $pars[$i] = $par1178;
+            $i++;
+        } else {
+            $par1178Resultat = null;
+        }
+
+        $par1179 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1179');
+        if (!$par1179) {
+            $par1179 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1179', 1);
+        }
+        if ($par1179) {
+            $par1179Resultat = $par1179->getResultat();
+            $pars[$i] = $par1179;
+            $i++;
+        } else {
+            $par1179Resultat = null;
+        }
+
+        $par1144 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1144');
+        if (!$par1144) {
+            $par1144 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1144', 1);
+        }
+        if ($par1144) {
+            $par1144Resultat = $par1144->getResultat();
+            $pars[$i] = $par1144;
+            $i++;
+        } else {
+            $par1144Resultat = null;
+        }
+
+        $par1146 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1146');
+        if (!$par1146) {
+            $par1146 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1146', 1);
+        }
+        if ($par1146) {
+            $par1146Resultat = $par1146->getResultat();
+            $pars[$i] = $par1146;
+            $i++;
+        } else {
+            $par1146Resultat = null;
+        }
+
+        $par1147 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1147');
+        if (!$par1147) {
+            $par1147 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1147', 1);
+        }
+        if ($par1147) {
+            $par1147Resultat = $par1147->getResultat();
+            $pars[$i] = $par1147;
+            $i++;
+        } else {
+            $par1147Resultat = null;
+        }
+
+        $par1148 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1148');
+        if (!$par1148) {
+            $par1148 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1148', 1);
+        }
+        if ($par1148) {
+            $par1148Resultat = $par1148->getResultat();
+            $pars[$i] = $par1148;
+            $i++;
+        } else {
+            $par1148Resultat = null;
+        }
+
+        $par2925 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '2925');
+        if (!$par2925) {
+            $par2925 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '2925', 1);
+        }
+        if ($par2925) {
+            $par2925Resultat = $par2925->getResultat();
+            $pars[$i] = $par12925;
+            $i++;
+        } else {
+            $par2925Resultat = null;
+        }
+
+        $par1292 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1292');
+        if (!$par1292) {
+            $par1292 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1292', 1);
+        }
+        if ($par1292) {
+            $par1292Resultat = $par1292->getResultat();
+            $pars[$i] = $par1292;
+            $i++;
+        } else {
+            $par1292Resultat = null;
+        }
+
+        $par5537 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '5537');
+        if (!$par5537) {
+            $par5537 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '5537', 1);
+        }
+        if ($par5537) {
+            $par5537Resultat = $par5537->getResultat();
+            $pars[$i] = $par5537;
+            $i++;
+        } else {
+            $par5537Resultat = null;
+        }
+
+        $par1743 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1743');
+        if (!$par1743) {
+            $par1743 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1743', 1);
+        }
+        if ($par1743) {
+            $par1743Resultat = $par1743->getResultat();
+            $pars[$i] = $par1743;
+            $i++;
+        } else {
+            $par1743Resultat = null;
+        }
+
+        $par7146 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '7146');
+        if (!$par7146) {
+            $par7146 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '7146', 1);
+        }
+        if ($par7146) {
+            $par7146Resultat = $par7146->getResultat();
+            $pars[$i] = $par1746;
+            $i++;
+        } else {
+            $par7146Resultat = null;
+        }
+
+        $par1780 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1780');
+        if (!$par1780) {
+            $par1780 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1780', 1);
+        }
+        if ($par1780) {
+            $par1780Resultat = $par1780->getResultat();
+            $pars[$i] = $par1780;
+            $i++;
+        } else {
+            $par1780Resultat = null;
+        }
+
+        $sommeParams = array(0 => array(1200 => $par1200Resultat,
+                1201 => $par1201Resultat,
+                1202 => $par1202Resultat,
+                1203 => $par1203Resultat
             ),
-            1 => array(1178 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1178, $demandeId, $reponseId, $codePrelevement),
-                1179 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1179, $demandeId, $reponseId, $codePrelevement)
+            1 => array(1178 => $par1178Resultat,
+                1179 => $par1179Resultat
             ),
-            2 => array(1144 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1144, $demandeId, $reponseId, $codePrelevement),
-                1146 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1146, $demandeId, $reponseId, $codePrelevement),
-                1147 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1147, $demandeId, $reponseId, $codePrelevement),
-                1148 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1148, $demandeId, $reponseId, $codePrelevement)
+            2 => array(1144 => $par1144Resultat,
+                1146 => $par1146Resultat,
+                1147 => $par1147Resultat,
+                1148 => $par1148Resultat
             ),
-            3 => array(2925 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(2925, $demandeId, $reponseId, $codePrelevement),
-                1292 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1292, $demandeId, $reponseId, $codePrelevement)
+            3 => array(2925 => $par2925Resultat,
+                1292 => $par1292Resultat
             ),
         );
 
-        $resultParams = array(0 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(5537, $demandeId, $reponseId, $codePrelevement),
-            1 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1743, $demandeId, $reponseId, $codePrelevement),
-            2 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(7146, $demandeId, $reponseId, $codePrelevement),
-            3 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1780, $demandeId, $reponseId, $codePrelevement));
+        $resultParams = array(0 => $par5537Resultat,
+            1 => $par1743Resultat,
+            2 => $par7146Resultat,
+            3 => $par1780Resultat);
 
         $params = array(5537, 1743, 7146, 1780);
 
-        // Test de validité
+// Test de validité
         $valid = true;
         $i = 0;
         while ($i < count($sommeParams) && $valid) {
@@ -2148,115 +2805,64 @@ class SuiviPrelevementsController extends Controller {
                 $resultParamMin = $resultParams[$idx] - $percent;
                 $resultParamMax = $resultParams[$idx] + $percent;
                 if (($resultParamMin > $somme) || ($somme > $resultParamMax)) {
-                    $this->_addLog('error', $demandeId, $reponseId, "Somme Parametres Distincts : La somme des paramètres ne correspond pas au paramètre global " . $params[$idx], $codePrelevement, $somme);
+                    $okSommeParametresDistincts = 2;
+                    $tabStatut['statut'] = 2;
+                    $tabStatut['libelle'] = 'Somme Parametres Distincts : La somme des paramètres ne correspond pas au paramètre global ';
+
+                    for ($i = 0; $i < count($pars); $i++) {
+                        $par = $pars[$i];
+                        $par->setCodeStatut($tabStatut['statut']);
+                        $par->setLibelleStatut($tabStatut['libelle']);
+                        $emSqe->persist($par);
+                    }
+                    $emSqe->flush();
                 }
             }
         }
+        return $okSommeParametresDistincts;
     }
 
-    //III.14 Contrôle de vraisemblance par parmètres macropolluants : Résultat d’analyse< Valeur max de la base x 2 
-    protected function _controleVraisemblanceMacroPolluants($demandeId, $reponseId, $codePrelevement) {
-        $codeSandreMacroPolluants = $this->codeSandreMacroPolluants;
-        foreach ($codeSandreMacroPolluants as $codeSandreMacroPolluant) {
-            $mesure = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre($codeSandreMacroPolluant[0], $demandeId, $reponseId, $codePrelevement);
-            if (!is_null($mesure)) {
-                if ($mesure > $codeSandreMacroPolluant[1]) {
-                    $this->_addLog('warning', $demandeId, $reponseId, "Controle Vraisemblance Macro Polluants : Le résultat est supérieur à la valeur attendue pour le paramètre " . $codeSandreMacroPolluant[0], $codePrelevement, $mesure);
+//III.14 Contrôle de vraisemblance par parmètres macropolluants : Résultat d’analyse< Valeur max de la base x 2 
+    protected function _controleVraisemblanceMacroPolluants($pgCmdPrelev) {
+
+        $session = $this->get('session');
+        $session->set('menu', 'suiviPrelevements');
+        $session->set('controller', 'SuiviPrelevements');
+        $session->set('fonction', '_controleVraisemblanceMacroPolluants');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        $repoPgCmdMesureEnv = $emSqe->getRepository('AeagSqeBundle:PgCmdMesureEnv');
+        $repoPgCmdAnalyse = $emSqe->getRepository('AeagSqeBundle:PgCmdAnalyse');
+        $repoPgProgUnitesPossiblesParam = $emSqe->getRepository('AeagSqeBundle:PgProgUnitesPossiblesParam');
+
+        $tabStatut = array();
+        $tabStatut['statut'] = 0;
+        $tabStatut['libelle'] = null;
+        $okControleVraisemblanceMacroPolluants = 0;
+
+        $pgProgUnitesPossiblesParams = $repoPgProgUnitesPossiblesParam->getPgProgUnitesPossiblesParamWithValeurMax();
+        foreach ($pgProgUnitesPossiblesParams as $pgProgUnitesPossiblesParam) {
+            $parMesure = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, $pgProgUnitesPossiblesParam->getCodeParametre()->getCodeParametre());
+            if (!$parMesure) {
+                $parMesure = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, $pgProgUnitesPossiblesParam->getCodeParametre()->getCodeParametre(), 1);
+            }
+            if ($parMesure) {
+                $parMesureResultat = $parMesure->getResultat();
+            } else {
+                $parMesureResultat = null;
+            }
+            if (!is_null($parMesureResultat)) {
+                if ($parMesureResultat > $pgProgUnitesPossiblesParam->getValMax()) {
+                    $okControleVraisemblanceMacroPolluants = 1;
+                    $tabStatut['statut'] = 1;
+                    $tabStatut['libelle'] = 'Controle Vraisemblance Macro Polluants : Le résultat est supérieur à la valeur attendue pour le paramètre (' . $pgProgUnitesPossiblesParam->getValMax() . ')';
+                    $parMesure->setCodeStatut($tabStatut['statut']);
+                    $parMesure->setLibelleStatut($tabStatut['libelle']);
+                    $emSqe->persist($parMesure);
                 }
             }
         }
-    }
-
-    //III.15 Détection Code remarque Lot 7 (Etat chimique, Substance pertinentes, Complément AEAG, PSEE) :  % de détection différent de 100 (= recherche d'absence de code remarque) suivant liste ref-doc
-    protected function _detectionCodeRemarqueLot7($demandeId, $reponseId, $codePrelevement) {
-
-        // Vérification marché Demande = marché Aeag
-        $demandeAeag = $this->repoPgCmdDemande->isPgCmdDemandesMarcheAeag($demandeId);
-        if (count($demandeAeag) > 0) {
-            // Récupération des codes Parametre de la RAI
-            $codesParams = $this->repoPgTmpValidEdilabo->getCodesParametres($demandeId, $reponseId, $codePrelevement);
-            $nbCodeRqTot = 0;
-            $nbCodeRq10 = 0;
-            foreach ($codesParams as $codeParam) {
-                if (in_array($codeParam, $this->detectionCodeRemarqueComplet)) {
-                    $codeRq = $this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre($codeParam, $demandeId, $reponseId, $codePrelevement);
-                    if ($codeRq == 10) {
-                        $nbCodeRq10++;
-                    }
-                    if ($codeRq != 0) {
-                        $nbCodeRqTot++;
-                    }
-                }
-            }
-
-            if ($nbCodeRqTot <= $nbCodeRq10) {
-                $this->_addLog('error', $demandeId, $reponseId, "Detection Code Remarque Lot 7 : Tous les codes remarques sont à 10", $codePrelevement, $nomFichier);
-            }
-        }
-    }
-
-    //III.16
-    protected function _detectionCodeRemarqueLot8($demandeId, $reponseId, $codePrelevement) {
-
-        // Vérification marché Demande = marché Aeag
-        $demandeAeag = $this->repoPgCmdDemande->isPgCmdDemandesMarcheAeag($demandeId);
-
-        if (count($demandeAeag) > 0) {
-            // Récupération des codes Parametre de la RAI
-            $codesParams = $this->repoPgTmpValidEdilabo->getCodesParametres($demandeId, $reponseId, $codePrelevement);
-            $nbTotalCodeRq = 0;
-            $nbCodeRq10 = 0;
-            foreach ($codesParams as $codeParam) {
-                if (in_array($codeParam, $this->detectionCodeRemarqueMoitie)) {
-                    $codeRq = $this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre($codeParam, $demandeId, $reponseId, $codePrelevement);
-                    if ($codeRq == 10) {
-                        $nbCodeRq10++;
-                    }
-                    if ($codeRq !== 0) {
-                        $nbTotalCodeRq++;
-                    }
-                }
-            }
-
-            if ($nbCodeRq10 < ($nbTotalCodeRq / 2)) {
-                $this->_addLog('warning', $demandeId, $reponseId, "Detection Code Remarque Lot 8 : La majorité des codes remarque est à 1", $codePrelevement, $nomFichier);
-            }
-        }
-    }
-
-    // III.17
-    protected function _controleLqAeag($pgCmdFichierRps, $codePrelevement) {
-        $demandeId = $pgCmdFichierRps->getDemande()->getId();
-        $reponseId = $pgCmdFichierRps->getId();
-        $pgTmpValidEdilabos = $this->repoPgTmpValidEdilabo->findBy(array('demandeId' => $demandeId, 'fichierRpsId' => $reponseId, 'codePrelevement' => $codePrelevement));
-        if ($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getTypeMarche() == 'MOA') {
-            foreach ($pgTmpValidEdilabos as $pgTmpValidEdilabo) {
-                if (!is_null($pgTmpValidEdilabo->getLqM())) {
-                    $lq = $this->repoPgProgLotLqParam->isValidLq($pgCmdFichierRps->getDemande()->getLotan()->getLot(), $pgTmpValidEdilabo->getCodeParametre(), $pgTmpValidEdilabo->getCodeFraction(), $pgTmpValidEdilabo->getLqM());
-                    if (count($lq) == 0) {
-                        $this->_addLog('warning', $demandeId, $reponseId, "Controle Lq AEAG : Lq supérieure à la valeur prévue", $codePrelevement, $pgTmpValidEdilabo->getLqM());
-                    }
-                }
-            }
-        }
-    }
-
-    protected function _updatePhase($pgCmdFichierRps, $phase, $phaseExclu = false) {
-
-        $pgProgPhases = $this->repoPgProgPhases->findOneByCodePhase($phase);
-        if (!$phaseExclu) {
-            $pgCmdFichierRps->setPhaseFichier($pgProgPhases);
-            $this->emSqe->persist($pgCmdFichierRps);
-        }
-
-        $pgProgSuiviPhases = new \Aeag\SqeBundle\Entity\PgProgSuiviPhases;
-        $pgProgSuiviPhases->setTypeObjet('RPS');
-        $pgProgSuiviPhases->setObjId($pgCmdFichierRps->getId());
-        $pgProgSuiviPhases->setDatePhase(new \DateTime());
-        $pgProgSuiviPhases->setPhase($pgProgPhases);
-        $this->emSqe->persist($pgProgSuiviPhases);
-
-        $this->emSqe->flush();
+        return $okControleVraisemblanceMacroPolluants;
     }
 
 }

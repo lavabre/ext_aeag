@@ -563,13 +563,14 @@
            });
            
            $(document).on('click', '#idEnregistrer',function(e){
-                  {% for groupe   in  groupes %}
+                 $('#modalTraitementEncours').modal();
+               {#   {% for groupe   in  groupes %}
                           $('#collapse{{groupe.grparAn.id}}').collapse('show');
-                           var nbRecords = $('#iidTable{{ groupe.grparAn.id}}_length option:selected').val();
+                           var nbRecords = $('#idTable{{ groupe.grparAn.id}}_length option:selected').val();
                            table{{groupe.grparAn.id }}.page.len( -1 ).draw();
-                            $('#modalTraitementEncours').modal();
-                            $('#idForm').submit();
                      {% endfor %}
+                     alert('ici');#}
+                      $('#idForm').submit();
            });
 
    
