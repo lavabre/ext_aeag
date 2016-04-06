@@ -104,12 +104,13 @@ class PgProgLotAnRepository extends EntityRepository {
     public function getPgProgLotAnByPresta($user) {
         
         $query = "select distinct lotan";
-        $query .= " from Aeag\SqeBundle\Entity\PgProgLotParamAn paran, Aeag\SqeBundle\Entity\PgRefCorresPresta presta, Aeag\SqeBundle\Entity\PgProgWebusers users, Aeag\SqeBundle\Entity\PgProgLotGrparAn gran, Aeag\SqeBundle\Entity\PgProgLotAn lotan, Aeag\SqeBundle\Entity\PgProgLot lot";
+        $query .= " from Aeag\SqeBundle\Entity\PgProgLotParamAn paran, Aeag\SqeBundle\Entity\PgRefCorresPresta presta, Aeag\SqeBundle\Entity\PgProgWebusers users, Aeag\SqeBundle\Entity\PgProgLotGrparAn gran, Aeag\SqeBundle\Entity\PgProgLotAn lotan, Aeag\SqeBundle\Entity\PgProgLot lot, Aeag\SqeBundle\Entity\PgCmdDemande dmd";
         $query .= " where paran.prestataire = presta.adrCorId";
         $query .= " and users.prestataire = presta.adrCorId";
         $query .= " and gran.id = paran.grparan";
         $query .= " and lotan.id = gran.lotan";
         $query .= " and lotan.lot = lot.id";
+        $query .= " and dmd.lotan = lotan.id";
         $query .= " and users.extId = :aeagUser";
         $query .= " and lotan.codeStatut <> 'INV'";
         $query .= " and lotan.phase >= 5 and lotan.phase <= 8";
@@ -122,8 +123,9 @@ class PgProgLotAnRepository extends EntityRepository {
     
     public function getPgProgLotAnByAdmin() {
         $query = "select distinct lotan";
-        $query .= " from Aeag\SqeBundle\Entity\PgProgLotAn lotan, Aeag\SqeBundle\Entity\PgProgLot lot";
+        $query .= " from Aeag\SqeBundle\Entity\PgProgLotAn lotan, Aeag\SqeBundle\Entity\PgProgLot lot, Aeag\SqeBundle\Entity\PgCmdDemande dmd";
         $query .= " where lotan.lot = lot.id";
+        $query .= " and dmd.lotan = lotan.id";
         $query .= " and lotan.codeStatut <> 'INV'";
         $query .= " and lotan.phase >= 5 and lotan.phase <= 8";
         
@@ -134,10 +136,11 @@ class PgProgLotAnRepository extends EntityRepository {
     
     public function getPgProgLotAnByProg($user) {
         $query = "select distinct lotan";
-        $query .= " from Aeag\SqeBundle\Entity\PgProgMarcheUser mu, Aeag\SqeBundle\Entity\PgProgWebusers users, Aeag\SqeBundle\Entity\PgProgLotAn lotan, Aeag\SqeBundle\Entity\PgProgLot lot";
+        $query .= " from Aeag\SqeBundle\Entity\PgProgMarcheUser mu, Aeag\SqeBundle\Entity\PgProgWebusers users, Aeag\SqeBundle\Entity\PgProgLotAn lotan, Aeag\SqeBundle\Entity\PgProgLot lot, Aeag\SqeBundle\Entity\PgCmdDemande dmd";
         $query .= " where lotan.lot = lot.id";
         $query .= " and mu.marche = lot.marche";
         $query .= " and users.id = mu.webuser";
+        $query .= " and dmd.lotan = lotan.id";
         $query .= " and lotan.codeStatut <> 'INV'";
         $query .= " and lotan.phase >= 5 and lotan.phase <= 8";
         $query .= " and users.extId = :aeagUser";

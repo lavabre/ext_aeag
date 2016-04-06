@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Aeag\AeagBundle\Entity\Notification;
 use Aeag\AeagBundle\Entity\Message;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class CheckProcessRaiCommand extends ContainerAwareCommand {
 
@@ -27,6 +28,7 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
     private $repoPgSandreFractions;
     private $repoPgCmdPrelev;
     private $repoPgCmdPrelevPc;
+    private $repoPgProgWebUsers;
     
     private $detectionCodeRemarqueComplet;
     private $detectionCodeRemarqueMoitie;
@@ -56,7 +58,8 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
         $this->repoPgProgUnitesPossiblesParam = $this->emSqe->getRepository('AeagSqeBundle:PgProgUnitesPossiblesParam');
         $this->repoPgSandreFractions = $this->emSqe->getRepository('AeagSqeBundle:PgSandreFractions');
         $this->repoPgCmdPrelev = $this->emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
-        $this->pgCmdPrelevPc = $this->emSqe->getRepository('AeagSqeBundle:PgCmdPrelevPc');
+        $this->repoPgCmdPrelevPc = $this->emSqe->getRepository('AeagSqeBundle:PgCmdPrelevPc');
+        $this->repoPgProgWebUsers = $this->emSqe->getRepository('AeagSqeBundle:PgProgWebUsers');
 
         // Chargement des fichiers csv dans des tableaux 
         $cheminCourant = __DIR__.'/../../../../';
@@ -105,7 +108,25 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
 
             // Compléter le fichier de logs
             $this->_insertFichierLog($pgCmdFichierRps);
-
+            
+            // Envoi mail
+            $context = $this->getContainer()->get('router')->getContext();
+            $context->setHost($this->getContainer()->getParameter('router_host'));
+            $context->setScheme($this->getContainer()->getParameter('router_scheme'));
+            $context->setBaseUrl($this->getContainer()->getParameter('router_baseurl'));
+            
+            $objetMessage = "SQE - RAI : Fichier " . $pgCmdFichierRps->getNomFichier(). " - Récapitulatif";
+            $url = $this->getContainer()->get('router')->generate('AeagSqeBundle_echangefichiers_reponses_telecharger', array("reponseId" =>  $pgCmdFichierRps->getId(), "typeFichier" => "CR"), UrlGeneratorInterface::ABSOLUTE_URL);
+            $txtMessage = "Bonjour, <br/><br/>";
+            $txtMessage .= "Lot : ".$pgCmdFichierRps->getDemande()->getLotan()->getLot()->getNomLot()."<br/>";
+            $txtMessage .= "Période : ".$pgCmdFichierRps->getDemande()->getPeriode()->getLabelPeriode()."<br/>";
+            $txtMessage .= 'Le traitement de la RAI '.$pgCmdFichierRps->getNomFichier().' est maintenant terminé <br/>';
+            $txtMessage .= "L'état final est le suivant : <strong>".$pgCmdFichierRps->getPhaseFichier()->getLibellePhase()."</strong><br/>";
+            $txtMessage .= 'Vous pouvez lire le récapitulatif dans le fichier disponible à l\'adresse suivante : <a href="'.$url.'">'.$pgCmdFichierRps->getNomFichierCompteRendu().'</a>';
+            $txtMessage .= "<br/><br/>Cordialement, <br/>L'équipe SQE";
+            $destinataire = $this->repoPgProgWebUsers->findOneByPrestataire($pgCmdFichierRps->getDemande()->getPrestataire());
+            $this->_envoiMessage($txtMessage, $destinataire, $objetMessage);
+            
             // Insertion données brutes
             //if ((count($logErrorsVraisemblance) == 0) && (count($logErrorsCoherence) == 0 )) {
                 //$this->_integrationDonneesBrutes($pgCmdFichierRps);
@@ -259,6 +280,7 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
 
             if (is_null($codeRq) && !is_null($mesure)) {
                 if ($codeParametre == 1429 || $inSitu == 0) {
+                    // TODO Si version edilabo
                     $this->_addLog('warning', $demandeId, $reponseId, "Valeur renseignée et code remarque vide", $codePrelevement, $codeParametre);
                 } else {
                     $this->_addLog('error', $demandeId, $reponseId, "Valeur renseignée et code remarque vide", $codePrelevement, $codeParametre);
@@ -344,9 +366,7 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
         
         $dejaFait = false;
         foreach ($pgTmpValidEdilabos as $pgTmpValidEdilabo) {
-            $this->output->writeln(array($pgTmpValidEdilabo->getDemandeId(), $pgTmpValidEdilabo->getCodePrelevement(), $pgTmpValidEdilabo->getCodeStation()));
-            $pgCmdPrelev = $this->repoPgCmdPrelev->findOneBy(array('demande' => $pgTmpValidEdilabo->getDemandeId(), 'codePrelevCmd' => $pgTmpValidEdilabo->getCodePrelevement(), 'station' => $pgTmpValidEdilabo->getCodeStation()));
-            $this->output->writeln(count($pgCmdPrelev));
+            $pgCmdPrelev = $this->repoPgCmdPrelev->findOneBy(array('demande' => $pgTmpValidEdilabo->getDemandeId(), 'codePrelevCmd' => $pgTmpValidEdilabo->getCodePrelevement()));
             if (!is_null($pgCmdPrelev)) {
                 $pgCmdPrelev->setFichierRps($pgCmdFichierRps);
                 $pgCmdPrelev->setDatePrelev($pgTmpValidEdilabo->getDatePrel());
@@ -364,7 +384,6 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
                         $pgCmdPrelevPc->setPrelev($pgCmdPrelev);
                         $pgCmdPrelevPc->setNumOrdre($pgTmpValidEdilabo->getNumOrdre());
                         $pgCmdPrelevPc->setRefEchCmd($pgTmpValidEdilabo->getRefEchCmd());
-
                     }
                     $pgCmdPrelevPc->setConformite($pgTmpValidEdilabo->getConformPrel());
                     $pgCmdPrelevPc->setAccreditation($pgTmpValidEdilabo->getAccredPrel());
@@ -380,7 +399,10 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
                     $pgCmdPrelevPc->setRefEchLabo($pgTmpValidEdilabo->getRefEchLabo());
                     $pgCmdPrelevPc->setCompletudeEch($pgTmpValidEdilabo->getCompletEch());
                     $pgCmdPrelevPc->setAcceptabiliteEch($pgTmpValidEdilabo->getAcceptEch());
-                    $pgCmdPrelevPc->setDateRecepEch($pgTmpValidEdilabo->getDateRecepEch());
+                    if (!is_null($pgTmpValidEdilabo->getDateRecepEch())) {
+                        $dateRecepEch = \DateTime::createFromFormat('Y-m-d', $pgTmpValidEdilabo->getDateRecepEch());
+                        $pgCmdPrelevPc->setDateRecepEch($dateRecepEch);
+                    }
                     $this->emSqe->persist($pgCmdPrelevPc);
 
                     $dejaFait = true;
@@ -390,22 +412,30 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
                     $pgCmdMesureEnv = new \Aeag\SqeBundle\Entity\PgCmdMesureEnv();
                     $pgCmdMesureEnv->setPrelev($pgCmdPrelev);
                     $pgCmdMesureEnv->setCodeParametre($pgTmpValidEdilabo->getCodeParametre());
-                    $pgCmdMesureEnv->setDateMes($pgTmpValidEdilabo->getDateM());
+                    if (!is_null($pgTmpValidEdilabo->getDateM())) {
+                        $dateM = \DateTime::createFromFormat('Y-m-d', $pgTmpValidEdilabo->getDateM());
+                        $pgCmdMesureEnv->setDateMes($dateM);
+                    }
                     $pgCmdMesureEnv->setResultat($pgTmpValidEdilabo->getResM());
                     $pgCmdMesureEnv->setCodeUnite($pgTmpValidEdilabo->getCodeUnite());
                     $pgCmdMesureEnv->setCodeRemarque($pgTmpValidEdilabo->getCodeRqM());
                     $pgCmdMesureEnv->setCodeMethode($pgTmpValidEdilabo->getMethPrel());
                     $pgCmdMesureEnv->setCodeStatut($pgTmpValidEdilabo->getCodeStatut());
+                    // Censé passer un objet
                     $pgCmdMesureEnv->setParamProg($pgTmpValidEdilabo->getParamProgId());
                     $this->emSqe->persist($pgCmdMesureEnv);
                 } else {
                     $pgCmdAnalyse = new \Aeag\SqeBundle\Entity\PgCmdAnalyse();
+                    // Censé passer un objet
                     $pgCmdAnalyse->setPrelevId($pgCmdPrelev);
                     $pgCmdAnalyse->setNumOrdre($pgTmpValidEdilabo->getNumOrdre());
                     $pgCmdAnalyse->setCodeParametre($pgTmpValidEdilabo->getCodeParametre());
                     $pgCmdAnalyse->setCodeFraction($pgTmpValidEdilabo->getCodeFraction());
                     $pgCmdAnalyse->setLieuAna($pgTmpValidEdilabo->getInSitu());
-                    $pgCmdAnalyse->setDateAna($pgTmpValidEdilabo->getDateM());
+                    if (!is_null($pgTmpValidEdilabo->getDateM())) {
+                        $dateM = \DateTime::createFromFormat('Y-m-d', $pgTmpValidEdilabo->getDateM());
+                        $pgCmdAnalyse->setDateAna($dateM);
+                    }
                     $pgCmdAnalyse->setResultat($pgTmpValidEdilabo->getResM());
                     $pgCmdAnalyse->setCodeUnite($pgTmpValidEdilabo->getCodeUnite());
                     $pgCmdAnalyse->setCodeRemarque($pgTmpValidEdilabo->getCodeRqM());
@@ -416,6 +446,7 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
                     $pgCmdAnalyse->setConfirmation($pgTmpValidEdilabo->getConfirmAna());
                     $pgCmdAnalyse->setReserve($pgTmpValidEdilabo->getReservAna());
                     $pgCmdAnalyse->setCodeStatut($pgTmpValidEdilabo->getCodeStatut());
+                    // Censé passer un objet
                     $pgCmdAnalyse->setParamProg($pgTmpValidEdilabo->getParamProgId());
                     $this->emSqe->persist($pgCmdAnalyse);
                 }
@@ -637,9 +668,9 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
                 $indVraiTds = $tdsEstime - $tdsModele;
 
                 if (175 <= abs($indVraiTds) && abs($indVraiTds) < 280) {
-                    $this->_addLog('warning', $demandeId, $reponseId, "Balance Ionique TDS 2 : Réserve", $codePrelevement);
+                    $this->_addLog('warning', $demandeId, $reponseId, "Balance Ionique TDS 2 : Réserve", $codePrelevement, abs($indVraiTds));
                 } else if (abs($indVraiTds) >= 280) {
-                    $this->_addLog('warning', $demandeId, $reponseId, "Balance Ionique TDS 2 : Valeur non conforme", $codePrelevement);
+                    $this->_addLog('warning', $demandeId, $reponseId, "Balance Ionique TDS 2 : Valeur non conforme", $codePrelevement, abs($indVraiTds));
                 }
             }
         }
@@ -653,13 +684,13 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
         if (!is_null($mPo4) && !is_null($mP)) {
             if (($this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre(1433, $demandeId, $reponseId, $codePrelevement) == 10) &&
                     ($this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre(1350, $demandeId, $reponseId, $codePrelevement) == 10)) {
-                $this->_addLog('error', $demandeId, $reponseId, "Ortophosphate : Tous les dosages sont en LQ", $codePrelevement);
+                $this->_addLog('error', $demandeId, $reponseId, "Orthophosphate : Tous les dosages sont en LQ", $codePrelevement);
             } else {
                 $indP = $mPo4 / $mP;
                 if (1 < $indP && $indP <= 1.25) {
-                    $this->_addLog('warning', $demandeId, $reponseId, "Ortophosphate : Réserve", $codePrelevement);
+                    $this->_addLog('warning', $demandeId, $reponseId, "Orthophosphate : Réserve", $codePrelevement, $indP);
                 } else if ($indP > 1.25) {
-                    $this->_addLog('error', $demandeId, $reponseId, "Ortophosphate : Valeur non conforme", $codePrelevement);
+                    $this->_addLog('error', $demandeId, $reponseId, "Orthophosphate : Valeur non conforme", $codePrelevement, $indP);
                 }
             }
         }
@@ -677,9 +708,9 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
             } else {
                 $indP = $mNh4 / $mNkj;
                 if (1 < $indP && $indP <= 1.25) {
-                    $this->_addLog('warning', $demandeId, $reponseId, "Ammonium : Réserve", $codePrelevement);
+                    $this->_addLog('warning', $demandeId, $reponseId, "Ammonium : Réserve", $codePrelevement, $indP);
                 } else if ($indP > 1.25) {
-                    $this->_addLog('error', $demandeId, $reponseId, "Ammonium : Valeur non conforme", $codePrelevement);
+                    $this->_addLog('error', $demandeId, $reponseId, "Ammonium : Valeur non conforme", $codePrelevement, $indP);
                 }
             }
         }
@@ -797,12 +828,12 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
             // Récupération des codes Parametre de la RAI
             $codesParams = $this->repoPgTmpValidEdilabo->getCodesParametres($demandeId, $reponseId, $codePrelevement);
             $nbCodeRqTot = 0;
-            $nbCodeRq10 = 0;
+            $nbCodeRq1 = 0;
             foreach ($codesParams as $codeParam) {
                 if (in_array($codeParam, $this->detectionCodeRemarqueComplet)) {
                     $codeRq = $this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre($codeParam, $demandeId, $reponseId, $codePrelevement);
-                    if ($codeRq == 10) {
-                        $nbCodeRq10++;
+                    if ($codeRq == 1) {
+                        $nbCodeRq1++;
                     }
                     if ($codeRq != 0) {
                         $nbCodeRqTot++;
@@ -810,8 +841,8 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
                 }
             }
 
-            if ($nbCodeRqTot <= $nbCodeRq10) {
-                $this->_addLog('error', $demandeId, $reponseId, "Detection Code Remarque Lot 7 : Tous les codes remarques sont à 10", $codePrelevement);
+            if (($nbCodeRqTot > 0) && ($nbCodeRqTot <= $nbCodeRq1)) {
+                $this->_addLog('error', $demandeId, $reponseId, "Detection Code Remarque Lot 7 : Tous les codes remarques sont à 1", $codePrelevement);
             }
         }
     }
@@ -839,7 +870,7 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
                 }
             }
 
-            if ($nbCodeRq10 < ($nbTotalCodeRq / 2)) {
+            if (($nbTotalCodeRq > 0) && ($nbCodeRq10 < ($nbTotalCodeRq / 2))) {
                 $this->_addLog('warning', $demandeId, $reponseId, "Detection Code Remarque Lot 8 : La majorité des codes remarque est à 1", $codePrelevement);
             }
         }
@@ -931,6 +962,22 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
         }
 
         return $result;
+    }
+    
+    protected function _envoiMessage($txtMessage, $destinataire, $objet, $expediteur = 'automate@eau-adour-garonne.fr') {
+        $txtMessage = "<html><head></head><body>".$txtMessage."</body></html>";
+        // Récupération du service
+        $mailer = $this->getContainer()->get('mailer');
+        // Création de l'e-mail : le service mailer utilise SwiftMailer, donc nous créons une instance de Swift_Message.
+        $mail = \Swift_Message::newInstance('Wonderful Subject')
+                ->setSubject($objet)
+                ->setFrom($expediteur)
+                ->setTo($destinataire->getMail())
+                ->setBody($txtMessage,'text/html');
+
+        $mailer->send($mail);
+
+        $this->em->flush();
     }
 
 }

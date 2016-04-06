@@ -70,7 +70,7 @@ class CheckSandreFormatCommand extends ContainerAwareCommand {
                                 $erreurs[] = $erreurXml["DescriptifErreur"];
                             }
                         }
-                        $destinataires = $this->repoPgProgWebUsers->findByTypeUser('ADMIN');
+                        //$destinataires = $this->repoPgProgWebUsers->findByTypeUser('ADMIN');
                     }
                     
                     // Création du fichier de compte rendu
@@ -80,12 +80,15 @@ class CheckSandreFormatCommand extends ContainerAwareCommand {
                     $this->emSqe->flush();
                     
                     // Envoi de mail au prestataire et à l'admin
-                    $objetMessage = "SQE - DAI " . $pgCmdFichierRps->getDemande()->getCodeDemandeCmd() . " : Fichier " . $pgCmdFichierRps->getId() . $validMessage;
-                    $txtMessage = "La RAI " . $pgCmdFichierRps->getNomFichier() . " concernant la DAI " . $pgCmdFichierRps->getDemande()->getCodeDemandeCmd() . " a été analysé. Celui-ci possède un format ".$validMessage.".";
-                    $destinataires[] = $this->repoPgProgWebUsers->findOneByPrestataire($pgCmdFichierRps->getDemande()->getPrestataire());
-                    foreach ($destinataires as $destinataire) {
-                        if (!is_null($destinataire)) {
-                            $this->_envoiMessage($txtMessage, $destinataire, $objetMessage);
+                    if ($etatTraitement == 2) {
+                        $objetMessage = "SQE - DAI " . $pgCmdFichierRps->getDemande()->getCodeDemandeCmd() . " : Fichier " . $pgCmdFichierRps->getId() . $validMessage;
+                        $txtMessage = "La RAI " . $pgCmdFichierRps->getNomFichier() . " concernant la DAI " . $pgCmdFichierRps->getDemande()->getCodeDemandeCmd() . " a été analysé. Celui-ci possède un format ".$validMessage.".";
+                        // Prevoir plusieurs
+                        $destinataires[] = $this->repoPgProgWebUsers->findOneByPrestataire($pgCmdFichierRps->getDemande()->getPrestataire());
+                        foreach ($destinataires as $destinataire) {
+                            if (!is_null($destinataire)) {
+                                $this->_envoiMessage($txtMessage, $destinataire, $objetMessage);
+                            }
                         }
                     }
                 }
@@ -121,28 +124,6 @@ class CheckSandreFormatCommand extends ContainerAwareCommand {
     }
 
     protected function _envoiMessage($txtMessage, $destinataire, $objet, $expediteur = 'automate@eau-adour-garonne.fr') {
-
-        $message = new Message();
-        $message->setRecepteur($destinataire->getId());
-        $message->setEmetteur($destinataire->getId());
-        $message->setNouveau(true);
-        $message->setIteration(2);
-        $texte = "Bonjour ," . PHP_EOL;
-        $texte .= " " . PHP_EOL;
-        $texte .= $txtMessage;
-        $texte .= " " . PHP_EOL;
-        $texte .= "Cordialement.";
-        $message->setMessage($texte);
-        $this->em->persist($message);
-
-        $notification = new Notification();
-        $notification->setRecepteur($destinataire->getId());
-        $notification->setEmetteur($destinataire->getId());
-        $notification->setNouveau(true);
-        $notification->setIteration(2);
-        $notification->setMessage($txtMessage);
-        $this->em->persist($notification);
-
         // Récupération du service
         $mailer = $this->getContainer()->get('mailer');
         // Création de l'e-mail : le service mailer utilise SwiftMailer, donc nous créons une instance de Swift_Message.
