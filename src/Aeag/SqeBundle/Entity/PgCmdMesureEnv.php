@@ -167,7 +167,7 @@ class PgCmdMesureEnv {
         $this->codeStatut = $codeStatut;
     }
 
-    function setParamProg($paramProg) {
+    function setParamProg(\Aeag\SqeBundle\Entity\PgProgLotParamAn $paramProg) {
         $this->paramProg = $paramProg;
     }
 
