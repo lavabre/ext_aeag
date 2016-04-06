@@ -106,7 +106,9 @@ class PgCmdDemandeRepository extends EntityRepository {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdDemande p";
         $query = $query . " where p.lotan = " . $pgProgLotAn->getId();
+        if ($pgRefCorresPresta){
         $query = $query . " and p.prestataire = " . $pgRefCorresPresta->getAdrCorid();
+        }
         $query = $query . " and p.periode= " . $pgProgPeriodes->getid();
         $qb = $this->_em->createQuery($query);
         //print_r($query);

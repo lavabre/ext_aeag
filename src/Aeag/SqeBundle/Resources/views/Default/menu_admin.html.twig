@@ -88,6 +88,16 @@
         </li>
         
         {% if  not app.session.get('evolution')%}
+            {%if app.session.get('menu') == 'saisieDonnees' %}
+                <li class="active">
+            {% else %}
+                <li> 
+            {%endif%}
+            <a href="{{ path('AeagSqeBundle_saisieDonnees_index')}}">Saisie des données</a>
+            </li>
+        {% endif %}  
+        
+        {% if  not app.session.get('evolution')%}
             {%if app.session.get('menu') == 'suiviPrelevements'%}
                 <li class="active">
             {% else %}

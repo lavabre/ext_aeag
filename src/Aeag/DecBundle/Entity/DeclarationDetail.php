@@ -30,7 +30,7 @@ class DeclarationDetail {
 
     /**
      * @var DeclarationProducteur
-     * @ORM\ManyToOne(targetEntity="Aeag\DecBundle\Entity\DeclarationProducteur" )
+     * @ORM\ManyToOne(targetEntity="Aeag\DecBundle\Entity\DeclarationProducteur" , cascade={"all"})
      * @ORM\JoinColumn(name="declarationProducteur_id", referencedColumnName="id")
      */
     private $DeclarationProducteur;
@@ -207,7 +207,7 @@ class DeclarationDetail {
         return $this->SousDeclarationCollecteur;
     }
 
-    public function setSousDeclarationCollecteur(SousDeclarationCollecteur $SousDeclarationCollecteur) {
+    public function setSousDeclarationCollecteur($SousDeclarationCollecteur) {
         $this->SousDeclarationCollecteur = $SousDeclarationCollecteur;
     }
 
@@ -215,7 +215,7 @@ class DeclarationDetail {
         return $this->DeclarationProducteur;
     }
 
-    public function setDeclarationProducteur(DeclarationProducteur $DeclarationProducteur) {
+    public function setDeclarationProducteur($DeclarationProducteur) {
         $this->DeclarationProducteur = $DeclarationProducteur;
     }
 

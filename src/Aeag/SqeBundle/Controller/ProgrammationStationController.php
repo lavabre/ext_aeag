@@ -292,7 +292,7 @@ class ProgrammationStationController extends Controller {
 //            $commune = $repoCommune->getCommuneByCommune($inseeCommune);
 //            $tabStations[$i]['commune']['libelle'] = $commune->getlibelle();
                 $tabStations[$i]['commune']['libelle'] = $stationGeo->getNomCommune();
-                $tabStations[$i]['lien'] = '/sqe_fiches_stations/' . $stationGeo->getCode() . '.pdf';
+                $tabStations[$i]['lien'] = '/sqe_fiches_stations/' . str_replace('/','-',$stationGeo->getCode()) . '.pdf';
 //                if ($stationGeo->getType() == 'STQ') {
 //                    $tabStations[$i]['lien'] = 'http://adour-garonne.eaufrance.fr/station/' . $stationGeo->getCode() . '/print';
 //                }
@@ -348,7 +348,7 @@ class ProgrammationStationController extends Controller {
 //            $commune = $repoCommune->getCommuneByCommune($inseeCommune);
 //            $tabStations[$i]['commune']['libelle'] = $commune->getlibelle();
                 $tabStations[$i]['commune']['libelle'] = $stationGeo->getNomCommune();
-               $tabStations[$i]['lien'] = '/sqe_fiches_stations/' . $stationGeo->getCode() . '.pdf';
+               $tabStations[$i]['lien'] = '/sqe_fiches_stations/' . str_replace('/','-',$stationGeo->getCode()) . '.pdf';
 //                if ($stationGeo->getType() == 'STQ') {
 //                    $tabStations[$i]['lien'] = 'http://adour-garonne.eaufrance.fr/station/' . $stationGeo->getCode() . '/print';
 //                }
@@ -667,7 +667,7 @@ class ProgrammationStationController extends Controller {
 //            $commune = $repoCommune->getCommuneByCommune($inseeCommune);
 //            $tabStations[$i]['commune']['libelle'] = $commune->getlibelle();
             $tabStations[$i]['commune']['libelle'] = $stationGeo->getNomCommune();
-            $tabStations[$i]['lien'] = '/sqe_fiches_stations/' . $stationGeo->getCode() . '.pdf';
+            $tabStations[$i]['lien'] = '/sqe_fiches_stations/' . str_replace('/','-',$stationGeo->getCode()) . '.pdf';
 //            if ($stationGeo->getType() == 'STQ') {
 //                $tabStations[$i]['lien'] = 'http://adour-garonne.eaufrance.fr/station/' . $stationGeo->getCode() . '/print';
 //            }

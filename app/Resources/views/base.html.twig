@@ -16,6 +16,7 @@
         <link href="{{ asset('bundles/aeagaeag/font-awesome/css/font-awesome.css') }}" rel="stylesheet">
         <link href="{{ asset('bundles/aeagaeag/bootstrap/css/datepicker.css') }}" rel="stylesheet">
         <link href="{{ asset('bundles/aeagaeag/bootstrap/css/timepicker.css') }}" rel="stylesheet">
+        <link href="{{ asset('bundles/aeagaeag/bootstrap/css/bootstrap-datetimepicker.min.css') }}" rel="stylesheet">
         <link href="{{ asset('bundles/aeagaeag/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
          <link href="{{ asset('bundles/aeagaeag/bootstrap/css/Autocomplete.css') }}" rel="stylesheet">
          <link href="{{ asset('bundles/aeagaeag/jquery-validation/demo/css/screen.css') }}" rel="stylesheet">
@@ -46,49 +47,12 @@
                  <div class="col-xs-7 hidden-xs text-center">
                      <h2>{% block titre %}Sites extranet de l'agence de l'eau 'Adour-Garonne'{% endblock titre %}</h2>
                  </div>
-                 <div class="col-xs-3 hidden-xs text-center">
+                 <div class="col-xs-2 hidden-xs text-center">
                      {% block message_admin %}{% endblock message_admin %}
                  </div>
-             </div>
-          <!--[if lt IE 9]>
-           </div>
-           <![endif]-->
-         </header>
-          
-           {% block navbar %}
-             <nav class="navbar navbar-default" >
-                 <div class="container-fluid">
-                      <div class="navbar-header "> 
-                            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                                <span class="icon-bar"></span>
-                                <span class="icon-bar"></span>
-                                <span class="icon-bar"></span>
-                                <span class="icon-bar"></span>
-                              </button>
-                         </div>  
-                        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                            <ul class="nav target navbar-nav">
-                                    {% block menu %}   
-                                    <li><a href="{{ path('aeag_homepage') }}"><i class="fa fa-home"></i>&nbsp; Accueil</a></li>
-                                    {% endblock menu %}
-                            </ul>
-                          <ul class="nav navbar-nav navbar-right">
-                                <!-- BEGIN USER LOGIN DROPDOWN -->
-                                {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-
-                                     <li class="dropdown user pull-right">
-                                       <a class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" href="#">
-                                           <span class="username"><i class="fa fa-user fa-fw"></i> {{ app.user.username }}</span>
-                                           <span class="fa fa-caret-down"></span>
-                                        </a>
-                                        <ul class="dropdown-menu">
-                                            <li><a href="{{ path('AeagUserBundle_compte_show') }}"><i class="fa fa-user fa-fw"></i>&nbsp; Compte</a></li>
-                                            <li><a href="{{ path('fos_user_security_logout') }}"><i class="fa fa-power-off fa-fw"></i>&nbsp; Quitter</a></li>
-                                        </ul>
-                                     </li>
-                                 {%endif%}
-                                  <!-- END USER LOGIN DROPDOWN -->
-                                  <!-- BEGIN INBOX DROPDOWN -->
+                  <div class="col-xs-2  text-right">
+                     <ul class="nav navbar-nav navbar-right">
+                                      <!-- BEGIN INBOX DROPDOWN -->
                                     {#if (app.session.get('Messages') | length) > 0 #}
 
                                          <li class="dropdown pull-right" id="header_inbox_bar">
@@ -208,6 +172,47 @@
                       
                      
                           </ul> 
+                 </div>
+             </div>
+          <!--[if lt IE 9]>
+           </div>
+           <![endif]-->
+         </header>
+          
+           {% block navbar %}
+             <nav class="navbar navbar-default" >
+                 <div class="container-fluid">
+                      <div class="navbar-header "> 
+                            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                              </button>
+                         </div>  
+                        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                            <ul class="nav target navbar-nav">
+                                    {% block menu %}   
+                                    <li><a href="{{ path('aeag_homepage') }}"><i class="fa fa-home"></i>&nbsp; Accueil</a></li>
+                                    {% endblock menu %}
+                            </ul>
+                          <ul class="nav navbar-nav navbar-right">
+                                <!-- BEGIN USER LOGIN DROPDOWN -->
+                                {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+
+                                     <li class="dropdown user pull-right">
+                                       <a class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" href="#">
+                                           <span class="username"><i class="fa fa-user fa-fw"></i> {{ app.user.username }}</span>
+                                           <span class="fa fa-caret-down"></span>
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="{{ path('AeagUserBundle_compte_show') }}"><i class="fa fa-user fa-fw"></i>&nbsp; Compte</a></li>
+                                            <li><a href="{{ path('fos_user_security_logout') }}"><i class="fa fa-power-off fa-fw"></i>&nbsp; Quitter</a></li>
+                                        </ul>
+                                     </li>
+                                 {%endif%}
+                                  <!-- END USER LOGIN DROPDOWN -->
+                                </ul> 
                      </div> 
                   </div>
               </nav> 
@@ -362,6 +367,8 @@
         <script type="text/javascript" src="{{ asset('bundles/aeagaeag/bootstrap/js/bootstrap-filestyle.min.js') }}"> </script>
         <script type="text/javascript" src="{{ asset('bundles/aeagaeag/bootstrap/js/bootstrap-datepicker.js') }}"> </script>
         <script type="text/javascript" src="{{ asset('bundles/aeagaeag/bootstrap/js/bootstrap-timepicker.js') }}"> </script>
+        <script type="text/javascript" src="{{ asset('bundles/aeagaeag/bootstrap/js/bootstrap-datetimepicker.min.js') }}"> </script>
+        <script type="text/javascript" src="{{ asset('bundles/aeagaeag/bootstrap/js/bootstrap-datetimepicker.fr.js') }}"> </script>
         <script type="text/javascript" src="{{ asset('bundles/aeagaeag/bootstrap/js/Autocomplete.js') }}"> </script>
        
         <script type="text/javascript" language="javascript">

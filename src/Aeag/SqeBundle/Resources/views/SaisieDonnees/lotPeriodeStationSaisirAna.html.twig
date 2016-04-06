@@ -5,19 +5,16 @@
         <a href="{{ path('aeag_homepage') }}">Accueil</a> 
     </li>
     <li>
-           <a href="{{ path('AeagSqeBundle_suiviPrelevements_index') }}">Suivi des prélèvements</a> 
+           <a href="{{ path('AeagSqeBundle_saisieDonnees_index') }}">Saisie des données</a> 
     </li>
     <li>
-           <a href="{{ path('AeagSqeBundle_suiviPrelevements_index') }}">Lots</a> 
+           <a href="{{ path('AeagSqeBundle_saisieDonnees_index') }}">Lots</a> 
     </li>
     <li>
-           <a href="{{path('AeagSqeBundle_suiviPrelevements_lot_periodes',{ 'lotanId': lotan.id })}}">Périodes</a> 
+           <a href="{{path('AeagSqeBundle_saisieDonnees_lot_periodes',{ 'lotanId': lotan.id })}}">Périodes</a> 
     </li>
      <li>
-           <a href="{{path('AeagSqeBundle_suiviPrelevements_lot_periode_stations',{ 'periodeAnId': periodeAn.id })}}">Stations</a> 
-    </li>
-     <li>
-         <a href="{{path('AeagSqeBundle_suiviPrelevements_lot_periode_station_demande',{'stationId': station.ouvFoncId, 'periodeAnId': periodeAn.id, 'cmdDemandeId': demande.id })}}">Demande</a>
+           <a href="{{path('AeagSqeBundle_saisieDonnees_lot_periode_stations',{ 'periodeAnId': periodeAn.id })}}">Stations</a> 
     </li>
      <li class="active">
           Saisie des analyses
@@ -29,12 +26,9 @@
                 <div class="col-md-offset-3 col-md-7">
                      <h3 class="page-title ">
                          <table>
-                             <tr><td>Analyses du {{ cmdSuiviPrel.datePrel | date("d/m/Y") }}</td></tr>
-                             <tr><td>Prélèvement du {{ cmdPrelev.datePrelev | date("d/m/Y") }}</td></tr>
-                             <tr><td>Demande  du {{ demande.dateDemande | date("d/m/Y") }}</td></tr>
                              <tr><td>Station {{ station.code }} {{ station.libelle }}</td></tr>
-                             <tr><td>entre le  {{ periodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;et&nbsp;&nbsp; {{periodeAn.periode.dateFin | date("d/m/Y") }}</td></tr>
-                             <tr><td>Lot  {{ lotan.lot.nomLot }} - {{ lotan.anneeProg }}  - version :  {{ lotan.version }}</td></tr>
+                             <tr><td>prévu entre le  {{ periodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;et&nbsp;&nbsp; {{periodeAn.periode.dateFin | date("d/m/Y") }}</td></tr>
+                             <tr><td nowrap>pour le Lot :  {{ lotan.lot.nomLot }} - {{ lotan.anneeProg }}  - version :  {{ lotan.version }}</td></tr>
                          </table>
                     </h3>
                 </div>
@@ -47,9 +41,18 @@
 
 {%block content %}
  
-    <form class="form" id="idForm" role="form" action="{{ path("AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_ana_resultat",{"prelevId":  cmdPrelev.id, "periodeAnId":  periodeAn.id, "stationId": station.ouvFoncId}) }}" method="post">
+    <form class="form" id="idForm" role="form" action="{{ path("AeagSqeBundle_saisieDonnees_lot_periode_station_ana_resultat",{"prelevId":  cmdPrelev.id, "periodeAnId":  periodeAn.id, "stationId": station.ouvFoncId}) }}" method="post">
     
     <div class="form-body">  
+        
+         <div class="form-group form-inline">
+                     <label class=" col-md-offset-3 col-xs-2 control-label">Date prélèvement :</label>
+                     <div class="col-xs-2  input-group">
+                            <input type="text" id="datePrel" name="datePrel" required="required" class="form-control text-center" placeholder="Date prélèvement" value="{{ cmdPrelev.datePrelev | date("d/m/Y H:i") }}">
+                     </div>
+        </div>
+    
+        
         {% for groupe   in  groupes %}
              <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
                     <div class="panel panel-default">
@@ -277,11 +280,16 @@
          </div>        
     
     
-        <div class="col-md-offset-3 col-md-8">
-            <button id="idEnregistrer" type="submit" class="btn btn-success"> 
-                <i class="fa fa-check"> Enregister</i>
-            </button>
-           <a class="btn btn-danger" href="{{path('AeagSqeBundle_suiviPrelevements_lot_periode_station_demande',{'stationId': station.ouvFoncId, 'periodeAnId': periodeAn.id, 'cmdDemandeId': demande.id })}}">
+      {% if maj == 'M' %}
+        <div class="col-md-offset-5 col-md-8">
+               <button id="idEnregistrer" type="submit" class="btn btn-success"> 
+                    <i class="fa fa-check"> Enregister</i>
+                </button>
+      {% else %}
+           <div class="col-md-offset-5 col-md-8">
+     {% endif %}
+            <a href="lotPeriodeStationSaisirEnvSitu.html.twig"></a>
+           <a class="btn btn-danger" href="{{path('AeagSqeBundle_saisieDonnees_lot_periode_stations',{'stationId': station.ouvFoncId, 'periodeAnId': periodeAn.id, 'cmdDemandeId': demande.id })}}">
                 <i class="fa fa-undo"> Annuler</i>
             </a>
           </div>
@@ -296,7 +304,11 @@
 
 {% block scripts %}
     
-  
+            $('#datePrel').datetimepicker(
+             {language:  'fr',
+              format: 'dd/mm/yyyy hh:ii'
+              }
+            );
     
           {% for groupe   in  groupes %}
               

@@ -127,7 +127,7 @@ class ReferentielAeagController extends Controller {
             fputs($fic, utf8_decode($contenu));
             for ($j = 0; $j < count($pgRefStationMesures); $j++) {
                 $tabStationMesures[$i]['pgRefStationMesure'] = $pgRefStationMesures[$j];
-                $tabStationMesures[$i]['lien'] = '/sqe_fiches_stations/' . $pgRefStationMesures[$j]['code'] . '.pdf';
+                $tabStationMesures[$i]['lien'] = '/sqe_fiches_stations/' . str_replace('/','-',$pgRefStationMesures[$j]['code']) . '.pdf';
 //                if ($pgRefStationMesures[$j]['type'] == 'STQ') {
 //                    $tabStationMesures[$i]['lien'] = 'http://adour-garonne.eaufrance.fr/station/' . $pgRefStationMesures[$j]['code'] . '/print';
 //                }
@@ -342,7 +342,7 @@ class ReferentielAeagController extends Controller {
                 foreach ($pgRefStationRsxs as $pgRefStationRsx) {
                     $pgRefStationMesure = $repoPgRefStationMesure->getPgRefStationMesureByOuvFoncId($pgRefStationRsx->getStationMesure()->getOuvFoncId());
                     $tabStationMesures[$i]['pgRefStationMesure'] = $pgRefStationMesure;
-                    $tabStationMesures[$i]['lien'] = '/sqe_fiches_stations/' . $pgRefStationMesure->getCode() . '.pdf';
+                    $tabStationMesures[$i]['lien'] = '/sqe_fiches_stations/' . str_replace('/','-',$pgRefStationMesure->getCode()) . '.pdf';
 //                    if ($pgRefStationMesure->getType() == 'STQ') {
 //                        $tabStationMesures[$i]['lien'] = 'http://adour-garonne.eaufrance.fr/station/' . $pgRefStationMesure->getCode() . '/print';
 //                    }

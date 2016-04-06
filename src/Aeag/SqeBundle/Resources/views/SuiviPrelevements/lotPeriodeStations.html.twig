@@ -40,56 +40,27 @@
         <table class="table table-bordered t table-advance" id="idTable_demandes">
             <thead>
                 <tr>
-                    <th>Stations</th>
-                    <th>Prélèvements</th>
-                    <th>Données terrains</th>
-                    <th>Analyses</th>
+                    <th>Action</th>
+                    <th>Code</th>
+                    <th>Libellé</th>
                   </tr>
             </thead>
             <tbody>
                  {%if stations | length%} 
                     {% for station in stations %}
                           <tr>
-                             <td>
-                                    <a  href="{{ station.lien }}" target="_blank" title="Localisation">{{ station.station.code }}</a>
-                                    {{ station.station.libelle }}
-                             </td>
-                             <td align="center">
-                                    <a id="id_{{ station.station.ouvFoncId }}" class="btn btn-primary" href="{{path('AeagSqeBundle_suiviPrelevements_lot_periode_station_demande',{  'stationId': station.station.ouvFoncId,  'periodeAnId': periodeAn.id, 'cmdDemandeId': station.cmdDemande.id })}}" title="demande">
-                                        <i class="fa fa-eye"> Suivi des prélèvements
-                                            <span class="badge">{{ station.suiviPrels | length }}</span>
-                                        </i> 
+                              <td align="center">
+                                    <a id="id_{{ station.station.ouvFoncId }}" class="btn btn-primary" href="{{path('AeagSqeBundle_suiviPrelevements_lot_periode_station_demande',{  'stationId': station.station.ouvFoncId,  'periodeAnId': periodeAn.id, 'cmdDemandeId': station.cmdDemande.id })}}" title="Voir">
+                                        <i class="fa fa-eye"> <span class="badge">{{ station.suiviPrels | length }}</span></i> 
                                    </a>
                              </td>
-                             <td align="center">
-                                  {% if is_granted('ROLE_ADMINSQE')  or station.cmdPrelev.saisieTerrain == 'O' %}
-                                            <a class="btn btn-primary" id="idSaisirDonneesTerrain{{ station.cmdPrelev.cmdPrelev.id  }}" href="#" title="Saisie des données terrains">
-                                                <i class="fa fa-pencil"> Saisir des données terrain 
-                                                    <ul class="list-inline">
-                                                         <li><span  class="label label-success">{{ station.cmdPrelev.nbSaisisParametresTerrainCorrect}}</li>
-                                                          <li><span  class="label label-warning">{{ station.cmdPrelev.nbSaisisParametresTerrainIncorrect}}</li>
-                                                          <li><span  class="label label-danger">{{ station.cmdPrelev.nbSaisisParametresTerrainErreur}}</li>
-                                                     <li><span  class="label label-default">{{ station.cmdPrelev.nbSaisisParametresTerrain  }}/{{ station.cmdPrelev.nbParametresTerrain }}</li>
-                                                   </ul>  
-                                              </i>
-                                           </a>
-                                     {% endif %}
+                              <td>
+                                    <a  href="{{ station.lien }}" target="_blank" title="Localisation">{{ station.station.code }}</a>
                              </td>
-                             <td align="center">
-                                   {% if is_granted('ROLE_ADMINSQE')  or station.cmdPrelev.saisieAnalyse == 'O' %}
-                                             <a class="btn btn-primary" id="idSaisirAnalyses{{ station.cmdPrelev.cmdPrelev.id  }}" href="#" title="Saisie des analyses">
-                                               <i class="fa fa-pencil"> Saisir des analyse 
-                                                    <ul class="list-inline">
-                                                        <li><span  class="label label-success">{{ station.cmdPrelev.nbSaisisParametresAnalyseCorrect}}</li>
-                                                         <li><span  class="label label-warning">{{ station.cmdPrelev.nbSaisisParametresAnalyseIncorrect}}</li>
-                                                         <li><span  class="label label-danger">{{ station.cmdPrelev.nbSaisisParametresAnalyseErreur}}</li>
-                                                    <li><span  class="label label-default">{{ station.cmdPrelev.nbSaisisParametresAnalyse }}/{{ station.cmdPrelev.nbParametresAnalyse }}</li>
-                                                  </ul> 
-                                              </i>
-                                           </a>
-                                    {% endif %}
+                             <td>
+                                     {{ station.station.libelle }}
                              </td>
-                          </tr>
+                     </tr>
                     {% endfor %}
                 {% endif %}
             </tbody>
@@ -104,7 +75,8 @@
 
 {% block scripts %}
     jQuery(document).ready(function() {
-        var table = $('#idTable_demandes').DataTable(
+     
+    var table = $('#idTable_demandes').DataTable(
             {"stateSave": true,
              "order": [[ 1, "desc" ]],
             "language": {
@@ -117,88 +89,8 @@
               "iDisplayLength": -1
             }
             );
-
-            $("#idTable_demandes thead td").each( function ( i ) {
-
-            if (i != 0){
-            var select = $('<select><option value=""></option></select>')
-            .appendTo( $(this).empty() )
-            .on( 'change', function () {
-            table.column( i )
-            .search( $(this).val() )
-            .draw();
-            });
-
-            table.column( i ).data().unique().sort().each( function ( d, j ) {
-                select.append( '<option value="'+d+'">'+d+'</option>' )
-            });
-            };
-            }); 
-            
-        $('.btn-telecharger').click(function (){
-            setTimeout("window.location.reload()",2000);//or other value
-        });
-        
-        $('.btn-voir-reponses').click(function (){
-            $('#modalTraitementEncours').modal();
-            var url = '{{ path("AeagSqeBundle_echangefichiers_reponses",{"demandeId":  "par1" }) }}';
-            url = url.replace("par1", $(this).attr('id'));
-            $.ajax({
-                url: url,
-                type: 'get',
-                success: function(html) {
-                    $('#modal-reponses-content').empty().append(html);
-                    $('#modalTraitementEncours').modal('hide');
-                    $('#modal_reponses').modal();
-                }
-            });
-            
-        });
-        
-        $('.btn-deposer-reponse').click(function (){
-            $('#modalTraitementEncours').modal();
-            var url = '{{ path("AeagSqeBundle_echangefichiers_reponses_selectionner",{"demandeId":  "par1" }) }}';
-            var demandeId = $(this).data('id');
-            url = url.replace("par1", demandeId);
-            $.ajax({
-                url: url,
-                type: 'get',
-                success: function(html) {
-                    $('#modal-reponses-selection-content').empty().append(html);
-                    $('#modalTraitementEncours').modal('hide');
-                    $('#modal_reponses_selection').modal();
-                }
-            });
-        
-        });
-    });
     
-    
-     {%if stations | length%} 
-                    {% for station in stations %}
-                             $(document).on('click','#idSaisirDonneesTerrain{{ station.cmdPrelev.cmdPrelev.id }}',function(e){
-                                    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                                    $('#modalTraitementEncours').modal('toggle');
-                                   var url = '{{ path("AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_saisir_env_situ",{"prelevId":  "par1", "periodeAnId": "par2", "stationId": "par3"}) }}', // Le nom du fichier indiqué dans le formulaire
-                                    url = url.replace("par1", {{ station.cmdPrelev.cmdPrelev.id }});
-                                    url = url.replace("par2", {{ periodeAn.id }});
-                                    url = url.replace("par3", {{ station.station.ouvFoncId }});
-                                    url = url.replace("amp;","");
-                                    window.location.replace(url);
-                              });
-                      
-                            $(document).on('click','#idSaisirAnalyses{{ station.cmdPrelev.cmdPrelev.id }}',function(e){
-                                    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                                    $('#modalTraitementEncours').modal('toggle');
-                                   var url = '{{ path("AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_saisir_ana",{"prelevId":  "par1", "periodeAnId": "par2", "stationId": "par3"}) }}', // Le nom du fichier indiqué dans le formulaire
-                                    url = url.replace("par1", {{ station.cmdPrelev.cmdPrelev.id }});
-                                    url = url.replace("par2", {{ periodeAn.id }});
-                                    url = url.replace("par3", {{ station.station.ouvFoncId }});
-                                    url = url.replace("amp;","");
-                                    window.location.replace(url);
-                              });
-                   {% endfor %}
-          {% endif %}
-                    
+         
+     });
     
 {%endblock scripts %}    

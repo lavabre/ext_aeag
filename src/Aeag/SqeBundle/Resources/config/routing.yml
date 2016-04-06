@@ -27,4 +27,8 @@ aeag_sqe_echangeFichiers:
 aeag_sqe_suiviPrelevements:
     resource: "@AeagSqeBundle/Resources/config/routing_suiviPrelevements.yml"
     prefix:   /suiviPrel  
+    
+aeag_sqe_SaisieDonnees:
+    resource: "@AeagSqeBundle/Resources/config/routing_saisieDonnees.yml"
+    prefix:   /siaiseDonnees
  

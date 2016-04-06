@@ -137,7 +137,7 @@ class ReferentielProgrammationController extends Controller {
                 foreach ($pgProgZgeorrefStations as $pgProgZgeorrefStation) {
                     $pgRefStationMesure = $repoPgRefStationMesure->getPgRefStationMesureByOuvFoncId($pgProgZgeorrefStation->getStationMesure()->getOuvFoncId());
                     $tabStationMesures[$i]['pgRefStationMesure'] = $pgRefStationMesure;
-                    $tabStationMesures[$i]['lien'] = '/sqe_fiches_stations/' . $pgRefStationMesure->getCode() . '.pdf';
+                    $tabStationMesures[$i]['lien'] = '/sqe_fiches_stations/' . str_replace('/','-',$pgRefStationMesure->getCode()) . '.pdf';
 //                    if ($pgRefStationMesure->getType() == 'STQ') {
 //                        $tabStationMesures[$i]['lien'] = 'http://adour-garonne.eaufrance.fr/station/' . $pgRefStationMesure->getCode() . '/print';
 //                    }
@@ -538,7 +538,7 @@ class ReferentielProgrammationController extends Controller {
                 foreach ($pgRefStationRsxs as $pgRefStationRsx) {
                     $pgRefStationMesure = $repoPgRefStationMesure->getPgRefStationMesureByOuvFoncId($pgRefStationRsx->getStationMesure()->getOuvFoncId());
                     $tabStationMesures[$i]['pgRefStationMesure'] = $pgRefStationMesure;
-                    $tabStationMesures[$i]['lien'] = '/sqe_fiches_stations/' . $pgRefStationMesure->getCode() . '.pdf';
+                    $tabStationMesures[$i]['lien'] = '/sqe_fiches_stations/' . str_replace('/','-',$pgRefStationMesure->getCode()) . '.pdf';
 //                    if ($pgRefStationMesure->getType() == 'STQ') {
 //                        $tabStationMesures[$i]['lien'] = 'http://adour-garonne.eaufrance.fr/station/' . $pgRefStationMesure->getCode() . '/print';
 //                    }
@@ -681,7 +681,7 @@ class ReferentielProgrammationController extends Controller {
                 foreach ($pgProgZgeorrefStations as $pgProgZgeorrefStation) {
                     $pgRefStationMesure = $repoPgRefStationMesure->getPgRefStationMesureByOuvFoncId($pgProgZgeorrefStation->getStationMesure()->getOuvFoncId());
                     $tabStationMesures[$i]['pgRefStationMesure'] = $pgRefStationMesure;
-                    $tabStationMesures[$i]['lien'] = '/sqe_fiches_stations/' . $pgRefStationMesure->getCode() . '.pdf';
+                    $tabStationMesures[$i]['lien'] = '/sqe_fiches_stations/' . str_replace('/','-',$pgRefStationMesure->getCode()) . '.pdf';
 //                    if ($pgRefStationMesure->getType() == 'STQ') {
 //                        $tabStationMesures[$i]['lien'] = 'http://adour-garonne.eaufrance.fr/station/' . $pgRefStationMesure->getCode() . '/print';
 //                    }
