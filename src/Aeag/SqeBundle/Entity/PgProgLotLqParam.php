@@ -63,7 +63,7 @@ class PgProgLotLqParam {
     /**
      * @var string
      *
-     * @ORM\Column(name="lq_prestataire", type="decimal", precision=20, scale=10, nullable=false)
+     * @ORM\Column(name="lq_presta", type="decimal", precision=20, scale=10, nullable=false)
      */
     private $lqPrestataire;
     

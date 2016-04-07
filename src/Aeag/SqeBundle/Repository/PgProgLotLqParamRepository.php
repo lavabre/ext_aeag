@@ -22,7 +22,7 @@ class PgProgLotLqParamRepository extends EntityRepository {
         $qb->setParameter('codeParametre', $codeParametre);
         $qb->setParameter('codeFraction', $codeFraction);
         $qb->setParameter('lq', $lq);
-        $results = $qb->getResults();
+        $results = $qb->getResult();
 
         return $results;
     }
