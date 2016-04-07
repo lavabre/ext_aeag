@@ -87,6 +87,17 @@ class PgProgLotPeriodeProgRepository extends EntityRepository {
        return $qb->getResult();
     }
     
+     public function getPgProgLotPeriodeProgByStationAnPeriodeAnOrderByGrparAn($PgProgLotStationAn,$PgProglotPeriodeAn) {
+        $query = "select p";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotPeriodeProg p";
+        $query = $query . " where p.stationAn = " . $PgProgLotStationAn->getId();
+        $query = $query . " and p.periodan = " . $PgProglotPeriodeAn->getId();
+         $query = $query . " order by  p.grparAn" ;
+        $qb = $this->_em->createQuery($query);
+       // print_r($query);
+       return $qb->getResult();
+    }
+    
     
     public function getPgProgLotPeriodeProgByStationAnGrparAnPeriodeAn($PgProgLotStationAn,$PgProglotGrparAn,$PgProglotPeriodeAn) {
         $query = "select p";

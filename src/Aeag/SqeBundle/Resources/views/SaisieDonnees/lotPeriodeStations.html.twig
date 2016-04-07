@@ -43,6 +43,9 @@
                     <th>Code</th>
                     <th>Libellé</th>
                     <th>Support</th>
+                     {% if typeMilieu.codeMilieu == 'LPC' %}
+                        <th> Zone verticale </th>
+                    {% endif %}
                     <th>Données terrains</th>
                     <th>Analyses</th>
                   </tr>
@@ -63,10 +66,13 @@
                                         {{ cmdPrelev.cmdPrelev.codeSupport.nomSupport }}
                                      {% endif %}
                                  </td>
+                                   {% if typeMilieu.codeMilieu == 'LPC' %}
+                                        <td> {{ cmdPrelev.prelevPc.zoneVerticale.nomZone }}</td>
+                                   {% endif %}
                                    <td  class="text-nowrap text-center">
                                         {% if cmdPrelev.saisieTerrain == 'O' %}
                                                       <ul class="list-inline">
-                                                               <li>
+                                                                <li>
                                                                    <a class="btn btn-warning" id="idSaisirDonneesTerrain{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Saisie des données terrains">
                                                                       <i class="fa fa-pencil"> Saisir </i>
                                                                    </a>
@@ -92,6 +98,7 @@
                                    </td>
                                    <td  class="text-nowrap text-center">
                                          {% if cmdPrelev.saisieAnalyse == 'O' %}
+                                             {% if  cmdPrelev.nbParametresAnalyse > 0 %}
                                                       <ul class="list-inline">
                                                            <li>
                                                                <a class="btn btn-warning" id="idSaisirAnalyses{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Saisie des analyses">
@@ -103,7 +110,18 @@
                                                            <li><span  class="label label-danger">{{ cmdPrelev.nbSaisisParametresAnalyseErreur}}</li>
                                                            <li><span  class="label label-default">{{ cmdPrelev.nbSaisisParametresAnalyse }}/{{ cmdPrelev.nbParametresAnalyse }}</li>
                                                      </ul> 
+                                                {% elseif cmdPrelev.nbAutresParametresAnalyse > 0 %}
+                                                          <ul class="list-inline">
+                                                               <li>
+                                                                  <a class="btn btn-success" id="idConsulterAnalyses{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Consulter les analyses">
+                                                                     <i class="fa fa-eye"> Consulter </i>
+                                                                   </a>
+                                                                </li>
+                                                                <li><span  class="label label-default">{{ cmdPrelev.nbAutresParametresAnalyse }}</li>
+                                                         </ul> 
+                                                {% endif %}
                                             {% else %}
+                                                 {% if  cmdPrelev.nbParametresAnalyse > 0 %}
                                                       <ul class="list-inline">
                                                                <li>
                                                                   <a class="btn btn-success" id="idConsulterAnalyses{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Consulter les analyses">
@@ -115,6 +133,16 @@
                                                                <li><span  class="label label-danger">{{ cmdPrelev.nbSaisisParametresAnalyseErreur}}</li>
                                                               <li><span  class="label label-default">{{ cmdPrelev.nbSaisisParametresAnalyse }}/{{ cmdPrelev.nbParametresAnalyse }}</li>
                                                          </ul> 
+                                                 {% elseif cmdPrelev.nbAutresParametresAnalyse > 0 %}
+                                                           <ul class="list-inline">
+                                                               <li>
+                                                                  <a class="btn btn-success" id="idConsulterAnalyses{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Consulter les analyses">
+                                                                     <i class="fa fa-eye"> Consulter </i>
+                                                                   </a>
+                                                                </li>
+                                                                <li><span  class="label label-default">{{ cmdPrelev.nbAutresParametresAnalyse }}</li>
+                                                         </ul> 
+                                                 {% endif %}
                                            {% endif %}
                                    </td>
                            </tr>
