@@ -35,4 +35,10 @@ AeagSqeBundle_saisieDonnees_lot_periode_station_ana_resultat:
     requirements:
         methods:  GET|POST
         
+AeagSqeBundle_saisieDonnees_lot_periode_station_env_situ_generer:
+    path:  /generer/env/{periodeAnId}/{prelevId}/{groupeId}/{profMax}/{ecart}
+    defaults: { _controller: AeagSqeBundle:SaisieDonnees:lotPeriodeStationGenererEnvSitu, periodeAnId : null, prelevId : null, groupeId : null,  profMax : null, ecart : null}
+    requirements:
+        methods:  GET|POST
+        
 

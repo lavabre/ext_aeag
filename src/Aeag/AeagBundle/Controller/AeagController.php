@@ -53,6 +53,11 @@ class AeagController extends Controller {
             $session->set('appli', 'sqe');
             return $this->redirect($this->generateUrl('aeag_sqe'));
         };
+        
+         if ($security->isGranted('ROLE_EDL')) {
+            $session->set('appli', 'edl');
+            return $this->redirect($this->generateUrl('aeag_edl'));
+        };
 
         if ($security->isGranted('ROLE_STOCK')) {
             $session->set('appli', 'sqe');

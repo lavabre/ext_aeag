@@ -1,0 +1,128 @@
+{% extends "AeagEdlBundle::layout.html.twig" %}
+
+{% block title %}Contact{% endblock%}
+
+{% block content %}
+  
+    <div class="block-border">
+         <h1>Contact</h1>
+         
+           {% if app.session.hasFlash('aeag-notice') %}
+                <div class="message success">
+                    {{ app.session.flash('aeag-notice') }}
+                </div>
+            {% endif %}
+         
+          <p align="center">Veuillez utiliser le formulaire ci-dessous pour nous faire part de
+            vos commentaires ou de vos questions</p>
+    
+
+     <form action="{{ path('AeagEdlBundle_contact') }}" method="post" {{ form_enctype(form) }} class="form">
+      
+        <table class="table1" cellspacing="0" width="90%" align="center">
+
+        <caption><h2>Informations personnelles</h2></caption>
+        <tbody>
+            <tr>
+
+                <td align="left" width="15%">{{ form_label(form.name,'Nom') }}</td>
+                <td width="85%">
+                {% if form_errors(form.name) | length %}
+                   <span class="relative"> 
+                     {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                         {{ form_widget(form.name, { 'attr': {'class': 'full-width error', 'value' : app.user.username } }) }} 
+                     {% else %}
+                         {{ form_widget(form.name, { 'attr': {'class': 'full-width error'} }) }}
+                     {% endif %}
+                     <span class="check-error"></span>
+                {% else %}
+                    {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                         {{ form_widget(form.name, { 'attr': {'class': 'full-width', 'value' : app.user.username } }) }} 
+                     {% else %}
+                         {{ form_widget(form.name, { 'attr': {'class': 'full-width'} }) }}
+                     {% endif %}
+                {% endif %}       
+                </td>
+                <td  nowrap><div class="symfony-form-errors">{{ form_errors(form.name) }}</div></td>
+                    
+            </tr>
+            <tr>
+
+                <td align="left">{{ form_label(form.email, "Courriel") }}</td>
+                <td width="85%">
+                {% if form_errors(form.email) | length %}
+                   <span class="relative"> 
+                      {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                         {{ form_widget(form.email, { 'attr': {'class': 'full-width error', 'value' : app.user.email } }) }} 
+                     {% else %}
+                         {{ form_widget(form.email, { 'attr': {'class': 'full-width error'} }) }}
+                     {% endif %}
+                   <span class="check-error"></span>
+                {% else %}
+                    {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                         {{ form_widget(form.email, { 'attr': {'class': 'full-width', 'value' : app.user.email } }) }} 
+                     {% else %}
+                         {{ form_widget(form.email, { 'attr': {'class': 'full-width'} }) }}
+                     {% endif %}
+                {% endif %}  
+                 </td>
+                <td nowrap><div class="symfony-form-errors">{{ form_errors(form.email) }}</div></td> 
+            </tr>
+        </tbody>
+    </table>   
+             
+     <table class="table1" cellspacing="0" width="90%" align="center">
+
+        <caption><h2>Objet</h2></caption>
+        <tbody>
+         
+            <tr>
+
+                <td align="left">{{ form_label(form.subject, "Objet") }}</td>
+                <td width="85%">
+                {% if form_errors(form.subject) | length %}
+                   <span class="relative"> 
+                    {{ form_widget(form.subject, { 'attr': {'class': 'full-width error'} }) }}
+                    <span class="check-error"></span>
+                {% else %}
+                  {{ form_widget(form.subject, { 'attr': {'class': 'full-width'} }) }}
+                {% endif %}  
+                </td>
+                <td nowrap><div class="symfony-form-errors">{{ form_errors(form.subject) }}</div></td>
+            </tr>
+            <tr>
+                <td align="left">{{ form_label(form.body, "Corps") }}</td>
+                <td width="85%">
+                {% if form_errors(form.body) | length %}
+                   <span class="relative"> 
+                    {{ form_widget(form.body, { 'attr': {'rows':5, 'class': 'full-width error'} }) }}
+                    <span class="check-error"></span>
+                {% else %}
+                  {{ form_widget(form.body, { 'attr': {'rows':5, 'class': 'full-width'} }) }}
+                {% endif %}  
+                </td>
+                <td nowrap><div class="symfony-form-errors">{{ form_errors(form.body) }}</div></td>
+            </tr>
+        </tbody>
+    </table>
+
+    {{ form_rest(form) }}
+
+    <div  align="center">
+      <button   class="button blue" type="submit">Envoyer la demande</button>
+    </div>
+            
+    </form>
+          
+      <br><br>
+        <div align="center">
+            <a  href="{{ path('AeagEdlBundle_homepage') }}">
+                <img src="{{ asset('bundles/aeagetatdeslieux/images/icons/web-app/24/Exit.png')}}" width="24" height="24">
+            </a>
+        </div>
+ 
+</div>
+
+{% endblock %}
+
+ 

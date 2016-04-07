@@ -24,6 +24,7 @@ class AppKernel extends Kernel
             new Aeag\UserBundle\AeagUserBundle(),
             new Aeag\SqeBundle\AeagSqeBundle(),
             new Aeag\DieBundle\AeagDieBundle(),
+            new Aeag\EdlBundle\AeagEdlBundle(),
            );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

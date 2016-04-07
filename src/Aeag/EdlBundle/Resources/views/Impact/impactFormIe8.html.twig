@@ -1,0 +1,130 @@
+<div class="block-border"> 
+ <div class="align-center">
+<form id="form{{ cdImpact }}" action="#" method="post" {{ form_enctype(form) }}>
+{{ form_errors(form) }}
+
+    {{ form_widget(form.euCd) }}
+    {{ form_widget(form.cdImpact) }}
+    <h2>{{ form_label(form.valeur, 'Choisir une valeur : ') }}</h2>
+	<span id="{{ cdImpact|e }}_U" p="U" class="dce_impact_U unselected">Inconnu</span>
+        <span id="{{ cdImpact|e }}_1" p="1" class="dce_impact_1 unselected">Oui</span>
+        <span id="{{ cdImpact|e }}_2" p="2" class="dce_impact_2 unselected">Non</span>
+    {{ form_widget(form.valeur) }}
+    {{ form_errors(form.valeur) }}
+    <br><br>    
+    <h2>{{ form_label(form.commentaire, 'Saisir un commentaire et éventuellement vos coordonnées :') }}</h2>
+    {{ form_errors(form.commentaire) }}
+    {{ form_widget(form.commentaire, {attr : {'cols': '60', 'rows': '5'}}) }}
+     <br><br>
+ </form>
+    <input type="button" id="valider" value="Valider" /><input id="annuler" type="button" value="Annuler" />
+</div>
+</div>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+	$("#{{ cdImpact }}_{{ derniereProposition }}").removeClass('unselected');
+	$("#form{{ cdImpact }} > #form_valeur").val("{{ derniereProposition }}");
+
+	// choix de la valeur de l impact
+	$("span[id^='{{ cdImpact }}_']").click(function(e){
+		var $newImpact = $(this).attr("p");
+
+		 // IHM
+                $("span[id='{{ cdImpact }}_U']").addClass('unselected');
+                $("span[id='{{ cdImpact }}_1']").addClass('unselected');
+                $("span[id='{{ cdImpact }}_2']").addClass('unselected');
+                $("span[id='{{ cdImpact }}_"+$newImpact+"']").removeClass('unselected');
+                           
+		// affecter valeur 
+		$("#form{{ cdImpact }} > #form_valeur").val($newImpact);
+	});
+
+	// validation de la saisie
+	$("#valider").click(function(e){
+            
+              if ( $("#form{{ cdImpact }} > #form_commentaire").val() == '' || $("#form{{ cdImpact }} > #form_valeur").val() == '')
+                {
+                    alert("Choisissez un état et saisissez un commentaire svp");
+               
+                } else
+                {
+            
+            
+		// lancer la requête ajax qui valide la saisie
+                
+		e.preventDefault();
+		 		
+		//alert($("#form{{ cdImpact }} > #form_valeur").val());
+                
+                // obtenir l'url
+		var $url = "{{ path('AeagEdlBundle_impactSubmit') }}";
+                               
+		$.getJSON($url,
+			{
+	    		euCd: $("#form{{ cdImpact }} > #form_euCd").val(),
+	    		cdImpact: $("#form{{ cdImpact }} > #form_cdImpact").val(),
+		    	commentaire: $("#form{{ cdImpact }} > #form_commentaire").val() ,
+		    	valeur: $("#form{{ cdImpact }} > #form_valeur").val()
+			}, 
+                        
+			function(json) {
+				//alert(json.message);
+				
+				// rétablir le style du bouton crayon
+				$('a[name="newImpact{{ cdImpact }}"]').removeClass("inEdit");
+	
+				// masquer le div de saisie
+	   			$("#divNewImpact{{ cdImpact }}").hide();
+	
+	   			// charger et afficher les propositions pour cette impact
+	   			//alert(json.message);
+				$("body").css("cursor", "wait");
+                                
+                                $.post("{{ path('AeagEdlBundle_impactListProposed') }}", 
+   					{ 
+   						euCd: "{{ euCd }}", 
+   						cdImpact: "{{ cdImpact }}"
+   					}, 
+   					function(data) {
+   	   					//alert(data);
+   	   					var $div = "#divImpact{{ cdImpact }}";
+   						// placer le formulaire sous le div
+   						$($div).html(data); 
+   						// rétablir curseur
+   						$("body").css("cursor", "auto");
+   					}
+   				).error(function() { 
+   					// rétablir curseur
+   					$("body").css("cursor", "auto");
+   					alert("Erreur non déterminée"); 
+   				}); 
+	   			
+			}
+		);
+            }		
+	}); 
+
+	// annulation de la saisie
+	$("#annuler").click(function(e){
+		// masquer le div de saisie
+		$("#divNewImpact{{ cdImpact }}").hide();
+		 $.post("{{ path('AeagEdlBundle_impactListProposed') }}", 
+   					{ 
+   						euCd: "{{ euCd }}", 
+   						cdImpact: "{{ cdImpact }}"
+   					}, 
+   					function(data) {
+   	   					//alert(data);
+   	   					var $div = "#divImpact{{ cdImpact }}";
+   						// placer le formulaire sous le div
+   						$($div).html(data); 
+   						// rétablir curseur
+   						$("body").css("cursor", "auto");
+   					}
+   				).error(function() { 
+   					// rétablir curseur
+   					$("body").css("cursor", "auto");
+   					alert("Erreur non déterminée"); 
+   				}); 
+	});
+</script>

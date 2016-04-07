@@ -1,0 +1,62 @@
+
+
+
+<form class="form" id="form_recherche" action="{{ path('AeagEdlBundle_rechercherMasseEau') }}" method="post">
+    <table class="table" cellspacing="0" width="100%" align="center">
+        <thead>
+            <tr>
+                <th>Département</th>
+                <th>Type</th>   
+                <th>Code</th>
+                <th>Masse d'eau</th>
+                {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                <th>Mes masses d'eau</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td align="left">
+                    <div class="check-error">{{ form_errors(form.deptcle) }}</div>
+                    <div class="full-width">{{ form_widget(form.deptcle, { 'attr': {'preferred_choices': app.session.get('deptcle'), 'separator': '=====' } } ) }}</div>
+                </td>
+                <td align="left">
+                    <div class="check-error">{{ form_errors(form.typecle) }}</div>
+                    <div class="full-width">{{ form_widget(form.typecle, { 'attr': {'preferred_choices': app.session.get('typecle'), 'separator': '=====' } }) }}</div>
+                </td>
+                <td align="left">
+                    <div class="check-error">{{ form_errors(form.codecle) }}</div>
+                        {{ form_widget(form.codecle, { 'attr': {'value': app.session.get('codecle')} }) }}
+                </td>
+                <td align="left">
+                    <div class="check-error">{{ form_errors(form.massecle) }}</div>
+                        {{ form_widget(form.massecle, { 'attr': {'value': app.session.get('masseEaucle') } })}}
+                </td>
+                    {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                <td align="center">
+                    <div class="align-center">
+                        <div class="check-error">{{ form_errors(form.territoirecle) }}</div>
+                        <div class="checkbox">{{ form_widget(form.territoirecle)}}</div>
+                     </div>
+                </td>
+                    {% endif %}
+            </tr>
+
+        </tbody>
+    </table>
+    <br>
+    <div class="align-center"> 
+        <table width="100%">
+            <tr>
+                <td width="50%" align="right">
+                    <button type="submit" class="button-red">Rechercher</button>
+                </td>
+                <td align="left">
+                    <div class="loading"> </div>
+                </td>
+            </tr>
+        </table>
+     </div>
+</form>
+
+

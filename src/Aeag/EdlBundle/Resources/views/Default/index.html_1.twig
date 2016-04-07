@@ -1,0 +1,114 @@
+{% extends "AeagEdlBundle::layout.html.twig" %}
+
+
+
+{% block content %}
+  
+    <div class="block-border">
+         {% include 'AeagEdlBundle:MasseEau:rechercherMasseEau.html.twig' with { 'form': form } %}
+    </div>
+
+    <div class="block-border">
+        <h2><div align="center">Liste des Masses d'eau</div></h2>
+        <div id="resultats_recherche"> 
+            {% include 'AeagEdlBundle:MasseEau:listeMasseEau.html.twig' with { 'MasseEau': MasseEau} %}
+        </div>
+    </div>
+
+
+{% endblock %}
+
+ {% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript">
+    $(document).ready(function() { 
+  
+    $(".loading").hide();
+    
+    
+    
+    $("#masseeaurecherche_deptcle").val('{{app.session.get('deptcle')}}');
+    $("#masseeaurecherche_typecle").val('{{ app.session.get('typecle') }}');
+    $("#masseeaurecherche_codecle").val('{{ app.session.get('codecle') }}');
+    $("#masseeaurecherche_massecle").val('{{ app.session.get('masseEaucle') }}');
+    $("#masseeaurecherche_territoirecle").val('{{ app.session.get('territoirecle') }}');
+    
+     {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+           $("#masseeaurecherche_territoirecle").val("1");
+          
+     {% endif %}
+      
+     {% if app.session.get('passage') == '0' %}
+            $(".loading").show();
+            $("#resultats_recherche").hide();
+            var codecle = $("#masseeaurecherche_codecle").val() ;
+            var masseEaucle = $("#masseeaurecherche_massecle").val();
+            var deptcle = $("#masseeaurecherche_deptcle").val();
+            var typecle = $("#masseeaurecherche_typecle").val();
+            var territoirecle = $("#masseeaurecherche_territoirecle").val();
+            var DATA = "motcle=" + codecle + "|" + masseEaucle + "|" + deptcle + "|" + typecle + "|" + territoirecle;
+            $.ajax({
+                        type: "POST",
+                        url: "{{ path('AeagEdlBundle_rechercherMasseEau')}}",
+                        data: DATA,
+                        cache: false,
+                        success: function(data){
+                        $('#resultats_recherche').html(data);
+                        $(".loading").hide();
+                        $("#resultats_recherche").show();
+                        }
+                    });       
+     {% endif %}
+    
+     if ($("#masseeaurecherche_territoirecle").val() == "1")
+             {
+              $("#masseeaurecherche_territoirecle").attr('checked', 'checked');
+             }
+          else
+              { 
+               $("#masseeaurecherche_territoirecle").removeAttr('checked');
+              };
+    
+    $("#masseeaurecherche_territoirecle").click(function() {
+        
+         if ($("#masseeaurecherche_territoirecle").val() == "2")
+             {
+             $("#masseeaurecherche_territoirecle").val("1");
+             $("#masseeaurecherche_territoirecle").attr('checked', 'checked');
+             }
+          else
+              { 
+                 $("#masseeaurecherche_territoirecle").val("2");
+                 $("#masseeaurecherche_territoirecle").removeAttr('checked');
+              };
+        });
+    
+    $("#form_recherche").submit(function(){ 
+        $(".loading").show();
+        var codecle = $("#masseeaurecherche_codecle").val() ;
+        var masseEaucle = $("#masseeaurecherche_massecle").val();
+        var deptcle = $("#masseeaurecherche_deptcle").val();
+        var typecle = $("#masseeaurecherche_typecle").val();
+        var territoirecle = $("#masseeaurecherche_territoirecle").val();
+        var DATA = "motcle=" + codecle + "|" + masseEaucle + "|" + deptcle + "|" + typecle + "|" + territoirecle;
+        $.ajax({
+            type: "POST",
+            url: "{{ path('AeagEdlBundle_rechercherMasseEau')}}",
+            data: DATA,
+            cache: false,
+            success: function(data){
+               $('#resultats_recherche').html(data);
+               $(".loading").hide();
+            }
+        });    
+        return false;
+    });
+
+    });
+ </script>
+ 
+ 
+
+
+
+{% endblock %}	

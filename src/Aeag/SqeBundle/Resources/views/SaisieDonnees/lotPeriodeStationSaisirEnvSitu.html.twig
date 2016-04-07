@@ -64,6 +64,9 @@
                                          <option value="1" selected>1 m</option> 
                                </select>
                      </div>
+                    <button id="idGenerer" type="submit" class="btn btn-success"> 
+                     <i class="fa fa-cogs"> genérer</i>
+                    </button>
            </div>
           {% else %}
                <div class="form-group form-inline">
@@ -74,7 +77,9 @@
              </div>
           {% endif %}
         
+         {% set groupeSelectionne = null %}
         {% for groupe   in  groupes %}
+          <div id="idGenerer{{ groupe.grparAn.id}}"
              <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
                     <div class="panel panel-default">
                             {% if is_granted('ROLE_ADMINSQE') or  (user.prestataire.adrCorId == groupe.grparAn.prestaDft.adrCorId)  %}
@@ -121,252 +126,269 @@
                                               </h4>
                                     </div>
                             {% endif %}
-                             <div id="collapse{{ groupe.grparAn.id}}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading{{ groupe.grparAn.id}}">
-                                <div class="panel-body">
-                                       <table class="table table-bordered " id="idTable{{ groupe.grparAn.id}}">
-                                                                       <thead>
-                                                                                <tr>
-                                                                                  <th>Code</th> 
-                                                                                  <th>Libelle</th> 
-                                                                                  <th>valeur</th> 
-                                                                                  <th>Unité</th> 
-                                                                                  <th>Remarque</th> 
-                                                                                  <th>Fraction</th> 
-                                                                                </tr>
-                                                                          </thead>
-                                                                       <tbody>
-                                                                                   {% for paramAn in groupe.paramAns %}
-                                                                                               {% if  paramAn.paramAn %}
-                                                                                                    {% if is_granted('ROLE_ADMINSQE') or  (user.prestataire.adrCorId == paramAn.paramAn.prestataire.adrCorId)  %}
-                                                                                                         {% if groupe.grparAn.grparRef.typeGrp == 'ENV'  %}
-                                                                                                             {% if paramAn.pgCmdMesureEnv %}
-                                                                                                                   {% if paramAn.pgCmdMesureEnv.codeStatut == '0' %}
-                                                                                                                        <tr class="success">
-                                                                                                                   {% elseif paramAn.pgCmdMesureEnv.codeStatut == '1' %}
-                                                                                                                        <tr class="warning" data-toggle="tooltip" data-placement="bottom" title="{{ paramAn.pgCmdMesureEnv.libelleStatut}}">
-                                                                                                                   {% else %}
-                                                                                                                        <tr class="danger" data-toggle="tooltip" data-placement="bottom" title="{{ paramAn.pgCmdMesureEnv.libelleStatut}}">
+                                <div id="collapse{{ groupe.grparAn.id}}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading{{ groupe.grparAn.id}}">
+                                       <div class="panel-body">
+                                              <table class="table table-bordered " id="idTable{{ groupe.grparAn.id}}">
+                                                                              <thead>
+                                                                                       <tr>
+                                                                                         <th>Code</th> 
+                                                                                         <th>Libelle</th> 
+                                                                                         <th>Remarque</th> 
+                                                                                         <th>valeur</th> 
+                                                                                         <th>Unité</th> 
+                                                                                         <th>Fraction</th> 
+                                                                                       </tr>
+                                                                                 </thead>
+                                                                              <tbody>
+                                                                                          {% for paramAn in groupe.paramAns %}
+                                                                                                      {% if  paramAn.paramAn %}
+                                                                                                          {% if paramAn.paramAn.codeParametre.codeParametre  == '1301' or 
+                                                                                                                   paramAn.paramAn.codeParametre.codeParametre  == '1302' or 
+                                                                                                                   paramAn.paramAn.codeParametre.codeParametre  == '1303' or
+                                                                                                                   paramAn.paramAn.codeParametre.codeParametre  == '1311' or 
+                                                                                                                   paramAn.paramAn.codeParametre.codeParametre  == '1312' %}
+                                                                                                                   <input type="hidden" id="idGroupeSelectionne" value="{{ groupe.grparAn.id }}">
+                                                                                                           {% endif %}
+                                                                                                           {% if is_granted('ROLE_ADMINSQE') or  (user.prestataire.adrCorId == paramAn.paramAn.prestataire.adrCorId)  %}
+                                                                                                                {% if groupe.grparAn.grparRef.typeGrp == 'ENV'  %}
+                                                                                                                    {% if paramAn.pgCmdMesureEnv %}
+                                                                                                                          {% if paramAn.pgCmdMesureEnv.codeStatut == '0' %}
+                                                                                                                               <tr class="success">
+                                                                                                                          {% elseif paramAn.pgCmdMesureEnv.codeStatut == '1' %}
+                                                                                                                               <tr class="warning" data-toggle="tooltip" data-placement="bottom" title="{{ paramAn.pgCmdMesureEnv.libelleStatut}}">
+                                                                                                                          {% else %}
+                                                                                                                               <tr class="danger" data-toggle="tooltip" data-placement="bottom" title="{{ paramAn.pgCmdMesureEnv.libelleStatut}}">
+                                                                                                                          {% endif %}
+                                                                                                                    {% else %}
+                                                                                                                       <tr>
                                                                                                                    {% endif %}
-                                                                                                             {% else %}
-                                                                                                                <tr>
-                                                                                                            {% endif %}
-                                                                                                            <td nowrap>{{ paramAn.paramAn.codeParametre.codeParametre }}</td>
-                                                                                                            <td align="left">{{ paramAn.paramAn.codeParametre.nomParametre }}</td>
-                                                                                                            <td align="right">
-                                                                                                                  <div class="form-group">
-                                                                                                                       <div class="input-group text-right">
-                                                                                                                           {% if paramAn.valeurs  %}
-                                                                                                                                  <select class="form-control" id="idValeur{{ paramAn.paramAn.id}}" name="valeur{{ paramAn.paramAn.id}}"   >    
-                                                                                                                                       <option value=""></option> 
-                                                                                                                                      {% for valeur in paramAn.valeurs %}
-                                                                                                                                              {% if paramAn.pgCmdMesureEnv %}
-                                                                                                                                                      {% if paramAn.pgCmdMesureEnv.resultat == valeur.valeur %}
-                                                                                                                                                               <option value="{{valeur.valeur  | replace({".00" : ""})}}" selected>{{valeur.valeur  | replace({".00" : ""})}} : {{valeur.libelle }}</option> 
-                                                                                                                                                      {% else %}
-                                                                                                                                                               <option value="{{valeur.valeur  | replace({".00" : ""}) }}">{{valeur.valeur  | replace({".00" : ""})}} : {{ valeur.libelle }}</option> 
+                                                                                                                   <td nowrap>{{ paramAn.paramAn.codeParametre.codeParametre }}</td>
+                                                                                                                   <td align="left">{{ paramAn.paramAn.codeParametre.nomParametre }}</td>
+                                                                                                                   <td align="right">
+                                                                                                                      <div class="form-group">
+                                                                                                                           <div class="input-group text-left">
+                                                                                                                                     <select class="form-control" id="idRemarque{{ paramAn.paramAn.id}}" name="remarque{{ paramAn.paramAn.id}}"   >    
+                                                                                                                                          <option value="0">0 : Donnée absente</option> 
+                                                                                                                                           <option value="1"  selected>1 : Donnée renseignée</option> 
+                                                                                                                                        </select>
+                                                                                                                              </div>
+                                                                                                                        </div> 
+                                                                                                                    </td>
+                                                                                                                   <td align="right">
+                                                                                                                         <div class="form-group">
+                                                                                                                              <div class="input-group text-right">
+                                                                                                                                  {% if paramAn.valeurs  %}
+                                                                                                                                         <select class="form-control" id="idValeur{{ paramAn.paramAn.id}}" name="valeur{{ paramAn.paramAn.id}}"   >    
+                                                                                                                                              <option value=""></option> 
+                                                                                                                                             {% for valeur in paramAn.valeurs %}
+                                                                                                                                                     {% if paramAn.pgCmdMesureEnv %}
+                                                                                                                                                             {% if paramAn.pgCmdMesureEnv.resultat == valeur.valeur %}
+                                                                                                                                                                      <option value="{{valeur.valeur  | replace({".00" : ""})}}" selected>{{valeur.valeur  | replace({".00" : ""})}} : {{valeur.libelle }}</option> 
+                                                                                                                                                             {% else %}
+                                                                                                                                                                      <option value="{{valeur.valeur  | replace({".00" : ""}) }}">{{valeur.valeur  | replace({".00" : ""})}} : {{ valeur.libelle }}</option> 
+                                                                                                                                                             {% endif %}
+                                                                                                                                                       {% else %}
+                                                                                                                                                              <option value="{{valeur.valeur  | replace({".00" : ""})}}">{{valeur.valeur  | replace({".00" : ""})}} : {{ valeur.libelle}}</option> 
                                                                                                                                                       {% endif %}
-                                                                                                                                                {% else %}
-                                                                                                                                                       <option value="{{valeur.valeur  | replace({".00" : ""})}}">{{valeur.valeur  | replace({".00" : ""})}} : {{ valeur.libelle}}</option> 
-                                                                                                                                               {% endif %}
-                                                                                                                                      {% endfor %}
-                                                                                                                                    </select>
-                                                                                                                             {% else %}
-                                                                                                                                 {% if paramAn.pgCmdMesureEnv %}
-                                                                                                                                       <input id="idValeur{{ paramAn.paramAn.id}}"  class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdMesureEnv.resultat | replace({".0000000000" : ""})}}">
-                                                                                                                                    {% else %}
-                                                                                                                                         <input id="idValeur{{ paramAn.paramAn.id}}" class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}" value="">
-                                                                                                                                 {% endif %}
-                                                                                                                             {% endif %}
-                                                                                                                        </div>
-                                                                                                                    </div> 
-                                                                                                               </td>
-                                                                                                                <td align="left">
-                                                                                                                  <div class="form-group">
-                                                                                                                       <div  class="input-group text-left">
-                                                                                                                           {% if paramAn.unites  %}
-                                                                                                                                {% if paramAn.unites | length > 1 %}
-                                                                                                                                          <select class="form-control" id="idUniteCode{{ paramAn.paramAn.id}}" name="uniteCode{{ paramAn.paramAn.id}}"   >    
-                                                                                                                                               {% for unite in paramAn.unites %}
-                                                                                                                                                        <option value="{{unite.codeUnite.codeUnite}}">{{unite.codeUnite.codeUnite}} : {{ unite.codeUnite.nomUnite}}</option> 
                                                                                                                                              {% endfor %}
-                                                                                                                                            </select>
-                                                                                                                                 {% else %}
-                                                                                                                                    <input id="idUniteCode{{ paramAn.paramAn.id}}" type="hidden" class="form-control" placeholder="unite" name ="uniteCode{{ paramAn.paramAn.id}}" value="{{paramAn.unites.0.codeUnite.codeUnite}}" readonly="readonly">
-                                                                                                                                     <input id="idUnite{{ paramAn.paramAn.id}}" type="text" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{paramAn.unites.0.codeUnite.codeUnite}} : {{paramAn.unites.0.codeUnite.nomUnite}}" readonly="readonly">
+                                                                                                                                           </select>
+                                                                                                                                    {% else %}
+                                                                                                                                        {% if paramAn.pgCmdMesureEnv %}
+                                                                                                                                              <input id="idValeur{{ paramAn.paramAn.id}}"  class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdMesureEnv.resultat | replace({".0000000000" : ""})}}">
+                                                                                                                                           {% else %}
+                                                                                                                                                <input id="idValeur{{ paramAn.paramAn.id}}" class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}" value="">
+                                                                                                                                        {% endif %}
                                                                                                                                     {% endif %}
-                                                                                                                            {% else %}
-                                                                                                                                 {% if paramAn.pgCmdMesureEnv %}
-                                                                                                                                       <input id="idUniteCode{{ paramAn.paramAn.id}}" type="hidden" class="form-control" placeholder="unite" name ="uniteCode{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdMesureEnv.codeUnite.codeUnite }}">
-                                                                                                                                        <input id="idUnite{{ paramAn.paramAn.id}}" type="text" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdMesureEnv.codeUnite.codeUnite }} : {{ paramAn.pgCmdMesureEnv.codeUnite.nomUnite }}" readonly="readonly">
-                                                                                                                                   {% else %}
-                                                                                                                                        <input id="idUniteCode{{ paramAn.paramAn.id}}" type="hidden" class="form-control" placeholder="unite" name ="uniteCode{{ paramAn.paramAn.id}}" value="{{ paramAn.unite.codeUnite }}">
-                                                                                                                                         <input id="idUnite{{ paramAn.paramAn.id}}" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{ paramAn.unite.codeUnite }} : {{ paramAn.unite.nomUnite }}" readonly="readonly">
-                                                                                                                                 {% endif %}
-                                                                                                                            {% endif %}
-                                                                                                                        </div>
-                                                                                                                    </div> 
-                                                                                                                </td>
-                                                                                                                <td align="right">
-                                                                                                                  <div class="form-group">
-                                                                                                                       <div class="input-group text-left">
-                                                                                                                                 <select class="form-control" id="idRemarque{{ paramAn.paramAn.id}}" name="remarque{{ paramAn.paramAn.id}}"   >    
-                                                                                                                                      <option value="0">0 : Donnée absente</option> 
-                                                                                                                                       <option value="1"  selected>1 : Donnée renseignée</option> 
-                                                                                                                                    </select>
-                                                                                                                          </div>
-                                                                                                                    </div> 
-                                                                                                                </td>
-                                                                                                             <td align="left">
-                                                                                                                {% if paramAn.fraction %}
-                                                                                                                    <span class="text-left">{{ paramAn.fraction.nomFraction }}</span>
-                                                                                                                {% endif %}
-                                                                                                            </td>
-                                                                                                        </tr>
-                                                                                                          {% else %}
-                                                                                                              {% if paramAn.pgCmdAnalyse %}
-                                                                                                                   {% if paramAn.pgCmdAnalyse.codeStatut == '0' %}
-                                                                                                                        <tr class="success">
-                                                                                                                   {% elseif paramAn.pgCmdAnalyse.codeStatut == '1' %}
-                                                                                                                        <tr class="warning" data-toggle="tooltip" data-placement="bottom" title="{{ paramAn.pgCmdAnalyse.libelleStatut}}">
-                                                                                                                   {% else %}
-                                                                                                                        <tr class="danger" data-toggle="tooltip" data-placement="bottom" title="{{ paramAn.pgCmdAnalyse.libelleStatut}}" >
-                                                                                                                   {% endif %}
-                                                                                                             {% else %}
-                                                                                                                <tr>
-                                                                                                            {% endif %}
-                                                                                                                 <td nowrap>{{ paramAn.paramAn.codeParametre.codeParametre }}</td>
-                                                                                                                  <td align="left">{{ paramAn.paramAn.codeParametre.nomParametre }}</td>
-                                                                                                                  <td align="right">
-                                                                                                                        <div class="form-group">
-                                                                                                                             <div class="input-group text-right">
-                                                                                                                                 {% if paramAn.valeurs  %}
-                                                                                                                                        <select class="form-control" id="idValeur{{ paramAn.paramAn.id}}" name="valeur{{ paramAn.paramAn.id}}"   >    
-                                                                                                                                             <option value=""></option> 
-                                                                                                                                            {% for valeur in paramAn.valeurs %}
-                                                                                                                                                    {% if paramAn.pgCmdAnalyse %}
-                                                                                                                                                            {% if paramAn.pgCmdAnalyse.resultat == valeur.valeur %}
-                                                                                                                                                                     <option value="{{valeur.valeur  | replace({".00" : ""}) }}" selected>{{valeur.valeur  | replace({".00" : ""}) }} : {{valeur.libelle }}</option> 
-                                                                                                                                                            {% else %}
-                                                                                                                                                                     <option value="{{valeur.valeur  | replace({".00" : ""}) }}">{{valeur.valeur  | replace({".00" : ""}) }} : {{ valeur.libelle }}</option> 
-                                                                                                                                                            {% endif %}
-                                                                                                                                                      {% else %}
-                                                                                                                                                             <option value="{{valeur.valeur  | replace({".00" : ""}) }}">{{valeur.valeur  | replace({".00" : ""}) }} : {{ valeur.libelle}}</option> 
-                                                                                                                                                     {% endif %}
-                                                                                                                                            {% endfor %}
-                                                                                                                                          </select>
-                                                                                                                                   {% else %}
-                                                                                                                                       {% if paramAn.pgCmdAnalyse %}
-                                                                                                                                             <input id="idValeur{{ paramAn.paramAn.id}}" class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdAnalyse.resultat | replace({".0000000000" : ""}) }}">
-                                                                                                                                         {% else %}
-                                                                                                                                               <input id="idValeur{{ paramAn.paramAn.id}}" class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}" value="">
-                                                                                                                                       {% endif %}
-                                                                                                                                   {% endif %}
-                                                                                                                              </div>
-                                                                                                                          </div> 
-                                                                                                                   </td>
-                                                                                                                   <td align="left">
-                                                                                                                        <div class="form-group">
-                                                                                                                             <div  class="input-group text-left">
-                                                                                                                                 {% if paramAn.unites  %}
-                                                                                                                                      {% if paramAn.unites | length > 1 %}
-                                                                                                                                                <select class="form-control" id="idUniteCode{{ paramAn.paramAn.id}}" name="uniteCode{{ paramAn.paramAn.id}}"   >    
-                                                                                                                                                    {% for unite in paramAn.unites %}
-                                                                                                                                                                      <option value="{{unite.codeUnite.codeUnite}}">{{unite.codeUnite.codeUnite}} : {{ unite.codeUnite.nomUnite}}</option> 
+                                                                                                                               </div>
+                                                                                                                           </div> 
+                                                                                                                      </td>
+                                                                                                                       <td align="left">
+                                                                                                                         <div class="form-group">
+                                                                                                                              <div  class="input-group text-left">
+                                                                                                                                  {% if paramAn.unites  %}
+                                                                                                                                       {% if paramAn.unites | length > 1 %}
+                                                                                                                                                 <select class="form-control" id="idUniteCode{{ paramAn.paramAn.id}}" name="uniteCode{{ paramAn.paramAn.id}}"   >    
+                                                                                                                                                      {% for unite in paramAn.unites %}
+                                                                                                                                                               <option value="{{unite.codeUnite.codeUnite}}">{{unite.codeUnite.codeUnite}} : {{ unite.codeUnite.nomUnite}}</option> 
                                                                                                                                                     {% endfor %}
-                                                                                                                                                  </select>
-                                                                                                                                       {% else %}
-                                                                                                                                            <input id="idUniteCode{{ paramAn.paramAn.id}}" type="hidden" class="form-control" placeholder="unite" name ="uniteCode{{ paramAn.paramAn.id}}" value="{{paramAn.unites.0.codeUnite.codeUnite}}" readonly="readonly">
-                                                                                                                                           <input id="idUnite{{ paramAn.paramAn.id}}" type="text" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{paramAn.unites.0.codeUnite.codeUnite}} : {{paramAn.unites.0.codeUnite.nomUnite}}" readonly="readonly">
-                                                                                                                                       {% endif %}
-                                                                                                                                  {% else %}
-                                                                                                                                       {% if paramAn.pgCmdAnalyse %}
-                                                                                                                                             <input id="idUniteCode{{ paramAn.paramAn.id}}" type="hidden" class="form-control" placeholder="unite" name ="uniteCode{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdAnalyse.codeUnite.codeUnite }}">
-                                                                                                                                             <input id="idUnite{{ paramAn.paramAn.id}}" type="text" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdAnalyse.codeUnite.codeUnite }} : {{ paramAn.pgCmdAnalyse.codeUnite.nomUnite }}">
-                                                                                                                                         {% else %}
+                                                                                                                                                   </select>
+                                                                                                                                        {% else %}
+                                                                                                                                           <input id="idUniteCode{{ paramAn.paramAn.id}}" type="hidden" class="form-control" placeholder="unite" name ="uniteCode{{ paramAn.paramAn.id}}" value="{{paramAn.unites.0.codeUnite.codeUnite}}" readonly="readonly">
+                                                                                                                                            <input id="idUnite{{ paramAn.paramAn.id}}" type="text" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{paramAn.unites.0.codeUnite.codeUnite}} : {{paramAn.unites.0.codeUnite.nomUnite}}" readonly="readonly">
+                                                                                                                                           {% endif %}
+                                                                                                                                   {% else %}
+                                                                                                                                        {% if paramAn.pgCmdMesureEnv %}
+                                                                                                                                              <input id="idUniteCode{{ paramAn.paramAn.id}}" type="hidden" class="form-control" placeholder="unite" name ="uniteCode{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdMesureEnv.codeUnite.codeUnite }}">
+                                                                                                                                               <input id="idUnite{{ paramAn.paramAn.id}}" type="text" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdMesureEnv.codeUnite.codeUnite }} : {{ paramAn.pgCmdMesureEnv.codeUnite.nomUnite }}" readonly="readonly">
+                                                                                                                                          {% else %}
                                                                                                                                                <input id="idUniteCode{{ paramAn.paramAn.id}}" type="hidden" class="form-control" placeholder="unite" name ="uniteCode{{ paramAn.paramAn.id}}" value="{{ paramAn.unite.codeUnite }}">
-                                                                                                                                               <input id="idUnite{{ paramAn.paramAn.id}}" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{ paramAn.unite.codeUnite }} : {{ paramAn.unite.nomUnite }}" readonly="readonly">
-                                                                                                                                       {% endif %}
-                                                                                                                                  {% endif %}
-                                                                                                                              </div>
-                                                                                                                          </div> 
+                                                                                                                                                <input id="idUnite{{ paramAn.paramAn.id}}" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{ paramAn.unite.codeUnite }} : {{ paramAn.unite.nomUnite }}" readonly="readonly">
+                                                                                                                                        {% endif %}
+                                                                                                                                   {% endif %}
+                                                                                                                               </div>
+                                                                                                                           </div> 
+                                                                                                                       </td>
+                                                                                                                    <td align="left">
+                                                                                                                       {% if paramAn.fraction %}
+                                                                                                                           <span class="text-left">{{ paramAn.fraction.nomFraction }}</span>
+                                                                                                                       {% endif %}
                                                                                                                    </td>
-                                                                                                                  <td align="right">
-                                                                                                                  <div class="form-group">
-                                                                                                                       <div class="input-group text-left">
-                                                                                                                                 <select class="form-control" id="idRemarque{{ paramAn.paramAn.id}}" name="remarque{{ paramAn.paramAn.id}}"   >    
-                                                                                                                                       <option value="1"  selected>1 : Donnée renseignée</option> 
-                                                                                                                                       <option value="0">0 : Donnée absente</option> 
-                                                                                                                                 </select>
-                                                                                                                          </div>
-                                                                                                                    </div> 
-                                                                                                                 </td>
-                                                                                                                  <td align="left">
-                                                                                                                      {% if paramAn.fraction %}
-                                                                                                                          <span class="text-left">{{ paramAn.fraction.nomFraction }}</span>
-                                                                                                                      {% endif %}
-                                                                                                                  </td>
-                                                                                                              </tr>
-                                                                                                          {% endif %}
-                                                                                                    {% else %}
-                                                                                                          {% if groupe.grparAn.grparRef.typeGrp == 'ENV'  %}
-                                                                                                          <tr>
-                                                                                                            <td nowrap>{{ paramAn.paramAn.codeParametre.codeParametre }}</td>
-                                                                                                            <td align="left">{{ paramAn.paramAn.codeParametre.nomParametre }}</td>
-                                                                                                            <td align="right">
-                                                                                                                   {% if paramAn.pgCmdMesureEnv %}
-                                                                                                                       <span class="text-right">{{ paramAn.pgCmdMesureEnv.resultat | replace({".0000000000" : ""}) }}</span>
-                                                                                                                    {% endif %}
-                                                                                                             </td>
-                                                                                                              <td align="left">
-                                                                                                                      {% if paramAn.pgCmdMesureEnv %}
-                                                                                                                          <span class="text-left">{{ paramAn.pgCmdMesureEnv.codeUnite.nomUnite }}</span>
-                                                                                                                      {% endif %}
-                                                                                                             </td>
-                                                                                                              <td align="left"></td>
-                                                                                                             <td align="left">
-                                                                                                                {% if paramAn.fraction %}
-                                                                                                                    <span class="text-left">{{ paramAn.fraction.nomFraction }}</span>
-                                                                                                                {% endif %}
-                                                                                                            </td>
-                                                                                                        </tr>
-                                                                                                          {% else %}
-                                                                                                              <tr>
-                                                                                                                  <td nowrap>{{ paramAn.paramAn.codeParametre.codeParametre }}</td>
-                                                                                                                  <td align="left">{{ paramAn.paramAn.codeParametre.nomParametre }}</td>
-                                                                                                                  <td align="right">
-                                                                                                                      {% if paramAn.pgCmdAnalyse %}
-                                                                                                                          <span class="text-right">{{ paramAn.pgCmdAnalyse.resultat | replace({".0000000000" : ""})  }}</span>
-                                                                                                                      {% endif %}
-                                                                                                                  </td>
-                                                                                                                  <td align="left">
-                                                                                                                         {% if paramAn.pgCmdAnalyse %}
-                                                                                                                             <span class="text-left">{{ paramAn.pgCmdAnalyse.codeUnite.nomUnite }}</span>
+                                                                                                               </tr>
+                                                                                                                 {% else %}
+                                                                                                                     {% if paramAn.pgCmdAnalyse %}
+                                                                                                                          {% if paramAn.pgCmdAnalyse.codeStatut == '0' %}
+                                                                                                                               <tr class="success">
+                                                                                                                          {% elseif paramAn.pgCmdAnalyse.codeStatut == '1' %}
+                                                                                                                               <tr class="warning" data-toggle="tooltip" data-placement="bottom" title="{{ paramAn.pgCmdAnalyse.libelleStatut}}">
+                                                                                                                          {% else %}
+                                                                                                                               <tr class="danger" data-toggle="tooltip" data-placement="bottom" title="{{ paramAn.pgCmdAnalyse.libelleStatut}}" >
+                                                                                                                          {% endif %}
+                                                                                                                    {% else %}
+                                                                                                                       <tr>
+                                                                                                                   {% endif %}
+                                                                                                                        <td nowrap>{{ paramAn.paramAn.codeParametre.codeParametre }}</td>
+                                                                                                                         <td align="left">{{ paramAn.paramAn.codeParametre.nomParametre }}</td>
+                                                                                                                             <td align="right">
+                                                                                                                         <div class="form-group">
+                                                                                                                              <div class="input-group text-left">
+                                                                                                                                        <select class="form-control" id="idRemarque{{ paramAn.paramAn.id}}" name="remarque{{ paramAn.paramAn.id}}"   >    
+                                                                                                                                              <option value="1"  selected>1 : Donnée renseignée</option> 
+                                                                                                                                              <option value="0">0 : Donnée absente</option> 
+                                                                                                                                        </select>
+                                                                                                                                 </div>
+                                                                                                                           </div> 
+                                                                                                                        </td>
+                                                                                                                       <td align="right">
+                                                                                                                               <div class="form-group">
+                                                                                                                                    <div class="input-group text-right">
+                                                                                                                                        {% if paramAn.valeurs  %}
+                                                                                                                                               <select class="form-control" id="idValeur{{ paramAn.paramAn.id}}" name="valeur{{ paramAn.paramAn.id}}"   >    
+                                                                                                                                                    <option value=""></option> 
+                                                                                                                                                   {% for valeur in paramAn.valeurs %}
+                                                                                                                                                           {% if paramAn.pgCmdAnalyse %}
+                                                                                                                                                                   {% if paramAn.pgCmdAnalyse.resultat == valeur.valeur %}
+                                                                                                                                                                            <option value="{{valeur.valeur  | replace({".00" : ""}) }}" selected>{{valeur.valeur  | replace({".00" : ""}) }} : {{valeur.libelle }}</option> 
+                                                                                                                                                                   {% else %}
+                                                                                                                                                                            <option value="{{valeur.valeur  | replace({".00" : ""}) }}">{{valeur.valeur  | replace({".00" : ""}) }} : {{ valeur.libelle }}</option> 
+                                                                                                                                                                   {% endif %}
+                                                                                                                                                             {% else %}
+                                                                                                                                                                    <option value="{{valeur.valeur  | replace({".00" : ""}) }}">{{valeur.valeur  | replace({".00" : ""}) }} : {{ valeur.libelle}}</option> 
+                                                                                                                                                            {% endif %}
+                                                                                                                                                   {% endfor %}
+                                                                                                                                                 </select>
+                                                                                                                                          {% else %}
+                                                                                                                                              {% if paramAn.pgCmdAnalyse %}
+                                                                                                                                                    <input id="idValeur{{ paramAn.paramAn.id}}" class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdAnalyse.resultat | replace({".0000000000" : ""}) }}">
+                                                                                                                                                {% else %}
+                                                                                                                                                      <input id="idValeur{{ paramAn.paramAn.id}}" class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}" value="">
+                                                                                                                                              {% endif %}
+                                                                                                                                          {% endif %}
+                                                                                                                                     </div>
+                                                                                                                                 </div> 
+                                                                                                                          </td>
+                                                                                                                          <td align="left">
+                                                                                                                               <div class="form-group">
+                                                                                                                                    <div  class="input-group text-left">
+                                                                                                                                        {% if paramAn.unites  %}
+                                                                                                                                             {% if paramAn.unites | length > 1 %}
+                                                                                                                                                       <select class="form-control" id="idUniteCode{{ paramAn.paramAn.id}}" name="uniteCode{{ paramAn.paramAn.id}}"   >    
+                                                                                                                                                           {% for unite in paramAn.unites %}
+                                                                                                                                                                             <option value="{{unite.codeUnite.codeUnite}}">{{unite.codeUnite.codeUnite}} : {{ unite.codeUnite.nomUnite}}</option> 
+                                                                                                                                                           {% endfor %}
+                                                                                                                                                         </select>
+                                                                                                                                              {% else %}
+                                                                                                                                                   <input id="idUniteCode{{ paramAn.paramAn.id}}" type="hidden" class="form-control" placeholder="unite" name ="uniteCode{{ paramAn.paramAn.id}}" value="{{paramAn.unites.0.codeUnite.codeUnite}}" readonly="readonly">
+                                                                                                                                                  <input id="idUnite{{ paramAn.paramAn.id}}" type="text" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{paramAn.unites.0.codeUnite.codeUnite}} : {{paramAn.unites.0.codeUnite.nomUnite}}" readonly="readonly">
+                                                                                                                                              {% endif %}
+                                                                                                                                         {% else %}
+                                                                                                                                              {% if paramAn.pgCmdAnalyse %}
+                                                                                                                                                    <input id="idUniteCode{{ paramAn.paramAn.id}}" type="hidden" class="form-control" placeholder="unite" name ="uniteCode{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdAnalyse.codeUnite.codeUnite }}">
+                                                                                                                                                    <input id="idUnite{{ paramAn.paramAn.id}}" type="text" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdAnalyse.codeUnite.codeUnite }} : {{ paramAn.pgCmdAnalyse.codeUnite.nomUnite }}">
+                                                                                                                                                {% else %}
+                                                                                                                                                      <input id="idUniteCode{{ paramAn.paramAn.id}}" type="hidden" class="form-control" placeholder="unite" name ="uniteCode{{ paramAn.paramAn.id}}" value="{{ paramAn.unite.codeUnite }}">
+                                                                                                                                                      <input id="idUnite{{ paramAn.paramAn.id}}" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{ paramAn.unite.codeUnite }} : {{ paramAn.unite.nomUnite }}" readonly="readonly">
+                                                                                                                                              {% endif %}
+                                                                                                                                         {% endif %}
+                                                                                                                                     </div>
+                                                                                                                                 </div> 
+                                                                                                                          </td>
+                                                                                                                          <td align="left">
+                                                                                                                             {% if paramAn.fraction %}
+                                                                                                                                 <span class="text-left">{{ paramAn.fraction.nomFraction }}</span>
+                                                                                                                             {% endif %}
+                                                                                                                         </td>
+                                                                                                                     </tr>
+                                                                                                                 {% endif %}
+                                                                                                           {% else %}
+                                                                                                                 {% if groupe.grparAn.grparRef.typeGrp == 'ENV'  %}
+                                                                                                                 <tr>
+                                                                                                                   <td nowrap>{{ paramAn.paramAn.codeParametre.codeParametre }}</td>
+                                                                                                                   <td align="left">{{ paramAn.paramAn.codeParametre.nomParametre }}</td>
+                                                                                                                   <td align="left">
+                                                                                                                        {% if paramAn.pgCmdMesureEnv %}
+                                                                                                                                 <span class="text-left">{{ paramAn.pgCmdMesureEnv.CodeRemarque }}</span>
+                                                                                                                        {% endif %}
                                                                                                                    </td>
-                                                                                                                   <td align="left"></td>
-                                                                                                                  <td align="left">
-                                                                                                                      {% if paramAn.fraction %}
-                                                                                                                          <span class="text-left">{{ paramAn.fraction.nomFraction }}</span>
-                                                                                                                      {% endif %}
-                                                                                                                  </td>
-                                                                                                              </tr>
+                                                                                                                   <td align="right">
+                                                                                                                          {% if paramAn.pgCmdMesureEnv %}
+                                                                                                                              <span class="text-right">{{ paramAn.pgCmdMesureEnv.resultat | replace({".0000000000" : ""}) }}</span>
+                                                                                                                           {% endif %}
+                                                                                                                    </td>
+                                                                                                                     <td align="left">
+                                                                                                                             {% if paramAn.pgCmdMesureEnv %}
+                                                                                                                                 <span class="text-left">{{ paramAn.pgCmdMesureEnv.codeUnite.nomUnite }}</span>
+                                                                                                                             {% endif %}
+                                                                                                                    </td>
+                                                                                                                    <td align="left">
+                                                                                                                       {% if paramAn.fraction %}
+                                                                                                                           <span class="text-left">{{ paramAn.fraction.nomFraction }}</span>
+                                                                                                                       {% endif %}
+                                                                                                                   </td>
+                                                                                                               </tr>
+                                                                                                                 {% else %}
+                                                                                                                     <tr>
+                                                                                                                         <td nowrap>{{ paramAn.paramAn.codeParametre.codeParametre }}</td>
+                                                                                                                         <td align="left">{{ paramAn.paramAn.codeParametre.nomParametre }}</td>
+                                                                                                                         <td align="left">
+                                                                                                                                 {% if paramAn.pgCmdAnalyse %}
+                                                                                                                                    <span class="text-left">{{ paramAn.pgCmdAnalyse.codeRemarque }}</span>
+                                                                                                                              {% endif %}
+                                                                                                                         </td>
+                                                                                                                         <td align="right">
+                                                                                                                             {% if paramAn.pgCmdAnalyse %}
+                                                                                                                                 <span class="text-right">{{ paramAn.pgCmdAnalyse.resultat | replace({".0000000000" : ""})  }}</span>
+                                                                                                                             {% endif %}
+                                                                                                                         </td>
+                                                                                                                         <td align="left">
+                                                                                                                                {% if paramAn.pgCmdAnalyse %}
+                                                                                                                                    <span class="text-left">{{ paramAn.pgCmdAnalyse.codeUnite.nomUnite }}</span>
+                                                                                                                              {% endif %}
+                                                                                                                         </td>
+                                                                                                                         <td align="left">
+                                                                                                                             {% if paramAn.fraction %}
+                                                                                                                                 <span class="text-left">{{ paramAn.fraction.nomFraction }}</span>
+                                                                                                                             {% endif %}
+                                                                                                                         </td>
+                                                                                                                     </tr>
                                                                                                           {% endif %}
-                                                                                                   {% endif %}
-                                                                                                   {% endif %}
-                                                                                                {% endif %}
-                                                                                      {% endfor %}
-                                                                        </tbody>
-                                                             </table>
-                                         <div class="row">
-                                              <div class="col-md-12 pull-right text-info">
-                                                <ul class="list-inline">
-                                                    <li><span class="label label-success">Correct</span></li>
-                                                    <li><span class="label label-warning">Avertissement</span></li>
-                                                     <li><span class="label label-danger">Erreur</span></li>
-                                                </ul>  
-                                              </div>
-                                            </div>      
-                                  </div>
-                        </div>
+                                                                                                          {% endif %}
+                                                                                                       {% endif %}
+                                                                                             {% endfor %}
+                                                                               </tbody>
+                                                                    </table>
+                                                <div class="row">
+                                                     <div class="col-md-12 pull-right text-info">
+                                                       <ul class="list-inline">
+                                                           <li><span class="label label-success">Correct</span></li>
+                                                           <li><span class="label label-warning">Avertissement</span></li>
+                                                            <li><span class="label label-danger">Erreur</span></li>
+                                                       </ul>  
+                                                     </div>
+                                                   </div>      
+                                         </div>
+                                    </div>
+                             </div>
+                    </div>
              </div>
         {% endfor %}
         
@@ -394,7 +416,7 @@
           </div>
        
           <div id="idCache"></div>
-          
+               
        </div>
      </form>
 
@@ -408,6 +430,8 @@
               format: 'dd/mm/yyyy hh:ii'
               }
             );
+            
+            
     
           {% for groupe   in  groupes %}
               
@@ -419,6 +443,7 @@
                               }else{
                                  $('#idCollapseI{{groupe.grparAn.id}}').removeClass("fa-expand").addClass("fa-compress");
                                   $('#collapse{{groupe.grparAn.id}}').collapse('show');
+                                  $('#idGroupeSelectionne').val(groupe.grparAn.id);
                               }
                    });
 
@@ -444,6 +469,9 @@
                                     {% if paramAn.pgCmdMesureEnv %}
                                            nbParamSaisis{{groupe.grparAn.id }} = nbParamSaisis{{groupe.grparAn.id }} + 1;
                                            $('#paramSaisis{{ groupe.grparAn.id}}').empty().html(nbParamSaisis{{groupe.grparAn.id }});
+                                           var valeur =   {{  paramAn.pgCmdMesureEnv.codeRemarque }}
+                                            $("#idRemarque{{ paramAn.paramAn.id}} option[value='" + valeur + "']").attr('selected','selected');
+                                            $("#idRemarque{{ paramAn.paramAn.id}}").val(valeur);
                                             if ($("#idValeur{{ paramAn.paramAn.id}}").val() == "" ){
                                                 $('#idRemarque{{ paramAn.paramAn.id}} option:selected').removeAttr('selected');
                                                 var remarque =  "0";
@@ -503,6 +531,9 @@
                                     {% if paramAn.pgCmdAnalyse %}
                                              nbParamSaisis{{groupe.grparAn.id }} = nbParamSaisis{{groupe.grparAn.id }} + 1;
                                             $('#paramSaisis{{ groupe.grparAn.id}}').empty().html(nbParamSaisis{{groupe.grparAn.id }});
+                                            var valeur =   {{  paramAn.pgCmdAnalyse.codeRemarque }}
+                                            $("#idRemarque{{ paramAn.paramAn.id}} option[value='" + valeur + "']").attr('selected','selected');
+                                            $("#idRemarque{{ paramAn.paramAn.id}}").val(valeur);
                                              if ($("#idValeur{{ paramAn.paramAn.id}}").val() == "" ){
                                                 $('#idRemarque{{ paramAn.paramAn.id}} option:selected').removeAttr('selected');
                                                 var remarque =  "0";
@@ -604,6 +635,27 @@
                      alert('ici');#}
                       $('#idForm').submit();
            });
+           
+           
+             $(document).on('click','#idGenerer',function(e){
+                            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                            $('#modalTraitementEncours').modal('toggle');
+                           var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_station_env_situ_generer",{"periodeAnId": "par1", "prelevId":  "par2", "groupeId" : "par3", "profMax" : "par4", "ecart" : "par5"}) }}', // Le nom du fichier indiqué dans le formulaire
+                           url = url.replace("par1", {{ periodeAn.id }}); 
+                           url = url.replace("par2", {{ cmdPrelev.id }});
+                           url = url.replace("par3", $('#idGroupeSelectionne').val());
+                           url = url.replace("par4", $('#profMax').val());
+                           url = url.replace("par5", $('#ecart').val());
+                           url = url.replace("amp;","");
+                           $.ajax({
+                                    url: url,
+                                    type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+                                    success: function(html) { // Je récupère la réponse du fichier PHP
+                                         $('#idGenerer' + $('#idGroupeSelectionne').val()).empty().append(html);
+                                         $('#modalTraitementEncours').modal('hide');
+                                       }
+                                });
+                    });
 
    
     

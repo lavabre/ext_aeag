@@ -87,7 +87,7 @@ class PgCmdAnalyse {
     /**
      * @var string
      *
-     * @ORM\Column(name="code_remarque", type="string", length=1, nullable=true)
+     * @ORM\Column(name="code_remarque", type="string", length=2, nullable=true)
      */
     private $codeRemarque;
 
