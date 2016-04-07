@@ -1,10 +1,8 @@
-# ignorer tous les fichiers dans le répertoire app/cache
+# ignorer tous les fichiers dans le rï¿½pertoire app/cache
 app/cache/
-# ignorer tous les fichiers dans le répertoire app/cache
+# ignorer tous les fichiers dans le rï¿½pertoire app/cache
 app/logs/
-# ignorer tous les fichiers dans le répertoire web/fichiers
-web/fichiers/
-# ignorer tous les fichiers dans le répertoire web/bundles
+# ignorer tous les fichiers dans le rï¿½pertoire web/bundles
 web/bundles/
-# ignorer tous les fichiers dans le répertoire nbproject/private
+# ignorer tous les fichiers dans le rï¿½pertoire nbproject/private
 nbproject/private/
