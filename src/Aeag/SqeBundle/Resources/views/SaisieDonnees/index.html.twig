@@ -1,0 +1,115 @@
+{% extends "AeagSqeBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+    <li>
+        <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+    </li>
+    <li class="active">
+          Saisie des données
+    </li>
+{% endblock breadcrumb %} 
+
+{%block panel_heading %}
+    <div class="row">
+            <div class="col-md-offset-3 col-md-7">
+                    <h3 class="page-title">
+                        <table>
+                            <tr><td>Saisie des données </td></tr>
+                            <tr><td>Liste des lots</td></tr>
+                       </table>
+                    </h3>
+            </div>
+    </div>
+{%endblock panel_heading %}
+
+{%block content %}
+    <div class="form-body">        
+        <table class="table table-bordered table-condensed table-advance" id="idTable_lot">
+            <thead>
+                <tr>
+                    <th width="1%">Actions</th>
+                    <th>Nom</th>
+                    <th>Année de programmation</th>
+                    <th>Version</th>
+                    <th>Marché</th>
+                    <th>Zone géographique</th>
+                    <th>Type de milieu</th>
+                    <th>Mandataire</th>
+                    <th>Etat</th>
+                    <th>Statut</th>
+                </tr>
+            </thead>
+            <tbody>
+                 {%if lotans | length%} 
+                    {% for lotan in lotans %}
+                       <tr>
+                            <td>
+                                <a id="id_{{lotan.id}}" class="btn btn-primary btn-demandes" href="{{path('AeagSqeBundle_saisieDonnees_lot_periodes',{ 'lotanId': lotan.id })}}" title="Périodes">
+                                    <i class="fa fa-eye"></i> 
+                                </a>
+                             </td>
+                            <td>{{lotan.lot.nomLot}}</td>
+                            <td>{{ lotan.anneeProg }}</td>
+                            <td>{{ lotan.version }}</td>
+                            <td>{{ lotan.lot.marche.nomMarche }}</td>
+                            <td>{{ lotan.lot.zgeoRef.nomZoneGeo }}</td>
+                            <td>{% if lotan.lot.codeMilieu| length %}
+                                {{ lotan.lot.codeMilieu.nomMilieu }}
+                                {% endif %}
+                            </td>
+                            <td>{%if lotan.lot.titulaire %}
+                                {{ lotan.lot.titulaire.nomCorres }}
+                                {% endif %}
+                            </td>
+                            <td>{{lotan.phase.libellePhase}} </td>
+                            <td>{{lotan.codeStatut.libelleStatut}} le {{ lotan.dateModif | date("d/m/Y H:i:")}} par {{ lotan.utilModif.nom}} </td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+{%endblock content %}    
+
+{% block scripts %}
+
+    $(document).ready(function() {
+        $('#modalTraitementEncours').modal('hide');
+          var table = $('#idTable_lot').DataTable(
+            {"stateSave": true,
+             "order": [[ 1, "desc" ]],
+              "language": {
+                                 "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
+                             },
+             "aLengthMenu": [
+                                        [10, 25, 50, 100, -1],
+                                        [10, 25, 50, 100, "Tous"]
+                                    ],
+              "iDisplayLength": -1
+            }
+            );
+
+            $("#idTable thead td").each( function ( i ) {
+
+            if (i != 0){
+            var select = $('<select><option value=""></option></select>')
+            .appendTo( $(this).empty() )
+            .on( 'change', function () {
+            table.column( i )
+            .search( $(this).val() )
+            .draw();
+            });
+
+            table.column( i ).data().unique().sort().each( function ( d, j ) {
+                select.append( '<option value="'+d+'">'+d+'</option>' )
+            });
+            };
+            }); 
+            
+            $(".btn-demandes").click(function() {
+                $('#modalTraitementEncours').modal();
+            });
+    });
+    
+{%endblock scripts %}    
+    

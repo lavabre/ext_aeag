@@ -150,31 +150,7 @@
                                  <i class="fa fa-comment"> Ajouter un suivi</i>
                             </a>
                      {% endif %}
-                     {% if is_granted('ROLE_ADMINSQE')  or cmdPrelev.saisieTerrain == 'O' %}
-                            <a class="btn btn-primary" id="idSaisirDonneesTerrain{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Saisie des données terrains">
-                                <i class="fa fa-pencil"> Saisir des données terrain 
-                                    <ul class="list-inline">
-                                         <li><span  class="label label-success">{{ cmdPrelev.nbSaisisParametresTerrainCorrect}}</li>
-                                          <li><span  class="label label-warning">{{ cmdPrelev.nbSaisisParametresTerrainIncorrect}}</li>
-                                          <li><span  class="label label-danger">{{ cmdPrelev.nbSaisisParametresTerrainErreur}}</li>
-                                     <li><span  class="label label-default">{{ cmdPrelev.nbSaisisParametresTerrain  }}/{{ cmdPrelev.nbParametresTerrain }}</li>
-                                   </ul>  
-                              </i>
-                           </a>
-                     {% endif %}
-                     {% if is_granted('ROLE_ADMINSQE')  or cmdPrelev.saisieAnalyse == 'O' %}
-                            <a class="btn btn-primary" id="idSaisirAnalyses{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Saisie des analyses">
-                               <i class="fa fa-pencil"> Saisir des analyse 
-                                    <ul class="list-inline">
-                                        <li><span  class="label label-success">{{ cmdPrelev.nbSaisisParametresAnalyseCorrect}}</li>
-                                         <li><span  class="label label-warning">{{ cmdPrelev.nbSaisisParametresAnalyseIncorrect}}</li>
-                                         <li><span  class="label label-danger">{{ cmdPrelev.nbSaisisParametresAnalyseErreur}}</li>
-                                    <li><span  class="label label-default">{{ cmdPrelev.nbSaisisParametresAnalyse }}/{{ cmdPrelev.nbParametresAnalyse }}</li>
-                                  </ul> 
-                              </i>
-                           </a>
-                    {% endif %}
-            </caption> 
+              </caption> 
             <thead>
                 <tr>
                     <th width="1%">Actions</th>
@@ -199,6 +175,10 @@
                                                               <a id="idDeposerSuivi{{ suiviPrel.suiviPrel.id }}" class="btn btn-primary btn-deposer-reponse"  title="Déposer un fichier terrain">
                                                                   <i class="fa fa-download"></i> 
                                                               </a>
+                                                          {% else %}
+                                                                 <a id="idTelechargerSuivi{{ suiviPrel.suiviPrel.id }}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_fichier_telecharger',{'suiviPrelId': suiviPrel.suiviPrel.id })}}" title="Télécharger le fichier terrain">
+                                                                    <i class="fa fa-upload"></i> 
+                                                                </a>
                                                           {% endif %}
                                                  {% endif %}
                                                  {% if is_granted('ROLE_ADMINSQE') %}
@@ -240,16 +220,7 @@
                 {% endif %}
             </tbody>
         </table>
-            
-         <div class="row">
-                <div class="col-md-12 pull-right text-info">
-                  <ul class="list-inline">
-                      <li><span class="label label-success">Correct</span></li>
-                      <li><span class="label label-warning">Avertissement</span></li>
-                       <li><span class="label label-danger">Erreur</span></li>
-                  </ul>  
-                </div>
-         </div>      
+  
      {% endfor %}
     </div>
 {%endblock content %}    
@@ -295,30 +266,7 @@
                                        }
                                 });
                     });
-                    
-                      $(document).on('click','#idSaisirDonneesTerrain{{ cmdPrelev.cmdPrelev.id }}',function(e){
-                            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                            $('#modalTraitementEncours').modal('toggle');
-                           var url = '{{ path("AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_saisir_env_situ",{"prelevId":  "par1", "periodeAnId": "par2", "stationId": "par3"}) }}', // Le nom du fichier indiqué dans le formulaire
-                            url = url.replace("par1", {{ cmdPrelev.cmdPrelev.id }});
-                            url = url.replace("par2", {{ periodeAn.id }});
-                            url = url.replace("par3", {{ station.ouvFoncId }});
-                            url = url.replace("amp;","");
-                            window.location.replace(url);
-                      });
-                      
-                         $(document).on('click','#idSaisirAnalyses{{ cmdPrelev.cmdPrelev.id }}',function(e){
-                            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                            $('#modalTraitementEncours').modal('toggle');
-                           var url = '{{ path("AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_saisir_ana",{"prelevId":  "par1", "periodeAnId": "par2", "stationId": "par3"}) }}', // Le nom du fichier indiqué dans le formulaire
-                            url = url.replace("par1", {{ cmdPrelev.cmdPrelev.id }});
-                            url = url.replace("par2", {{ periodeAn.id }});
-                            url = url.replace("par3", {{ station.ouvFoncId }});
-                            url = url.replace("amp;","");
-                            window.location.replace(url);
-                      });
-                    
-                    
+                 
                 
                     
                    {% for suiviPrel  in cmdPrelev.suiviPrels %}
@@ -384,12 +332,7 @@
                              
             
          {% endfor %}
-         
-               
-        
-         
+          
       });
-    
-            
-    
+     
 {%endblock scripts %}    

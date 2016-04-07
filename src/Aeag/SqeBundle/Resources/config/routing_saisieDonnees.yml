@@ -1,0 +1,38 @@
+AeagSqeBundle_saisieDonnees_index:
+    path:  /lots
+    defaults: { _controller: AeagSqeBundle:SaisieDonnees:index }
+    
+AeagSqeBundle_saisieDonnees_lot_periodes:
+    path:  /periodes/{lotanId}
+    defaults: { _controller: AeagSqeBundle:SaisieDonnees:lotPeriodes, lotanId : null}    
+
+AeagSqeBundle_saisieDonnees_lot_periode_stations:
+    path: /stations/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SaisieDonnees:lotPeriodeStations, periodeAnId : null}
+    
+
+AeagSqeBundle_saisieDonnees_lot_periode_station_saisir_env_situ:
+    path:  /saisir/env/{prelevId}/{periodeAnId}/{stationId}/{maj}
+    defaults: { _controller: AeagSqeBundle:SaisieDonnees:lotPeriodeStationSaisirEnvSitu, prelevId : null, periodeAnId : null, stationId : null, maj : null}
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_saisieDonnees_lot_periode_station_saisir_ana:
+    path:  /saisir/ana/{prelevId}/{periodeAnId}/{stationId}/{maj}
+    defaults: { _controller: AeagSqeBundle:SaisieDonnees:lotPeriodeStationSaisirAna, prelevId : null, periodeAnId : null, stationId : null, maj :  null}
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_saisieDonnees_lot_periode_station_env_situ_resultat:
+    path:  /resultat/env/{prelevId}/{periodeAnId}/{stationId}
+    defaults: { _controller: AeagSqeBundle:SaisieDonnees:lotPeriodeStationResultatEnvSitu, prelevId : null, periodeAnId : null, stationId : null}
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_saisieDonnees_lot_periode_station_ana_resultat:
+    path:  /resultat/ana/{prelevId}/{periodeAnId}/{stationId}
+    defaults: { _controller: AeagSqeBundle:SaisieDonnees:lotPeriodeStationResultatAna, prelevId : null, periodeAnId : null, stationId : null}
+    requirements:
+        methods:  GET|POST
+        
+

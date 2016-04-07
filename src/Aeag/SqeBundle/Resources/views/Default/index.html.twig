@@ -24,16 +24,30 @@
                         </br>
                          <li><a class="btn btn-primary btn-lg" href="{{ path('Aeag_sqe_programmation_lots', {'action': 'P'}) }}" title="Programmer"><i class="fa fa-edit fa-2x"></i> Programmer</a></li>
                          </br>
-                    {% endif %}
+                     {% endif %}
                     {%if   is_granted('ROLE_PRESTASQE') %}
                         <li><a class="btn btn-primary btn-lg" href="{{ path('AeagSqeBundle_echangefichiers_index')}}" title="Echange de fichiers"><i class="fa fa-download fa-2x"></i> Echange de fichiers</a></li>
                         </br>
-                         <li><a class="btn btn-primary btn-lg" href="{{ path('AeagSqeBundle_suiviPrelevements_index')}}" title="Suivi des prélèvements"><i class="fa fa-dashboard fa-2x"></i> Suivi des prélèvements</a></li>
+                         <li><a class="btn btn-primary btn-lg" href="{{ path('AeagSqeBundle_saisieDonnees_index')}}" title="Saisie des données"><i class="fa fa-dashboard fa-2x"></i> Saisie des données</a></li>
+                        </br>
+                         <li><a class="btn btn-primary btn-lg" href="{{ path('AeagSqeBundle_suiviPrelevements_index')}}" title="Suivi des prélèvements"><i class="fa fa-calendar fa-2x"></i> Suivi des prélèvements</a></li>
                          </br>
                     {% endif %}
-                    <li><a class="btn btn-info  btn-lg" href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur.pdf') }}" target="_blank" title="Aide"><i class="fa fa-book fa-2x"></i> Aide</a></li>
-                  </ul>  
+                   </ul>  
             </div>
+         </div>   
+                   
+           <div class="row">
+           <div class="col-md-8 pull-right text-info">
+             <ul class="list-inline">
+                {%if   is_granted('ROLE_PROGSQE') %}
+                        <li><a class="btn btn-info  btn-lg" href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur-prog.pdf') }}" target="_blank" title="Aide"><i class="fa fa-book fa-2x"></i> Aide programmation</a></li>
+                     {% endif %}
+                    {%if   is_granted('ROLE_PRESTASQE') %}
+                       <li><a class="btn btn-info  btn-lg" href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur.pdf') }}" target="_blank" title="Aide"><i class="fa fa-book fa-2x"></i> Aide utilisateur</a></li>
+                    {% endif %}  
+              </ul>  
+           </div>
          </div>       
            
    

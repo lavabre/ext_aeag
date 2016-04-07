@@ -545,8 +545,8 @@ class AdminController extends Controller {
         $declarations = $repoDeclarationCollecteur->getDeclarationCollecteursByAnnee($annee);
         $ok = null;
         foreach ($declarations as $declaration) {
-                $ok = CollecteurController::majStatutDeclarationCollecteursAction($declaration->getId(), $user, $emDec, $session);
-              //  print_r($declaration->getId() . ' statut : ' . $declaration->getStatut()->getCode());
+            $ok = CollecteurController::majStatutDeclarationCollecteursAction($declaration->getId(), $user, $emDec, $session);
+            //  print_r($declaration->getId() . ' statut : ' . $declaration->getStatut()->getCode());
         }
         return $this->redirect($this->generateUrl('AeagDecBundle_admin_listeDeclarationCollecteurs', array('annee' => $annee, 'statut' => '99')));
     }
@@ -554,22 +554,151 @@ class AdminController extends Controller {
     public function majCompteursProducteursAction($annee = null) {
 
         $session = $this->get('session');
+        $em = $this->getDoctrine()->getManager();
         $emDec = $this->getDoctrine()->getManager('dec');
         $user = $this->getUser();
+
+        $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
+        $repoDeclarationCollecteur = $emDec->getRepository('AeagDecBundle:DeclarationCollecteur');
+        $repoSousDeclarationCollecteur = $emDec->getRepository('AeagDecBundle:SousDeclarationCollecteur');
+        $repoDeclarationDetail = $emDec->getRepository('AeagDecBundle:DeclarationDetail');
         $repoDeclarationProducteur = $emDec->getRepository('AeagDecBundle:DeclarationProducteur');
+        $repoStatut = $emDec->getRepository('AeagDecBundle:Statut');
+
+//        $declarationProducteurs = $repoDeclarationProducteur->getDeclarationProducteursByAnnee($annee);
+//        $declarationProducteurEncours = null;
+//        $nbModifier = 0;
+//        $nbSupprimer = 0;
+//        $nbLus = 0;
+//        foreach ($declarationProducteurs as $declarationProducteur) {
+//            if (!$declarationProducteurEncours) {
+//                $declarationProducteurEncours = $declarationProducteur;
+//                $nb = 0;
+//            }
+//            if ($declarationProducteurEncours->getProducteur() == $declarationProducteur->getProducteur()) {
+//                $nb++;
+//                if ($nb > 1) {
+//                    $nbLus++;
+//                    $declarationProducteurEncours->setQuantiteReel($declarationProducteurEncours->getQuantiteReel() + $declarationProducteur->getQuantiteReel());
+//                    $declarationProducteurEncours->setQuantiteRet($declarationProducteurEncours->getQuantiteRet() + $declarationProducteur->getQuantiteRet());
+//                    $declarationProducteurEncours->setQuantiteAide($declarationProducteurEncours->getQuantiteAide() + $declarationProducteur->getQuantiteAide());
+//                    $declarationProducteurEncours->setMontReel($declarationProducteurEncours->getMontReel() + $declarationProducteur->getMontReel());
+//                    $declarationProducteurEncours->setMontRet($declarationProducteurEncours->getMontRet() + $declarationProducteur->getMontRet());
+//                    $declarationProducteurEncours->setMontAide($declarationProducteurEncours->getMontAide() + $declarationProducteur->getMontAide());
+//                       $declarationDetails = $repoDeclarationDetail->getDeclarationDetailsByDeclarationProducteur($declarationProducteur->getId());
+//                    foreach ($declarationDetails as $declarationDetail) {
+//                        $declarationDetail->setDeclarationProducteur($declarationProducteurEncours);
+//                        $emDec->persist($declarationDetail);
+//                        $emDec->flush();
+////                        print_r ('declaration detail modifie : ' . $declarationDetail->getId() . '  DeclarationProducteur devient : ' . $declarationProducteurEncours->getId());
+//                    }
+//                    $emDec->remove($declarationProducteur);
+//                    $nbSupprimer++;
+////                    print_r('    declaration producteur supprimée : '  . $declarationProducteur->getId());
+//                }
+//            } else {
+//                if ($nb > 1) {
+//                    $emDec->persist($declarationProducteurEncours);
+//                    $nbModifier++;
+//                }
+//                $declarationProducteurEncours = $declarationProducteur;
+//                $nb = 0;
+//            }
+//        }
+//        if ($nb > 1) {
+//            $emDec->persist($declarationProducteurEncours);
+//            $nbModifier++;
+//        }
+//        $emDec->flush();
+//        return new Response('nb : ' . count($declarationProducteurs) . ' Lus : ' . $nbLus . ' modifier : ' . $nbModifier . ' supprimer : ' . $nbSupprimer);
+//
+//
+//        $producteurs = $repoOuvrage->getAllProducteurs();
+//        $producteurEncours = null;
+//
+//        $nbModifier = 0;
+//        $nbSupprimer = 0;
+//        $nbLus = 0;
+//        foreach ($producteurs as $producteur) {
+//            if (!$producteurEncours) {
+//                $producteurEncours = clone($producteur);
+//                $nb = 0;
+//            }
+//            if ($producteurEncours->getSiret() == $producteur->getSiret()) {
+//                $nb++;
+//                if ($nb > 1) {
+//                    $nbLus++;
+//                    $nb++;
+//                    $declarationProducteur = $repoDeclarationProducteur->getDeclarationProducteurByProducteurAnnee($producteur->getId(), $annee);
+//                    if ($declarationProducteur) {
+//                        $producteurLu = $repoOuvrage->getOuvrageById($declarationProducteur->getProducteur());
+//                        if ($producteurLu->getSiret() == $producteurEncours->getSiret()) {
+//                            $declarationProducteur->setProducteur($producteurEncours->getId());
+//                            if ($declarationProducteur->getQuantiteReel() == 0 and $declarationProducteur->getMontReel() == 0 and
+//                                    $declarationProducteur->getQuantiteRet() == 0 and $declarationProducteur->getMontRet() == 0 and
+//                                    $declarationProducteur->getQuantiteAide() == 0 and $declarationProducteur->getMontAide() == 0) {
+//                                $emDec->remove($declarationProducteur);
+//                            } else {
+//                                $emDec->persist($declarationProducteur);
+//                            }
+//                            $nbModifier++;
+//                            if ($producteurLu->getId() != $producteurEncours->getId()) {
+//                                $em->remove($producteurLu);
+//                                $nbSupprimer++;
+//                            }
+//                        }
+//                    }
+//                }
+//            } else {
+//                $producteurEncours = clone($producteur);
+//                $nb = 0;
+//            }
+//        }
+//        $emDec->flush();
+//        $em->flush();
+//        return new Response('nb : ' . count($producteurs) . ' Lus : ' . $nbLus . ' modifier : ' . $nbModifier . ' supprimer : ' . $nbSupprimer);
+        //
         $declarationProducteurs = $repoDeclarationProducteur->getDeclarationProducteursByAnnee($annee);
         $nb = 0;
         $total = count($declarationProducteurs);
         foreach ($declarationProducteurs as $declarationProducteur) {
-            $ok = null;
-            $ok = CollecteurController::majStatutDeclarationProducteursAction($declarationProducteur->getId(), $user, $emDec, $session);
-            //print_r($ok);
+            $statut = $repoStatut->getStatutByCode('10');
+            $totQuantiteReel = 0;
+            $totMontReel = 0;
+            $totQuantiteRet = 0;
+            $totMontRet = 0;
+            $totQuantiteAide = 0;
+            $totMontAide = 0;
+            $declarationDetails = $repoDeclarationDetail->getDeclarationDetailsByDeclarationProducteur($declarationProducteur->getId());
+            foreach ($declarationDetails as $declarationDetail) {
+                if ($statut->getCode() < $declarationDetail->getStatut()->getCode()) {
+                    $statut = $declarationDetail->getStatut();
+                }
+                if ($declarationDetail->getStatut()->getCode() != '11') {
+                    $totQuantiteReel += $declarationDetail->getQuantiteReel();
+                    $totMontReel += $declarationDetail->getMontreel();
+                    $totQuantiteRet += $declarationDetail->getQuantiteRet();
+                    $totMontRet += $declarationDetail->getMontret();
+                    $totQuantiteAide += $declarationDetail->getQuantiteAide();
+                    $totMontAide += $declarationDetail->getMontAide();
+                }
+            }
+            if ($statut->getCode() == '10') {
+                $statut = $repoStatut->getStatutByCode('20');
+            } elseif ($statut->getCode() == '11') {
+                $statut = $repoStatut->getStatutByCode('21');
+            }
+            $declarationProducteur->setStatut($statut);
+            $declarationProducteur->setQuantiteRet($totQuantiteRet);
+            $declarationProducteur->setMontRet($totMontRet);
+            $declarationProducteur->setQuantiteReel($totQuantiteReel);
+            $declarationProducteur->setMontReel($totMontReel);
+            $declarationProducteur->setQuantiteAide($totQuantiteAide);
+            $declarationProducteur->setMontAide($totMontAide);
+            $emDec->persist($declarationProducteur);
             $nb++;
-//            return $this->render('AeagDecBundle:Admin:progression.html.twig', array(
-//                        'nb' => $nb,
-//                        'total' => $total
-//            ));
         }
+        $emDec->flush();
         return $this->redirect($this->generateUrl('AeagDecBundle_admin_listeDeclarationCollecteurs', array('annee' => $annee, 'statut' => '99')));
     }
 

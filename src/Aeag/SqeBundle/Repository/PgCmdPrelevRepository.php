@@ -77,7 +77,7 @@ class PgCmdPrelevRepository extends EntityRepository {
         $query = $query . " and p.periode = " . $pgProgPeriodes->getId();
         $qb = $this->_em->createQuery($query);
         //print_r($query);
-         return $qb->getOneOrNullResult();
+          return $qb->getResult();
      }
     
 }

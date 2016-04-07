@@ -52,6 +52,16 @@ class OuvrageRepository extends EntityRepository {
         //print_r($query);
         return $qb->getResult();
     }
+    
+     public function getAllProducteurs() {
+        $query = "select c";
+        $query = $query . " from Aeag\AeagBundle\Entity\Ouvrage c";
+        $query = $query . " where c.type = 'PDEC'";
+        $query = $query . " order by c.siret, c.naf, c.ville";
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+        return $qb->getResult();
+    }
 
 
     /**

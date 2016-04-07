@@ -30,6 +30,7 @@ class DeclarationProducteurRepository extends EntityRepository {
         $query = "select d";
         $query = $query . " from Aeag\DecBundle\Entity\DeclarationProducteur d";
         $query = $query . " where d.annee = " . $annee;
+        $query = $query . " order by d.id  ";
         $qb = $this->_em->createQuery($query);
         //print_r($query);
         return $qb->getResult();

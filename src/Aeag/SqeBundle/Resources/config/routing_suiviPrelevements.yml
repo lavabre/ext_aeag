@@ -37,38 +37,13 @@ AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_deposer:
     defaults: { _controller: AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemandeSuiviDeposer, suiviPrelId : null, periodeAnId : null}
     requirements:
          methods:  GET|POST
-         
    
 AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_supprimer:
     path:  /supprimer/{suiviPrelId}/{periodeAnId}
     defaults: { _controller: AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemandeSuiviSupprimer, suiviPrelId : null, periodeAnId : null}
     requirements:
         methods:  GET|POST
-        
-AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_saisir_env_situ:
-    path:  /saisir/env/{prelevId}/{periodeAnId}/{stationId}
-    defaults: { _controller: AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemandeSuiviSaisirEnvSitu, prelevId : null, periodeAnId : null, stationId : null}
-    requirements:
-        methods:  GET|POST
-        
-AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_saisir_ana:
-    path:  /saisir/ana/{prelevId}/{periodeAnId}/{stationId}
-    defaults: { _controller: AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemandeSuiviSaisirAna, prelevId : null, periodeAnId : null, stationId : null}
-    requirements:
-        methods:  GET|POST
-        
-AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_env_situ_resultat:
-    path:  /resultat/env/{prelevId}/{periodeAnId}/{stationId}
-    defaults: { _controller: AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemandeSuiviResultatEnvSitu, prelevId : null, periodeAnId : null, stationId : null}
-    requirements:
-        methods:  GET|POST
-        
-AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_ana_resultat:
-    path:  /resultat/ana/{prelevId}/{periodeAnId}/{stationId}
-    defaults: { _controller: AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemandeSuiviResultatAna, prelevId : null, periodeAnId : null, stationId : null}
-    requirements:
-        methods:  GET|POST
-        
+  
 AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_fichier_deposer:
     path:  /fichier/deposer/{suiviPrelId}/{periodeAnId}
     defaults: { _controller: AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemandeSuiviFichierDeposer, suiviPrelId : null, periodeAnId : null }

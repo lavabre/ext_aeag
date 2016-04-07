@@ -1905,7 +1905,7 @@ class CollecteurController extends Controller {
                             }
                             $producteurs = $repoOuvrage->getOuvragesBySiretType($tab[0], 'PDEC');
                             if ($producteurs) {
-                                $producteur = null;
+                                $producteur = $producteurs[0];
                             }
                             if (!$producteur) {
                                 $producteur = new Ouvrage();

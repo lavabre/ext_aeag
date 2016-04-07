@@ -11,8 +11,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Entity(repositoryClass="Aeag\SqeBundle\Repository\PgCmdPrelevRepository")
  */
-class PgCmdPrelev
-{
+class PgCmdPrelev {
+
     /**
      * @var string
      *
@@ -36,6 +36,13 @@ class PgCmdPrelev
      * @ORM\Column(name="date_prelev", type="datetime", nullable=true)
      */
     private $datePrelev;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="prof_max", type="decimal", precision=8, scale=2, nullable=true)
+     */
+    private $profMax;
 
     /**
      * @var string
@@ -142,19 +149,16 @@ class PgCmdPrelev
     /**
      * Constructor
      */
-    public function __construct()
-    {
+    public function __construct() {
         $this->pprog = new \Doctrine\Common\Collections\ArrayCollection();
     }
-
 
     /**
      * Get id
      *
      * @return string
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -165,8 +169,7 @@ class PgCmdPrelev
      *
      * @return PgCmdPrelev
      */
-    public function setCodePrelevCmd($codePrelevCmd)
-    {
+    public function setCodePrelevCmd($codePrelevCmd) {
         $this->codePrelevCmd = $codePrelevCmd;
 
         return $this;
@@ -177,8 +180,7 @@ class PgCmdPrelev
      *
      * @return string
      */
-    public function getCodePrelevCmd()
-    {
+    public function getCodePrelevCmd() {
         return $this->codePrelevCmd;
     }
 
@@ -189,8 +191,7 @@ class PgCmdPrelev
      *
      * @return PgCmdPrelev
      */
-    public function setDatePrelev($datePrelev)
-    {
+    public function setDatePrelev($datePrelev) {
         $this->datePrelev = $datePrelev;
 
         return $this;
@@ -201,9 +202,16 @@ class PgCmdPrelev
      *
      * @return \DateTime
      */
-    public function getDatePrelev()
-    {
+    public function getDatePrelev() {
         return $this->datePrelev;
+    }
+
+    function getProfMax() {
+        return $this->profMax;
+    }
+
+    function setProfMax($profMax) {
+        $this->profMax = $profMax;
     }
 
     /**
@@ -213,8 +221,7 @@ class PgCmdPrelev
      *
      * @return PgCmdPrelev
      */
-    public function setRealise($realise)
-    {
+    public function setRealise($realise) {
         $this->realise = $realise;
 
         return $this;
@@ -225,8 +232,7 @@ class PgCmdPrelev
      *
      * @return string
      */
-    public function getRealise()
-    {
+    public function getRealise() {
         return $this->realise;
     }
 
@@ -237,8 +243,7 @@ class PgCmdPrelev
      *
      * @return PgCmdPrelev
      */
-    public function setPrestaPrel(\Aeag\SqeBundle\Entity\PgRefCorresPresta $prestaPrel = null)
-    {
+    public function setPrestaPrel(\Aeag\SqeBundle\Entity\PgRefCorresPresta $prestaPrel = null) {
         $this->prestaPrel = $prestaPrel;
 
         return $this;
@@ -249,8 +254,7 @@ class PgCmdPrelev
      *
      * @return \Aeag\SqeBundle\Entity\PgRefCorresPresta
      */
-    public function getPrestaPrel()
-    {
+    public function getPrestaPrel() {
         return $this->prestaPrel;
     }
 
@@ -261,8 +265,7 @@ class PgCmdPrelev
      *
      * @return PgCmdPrelev
      */
-    public function setDemande(\Aeag\SqeBundle\Entity\PgCmdDemande $demande = null)
-    {
+    public function setDemande(\Aeag\SqeBundle\Entity\PgCmdDemande $demande = null) {
         $this->demande = $demande;
 
         return $this;
@@ -273,8 +276,7 @@ class PgCmdPrelev
      *
      * @return \Aeag\SqeBundle\Entity\PgCmdDemande
      */
-    public function getDemande()
-    {
+    public function getDemande() {
         return $this->demande;
     }
 
@@ -285,8 +287,7 @@ class PgCmdPrelev
      *
      * @return PgCmdPrelev
      */
-    public function setStation(\Aeag\SqeBundle\Entity\PgRefStationMesure $station = null)
-    {
+    public function setStation(\Aeag\SqeBundle\Entity\PgRefStationMesure $station = null) {
         $this->station = $station;
 
         return $this;
@@ -297,8 +298,7 @@ class PgCmdPrelev
      *
      * @return \Aeag\SqeBundle\Entity\PgRefStationMesure
      */
-    public function getStation()
-    {
+    public function getStation() {
         return $this->station;
     }
 
@@ -309,8 +309,7 @@ class PgCmdPrelev
      *
      * @return PgCmdPrelev
      */
-    public function setPeriode(\Aeag\SqeBundle\Entity\PgProgPeriodes $periode = null)
-    {
+    public function setPeriode(\Aeag\SqeBundle\Entity\PgProgPeriodes $periode = null) {
         $this->periode = $periode;
 
         return $this;
@@ -321,8 +320,7 @@ class PgCmdPrelev
      *
      * @return \Aeag\SqeBundle\Entity\PgProgPeriodes
      */
-    public function getPeriode()
-    {
+    public function getPeriode() {
         return $this->periode;
     }
 
@@ -333,8 +331,7 @@ class PgCmdPrelev
      *
      * @return PgCmdPrelev
      */
-    public function setCodeSupport(\Aeag\SqeBundle\Entity\PgSandreSupports $codeSupport = null)
-    {
+    public function setCodeSupport(\Aeag\SqeBundle\Entity\PgSandreSupports $codeSupport = null) {
         $this->codeSupport = $codeSupport;
 
         return $this;
@@ -345,8 +342,7 @@ class PgCmdPrelev
      *
      * @return \Aeag\SqeBundle\Entity\PgSandreSupports
      */
-    public function getCodeSupport()
-    {
+    public function getCodeSupport() {
         return $this->codeSupport;
     }
 
@@ -357,8 +353,7 @@ class PgCmdPrelev
      *
      * @return PgCmdPrelev
      */
-    public function setPhaseDmd(\Aeag\SqeBundle\Entity\PgProgPhases $phaseDmd = null)
-    {
+    public function setPhaseDmd(\Aeag\SqeBundle\Entity\PgProgPhases $phaseDmd = null) {
         $this->phaseDmd = $phaseDmd;
 
         return $this;
@@ -369,8 +364,7 @@ class PgCmdPrelev
      *
      * @return \Aeag\SqeBundle\Entity\PgProgPhases
      */
-    public function getPhaseDmd()
-    {
+    public function getPhaseDmd() {
         return $this->phaseDmd;
     }
 
@@ -381,8 +375,7 @@ class PgCmdPrelev
      *
      * @return PgCmdPrelev
      */
-    public function setCodeMethode(\Aeag\SqeBundle\Entity\PgSandreMethodes $codeMethode = null)
-    {
+    public function setCodeMethode(\Aeag\SqeBundle\Entity\PgSandreMethodes $codeMethode = null) {
         $this->codeMethode = $codeMethode;
 
         return $this;
@@ -393,8 +386,7 @@ class PgCmdPrelev
      *
      * @return \Aeag\SqeBundle\Entity\PgSandreMethodes
      */
-    public function getCodeMethode()
-    {
+    public function getCodeMethode() {
         return $this->codeMethode;
     }
 
@@ -405,8 +397,7 @@ class PgCmdPrelev
      *
      * @return PgCmdPrelev
      */
-    public function setFichierRps(\Aeag\SqeBundle\Entity\PgCmdFichiersRps $fichierRps = null)
-    {
+    public function setFichierRps(\Aeag\SqeBundle\Entity\PgCmdFichiersRps $fichierRps = null) {
         $this->fichierRps = $fichierRps;
 
         return $this;
@@ -417,8 +408,7 @@ class PgCmdPrelev
      *
      * @return \Aeag\SqeBundle\Entity\PgCmdFichiersRps
      */
-    public function getFichierRps()
-    {
+    public function getFichierRps() {
         return $this->fichierRps;
     }
 
@@ -429,8 +419,7 @@ class PgCmdPrelev
      *
      * @return PgCmdPrelev
      */
-    public function addPprog(\Aeag\SqeBundle\Entity\PgProgLotPeriodeProg $pprog)
-    {
+    public function addPprog(\Aeag\SqeBundle\Entity\PgProgLotPeriodeProg $pprog) {
         $this->pprog[] = $pprog;
 
         return $this;
@@ -441,8 +430,7 @@ class PgCmdPrelev
      *
      * @param \Aeag\SqeBundle\Entity\PgProgLotPeriodeProg $pprog
      */
-    public function removePprog(\Aeag\SqeBundle\Entity\PgProgLotPeriodeProg $pprog)
-    {
+    public function removePprog(\Aeag\SqeBundle\Entity\PgProgLotPeriodeProg $pprog) {
         $this->pprog->removeElement($pprog);
     }
 
@@ -451,8 +439,8 @@ class PgCmdPrelev
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getPprog()
-    {
+    public function getPprog() {
         return $this->pprog;
     }
+
 }

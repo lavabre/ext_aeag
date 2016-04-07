@@ -2168,7 +2168,7 @@ class ReferentielController extends Controller {
                         $tab[0] = str_replace("'", "", $tab[0]);
                         $Ouvrages = $repoOuvrage->getOuvragesBySiretType($tab[0], 'PDEC');
                         $Ouvrage = null;
-                        if ($Ouvrages) {
+                        if (count($Ouvrages) > 0) {
                             $Ouvrage = $Ouvrages[0];
                         }
                         if (!$Ouvrage) {
