@@ -46,9 +46,11 @@
                                 <a id="id_{{demande.id}}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_echangefichiers_telecharger',{'demandeId' : demande.id})}}" title="Télécharger la DAI">
                                     <i class="fa fa-upload"></i> 
                                 </a>
-                                <a id="id_{{demande.id}}" class="btn btn-primary btn-deposer-reponse" data-id="{{demande.id}}" title="Déposer une RAI">
-                                    <i class="fa fa-download"></i> 
-                                </a>
+                                {% if (is_granted('ROLE_ADMINSQE') or (user.prestataire == demande.prestataire and ("Saisie" not in demande.formatFichier))) and (demande.phaseDemande.codePhase != 'D40' and demande.phaseDemande.codePhase != 'D50') %}
+                                    <a id="id_{{demande.id}}" class="btn btn-primary btn-deposer-reponse" data-id="{{demande.id}}" title="Déposer une RAI">
+                                        <i class="fa fa-download"></i> 
+                                    </a>
+                                {% endif%}
                             </td>
                             {% if demande.periode %}
                                 <td>{{ demande.periode.labelPeriode}}</td>
@@ -99,7 +101,7 @@
     jQuery(document).ready(function() {
         var table = $('#idTable_demandes').DataTable(
             {"stateSave": true,
-             "order": [[ 1, "desc" ]],
+             "order": [[ 1, 'asc' ], [ 2, 'asc' ]],
             "oLanguage": {
             "sSearch": "Filtre",
             "sFirst": "1ere page",
@@ -112,7 +114,7 @@
             "sZeroRecords": "Pas d'enregistrement à afficher",
             "sInfoEmpty": "Pas d'enregistrement à afficher",
             "sInfoThousands": " ",
-            "sLengthMenu": 'Afficher <select>' +
+            "sLengthMenu": 'Afficher <select id="select-length-menu">' +
                 '<option value="10">10</option>' +
                 '<option value="20">20</option>' +
                 '<option value="30">30</option>' +
@@ -145,6 +147,8 @@
         $('.btn-telecharger').click(function (){
             setTimeout("window.location.reload()",2000);//or other value
         });
+        
+        $('#select-length-menu').val("-1");
         
         $('.btn-voir-reponses').click(function (){
             $('#modalTraitementEncours').modal();
