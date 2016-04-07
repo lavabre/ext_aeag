@@ -99,84 +99,84 @@ class PgCmdMesureEnv {
      */
     private $paramProg;
 
-    function getPrelev() {
+    public function getPrelev() {
         return $this->prelev;
     }
 
-    function getCodeParametre() {
+    public function getCodeParametre() {
         return $this->codeParametre;
     }
 
-    function getDateMes() {
+    public function getDateMes() {
         return $this->dateMes;
     }
 
-    function getResultat() {
+    public function getResultat() {
         return $this->resultat;
     }
 
-    function getCodeUnite() {
+    public function getCodeUnite() {
         return $this->codeUnite;
     }
 
-    function getCodeRemarque() {
+    public function getCodeRemarque() {
         return $this->codeRemarque;
     }
 
-    function getCodeMethode() {
+    public function getCodeMethode() {
         return $this->codeMethode;
     }
 
-    function getCodeStatut() {
+    public function getCodeStatut() {
         return $this->codeStatut;
     }
 
-    function getParamProg() {
-        return $this->paramProg;
-    }
-
-    function setPrelev($prelev) {
-        $this->prelev = $prelev;
-    }
-
-    function setCodeParametre($codeParametre) {
-        $this->codeParametre = $codeParametre;
-    }
-
-    function setDateMes(\DateTime $dateMes) {
-        $this->dateMes = $dateMes;
-    }
-
-    function setResultat($resultat) {
-        $this->resultat = $resultat;
-    }
-
-    function setCodeUnite($codeUnite) {
-        $this->codeUnite = $codeUnite;
-    }
-
-    function setCodeRemarque($codeRemarque) {
-        $this->codeRemarque = $codeRemarque;
-    }
-
-    function setCodeMethode($codeMethode) {
-        $this->codeMethode = $codeMethode;
-    }
-
-    function setCodeStatut($codeStatut) {
-        $this->codeStatut = $codeStatut;
-    }
-
-    function setParamProg(\Aeag\SqeBundle\Entity\PgProgLotParamAn $paramProg) {
-        $this->paramProg = $paramProg;
-    }
-
-    function getLibelleStatut() {
+    public function getLibelleStatut() {
         return $this->libelleStatut;
     }
 
-    function setLibelleStatut($libelleStatut) {
+    public function getParamProg() {
+        return $this->paramProg;
+    }
+
+    public function setPrelev(\Aeag\SqeBundle\Entity\PgCmdPrelev $prelev) {
+        $this->prelev = $prelev;
+    }
+
+    public function setCodeParametre(\Aeag\SqeBundle\Entity\PgSandreParametres $codeParametre) {
+        $this->codeParametre = $codeParametre;
+    }
+
+    public function setDateMes(\DateTime $dateMes) {
+        $this->dateMes = $dateMes;
+    }
+
+    public function setResultat($resultat) {
+        $this->resultat = $resultat;
+    }
+
+    public function setCodeUnite(\Aeag\SqeBundle\Entity\PgSandreUnites $codeUnite) {
+        $this->codeUnite = $codeUnite;
+    }
+
+    public function setCodeRemarque($codeRemarque) {
+        $this->codeRemarque = $codeRemarque;
+    }
+
+    public function setCodeMethode($codeMethode) {
+        $this->codeMethode = $codeMethode;
+    }
+
+    public function setCodeStatut($codeStatut) {
+        $this->codeStatut = $codeStatut;
+    }
+
+    public function setLibelleStatut($libelleStatut) {
         $this->libelleStatut = $libelleStatut;
+    }
+
+    public function setParamProg(\Aeag\SqeBundle\Entity\PgProgLotParamAn $paramProg) {
+        $this->paramProg = $paramProg;
     }
 
 }

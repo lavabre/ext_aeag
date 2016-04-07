@@ -157,148 +157,148 @@ class PgCmdAnalyse {
      */
     private $paramProg;
 
-    function getPrelevId() {
+    public function getPrelevId() {
         return $this->prelevId;
     }
 
-    function getNumOrdre() {
+    public function getNumOrdre() {
         return $this->numOrdre;
     }
 
-    function getCodeParametre() {
+    public function getCodeParametre() {
         return $this->codeParametre;
     }
 
-    function getCodeFraction() {
+    public function getCodeFraction() {
         return $this->codeFraction;
     }
 
-    function getLieuAna() {
+    public function getLieuAna() {
         return $this->lieuAna;
     }
 
-    function getDateAna() {
+    public function getDateAna() {
         return $this->dateAna;
     }
 
-    function getResultat() {
+    public function getResultat() {
         return $this->resultat;
     }
 
-    function getCodeUnite() {
+    public function getCodeUnite() {
         return $this->codeUnite;
     }
 
-    function getCodeRemarque() {
+    public function getCodeRemarque() {
         return $this->codeRemarque;
     }
 
-    function getLqAna() {
+    public function getLqAna() {
         return $this->lqAna;
     }
 
-    function getRefAnaLabo() {
+    public function getRefAnaLabo() {
         return $this->refAnaLabo;
     }
 
-    function getCodeMethode() {
+    public function getCodeMethode() {
         return $this->codeMethode;
     }
 
-    function getAccreditation() {
+    public function getAccreditation() {
         return $this->accreditation;
     }
 
-    function getConfirmation() {
+    public function getConfirmation() {
         return $this->confirmation;
     }
 
-    function getReserve() {
+    public function getReserve() {
         return $this->reserve;
     }
 
-    function getCodeStatut() {
+    public function getCodeStatut() {
         return $this->codeStatut;
     }
 
-    function getParamProg() {
-        return $this->paramProg;
-    }
-
-    function setPrelevId($prelevId) {
-        $this->prelevId = $prelevId;
-    }
-
-    function setNumOrdre($numOrdre) {
-        $this->numOrdre = $numOrdre;
-    }
-
-    function setCodeParametre($codeParametre) {
-        $this->codeParametre = $codeParametre;
-    }
-
-    function setCodeFraction($codeFraction) {
-        $this->codeFraction = $codeFraction;
-    }
-
-    function setLieuAna($lieuAna) {
-        $this->lieuAna = $lieuAna;
-    }
-
-    function setDateAna(\DateTime $dateAna) {
-        $this->dateAna = $dateAna;
-    }
-
-    function setResultat($resultat) {
-        $this->resultat = $resultat;
-    }
-
-    function setCodeUnite($codeUnite) {
-        $this->codeUnite = $codeUnite;
-    }
-
-    function setCodeRemarque($codeRemarque) {
-        $this->codeRemarque = $codeRemarque;
-    }
-
-    function setLqAna($lqAna) {
-        $this->lqAna = $lqAna;
-    }
-
-    function setRefAnaLabo($refAnaLabo) {
-        $this->refAnaLabo = $refAnaLabo;
-    }
-
-    function setCodeMethode($codeMethode) {
-        $this->codeMethode = $codeMethode;
-    }
-
-    function setAccreditation($accreditation) {
-        $this->accreditation = $accreditation;
-    }
-
-    function setConfirmation($confirmation) {
-        $this->confirmation = $confirmation;
-    }
-
-    function setReserve($reserve) {
-        $this->reserve = $reserve;
-    }
-
-    function setCodeStatut($codeStatut) {
-        $this->codeStatut = $codeStatut;
-    }
-
-    function setParamProg($paramProg) {
-        $this->paramProg = $paramProg;
-    }
-
-    function getLibelleStatut() {
+    public function getLibelleStatut() {
         return $this->libelleStatut;
     }
 
-    function setLibelleStatut($libelleStatut) {
+    public function getParamProg() {
+        return $this->paramProg;
+    }
+
+    public function setPrelevId($prelevId) {
+        $this->prelevId = $prelevId;
+    }
+
+    public function setNumOrdre($numOrdre) {
+        $this->numOrdre = $numOrdre;
+    }
+
+    public function setCodeParametre(\Aeag\SqeBundle\Entity\PgSandreParametres $codeParametre) {
+        $this->codeParametre = $codeParametre;
+    }
+
+    public function setCodeFraction(\Aeag\SqeBundle\Entity\PgSandreFractions $codeFraction) {
+        $this->codeFraction = $codeFraction;
+    }
+
+    public function setLieuAna($lieuAna) {
+        $this->lieuAna = $lieuAna;
+    }
+
+    public function setDateAna(\DateTime $dateAna) {
+        $this->dateAna = $dateAna;
+    }
+
+    public function setResultat($resultat) {
+        $this->resultat = $resultat;
+    }
+
+    public function setCodeUnite(\Aeag\SqeBundle\Entity\PgSandreUnites $codeUnite) {
+        $this->codeUnite = $codeUnite;
+    }
+
+    public function setCodeRemarque($codeRemarque) {
+        $this->codeRemarque = $codeRemarque;
+    }
+
+    public function setLqAna($lqAna) {
+        $this->lqAna = $lqAna;
+    }
+
+    public function setRefAnaLabo($refAnaLabo) {
+        $this->refAnaLabo = $refAnaLabo;
+    }
+
+    public function setCodeMethode($codeMethode) {
+        $this->codeMethode = $codeMethode;
+    }
+
+    public function setAccreditation($accreditation) {
+        $this->accreditation = $accreditation;
+    }
+
+    public function setConfirmation($confirmation) {
+        $this->confirmation = $confirmation;
+    }
+
+    public function setReserve($reserve) {
+        $this->reserve = $reserve;
+    }
+
+    public function setCodeStatut($codeStatut) {
+        $this->codeStatut = $codeStatut;
+    }
+
+    public function setLibelleStatut($libelleStatut) {
         $this->libelleStatut = $libelleStatut;
+    }
+
+    public function setParamProg(\Aeag\SqeBundle\Entity\PgProgLotParamAn $paramProg) {
+        $this->paramProg = $paramProg;
     }
 
 }

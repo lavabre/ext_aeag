@@ -191,7 +191,7 @@ class PgCmdPrelev {
      *
      * @return PgCmdPrelev
      */
-    public function setDatePrelev($datePrelev) {
+    public function setDatePrelev(\DateTime $datePrelev) {
         $this->datePrelev = $datePrelev;
 
         return $this;
