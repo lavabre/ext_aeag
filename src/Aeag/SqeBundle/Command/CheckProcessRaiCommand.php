@@ -7,8 +7,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Aeag\AeagBundle\Entity\Notification;
-use Aeag\AeagBundle\Entity\Message;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class CheckProcessRaiCommand extends ContainerAwareCommand {
@@ -29,6 +27,9 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
     private $repoPgCmdPrelev;
     private $repoPgCmdPrelevPc;
     private $repoPgProgWebUsers;
+    private $repoPgSandreParametres;
+    private $repoPgSandreUnites;
+    private $repoPgSandreZoneVerticaleProspectee;
     
     private $detectionCodeRemarqueComplet;
     private $detectionCodeRemarqueMoitie;
@@ -60,6 +61,10 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
         $this->repoPgCmdPrelev = $this->emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
         $this->repoPgCmdPrelevPc = $this->emSqe->getRepository('AeagSqeBundle:PgCmdPrelevPc');
         $this->repoPgProgWebUsers = $this->emSqe->getRepository('AeagSqeBundle:PgProgWebUsers');
+        $this->repoPgSandreParametres = $this->emSqe->getRepository('AeagSqeBundle:PgSandreParametres');
+        $this->repoPgSandreUnites = $this->emSqe->getRepository('AeagSqeBundle:PgSandreUnites');
+        $this->repoPgSandreZoneVerticaleProspectee = $this->emSqe->getRepository('AeagSqeBundle:PgSandreZoneVerticaleProspectee');
+        $this->repoPgProgLotParamAn = $this->emSqe->getRepository('AeagSqeBundle:PgProgLotParamAn');
 
         // Chargement des fichiers csv dans des tableaux 
         $cheminCourant = __DIR__.'/../../../../';
@@ -128,9 +133,9 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
             $this->_envoiMessage($txtMessage, $destinataire, $objetMessage);
             
             // Insertion données brutes
-            //if ((count($logErrorsVraisemblance) == 0) && (count($logErrorsCoherence) == 0 )) {
-                //$this->_integrationDonneesBrutes($pgCmdFichierRps);
-            //}
+            if ((count($logErrorsVraisemblance) == 0) && (count($logErrorsCoherence) == 0 )) {
+                $this->_integrationDonneesBrutes($pgCmdFichierRps);
+            }
 
             // TODO Vider la table tempo des lignes correspondant à la RAI
         }
@@ -369,7 +374,10 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
             $pgCmdPrelev = $this->repoPgCmdPrelev->findOneBy(array('demande' => $pgTmpValidEdilabo->getDemandeId(), 'codePrelevCmd' => $pgTmpValidEdilabo->getCodePrelevement()));
             if (!is_null($pgCmdPrelev)) {
                 $pgCmdPrelev->setFichierRps($pgCmdFichierRps);
-                $pgCmdPrelev->setDatePrelev($pgTmpValidEdilabo->getDatePrel());
+                if (!is_null($pgTmpValidEdilabo->getDatePrel())) {
+                    $datePrel = \DateTime::createFromFormat('Y-m-d', $pgTmpValidEdilabo->getDatePrel());
+                    $pgCmdPrelev->setDatePrelev($datePrel);
+                }
                 $pgCmdPrelev->setCodeMethode($pgTmpValidEdilabo->getMethPrel());
                 $pgCmdPrelev->setRealise("1");
                 $this->emSqe->persist($pgCmdPrelev);
@@ -393,7 +401,10 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
                     $pgCmdPrelevPc->setXPrel($pgTmpValidEdilabo->getXPrel());
                     $pgCmdPrelevPc->setYPrel($pgTmpValidEdilabo->getYPrel());
                     $pgCmdPrelevPc->setLocalisation($pgTmpValidEdilabo->getLocalisation());
-                    $pgCmdPrelevPc->setZoneVerticale($pgTmpValidEdilabo->getZoneVert());
+                    $pgSandreZoneVerticaleProspectee = $this->repoPgSandreZoneVerticaleProspectee->findOneByCodeZone($pgTmpValidEdilabo->getZoneVert());
+                    if (!is_null($pgSandreZoneVerticaleProspectee)) {
+                        $pgCmdPrelevPc->setZoneVerticale($pgSandreZoneVerticaleProspectee);
+                    }
                     $pgCmdPrelevPc->setProfondeur($pgTmpValidEdilabo->getProf());
                     $pgCmdPrelevPc->setRefEchPrel($pgTmpValidEdilabo->getRefEchPrel());
                     $pgCmdPrelevPc->setRefEchLabo($pgTmpValidEdilabo->getRefEchLabo());
@@ -411,33 +422,49 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
                 if ($pgTmpValidEdilabo->getInSitu() == 0) {
                     $pgCmdMesureEnv = new \Aeag\SqeBundle\Entity\PgCmdMesureEnv();
                     $pgCmdMesureEnv->setPrelev($pgCmdPrelev);
-                    $pgCmdMesureEnv->setCodeParametre($pgTmpValidEdilabo->getCodeParametre());
+                    $pgSandreParametres = $this->repoPgSandreParametres->findOneByCodeParametre($pgTmpValidEdilabo->getCodeParametre());
+                    if (!is_null($pgSandreParametres)) {
+                        $pgCmdMesureEnv->setCodeParametre($pgSandreParametres);
+                    }
                     if (!is_null($pgTmpValidEdilabo->getDateM())) {
                         $dateM = \DateTime::createFromFormat('Y-m-d', $pgTmpValidEdilabo->getDateM());
                         $pgCmdMesureEnv->setDateMes($dateM);
                     }
                     $pgCmdMesureEnv->setResultat($pgTmpValidEdilabo->getResM());
-                    $pgCmdMesureEnv->setCodeUnite($pgTmpValidEdilabo->getCodeUnite());
+                    $pgSandreUnites = $this->repoPgSandreUnites->findOneByCodeUnite($pgTmpValidEdilabo->getCodeUnite());
+                    if (!is_null($pgSandreUnites)) {
+                        $pgCmdMesureEnv->setCodeUnite($pgSandreUnites);
+                    }
                     $pgCmdMesureEnv->setCodeRemarque($pgTmpValidEdilabo->getCodeRqM());
                     $pgCmdMesureEnv->setCodeMethode($pgTmpValidEdilabo->getMethPrel());
                     $pgCmdMesureEnv->setCodeStatut($pgTmpValidEdilabo->getCodeStatut());
-                    // Censé passer un objet
-                    $pgCmdMesureEnv->setParamProg($pgTmpValidEdilabo->getParamProgId());
+                    $pgProgLotParamAn = $this->repoPgProgLotParamAn->findOneById($pgTmpValidEdilabo->getParamProgId());
+                    if (!is_null($pgProgLotParamAn)) {
+                        $pgCmdMesureEnv->setParamProg($pgProgLotParamAn);
+                    }
                     $this->emSqe->persist($pgCmdMesureEnv);
                 } else {
                     $pgCmdAnalyse = new \Aeag\SqeBundle\Entity\PgCmdAnalyse();
-                    // Censé passer un objet
-                    $pgCmdAnalyse->setPrelevId($pgCmdPrelev);
+                    $pgCmdAnalyse->setPrelevId($pgCmdPrelev->getId());
                     $pgCmdAnalyse->setNumOrdre($pgTmpValidEdilabo->getNumOrdre());
-                    $pgCmdAnalyse->setCodeParametre($pgTmpValidEdilabo->getCodeParametre());
-                    $pgCmdAnalyse->setCodeFraction($pgTmpValidEdilabo->getCodeFraction());
+                    $pgSandreParametres = $this->repoPgSandreParametres->findOneByCodeParametre($pgTmpValidEdilabo->getCodeParametre());
+                    if (!is_null($pgSandreParametres)) {
+                        $pgCmdAnalyse->setCodeParametre($pgSandreParametres);
+                    }
+                    $pgSandreFractions = $this->repoPgSandreFractions->findOneByCodeFraction($pgTmpValidEdilabo->getCodeFraction());
+                    if (!is_null($pgSandreFractions)) {
+                        $pgCmdAnalyse->setCodeFraction($pgSandreFractions);
+                    }
                     $pgCmdAnalyse->setLieuAna($pgTmpValidEdilabo->getInSitu());
                     if (!is_null($pgTmpValidEdilabo->getDateM())) {
                         $dateM = \DateTime::createFromFormat('Y-m-d', $pgTmpValidEdilabo->getDateM());
                         $pgCmdAnalyse->setDateAna($dateM);
                     }
                     $pgCmdAnalyse->setResultat($pgTmpValidEdilabo->getResM());
-                    $pgCmdAnalyse->setCodeUnite($pgTmpValidEdilabo->getCodeUnite());
+                    $pgSandreUnites = $this->repoPgSandreUnites->findOneByCodeUnite($pgTmpValidEdilabo->getCodeUnite());
+                    if (!is_null($pgSandreUnites)) {
+                        $pgCmdAnalyse->setCodeUnite($pgSandreUnites);
+                    }
                     $pgCmdAnalyse->setCodeRemarque($pgTmpValidEdilabo->getCodeRqM());
                     $pgCmdAnalyse->setLqAna($pgTmpValidEdilabo->getLqM());
                     $pgCmdAnalyse->setRefAnaLabo($pgTmpValidEdilabo->getRefAnaLabo());
@@ -446,8 +473,10 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
                     $pgCmdAnalyse->setConfirmation($pgTmpValidEdilabo->getConfirmAna());
                     $pgCmdAnalyse->setReserve($pgTmpValidEdilabo->getReservAna());
                     $pgCmdAnalyse->setCodeStatut($pgTmpValidEdilabo->getCodeStatut());
-                    // Censé passer un objet
-                    $pgCmdAnalyse->setParamProg($pgTmpValidEdilabo->getParamProgId());
+                    $pgProgLotParamAn = $this->repoPgProgLotParamAn->findOneById($pgTmpValidEdilabo->getParamProgId());
+                    if (!is_null($pgProgLotParamAn)) {
+                        $pgCmdAnalyse->setParamProg($pgProgLotParamAn);
+                    }
                     $this->emSqe->persist($pgCmdAnalyse);
                 }
 

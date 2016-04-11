@@ -53,7 +53,8 @@ class EchangeFichiersController extends Controller {
 
         $pgProgWebUser = $repoPgProgWebUsers->findOneByExtId($user->getId());
         $pgProgLotAn = $repoPgProgLotAn->findOneById($lotanId);
-        $pgCmdDemandes = $repoPgCmdDemande->findBy(array('lotan' => $lotanId));
+        $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandeByLotan($pgProgLotAn);
+        
         $reponses = array();
         $reponsesMax = array();
         foreach ($pgCmdDemandes as $pgCmdDemande) {
