@@ -1,5 +1,4 @@
-  
-             <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+          <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
                     <div class="panel panel-default">
                             {% if is_granted('ROLE_ADMINSQE') or  (user.prestataire.adrCorId == groupe.grparAn.prestaDft.adrCorId)  %}
                                     <div class="panel-heading" role="tab" id="heading{{groupe.grparAn.id}}">
@@ -45,12 +44,14 @@
                                               </h4>
                                     </div>
                             {% endif %}
-                            <div id="idGenerer{{ groupe.grparAn.id}}"
-                                    <div id="collapse{{ groupe.grparAn.id}}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading{{ groupe.grparAn.id}}">
+                                <div id="collapse{{ groupe.grparAn.id}}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading{{ groupe.grparAn.id}}">
                                        <div class="panel-body">
                                               <table class="table table-bordered " id="idTable{{ groupe.grparAn.id}}">
                                                                               <thead>
                                                                                        <tr>
+                                                                                          {% if typeMilieu.codeMilieu == 'LPC'  and groupe.grparAn.grparRef.typeGrp == 'SIT'%}
+                                                                                              <th>Profondeur</th>
+                                                                                          {% endif %}
                                                                                          <th>Code</th> 
                                                                                          <th>Libelle</th> 
                                                                                          <th>Remarque</th> 
@@ -67,8 +68,8 @@
                                                                                                                    paramAn.paramAn.codeParametre.codeParametre  == '1303' or
                                                                                                                    paramAn.paramAn.codeParametre.codeParametre  == '1311' or 
                                                                                                                    paramAn.paramAn.codeParametre.codeParametre  == '1312' %}
-                                                                                                           {% set groupeSelectionne =  groupe.grparAn.id %}     
-                                                                                                           {% endif %}
+                                                                                                                   <input type="hidden" id="idGroupeSelectionne" value="{{ groupe.grparAn.id }}">
+                                                                                                               {% endif %}
                                                                                                            {% if is_granted('ROLE_ADMINSQE') or  (user.prestataire.adrCorId == paramAn.paramAn.prestataire.adrCorId)  %}
                                                                                                                 {% if groupe.grparAn.grparRef.typeGrp == 'ENV'  %}
                                                                                                                     {% if paramAn.pgCmdMesureEnv %}
@@ -155,17 +156,26 @@
                                                                                                                    </td>
                                                                                                                </tr>
                                                                                                                  {% else %}
-                                                                                                                     {% if paramAn.pgCmdAnalyse %}
+                                                                                                                    {% if paramAn.pgCmdAnalyse %}
                                                                                                                           {% if paramAn.pgCmdAnalyse.codeStatut == '0' %}
                                                                                                                                <tr class="success">
                                                                                                                           {% elseif paramAn.pgCmdAnalyse.codeStatut == '1' %}
                                                                                                                                <tr class="warning" data-toggle="tooltip" data-placement="bottom" title="{{ paramAn.pgCmdAnalyse.libelleStatut}}">
-                                                                                                                          {% else %}
+                                                                                                                          {% elseif paramAn.pgCmdAnalyse.codeStatut == '2' %}
                                                                                                                                <tr class="danger" data-toggle="tooltip" data-placement="bottom" title="{{ paramAn.pgCmdAnalyse.libelleStatut}}" >
-                                                                                                                          {% endif %}
+                                                                                                                         {% else %}
+                                                                                                                         <tr>
+                                                                                                                    {% endif %}
                                                                                                                     {% else %}
                                                                                                                        <tr>
                                                                                                                    {% endif %}
+                                                                                                                       {% if typeMilieu.codeMilieu == 'LPC' %}
+                                                                                                                           <td align="right">
+                                                                                                                           {% if paramAn.pgCmdPrelevPc %}
+                                                                                                                             {{ paramAn.pgCmdPrelevPc.profondeur | number_format( 2,","," ")  }}
+                                                                                                                           {% endif %}
+                                                                                                                           </td>
+                                                                                                                      {% endif %}
                                                                                                                         <td nowrap>{{ paramAn.paramAn.codeParametre.codeParametre }}</td>
                                                                                                                          <td align="left">{{ paramAn.paramAn.codeParametre.nomParametre }}</td>
                                                                                                                              <td align="right">
@@ -267,6 +277,13 @@
                                                                                                                </tr>
                                                                                                                  {% else %}
                                                                                                                      <tr>
+                                                                                                                       {% if typeMilieu.codeMilieu == 'LPC' %}
+                                                                                                                           <td align="right">
+                                                                                                                           {% if paramAn.pgCmdPrelevPc %}
+                                                                                                                             {{ paramAn.pgCmdPrelevPc.profondeur | number_format( 2,","," ")  }}
+                                                                                                                           {% endif %}
+                                                                                                                           </td>
+                                                                                                                      {% endif %}
                                                                                                                          <td nowrap>{{ paramAn.paramAn.codeParametre.codeParametre }}</td>
                                                                                                                          <td align="left">{{ paramAn.paramAn.codeParametre.nomParametre }}</td>
                                                                                                                          <td align="left">
@@ -308,7 +325,7 @@
                                          </div>
                                     </div>
                              </div>
-             </div>
+                    </div>
  
    <script>
     
@@ -325,8 +342,8 @@
 
               
                     var table{{groupe.grparAn.id }} = $('#idTable{{ groupe.grparAn.id }}').DataTable(
-                       {"stateSave": true,
-                         "order": [[ 0, "desc" ]],
+                       {"stateSave": false,
+                         "order": [[ 1, "asc" ],[ 0, "asc" ]],
                         "language": {
                                 "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
                                },
@@ -346,31 +363,31 @@
                                            nbParamSaisis{{groupe.grparAn.id }} = nbParamSaisis{{groupe.grparAn.id }} + 1;
                                            $('#paramSaisis{{ groupe.grparAn.id}}').empty().html(nbParamSaisis{{groupe.grparAn.id }});
                                            var valeur =   {{  paramAn.pgCmdMesureEnv.codeRemarque }}
-                                            $("#idRemarque{{ paramAn.paramAn.id}} option[value='" + valeur + "']").attr('selected','selected');
-                                            $("#idRemarque{{ paramAn.paramAn.id}}").val(valeur);
-                                            if ($("#idValeur{{ paramAn.paramAn.id}}").val() == "" ){
-                                                $('#idRemarque{{ paramAn.paramAn.id}} option:selected').removeAttr('selected');
+                                            $("#idRemarque{{ paramAn.id}} option[value='" + valeur + "']").attr('selected','selected');
+                                            $("#idRemarque{{ paramAn.id}}").val(valeur);
+                                            if ($("#idValeur{{ paramAn.id}}").val() == "" ){
+                                                $('#idRemarque{{ paramAn.id}} option:selected').removeAttr('selected');
                                                 var remarque =  "0";
-                                                $("#idRemarque{{ paramAn.paramAn.id}} option[value='" + remarque + "']").attr('selected','selected');
-                                                $("#idRemarque{{ paramAn.paramAn.id}}").val(remarque);
+                                                $("#idRemarque{{ paramAn.id}} option[value='" + remarque + "']").attr('selected','selected');
+                                                $("#idRemarque{{ paramAn.id}}").val(remarque);
                                              };
                                            {% for valeur in paramAn.valeurs %}
                                                     {% if paramAn.pgCmdMesureEnv.resultat | replace({".0000000000" : ""})   == valeur.valeur  | replace({".00" : ""}) %}
-                                                            $('#idValeur{{ paramAn.paramAn.id}} option:selected').removeAttr('selected');
+                                                            $('#idValeur{{ paramAn.id}} option:selected').removeAttr('selected');
                                                             var valeur =   {{ valeur.valeur |  replace({".00" : ""})}}
-                                                            $("#idValeur{{ paramAn.paramAn.id}} option[value='" + valeur + "']").attr('selected','selected');
-                                                            $("#idValeur{{ paramAn.paramAn.id}}").val(valeur);
+                                                            $("#idValeur{{ paramAn.id}} option[value='" + valeur + "']").attr('selected','selected');
+                                                            $("#idValeur{{ paramAn.id}}").val(valeur);
                                                     {% endif %}
                                            {% endfor %}
                                    {% endif %}
-                                    $(document).on('change','#idValeur{{ paramAn.paramAn.id}}',function(e){
-                                            if ($("#idValeur{{ paramAn.paramAn.id}}").val() != "" ){
-                                                     $('#idRemarque{{ paramAn.paramAn.id}} option:selected').removeAttr('selected');
+                                    $(document).on('change','#idValeur{{ paramAn.id}}',function(e){
+                                            if ($("#idValeur{{ paramAn.id}}").val() != "" ){
+                                                     $('#idRemarque{{ paramAn.id}} option:selected').removeAttr('selected');
                                                       var remarque =  "1";
-                                                      $("#idRemarque{{ paramAn.paramAn.id}} option[value='" + remarque + "']").attr('selected','selected');
-                                                     $("#idRemarque{{ paramAn.paramAn.id}}").val(remarque);
+                                                      $("#idRemarque{{ paramAn.id}} option[value='" + remarque + "']").attr('selected','selected');
+                                                     $("#idRemarque{{ paramAn.id}}").val(remarque);
                                              }
-                                            if ($("#idValeur{{ paramAn.paramAn.id}}").val() == "" ){
+                                            if ($("#idValeur{{ paramAn.id}}").val() == "" ){
                                                 nbParamSaisis{{groupe.grparAn.id }} = nbParamSaisis{{groupe.grparAn.id }} - 1;
                                              }else{
                                                 nbParamSaisis{{groupe.grparAn.id }} = nbParamSaisis{{groupe.grparAn.id }} + 1;
@@ -378,26 +395,26 @@
                                              $('#paramSaisis{{ groupe.grparAn.id}}').empty().html(nbParamSaisis{{groupe.grparAn.id }});
                                        });
                                        
-                                       $(document).on('change','#idRemarque{{ paramAn.paramAn.id}}',function(e){
-                                            if ($("#idRemarque{{ paramAn.paramAn.id}}").val() == "0" ){
-                                                 $("#idValeur{{ paramAn.paramAn.id}}").val(null);
+                                       $(document).on('change','#idRemarque{{ paramAn.id}}',function(e){
+                                            if ($("#idRemarque{{ paramAn.id}}").val() == "0" ){
+                                                 $("#idValeur{{ paramAn.id}}").val(null);
                                             }
                                         });
                                        
                                     {% for unite in paramAn.unites %}
                                             {% if paramAn.pgCmdMesureEnv %}
                                                     {% if paramAn.pgCmdMesureEnv.codeUnite.codeUnite == unite.codeUnite.codeUnite %}
-                                                            $('#idUniteCode{{ paramAn.paramAn.id}} option:selected').removeAttr('selected');
+                                                            $('#idUniteCode{{ paramAn.id}} option:selected').removeAttr('selected');
                                                             var valeur =   '{{ paramAn.pgCmdMesureEnv.codeUnite.codeUnite }}';
-                                                              $("#idUniteCode{{ paramAn.paramAn.id}} option[value='" + valeur + "']").attr('selected','selected');
-                                                              $("#idUniteCode{{ paramAn.paramAn.id}}").val(valeur);
+                                                              $("#idUniteCode{{ paramAn.id}} option[value='" + valeur + "']").attr('selected','selected');
+                                                              $("#idUniteCode{{ paramAn.id}}").val(valeur);
                                                       {% endif %}
                                             {% elseif paramAn.unite %}
                                                     {% if paramAn.unite.codeUnite == unite.codeUnite.codeUnite %}
-                                                             $('#idUniteCode{{ paramAn.paramAn.id}} option:selected').removeAttr('selected');
+                                                             $('#idUniteCode{{ paramAn.id}} option:selected').removeAttr('selected');
                                                             var valeur =   '{{ paramAn.unite.codeUnite }}';
-                                                            $("#idUniteCode{{ paramAn.paramAn.id}} option[value='" + valeur + "']").attr('selected','selected');
-                                                            $("#idUniteCode{{ paramAn.paramAn.id}}").val(valeur);
+                                                            $("#idUniteCode{{ paramAn.id}} option[value='" + valeur + "']").attr('selected','selected');
+                                                            $("#idUniteCode{{ paramAn.id}}").val(valeur);
                                                       {% endif %}
                                             {% endif %}
                                     {% endfor %}
@@ -405,8 +422,10 @@
                    {% else %}
                             {% for paramAn in groupe.paramAns %}
                                     {% if paramAn.pgCmdAnalyse %}
+                                         {% if paramAn.pgCmdAnalyse.codeStatut != 3 %}
                                              nbParamSaisis{{groupe.grparAn.id }} = nbParamSaisis{{groupe.grparAn.id }} + 1;
                                             $('#paramSaisis{{ groupe.grparAn.id}}').empty().html(nbParamSaisis{{groupe.grparAn.id }});
+                                        {% endif %}
                                             var valeur =   {{  paramAn.pgCmdAnalyse.codeRemarque }}
                                             $("#idRemarque{{ paramAn.paramAn.id}} option[value='" + valeur + "']").attr('selected','selected');
                                             $("#idRemarque{{ paramAn.paramAn.id}}").val(valeur);
@@ -472,4 +491,4 @@
                     $('#expandAll{{groupe.grparAn.id}}').show();
                     $('#collapseAll{{groupe.grparAn.id}}').hide(); 
           
-</scripts>    
+</script>    

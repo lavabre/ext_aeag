@@ -36,6 +36,7 @@ class PgCmdAnalyseRepository extends EntityRepository {
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdAnalyse p";
         $query = $query . " where p.prelevId = " . $pgCmdPrelev->getId() ;
         $query = $query . " and p.lieuAna = '1'" ;
+        $query = $query . " and  p.codeStatut <> '3'";
         $qb = $this->_em->createQuery($query);
         //print_r($query);
          return $qb->getSingleScalarResult();
@@ -57,6 +58,7 @@ class PgCmdAnalyseRepository extends EntityRepository {
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdAnalyse p";
         $query = $query . " where p.prelevId = " . $pgCmdPrelev->getId() ;
         $query = $query . " and p.lieuAna = '2'" ;
+         $query = $query . " and  p.codeStatut <> '3'";
         $qb = $this->_em->createQuery($query);
         //print_r($query);
          return $qb->getSingleScalarResult();
@@ -104,6 +106,15 @@ class PgCmdAnalyseRepository extends EntityRepository {
         $qb = $this->_em->createQuery($query);
         //print_r($query);
        return $qb->getResult();
+    }
+    
+    public function getMaxNumOrdreByPrelev($pgCmdPrelev) {
+        $query = "select max(c.numOrdre)";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdAnalyse c";
+        $query = $query . " where c.prelevId = " . $pgCmdPrelev->getId() ;
+         $qb = $this->_em->createQuery($query);
+        //print_r($query);
+        return $qb->getSingleScalarResult();
     }
     
      public function getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, $parametre, $numOrdre) {

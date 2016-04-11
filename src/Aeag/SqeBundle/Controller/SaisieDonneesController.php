@@ -196,6 +196,8 @@ class SaisieDonneesController extends Controller {
                         $pgPrelevPcs = $repoPgCmdPrelevPc->getPgCmdPrelevPcByPrelev($pgCmdPrelev);
                         if ($pgPrelevPcs) {
                             $tabStations[$i]['cmdPrelev'][$j]['prelevPc'] = $pgPrelevPcs[0];
+                        } else {
+                            $tabStations[$i]['cmdPrelev'][$j]['prelevPc'] = null;
                         }
                         $pgProgPrestaTypfic = $repoPgProgPrestaTypfic->getPgProgPrestaTypficByCodeMilieu($pgProgTypeMilieu, $pgCmdPrelev->getprestaPrel());
                         if ($pgProgPrestaTypfic) {
@@ -204,11 +206,24 @@ class SaisieDonneesController extends Controller {
                                 foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
                                     if ($tabStations[$i]['station']->getOuvFoncId() == $pgProgLotPeriodeProg->getStationAn()->getStation()->getOuvFoncId()) {
                                         $pgProgLotGrparAn = $pgProgLotPeriodeProg->getGrparAn();
-                                        if ($pgProgLotGrparAn->getvalide() == 'O' and ( $pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'ENV' or $pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'SIT')) {
+                                        if ($pgProgLotGrparAn->getvalide() == 'O' and $pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'ENV' ) {
                                             $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
                                             foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
                                                 if ($pgCmdPrelev->getprestaPrel()->getAdrCorId() == $pgProgLotParamAn->getPrestataire()->getAdrCorId()) {
                                                     $NbProgLotParamAn++;
+                                                }
+                                            }
+                                        }
+                                        if ($pgProgLotGrparAn->getvalide() == 'O' and $pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'SIT') {
+                                            $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
+                                            foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
+                                                $pgCmdAnalyses = $repoPgCmdAnalyse->getPgCmdAnalysesByPrelevParamProg($pgCmdPrelev, $pgProgLotParamAn);
+                                                if ($pgCmdPrelev->getprestaPrel()->getAdrCorId() == $pgProgLotParamAn->getPrestataire()->getAdrCorId()) {
+                                                     if (count($pgCmdAnalyses) > 0) {
+                                                        $NbProgLotParamAn += count($pgCmdAnalyses);
+                                                    } else {
+                                                        $NbProgLotParamAn++;
+                                                    }
                                                 }
                                             }
                                         }
@@ -220,11 +235,24 @@ class SaisieDonneesController extends Controller {
                                 foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
                                     if ($tabStations[$i]['station']->getOuvFoncId() == $pgProgLotPeriodeProg->getStationAn()->getStation()->getOuvFoncId()) {
                                         $pgProgLotGrparAn = $pgProgLotPeriodeProg->getGrparAn();
-                                        if ($pgProgLotGrparAn->getvalide() == 'O' and ( $pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'ENV' or $pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'SIT')) {
+                                        if ($pgProgLotGrparAn->getvalide() == 'O' and $pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'ENV') {
                                             $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
                                             foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
                                                 if ($pgCmdPrelev->getprestaPrel()->getAdrCorId() != $pgProgLotParamAn->getPrestataire()->getAdrCorId()) {
                                                     $NbProgLotParamAn++;
+                                                }
+                                            }
+                                        }
+                                        if ($pgProgLotGrparAn->getvalide() == 'O' and $pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'SIT') {
+                                            $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
+                                            foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
+                                                $pgCmdAnalyses = $repoPgCmdAnalyse->getPgCmdAnalysesByPrelevParamProg($pgCmdPrelev, $pgProgLotParamAn);
+                                                if ($pgCmdPrelev->getprestaPrel()->getAdrCorId() != $pgProgLotParamAn->getPrestataire()->getAdrCorId()) {
+                                                    if (count($pgCmdAnalyses) > 0) {
+                                                        $NbProgLotParamAn += count($pgCmdAnalyses);
+                                                    } else {
+                                                        $NbProgLotParamAn++;
+                                                    }
                                                 }
                                             }
                                         }
@@ -340,6 +368,7 @@ class SaisieDonneesController extends Controller {
         $repoPgProgUnitesPossiblesParam = $emSqe->getRepository('AeagSqeBundle:PgProgUnitesPossiblesParam');
         $repoPgSandreUnitesPossiblesParamsEnv = $emSqe->getRepository('AeagSqeBundle:PgSandreUnitesPossiblesParamsEnv');
         $repoPgSandreFractions = $emSqe->getRepository('AeagSqeBundle:PgSandreFractions');
+        $repoPgCmdPrelevPc = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelevPc');
 
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevById($prelevId);
@@ -386,7 +415,7 @@ class SaisieDonneesController extends Controller {
                                 $tabGroupes[$nbGroupes]['correct'] = $tabGroupes[$nbGroupes]['correct'] + 1;
                             } elseif ($pgCmdMesureEnv->getCodeStatut() == '1') {
                                 $tabGroupes[$nbGroupes]['warning'] = $tabGroupes[$nbGroupes]['warning'] + 1;
-                            } else {
+                            } elseif ($pgCmdMesureEnv->getCodeStatut() == '2') {
                                 $tabGroupes[$nbGroupes]['erreur'] = $tabGroupes[$nbGroupes]['erreur'] + 1;
                             }
                             $tabParamAns[$nbParamAns]['pgCmdMesureEnv'] = $pgCmdMesureEnv;
@@ -394,6 +423,7 @@ class SaisieDonneesController extends Controller {
                         } else {
                             $tabParamAns[$nbParamAns]['pgCmdMesureEnv'] = null;
                         }
+                        $tabParamAns[$nbParamAns]['pgCmdPrelevPc'] = null;
                         $pgSandreUnitesPossiblesParamsEnv = $repoPgSandreUnitesPossiblesParamsEnv->getPgSandreUnitesPossiblesParamsEnvByCodeParametre($pgProgLotParamAn->getCodeParametre()->getCodeParametre());
                         if ($pgSandreUnitesPossiblesParamsEnv) {
                             $tabParamAns[$nbParamAns]['valeurs'] = $pgSandreUnitesPossiblesParamsEnv;
@@ -421,10 +451,17 @@ class SaisieDonneesController extends Controller {
                                     $tabGroupes[$nbGroupes]['correct'] = $tabGroupes[$nbGroupes]['correct'] + 1;
                                 } elseif ($pgCmdAnalyse->getCodeStatut() == '1') {
                                     $tabGroupes[$nbGroupes]['warning'] = $tabGroupes[$nbGroupes]['warning'] + 1;
-                                } else {
+                                } elseif ($pgCmdAnalyse->getCodeStatut() == '2') {
                                     $tabGroupes[$nbGroupes]['erreur'] = $tabGroupes[$nbGroupes]['erreur'] + 1;
                                 }
+                                $tabParamAns[$nbParamAns]['paramAn'] = $pgProgLotParamAn;
                                 $tabParamAns[$nbParamAns]['pgCmdAnalyse'] = $pgCmdAnalyse;
+                                $pgCmdPrelevPc = $repoPgCmdPrelevPc->getPgCmdPrelevPcByPrelevNumOrdre($pgCmdPrelev, $pgCmdAnalyse->getNumOrdre());
+                                if ($pgCmdPrelevPc) {
+                                    $tabParamAns[$nbParamAns]['pgCmdPrelevPc'] = $pgCmdPrelevPc;
+                                } else {
+                                    $tabParamAns[$nbParamAns]['pgCmdPrelevPc'] = null;
+                                }
                                 $tabParamAns[$nbParamAns]['unite'] = $pgCmdAnalyse->getCodeUnite();
                                 $pgSandreUnitesPossiblesParamsEnv = $repoPgSandreUnitesPossiblesParamsEnv->getPgSandreUnitesPossiblesParamsEnvByCodeParametre($pgProgLotParamAn->getCodeParametre()->getCodeParametre());
                                 if ($pgSandreUnitesPossiblesParamsEnv) {
@@ -449,7 +486,7 @@ class SaisieDonneesController extends Controller {
                             }
                         } else {
                             $tabParamAns[$nbParamAns]['pgCmdAnalyse'] = null;
-
+                            $tabParamAns[$nbParamAns]['pgCmdPrelevPc'] = null;
                             $pgSandreUnitesPossiblesParamsEnv = $repoPgSandreUnitesPossiblesParamsEnv->getPgSandreUnitesPossiblesParamsEnvByCodeParametre($pgProgLotParamAn->getCodeParametre()->getCodeParametre());
                             if ($pgSandreUnitesPossiblesParamsEnv) {
                                 $tabParamAns[$nbParamAns]['valeurs'] = $pgSandreUnitesPossiblesParamsEnv;
@@ -916,7 +953,7 @@ class SaisieDonneesController extends Controller {
                                 $tabGroupes[$nbGroupes]['correct'] = $tabGroupes[$nbGroupes]['correct'] + 1;
                             } elseif ($pgCmdAnalyse->getCodeStatut() == '1') {
                                 $tabGroupes[$nbGroupes]['warning'] = $tabGroupes[$nbGroupes]['warning'] + 1;
-                            } else {
+                            } elseif ($pgCmdAnalyse->getCodeStatut() == '2') {
                                 $tabGroupes[$nbGroupes]['erreur'] = $tabGroupes[$nbGroupes]['erreur'] + 1;
                             }
                             $tabParamAns[$nbParamAns]['pgCmdAnalyse'] = $pgCmdAnalyse;
@@ -1252,7 +1289,8 @@ class SaisieDonneesController extends Controller {
         $repoPgSandreUnites = $emSqe->getRepository('AeagSqeBundle:PgSandreUnites');
         $repoPgSandreFractions = $emSqe->getRepository('AeagSqeBundle:PgSandreFractions');
         $repoPgProgUnitesPossiblesParam = $emSqe->getRepository('AeagSqeBundle:PgProgUnitesPossiblesParam');
-        $repoPgSandreFractions = $emSqe->getRepository('AeagSqeBundle:PgSandreFractions');
+        $repoPgSandreUnitesPossiblesParamsEnv = $emSqe->getRepository('AeagSqeBundle:PgSandreUnitesPossiblesParamsEnv');
+        $repoPgSandreZoneVerticaleProspectee = $emSqe->getRepository('AeagSqeBundle:PgSandreZoneVerticaleProspectee');
 
 
         $now = date('Ymd');
@@ -1264,93 +1302,116 @@ class SaisieDonneesController extends Controller {
         $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($periodeAnId);
         $pgProgLotAn = $pgProgLotPeriodeAn->getLotAn();
         $pgProgLot = $pgProgLotAn->getLot();
+        $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
         $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByGrparAnPeriodeAn($pgProgLotGrparAn, $pgProgLotPeriodeAn);
         $nbErreurs = 0;
 
-
-        foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
-            $pgProgLotGrparAn = $pgProgLotPeriodeProg->getGrparAn();
-            $pgProgGrpParamRef = $pgProgLotGrparAn->getGrparRef();
-            $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
-
-            foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
-                if ($pgProgLotParamAn->getCodeparametre()->getcodeParametre() == '1301' or
-                        $pgProgLotParamAn->getCodeparametre()->getcodeParametre() == '1302' or
-                        $pgProgLotParamAn->getCodeparametre()->getcodeParametre() == '1303' or
-                        $pgProgLotParamAn->getCodeparametre()->getcodeParametre() == '1311' or
-                        $pgProgLotParamAn->getCodeparametre()->getcodeParametre() == '1312') {
-
-                    if ($pgProgLotParamAn->getCodeFraction()) {
-                        $pgSandreFraction = $repoPgSandreFractions->getPgSandreFractionsByCodeFraction($pgProgLotParamAn->getCodeFraction());
-                    } else {
-                        $pgSandreFraction = null;
-                    }
-
-                    if ($profMax < 3) {
-                        $profDeb = 0;
-                        $profFin = 3;
-                        $ecartRet = 0.5;
-                    } else {
-                        $profDeb = 0;
-                        $profFin = $profMax;
-                        $ecartRet = $ecart;
-                    }
-                    $numOrdre = 0;
-                    for ($prof = 0; prof < $profFin; $prof + $ecartRet) {
-                        $numOrdre++;
-                        $pgCmdAnalyse = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevIdNumOrdre($pgCmdPrelev->getid(), $numOrdre);
-                        if (!$pgCmdAnalyse) {
-                            $pgCmdPrelevPc = $repoPgCmdPrelevPc->getPgCmdPrelevPcByPrelevNumOrdre($pgCmdPrelev, $numOrdre);
-                            if (!$pgCmdPrelevPc) {
-                                $pgCmdPrelevPc = new PgCmdPrelevPc();
-                                $pgCmdPrelevPc->setPrelev($pgCmdPrelev);
-                                $pgCmdPrelevPc->setNumOrdre($numOrdre);
-                                $pgCmdPrelevPc->setProfondeur($prof);
-                            } else {
-                                $pgCmdPrelevPc->setProfondeur($prof);
-                            }
-                            $emSqe->persist($pgCmdPrelevPc);
-                            $pgCmdAnalyse = new PgCmdAnalyse();
-                            $pgCmdAnalyse->setNumOrdre($numOrdre);
-                            $pgCmdAnalyse->setLieuAna('1');
-                            $pgCmdAnalyse->setPrelevId($pgCmdPrelev->getId());
-                            $pgCmdAnalyse->setParamProg($pgProgLotParamAn);
-                            $pgCmdAnalyse->setCodeParametre($pgProgLotParamAn->getCodeParametre());
-                            $pgCmdAnalyse->setCodeFraction($pgSandreFraction);
-                        } else {
-                            $pgCmdPrelevPc = $repoPgCmdPrelevPc->getPgCmdPrelevPcByPrelevNumOrdre($pgCmdPrelev, $numOrdre);
-                            if (!$pgCmdPrelevPc) {
-                                $pgCmdPrelevPc = new PgCmdPrelevPc();
-                                $pgCmdPrelevPc->setPrelev($pgCmdPrelev);
-                                $pgCmdPrelevPc->setNumOrdre($numOrdre);
-                                $pgCmdPrelevPc->setProfondeur($prof);
-                            } else {
-                                $pgCmdPrelevPc->setProfondeur($prof);
-                            }
-                            $emSqe->persist($pgCmdPrelevPc);
-                        }
-                        $emSqe->persist($pgCmdAnalyse);
-                    }
-                    $numOrdre++;
-                    $existe = true;
-                    while ($existe) {
-                        $pgCmdAnalyse = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevIdNumOrdre($pgCmdPrelev->getid(), $numOrdre);
-                        if (!$pgCmdAnalyse) {
-                            $existe = false;
-                        } else {
-                            $pgCmdPrelevPc = $repoPgCmdPrelevPc->getPgCmdPrelevPcByPrelevNumOrdre($pgCmdPrelev, $numOrdre);
-                            if ($pgCmdPrelevPc) {
-                                $emSqe->remove($pgCmdPrelevPc);
-                            }
-                            $emSqe->remove($pgCmdAnalyse);
-                            $numOrdre++;
-                        }
-                    }
+        $pgSandreZoneVerticaleProspectee = $repoPgSandreZoneVerticaleProspectee->getPgSandreZoneVerticaleProspecteeByCodeZone(0);
+        $pgProgGrpParamRef = $pgProgLotGrparAn->getGrparRef();
+        $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
+        $numOrdre = 0;
+        $parametre = null;
+        $tabParametres = array();
+        $nbPara = 0;
+        foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
+            if ($pgProgLotParamAn->getCodeparametre()->getcodeParametre() == '1301' or
+                    $pgProgLotParamAn->getCodeparametre()->getcodeParametre() == '1302' or
+                    $pgProgLotParamAn->getCodeparametre()->getcodeParametre() == '1303' or
+                    $pgProgLotParamAn->getCodeparametre()->getcodeParametre() == '1311' or
+                    $pgProgLotParamAn->getCodeparametre()->getcodeParametre() == '1312') {
+                $tabParametres[$nbPara]['pgProgLotParamAn'] = $pgProgLotParamAn;
+                $tabAnalyse = array();
+                $nbAna = 0;
+                $pgCmdAnalyses = $repoPgCmdAnalyse->getPgCmdAnalysesByPrelevParamProg($pgCmdPrelev, $pgProgLotParamAn);
+                foreach ($pgCmdAnalyses as $pgCmdAnalyse) {
+                    $tabAnalyse[$nbAna]['pgCmdAnalyse'] = $pgCmdAnalyse;
+                    $pgCmdPrelevPc = $repoPgCmdPrelevPc->getPgCmdPrelevPcByPrelevNumOrdre($pgCmdPrelev, $pgCmdAnalyse->getNumOrdre());
+                    $tabAnalyse[$nbAna]['pgCmdPrelevPc'] = $pgCmdPrelevPc;
+                    $tabAna[$nbAna]['ok'] = false;
+                    $nbAna++;
                 }
+                $tabParametres[$nbPara]['pgCmdAnalyses'] = $tabAnalyse;
+                $nbPara++;
             }
         }
-        $emSqe->flush();
+
+        if ($profMax <= 3) {
+            $profDeb = 0;
+            $profFin = $profMax;
+            $ecartRet = 0.5;
+        } else {
+            $profDeb = 0;
+            $profFin = $profMax;
+            $ecartRet = $ecart;
+        }
+
+        for ($nbPara = 0; $nbPara < count($tabParametres); $nbPara++) {
+            $pgProgLotParamAn = $tabParametres[$nbPara]['pgProgLotParamAn'];
+            if ($pgProgLotParamAn->getCodeFraction()) {
+                $pgSandreFraction = $repoPgSandreFractions->getPgSandreFractionsByCodeFraction($pgProgLotParamAn->getCodeFraction());
+            } else {
+                $pgSandreFraction = null;
+            }
+            if ($pgProgLotParamAn->getCodeUnite()) {
+                $pgSandreUnites = $repoPgSandreUnites->getPgSandreUnitesByCodeUnite($pgProgLotParamAn->getCodeUnite());
+            } else {
+                $pgSandreUnites = null;
+            }
+            $tabAna = $tabParametres[$nbPara]['pgCmdAnalyses'];
+            for ($prof = 0; $prof <= $profFin; $prof += $ecartRet) {
+                $trouvePrelPc = false;
+                for ($nbAna = 0; $nbAna < count($tabAna); $nbAna++) {
+                    $pgPrelevPc = $tabAna[$nbAna]['pgCmdPrelevPc'];
+                    if ($pgPrelevPc->getProfondeur() == $prof) {
+                        $trouvePrelPc = true;
+                        $tabAna[$nbAna]['ok'] = true;
+                        $pgSandreZoneVerticaleProspectee = $pgCmdPrelevPc->getZoneVerticale();
+                        break;
+                    }
+                }
+                if (!$trouvePrelPc) {
+                    $numOrdre = $repoPgCmdAnalyse->getMaxNumOrdreByPrelev($pgCmdPrelev);
+                    $numOrdre++;
+                    $pgCmdPrelevPc = new PgCmdPrelevPc();
+                    $pgCmdPrelevPc->setPrelev($pgCmdPrelev);
+                    $pgCmdPrelevPc->setNumOrdre($numOrdre);
+                    $pgCmdPrelevPc->setProfondeur($prof);
+                    $pgCmdPrelevPc->setZoneVerticale($pgSandreZoneVerticaleProspectee);
+                    $emSqe->persist($pgCmdPrelevPc);
+                    $emSqe->flush();
+                    $pgCmdAnalyse = new PgCmdAnalyse();
+                    $pgCmdAnalyse->setNumOrdre($numOrdre);
+                    $pgCmdAnalyse->setLieuAna('1');
+                    $pgCmdAnalyse->setPrelevId($pgCmdPrelev->getId());
+                    $pgCmdAnalyse->setParamProg($pgProgLotParamAn);
+                    $pgCmdAnalyse->setCodeParametre($pgProgLotParamAn->getCodeParametre());
+                    $pgCmdAnalyse->setCodeFraction($pgSandreFraction);
+                    $pgCmdAnalyse->setCodeUnite($pgSandreUnites);
+                    $pgCmdAnalyse->setCodeStatut(3);
+                    $emSqe->persist($pgCmdAnalyse);
+                    $emSqe->flush();
+                }
+                
+                $pgCmdPrelev->setProfMax($profMax);
+                $emSqe->persist($pgCmdPrelev);
+            
+                $pgCmdAnalyses = $repoPgCmdAnalyse->getPgCmdAnalysesByPrelevParamProg($pgCmdPrelev, $pgProgLotParamAn);
+                foreach ($pgCmdAnalyses as $pgCmdAnalyse) {
+                    $pgCmdPrelevPc = $repoPgCmdPrelevPc->getPgCmdPrelevPcByPrelevNumOrdre($pgCmdPrelev, $pgCmdAnalyse->getNumOrdre());
+                    if ($pgCmdPrelevPc->getProfondeur() > $profFin) {
+                        $emSqe->remove($pgCmdAnalyse);
+                        $emSqe->flush();
+                        $emSqe->remove($pgCmdPrelevPc);
+                    }
+                }
+                $emSqe->flush();
+            }
+        }
         $tabGroupe = array();
+        $tabGroupe['grparAn'] = $pgProgLotGrparAn;
+        $tabGroupe['correct'] = 0;
+        $tabGroupe['warning'] = 0;
+        $tabGroupe['erreur'] = 0;
         $tabParamAns = array();
         $nbParamAns = 0;
         foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
@@ -1363,11 +1424,11 @@ class SaisieDonneesController extends Controller {
                 $pgCmdMesureEnv = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParamProg($pgCmdPrelev, $pgProgLotParamAn);
                 if ($pgCmdMesureEnv) {
                     if ($pgCmdMesureEnv->getCodeStatut() == '0') {
-                        $tabGroupes[$nbGroupes]['correct'] = $tabGroupes[$nbGroupes]['correct'] + 1;
+                        $tabGroupe['correct'] = $tabGroupe['correct'] + 1;
                     } elseif ($pgCmdMesureEnv->getCodeStatut() == '1') {
-                        $tabGroupes[$nbGroupes]['warning'] = $tabGroupes[$nbGroupes]['warning'] + 1;
-                    } else {
-                        $tabGroupes[$nbGroupes]['erreur'] = $tabGroupes[$nbGroupes]['erreur'] + 1;
+                        $tabGroupe['warning'] = $tabGroupe['warning'] + 1;
+                    } elseif ($pgCmdMesureEnv->getCodeStatut() == '2') {
+                        $tabGroupe['erreur'] = $tabGroupe['erreur'] + 1;
                     }
                     $tabParamAns[$nbParamAns]['pgCmdMesureEnv'] = $pgCmdMesureEnv;
                     $tabParamAns[$nbParamAns]['unite'] = $pgCmdMesureEnv->getCodeUnite();
@@ -1392,13 +1453,16 @@ class SaisieDonneesController extends Controller {
                 if (count($pgCmdAnalyses) > 0) {
                     foreach ($pgCmdAnalyses as $pgCmdAnalyse) {
                         if ($pgCmdAnalyse->getCodeStatut() == '0') {
-                            $tabGroupes[$nbGroupes]['correct'] = $tabGroupes[$nbGroupes]['correct'] + 1;
+                            $tabGroupe['correct'] = $tabGroupe['correct'] + 1;
                         } elseif ($pgCmdAnalyse->getCodeStatut() == '1') {
-                            $tabGroupes[$nbGroupes]['warning'] = $tabGroupes[$nbGroupes]['warning'] + 1;
-                        } else {
-                            $tabGroupes[$nbGroupes]['erreur'] = $tabGroupes[$nbGroupes]['erreur'] + 1;
+                            $tabGroupe['warning'] = $tabGroupe['warning'] + 1;
+                        } elseif ($pgCmdAnalyse->getCodeStatut() == '2') {
+                            $tabGroupe['erreur'] = $tabGroupe['erreur'] + 1;
                         }
+                        $tabParamAns[$nbParamAns]['paramAn'] = $pgProgLotParamAn;
                         $tabParamAns[$nbParamAns]['pgCmdAnalyse'] = $pgCmdAnalyse;
+                        $pgCmdPrelevPc = $repoPgCmdPrelevPc->getPgCmdPrelevPcByPrelevNumOrdre($pgCmdPrelev, $pgCmdAnalyse->getNumOrdre());
+                        $tabParamAns[$nbParamAns]['pgCmdPrelevPc'] = $pgCmdPrelevPc;
                         $tabParamAns[$nbParamAns]['unite'] = $pgCmdAnalyse->getCodeUnite();
                         $pgSandreUnitesPossiblesParamsEnv = $repoPgSandreUnitesPossiblesParamsEnv->getPgSandreUnitesPossiblesParamsEnvByCodeParametre($pgProgLotParamAn->getCodeParametre()->getCodeParametre());
                         if ($pgSandreUnitesPossiblesParamsEnv) {
@@ -1423,7 +1487,7 @@ class SaisieDonneesController extends Controller {
                     }
                 } else {
                     $tabParamAns[$nbParamAns]['pgCmdAnalyse'] = null;
-
+                    $tabParamAns[$nbParamAns]['pgCmdPrelevPc'] = null;
                     $pgSandreUnitesPossiblesParamsEnv = $repoPgSandreUnitesPossiblesParamsEnv->getPgSandreUnitesPossiblesParamsEnvByCodeParametre($pgProgLotParamAn->getCodeParametre()->getCodeParametre());
                     if ($pgSandreUnitesPossiblesParamsEnv) {
                         $tabParamAns[$nbParamAns]['valeurs'] = $pgSandreUnitesPossiblesParamsEnv;
@@ -1450,7 +1514,7 @@ class SaisieDonneesController extends Controller {
         }
         $tabGroupe['paramAns'] = $tabParamAns;
 
-//  return new Response(  \Symfony\Component\VarDumper\VarDumper::dump($tabParamAns));
+        //  \Symfony\Component\VarDumper\VarDumper::dump($tabGroupe);
 //return new Response ('');
         return $this->render('AeagSqeBundle:SaisieDonnees:lotPeriodeStationGenererEnvSitu.html.twig', array(
                     'user' => $pgProgWebUser,
@@ -1458,7 +1522,7 @@ class SaisieDonneesController extends Controller {
                     'lotan' => $pgProgLotAn,
                     'cmdPrelev' => $pgCmdPrelev,
                     'groupe' => $tabGroupe,
-                    'maj' => $maj));
+        ));
     }
 
     protected function getCheminEchange($pgCmdSuiviPrel) {

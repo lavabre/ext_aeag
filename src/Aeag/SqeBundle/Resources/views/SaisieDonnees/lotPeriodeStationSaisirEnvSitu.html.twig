@@ -21,6 +21,32 @@
     </li>
 {% endblock breadcrumb %} 
 
+{% block modal %}
+    {% if typeMilieu.codeMilieu == 'LPC' %}
+              <div class="modal fade" id="modal-generer">
+                <div class="modal-dialog modal-window">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title" id="modal-genererLabel">Génération des profondeurs dans le groupe in situ</h4>
+                        </div>
+                        <div class="modal-body">
+                            <h4>Cliquer sur enregistrer pour générer les profondeurs dans le groupe in situ</h4>
+                            <br/><br/>
+                            <div class="alert alert-danger">Attention : les valeur saisies pour les profondeurs supérieures à la profondeur du lac seront perdues</div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
+                            <button id="idGenerer" type="submit" class="btn btn-success"> 
+                                <i class="fa fa-cogs"> genérer</i>
+                               </button>
+                        </div>
+                    </div>
+                </div>
+            </div>  
+    {%endif %}
+{% endblock modal %}
+
 {%block panel_heading %}
         <div class="row">
                 <div class="col-md-offset-3 col-md-7">
@@ -64,9 +90,10 @@
                                          <option value="1" selected>1 m</option> 
                                </select>
                      </div>
-                    <button id="idGenerer" type="submit" class="btn btn-success"> 
-                     <i class="fa fa-cogs"> genérer</i>
-                    </button>
+                   
+                    <a class="btn btn-success" data-toggle="modal" href="#modal-generer" title="Générer les profondeurs">
+                             <i class="fa fa-cogs"> Générer</i>
+                    </a>
            </div>
           {% else %}
                <div class="form-group form-inline">
@@ -131,6 +158,9 @@
                                               <table class="table table-bordered " id="idTable{{ groupe.grparAn.id}}">
                                                                               <thead>
                                                                                        <tr>
+                                                                                          {% if typeMilieu.codeMilieu == 'LPC'  and groupe.grparAn.grparRef.typeGrp == 'SIT'%}
+                                                                                              <th>Profondeur</th>
+                                                                                          {% endif %}
                                                                                          <th>Code</th> 
                                                                                          <th>Libelle</th> 
                                                                                          <th>Remarque</th> 
@@ -148,7 +178,7 @@
                                                                                                                    paramAn.paramAn.codeParametre.codeParametre  == '1311' or 
                                                                                                                    paramAn.paramAn.codeParametre.codeParametre  == '1312' %}
                                                                                                                    <input type="hidden" id="idGroupeSelectionne" value="{{ groupe.grparAn.id }}">
-                                                                                                           {% endif %}
+                                                                                                               {% endif %}
                                                                                                            {% if is_granted('ROLE_ADMINSQE') or  (user.prestataire.adrCorId == paramAn.paramAn.prestataire.adrCorId)  %}
                                                                                                                 {% if groupe.grparAn.grparRef.typeGrp == 'ENV'  %}
                                                                                                                     {% if paramAn.pgCmdMesureEnv %}
@@ -235,17 +265,26 @@
                                                                                                                    </td>
                                                                                                                </tr>
                                                                                                                  {% else %}
-                                                                                                                     {% if paramAn.pgCmdAnalyse %}
+                                                                                                                    {% if paramAn.pgCmdAnalyse %}
                                                                                                                           {% if paramAn.pgCmdAnalyse.codeStatut == '0' %}
                                                                                                                                <tr class="success">
                                                                                                                           {% elseif paramAn.pgCmdAnalyse.codeStatut == '1' %}
                                                                                                                                <tr class="warning" data-toggle="tooltip" data-placement="bottom" title="{{ paramAn.pgCmdAnalyse.libelleStatut}}">
-                                                                                                                          {% else %}
+                                                                                                                          {% elseif paramAn.pgCmdAnalyse.codeStatut == '2' %}
                                                                                                                                <tr class="danger" data-toggle="tooltip" data-placement="bottom" title="{{ paramAn.pgCmdAnalyse.libelleStatut}}" >
-                                                                                                                          {% endif %}
+                                                                                                                         {% else %}
+                                                                                                                         <tr>
+                                                                                                                    {% endif %}
                                                                                                                     {% else %}
                                                                                                                        <tr>
                                                                                                                    {% endif %}
+                                                                                                                       {% if typeMilieu.codeMilieu == 'LPC' %}
+                                                                                                                           <td align="right">
+                                                                                                                           {% if paramAn.pgCmdPrelevPc %}
+                                                                                                                             {{ paramAn.pgCmdPrelevPc.profondeur | number_format( 2,","," ")  }}
+                                                                                                                           {% endif %}
+                                                                                                                           </td>
+                                                                                                                      {% endif %}
                                                                                                                         <td nowrap>{{ paramAn.paramAn.codeParametre.codeParametre }}</td>
                                                                                                                          <td align="left">{{ paramAn.paramAn.codeParametre.nomParametre }}</td>
                                                                                                                              <td align="right">
@@ -347,6 +386,13 @@
                                                                                                                </tr>
                                                                                                                  {% else %}
                                                                                                                      <tr>
+                                                                                                                          {% if typeMilieu.codeMilieu == 'LPC' %}
+                                                                                                                           <td align="right">
+                                                                                                                           {% if paramAn.pgCmdPrelevPc %}
+                                                                                                                             {{ paramAn.pgCmdPrelevPc.profondeur }}
+                                                                                                                           {% endif %}
+                                                                                                                           </td>
+                                                                                                                        {% endif %}
                                                                                                                          <td nowrap>{{ paramAn.paramAn.codeParametre.codeParametre }}</td>
                                                                                                                          <td align="left">{{ paramAn.paramAn.codeParametre.nomParametre }}</td>
                                                                                                                          <td align="left">
@@ -425,6 +471,8 @@
 
 {% block scripts %}
     
+    jQuery(document).ready(function() {
+    
             $('#datePrel').datetimepicker(
              {language:  'fr',
               format: 'dd/mm/yyyy hh:ii'
@@ -443,14 +491,13 @@
                               }else{
                                  $('#idCollapseI{{groupe.grparAn.id}}').removeClass("fa-expand").addClass("fa-compress");
                                   $('#collapse{{groupe.grparAn.id}}').collapse('show');
-                                  $('#idGroupeSelectionne').val(groupe.grparAn.id);
                               }
                    });
 
-              
+              {% if typeMilieu.codeMilieu == 'LPC'  and groupe.grparAn.grparRef.typeGrp == 'SIT'%}
                     var table{{groupe.grparAn.id }} = $('#idTable{{ groupe.grparAn.id }}').DataTable(
-                       {"stateSave": true,
-                         "order": [[ 0, "desc" ]],
+                       {"stateSave": false,
+                         "order": [[ 1, "asc" ],[ 0, "asc" ]],
                         "language": {
                                 "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
                                },
@@ -461,6 +508,21 @@
                          "iDisplayLength": -1
                         }
                         );
+                   {% else%}
+                        var table{{groupe.grparAn.id }} = $('#idTable{{ groupe.grparAn.id }}').DataTable(
+                       {"stateSave": false,
+                         "order": [[ 0, "asc" ]],
+                        "language": {
+                                "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
+                               },
+                        "aLengthMenu": [
+                                                   [10, 25, 50, 100, -1],
+                                                   [10, 25, 50, 100, "Tous"]
+                                               ],
+                         "iDisplayLength": -1
+                        }
+                        );
+                   {% endif %}
                     
                    var nbParamSaisis{{groupe.grparAn.id }} = parseInt($('#paramSaisis{{ groupe.grparAn.id}}').html());
                 
@@ -529,8 +591,10 @@
                    {% else %}
                             {% for paramAn in groupe.paramAns %}
                                     {% if paramAn.pgCmdAnalyse %}
+                                        {% if paramAn.pgCmdAnalyse.codeStatut != 3 %}
                                              nbParamSaisis{{groupe.grparAn.id }} = nbParamSaisis{{groupe.grparAn.id }} + 1;
                                             $('#paramSaisis{{ groupe.grparAn.id}}').empty().html(nbParamSaisis{{groupe.grparAn.id }});
+                                         {% endif %}
                                             var valeur =   {{  paramAn.pgCmdAnalyse.codeRemarque }}
                                             $("#idRemarque{{ paramAn.paramAn.id}} option[value='" + valeur + "']").attr('selected','selected');
                                             $("#idRemarque{{ paramAn.paramAn.id}}").val(valeur);
@@ -636,14 +700,20 @@
                       $('#idForm').submit();
            });
            
-           
-             $(document).on('click','#idGenerer',function(e){
+            if ($('#idGroupeSelectionne').val() == ''){
+                $('#idGenerer').hide();
+             }
+             
+             var groupeSelectionne = $('#idGroupeSelectionne').val();
+             
+                $(document).on('click','#idGenerer',function(e){
                             e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                            $('#modal-generer').modal('hide');
                             $('#modalTraitementEncours').modal('toggle');
                            var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_station_env_situ_generer",{"periodeAnId": "par1", "prelevId":  "par2", "groupeId" : "par3", "profMax" : "par4", "ecart" : "par5"}) }}', // Le nom du fichier indiqué dans le formulaire
                            url = url.replace("par1", {{ periodeAn.id }}); 
                            url = url.replace("par2", {{ cmdPrelev.id }});
-                           url = url.replace("par3", $('#idGroupeSelectionne').val());
+                           url = url.replace("par3", groupeSelectionne);
                            url = url.replace("par4", $('#profMax').val());
                            url = url.replace("par5", $('#ecart').val());
                            url = url.replace("amp;","");
@@ -651,12 +721,12 @@
                                     url: url,
                                     type: 'get', // La méthode indiquée dans le formulaire (get ou post)
                                     success: function(html) { // Je récupère la réponse du fichier PHP
-                                         $('#idGenerer' + $('#idGroupeSelectionne').val()).empty().append(html);
+                                         $('#idGenerer' + groupeSelectionne).empty().append(html);
                                          $('#modalTraitementEncours').modal('hide');
                                        }
                                 });
                     });
 
-   
+   });
     
 {%endblock scripts %}    
