@@ -63,6 +63,12 @@ AeagDecBundle_admin_majCompteursProducteurs:
     requirements:
         methods:  GET|POST
         
+AeagDecBundle_admin_ajouterDeclarations:
+    path:  /ajouterDeclarations{annee}/{statut}
+    defaults: { _controller: AeagDecBundle:Admin:ajouterDeclaration ,annee:null, statut:null}
+    requirements:
+        methods:  GET|POST
+        
 
 
         

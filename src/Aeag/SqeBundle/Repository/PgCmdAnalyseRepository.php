@@ -108,6 +108,16 @@ class PgCmdAnalyseRepository extends EntityRepository {
        return $qb->getResult();
     }
     
+     public function getPgCmdAnalysesByPrelevNumOrdre($pgCmdPrelev, $numOrdre) {
+        $query = "select c";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdAnalyse c";
+        $query = $query . " where c.prelevId = " . $pgCmdPrelev->getId() ;
+        $query = $query . " and  c.numOrdre = " . $numOrdre ;
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+       return $qb->getResult();
+    }
+    
     public function getMaxNumOrdreByPrelev($pgCmdPrelev) {
         $query = "select max(c.numOrdre)";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdAnalyse c";

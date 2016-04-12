@@ -702,6 +702,61 @@ class AdminController extends Controller {
         return $this->redirect($this->generateUrl('AeagDecBundle_admin_listeDeclarationCollecteurs', array('annee' => $annee, 'statut' => '99')));
     }
 
+    public function ajouterDeclarationAction($annee = null, $statut = null) {
+
+        $em = $this->getDoctrine()->getManager();
+        $emDec = $this->getDoctrine()->getManager('dec');
+        $session = $this->get('session');
+        $user = $this->getUser();
+        if (is_object($user)) {
+            $mes = AeagController::notificationAction($user, $em, $session);
+            $mes1 = AeagController::messageAction($user, $em, $session);
+        }
+
+        $repoUsers = $em->getRepository('AeagUserBundle:User');
+        $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
+        $repoStatut = $emDec->getRepository('AeagDecBundle:Statut');
+        $repoDeclarationCollecteur = $emDec->getRepository('AeagDecBundle:DeclarationCollecteur');
+
+        $Annee = $emDec->getRepository('AeagDecBundle:Parametre')->findOneBy(array('code' => 'ANNEE'));
+        $annee = $Annee->getLibelle();
+        $nb = 0;
+        $declarationCollecteurs = $repoDeclarationCollecteur->getDeclarationCollecteursByAnnee($annee);
+        if (!$declarationCollecteurs) {
+            $users = $repoUsers->getUsersByRole('ROLE_ODEC');
+            foreach ($users as $user) {
+                if ($user->getEnabled()) {
+                    $collecteur = $repoOuvrage->getOuvrageByUserIdType($user->getId(), 'ODEC');
+                    if (!$collecteur) {
+                        $collecteur = $repoOuvrage->getOuvrageByUserNameType($user->getUsername(), 'ODEC');
+                    }
+                    if ($collecteur) {
+                        $declarationCollecteur = new DeclarationCollecteur();
+                        $declarationCollecteur->setAnnee($annee);
+                        $declarationCollecteur->setCollecteur($collecteur->getId());
+                        $statut = $repoStatut->getStatutByCode('20');
+                        $declarationCollecteur->setStatut($statut);
+                        $declarationCollecteur->setQuantiteReel(0);
+                        $declarationCollecteur->setMontReel(0);
+                        $declarationCollecteur->setQuantiteRet(0);
+                        $declarationCollecteur->setMontRet(0);
+                        $declarationCollecteur->setQuantiteAide(0);
+                        $declarationCollecteur->setMontAide(0);
+                        $declarationCollecteur->setDossierAide(null);
+                        $declarationCollecteur->setMontantAp(0);
+                        $declarationCollecteur->setMontantApDispo(0);
+                        $emDec->persist($declarationCollecteur);
+                        $nb++;
+                    }
+                }
+            }
+        }
+
+        $emDec->flush();
+        $session->getFlashBag()->add('notice-success', $nb . " dossiers créés pour l\'annee " . $annee . "  avec succès !");
+        return $this->redirect($this->generateUrl('AeagDecBundle_admin_listeDeclarationCollecteurs', array('annee' => $annee, 'statut' => $statut->getCode())));
+    }
+
     function Ftp($local_dir = null, $ftp_dir = null) {
 
 

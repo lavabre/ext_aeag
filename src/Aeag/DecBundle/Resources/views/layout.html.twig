@@ -88,9 +88,16 @@
                                         Maj compteurs producteurs 
                                     </a>
                                 </li> 
+                             
                             </ul>
                         </li>
+                    
                                    {% endfor %}
+                                 <li>
+                                    <a href="{{ path('AeagDecBundle_admin_ajouterDeclarations', { 'annee': 2015, 'statut': '99' }) }}">
+                                        Ouvrir nouvelle année
+                                    </a>
+                                </li> 
                     </ul> 
                 </li>
 

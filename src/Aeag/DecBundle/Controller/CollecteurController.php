@@ -1035,7 +1035,7 @@ class CollecteurController extends Controller {
             $mes = AeagController::notificationAction($user, $em, $session);
             $mes1 = AeagController::messageAction($user, $em, $session);
         }
-        $repoOuvrage = $emDec->getRepository('AeagDecBundle:Ouvrage');
+        $repoOuvrage = $em->getRepository('AeagDecBundle:Ouvrage');
         $repoDeclarationCollecteur = $emDec->getRepository('AeagDecBundle:DeclarationCollecteur');
         $repoStatut = $emDec->getRepository('AeagDecBundle:Statut');
 
