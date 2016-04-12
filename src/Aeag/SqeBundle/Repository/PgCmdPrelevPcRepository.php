@@ -44,7 +44,7 @@ class PgCmdPrelevPcRepository extends EntityRepository {
         $query = $query . " and c.numOrdre = " . $numOrdre ;
         $qb = $this->_em->createQuery($query);
         //print_r($query);
-        return $qb->getResult();
+        return $qb->getOneOrNullResult();
     }
     
     

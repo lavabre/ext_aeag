@@ -1,0 +1,173 @@
+<table class="table" cellspacing="0" width="100%" align="center"> 
+    <input type='hidden' id='UrlActuel' value="{{ path('AeagEdlBundle_risque', { 'code': risque.euCd }) }}" /> 
+
+    <input type='hidden' id='newRisqueRoute' value="{{ path('AeagEdlBundle_risqueForm') }}" /> 
+
+
+    <tr>
+        <td align="left" width="70%">{{ risque.type.libelle }}</td>
+        <td width="10%"><span class="dce_risque_{{ risque.valeur }}">{{ risque.getValueLib() }}</span></td>
+   {% if derniereProp %}
+        <td width="10%" nowrap><span class="dce_risque_{{ derniereProp.valeur }}">{{ derniereProp.getValueLib() }}</span></td>
+   {% else %}
+        <td width="10%"></td>
+   {% endif %}
+   {% if is_granted("IS_AUTHENTICATED_REMEMBERED")and is_granted("ROLE_COMMENTATEUR") %}
+        <td width="10%"><a id="newRisque{{ risque.cdRisque }}" title="Proposer une nouvelle évaluation" cdRisque="{{ risque.cdRisque }}">
+                <img src="{{ asset('bundles/aeagetatdeslieux/images/icons/web-app/24/Comment.png')}}" width="24" height="24">
+            </a>
+        </td>
+   {% else %}
+        <td width="10%"></td>
+   {% endif %}
+
+    </tr>
+
+    <div id="RisquesParametre">  
+        <div id="divProposed{{ risque.cdRisque }}">
+
+ {% if risque.proposed|length > 0 %} 
+
+            <tr>
+                <td colspan=4>
+                    <table class="table" cellspacing="0" width="90%" align="right">
+                        <tr>
+                            <th nowrap width="5%">Date</th>
+                            <th nowrap width="5%">Auteur</th>
+                            <th nowrap width="55%">Commentaire</th>
+                            <th nowrap width="10%">Risque proposé</th>
+                            <th nowrap width="10%">Action</th>
+                        </tr>
+
+        
+            {% set i = 1 %}
+            {% for pp in risque.proposed %}
+                        <div id="RisquesProposed{{i}}">
+
+                            <tr>
+                                <td width="5%" nowrap>{{ pp.propositionDate }}</td>
+                                {% if pp.role == 'local' %}
+                                <td width="5%" nowrap>acteur local : {{ pp.utilisateur.username }}</td>
+                                {% else %}
+                                <td width="5%" nowrap>expert : {{ pp.utilisateur.username }}</td>
+                                {% endif %}
+                                <td width="55%" align="left">{{ pp.commentaire }}</td>
+                                <td width="10%" nowrap><span class="dce_risque_{{ pp.valeur }}">{{ pp.getValueLib() }}</span></td>
+                            {% if is_granted("IS_AUTHENTICATED_REMEMBERED")and is_granted("ROLE_COMMENTATEUR") and  pp.role ==  'local' and pp.utilisateur.id == user.id %} 
+                                <td width="10%"><a name="removeRisque{{ pp.cdRisque }}" title="Supprimer cette proposition" login="{{ pp.utilisateur.id }}" propositionDate="{{ pp.propositionDate }}">
+                                        <img src="{{ asset('bundles/aeagetatdeslieux/images/icons/web-app/24/Delete.png')}}">
+                                    </a>
+                                </td>
+                            {% elseif is_granted("IS_AUTHENTICATED_REMEMBERED")and is_granted("ROLE_SUPERVISEUR") %}
+                                <td width="10%"><a name="removeRisque{{ pp.cdRisque }}" title="Supprimer cette proposition" login="{{ pp.utilisateur.id }}" propositionDate="{{ pp.propositionDate }}">
+                                        <img src="{{ asset('bundles/aeagetatdeslieux/images/icons/web-app/24/Delete.png')}}">
+                                    </a>
+                                </td>
+                            {% else %}
+                                <td width="10%"></td>
+                            {% endif %}
+                            </tr>
+
+
+                        </div>
+
+                {% set i = i + 1 %}
+                {% if i > 2 %}
+                {% set i = 1 %}
+                {% endif %}
+                {% endfor %}
+
+  
+
+                    </table>
+                </td>
+            </tr>
+
+{% endif %}
+        </div>
+    </div>
+</table>
+
+
+<div id ="divNewRisque{{ risque.cdRisque }}"></div> 
+
+
+
+<script type="text/javascript">
+    
+      
+$(document).ready(function() { 	// Sur clic "Proposer un nouvel risque"
+        $('#newRisque{{ risque.cdRisque }}').click(function(e){
+                //$("body").css("cursor", "wait");
+               
+                //conserver l'url actuel
+                var $urlActuel = $('input#UrlActuel').val();
+                
+                // obtenir l'url
+                var $url = $('input#newRisqueRoute').val();
+		
+                // conserver l'id du div qui hébergera le formulaire de saisie
+                var $div = "#divNewRisque{{ risque.cdRisque }}";
+                
+                
+                              
+                $.post($url,
+                       { 
+                                euCd: "{{ risque.euCd }}", 
+                                cdRisque: "{{ risque.cdRisque }}"
+                        },
+                        function(data) {
+                                            // placer le formulaire sous le div
+                                            //$($div).hide();
+                                                                                          
+                                             $($div).html(data);
+                                            
+                                            // $($div).hide();
+                                            
+                                            // cosmétique
+                                            //$($div).slideDown('fast');
+                                            // rétablir curseur
+                                            $("body").css("cursor", "auto");
+                                    }
+                            ).error(function() { 
+                                    // rétablir curseur
+                                    $("body").css("cursor", "auto");
+                                    alert("Erreur non déterminée");    
+                  });                      
+                  
+        });
+
+        $('a[name="removeRisque{{ risque.cdRisque }}"]').click(function(e){
+                $("body").css("cursor", "wait");
+
+                // obtenir l'url
+                var $url = "{{ path('AeagEdlBundle_removeRisque') }}";
+		
+                // lancer la requête ajax  
+                $.post($url, 
+                        { 
+                                euCd: "{{ risque.euCd }}", 
+                                cdRisque: "{{ risque.cdRisque }}",
+                                login: $(this).attr('login'),
+                                propositionDate: $(this).attr('propositionDate')
+                        }, 
+                        function(data) {
+                                // placer le formulaire sous le div
+                                $("#divRisque{{ risque.cdRisque }}").html(data); 
+                               
+                                // rétablir curseur
+                                $("body").css("cursor", "auto");
+                        }
+                ).error(function() { 
+                        // rétablir curseur
+                        $("body").css("cursor", "auto");
+                        alert("Erreur non déterminée"); 
+                }); 
+        });
+});
+    </script>
+
+
+
+
+

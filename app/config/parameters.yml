@@ -42,6 +42,13 @@ parameters:
     database_user6: postgres
     database_password6: null
     
+    database_driver7: pdo_pgsql
+    database_host7: vslindev211
+    database_port7: null
+    database_name7: edl2012
+    database_user7: postgres
+    database_password7: null
+        
     mailer_transport: smtp
     mailer_host: exhubcas
     mailer_user: automate

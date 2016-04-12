@@ -30,5 +30,5 @@ aeag_sqe_suiviPrelevements:
     
 aeag_sqe_SaisieDonnees:
     resource: "@AeagSqeBundle/Resources/config/routing_saisieDonnees.yml"
-    prefix:   /siaiseDonnees
+    prefix:   /saisieDonnees
  

@@ -1,0 +1,7 @@
+parameters:
+#    aeag_etatdeslieux.example.class: Aeag\EdlBundle\Example
+
+services:
+#    aeag_etatdeslieux.example:
+#        class: %aeag_etatdeslieux.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

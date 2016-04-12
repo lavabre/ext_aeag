@@ -1,6 +1,6 @@
 # This file is auto-generated during the composer install
 parameters:
-    database_driver: pdo_pgsql
+   database_driver: pdo_pgsql
     database_host: vslindev211
     database_port: null
     database_name: aeag
@@ -34,21 +34,21 @@ parameters:
     database_name5: sqe
     database_user5: postgres
     database_password5: null
+    
+    database_driver6: pdo_pgsql
+    database_host6: vslindev211
+    database_port6: null
+    database_name6: die
+    database_user6: postgres
+    database_password6: null
+    
+    database_driver7: pdo_pgsql
+    database_host7: vslindev211
+    database_port7: null
+    database_name7: edl2012
+    database_user7: postgres
+    database_password7: null
 
-    database_driver6: oci8
-    database_host6: vslin190
-    database_port6: 1521
-    database_name6: ifc
-    database_user6: visu
-    database_password6: visu
-    
-    database_driver7: oci8
-    database_host7: vslin187
-    database_port7: 1521
-    database_name7: gtt
-    database_user7: visu
-    database_password7: visu
-    
     
     mailer_transport: smtp
     mailer_host: exhubcas
