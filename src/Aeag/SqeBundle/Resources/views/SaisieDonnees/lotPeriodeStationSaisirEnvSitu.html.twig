@@ -282,7 +282,7 @@
                                                                                                                            <td align="right">
                                                                                                                            {% if paramAn.pgCmdPrelevPc %}
                                                                                                                              {{ paramAn.pgCmdPrelevPc.profondeur | number_format( 2,","," ")  }}
-                                                                                                                             <input  type="hidden" id="idAnalyseNumOrdre-{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}" name="idAnalyseNumOrdre-{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}" value="{{ paramAn.pgCmdAnalyse.numOrdre }}" class="form-control number text-right valid">
+                                                                                                                             <input  type="hidden" id="idAnalyseNumOrdre-{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}" name="AnalyseNumOrdre-{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}" value="{{ paramAn.pgCmdAnalyse.numOrdre }}" class="form-control number text-right valid">
                                                                                                                            {% endif %}
                                                                                                                            </td>
                                                                                                                       {% endif %}
@@ -291,7 +291,15 @@
                                                                                                                              <td align="right">
                                                                                                                          <div class="form-group">
                                                                                                                               <div class="input-group text-left">
+                                                                                                                                  {% if typeMilieu.codeMilieu == 'LPC' %}
+                                                                                                                                      {% if paramAn.pgCmdAnalyse %}
+                                                                                                                                         <select class="form-control" id="idRemarque{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}" name="remarque{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}"   >    
+                                                                                                                                       {% else %}
+                                                                                                                                           <select class="form-control" id="idRemarque{{ paramAn.paramAn.id}}" name="remarque{{ paramAn.paramAn.id}}"   >    
+                                                                                                                                       {% endif %}
+                                                                                                                                  {% else %}
                                                                                                                                         <select class="form-control" id="idRemarque{{ paramAn.paramAn.id}}" name="remarque{{ paramAn.paramAn.id}}"   >    
+                                                                                                                                   {% endif %}
                                                                                                                                               <option value="1"  selected>1 : Donnée renseignée</option> 
                                                                                                                                               <option value="0">0 : Donnée absente</option> 
                                                                                                                                         </select>
@@ -302,7 +310,15 @@
                                                                                                                                <div class="form-group">
                                                                                                                                     <div class="input-group text-right">
                                                                                                                                         {% if paramAn.valeurs  %}
-                                                                                                                                               <select class="form-control" id="idValeur{{ paramAn.paramAn.id}}" name="valeur{{ paramAn.paramAn.id}}"   >    
+                                                                                                                                               {% if typeMilieu.codeMilieu == 'LPC' %}
+                                                                                                                                                   {% if paramAn.pgCmdAnalyse %}
+                                                                                                                                                        <select class="form-control" id="idValeur{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}" name="valeur{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}"   >   
+                                                                                                                                                   {% else %}
+                                                                                                                                                        <select class="form-control" id="idValeur{{ paramAn.paramAn.id}}" name="valeur{{ paramAn.paramAn.id}}"   >   
+                                                                                                                                                   {% endif %}
+                                                                                                                                                {% else %}
+                                                                                                                                                    <select class="form-control" id="idValeur{{ paramAn.paramAn.id}}" name="valeur{{ paramAn.paramAn.id}}"   >   
+                                                                                                                                                {% endif %}
                                                                                                                                                     <option value=""></option> 
                                                                                                                                                    {% for valeur in paramAn.valeurs %}
                                                                                                                                                            {% if paramAn.pgCmdAnalyse %}
@@ -318,9 +334,25 @@
                                                                                                                                                  </select>
                                                                                                                                           {% else %}
                                                                                                                                               {% if paramAn.pgCmdAnalyse %}
+                                                                                                                                                  {% if typeMilieu.codeMilieu == 'LPC' %}
+                                                                                                                                                      {% if paramAn.pgCmdAnalyse %}
+                                                                                                                                                         <input id="idValeur{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}" class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}" value="{{ paramAn.pgCmdAnalyse.resultat | replace({".0000000000" : ""}) }}">
+                                                                                                                                                      {% else %}
+                                                                                                                                                          <input id="idValeur{{ paramAn.paramAn.id}}" class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdAnalyse.resultat | replace({".0000000000" : ""}) }}">
+                                                                                                                                                      {% endif %}
+                                                                                                                                                   {% else %}
                                                                                                                                                     <input id="idValeur{{ paramAn.paramAn.id}}" class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdAnalyse.resultat | replace({".0000000000" : ""}) }}">
+                                                                                                                                                   {% endif %}
                                                                                                                                                 {% else %}
+                                                                                                                                                     {% if typeMilieu.codeMilieu == 'LPC' %}
+                                                                                                                                                         {% if paramAn.pgCmdAnalyse %}
+                                                                                                                                                             <input id="idValeur{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}" class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}" value="">
+                                                                                                                                                          {% else %}
+                                                                                                                                                              <input id="idValeur{{ paramAn.paramAn.id}}" class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}" value="">
+                                                                                                                                                          {% endif %}
+                                                                                                                                                      {% else %}
                                                                                                                                                       <input id="idValeur{{ paramAn.paramAn.id}}" class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}" value="">
+                                                                                                                                                      {% endif %}
                                                                                                                                               {% endif %}
                                                                                                                                           {% endif %}
                                                                                                                                      </div>
@@ -331,23 +363,61 @@
                                                                                                                                     <div  class="input-group text-left">
                                                                                                                                         {% if paramAn.unites  %}
                                                                                                                                              {% if paramAn.unites | length > 1 %}
-                                                                                                                                                       <select class="form-control" id="idUniteCode{{ paramAn.paramAn.id}}" name="uniteCode{{ paramAn.paramAn.id}}"   >    
+                                                                                                                                                     {% if typeMilieu.codeMilieu == 'LPC' %}
+                                                                                                                                                         {% if paramAn.pgCmdAnalyse %}
+                                                                                                                                                            <select class="form-control" id="idUniteCode{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}" name="uniteCode{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}"   >   
+                                                                                                                                                         {% else %}
+                                                                                                                                                             <select class="form-control" id="idUniteCode{{ paramAn.paramAn.id}}" name="uniteCode{{ paramAn.paramAn.id}}"   >   
+                                                                                                                                                          {% endif %}
+                                                                                                                                                     {% else %}
+                                                                                                                                                       <select class="form-control" id="idUniteCode{{ paramAn.paramAn.id}}" name="uniteCode{{ paramAn.paramAn.id}}"   >   
+                                                                                                                                                      {% endif %}
                                                                                                                                                            {% for unite in paramAn.unites %}
                                                                                                                                                                              <option value="{{unite.codeUnite.codeUnite}}">{{unite.codeUnite.codeUnite}} : {{ unite.codeUnite.nomUnite}}</option> 
                                                                                                                                                            {% endfor %}
                                                                                                                                                          </select>
                                                                                                                                               {% else %}
-                                                                                                                                                   <input id="idUniteCode{{ paramAn.paramAn.id}}" type="hidden" class="form-control" placeholder="unite" name ="uniteCode{{ paramAn.paramAn.id}}" value="{{paramAn.unites.0.codeUnite.codeUnite}}" readonly="readonly">
-                                                                                                                                                  <input id="idUnite{{ paramAn.paramAn.id}}" type="text" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{paramAn.unites.0.codeUnite.codeUnite}} : {{paramAn.unites.0.codeUnite.nomUnite}}" readonly="readonly">
+                                                                                                                                                  {% if typeMilieu.codeMilieu == 'LPC' %}
+                                                                                                                                                      {% if paramAn.pgCmdAnalyse %}
+                                                                                                                                                            <input id="idUniteCode{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}" type="hidden" class="form-control" placeholder="unite" name ="uniteCode{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}" value="{{paramAn.unites.0.codeUnite.codeUnite}}" readonly="readonly">
+                                                                                                                                                            <input id="idUnite{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}" type="text" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}" value="{{paramAn.unites.0.codeUnite.codeUnite}} : {{paramAn.unites.0.codeUnite.nomUnite}}" readonly="readonly">
+                                                                                                                                                       {% else %}
+                                                                                                                                                            <input id="idUniteCode{{ paramAn.paramAn.id}}" type="hidden" class="form-control" placeholder="unite" name ="uniteCode{{ paramAn.paramAn.id}}" value="{{paramAn.unites.0.codeUnite.codeUnite}}" readonly="readonly">
+                                                                                                                                                            <input id="idUnite{{ paramAn.paramAn.id}}" type="text" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{paramAn.unites.0.codeUnite.codeUnite}} : {{paramAn.unites.0.codeUnite.nomUnite}}" readonly="readonly">
+                                                                                                                                                       {% endif %}
+                                                                                                                                                      {% else %}
+                                                                                                                                                        <input id="idUniteCode{{ paramAn.paramAn.id}}" type="hidden" class="form-control" placeholder="unite" name ="uniteCode{{ paramAn.paramAn.id}}" value="{{paramAn.unites.0.codeUnite.codeUnite}}" readonly="readonly">
+                                                                                                                                                       <input id="idUnite{{ paramAn.paramAn.id}}" type="text" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{paramAn.unites.0.codeUnite.codeUnite}} : {{paramAn.unites.0.codeUnite.nomUnite}}" readonly="readonly">
+                                                                                                                                                  {% endif %}
                                                                                                                                               {% endif %}
                                                                                                                                          {% else %}
                                                                                                                                               {% if paramAn.pgCmdAnalyse %}
+                                                                                                                                                  {% if typeMilieu.codeMilieu == 'LPC' %}
+                                                                                                                                                      {% if paramAn.pgCmdAnalyse %}
+                                                                                                                                                           <input id="idUniteCode{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}" type="hidden" class="form-control" placeholder="unite" name ="uniteCode{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}" value="{{ paramAn.pgCmdAnalyse.codeUnite.codeUnite }}">
+                                                                                                                                                          <input id="idUnite{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}" type="text" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}" value="{{ paramAn.pgCmdAnalyse.codeUnite.codeUnite }} : {{ paramAn.pgCmdAnalyse.codeUnite.nomUnite }}">
+                                                                                                                                                      {% else %}
+                                                                                                                                                          <input id="idUniteCode{{ paramAn.paramAn.id}}" type="hidden" class="form-control" placeholder="unite" name ="uniteCode{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdAnalyse.codeUnite.codeUnite }}">
+                                                                                                                                                          <input id="idUnite{{ paramAn.paramAn.id}}" type="text" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdAnalyse.codeUnite.codeUnite }} : {{ paramAn.pgCmdAnalyse.codeUnite.nomUnite }}">
+                                                                                                                                                      {% endif %}
+                                                                                                                                                      {% else %}
                                                                                                                                                     <input id="idUniteCode{{ paramAn.paramAn.id}}" type="hidden" class="form-control" placeholder="unite" name ="uniteCode{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdAnalyse.codeUnite.codeUnite }}">
                                                                                                                                                     <input id="idUnite{{ paramAn.paramAn.id}}" type="text" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdAnalyse.codeUnite.codeUnite }} : {{ paramAn.pgCmdAnalyse.codeUnite.nomUnite }}">
-                                                                                                                                                {% else %}
+                                                                                                                                                  {% endif %}
+                                                                                                                                                  {% else %}
+                                                                                                                                                      {% if typeMilieu.codeMilieu == 'LPC' %}
+                                                                                                                                                          {% if paramAn.pgCmdAnalyse %}
+                                                                                                                                                              <input id="idUniteCode{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}" type="hidden" class="form-control" placeholder="unite" name ="uniteCode{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}" value="{{ paramAn.unite.codeUnite }}">
+                                                                                                                                                             <input id="idUnite{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}" value="{{ paramAn.unite.codeUnite }} : {{ paramAn.unite.nomUnite }}" readonly="readonly">
+                                                                                                                                                         {% else %}
+                                                                                                                                                             <input id="idUniteCode{{ paramAn.paramAn.id}}" type="hidden" class="form-control" placeholder="unite" name ="uniteCode{{ paramAn.paramAn.id}}" value="{{ paramAn.unite.codeUnite }}">
+                                                                                                                                                             <input id="idUnite{{ paramAn.paramAn.id}}" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{ paramAn.unite.codeUnite }} : {{ paramAn.unite.nomUnite }}" readonly="readonly">
+                                                                                                                                                          {% endif %}
+                                                                                                                                                          {% else %}
                                                                                                                                                       <input id="idUniteCode{{ paramAn.paramAn.id}}" type="hidden" class="form-control" placeholder="unite" name ="uniteCode{{ paramAn.paramAn.id}}" value="{{ paramAn.unite.codeUnite }}">
                                                                                                                                                       <input id="idUnite{{ paramAn.paramAn.id}}" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{ paramAn.unite.codeUnite }} : {{ paramAn.unite.nomUnite }}" readonly="readonly">
-                                                                                                                                              {% endif %}
+                                                                                                                                                      {% endif %}
+                                                                                                                                                 {% endif %}
                                                                                                                                          {% endif %}
                                                                                                                                      </div>
                                                                                                                                  </div> 
@@ -591,7 +661,111 @@
                              {% endfor %}
                    {% else %}
                             {% for paramAn in groupe.paramAns %}
+                                {% if typeMilieu.codeMilieu == 'LPC' %}
                                     {% if paramAn.pgCmdAnalyse %}
+                                        {% if paramAn.pgCmdAnalyse.codeStatut != 3 %}
+                                             nbParamSaisis{{groupe.grparAn.id }} = nbParamSaisis{{groupe.grparAn.id }} + 1;
+                                            $('#paramSaisis{{ groupe.grparAn.id}}').empty().html(nbParamSaisis{{groupe.grparAn.id }});
+                                         {% endif %}
+                                            var valeur =   {{  paramAn.pgCmdAnalyse.codeRemarque }}
+                                            $("#idRemarque{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }} option[value='" + valeur + "']").attr('selected','selected');
+                                            $("#idRemarque{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}").val(valeur);
+                                             if ($("#idValeur{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}").val() == "" ){
+                                                $('#idRemarque{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }} option:selected').removeAttr('selected');
+                                                var remarque =  "0";
+                                                $("#idRemarque{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }} option[value='" + remarque + "']").attr('selected','selected');
+                                                $("#idRemarque{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}").val(remarque);
+                                            };
+                                            {% for valeur in paramAn.valeurs %}
+                                                         {% if paramAn.pgCmdAnalyse.resultat | replace({".0000000000" : ""})  == valeur.valeur  | replace({".00" : ""}) %}
+                                                                $('#idValeur{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }} option:selected').removeAttr('selected');
+                                                                var valeur =   {{ valeur.valeur |  replace({".00" : ""}) }}
+                                                                $("#idValeur{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }} option[value='" + valeur + "']").attr('selected','selected');
+                                                                $("#idValeur{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}").val(valeur);
+                                                       {% endif %}
+                                              {% endfor %}
+                                     
+                                     $(document).on('change','#idValeur{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}',function(e){
+                                            if ($("#idValeur{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}").val() != "" ){
+                                               $('#idRemarque{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }} option:selected').removeAttr('selected');
+                                                var remarque =  "1";
+                                                $("#idRemarque{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }} option[value='" + remarque + "']").attr('selected','selected');
+                                               $("#idRemarque{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}").val(remarque);
+                                            }
+                                      
+                                            if ($("#idValeur{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}").val() == "" ){
+                                                nbParamSaisis{{groupe.grparAn.id }} = nbParamSaisis{{groupe.grparAn.id }} - 1;
+                                             }else{
+                                                nbParamSaisis{{groupe.grparAn.id }} = nbParamSaisis{{groupe.grparAn.id }} + 1;
+                                             };
+                                             $('#paramSaisis{{ groupe.grparAn.id}}').empty().html(nbParamSaisis{{groupe.grparAn.id }});
+                                       });
+                                    
+                                      $(document).on('change','#idRemarque{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}',function(e){
+                                            if ($("#idRemarque{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}").val() == "0" ){
+                                                 $("#idValeur{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}").val(null);
+                                            }
+                                        });
+                                    {% for unite in paramAn.unites %}
+                                            {% if paramAn.pgCmdAnalyse %}
+                                                    {% if paramAn.pgCmdAnalyse.codeUnite.codeUnite == unite.codeUnite.codeUnite %}
+                                                           $('#idUniteCode{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }} option:selected').removeAttr('selected');
+                                                            var valeur =   '{{ unite.codeUnite.codeUnite }}';
+                                                           $("#idUniteCode{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }} option[value='" + valeur + "']").attr('selected','selected');
+                                                           $("#idUniteCode{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}").val(valeur);
+                                                      {% endif %}
+                                            {% elseif paramAn.unite %}
+                                                    {% if paramAn.unite.codeUnite == unite.codeUnite.codeUnite %}
+                                                             $('#idUniteCode{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }} option:selected').removeAttr('selected');
+                                                            var valeur =   '{{ paramAn.unite.codeUnite }}';
+                                                             $("#idUniteCode{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }} option[value='" + valeur + "']").attr('selected','selected');
+                                                             $("#idUniteCode{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}").val(valeur);
+                                                       {% endif %}
+                                            {% endif %}
+                                      {% endfor %}
+                                      {% else %}
+                                        $(document).on('change','#idValeur{{ paramAn.paramAn.id}}',function(e){
+                                            if ($("#idValeur{{ paramAn.paramAn.id}}").val() != "" ){
+                                               $('#idRemarque{{ paramAn.paramAn.id}} option:selected').removeAttr('selected');
+                                                var remarque =  "1";
+                                                $("#idRemarque{{ paramAn.paramAn.id}} option[value='" + remarque + "']").attr('selected','selected');
+                                               $("#idRemarque{{ paramAn.paramAn.id}}").val(remarque);
+                                            }
+                                      
+                                            if ($("#idValeur{{ paramAn.paramAn.id}}").val() == "" ){
+                                                nbParamSaisis{{groupe.grparAn.id }} = nbParamSaisis{{groupe.grparAn.id }} - 1;
+                                             }else{
+                                                nbParamSaisis{{groupe.grparAn.id }} = nbParamSaisis{{groupe.grparAn.id }} + 1;
+                                             };
+                                             $('#paramSaisis{{ groupe.grparAn.id}}').empty().html(nbParamSaisis{{groupe.grparAn.id }});
+                                       });
+                                    
+                                      $(document).on('change','#idRemarque{{ paramAn.paramAn.id}}',function(e){
+                                            if ($("#idRemarque{{ paramAn.paramAn.id}}").val() == "0" ){
+                                                 $("#idValeur{{ paramAn.paramAn.id}}").val(null);
+                                            }
+                                        });
+                                    {% for unite in paramAn.unites %}
+                                            {% if paramAn.pgCmdAnalyse %}
+                                                    {% if paramAn.pgCmdAnalyse.codeUnite.codeUnite == unite.codeUnite.codeUnite %}
+                                                           $('#idUniteCode{{ paramAn.paramAn.id}} option:selected').removeAttr('selected');
+                                                            var valeur =   '{{ unite.codeUnite.codeUnite }}';
+                                                           $("#idUniteCode{{ paramAn.paramAn.id}} option[value='" + valeur + "']").attr('selected','selected');
+                                                           $("#idUniteCode{{ paramAn.paramAn.id}}").val(valeur);
+                                                      {% endif %}
+                                            {% elseif paramAn.unite %}
+                                                    {% if paramAn.unite.codeUnite == unite.codeUnite.codeUnite %}
+                                                             $('#idUniteCode{{ paramAn.paramAn.id}} option:selected').removeAttr('selected');
+                                                            var valeur =   '{{ paramAn.unite.codeUnite }}';
+                                                             $("#idUniteCode{{ paramAn.paramAn.id}} option[value='" + valeur + "']").attr('selected','selected');
+                                                             $("#idUniteCode{{ paramAn.paramAn.id}}").val(valeur);
+                                                       {% endif %}
+                                            {% endif %}
+                                      {% endfor %}
+                                      {% endif %}
+                                      
+                                {% else %}
+                                         {% if paramAn.pgCmdAnalyse %}
                                         {% if paramAn.pgCmdAnalyse.codeStatut != 3 %}
                                              nbParamSaisis{{groupe.grparAn.id }} = nbParamSaisis{{groupe.grparAn.id }} + 1;
                                             $('#paramSaisis{{ groupe.grparAn.id}}').empty().html(nbParamSaisis{{groupe.grparAn.id }});
@@ -653,6 +827,7 @@
                                                        {% endif %}
                                             {% endif %}
                                       {% endfor %}
+                                {% endif %}
                              {% endfor %}
                    {% endif %}
                    

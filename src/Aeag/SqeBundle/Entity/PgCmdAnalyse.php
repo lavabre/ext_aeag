@@ -156,6 +156,9 @@ class PgCmdAnalyse {
      * })
      */
     private $paramProg;
+    
+    
+       
 
     public function getPrelevId() {
         return $this->prelevId;
@@ -300,5 +303,7 @@ class PgCmdAnalyse {
     public function setParamProg(\Aeag\SqeBundle\Entity\PgProgLotParamAn $paramProg) {
         $this->paramProg = $paramProg;
     }
+    
+   
 
 }

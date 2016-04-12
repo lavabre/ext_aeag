@@ -47,5 +47,17 @@ class PgCmdPrelevPcRepository extends EntityRepository {
         return $qb->getOneOrNullResult();
     }
     
+    /**
+     * @return array
+     */
+    public function getMaxNumOrdreByPrelev($pgCmdPrelev) {
+        $query = "select max(c.numOrdre)";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelevPc c";
+        $query = $query . " where c.prelev = " . $pgCmdPrelev->getId() ;
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+        return $qb->getSingleScalarResult();
+    }
+    
     
 }
