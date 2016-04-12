@@ -130,7 +130,7 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
             $txtMessage .= 'Vous pouvez lire le récapitulatif dans le fichier disponible à l\'adresse suivante : <a href="'.$url.'">'.$pgCmdFichierRps->getNomFichierCompteRendu().'</a>';
             $txtMessage .= "<br/><br/>Cordialement, <br/>L'équipe SQE";
             $destinataire = $this->repoPgProgWebUsers->findOneByPrestataire($pgCmdFichierRps->getDemande()->getPrestataire());
-            $this->_envoiMessage($txtMessage, $destinataire, $objetMessage);
+            $this->_envoiMessage($txtMessage, $destinataire, $pgCmdFichierRps, $objetMessage);
             
             // Insertion données brutes
             if ((count($logErrorsVraisemblance) == 0) && (count($logErrorsCoherence) == 0 )) {
@@ -993,20 +993,24 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
         return $result;
     }
     
-    protected function _envoiMessage($txtMessage, $destinataire, $objet, $expediteur = 'automate@eau-adour-garonne.fr') {
+    protected function _envoiMessage($txtMessage, $destinataire, $objet, $pgCmdFichierRps, $expediteur = 'automate@eau-adour-garonne.fr') {
         $txtMessage = "<html><head></head><body>".$txtMessage."</body></html>";
-        // Récupération du service
-        $mailer = $this->getContainer()->get('mailer');
-        // Création de l'e-mail : le service mailer utilise SwiftMailer, donc nous créons une instance de Swift_Message.
-        $mail = \Swift_Message::newInstance('Wonderful Subject')
-                ->setSubject($objet)
-                ->setFrom($expediteur)
-                ->setTo($destinataire->getMail())
-                ->setBody($txtMessage,'text/html');
+        try {
+            // Récupération du service
+            $mailer = $this->getContainer()->get('mailer');
+            // Création de l'e-mail : le service mailer utilise SwiftMailer, donc nous créons une instance de Swift_Message.
+            $mail = \Swift_Message::newInstance('Wonderful Subject')
+                    ->setSubject($objet)
+                    ->setFrom($expediteur)
+                    ->setTo($destinataire->getMail())
+                    ->setBody($txtMessage,'text/html');
 
-        $mailer->send($mail);
+            $mailer->send($mail);
 
-        $this->em->flush();
+            $this->em->flush();
+        } catch (\Swift_TransportException $ex) {
+            $this->_addLog('warning', $pgCmdFichierRps->getDemande()->getId(), $pgCmdFichierRps->getId(), "Erreur lors de l\'envoi de mail dans le process de verification des RAIs", null, $ex->getMessage());
+        }
     }
 
 }
