@@ -309,6 +309,23 @@ class PgTmpValidEdilaboRepository extends EntityRepository {
         return $result;
     }
     
+    public function getCodeRqValideByCodePrelevement($demandeId, $reponseId, $codePrelevement) {
+        $query = "select distinct p.codeRqM";
+        $query .= " from Aeag\SqeBundle\Entity\PgTmpValidEdilabo p";
+        $query .= " where p.demandeId = :demande";
+        $query .= " and p.fichierRpsId = :reponse";
+        $query .= " and p.codePrelevement = :codePrelevement";
+        $query .= " and p.codeRqM IS NOT NULL";
+        $query .= " and p.codeRqM <> '0'";
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('demande', $demandeId);
+        $qb->setParameter('reponse', $reponseId);
+        $qb->setParameter('codePrelevement', $codePrelevement);
+        $result = $qb->getResult();
+        
+        return $result;
+    }
+    
     public function getDiffCodeParametreAdd($codePrelevement, $demandeId, $reponseId) {
          $query = " select rps.codeParametre";
         $query .= " from Aeag\SqeBundle\Entity\PgTmpValidEdilabo rps";
