@@ -14,7 +14,6 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
     private $emSqe;
     private $em;
     private $output;
-    
     private $repoPgCmdFichiersRps;
     private $repoPgProgPhases;
     private $repoPgTmpValidEdilabo;
@@ -30,10 +29,8 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
     private $repoPgSandreParametres;
     private $repoPgSandreUnites;
     private $repoPgSandreZoneVerticaleProspectee;
-    
     private $detectionCodeRemarqueComplet;
     private $detectionCodeRemarqueMoitie;
-    
     private $phase82atteinte = false;
 
     protected function configure() {
@@ -67,7 +64,7 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
         $this->repoPgProgLotParamAn = $this->emSqe->getRepository('AeagSqeBundle:PgProgLotParamAn');
 
         // Chargement des fichiers csv dans des tableaux 
-        $cheminCourant = __DIR__.'/../../../../';
+        $cheminCourant = __DIR__ . '/../../../../';
         $this->detectionCodeRemarqueComplet = $this->_csvToArray($cheminCourant . "/web/tablesCorrespondancesRai/detectionCodeRemarqueComplet.csv");
         $this->detectionCodeRemarqueMoitie = $this->_csvToArray($cheminCourant . "/web/tablesCorrespondancesRai/detectionCodeRemarqueMoitie.csv");
         // On récupère les RAIs dont les phases sont en R25
@@ -113,36 +110,39 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
 
             // Compléter le fichier de logs
             $this->_insertFichierLog($pgCmdFichierRps);
-            
+
             // Envoi mail
             $context = $this->getContainer()->get('router')->getContext();
             $context->setHost($this->getContainer()->getParameter('router_host'));
             $context->setScheme($this->getContainer()->getParameter('router_scheme'));
             $context->setBaseUrl($this->getContainer()->getParameter('router_baseurl'));
-            
-            $objetMessage = "SQE - RAI : Fichier " . $pgCmdFichierRps->getNomFichier(). " - Récapitulatif";
-            $url = $this->getContainer()->get('router')->generate('AeagSqeBundle_echangefichiers_reponses_telecharger', array("reponseId" =>  $pgCmdFichierRps->getId(), "typeFichier" => "CR"), UrlGeneratorInterface::ABSOLUTE_URL);
+
+            $objetMessage = "SQE - RAI : Fichier " . $pgCmdFichierRps->getNomFichier() . " - Récapitulatif";
+            $url = $this->getContainer()->get('router')->generate('AeagSqeBundle_echangefichiers_reponses_telecharger', array("reponseId" => $pgCmdFichierRps->getId(), "typeFichier" => "CR"), UrlGeneratorInterface::ABSOLUTE_URL);
             $txtMessage = "Bonjour, <br/><br/>";
-            $txtMessage .= "Lot : ".$pgCmdFichierRps->getDemande()->getLotan()->getLot()->getNomLot()."<br/>";
-            $txtMessage .= "Période : ".$pgCmdFichierRps->getDemande()->getPeriode()->getLabelPeriode()."<br/>";
-            $txtMessage .= 'Le traitement de la RAI '.$pgCmdFichierRps->getNomFichier().' est maintenant terminé <br/>';
-            $txtMessage .= "L'état final est le suivant : <strong>".$pgCmdFichierRps->getPhaseFichier()->getLibellePhase()."</strong><br/>";
-            $txtMessage .= 'Vous pouvez lire le récapitulatif dans le fichier disponible à l\'adresse suivante : <a href="'.$url.'">'.$pgCmdFichierRps->getNomFichierCompteRendu().'</a>';
+            $txtMessage .= "Lot : " . $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getNomLot() . "<br/>";
+            $txtMessage .= "Période : " . $pgCmdFichierRps->getDemande()->getPeriode()->getLabelPeriode() . "<br/>";
+            $txtMessage .= 'Le traitement de la RAI ' . $pgCmdFichierRps->getNomFichier() . ' est maintenant terminé <br/>';
+            $txtMessage .= "L'état final est le suivant : <strong>" . $pgCmdFichierRps->getPhaseFichier()->getLibellePhase() . "</strong><br/>";
+            $txtMessage .= 'Vous pouvez lire le récapitulatif dans le fichier disponible à l\'adresse suivante : <a href="' . $url . '">' . $pgCmdFichierRps->getNomFichierCompteRendu() . '</a>';
             $txtMessage .= "<br/><br/>Cordialement, <br/>L'équipe SQE";
             $destinataire = $this->repoPgProgWebUsers->findOneByPrestataire($pgCmdFichierRps->getDemande()->getPrestataire());
-            $this->_envoiMessage($txtMessage, $destinataire, $pgCmdFichierRps, $objetMessage);
-            
+            $this->_envoiMessage($txtMessage, $destinataire, $objetMessage, $pgCmdFichierRps);
+
             // Insertion données brutes
             if ((count($logErrorsVraisemblance) == 0) && (count($logErrorsCoherence) == 0 )) {
                 $this->_integrationDonneesBrutes($pgCmdFichierRps);
+
+                // TODO Evolution de la phase
+                //$this->_updatePhase($pgCmdFichierRps, 'R45', $this->phase82atteinte);
             }
 
-            // TODO Vider la table tempo des lignes correspondant à la RAI
+            // Vider la table tempo des lignes correspondant à la RAI
+            $this->_cleanTmpTable($pgCmdFichierRps);
         }
     }
 
     protected function _coherenceRaiDai($pgCmdFichierRps) {
-
         $this->_updatePhase($pgCmdFichierRps, 'R26');
 
         $demandeId = $pgCmdFichierRps->getDemande()->getId();
@@ -236,7 +236,6 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
                 } else {
                     $this->_addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: Paramètre manquant", $codePrelev["codePrelevement"], $diff);
                 }
-                
             }
         }
     }
@@ -256,111 +255,128 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
     }
 
     protected function _controleVraisemblance($pgCmdFichierRps) {
-
         $this->_updatePhase($pgCmdFichierRps, 'R36', $this->phase82atteinte);
 
         $demandeId = $pgCmdFichierRps->getDemande()->getId();
         $reponseId = $pgCmdFichierRps->getId();
-        $pgTmpValidEdilabos = $this->repoPgTmpValidEdilabo->findBy(array('fichierRpsId' => $reponseId, 'demandeId' => $demandeId));
-
-        // Contrôles sur toutes les valeurs insérées
-        foreach ($pgTmpValidEdilabos as $pgTmpValidEdilabo) {
-            $mesure = $pgTmpValidEdilabo->getResM();
-            $codeRq = $pgTmpValidEdilabo->getCodeRqM();
-            $codeParametre = $pgTmpValidEdilabo->getCodeParametre();
-            $codePrelevement = $pgTmpValidEdilabo->getCodePrelevement();
-            $inSitu = $pgTmpValidEdilabo->getInSitu();
-
-
-            // III.1 Champs non renseignés (valeurs et code remarque) ou valeurs non numériques ou valeurs impossibles params env / code remarque peut ne pas être renseigné pour cette liste (car réponse en edilabo 1.0) => avertissement
-            if (is_null($mesure)) {
-                if ($codeRq != 0 || is_null($codeRq)) { // III.2 Si valeur "vide" avec code remarque "0" hors lecture échelle (1429),,,,,,,'ABSENT' / on doit avoir un code remarque = 0 pour les valeurs vides, sinon avertissement, sauf pour le 1429 (cote échelle) => Avertissement
-                    if ($codeParametre == 1429 || $inSitu == 0) {
-                        $this->_addLog('warning', $demandeId, $reponseId, "Valeur non renseignée et code remarque différent de 0", $codePrelevement, $codeParametre);
-                    } else {
-                        $this->_addLog('error', $demandeId, $reponseId, "Valeur non renseignée et code remarque différent de 0", $codePrelevement, $codeParametre);
-                    }
-                }
-            }
-
-            if (is_null($codeRq) && !is_null($mesure)) {
-                if ($codeParametre == 1429 || $inSitu == 0) {
-                    // TODO Si version edilabo
-                    $this->_addLog('warning', $demandeId, $reponseId, "Valeur renseignée et code remarque vide", $codePrelevement, $codeParametre);
-                } else {
-                    $this->_addLog('error', $demandeId, $reponseId, "Valeur renseignée et code remarque vide", $codePrelevement, $codeParametre);
-                }
-            }
-
-            if (!is_null($codeRq) && !is_null($mesure)) {
-                if (!is_numeric($mesure) || !is_numeric($codeRq)) {
-                    $this->_addLog('error', $demandeId, $reponseId, "La valeur n'est pas un nombre", $codePrelevement, $codeParametre);
-                }
-            }
-
-            // Codes Params Env
-            // III.3 Valeurs =0 (hors TH (1345), TA (1346), TAC (1347), Temp(1301)) hors codes observations environnementales / résultat = 0 possible pour les paramètres de cette liste (et pour 1345, 1346, 1347 et 1301) => Erreur
-            if ($mesure == 0) {
-                if ($codeParametre !== 1345 && $codeParametre !== 1346 && $codeParametre !== 1347 && $codeParametre !== 1301 && $inSitu != 0) {
-                    $this->_addLog('error', $demandeId, $reponseId, "Valeur = 0 impossible pour ce paramètre", $codePrelevement, $codeParametre);
-                }
-            }
-
-            // III.4 Valeurs < 0 (hors température de air 1409, potentiel REDOX 1330)
-            if ($mesure < 0) {
-                if ($codeParametre != 1409 && $codeParametre != 1330 && $codeParametre != 1420 && $codeParametre != 1429) {
-                    $this->_addLog('error', $demandeId, $reponseId, "Valeur < 0 impossible pour ce paramètre", $codePrelevement, $codeParametre);
-                }
-            }
-
-            // III.5 Valeurs avec code remarque '> (3)' hors bactério (1147,1448,1449,1451,5479,6455); code remarque ="Trace (7)"
-            $codeParamsBacterio = array(
-                1447, 1448, 1449, 1451, 5479, 6455
-            );
-            if (($codeRq == 3 && !in_array($codeParametre, $codeParamsBacterio)) || $codeRq == 7) {
-                $this->_addLog('error', $demandeId, $reponseId, "Code Remarque > 3 ou == 7 impossible pour ce paramètre", $codePrelevement, $codeParametre);
-            }
-        }
 
         $codePrelevements = $this->repoPgTmpValidEdilabo->getCodePrelevement($demandeId, $reponseId);
+        // Contrôles sur toutes les valeurs insérées
         foreach ($codePrelevements as $codePrelevement) {
             $codePrelevement = $codePrelevement['codePrelevement'];
-            // Contrôles spécifiques
-            // III.6
-            $this->_pH($demandeId, $reponseId, $codePrelevement);
 
-            // III.7
-            $this->_modeleWeiss($demandeId, $reponseId, $codePrelevement);
+            $meSituHydro = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1726, $demandeId, $reponseId, $codePrelevement);
 
-            // III.8 
-            $this->_balanceIonique($demandeId, $reponseId, $codePrelevement);
+            if (!is_null($meSituHydro) && $meSituHydro <= 2) {
+                $this->_addLog('warning', $demandeId, $reponseId, "Situation Hydro = ".$meSituHydro, $codePrelevement, 1726);
+                $codesRqValides = $this->repoPgTmpValidEdilabo->getCodeRqByCodePrelevement();
+                if (count($codesRqValides) > 0 ) {
+                    $this->_addLog('error', $demandeId, $reponseId, "Situation Hydro : Code Remarque impossible ", $codePrelevement, 1726);
+                } else {
+                    //todo update tmp set code_remarque = 0 and res = null where in_situ = 0
+                    $pgTmpValidEdilabos = $this->repoPgTmpValidEdilabo->findBy(array('fichierRpsId' => $reponseId, 'demandeId' => $demandeId, 'codePrelevement' => $codePrelevement, 'inSitu' => 0));
+                    foreach($pgTmpValidEdilabos as $pgTmpValidEdilabo) {
+                        $pgTmpValidEdilabo->setCodeRqM(0);
+                        $pgTmpValidEdilabo->setResM();
+                    }
+                    $this->emSqe->flush();
+                    
+                }
+            } else {
+                $pgTmpValidEdilabos = $this->repoPgTmpValidEdilabo->findBy(array('fichierRpsId' => $reponseId, 'demandeId' => $demandeId, 'codePrelevement' => $codePrelevement));
+                foreach ($pgTmpValidEdilabos as $pgTmpValidEdilabo) {
+                    $mesure = $pgTmpValidEdilabo->getResM();
+                    $codeRq = $pgTmpValidEdilabo->getCodeRqM();
+                    $codeParametre = $pgTmpValidEdilabo->getCodeParametre();
+                    $inSitu = $pgTmpValidEdilabo->getInSitu();
 
-            // III.9
-            $this->_balanceIoniqueTds2($demandeId, $reponseId, $codePrelevement);
+                    // III.1 Champs non renseignés (valeurs et code remarque) ou valeurs non numériques ou valeurs impossibles params env / code remarque peut ne pas être renseigné pour cette liste (car réponse en edilabo 1.0) => avertissement
+                    if (is_null($mesure)) {
+                        if ($codeRq != 0 || is_null($codeRq)) { // III.2 Si valeur "vide" avec code remarque "0" hors lecture échelle (1429),,,,,,,'ABSENT' / on doit avoir un code remarque = 0 pour les valeurs vides, sinon avertissement, sauf pour le 1429 (cote échelle) => Avertissement
+                            if ($codeParametre == 1429 || $inSitu == 0) {
+                                $this->_addLog('warning', $demandeId, $reponseId, "Valeur non renseignée et code remarque différent de 0", $codePrelevement, $codeParametre);
+                            } else {
+                                $this->_addLog('error', $demandeId, $reponseId, "Valeur non renseignée et code remarque différent de 0", $codePrelevement, $codeParametre);
+                            }
+                        }
+                    }
 
-            // III.10
-            $this->_ortophosphate($demandeId, $reponseId, $codePrelevement);
+                    if (is_null($codeRq) && !is_null($mesure)) {
+                        if ($codeParametre == 1429 || $inSitu == 0) {
+                            // TODO Si version edilabo
+                            // A remettre lorsque la version edilabo sera prise en compte 
+                            // $this->_addLog('warning', $demandeId, $reponseId, "Valeur renseignée et code remarque vide", $codePrelevement, $codeParametre);
+                        } else {
+                            $this->_addLog('error', $demandeId, $reponseId, "Valeur renseignée et code remarque vide", $codePrelevement, $codeParametre);
+                        }
+                    }
 
-            // III.11
-            $this->_ammonium($demandeId, $reponseId, $codePrelevement);
+                    if (!is_null($codeRq) && $codeRq != 0 && !is_null($mesure)) {
+                        if (!is_numeric($mesure) || !is_numeric($codeRq)) {
+                            $this->_addLog('error', $demandeId, $reponseId, "La valeur n'est pas un nombre", $codePrelevement, $codeParametre);
+                        }
+                    }
 
-            // III.12
-            $this->_pourcentageHorsOxygene($demandeId, $reponseId, $codePrelevement);
+                    // Codes Params Env
+                    // III.3 Valeurs =0 (hors TH (1345), TA (1346), TAC (1347), Temp(1301)) hors codes observations environnementales / résultat = 0 possible pour les paramètres de cette liste (et pour 1345, 1346, 1347 et 1301) => Erreur
+                    if (!is_null($mesure) && $mesure == 0) {
+                        if ($codeParametre !== 1345 && $codeParametre !== 1346 && $codeParametre !== 1347 && $codeParametre !== 1301 && $inSitu != 0) {
+                            $this->_addLog('error', $demandeId, $reponseId, "Valeur = 0 impossible pour ce paramètre", $codePrelevement, $codeParametre);
+                        }
+                    }
 
-            // III.13
-            $this->_sommeParametresDistincts($demandeId, $reponseId, $codePrelevement);
+                    // III.4 Valeurs < 0 (hors température de air 1409, potentiel REDOX 1330)
+                    if ($mesure < 0) {
+                        if ($codeParametre != 1409 && $codeParametre != 1330 && $codeParametre != 1420 && $codeParametre != 1429) {
+                            $this->_addLog('error', $demandeId, $reponseId, "Valeur < 0 impossible pour ce paramètre", $codePrelevement, $codeParametre);
+                        }
+                    }
 
-            // III.14
-            $this->_controleVraisemblanceMacroPolluants($demandeId, $reponseId, $codePrelevement);
+                    // III.5 Valeurs avec code remarque '> (3)' hors bactério (1147,1448,1449,1451,5479,6455); code remarque ="Trace (7)"
+                    $codeParamsBacterio = array(
+                        1447, 1448, 1449, 1451, 5479, 6455
+                    );
+                    if (($codeRq == 3 && !in_array($codeParametre, $codeParamsBacterio)) || $codeRq == 7) {
+                        $this->_addLog('error', $demandeId, $reponseId, "Code Remarque > 3 ou == 7 impossible pour ce paramètre", $codePrelevement, $codeParametre);
+                    }
+                }
+                // Contrôles spécifiques
+                // III.6
+                $this->_pH($demandeId, $reponseId, $codePrelevement);
 
-            // III.15
-            $this->_detectionCodeRemarqueLot7($demandeId, $reponseId, $codePrelevement);
+                // III.7
+                $this->_modeleWeiss($demandeId, $reponseId, $codePrelevement);
 
-            // III.16
-            $this->_detectionCodeRemarqueLot8($demandeId, $reponseId, $codePrelevement);
+                // III.8 
+                $this->_balanceIonique($demandeId, $reponseId, $codePrelevement);
 
-            // III.17
-            $this->_controleLqAeag($pgCmdFichierRps, $codePrelevement);
+                // III.9
+                $this->_balanceIoniqueTds2($demandeId, $reponseId, $codePrelevement);
+
+                // III.10
+                $this->_orthophosphate($demandeId, $reponseId, $codePrelevement);
+
+                // III.11
+                $this->_ammonium($demandeId, $reponseId, $codePrelevement);
+
+                // III.12
+                $this->_pourcentageHorsOxygene($demandeId, $reponseId, $codePrelevement);
+
+                // III.13
+                $this->_sommeParametresDistincts($demandeId, $reponseId, $codePrelevement);
+
+                // III.14
+                $this->_controleVraisemblanceMacroPolluants($demandeId, $reponseId, $codePrelevement);
+
+                // III.15
+                $this->_detectionCodeRemarqueLot7($demandeId, $reponseId, $codePrelevement);
+
+                // III.16
+                $this->_detectionCodeRemarqueLot8($demandeId, $reponseId, $codePrelevement);
+
+                // III.17
+                $this->_controleLqAeag($pgCmdFichierRps, $codePrelevement);
+            }
         }
     }
 
@@ -368,7 +384,7 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
         $demandeId = $pgCmdFichierRps->getDemande()->getId();
         $reponseId = $pgCmdFichierRps->getId();
         $pgTmpValidEdilabos = $this->repoPgTmpValidEdilabo->findBy(array('fichierRpsId' => $reponseId, 'demandeId' => $demandeId));
-        
+
         $dejaFait = false;
         foreach ($pgTmpValidEdilabos as $pgTmpValidEdilabo) {
             $pgCmdPrelev = $this->repoPgCmdPrelev->findOneBy(array('demande' => $pgTmpValidEdilabo->getDemandeId(), 'codePrelevCmd' => $pgTmpValidEdilabo->getCodePrelevement()));
@@ -381,7 +397,7 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
                 $pgCmdPrelev->setCodeMethode($pgTmpValidEdilabo->getMethPrel());
                 $pgCmdPrelev->setRealise("1");
                 $this->emSqe->persist($pgCmdPrelev);
-            
+
                 // Cas particulier selon num_ordre => creer une nouvelle ligne
                 // Ne faire qu'une fois le traitement $pgCmdPrelevPc
                 if (!$dejaFait) {
@@ -506,7 +522,7 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
             if ($mConductivite < 10000) {
                 $mTEauK = $mTEau + 273.15;
                 $argExp = -173.4292 + 249.6339 * 100 / $mTEauK + 143.3483 * log($mTEauK / 100) - 21.8492 * $mTEauK / 100;
-                $txSatModel = 1.4276 * exp($argExp);
+                $txSatModel = ($mOxDiss * 100) / 1.4276 * exp($argExp);
                 $indVraiWess = $txSatModel - $mTxSatOx;
 
                 if (abs($indVraiWess) > 25) {
@@ -706,16 +722,14 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
     }
 
     // III.10 [PO4] (1433) en P < [P total](1350) 
-    protected function _ortophosphate($demandeId, $reponseId, $codePrelevement) {
+    protected function _orthophosphate($demandeId, $reponseId, $codePrelevement) {
         $mPo4 = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1433, $demandeId, $reponseId, $codePrelevement);
         $mP = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1350, $demandeId, $reponseId, $codePrelevement);
 
         if (!is_null($mPo4) && !is_null($mP)) {
-            if (($this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre(1433, $demandeId, $reponseId, $codePrelevement) == 10) &&
-                    ($this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre(1350, $demandeId, $reponseId, $codePrelevement) == 10)) {
-                $this->_addLog('error', $demandeId, $reponseId, "Orthophosphate : Tous les dosages sont en LQ", $codePrelevement);
-            } else {
-                $indP = $mPo4 / $mP;
+            if (($this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre(1433, $demandeId, $reponseId, $codePrelevement) != 10) ||
+                    ($this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre(1350, $demandeId, $reponseId, $codePrelevement) != 10)) {
+                $indP = ($mPo4 * 0.3261379) / $mP;
                 if (1 < $indP && $indP <= 1.25) {
                     $this->_addLog('warning', $demandeId, $reponseId, "Orthophosphate : Réserve", $codePrelevement, $indP);
                 } else if ($indP > 1.25) {
@@ -731,11 +745,9 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
         $mNkj = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1319, $demandeId, $reponseId, $codePrelevement);
 
         if (!is_null($mNh4) && !is_null($mNkj)) {
-            if (($this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre(1335, $demandeId, $reponseId, $codePrelevement) == 10) &&
-                    ($this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre(1319, $demandeId, $reponseId, $codePrelevement) == 10)) {
-                $this->_addLog('error', $demandeId, $reponseId, "Ammonium : tous les dosages sont en LQ", $codePrelevement);
-            } else {
-                $indP = $mNh4 / $mNkj;
+            if (($this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre(1335, $demandeId, $reponseId, $codePrelevement) != 10) ||
+                    ($this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre(1319, $demandeId, $reponseId, $codePrelevement) != 10)) {
+                $indP = ($mNh4 * 0.7765) / $mNkj;
                 if (1 < $indP && $indP <= 1.25) {
                     $this->_addLog('warning', $demandeId, $reponseId, "Ammonium : Réserve", $codePrelevement, $indP);
                 } else if ($indP > 1.25) {
@@ -992,9 +1004,9 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
 
         return $result;
     }
-    
+
     protected function _envoiMessage($txtMessage, $destinataire, $objet, $pgCmdFichierRps, $expediteur = 'automate@eau-adour-garonne.fr') {
-        $txtMessage = "<html><head></head><body>".$txtMessage."</body></html>";
+        $txtMessage = "<html><head></head><body>" . $txtMessage . "</body></html>";
         try {
             // Récupération du service
             $mailer = $this->getContainer()->get('mailer');
@@ -1003,7 +1015,7 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
                     ->setSubject($objet)
                     ->setFrom($expediteur)
                     ->setTo($destinataire->getMail())
-                    ->setBody($txtMessage,'text/html');
+                    ->setBody($txtMessage, 'text/html');
 
             $mailer->send($mail);
 
@@ -1011,6 +1023,22 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
         } catch (\Swift_TransportException $ex) {
             $this->_addLog('warning', $pgCmdFichierRps->getDemande()->getId(), $pgCmdFichierRps->getId(), "Erreur lors de l\'envoi de mail dans le process de verification des RAIs", null, $ex->getMessage());
         }
+    }
+    
+    protected function _cleanTmpTable($pgCmdFichierRps) {
+        $demandeId = $pgCmdFichierRps->getDemande()->getId();
+        $reponseId = $pgCmdFichierRps->getId();
+        $pgTmpValidEdilabos = $this->repoPgTmpValidEdilabo->findBy(array('demandeId' => $demandeId, 'fichierRpsId' => $reponseId));
+        foreach($pgTmpValidEdilabos as $pgTmpValidEdilabo) {
+            $this->emSqe->remove($pgTmpValidEdilabo);
+        }
+        
+        $pgPgLogValidEdilabos = $this->repoPgLogValidEdilabo->findBy(array('demandeId' => $demandeId, 'fichierRpsId' => $reponseId));
+        foreach($pgPgLogValidEdilabos as $pgPgLogValidEdilabo) {
+            $this->emSqe->remove($pgPgLogValidEdilabo);
+        }
+        
+        $this->emSqe->flush();
     }
 
 }
