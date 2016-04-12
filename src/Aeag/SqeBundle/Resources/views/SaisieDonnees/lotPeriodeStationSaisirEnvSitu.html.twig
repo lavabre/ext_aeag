@@ -282,6 +282,7 @@
                                                                                                                            <td align="right">
                                                                                                                            {% if paramAn.pgCmdPrelevPc %}
                                                                                                                              {{ paramAn.pgCmdPrelevPc.profondeur | number_format( 2,","," ")  }}
+                                                                                                                             <input  type="hidden" id="idAnalyseNumOrdre-{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}" name="idAnalyseNumOrdre-{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}" value="{{ paramAn.pgCmdAnalyse.numOrdre }}" class="form-control number text-right valid">
                                                                                                                            {% endif %}
                                                                                                                            </td>
                                                                                                                       {% endif %}
@@ -495,7 +496,7 @@
                    });
 
               {% if typeMilieu.codeMilieu == 'LPC'  and groupe.grparAn.grparRef.typeGrp == 'SIT'%}
-                    var table{{groupe.grparAn.id }} = $('#idTable{{ groupe.grparAn.id }}').DataTable(
+                     var table{{groupe.grparAn.id }} = $('#idTable{{ groupe.grparAn.id }}').DataTable(
                        {"stateSave": false,
                          "order": [[ 1, "asc" ],[ 0, "asc" ]],
                         "language": {
