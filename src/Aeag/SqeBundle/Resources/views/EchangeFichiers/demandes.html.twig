@@ -136,23 +136,6 @@
             });
             
         });
-        
-        $('.btn-deposer-reponse').click(function (){
-            $('#modalTraitementEncours').modal();
-            var url = '{{ path("AeagSqeBundle_echangefichiers_reponses_selectionner",{"demandeId":  "par1" }) }}';
-            var demandeId = $(this).data('id');
-            url = url.replace("par1", demandeId);
-            $.ajax({
-                url: url,
-                type: 'get',
-                success: function(html) {
-                    $('#modal-reponses-selection-content').empty().append(html);
-                    $('#modalTraitementEncours').modal('hide');
-                    $('#modal_reponses_selection').modal();
-                }
-            });
-        
-        });
     
         var table = $('#idTable_demandes').DataTable(
             {"stateSave": true,
