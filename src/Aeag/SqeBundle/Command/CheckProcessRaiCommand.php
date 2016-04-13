@@ -9,26 +9,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class CheckProcessRaiCommand extends ContainerAwareCommand {
+class CheckProcessRaiCommand extends AeagCommand {
 
-    private $emSqe;
-    private $em;
-    private $output;
-    private $repoPgCmdFichiersRps;
-    private $repoPgProgPhases;
-    private $repoPgTmpValidEdilabo;
-    private $repoPgLogValidEdilabo;
-    private $repoPgCmdDemande;
-    private $repoPgRefCorresPresta;
-    private $repoPgProgLotLqParam;
-    private $repoPgProgUnitesPossiblesParam;
-    private $repoPgSandreFractions;
-    private $repoPgCmdPrelev;
-    private $repoPgCmdPrelevPc;
-    private $repoPgProgWebUsers;
-    private $repoPgSandreParametres;
-    private $repoPgSandreUnites;
-    private $repoPgSandreZoneVerticaleProspectee;
     private $detectionCodeRemarqueComplet;
     private $detectionCodeRemarqueMoitie;
     private $phase82atteinte = false;
@@ -41,27 +23,8 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) {
-        $this->em = $this->getContainer()->get('doctrine')->getManager();
-        $this->emSqe = $this->getContainer()->get('doctrine')->getManager('sqe');
-
-        $this->output = $output;
-
-        $this->repoPgCmdFichiersRps = $this->emSqe->getRepository('AeagSqeBundle:PgCmdFichiersRps');
-        $this->repoPgCmdDemande = $this->emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
-        $this->repoPgProgPhases = $this->emSqe->getRepository('AeagSqeBundle:PgProgPhases');
-        $this->repoPgTmpValidEdilabo = $this->emSqe->getRepository('AeagSqeBundle:PgTmpValidEdilabo');
-        $this->repoPgLogValidEdilabo = $this->emSqe->getRepository('AeagSqeBundle:PgLogValidEdilabo');
-        $this->repoPgRefCorresPresta = $this->emSqe->getRepository('AeagSqeBundle:PgRefCorresPresta');
-        $this->repoPgProgLotLqParam = $this->emSqe->getRepository('AeagSqeBundle:PgProgLotLqParam');
-        $this->repoPgProgUnitesPossiblesParam = $this->emSqe->getRepository('AeagSqeBundle:PgProgUnitesPossiblesParam');
-        $this->repoPgSandreFractions = $this->emSqe->getRepository('AeagSqeBundle:PgSandreFractions');
-        $this->repoPgCmdPrelev = $this->emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
-        $this->repoPgCmdPrelevPc = $this->emSqe->getRepository('AeagSqeBundle:PgCmdPrelevPc');
-        $this->repoPgProgWebUsers = $this->emSqe->getRepository('AeagSqeBundle:PgProgWebUsers');
-        $this->repoPgSandreParametres = $this->emSqe->getRepository('AeagSqeBundle:PgSandreParametres');
-        $this->repoPgSandreUnites = $this->emSqe->getRepository('AeagSqeBundle:PgSandreUnites');
-        $this->repoPgSandreZoneVerticaleProspectee = $this->emSqe->getRepository('AeagSqeBundle:PgSandreZoneVerticaleProspectee');
-        $this->repoPgProgLotParamAn = $this->emSqe->getRepository('AeagSqeBundle:PgProgLotParamAn');
+        
+        parent::execute($input, $output);
 
         // Chargement des fichiers csv dans des tableaux 
         $cheminCourant = __DIR__ . '/../../../../';
@@ -70,7 +33,8 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
         // On récupère les RAIs dont les phases sont en R25
         $pgProgPhases = $this->repoPgProgPhases->findOneByCodePhase('R25');
         $pgCmdFichiersRps = $this->repoPgCmdFichiersRps->findBy(array('phaseFichier' => $pgProgPhases, 'typeFichier' => 'RPS', 'suppr' => 'N'));
-
+        $cptRaisTraitesOk = 0;
+        $cptRaisTraitesNok = 0;
         foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
 
             $this->_coherenceRaiDai($pgCmdFichierRps);
@@ -119,29 +83,35 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
 
             $objetMessage = "SQE - RAI : Fichier " . $pgCmdFichierRps->getNomFichier() . " - Récapitulatif";
             $url = $this->getContainer()->get('router')->generate('AeagSqeBundle_echangefichiers_reponses_telecharger', array("reponseId" => $pgCmdFichierRps->getId(), "typeFichier" => "CR"), UrlGeneratorInterface::ABSOLUTE_URL);
-            $txtMessage = "Bonjour, <br/><br/>";
-            $txtMessage .= "Lot : " . $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getNomLot() . "<br/>";
+            $txtMessage = "Lot : " . $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getNomLot() . "<br/>";
             $txtMessage .= "Période : " . $pgCmdFichierRps->getDemande()->getPeriode()->getLabelPeriode() . "<br/>";
             $txtMessage .= 'Le traitement de la RAI ' . $pgCmdFichierRps->getNomFichier() . ' est maintenant terminé <br/>';
             $txtMessage .= "L'état final est le suivant : <strong>" . $pgCmdFichierRps->getPhaseFichier()->getLibellePhase() . "</strong><br/>";
             $txtMessage .= 'Vous pouvez lire le récapitulatif dans le fichier disponible à l\'adresse suivante : <a href="' . $url . '">' . $pgCmdFichierRps->getNomFichierCompteRendu() . '</a>';
-            $txtMessage .= "<br/><br/>Cordialement, <br/>L'équipe SQE";
             $destinataire = $this->repoPgProgWebUsers->findOneByPrestataire($pgCmdFichierRps->getDemande()->getPrestataire());
             $this->_envoiMessage($txtMessage, $destinataire, $objetMessage, $pgCmdFichierRps);
 
             // Insertion données brutes
             if ((count($logErrorsVraisemblance) == 0) && (count($logErrorsCoherence) == 0 )) {
                 $this->_integrationDonneesBrutes($pgCmdFichierRps);
-
+                
                 // Evolution de la phase
                 $this->_updatePhase($pgCmdFichierRps, 'R45', $this->phase82atteinte);
                 
                 // TODO Fichier csv
+                
+                $cptRaisTraitesOk++;
+            } else {
+                $cptRaisTraitesNok++;
             }
 
             // Vider la table tempo des lignes correspondant à la RAI
             $this->_cleanTmpTable($pgCmdFichierRps);
         }
+        
+        $date = new \DateTime();
+        $cptRaisTraitesTot = $cptRaisTraitesOk + $cptRaisTraitesNok;
+        $this->output->writeln($date->format('d/m/Y H:i:s').'- Process RAI : '.$cptRaisTraitesTot." RAI(s) traitée(s), ".$cptRaisTraitesOk." OK, ".$cptRaisTraitesNok." NOK");
     }
 
     protected function _coherenceRaiDai($pgCmdFichierRps) {
@@ -936,40 +906,11 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
         }
     }
 
-    protected function _updatePhase($pgCmdFichierRps, $phase, $phaseExclu = false) {
-
-        $pgProgPhases = $this->repoPgProgPhases->findOneByCodePhase($phase);
-        if (!$phaseExclu) {
-            $pgCmdFichierRps->setPhaseFichier($pgProgPhases);
-            $this->emSqe->persist($pgCmdFichierRps);
-        }
-
-        $pgProgSuiviPhases = new \Aeag\SqeBundle\Entity\PgProgSuiviPhases;
-        $pgProgSuiviPhases->setTypeObjet('RPS');
-        $pgProgSuiviPhases->setObjId($pgCmdFichierRps->getId());
-        $pgProgSuiviPhases->setDatePhase(new \DateTime());
-        $pgProgSuiviPhases->setPhase($pgProgPhases);
-        $this->emSqe->persist($pgProgSuiviPhases);
-
-        $this->emSqe->flush();
-    }
-
     protected function _convertMultiArray($array) {
         $out = implode(",", array_map(function($a) {
                     return implode("-", $a);
                 }, $array));
         return $out;
-    }
-
-    protected function _addLog($typeErreur, $demandeId, $fichierRpsId, $message, $codePrelevement = null, $commentaire = null) {
-        $dateLog = new \DateTime();
-        if (!is_null($commentaire) && is_array($commentaire)) {
-            $commentaire = $this->_convertMultiArray($commentaire);
-        }
-        $pgLogValidEdilabo = new \Aeag\SqeBundle\Entity\PgLogValidEdilabo($demandeId, $fichierRpsId, $typeErreur, $message, $dateLog, $codePrelevement, $commentaire);
-
-        $this->emSqe->persist($pgLogValidEdilabo);
-        $this->emSqe->flush();
     }
 
     protected function _insertFichierLog($pgCmdFichierRps) {
@@ -1005,26 +946,6 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
         }
 
         return $result;
-    }
-
-    protected function _envoiMessage($txtMessage, $destinataire, $objet, $pgCmdFichierRps, $expediteur = 'automate@eau-adour-garonne.fr') {
-        $txtMessage = "<html><head></head><body>" . $txtMessage . "</body></html>";
-        try {
-            // Récupération du service
-            $mailer = $this->getContainer()->get('mailer');
-            // Création de l'e-mail : le service mailer utilise SwiftMailer, donc nous créons une instance de Swift_Message.
-            $mail = \Swift_Message::newInstance('Wonderful Subject')
-                    ->setSubject($objet)
-                    ->setFrom($expediteur)
-                    ->setTo($destinataire->getMail())
-                    ->setBody($txtMessage, 'text/html');
-
-            $mailer->send($mail);
-
-            $this->em->flush();
-        } catch (\Swift_TransportException $ex) {
-            $this->_addLog('warning', $pgCmdFichierRps->getDemande()->getId(), $pgCmdFichierRps->getId(), "Erreur lors de l\'envoi de mail dans le process de verification des RAIs", null, $ex->getMessage());
-        }
     }
     
     protected function _cleanTmpTable($pgCmdFichierRps) {

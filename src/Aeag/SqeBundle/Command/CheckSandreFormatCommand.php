@@ -10,14 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Aeag\AeagBundle\Entity\Notification;
 use Aeag\AeagBundle\Entity\Message;
 
-class CheckSandreFormatCommand extends ContainerAwareCommand {
-
-    private $emSqe;
-    private $em;
-    private $output;
-    private $repoPgCmdFichiersRps;
-    private $repoPgProgPhases;
-    private $repoPgProgWebUsers;
+class CheckSandreFormatCommand extends AeagCommand {
     
     protected function configure() {
         $this
@@ -27,14 +20,8 @@ class CheckSandreFormatCommand extends ContainerAwareCommand {
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) {
-        $this->emSqe = $this->getContainer()->get('doctrine')->getManager('sqe');
-        $this->em = $this->getContainer()->get('doctrine')->getManager();
-        $this->output = $output;
         
-        // Récupération des programmations
-        $this->repoPgCmdFichiersRps = $this->emSqe->getRepository('AeagSqeBundle:PgCmdFichiersRps');
-        $this->repoPgProgPhases = $this->emSqe->getRepository('AeagSqeBundle:PgProgPhases');
-        $this->repoPgProgWebUsers = $this->emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
+        parent::execute($input, $output);
 
         $pgProgPhases = $this->repoPgProgPhases->findOneByCodePhase('R15');
         $pgCmdFichiersRps = $this->repoPgCmdFichiersRps->findBy(array('phaseFichier' => $pgProgPhases, 'typeFichier' => 'RPS', 'suppr' => 'N'));
@@ -87,7 +74,7 @@ class CheckSandreFormatCommand extends ContainerAwareCommand {
                         $destinataires[] = $this->repoPgProgWebUsers->findOneByPrestataire($pgCmdFichierRps->getDemande()->getPrestataire());
                         foreach ($destinataires as $destinataire) {
                             if (!is_null($destinataire)) {
-                                $this->_envoiMessage($txtMessage, $destinataire, $objetMessage);
+                                $this->_envoiMessage($txtMessage, $destinataire, $objetMessage, $pgCmdFichierRps);
                             }
                         }
                     }
@@ -95,10 +82,8 @@ class CheckSandreFormatCommand extends ContainerAwareCommand {
                 
             }
         }
-        if (count($pgCmdFichiersRps) > 0) {
-            $date = new \DateTime();
-            $output->writeln($date->format('d/m/Y H:i:s').': '.count($pgCmdFichiersRps)." RAI(s) traitée(s)");
-        }
+        $date = new \DateTime();
+        $this->output->writeln($date->format('d/m/Y H:i:s').'- Check Sandre : '.count($pgCmdFichiersRps)." RAI(s) traitée(s)");
     }
 
     protected function _creationFichierCr($pgCmdFichierRps, $erreurs) {
@@ -121,36 +106,6 @@ class CheckSandreFormatCommand extends ContainerAwareCommand {
         file_put_contents($fullFileName, $cr);
         // Enregistrement du fichier CR en base
         $pgCmdFichierRps->setNomFichierCompteRendu($fileName);
-    }
-
-    protected function _envoiMessage($txtMessage, $destinataire, $objet, $expediteur = 'automate@eau-adour-garonne.fr') {
-        // Récupération du service
-        $mailer = $this->getContainer()->get('mailer');
-        // Création de l'e-mail : le service mailer utilise SwiftMailer, donc nous créons une instance de Swift_Message.
-        $mail = \Swift_Message::newInstance('Wonderful Subject')
-                ->setSubject($objet)
-                ->setFrom($expediteur)
-                ->setTo($destinataire->getMail())
-                ->setBody($this->getContainer()->get('templating')->render('AeagSqeBundle:EchangeFichiers:reponseEmail.txt.twig', array('message' => $txtMessage)));
-
-        $mailer->send($mail);
-
-        $this->em->flush();
-    }
-    
-    protected function _updatePhase($pgCmdFichierRps, $phase) {
-        $pgProgPhases = $this->repoPgProgPhases->findOneByCodePhase($phase);
-        $pgCmdFichierRps->setPhaseFichier($pgProgPhases);
-        $this->emSqe->persist($pgCmdFichierRps);
-        
-        $pgProgSuiviPhases = new \Aeag\SqeBundle\Entity\PgProgSuiviPhases;
-        $pgProgSuiviPhases->setTypeObjet('RPS');
-        $pgProgSuiviPhases->setObjId($pgCmdFichierRps->getId());
-        $pgProgSuiviPhases->setDatePhase(new \DateTime());
-        $pgProgSuiviPhases->setPhase($pgProgPhases);
-        $this->emSqe->persist($pgProgSuiviPhases);
-        
-        $this->emSqe->flush();
     }
 
 }

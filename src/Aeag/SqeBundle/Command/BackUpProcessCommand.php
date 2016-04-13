@@ -1,22 +1,10 @@
 <?php
 
 namespace Aeag\SqeBundle\Command;
-
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class BackUpProcessCommand extends ContainerAwareCommand {
-
-    private $emSqe;
-    private $em;
-    private $output;
-    private $repoPgCmdFichiersRps;
-    private $repoPgProgPhases;
-    private $repoPgProgWebUsers;
+class BackUpProcessCommand extends AeagCommand {
     
     protected function configure() {
         $this
@@ -26,15 +14,9 @@ class BackUpProcessCommand extends ContainerAwareCommand {
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) {
-        $this->em = $this->getContainer()->get('doctrine')->getManager();
-        $this->emSqe = $this->getContainer()->get('doctrine')->getManager('sqe');
-
-        $this->output = $output;
-
-        $this->repoPgCmdFichiersRps = $this->emSqe->getRepository('AeagSqeBundle:PgCmdFichiersRps');
-        $this->repoPgProgPhases = $this->emSqe->getRepository('AeagSqeBundle:PgProgPhases');
-        $this->repoPgProgWebUsers = $this->emSqe->getRepository('AeagSqeBundle:PgProgWebUsers');
-
+        
+        parent::execute($input, $output);
+        
         // Phase 210
         $this->_phaseR10();
 
@@ -55,10 +37,7 @@ class BackUpProcessCommand extends ContainerAwareCommand {
             if ($pgCmdFichierRps->getNomFichier()) {
                 if ($this->envoiFichierValidationFormat($this->emSqe, $pgCmdFichierRps, $pathBase . '/' . $pgCmdFichierRps->getNomFichier())) {
                     // Changement de la phase de la réponse 
-                    $pgProgPhases = $this->repoPgProgPhases->findOneByCodePhase('R15');
-                    $pgCmdFichierRps->setPhaseFichier($pgProgPhases);
-                    $this->emSqe->persist($pgCmdFichierRps);
-                    $this->emSqe->flush();
+                    $this->_updatePhase($pgCmdFichierRps, 'R15');
 
                     // Envoi d'un mail
                     $objetMessage = "RAI " . $pgCmdFichierRps->getId() . " soumise et en cours de validation";
@@ -73,7 +52,7 @@ class BackUpProcessCommand extends ContainerAwareCommand {
         }
         
         $date = new \DateTime();
-        $this->output->writeln($date->format('d/m/Y H:i:s').': '.$cptPhaseR10Fait." RAI(s) en phase R10 traitée(s)");
+        $this->output->writeln($date->format('d/m/Y H:i:s').'- BackUp Process : '.$cptPhaseR10Fait." RAI(s) en phase R10 traitée(s)");
     }
 
     public function envoiFichierValidationFormat($em, $pgCmdFichierRps, $fullFileName) {
@@ -164,26 +143,6 @@ class BackUpProcessCommand extends ContainerAwareCommand {
         return $codeScenario . ';' . $versionScenario;
     }
     
-    protected function _envoiMessage($txtMessage, $destinataire, $objet, $pgCmdFichierRps, $expediteur = 'automate@eau-adour-garonne.fr') {
-        $txtMessage = "<html><head></head><body>" . $txtMessage . "</body></html>";
-        try {
-            // Récupération du service
-            $mailer = $this->getContainer()->get('mailer');
-            // Création de l'e-mail : le service mailer utilise SwiftMailer, donc nous créons une instance de Swift_Message.
-            $mail = \Swift_Message::newInstance('Wonderful Subject')
-                    ->setSubject($objet)
-                    ->setFrom($expediteur)
-                    ->setTo($destinataire->getMail())
-                    ->setBody($txtMessage, 'text/html');
-
-            $mailer->send($mail);
-
-            $this->em->flush();
-        } catch (\Swift_TransportException $ex) {
-            $this->_addLog('warning', $pgCmdFichierRps->getDemande()->getId(), $pgCmdFichierRps->getId(), "Erreur lors de l\'envoi de mail dans le process de verification des RAIs", null, $ex->getMessage());
-        }
-    }
-    
     protected function getCheminEchange($pgCmdDemande, $reponseId = null) {
         $chemin = $this->getContainer()->getParameter('repertoire_echange');
         $chemin .= $pgCmdDemande->getAnneeProg() . '/' . $pgCmdDemande->getCommanditaire()->getNomCorres() .
@@ -217,10 +176,17 @@ class BackUpProcessCommand extends ContainerAwareCommand {
     }
 
     protected function _phaseR26() {
+        
+//        $date = new \DateTime();
+//        $this->output->writeln($date->format('d/m/Y H:i:s').'- BackUp Process : '.$cptPhaseR10Fait." RAI(s) en phase R10 traitée(s)");
+        
         return true;
     }
 
     protected function _phaseR36() {
+        
+//        $date = new \DateTime();
+//        $this->output->writeln($date->format('d/m/Y H:i:s').'- BackUp Process : '.$cptPhaseR10Fait." RAI(s) en phase R10 traitée(s)");
         return true;
     }
 
