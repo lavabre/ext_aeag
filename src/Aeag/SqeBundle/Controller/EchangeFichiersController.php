@@ -10,6 +10,7 @@ use Aeag\AeagBundle\Controller\AeagController;
 class EchangeFichiersController extends Controller {
 
     public function indexAction() {
+        
         $user = $this->getUser();
         if (!$user) {
              return $this->render('AeagSqeBundle:Default:interdit.html.twig');
