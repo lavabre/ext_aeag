@@ -49,6 +49,7 @@ class BackUpProcessCommand extends ContainerAwareCommand {
         // Repérer les fichier réponses ayant une phase R10 (210)
         $pgProgPhase = $this->repoPgProgPhases->findOneByCodePhase('R10');
         $pgCmdFichiersRps = $this->repoPgCmdFichiersRps->findBy(array('typeFichier' => 'RPS', 'phaseFichier' => $pgProgPhase));
+        $cptPhaseR10Fait = 0;
         foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
             $pathBase = $this->getCheminEchange($pgCmdFichierRps->getDemande(), $pgCmdFichierRps->getId());
             if ($pgCmdFichierRps->getNomFichier()) {
@@ -65,9 +66,14 @@ class BackUpProcessCommand extends ContainerAwareCommand {
                             . "Vous serez informé lorsque celle-ci sera validée. ";
                     $destinataire = $this->repoPgProgWebUsers->findOneByPrestataire($pgCmdFichierRps->getDemande()->getPrestataire());
                     $this->_envoiMessage($txtMessage, $destinataire, $objetMessage, $pgCmdFichierRps);
+                    
+                    $cptPhaseR10Fait++;
                 }
             }
         }
+        
+        $date = new \DateTime();
+        $this->output->writeln($date->format('d/m/Y H:i:s').': '.$cptPhaseR10Fait." RAI(s) en phase R10 traitée(s)");
     }
 
     public function envoiFichierValidationFormat($em, $pgCmdFichierRps, $fullFileName) {
