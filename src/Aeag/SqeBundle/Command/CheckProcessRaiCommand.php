@@ -133,8 +133,10 @@ class CheckProcessRaiCommand extends ContainerAwareCommand {
             if ((count($logErrorsVraisemblance) == 0) && (count($logErrorsCoherence) == 0 )) {
                 $this->_integrationDonneesBrutes($pgCmdFichierRps);
 
-                // TODO Evolution de la phase
-                //$this->_updatePhase($pgCmdFichierRps, 'R45', $this->phase82atteinte);
+                // Evolution de la phase
+                $this->_updatePhase($pgCmdFichierRps, 'R45', $this->phase82atteinte);
+                
+                // TODO Fichier csv
             }
 
             // Vider la table tempo des lignes correspondant à la RAI

@@ -12,6 +12,7 @@ require_once __DIR__.'/AppKernel.php';
 
 use Aeag\SqeBundle\Command\CheckProcessRaiCommand;
 use Aeag\SqeBundle\Command\CheckSandreFormatCommand;
+use Aeag\SqeBundle\Command\BackUpProcessCommand;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Debug\Debug;
@@ -28,4 +29,5 @@ $kernel = new AppKernel($env, $debug);
 $application = new Application($kernel);
 $application->add(new CheckProcessRaiCommand);
 $application->add(new CheckSandreFormatCommand);
+$application->add(new BackUpProcessCommand);
 $application->run($input);

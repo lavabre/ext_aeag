@@ -363,6 +363,7 @@ class EchangeFichiersController extends Controller {
             return false;
         } else {
             $session->getFlashBag()->add('notice-error', 'Le webservice retourne un fichier vide');
+            return false;
         }
         
     }
