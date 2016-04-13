@@ -1,0 +1,186 @@
+{% extends "AeagEdlBundle::layout.html.twig" %}
+
+
+
+{% block content %}
+
+ <div class="block-border">
+
+<div align="center">
+
+<table class="table sortable no-margin last-child" cellspacing="0" width="100%" >
+
+    <thead>
+        <tr>
+            <th scope="col">
+                  <span class="column-sort">
+                        <a href="#" title="Sort up" class="sort-up active"></a>
+                        <a href="#" title="Sort down" class="sort-down"></a>
+                </span>
+                Code
+            </th> 
+            <th scope="col">
+                <span class="column-sort">
+                        <a href="#" title="Sort up" class="sort-up"></a>
+                        <a href="#" title="Sort down" class="sort-down"></a>
+                </span>
+                Masse d'eau
+            </th>
+            <th scope="col">
+                <span class="column-sort">
+                    <a href="#" title="Sort up" class="sort-up"></a>
+                    <a href="#" title="Sort down" class="sort-down"></a>
+                </span>
+                Dernier ntervenant
+            </th>
+            <th scope="col">
+                <span class="column-sort">
+                    <a href="#" title="Sort up" class="sort-up"></a>
+                    <a href="#" title="Sort down" class="sort-down"></a>
+                </span>
+                Date d'intervention
+            </th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+   
+    {% for entity in MasseEau %}
+            <tr>
+                <td>{{ entity.euCd }}&nbsp;&nbsp;</td>
+                <td nowrap>{{ entity.nomMasseEau }}</td>
+                {% if entity.der_user == "" %}
+                   <td></td>
+                 {% else %}
+                  <td>{{ entity.der_user.username }}</td>
+                {%endif %}
+                {% if entity.der_date == "" %}
+                   <td></td>
+                 {% else %}
+                  <td>{{entity.der_date | date("Y/m/d H:i") }}</td>
+                {%endif %}
+                <td width="10%" align="right">
+                    <a class="button" href="{{ path('AeagEdlBundle_etatGroupe1', { 'code': entity.euCd, 'page': 1 }) }}">détail</a>
+                </td>
+            </tr>
+  
+    {% endfor %}
+        </tbody>
+    </table>
+
+  </div>
+</div>
+{% endblock %}
+
+
+{% block javascripts %}
+    {{ parent() }}
+
+
+<script>
+		$(".loading").hide();
+		/*
+		 * This script shows how to setup the various template plugins and functions
+		 */
+		
+		$(document).ready(function()
+		{
+		
+			/*
+			 * Table sorting
+			 */
+			
+			// A small classes setup...
+			$.fn.dataTableExt.oStdClasses.sWrapper = 'no-margin last-child';
+			$.fn.dataTableExt.oStdClasses.sInfo = 'message no-margin';
+			$.fn.dataTableExt.oStdClasses.sLength = 'float-left';
+			$.fn.dataTableExt.oStdClasses.sFilter = 'float-right';
+			$.fn.dataTableExt.oStdClasses.sPaging = 'sub-hover paging_';
+			$.fn.dataTableExt.oStdClasses.sPagePrevEnabled = 'control-prev';
+			$.fn.dataTableExt.oStdClasses.sPagePrevDisabled = 'control-prev disabled';
+			$.fn.dataTableExt.oStdClasses.sPageNextEnabled = 'control-next';
+			$.fn.dataTableExt.oStdClasses.sPageNextDisabled = 'control-next disabled';
+			$.fn.dataTableExt.oStdClasses.sPageFirst = 'control-first';
+			$.fn.dataTableExt.oStdClasses.sPagePrevious = 'control-prev';
+			$.fn.dataTableExt.oStdClasses.sPageNext = 'control-next';
+			$.fn.dataTableExt.oStdClasses.sPageLast = 'control-last';
+			
+			// Apply to table
+			$('.sortable').each(function(i)
+			{
+				// DataTable config
+				var table = $(this),
+					oTable = table.dataTable({
+						/*
+						 * We set specific options for each columns here. Some columns contain raw data to enable correct sorting, so we convert it for display
+						 * @url http://www.datatables.net/usage/columns
+						 */
+						aoColumns: [
+							{ sType: 'string' },
+							{ sType: 'string' },
+							{ sType: 'string' },
+                                                        { sType: 'string' },
+                                                        { bSortable: false }
+						],
+                                                
+                                                sPaginationType: 'full_numbers',
+						
+						/*
+						 * Set DOM structure for table controls
+						 * @url http://www.datatables.net/examples/basic_init/dom.html
+						 */
+						sDom: '<"block-controls"<"controls-buttons"fipt>>t<"block-footer clearfix"l>',
+						
+						/*
+						 * Callback to apply template setup
+						 */
+						fnDrawCallback: function()
+						{
+							this.parent().applyTemplateSetup();
+						},
+						fnInitComplete: function()
+						{
+							this.parent().applyTemplateSetup();
+						}
+					});
+				
+				// Sorting arrows behaviour
+				table.find('thead .sort-up').click(function(event)
+				{
+					// Stop link behaviour
+					event.preventDefault();
+					
+					// Find column index
+					var column = $(this).closest('th'),
+						columnIndex = column.parent().children().index(column.get(0));
+					
+					// Send command
+					oTable.fnSort([[columnIndex, 'asc']]);
+					
+					// Prevent bubbling
+					return false;
+				});
+				table.find('thead .sort-down').click(function(event)
+				{
+					// Stop link behaviour
+					event.preventDefault();
+					
+					// Find column index
+					var column = $(this).closest('th'),
+						columnIndex = column.parent().children().index(column.get(0));
+					
+					// Send command
+					oTable.fnSort([[columnIndex, 'desc']]);
+					
+					// Prevent bubbling
+					return false;
+				});
+			});
+			
+			
+		});
+	
+	
+	</script>
+
+{% endblock %}	

@@ -40,6 +40,12 @@ class AeagController extends Controller {
         if ($security->isGranted('ROLE_ADMIN')) {
             return $this->render('AeagAeagBundle:Admin:index.html.twig');
         };
+        
+         if ($security->isGranted('ROLE_ADMINEDL')) {
+            $session->set('appli', 'edl');
+            return $this->redirect($this->generateUrl('Aeag_edl'));
+        };
+        
         if ($security->isGranted('ROLE_ODEC')) {
             $session->set('appli', 'dec');
             return $this->redirect($this->generateUrl('aeag_dec'));

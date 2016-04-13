@@ -1,0 +1,128 @@
+
+
+
+<div id="dialog-form" title="Creation d'un nouveau commentaire">
+    <form id="form{{ cdImpact }}" action="#" method="post" {{ form_enctype(form) }}>
+        {{ form_errors(form) }}
+
+            {{ form_widget(form.euCd) }}
+            {{ form_widget(form.cdImpact) }}
+
+            {{ form_widget(form.valeur) }}
+            {{ form_errors(form.valeur) }}
+
+            {{ form_errors(form.commentaire) }}
+            {{ form_widget(form.commentaire) }}
+
+            <p><h2>{{ form_label(form.valeur, 'Choisir une valeur') }}</h2</p>
+            <p></p>
+            <p>
+                <span id="{{ cdImpact|e }}_U" p="U" class="dce_impact_U unselected">Inconnu</span>
+                <span id="{{ cdImpact|e }}_1" p="1" class="dce_impact_1 unselected">Oui</span>
+                <span id="{{ cdImpact|e }}_2" p="2" class="dce_impact_2 unselected">Non</span>
+             </p>
+            <p><h2>{{ form_label(form.commentaire, 'Saisir un commentaire et éventuellement vos coordonnées') }}</h2></p>
+            <p>
+                <textarea id="commentaire" cols=60, rows=5 wrap="soft" onkeyup="EnvoyerCommentaire(this)" ></textarea>
+            </p>
+        </form>
+    </div>
+
+
+
+
+{% block modal %}
+
+  
+        <script type="text/javascript">
+            
+            
+          
+               $('textarea#form_commentaire').hide();
+          
+              function EnvoyerCommentaire(textarea){
+                          if (textarea != '') {
+                          $('textarea#form_commentaire').val($(textarea).val());
+                          };
+                          };
+       
+           
+                
+                  $("#dialog-form").hide();  
+                
+                  $('#dialog-form').modal({
+                          title: 'Nouveau commentaire',
+                          height:300,
+                          width:550,
+                          resizable:false,
+                          buttons: { 'valider': function(e) { 
+                                               //alert($("#form{{ cdImpact }} > #form_valeur").val());
+                                               if ( $('textarea#form_commentaire').val() == '' || $("input#form_valeur").val() == '') {
+                                                   alert("Choisissez un état et saisissez un commentaire svp");
+                                               } else {
+                                               // obtenir l'url
+                                               var $url = "{{ path('AeagEdlBundle_impactSubmit') }}";
+                                               $.getJSON($url,
+                                                      {
+                                                      euCd: $("input#form_euCd").val(),
+                                                      cdImpact: $("input#form_cdImpact").val(),
+                                                      commentaire: $("textarea#form_commentaire").val() ,
+                                                      valeur: $("input#form_valeur").val()
+                                                      }, 
+
+                                                      function(json) {
+                                                              //alert(json.message);
+                                                              // masquer le div de saisie
+                                                              $("#divNewImpact{{ cdImpact }}").hide();
+                                                              // charger et afficher les propositions pour cette Impact
+                                                              //alert(json.message);
+                                                              $("body").css("cursor", "wait");
+                                                              $.post("{{ path('AeagEdlBundle_impactListProposed') }}", 
+                                                                      { 
+                                                                              euCd: "{{ euCd }}", 
+                                                                              cdImpact: "{{ cdImpact }}"
+                                                                      }, 
+                                                                      function(data) {
+                                                                              //alert(data);
+                                                                              var $div = "#divImpact{{ cdImpact }}";
+                                                                              // placer le formulaire sous le div
+                                                                              $($div).html(data); 
+                                                                              // rétablir curseur
+                                                                              $("body").css("cursor", "auto");
+                                                                      }
+                                                              ).error(function() { 
+                                                                      // rétablir curseur
+                                                                      $("body").css("cursor", "auto");
+                                                                      alert("Erreur non déterminée"); 
+                                                              });
+                                                          }); 
+                                          
+                                               e.closeModal();} },
+                                     'Annuler': function(e) { 
+                                               e.closeModal(); }
+                                  }
+                  });
+
+           
+                   //$("#{{ cdImpact }}_{{ derniereProposition }}").removeClass('unselected');
+                   //$("#form{{ cdImpact }} > #form_valeur").val("{{ derniereProposition }}");
+
+                   // choix de la valeur de l impact
+                   $("span[id^='{{ cdImpact }}_']").click(function(e){
+                           var $newImpact = $(this).attr("p");
+
+                           // IHM
+                           $("span[id='{{ cdImpact }}_U']").addClass('unselected');
+                           $("span[id='{{ cdImpact }}_1']").addClass('unselected');
+                           $("span[id='{{ cdImpact }}_2']").addClass('unselected');
+                           $("span[id='{{ cdImpact }}_"+$newImpact+"']").removeClass('unselected');
+
+                           // affecter valeur 
+                           $("#form{{ cdImpact }} > #form_valeur").val($newImpact);
+                   });
+
+       
+   
+            </script>
+
+{% endblock modal %}

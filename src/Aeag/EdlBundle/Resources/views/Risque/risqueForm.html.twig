@@ -1,0 +1,129 @@
+
+
+
+<div id="dialog-form" title="Creation d'un nouveau commentaire">
+    <form id="form{{ cdRisque }}" action="#" method="post" {{ form_enctype(form) }}>
+        {{ form_errors(form) }}
+
+            {{ form_widget(form.euCd) }}
+            {{ form_widget(form.cdRisque) }}
+
+            {{ form_widget(form.valeur) }}
+            {{ form_errors(form.valeur) }}
+
+            {{ form_errors(form.commentaire) }}
+            {{ form_widget(form.commentaire) }}
+
+            <p><h2>{{ form_label(form.valeur, 'Choisir une valeur') }}</h2</p>
+            <p></p>
+            <p>
+                <span id="{{ cdRisque|e }}_U" p="U" class="dce_risque_U unselected">Inconnu</span>
+                <span id="{{ cdRisque|e }}_1" p="1" class="dce_risque_1 unselected">Pas de rique</span>
+                <span id="{{ cdRisque|e }}_2" p="2" class="dce_risque_2 unselected">Doute</span>
+                <span id="{{ cdRisque|e }}_3" p="3" class="dce_risque_3 unselected">Risque</span>
+              </p>
+            <p><h2>{{ form_label(form.commentaire, 'Saisir un commentaire et éventuellement vos coordonnées') }}</h2></p>
+            <p>
+                <textarea id="commentaire" cols=60, rows=5 wrap="soft" onkeyup="EnvoyerCommentaire(this)" ></textarea>
+            </p>
+        </form>
+    </div>
+
+
+
+
+{% block modal %}
+
+    
+        <script type="text/javascript">
+          
+          
+               $('textarea#form_commentaire').hide();
+          
+              function EnvoyerCommentaire(textarea){
+                          if (textarea != '') {
+                          $('textarea#form_commentaire').val($(textarea).val());
+                          };
+                          };
+       
+           
+                
+                  $("#dialog-form").hide();  
+                
+                  $('#dialog-form').modal({
+                          title: 'Nouveau commentaire',
+                          height:300,
+                          width:550,
+                          resizable:false,
+                          buttons: { 'valider': function(e) { 
+                                               //alert($("#form{{ cdRisque }} > #form_valeur").val());
+                                               if ( $('textarea#form_commentaire').val() == '' || $("input#form_valeur").val() == '') {
+                                                   alert("Choisissez un état et saisissez un commentaire svp");
+                                               } else {
+                                               // obtenir l'url
+                                               var $url = "{{ path('AeagEdlBundle_risqueSubmit') }}";
+                                               $.getJSON($url,
+                                                      {
+                                                      euCd: $("input#form_euCd").val(),
+                                                      cdRisque: $("input#form_cdRisque").val(),
+                                                      commentaire: $("textarea#form_commentaire").val() ,
+                                                      valeur: $("input#form_valeur").val()
+                                                      }, 
+
+                                                      function(json) {
+                                                              //alert(json.message);
+                                                              // masquer le div de saisie
+                                                              $("#divNewRisque{{ cdRisque }}").hide();
+                                                              // charger et afficher les propositions pour cette Risque
+                                                              //alert(json.message);
+                                                              $("body").css("cursor", "wait");
+                                                              $.post("{{ path('AeagEdlBundle_risqueListProposed') }}", 
+                                                                      { 
+                                                                              euCd: "{{ euCd }}", 
+                                                                              cdRisque: "{{ cdRisque }}"
+                                                                      }, 
+                                                                      function(data) {
+                                                                              //alert(data);
+                                                                              var $div = "#divRisque{{ cdRisque }}";
+                                                                              // placer le formulaire sous le div
+                                                                              $($div).html(data); 
+                                                                              // rétablir curseur
+                                                                              $("body").css("cursor", "auto");
+                                                                      }
+                                                              ).error(function() { 
+                                                                      // rétablir curseur
+                                                                      $("body").css("cursor", "auto");
+                                                                      alert("Erreur non déterminée"); 
+                                                              });
+                                                          }); 
+                                          
+                                               e.closeModal();} },
+                                     'Annuler': function(e) { 
+                                               e.closeModal(); }
+                                  }
+                  });
+
+           
+                   //$("#{{ cdRisque }}_{{ derniereProposition }}").removeClass('unselected');
+                   //$("#form{{ cdRisque }} > #form_valeur").val("{{ derniereProposition }}");
+
+                   // choix de la valeur de l risque
+                   $("span[id^='{{ cdRisque }}_']").click(function(e){
+                           var $newRisque = $(this).attr("p");
+
+                           // IHM
+                           $("span[id='{{ cdRisque }}_U']").addClass('unselected');
+                           $("span[id='{{ cdRisque }}_1']").addClass('unselected');
+                           $("span[id='{{ cdRisque }}_2']").addClass('unselected');
+                           $("span[id='{{ cdRisque }}_3']").addClass('unselected');
+                           $("span[id='{{ cdRisque }}_"+$newRisque+"']").removeClass('unselected');
+
+                           // affecter valeur 
+                           $("#form{{ cdRisque }} > #form_valeur").val($newRisque);
+                   });
+
+       
+   
+            </script>
+
+{% endblock modal %}

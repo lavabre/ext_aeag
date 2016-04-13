@@ -1,0 +1,16 @@
+         {%if app.session.get('menu') == 'accueil'%}
+             <li  class="active">
+         {% else %}
+            <li>
+         {% endif %}
+             <a href="{{ path('Aeag_edl') }}">
+                 <span class="selected">
+                     <i class="fa fa-home"></i>&nbsp; Accueil
+                 </span>
+             </a>
+         </li>
+            
+         <li>
+            <a href="{{ asset('bundles/aeagedl/doc/manuel-utilisateur.pdf') }}" target="_blank">Aide</a>
+        </li>
+   
