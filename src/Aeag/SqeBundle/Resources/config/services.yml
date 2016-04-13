@@ -1,7 +1,8 @@
 parameters:
-#    aeag_sqe.example.class: Aeag\SqeBundle\Example
-
+    aeag_sqe.tools.class: Aeag\SqeBundle\Utils\Tools
+    
 services:
-#    aeag_sqe.example:
-#        class: %aeag_sqe.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]
+    # keep your service names short
+    aeag_sqe.tools:
+        class: %aeag_sqe.tools.class%
+#       arguments: [@service_id, "plain_value", %parameter%]

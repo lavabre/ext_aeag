@@ -10,6 +10,7 @@ use Aeag\AeagBundle\Controller\AeagController;
 class EchangeFichiersController extends Controller {
 
     public function indexAction() {
+        
         $user = $this->getUser();
         if (!$user) {
              return $this->render('AeagSqeBundle:Default:interdit.html.twig');
@@ -363,6 +364,7 @@ class EchangeFichiersController extends Controller {
             return false;
         } else {
             $session->getFlashBag()->add('notice-error', 'Le webservice retourne un fichier vide');
+            return false;
         }
         
     }
