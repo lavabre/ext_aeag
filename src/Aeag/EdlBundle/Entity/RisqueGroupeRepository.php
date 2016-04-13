@@ -3,7 +3,6 @@
 namespace Aeag\EdlBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
-use JMS\SecurityExtraBundle\Annotation\Secure;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
