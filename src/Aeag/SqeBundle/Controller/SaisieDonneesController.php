@@ -497,6 +497,7 @@ class SaisieDonneesController extends Controller {
                                     } else {
                                         $tabParamAns[$nbParamAns]['unites'] = null;
                                     }
+                                    $tabParamAns[$nbParamAns]['unite'] = null;
 
                                     if ($pgProgLotParamAn->getCodeFraction()) {
                                         $pgSandreFraction = $repoPgSandreFractions->getPgSandreFractionsByCodeFraction($pgProgLotParamAn->getCodeFraction());

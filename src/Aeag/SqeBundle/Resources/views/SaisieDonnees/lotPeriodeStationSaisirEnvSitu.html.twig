@@ -760,10 +760,8 @@
                                  {% else %}
                             
                                 {% if paramAn.pgCmdAnalyse %}
-                                        {% if paramAn.pgCmdAnalyse.codeStatut != 3 %}
                                              nbParamSaisis{{groupe.grparAn.id }} = nbParamSaisis{{groupe.grparAn.id }} + 1;
                                             $('#paramSaisis{{ groupe.grparAn.id}}').empty().html(nbParamSaisis{{groupe.grparAn.id }});
-                                         {% endif %}
                                             var valeur =   {{  paramAn.pgCmdAnalyse.codeRemarque }}
                                             $("#idRemarque{{ paramAn.paramAn.id}} option[value='" + valeur + "']").attr('selected','selected');
                                             $("#idRemarque{{ paramAn.paramAn.id}}").val(valeur);

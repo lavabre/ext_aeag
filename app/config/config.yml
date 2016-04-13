@@ -103,14 +103,14 @@ doctrine:
                 password: %database_password6%
                 charset:  UTF8
                 
-            edl:
-                driver:   %database_driver7%
-                host:     %database_host7%
-                port:     %database_port7%
-                dbname:   %database_name7%
-                user:     %database_user7%
-                password: %database_password7%
-                charset:  UTF8
+#            edl:
+#                driver:   %database_driver7%
+#                host:     %database_host7%
+#                port:     %database_port7%
+#                dbname:   %database_name7%
+#                user:     %database_user7%
+#                password: %database_password7%
+#                charset:  UTF8
            
             
                 
@@ -147,10 +147,10 @@ doctrine:
                 mappings:
                     AeagSqeBundle : ~
                     
-            edl:
-                connection:       edl
-                mappings:
-                    AeagEdlBundle : ~
+#            edl:
+#                connection:       edl
+#                mappings:
+#                    AeagEdlBundle : ~
                     
   
 # Swiftmailer Configuration
