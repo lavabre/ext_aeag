@@ -378,7 +378,7 @@
                                                                                                                               
                                                                                                                                     </tr>
                                                                                                                                 {% else %}
-                                                                                                                                
+                                                                                                                                {% if paramAn.pgCmdPrelevPc.numOrdre  == 1 %}
                                                                                                                                  {% if paramAn.pgCmdAnalyse %}
                                                                                                                                             {% if paramAn.pgCmdAnalyse.codeStatut == '0' %}
                                                                                                                                                  <tr class="success">
@@ -475,7 +475,7 @@
                                                                                                                                         </td>
                                                                                                                               
                                                                                                                                     </tr>
-                                                                                                                               
+                                                                                                                               {% endif %}
                                                                                                                            {% endif %}
                                                                                                                 {% endif %}
                                                                                                          {% endif %}
@@ -496,6 +496,7 @@
                                     </div>
                              </div>
               </div>
+          </div>
         {% endfor %}
         
           <div class="row">
