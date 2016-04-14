@@ -3184,7 +3184,7 @@ class ReferentielController extends Controller {
         $rep = $parametre->getLibelle();
         $fichier = $rep . "/" . $ficent;
 
-        $message1 = null;
+        $message1 = 'null';
 
         if (file_exists($fichier)) {
             $fic = fopen($fichier, "r");
@@ -3228,7 +3228,7 @@ class ReferentielController extends Controller {
                                     $emDec->remove($declarationdetail);
                                 }
                             }
-                        }
+                         }
                     }
                     $sousDeclarationCollecteur->setDeclarationCollecteur($declarationCollecteur);
                     $sousDeclarationCollecteur->setNumero($tab[2]);
@@ -3269,7 +3269,7 @@ class ReferentielController extends Controller {
             $message1 = "Fichier inexistant : " . $ficent;
         }
 
-        $messages = array($message1, $sousDeclarationCollecteur, null, null);
+        $messages = array($message1, null, null, null);
         return $messages;
     }
 

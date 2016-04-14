@@ -5,33 +5,30 @@ namespace Aeag\EdlBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * EtatGroupe
+ * Aeag\EdlBundle\Entity\EtatGroupe
  *
  * @ORM\Table(name="etat_groupe")
- * @ORM\Entity
  * @ORM\Entity(repositoryClass="Aeag\EdlBundle\Repository\EtatGroupeRepository")
  */
 class EtatGroupe
 {
     /**
-     * @var string
+     * @var string $cdGroupe
      *
      * @ORM\Column(name="cd_groupe", type="string", length=16, nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="SEQUENCE")
-     * @ORM\SequenceGenerator(sequenceName="etat_groupe_cd_groupe_seq", allocationSize=1, initialValue=1)
-     */
+      */
     private $cdGroupe;
 
     /**
-     * @var string
+     * @var string $libelle
      *
      * @ORM\Column(name="libelle", type="string", length=255, nullable=false)
      */
     private $libelle;
 
     /**
-     * @var integer
+     * @var integer $ordre
      *
      * @ORM\Column(name="ordre", type="integer", nullable=false)
      */
@@ -42,7 +39,7 @@ class EtatGroupe
     /**
      * Get cdGroupe
      *
-     * @return string
+     * @return string 
      */
     public function getCdGroupe()
     {
@@ -53,20 +50,16 @@ class EtatGroupe
      * Set libelle
      *
      * @param string $libelle
-     *
-     * @return etatGroupe
      */
     public function setLibelle($libelle)
     {
         $this->libelle = $libelle;
-
-        return $this;
     }
 
     /**
      * Get libelle
      *
-     * @return string
+     * @return string 
      */
     public function getLibelle()
     {
@@ -77,23 +70,20 @@ class EtatGroupe
      * Set ordre
      *
      * @param integer $ordre
-     *
-     * @return etatGroupe
      */
     public function setOrdre($ordre)
     {
         $this->ordre = $ordre;
-
-        return $this;
     }
 
     /**
      * Get ordre
      *
-     * @return integer
+     * @return integer 
      */
     public function getOrdre()
     {
         return $this->ordre;
     }
+
 }

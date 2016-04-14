@@ -3,18 +3,17 @@
 namespace Aeag\EdlBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Aeag\EdlBundle\Entity\EtatMeProposed
+ * EtatMeProposed
  *
- * @ORM\Table(name="etat_me_proposed")
+ * @ORM\Table(name="etat_me_proposed", indexes={@ORM\Index(name="idx_b7e685ba50eae44", columns={"id_utilisateur"}), @ORM\Index(name="idx_b7e685baa8feab267a9ab42e", columns={"eu_cd", "cd_etat"})})
  * @ORM\Entity
  */
-class EtatMeProposed {
-
+class EtatMeProposed
+{
     /**
-     * @var string $euCd
+     * @var string
      *
      * @ORM\Column(name="eu_cd", type="string", length=24, nullable=false)
      * @ORM\Id
@@ -23,16 +22,16 @@ class EtatMeProposed {
     private $euCd;
 
     /**
-     * @var string $propositionDate
+     * @var string
      *
-     * @ORM\Column(name="proposition_date", type="string", nullable=false)
+     * @ORM\Column(name="proposition_date", type="string", length=255, nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
      */
     private $propositionDate;
 
     /**
-     * @var string $cdEtat
+     * @var string
      *
      * @ORM\Column(name="cd_etat", type="string", length=16, nullable=false)
      * @ORM\Id
@@ -41,93 +40,83 @@ class EtatMeProposed {
     private $cdEtat;
 
     /**
-     * @var string $valeur
+     * @var string
      *
-     * @ORM\Column(name="valeur", type="string", nullable=false)
+     * @ORM\Column(name="valeur", type="string", length=255, nullable=false)
      */
     private $valeur;
 
     /**
-     * @var text $commentaire
+     * @var string
      *
      * @ORM\Column(name="commentaire", type="text", nullable=true)
-     * @Assert\NotBlank(message = "le commentaire est obligatoire");
      */
     private $commentaire;
-    
-     /**
-     * @var string $role
+
+    /**
+     * @var string
      *
-     * @ORM\Column(name="role", type="string", nullable=false)
+     * @ORM\Column(name="role", type="string", length=255, nullable=false)
      */
     private $role;
 
-
     /**
-     * @var EtatMe
+     * @var \Utilisateur
      *
-     * @ORM\ManyToOne(targetEntity="EtatMe", inversedBy="proposed")
-     * @ORM\JoinColumns({
-     * @ORM\JoinColumn(name="eu_cd", referencedColumnName="eu_cd"),
-     * @ORM\JoinColumn(name="cd_etat", referencedColumnName="cd_etat")
-     * })
-     */
-    private $etatOriginal;
-
-    /**
-     * @var Utilisateur
-     * 
-     * @ORM\ManyToOne(targetEntity="Aeag\EdlBundle\Entity\Utilisateur")
+     * @ORM\ManyToOne(targetEntity="Utilisateur")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="id_utilisateur", referencedColumnName="id")
      * })
      */
     private $utilisateur;
 
-    public function getValueLib() {
-        switch ($this->valeur) {
-            case '1' : return 'Très bon état';
-            case '2' : return 'Bon';
-            case '3' : return 'Moyen';
-            case '4' : return 'Médiocre';
-            case '5' : return 'Mauvais';
-            case 'U' : return 'Inconnu';
-        }
-    }
+
 
     /**
      * Set euCd
      *
      * @param string $euCd
+     *
+     * @return etatMeProposed
      */
-    public function setEuCd($euCd) {
+    public function setEuCd($euCd)
+    {
         $this->euCd = $euCd;
+
+        return $this;
     }
 
     /**
      * Get euCd
      *
-     * @return string 
+     * @return string
      */
-    public function getEuCd() {
+    public function getEuCd()
+    {
         return $this->euCd;
     }
 
     /**
      * Set propositionDate
      *
-     * @param datetime $propositionDate
+     * @param string $propositionDate
+     *
+     * @return etatMeProposed
      */
-    public function setPropositionDate($propositionDate) {
+    public function setPropositionDate($propositionDate)
+    {
         $this->propositionDate = $propositionDate;
+
+        return $this;
     }
 
     /**
      * Get propositionDate
      *
-     * @return datetime 
+     * @return string
      */
-    public function getPropositionDate() {
+    public function getPropositionDate()
+    {
         return $this->propositionDate;
     }
 
@@ -135,17 +124,23 @@ class EtatMeProposed {
      * Set cdEtat
      *
      * @param string $cdEtat
+     *
+     * @return etatMeProposed
      */
-    public function setCdEtat($cdEtat) {
+    public function setCdEtat($cdEtat)
+    {
         $this->cdEtat = $cdEtat;
+
+        return $this;
     }
 
     /**
      * Get cdEtat
      *
-     * @return string 
+     * @return string
      */
-    public function getCdEtat() {
+    public function getCdEtat()
+    {
         return $this->cdEtat;
     }
 
@@ -153,82 +148,95 @@ class EtatMeProposed {
      * Set valeur
      *
      * @param string $valeur
+     *
+     * @return etatMeProposed
      */
-    public function setValeur($valeur) {
+    public function setValeur($valeur)
+    {
         $this->valeur = $valeur;
+
+        return $this;
     }
 
     /**
      * Get valeur
      *
-     * @return string 
+     * @return string
      */
-    public function getValeur() {
+    public function getValeur()
+    {
         return $this->valeur;
     }
 
     /**
      * Set commentaire
      *
-     * @param text $commentaire
+     * @param string $commentaire
+     *
+     * @return etatMeProposed
      */
-    public function setCommentaire($commentaire) {
+    public function setCommentaire($commentaire)
+    {
         $this->commentaire = $commentaire;
+
+        return $this;
     }
 
     /**
      * Get commentaire
      *
-     * @return text 
+     * @return string
      */
-    public function getCommentaire() {
+    public function getCommentaire()
+    {
         return $this->commentaire;
     }
 
     /**
-     * Set etatOriginal
+     * Set role
      *
-     * @param Aeag\EdlBundle\Entity\EtatMe $etatOriginal
+     * @param string $role
+     *
+     * @return etatMeProposed
      */
-    public function setEtatOriginal(\Aeag\EdlBundle\Entity\EtatMe $etatOriginal) {
-        $this->etatOriginal = $etatOriginal;
+    public function setRole($role)
+    {
+        $this->role = $role;
+
+        return $this;
     }
 
     /**
-     * Get etatOriginal
+     * Get role
      *
-     * @return Aeag\EdlBundle\Entity\EtatMe 
+     * @return string
      */
-    public function getEtatOriginal() {
-        return $this->etatOriginal;
+    public function getRole()
+    {
+        return $this->role;
     }
 
     /**
      * Set utilisateur
      *
-     * @param Aeag\EdlBundle\Entity\Utilisateur $utilisateur
+     * @param \Aeag\EdlBundle\Entity\Utilisateur $utilisateur
+     *
+     * @return etatMeProposed
      */
-    public function setUtilisateur(\Aeag\EdlBundle\Entity\Utilisateur $utilisateur) {
+    public function setUtilisateur(\Aeag\EdlBundle\Entity\Utilisateur $utilisateur = null)
+    {
         $this->utilisateur = $utilisateur;
+
+        return $this;
     }
 
     /**
      * Get utilisateur
      *
-     * @return Aeag\EdlBundle\Entity\Utilisateur 
+     * @return \Aeag\EdlBundle\Entity\Utilisateur
      */
-    public function getUtilisateur() {
+    public function getUtilisateur()
+    {
         return $this->utilisateur;
     }
-    
-    public function getRole() {
-        return $this->role;
-    }
-
-    public function setRole($role) {
-        $this->role = $role;
-    }
-
-
-
 }

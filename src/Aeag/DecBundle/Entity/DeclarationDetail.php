@@ -30,7 +30,7 @@ class DeclarationDetail {
 
     /**
      * @var DeclarationProducteur
-     * @ORM\ManyToOne(targetEntity="Aeag\DecBundle\Entity\DeclarationProducteur" , cascade={"all"})
+     * @ORM\ManyToOne(targetEntity="Aeag\DecBundle\Entity\DeclarationProducteur")
      * @ORM\JoinColumn(name="declarationProducteur_id", referencedColumnName="id")
      */
     private $DeclarationProducteur;

@@ -4,7 +4,7 @@
 <dt>{{etatGroupe.libelle}} </dt>   
 
 <dd>
-    <table  class="tablehead" cellspacing="0" width="100%" align="center">
+    <table class="table table-bordered table-condensed table-advance" id="idTable">
         <thead>
             <tr>
                 <th  width="70%">libelle</th>
@@ -20,8 +20,8 @@
 
                         {% for etat in etats %}
 
-                   <div id="divEtat{{ etat.cdEtat }}" >
-                                    {{ render(controller('AeagEdlBundle:Etat:etatListProposed', {'euCd':etat.euCd, 'cdEtat':etat.cdEtat})) }}
+                   <div id="divEtat{{ etat.etatType.cdEtat }}" >
+                                    {{ render(controller('AeagEdlBundle:Etat:etatListProposed', {'euCd':etat.masseEau.euCd, 'cdEtat':etat.etatType.cdEtat})) }}
                         </div>     
                
                         {% endfor %}

@@ -148,7 +148,7 @@ class EtatController extends Controller {
      * 
      * mode Ajax
      */
-    public function etatListProposedAction() {
+    public function etatListProposedAction(Request $request) {
         
         $user = $this->getUser();
         $session = $this->get('session');
@@ -158,10 +158,12 @@ class EtatController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
         
-        $request = $this->getRequest();
-
+        
+       
         $euCd = $request->get('euCd');
         $cdEtat = $request->get('cdEtat');
+        
+        return new Response ('$euCd : ' . $euCd. '  $cdEtat : ' . $cdEtat);
 
         $repo = $emEdl->getRepository('AeagEdlBundle:EtatMe');
         $etatInitiale = $repo->findOneBy(array('euCd' => $euCd, 'cdEtat' => $cdEtat));
@@ -170,7 +172,8 @@ class EtatController extends Controller {
         $repo = $emEdl->getRepository('AeagEdlBundle:EtatMe');
         $derniereProp = $repo->getLastProposition($euCd, $cdEtat);
         
-       
+        
+        
         return $this->render('AeagEdlBundle:Etat:etatListProposed.html.twig', array(
                     'etat' => $etatInitiale,
                     'derniereProp' => $derniereProp,

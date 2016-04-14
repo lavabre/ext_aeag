@@ -5,16 +5,15 @@ namespace Aeag\EdlBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Aeag\EdlBundle\Entity\EtatType
+ * EtatType
  *
- * @ORM\Table(name="etat_type")
+ * @ORM\Table(name="etat_type", indexes={@ORM\Index(name="IDX_57A8D57B7A0B352", columns={"cd_groupe"})})
  * @ORM\Entity
  */
 class EtatType
 {
-
     /**
-     * @var string $cdEtat
+     * @var string
      *
      * @ORM\Column(name="cd_etat", type="string", length=16, nullable=false)
      * @ORM\Id
@@ -22,28 +21,28 @@ class EtatType
     private $cdEtat;
 
     /**
-     * @var string $libelle
+     * @var string
      *
      * @ORM\Column(name="libelle", type="string", length=255, nullable=false)
      */
     private $libelle;
 
     /**
-     * @var integer $ordre
+     * @var integer
      *
      * @ORM\Column(name="ordre", type="integer", nullable=false)
      */
     private $ordre;
 
     /**
-     * @var string $typeMe
+     * @var string
      *
-     * @ORM\Column(name="type_me", type="string", nullable=false)
+     * @ORM\Column(name="type_me", type="string", length=2, nullable=true)
      */
     private $typeMe;
 
     /**
-     * @var EtatGroupe
+     * @var \EtatGroupe
      *
      * @ORM\ManyToOne(targetEntity="EtatGroupe")
      * @ORM\JoinColumns({
@@ -53,10 +52,11 @@ class EtatType
     private $cdGroupe;
 
 
+
     /**
      * Get cdEtat
      *
-     * @return string 
+     * @return string
      */
     public function getCdEtat()
     {
@@ -67,16 +67,20 @@ class EtatType
      * Set libelle
      *
      * @param string $libelle
+     *
+     * @return etatType
      */
     public function setLibelle($libelle)
     {
         $this->libelle = $libelle;
+
+        return $this;
     }
 
     /**
      * Get libelle
      *
-     * @return string 
+     * @return string
      */
     public function getLibelle()
     {
@@ -87,16 +91,20 @@ class EtatType
      * Set ordre
      *
      * @param integer $ordre
+     *
+     * @return etatType
      */
     public function setOrdre($ordre)
     {
         $this->ordre = $ordre;
+
+        return $this;
     }
 
     /**
      * Get ordre
      *
-     * @return integer 
+     * @return integer
      */
     public function getOrdre()
     {
@@ -107,16 +115,20 @@ class EtatType
      * Set typeMe
      *
      * @param string $typeMe
+     *
+     * @return etatType
      */
     public function setTypeMe($typeMe)
     {
         $this->typeMe = $typeMe;
+
+        return $this;
     }
 
     /**
      * Get typeMe
      *
-     * @return string 
+     * @return string
      */
     public function getTypeMe()
     {
@@ -124,25 +136,26 @@ class EtatType
     }
 
     /**
-
-    /**
      * Set cdGroupe
      *
-     * @param Aeag\EdlBundle\Entity\EtatGroupe $cdGroupe
+     * @param \Aeag\EdlBundle\Entity\EtatGroupe $cdGroupe
+     *
+     * @return etatType
      */
-    public function setCdGroupe(\Aeag\EdlBundle\Entity\EtatGroupe $cdGroupe)
+    public function setCdGroupe(\Aeag\EdlBundle\Entity\EtatGroupe $cdGroupe = null)
     {
         $this->cdGroupe = $cdGroupe;
+
+        return $this;
     }
 
     /**
      * Get cdGroupe
      *
-     * @return Aeag\EdlBundle\Entity\EtatGroupe 
+     * @return \Aeag\EdlBundle\Entity\EtatGroupe
      */
     public function getCdGroupe()
     {
         return $this->cdGroupe;
     }
-
 }

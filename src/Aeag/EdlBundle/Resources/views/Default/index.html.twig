@@ -15,17 +15,17 @@
 
 {% block content %}
 
-    <form class="form" id="form_recherche" action="{{ path('Aeag_edl') }}" method="post">
-        
-          {% spaceless %}
+    <form class="form" id="form_recherche" action="{{ path('AeagEdlBundle_listeMasseEau') }}" method="post">
+
+        {% spaceless %}
             {% if form_errors(form) | length %}
                 <div class="alert alert-warning alert-dismissible" role="alert">
                     <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
                     {{ form_errors(form) }}   
                 </div>
-           {% endif %}
+            {% endif %}
         {% endspaceless %}
-        
+
         <table class="table table-bordered table-condensed table-advance" id="idTable">
             <thead>
                 <tr>
@@ -41,60 +41,60 @@
             <tbody>
                 <tr>
                     <td align="center">
-                          <div class="form-group">
+                        <div class="form-group">
                             {%if form_errors(form.deptcle) %}
                                 <div class="col-sm-8 input-group has-error has-feedback">
-                            {% else %}
-                                 <div class="col-sm-8 input-group">
-                             {% endif %}
-                               {{ form_widget(form.deptcle, { 'attr': {'preferred_choices': app.session.get('deptcle'), 'separator': '=====' } } ) }}
-                             </div>
-                         </div> 
+                                {% else %}
+                                    <div class="col-sm-8 input-group">
+                                    {% endif %}
+                                    {{ form_widget(form.deptcle, { 'attr': {'class': 'form-control ', 'preferred_choices': app.session.get('deptcle'), 'separator': '=====' } } ) }}
+                                </div>
+                            </div> 
                     </td>
                     <td align="center">
                         <div class="form-group">
                             {%if form_errors(form.typecle) %}
                                 <div class="col-sm-8 input-group has-error has-feedback">
-                            {% else %}
-                                 <div class="col-sm-8 input-group">
-                             {% endif %}
-                              {{ form_widget(form.typecle, { 'attr': {'preferred_choices': app.session.get('typecle'), 'separator': '=====' } }) }}
-                             </div>
-                         </div> 
+                                {% else %}
+                                    <div class="col-sm-8 input-group">
+                                    {% endif %}
+                                    {{ form_widget(form.typecle, { 'attr': {'class': 'form-control ', 'preferred_choices': app.session.get('typecle'), 'separator': '=====' } }) }}
+                                </div>
+                            </div> 
                     </td>
                     <td align="center">
-                          <div class="form-group">
+                        <div class="form-group">
                             {%if form_errors(form.codecle) %}
                                 <div class="col-sm-8 input-group has-error has-feedback">
-                            {% else %}
-                                 <div class="col-sm-8 input-group">
-                             {% endif %}
-                              {{ form_widget(form.codecle, { 'attr': {'value': app.session.get('codecle')} }) }}
-                             </div>
-                         </div> 
+                                {% else %}
+                                    <div class="col-sm-8 input-group">
+                                    {% endif %}
+                                    {{ form_widget(form.codecle, { 'attr': {'class': 'form-control ', 'value': app.session.get('codecle')} }) }}
+                                </div>
+                            </div> 
                     </td>
                     <td align="center">
-                         <div class="form-group">
+                        <div class="form-group">
                             {%if form_errors(form.massecle) %}
                                 <div class="col-sm-8 input-group has-error has-feedback">
-                            {% else %}
-                                 <div class="col-sm-8 input-group">
-                             {% endif %}
-                              {{ form_widget(form.massecle, { 'attr': {'value': app.session.get('masseEaucle') } })}}
-                             </div>
-                         </div> 
+                                {% else %}
+                                    <div class="col-sm-8 input-group">
+                                    {% endif %}
+                                    {{ form_widget(form.massecle, { 'attr': {'class': 'form-control ', 'value': app.session.get('masseEaucle') } })}}
+                                </div>
+                            </div> 
                     </td>
                     {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
                         <td align="center">
                             <div class="form-group">
-                            {%if form_errors(form.territoirecle) %}
-                                <div class="col-sm-8 input-group has-error has-feedback">
-                            {% else %}
-                                 <div class="col-sm-8 input-group">
-                             {% endif %}
-                              {{ form_widget(form.territoirecle)}}
-                             </div>
-                         </div> 
+                                {%if form_errors(form.territoirecle) %}
+                                    <div class="col-sm-8 checkbox has-error has-feedback">
+                                    {% else %}
+                                        <div class="col-sm-8 checkbox">
+                                        {% endif %}
+                                        {{ form_widget(form.territoirecle)}}
+                                    </div>
+                                </div> 
                         </td>
                     {% endif %}
                 </tr>
@@ -103,67 +103,53 @@
         </table>
         <br>
         <div class="form-group">
-        <div class="col-xs-offset-4 col-xs-8">
-          <button type="submit" class="btn btn-success"><i class="fa fa-eye"></i>&nbsp;Rechercher</button>
-        </div>
-     </div>        
-  
+            <div class="col-xs-offset-4 col-xs-8">
+                <button type="submit" class="btn btn-success"><i class="fa fa-search"></i>&nbsp;Rechercher</button>
+            </div>
+        </div>        
+
     </form>
-
-
-
 
 {% endblock %}
 
-{% block javascripts %}
-    {{ parent() }}
-    <script type="text/javascript">
-        $(document).ready(function () {
+{% block scripts %}
 
-        $('#modalTraitementEncours').modal('hide');
-         {#   var table = $('#idTable').DataTable(
-                    {"stateSave": true,
-                        "order": [[1, "desc"]],
-                        "language": {
-                            "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
-                        },
-                        "aLengthMenu": [
-                            [10, 25, 50, 100, -1],
-                            [10, 25, 50, 100, "Tous"]
-                        ],
-                        "iDisplayLength": -1
-                    }
-            );#}
+    $(document).ready(function () {
 
-            $("#masseeaurecherche_deptcle").val('{{app.session.get('deptcle')}}');
-            $("#masseeaurecherche_typecle").val('{{ app.session.get('typecle') }}');
-            $("#masseeaurecherche_codecle").val('{{ app.session.get('codecle') }}');
-            $("#masseeaurecherche_massecle").val('{{ app.session.get('masseEaucle') }}');
-            $("#masseeaurecherche_territoirecle").val('{{ app.session.get('territoirecle') }}');
+    $('#modalTraitementEncours').modal('hide');
 
-        {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                $("#masseeaurecherche_territoirecle").val("1");
+    {% if app.session.get('deptcle')   %}
+        var valeur = {{ app.session.get('deptcle') }};
+        $("#masseeaurecherche_deptcle option[value='" + valeur + "']").attr('selected','selected');
+        $("#masseeaurecherche_deptcle").val(valeur);
+    {% endif %}
+    {% if app.session.get('typecle')   %}
+        var valeur = '{{ app.session.get('typecle') }}';
+        $("#masseeaurecherche_typecle option[value='" + valeur + "']").attr('selected','selected');
+        $("#masseeaurecherche_typecle").val(valeur);
+    {% endif %}
+    $("#masseeaurecherche_codecle").val('{{ app.session.get('codecle') }}');
+    $("#masseeaurecherche_massecle").val('{{ app.session.get('masseEaucle') }}');
+    $("#masseeaurecherche_territoirecle").val('{{ app.session.get('territoirecle') }}');
 
-        {% endif %}
+    {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+        $("#masseeaurecherche_territoirecle").val("1");
+
+    {% endif %}
 
 
 
-                if ($("#masseeaurecherche_territoirecle").val() == "1")
-                {
-                    $("#masseeaurecherche_territoirecle").attr('checked', 'checked');
-                }
-                else
-                {
-                    $("#masseeaurecherche_territoirecle").removeAttr('checked');
-                }
-                ;
+    if ($("#masseeaurecherche_territoirecle").val() == "1")
+    {
+    $("#masseeaurecherche_territoirecle").attr('checked', 'checked');
+    }
+    else
+    {
+    $("#masseeaurecherche_territoirecle").removeAttr('checked');
+    }
+    ;
 
 
-            });
-    </script>
+    });
 
-
-
-
-
-{% endblock %}	
+{% endblock  scripts %}	

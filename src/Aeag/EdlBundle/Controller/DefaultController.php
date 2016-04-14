@@ -31,227 +31,26 @@ class DefaultController extends Controller {
 
         $user = $this->getUser();
         $session = $this->get('session');
-        $session->clear();
         $session->set('retourErreur', $this->generateUrl('Aeag_edl'));
         $session->set('menu', 'acceuil');
         $session->set('controller', 'default');
         $session->set('fonction', 'index');
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
-       
+
+        $session->set('codecle', null);
+        $session->set('masseEaucle', null);
+        $session->set('deptcle', null);
+        $session->set('typecle', null);
+        $session->set('territoirecle', null);
+        $session->set('recherche', 'N');
+
         $critere = new Criteres();
         $form = $this->createForm(new MasseEauRechercheForm(), $critere);
-        if ($request->getMethod() == 'POST') {
-            $form->handleRequest($request);
-            
-            $session = $this->get("session");
 
-            $request = $this->getRequest();
-
-            $session->set('codecle', null);
-            $session->set('masseEaucle', null);
-            $session->set('deptcle', null);
-            $session->set('typecle', null);
-            $session->set('territoirecle', null);
-
-
-            $codecle = $critere->getCodecle();
-            $masseEaucle = $critere->getMassecle();
-            if ($critere->getDeptcle()) {
-                $deptcle = $critere->getDeptcle()->getInseeDepartement();
-            } else {
-                $deptcle = null;
-            };
-            $typecle = $critere->getTypecle();
-            $territoirecle = $critere->getTerritoirecle();
-
-            $session->set('codecle', $codecle);
-            $session->set('masseEaucle', $masseEaucle);
-            $session->set('deptcle', $deptcle);
-            $session->set('typecle', $typecle);
-
-            if (!($territoirecle == '1')) {
-                $territoirecle = '2';
-            }
-            $session->set('territoirecle', $territoirecle);
-
-
-            //return new Response('codecle : ' . $codecle . ' massecle : ' . $masseEaucle . ' dept : ' . $deptcle . ' typecle : ' . $typecle . ' territoire : ' . $territoirecle);
-
-
-            $where = "a.euCd = a.euCd";
-
-
-            if (!empty($typecle)) {
-                $where = $where . " and upper(a.typeMe) = '" . $typecle . "'";
-            }
-
-            if (!empty($codecle)) {
-                $where = $where . " and upper(a.euCd) LIKE '%" . strtoupper($codecle) . "%'";
-                if (!empty($masseEaucle)) {
-                    $where = $where . " and upper(a.nomMasseEau) LIKE '%" . strtoupper($masseEaucle) . "%'";
-                };
-            } else {
-                if (!empty($masseEaucle)) {
-                    $where = $where . " and upper(a.nomMasseEau) LIKE '%" . strtoupper($masseEaucle) . "%'";
-                };
-            };
-
-
-            if ($territoirecle == '1') {
-                $user = $this->container->get('security.context')->getToken()->getUser();
-
-                // Et pour vérifier que l'utilisateur est authentifié (et non un anonyme)
-                if (!is_object($user)) {
-                    throw new AccessDeniedException('Vous n\'êtes pas authentifié.');
-                }
-
-                //return new Response('role : ' . isset(in_array("ROLE_SUPERVISEUR", $user->getRoles())));
-
-                if (!empty($deptcle)) {
-                    $where = $where . " and b.euCd = a.euCd";
-                    $where = $where . " and b.inseeDepartement = '" . $deptcle . "'";
-                    $where = $where . " and b.inseeDepartement = c.inseeDepartement";
-                    $where = $where . " and c.utilisateur = " . $user->getId();
-                } else {
-
-                    $where = $where . " and b.euCd = a.euCd";
-                    $where = $where . " and b.inseeDepartement = c.inseeDepartement";
-                    $where = $where . " and c.utilisateur = " . $user->getId();
-                }
-
-                $query = "select a from Aeag\EdlBundle\Entity\MasseEau a,";
-                $query = $query . " Aeag\EdlBundle\Entity\DepMe b,";
-                $query = $query . " Aeag\EdlBundle\Entity\DepUtilisateur c where ";
-            } else {
-                if (!empty($deptcle)) {
-                    $where = $where . " and b.euCd = a.euCd";
-                    $where = $where . " and b.inseeDepartement = '" . $deptcle . "'";
-
-                    $query = "select a from Aeag\EdlBundle\Entity\MasseEau a,";
-                    $query = $query . " Aeag\EdlBundle\Entity\DepMe b where ";
-                } else {
-
-
-
-                    $query = "select a from Aeag\EdlBundle\Entity\MasseEau a where ";
-                }
-            }
-
-            //return new Response('where  : ' .  $where );
-
-
-            $query = $query . $where . " order by  a.nomMasseEau";
-
-            //return new Response('query  : ' . $query);
-
-            $MasseEaux = $emEdl->createQuery($query)
-                    ->getResult();
-
-            $res = array();
-            $i = 0;
-            foreach ($MasseEaux as $MasseEau) {
-                $repo = $emEdl->getRepository('AeagEdlBundle:EtatMe');
-                $etatMe = $repo->getDerniereProposition($MasseEau->getEuCd());
-
-                if ($etatMe) {
-                    $etat_user = $etatMe->getUtilisateur();
-                    $etat_date = $etatMe->getpropositionDate();
-                } else {
-                    $etat_user = null;
-                    $etat_date = null;
-                };
-
-                $repo = $emEdl->getRepository('AeagEdlBundle:ImpactMe');
-                $impactMe = $repo->getDerniereProposition($MasseEau->getEuCd());
-
-                if ($impactMe) {
-                    $impact_user = $impactMe->getUtilisateur();
-                    $impact_date = $impactMe->getpropositionDate();
-                } else {
-                    $impact_user = null;
-                    $impact_date = null;
-                };
-
-                $repo =$emEdl->getRepository('AeagEdlBundle:PressionMe');
-                $pressionMe = $repo->getDerniereProposition($MasseEau->getEuCd());
-
-                if ($pressionMe) {
-                    $pression_user = $pressionMe->getUtilisateur();
-                    $pression_date = $pressionMe->getpropositionDate();
-                } else {
-                    $pression_user = null;
-                    $pression_date = null;
-                };
-
-                $repo = $emEdl->getRepository('AeagEdlBundle:RisqueMe');
-                $risqueMe = $repo->getDerniereProposition($MasseEau->getEuCd());
-
-                if ($risqueMe) {
-                    $risque_user = $risqueMe->getUtilisateur();
-                    $risque_date = $risqueMe->getpropositionDate();
-                } else {
-                    $risque_user = null;
-                    $risque_date = null;
-                };
-
-                $der_user = $etat_user;
-                $der_date = $etat_date;
-
-                if ($impact_date > $der_date) {
-                    $der_user = $impact_user;
-                    $der_date = $impact_date;
-                };
-
-                if ($pression_date > $der_date) {
-                    $der_user = $pression_user;
-                    $der_date = $pression_date;
-                };
-
-                if ($risque_date > $der_date) {
-                    $der_user = $risque_user;
-                    $der_date = $risque_date;
-                };
-
-                //return new Response('etatMe : ' .  $etatMe->getEuCd() . ' user : ' . $etatMe->getUtilisateur());
-
-
-                $res[$i] = array('euCd' => $MasseEau->getEuCd(),
-                    'nomMasseEau' => $MasseEau->getNomMasseEau(),
-                    'etat_user' => $etat_user,
-                    'etat_date' => $etat_date,
-                    'impact_user' => $impact_user,
-                    'impact_date' => $impact_date,
-                    'pression_user' => $pression_user,
-                    'pression_date' => $pression_date,
-                    'risque_user' => $risque_user,
-                    'risque_date' => $risque_date,
-                    'der_user' => $der_user,
-                    'der_date' => $der_date);
-                $i++;
-            }
-
-
-
-
-            $session->set('MasseEau', $res);
-
-
-            $variables['MasseEau'] = $res;
-
-            $variables['codecle'] = $session->get('codecle');
-            $variables['deptcle'] = $session->get('deptcle');
-            $variables['typecle'] = $session->get('typecle');
-            $variables['territoirecle'] = $session->get('territoirecle');
-
-            return $this->render('AeagEdlBundle:MasseEau:listeMasseEau.html.twig', $variables);
-        } else {
-
-
-            return $this->render('AeagEdlBundle:Default:index.html.twig', array(
-                        'form' => $form->createView()
-                    ));
-        }
+        return $this->render('AeagEdlBundle:Default:index.html.twig', array(
+                    'form' => $form->createView()
+        ));
     }
 
     /**
@@ -263,32 +62,308 @@ class DefaultController extends Controller {
      * @Template("AeagEdlBundle:MasseEau:listeMasseEau.html.twig")
      *
      */
-    public function listeMasseEauAction() {
-
-        $request = $this->getRequest();
-
+    public function listeMasseEauAction(Request $request) {
 
 // Liste des dossiers selectionnés
-        $session = $request->getSession();
+        $user = $this->getUser();
+        $session = $this->get('session');
+        $session->set('retourErreur', $this->generateUrl('Aeag_edl'));
+        $session->set('menu', 'acceuil');
+        $session->set('controller', 'default');
+        $session->set('fonction', 'index');
+        $em = $this->get('doctrine')->getManager();
+        $emEdl = $this->get('doctrine')->getManager('edl');
 
-        $session->set('UrlRetour', '');
+        $critere = new Criteres();
+        $form = $this->createForm(new MasseEauRechercheForm(), $critere);
 
-        $session->set('passage', '1');
+        $form->handleRequest($request);
 
-        $variables['MasseEau'] = $session->get('MasseEau');
+        $session = $this->get("session");
 
-        if (!is_array($variables['MasseEau'])) {
-            return $this->redirect($this->generateUrl('Aeag_edl'));
+        if ($session->get('recherche') == 'N') {
+
+            $request = $this->getRequest();
+
+            $codecle = $critere->getCodecle();
+            $masseEaucle = $critere->getMassecle();
+            if ($critere->getDeptcle()) {
+                $deptcle = $critere->getDeptcle()->getInseeDepartement();
+                $deptnom = $critere->getDeptcle()->getnomDepartement();
+            } else {
+                $deptcle = null;
+                $deptnom = null;
+            };
+            $typecle = $critere->getTypecle();
+            $territoirecle = $critere->getTerritoirecle();
+
+            $session->set('codecle', $codecle);
+            $session->set('masseEaucle', $masseEaucle);
+            $session->set('deptcle', $deptcle);
+            $session->set('deptnom', $deptnom);
+            $session->set('typecle', $typecle);
+            $session->set('recherche', 'O');
+
+            if (!($territoirecle == '1')) {
+                $territoirecle = '2';
+            }
+            $session->set('territoirecle', $territoirecle);
+        } else {
+            $codecle = $session->get('codecle');
+            $masseEaucle = $session->get('masseEaucle');
+            $deptcle = $session->get('deptcle');
+            $typecle = $session->get('typecle');
+            $territoirecle = $session->get('territoirecle');
+        }
+
+        $tabSelection = array();
+        if ($deptcle) {
+            $tabSelection['dept'] = $session->get('deptnom');
+        } else {
+            $tabSelection['dept'] = null;
+        }
+        if ($typecle) {
+            if ($typecle == 'CW') {
+                $tabSelection['type'] = 'Cotière';
+            }
+            if ($typecle == 'TW') {
+                $tabSelection['type'] = 'Transition';
+            }
+            if ($typecle == 'LW') {
+                $tabSelection['type'] = 'Lac';
+            }
+            if ($typecle == 'RW') {
+                $tabSelection['type'] = 'Rivière';
+            }
+            if ($typecle == 'GW') {
+                $tabSelection['type'] = 'Souterraine';
+            }
+        } else {
+            $tabSelection['type'] = null;
+        }
+        if ($codecle) {
+            $tabSelection['code'] = $codecle;
+        } else {
+            $tabSelection['code'] = null;
+        }
+        if ($masseEaucle) {
+            $tabSelection['masseEau'] = $masseEaucle;
+        } else {
+            $tabSelection['masseEau'] = null;
+        }
+        if ($territoirecle == '1') {
+            $tabSelection['territoire'] = 'O';
+        } else {
+            $tabSelection['territoire'] = 'N';
         }
 
 
-        $form = $this->container->get('form.factory')->create(new MasseEauRechercheForm($variables));
-        $variables['form'] = $form->createView();
 
-        return $variables;
+        //return new Response('codecle : ' . $codecle . ' massecle : ' . $masseEaucle . ' dept : ' . $deptcle . ' typecle : ' . $typecle . ' territoire : ' . $territoirecle);
+
+
+        $where = "a.euCd = a.euCd";
+
+
+        if (!empty($typecle)) {
+            $where = $where . " and upper(a.typeMe) = '" . $typecle . "'";
+        }
+
+        if (!empty($codecle)) {
+            $where = $where . " and upper(a.euCd) LIKE '%" . strtoupper($codecle) . "%'";
+            if (!empty($masseEaucle)) {
+                $where = $where . " and upper(a.nomMasseEau) LIKE '%" . strtoupper($masseEaucle) . "%'";
+            };
+        } else {
+            if (!empty($masseEaucle)) {
+                $where = $where . " and upper(a.nomMasseEau) LIKE '%" . strtoupper($masseEaucle) . "%'";
+            };
+        };
+
+
+        if ($territoirecle == '1') {
+            $user = $this->container->get('security.context')->getToken()->getUser();
+
+            // Et pour vérifier que l'utilisateur est authentifié (et non un anonyme)
+            if (!is_object($user)) {
+                throw new AccessDeniedException('Vous n\'êtes pas authentifié.');
+            }
+
+            //return new Response('role : ' . isset(in_array("ROLE_SUPERVISEUR", $user->getRoles())));
+
+            if (!empty($deptcle)) {
+                $where = $where . " and b.euCd = a.euCd";
+                $where = $where . " and b.inseeDepartement = '" . $deptcle . "'";
+                $where = $where . " and b.inseeDepartement = c.inseeDepartement";
+                $where = $where . " and c.utilisateur = " . $user->getId();
+            } else {
+
+                $where = $where . " and b.euCd = a.euCd";
+                $where = $where . " and b.inseeDepartement = c.inseeDepartement";
+                $where = $where . " and c.utilisateur = " . $user->getId();
+            }
+
+            $query = "select a from Aeag\EdlBundle\Entity\MasseEau a,";
+            $query = $query . " Aeag\EdlBundle\Entity\DepartementMe b,";
+            $query = $query . " Aeag\EdlBundle\Entity\DepUtilisateur c where ";
+        } else {
+            if (!empty($deptcle)) {
+                $where = $where . " and b.euCd = a.euCd";
+                $where = $where . " and b.inseeDepartement = '" . $deptcle . "'";
+
+                $query = "select a from Aeag\EdlBundle\Entity\MasseEau a,";
+                $query = $query . " Aeag\EdlBundle\Entity\DepartementMe b where ";
+            } else {
+
+
+
+                $query = "select a from Aeag\EdlBundle\Entity\MasseEau a where ";
+            }
+        }
+
+        //return new Response('where  : ' .  $where );
+
+
+        $query = $query . $where . " order by  a.nomMasseEau";
+
+        //return new Response('query  : ' . $query);
+
+        $MasseEaux = $emEdl->createQuery($query)
+                ->getResult();
+
+        $res = array();
+        $i = 0;
+        foreach ($MasseEaux as $MasseEau) {
+            $repo = $emEdl->getRepository('AeagEdlBundle:EtatMe');
+            $etatMe = $repo->getDerniereProposition($MasseEau->getEuCd());
+
+            if ($etatMe) {
+                $etat_user = $etatMe->getUtilisateur();
+                $etat_date = $etatMe->getpropositionDate();
+            } else {
+                $etat_user = null;
+                $etat_date = null;
+            };
+
+
+            $repo = $emEdl->getRepository('AeagEdlBundle:PressionMe');
+            $pressionMe = $repo->getDerniereProposition($MasseEau->getEuCd());
+
+            if ($pressionMe) {
+                $pression_user = $pressionMe->getUtilisateur();
+                $pression_date = $pressionMe->getpropositionDate();
+            } else {
+                $pression_user = null;
+                $pression_date = null;
+            };
+
+            $der_user = $etat_user;
+            $der_date = $etat_date;
+
+            if ($pression_date > $der_date) {
+                $der_user = $pression_user;
+                $der_date = $pression_date;
+            };
+
+
+            //return new Response('etatMe : ' .  $etatMe->getEuCd() . ' user : ' . $etatMe->getUtilisateur());
+
+
+            $res[$i] = array('euCd' => $MasseEau->getEuCd(),
+                'nomMasseEau' => $MasseEau->getNomMasseEau(),
+                'etat_user' => $etat_user,
+                'etat_date' => $etat_date,
+                'pression_user' => $pression_user,
+                'pression_date' => $pression_date,
+                'der_user' => $der_user,
+                'der_date' => $der_date);
+            $i++;
+        }
+
+        $variables['MasseEau'] = $res;
+        $variables['Selection'] = $tabSelection;
+
+        return $this->render('AeagEdlBundle:MasseEau:listeMasseEau.html.twig', $variables);
     }
 
+    public function etatGroupeAction($code = null) {
+
+        $user = $this->getUser();
+        $session = $this->get('session');
+        $session->clear();
+        $session->set('controller', 'default');
+        $session->set('fonction', 'etatGroupe');
+        $em = $this->get('doctrine')->getManager();
+        $emEdl = $this->get('doctrine')->getManager('edl');
+
+        $request = $this->container->get('request');
+
+
+        $repo = $emEdl->getRepository('AeagEdlBundle:EtatGroupe');
+        $etatGroupes = $repo->getEtatGroupe();
+
+        if (!$etatGroupes) {
+            throw $this->createNotFoundException('Table EtatGroupe non trouvée : ');
+        }
+
+
+        $meRepo = $emEdl->getRepository('AeagEdlBundle:MasseEau');
+
+        $me = $meRepo->findOneBy(array('euCd' => $code));
+
+        if (!$me) {
+            throw $this->createNotFoundException('Masse d\'eau non trouvée : ' . $code);
+        }
+
+
+        $session->set('UrlRetour', $this->generateUrl('AeagEdlBundle_listeMasseEau'));
+
+
+
+        return $this->render('AeagEdlBundle:Etat:etatGroupe.html.twig', array(
+                    'etatGroupes' => $etatGroupes,
+                    'me' => $me,
+                    'url' => $session->get('UrlRetour')
+                        )
+        );
+    }
     
+    public function etatAction($code = null, $cdGroupe = null) {
+
+        $user = $this->getUser();
+        $session = $this->get('session');
+        $session->clear();
+        $session->set('controller', 'default');
+        $session->set('fonction', 'etat');
+        $em = $this->get('doctrine')->getManager();
+        $emEdl = $this->get('doctrine')->getManager('edl');
+
+        $request = $this->container->get('request');
+
+        $repo = $emEdl->getRepository('AeagEdlBundle:EtatGroupe');
+        $etatGroupe = $repo->findOneBy(array('cdGroupe' => $cdGroupe));
+
+        
+
+        $repo = $emEdl->getRepository('AeagEdlBundle:EtatMe');
+        $etats = $repo->getEtatMe($code, $cdGroupe);
+        $nbEtats = $repo->getNbEtatMe($code, $cdGroupe);
+
+
+        if ($session->get('UrlRetour') == '') {
+            $session->set('UrlRetour', $this->generateUrl('AeagEdlBundle_listeMasseEau'));
+        }
+
+
+        return $this->render('AeagEdlBundle:Etat:etat.html.twig', array(
+                    'etatGroupe' => $etatGroupe,
+                    'etats' => $etats,
+                    'nbEtats' => $nbEtats,
+                    'url' => $session->get('UrlRetour')
+                        )
+        );
+    }
+
     public function massedeauAction($code) {
 
         $request = $this->container->get('request');
@@ -367,82 +442,7 @@ class DefaultController extends Controller {
         );
     }
 
-    public function etatAction($code = null, $cdGroupe = null) {
-        
-        $user = $this->getUser();
-        $session = $this->get('session');
-        $session->clear();
-        $session->set('controller', 'default');
-        $session->set('fonction', 'etat');
-        $em = $this->get('doctrine')->getManager();
-        $emEdl = $this->get('doctrine')->getManager('edl');
-
-        $request = $this->container->get('request');
-
-        $repo = $emEdl->getRepository('AeagEdlBundle:EtatGroupe');
-        $etatGroupe = $repo->findOneBy(array('cdGroupe' => $cdGroupe));
-
-
-        $repo = $emEdl->getRepository('AeagEdlBundle:EtatMe');
-        $etats = $repo->getEtatMe($code, $cdGroupe);
-        $nbEtats = $repo->getNbEtatMe($code, $cdGroupe);
-
-
-        if ($session->get('UrlRetour') == '') {
-            $session->set('UrlRetour', $this->generateUrl('AeagEdlBundle_listeMasseEau', array('page' => 1)));
-        }
-
-
-        return $this->render('AeagEdlBundle:Etat:etat.html.twig', array(
-                    'etatGroupe' => $etatGroupe,
-                    'etats' => $etats,
-                    'nbEtats' => $nbEtats,
-                    'url' => $session->get('UrlRetour')
-                        )
-        );
-    }
-
-    public function etatGroupeAction($code = null, $page = 1) {
-        
-        $user = $this->getUser();
-        $session = $this->get('session');
-        $session->clear();
-        $session->set('controller', 'default');
-        $session->set('fonction', 'etatGroupe');
-        $em = $this->get('doctrine')->getManager();
-        $emEdl = $this->get('doctrine')->getManager('edl');
-
-        $request = $this->container->get('request');
-
-     
-        $repo = $emEdl->getRepository('AeagEdlBundle:EtatGroupe');
-        $etatGroupes = $repo->getEtatGroupe();
-
-        if (!$etatGroupes) {
-            throw $this->createNotFoundException('Table EtatGroupe non trouvée : ');
-        }
-
-
-        $meRepo = $emEdl->getRepository('AeagEdlBundle:MasseEau');
-
-        $me = $meRepo->findOneBy(array('euCd' => $code));
-
-        if (!$me) {
-            throw $this->createNotFoundException('Masse d\'eau non trouvée : ' . $code);
-        }
-
-
-        $session->set('UrlRetour', $this->generateUrl('AeagEdlBundle_listeMasseEau', array('page' => $page)));
-
-
-
-        return $this->render('AeagEdlBundle:Etat:etatGroupe.html.twig', array(
-                    'etatGroupes' => $etatGroupes,
-                    'me' => $me,
-                    'url' => $session->get('UrlRetour')
-                        )
-        );
-    }
+    
 
     public function impactAction($code = null, $cdGroupe = null) {
 
@@ -590,8 +590,7 @@ class DefaultController extends Controller {
 
         return $this->render('AeagEdlBundle:Default:contact.html.twig', array(
                     'form' => $form->createView()
-                ));
+        ));
     }
 
 }
-

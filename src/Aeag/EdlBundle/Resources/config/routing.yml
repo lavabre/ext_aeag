@@ -6,6 +6,25 @@ Aeag_edl:
     requirements:
         methods:  GET|POST
         
+AeagEdlBundle_rechercherMasseEau:
+    path: /avis/masseEau/rechercher
+    defaults: { _controller: AeagEdlBundle:Default:rechercherMasseEau }
+    requirements:
+         methods: POST
+   
+    
+AeagEdlBundle_listeMasseEau:
+    path: /avis/ListeEtat
+    defaults: { _controller: "AeagEdlBundle:Default:listeMasseEau" }
+
+AeagEdlBundle_etatGroupe:
+    path:  /avis/etatgroupe/{code}
+    defaults: { _controller: AeagEdlBundle:Default:etatGroupe }
+    
+    
+    
+    
+        
 AeagEdlBundle_contact:
     path:  /contact
     defaults: { _controller: AeagEdlBundle:Default:contact }
@@ -63,13 +82,8 @@ AeagEdlBundle_etat:
     path:  /avis/etat/{code}
     defaults: { _controller: AeagEdlBundle:Default:etat }
     
-AeagEdlBundle_etatGroupe1:
-    path:  /avis/etatgroupe/{code}/{page}
-    defaults: { _controller: AeagEdlBundle:Default:etatGroupe }
 
-AeagEdlBundle_etatGroupe:
-    path:  /avis/etatgroupe/{code}
-    defaults: { _controller: AeagEdlBundle:Default:etatGroupe }
+
     
     
 AeagEdlBundle_impactForm:
@@ -123,16 +137,6 @@ AeagEdlBundle_risqueGroupe:
     defaults: { _controller: AeagEdlBundle:Default:risqueGroupe }
      
 
-AeagEdlBundle_rechercherMasseEau:
-    path: /avis/masseEau/rechercher
-    defaults: { _controller: AeagEdlBundle:Default:rechercherMasseEau }
-    requirements:
-         methods: POST
-   
-    
-AeagEdlBundle_listeMasseEau:
-    path: /avis/ListeEtat
-    defaults: { _controller: "AeagEdlBundle:Default:listeMasseEau" }
 
 
 fos_user_security:

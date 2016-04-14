@@ -5,31 +5,33 @@ namespace Aeag\EdlBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Aeag\EdlBundle\Entity\PressionGroupe
+ * PressionGroupe
  *
  * @ORM\Table(name="pression_groupe")
- * @ORM\Entity(repositoryClass="Aeag\EdlBundle\Entity\PressionGroupeRepository")
+ * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Aeag\EdlBundle\Repository\PressionGroupeRepository")
  */
 class PressionGroupe
 {
-
     /**
-     * @var string $cdGroupe
+     * @var string
      *
      * @ORM\Column(name="cd_groupe", type="string", length=16, nullable=false)
      * @ORM\Id
-       */
+     * @ORM\GeneratedValue(strategy="SEQUENCE")
+     * @ORM\SequenceGenerator(sequenceName="pression_groupe_cd_groupe_seq", allocationSize=1, initialValue=1)
+     */
     private $cdGroupe;
 
     /**
-     * @var string $libelle
+     * @var string
      *
      * @ORM\Column(name="libelle", type="string", length=255, nullable=false)
      */
     private $libelle;
 
     /**
-     * @var integer $ordre
+     * @var integer
      *
      * @ORM\Column(name="ordre", type="integer", nullable=false)
      */
@@ -40,7 +42,7 @@ class PressionGroupe
     /**
      * Get cdGroupe
      *
-     * @return string 
+     * @return string
      */
     public function getCdGroupe()
     {
@@ -51,16 +53,20 @@ class PressionGroupe
      * Set libelle
      *
      * @param string $libelle
+     *
+     * @return pressionGroupe
      */
     public function setLibelle($libelle)
     {
         $this->libelle = $libelle;
+
+        return $this;
     }
 
     /**
      * Get libelle
      *
-     * @return string 
+     * @return string
      */
     public function getLibelle()
     {
@@ -71,20 +77,23 @@ class PressionGroupe
      * Set ordre
      *
      * @param integer $ordre
+     *
+     * @return pressionGroupe
      */
     public function setOrdre($ordre)
     {
         $this->ordre = $ordre;
+
+        return $this;
     }
 
     /**
      * Get ordre
      *
-     * @return integer 
+     * @return integer
      */
     public function getOrdre()
     {
         return $this->ordre;
     }
-
 }

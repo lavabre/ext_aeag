@@ -5,76 +5,74 @@ namespace Aeag\EdlBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Cwbody
+ * Aeag\EdlBundle\Entity\Twbody
  *
- * @ORM\Table(name="cwbody")
+ * @ORM\Table(name="twbody")
  * @ORM\Entity
  */
-class Cwbody
+class Twbody
 {
     /**
-     * @var string
+     * @var string $euCd
      *
      * @ORM\Column(name="eu_cd", type="string", length=24, nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="SEQUENCE")
-     * @ORM\SequenceGenerator(sequenceName="cwbody_eu_cd_seq", allocationSize=1, initialValue=1)
-     */
+        */
     private $euCd;
 
     /**
-     * @var string
+     * @var string $regionCd
      *
-     * @ORM\Column(name="region_cd", type="string", length=2, nullable=true)
+     * @ORM\Column(name="region_cd", type="string", nullable=true)
      */
     private $regionCd;
 
     /**
-     * @var string
+     * @var string $system
      *
-     * @ORM\Column(name="system", type="string", length=1, nullable=true)
+     * @ORM\Column(name="system", type="string", nullable=true)
      */
     private $system;
 
     /**
-     * @var string
+     * @var string $statusYr
      *
-     * @ORM\Column(name="salinity", type="string", length=1, nullable=true)
+     * @ORM\Column(name="status_yr", type="string", nullable=true)
+     */
+    private $statusYr;
+
+    /**
+     * @var string $salinity
+     *
+     * @ORM\Column(name="salinity", type="string", nullable=true)
      */
     private $salinity;
 
     /**
-     * @var string
+     * @var string $tidal
      *
-     * @ORM\Column(name="tidal", type="string", length=5, nullable=true)
+     * @ORM\Column(name="tidal", type="string", nullable=true)
      */
     private $tidal;
 
     /**
-     * @var string
+     * @var float $lat
      *
-     * @ORM\Column(name="depth_cat", type="string", length=1, nullable=true)
-     */
-    private $depthCat;
-
-    /**
-     * @var float
-     *
-     * @ORM\Column(name="lat", type="float", precision=10, scale=0, nullable=true)
+     * @ORM\Column(name="lat", type="float", nullable=true)
      */
     private $lat;
 
     /**
-     * @var float
+     * @var float $lon
      *
-     * @ORM\Column(name="lon", type="float", precision=10, scale=0, nullable=true)
+     * @ORM\Column(name="lon", type="float", nullable=true)
      */
     private $lon;
 
     /**
-     * @var string
+     * @var string $typeFr
      *
-     * @ORM\Column(name="type_fr", type="string", length=8, nullable=true)
+     * @ORM\Column(name="type_fr", type="string", nullable=true)
      */
     private $typeFr;
 
@@ -83,7 +81,7 @@ class Cwbody
     /**
      * Get euCd
      *
-     * @return string
+     * @return string 
      */
     public function getEuCd()
     {
@@ -94,20 +92,16 @@ class Cwbody
      * Set regionCd
      *
      * @param string $regionCd
-     *
-     * @return cwbody
      */
     public function setRegionCd($regionCd)
     {
         $this->regionCd = $regionCd;
-
-        return $this;
     }
 
     /**
      * Get regionCd
      *
-     * @return string
+     * @return string 
      */
     public function getRegionCd()
     {
@@ -118,20 +112,16 @@ class Cwbody
      * Set system
      *
      * @param string $system
-     *
-     * @return cwbody
      */
     public function setSystem($system)
     {
         $this->system = $system;
-
-        return $this;
     }
 
     /**
      * Get system
      *
-     * @return string
+     * @return string 
      */
     public function getSystem()
     {
@@ -139,23 +129,39 @@ class Cwbody
     }
 
     /**
+     * Set statusYr
+     *
+     * @param string $statusYr
+     */
+    public function setStatusYr($statusYr)
+    {
+        $this->statusYr = $statusYr;
+    }
+
+    /**
+     * Get statusYr
+     *
+     * @return string 
+     */
+    public function getStatusYr()
+    {
+        return $this->statusYr;
+    }
+
+    /**
      * Set salinity
      *
      * @param string $salinity
-     *
-     * @return cwbody
      */
     public function setSalinity($salinity)
     {
         $this->salinity = $salinity;
-
-        return $this;
     }
 
     /**
      * Get salinity
      *
-     * @return string
+     * @return string 
      */
     public function getSalinity()
     {
@@ -166,20 +172,16 @@ class Cwbody
      * Set tidal
      *
      * @param string $tidal
-     *
-     * @return cwbody
      */
     public function setTidal($tidal)
     {
         $this->tidal = $tidal;
-
-        return $this;
     }
 
     /**
      * Get tidal
      *
-     * @return string
+     * @return string 
      */
     public function getTidal()
     {
@@ -187,47 +189,19 @@ class Cwbody
     }
 
     /**
-     * Set depthCat
-     *
-     * @param string $depthCat
-     *
-     * @return cwbody
-     */
-    public function setDepthCat($depthCat)
-    {
-        $this->depthCat = $depthCat;
-
-        return $this;
-    }
-
-    /**
-     * Get depthCat
-     *
-     * @return string
-     */
-    public function getDepthCat()
-    {
-        return $this->depthCat;
-    }
-
-    /**
      * Set lat
      *
      * @param float $lat
-     *
-     * @return cwbody
      */
     public function setLat($lat)
     {
         $this->lat = $lat;
-
-        return $this;
     }
 
     /**
      * Get lat
      *
-     * @return float
+     * @return float 
      */
     public function getLat()
     {
@@ -238,20 +212,16 @@ class Cwbody
      * Set lon
      *
      * @param float $lon
-     *
-     * @return cwbody
      */
     public function setLon($lon)
     {
         $this->lon = $lon;
-
-        return $this;
     }
 
     /**
      * Get lon
      *
-     * @return float
+     * @return float 
      */
     public function getLon()
     {
@@ -262,20 +232,16 @@ class Cwbody
      * Set typeFr
      *
      * @param string $typeFr
-     *
-     * @return cwbody
      */
     public function setTypeFr($typeFr)
     {
         $this->typeFr = $typeFr;
-
-        return $this;
     }
 
     /**
      * Get typeFr
      *
-     * @return string
+     * @return string 
      */
     public function getTypeFr()
     {

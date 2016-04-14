@@ -5,7 +5,7 @@ namespace Aeag\EdlBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Lwbody
+ * Aeag\EdlBundle\Entity\Lwbody
  *
  * @ORM\Table(name="lwbody")
  * @ORM\Entity
@@ -13,180 +13,178 @@ use Doctrine\ORM\Mapping as ORM;
 class Lwbody
 {
     /**
-     * @var string
+     * @var string $euCd
      *
      * @ORM\Column(name="eu_cd", type="string", length=24, nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="SEQUENCE")
-     * @ORM\SequenceGenerator(sequenceName="lwbody_eu_cd_seq", allocationSize=1, initialValue=1)
-     */
+      */
     private $euCd;
 
     /**
-     * @var string
+     * @var string $regionCd
      *
-     * @ORM\Column(name="region_cd", type="string", length=2, nullable=true)
+     * @ORM\Column(name="region_cd", type="string", nullable=true)
      */
     private $regionCd;
 
     /**
-     * @var string
+     * @var string $system
      *
-     * @ORM\Column(name="system", type="string", length=1, nullable=true)
+     * @ORM\Column(name="system", type="string", nullable=true)
      */
     private $system;
 
     /**
-     * @var string
+     * @var string $statusYr
      *
-     * @ORM\Column(name="status_yr", type="string", length=4, nullable=true)
+     * @ORM\Column(name="status_yr", type="string", nullable=true)
      */
     private $statusYr;
 
     /**
-     * @var string
+     * @var string $altCat
      *
-     * @ORM\Column(name="alt_cat", type="string", length=4, nullable=true)
+     * @ORM\Column(name="alt_cat", type="string", nullable=true)
      */
     private $altCat;
 
     /**
-     * @var string
+     * @var string $geolCat
      *
-     * @ORM\Column(name="geol_cat", type="string", length=1, nullable=true)
+     * @ORM\Column(name="geol_cat", type="string", nullable=true)
      */
     private $geolCat;
 
     /**
-     * @var string
+     * @var string $sizeCat
      *
-     * @ORM\Column(name="size_cat", type="string", length=2, nullable=true)
+     * @ORM\Column(name="size_cat", type="string", nullable=true)
      */
     private $sizeCat;
 
     /**
-     * @var string
+     * @var string $depthCat
      *
-     * @ORM\Column(name="depth_cat", type="string", length=1, nullable=true)
+     * @ORM\Column(name="depth_cat", type="string", nullable=true)
      */
     private $depthCat;
 
     /**
-     * @var float
+     * @var float $alt
      *
-     * @ORM\Column(name="alt", type="float", precision=10, scale=0, nullable=true)
+     * @ORM\Column(name="alt", type="float", nullable=true)
      */
     private $alt;
 
     /**
-     * @var float
+     * @var float $lat
      *
-     * @ORM\Column(name="lat", type="float", precision=10, scale=0, nullable=true)
+     * @ORM\Column(name="lat", type="float", nullable=true)
      */
     private $lat;
 
     /**
-     * @var float
+     * @var float $lon
      *
-     * @ORM\Column(name="lon", type="float", precision=10, scale=0, nullable=true)
+     * @ORM\Column(name="lon", type="float", nullable=true)
      */
     private $lon;
 
     /**
-     * @var float
+     * @var float $depth
      *
-     * @ORM\Column(name="depth", type="float", precision=10, scale=0, nullable=true)
+     * @ORM\Column(name="depth", type="float", nullable=true)
      */
     private $depth;
 
     /**
-     * @var float
+     * @var float $size
      *
-     * @ORM\Column(name="size", type="float", precision=10, scale=0, nullable=true)
+     * @ORM\Column(name="size", type="float", nullable=true)
      */
     private $size;
 
     /**
-     * @var float
+     * @var float $avDepth
      *
-     * @ORM\Column(name="av_depth", type="float", precision=10, scale=0, nullable=true)
+     * @ORM\Column(name="av_depth", type="float", nullable=true)
      */
     private $avDepth;
 
     /**
-     * @var string
+     * @var string $lakeShape
      *
-     * @ORM\Column(name="lake_shape", type="string", length=2, nullable=true)
+     * @ORM\Column(name="lake_shape", type="string", nullable=true)
      */
     private $lakeShape;
 
     /**
-     * @var float
+     * @var float $resTime
      *
-     * @ORM\Column(name="res_time", type="float", precision=10, scale=0, nullable=true)
+     * @ORM\Column(name="res_time", type="float", nullable=true)
      */
     private $resTime;
 
     /**
-     * @var string
+     * @var string $mixing
      *
-     * @ORM\Column(name="mixing", type="string", length=2, nullable=true)
+     * @ORM\Column(name="mixing", type="string", nullable=true)
      */
     private $mixing;
 
     /**
-     * @var string
+     * @var string $critmdo
      *
-     * @ORM\Column(name="critmdo", type="string", length=1, nullable=true)
+     * @ORM\Column(name="critmdo", type="string", nullable=true)
      */
     private $critmdo;
 
     /**
-     * @var string
+     * @var string $cgenesur
      *
-     * @ORM\Column(name="cgenesur", type="string", length=8, nullable=true)
+     * @ORM\Column(name="cgenesur", type="string", nullable=true)
      */
     private $cgenesur;
 
     /**
-     * @var string
+     * @var string $typeFr
      *
-     * @ORM\Column(name="type_fr", type="string", length=4, nullable=true)
+     * @ORM\Column(name="type_fr", type="string", nullable=true)
      */
     private $typeFr;
 
     /**
-     * @var string
+     * @var string $hydroecor
      *
-     * @ORM\Column(name="hydroecor", type="string", length=4, nullable=true)
+     * @ORM\Column(name="hydroecor", type="string", nullable=true)
      */
     private $hydroecor;
 
     /**
-     * @var float
+     * @var float $capTotal
      *
-     * @ORM\Column(name="cap_total", type="float", precision=10, scale=0, nullable=true)
+     * @ORM\Column(name="cap_total", type="float", nullable=true)
      */
     private $capTotal;
 
     /**
-     * @var float
+     * @var float $capUseful
      *
-     * @ORM\Column(name="cap_useful", type="float", precision=10, scale=0, nullable=true)
+     * @ORM\Column(name="cap_useful", type="float", nullable=true)
      */
     private $capUseful;
 
     /**
-     * @var float
+     * @var float $perimeter
      *
-     * @ORM\Column(name="perimeter", type="float", precision=10, scale=0, nullable=true)
+     * @ORM\Column(name="perimeter", type="float", nullable=true)
      */
     private $perimeter;
 
     /**
-     * @var string
+     * @var string $barrage
      *
-     * @ORM\Column(name="barrage", type="string", length=1, nullable=true)
+     * @ORM\Column(name="barrage", type="string", nullable=true)
      */
     private $barrage;
 
@@ -195,7 +193,7 @@ class Lwbody
     /**
      * Get euCd
      *
-     * @return string
+     * @return string 
      */
     public function getEuCd()
     {
@@ -206,20 +204,16 @@ class Lwbody
      * Set regionCd
      *
      * @param string $regionCd
-     *
-     * @return lwbody
      */
     public function setRegionCd($regionCd)
     {
         $this->regionCd = $regionCd;
-
-        return $this;
     }
 
     /**
      * Get regionCd
      *
-     * @return string
+     * @return string 
      */
     public function getRegionCd()
     {
@@ -230,20 +224,16 @@ class Lwbody
      * Set system
      *
      * @param string $system
-     *
-     * @return lwbody
      */
     public function setSystem($system)
     {
         $this->system = $system;
-
-        return $this;
     }
 
     /**
      * Get system
      *
-     * @return string
+     * @return string 
      */
     public function getSystem()
     {
@@ -254,20 +244,16 @@ class Lwbody
      * Set statusYr
      *
      * @param string $statusYr
-     *
-     * @return lwbody
      */
     public function setStatusYr($statusYr)
     {
         $this->statusYr = $statusYr;
-
-        return $this;
     }
 
     /**
      * Get statusYr
      *
-     * @return string
+     * @return string 
      */
     public function getStatusYr()
     {
@@ -278,20 +264,16 @@ class Lwbody
      * Set altCat
      *
      * @param string $altCat
-     *
-     * @return lwbody
      */
     public function setAltCat($altCat)
     {
         $this->altCat = $altCat;
-
-        return $this;
     }
 
     /**
      * Get altCat
      *
-     * @return string
+     * @return string 
      */
     public function getAltCat()
     {
@@ -302,20 +284,16 @@ class Lwbody
      * Set geolCat
      *
      * @param string $geolCat
-     *
-     * @return lwbody
      */
     public function setGeolCat($geolCat)
     {
         $this->geolCat = $geolCat;
-
-        return $this;
     }
 
     /**
      * Get geolCat
      *
-     * @return string
+     * @return string 
      */
     public function getGeolCat()
     {
@@ -326,20 +304,16 @@ class Lwbody
      * Set sizeCat
      *
      * @param string $sizeCat
-     *
-     * @return lwbody
      */
     public function setSizeCat($sizeCat)
     {
         $this->sizeCat = $sizeCat;
-
-        return $this;
     }
 
     /**
      * Get sizeCat
      *
-     * @return string
+     * @return string 
      */
     public function getSizeCat()
     {
@@ -350,20 +324,16 @@ class Lwbody
      * Set depthCat
      *
      * @param string $depthCat
-     *
-     * @return lwbody
      */
     public function setDepthCat($depthCat)
     {
         $this->depthCat = $depthCat;
-
-        return $this;
     }
 
     /**
      * Get depthCat
      *
-     * @return string
+     * @return string 
      */
     public function getDepthCat()
     {
@@ -374,20 +344,16 @@ class Lwbody
      * Set alt
      *
      * @param float $alt
-     *
-     * @return lwbody
      */
     public function setAlt($alt)
     {
         $this->alt = $alt;
-
-        return $this;
     }
 
     /**
      * Get alt
      *
-     * @return float
+     * @return float 
      */
     public function getAlt()
     {
@@ -398,20 +364,16 @@ class Lwbody
      * Set lat
      *
      * @param float $lat
-     *
-     * @return lwbody
      */
     public function setLat($lat)
     {
         $this->lat = $lat;
-
-        return $this;
     }
 
     /**
      * Get lat
      *
-     * @return float
+     * @return float 
      */
     public function getLat()
     {
@@ -422,20 +384,16 @@ class Lwbody
      * Set lon
      *
      * @param float $lon
-     *
-     * @return lwbody
      */
     public function setLon($lon)
     {
         $this->lon = $lon;
-
-        return $this;
     }
 
     /**
      * Get lon
      *
-     * @return float
+     * @return float 
      */
     public function getLon()
     {
@@ -446,20 +404,16 @@ class Lwbody
      * Set depth
      *
      * @param float $depth
-     *
-     * @return lwbody
      */
     public function setDepth($depth)
     {
         $this->depth = $depth;
-
-        return $this;
     }
 
     /**
      * Get depth
      *
-     * @return float
+     * @return float 
      */
     public function getDepth()
     {
@@ -470,20 +424,16 @@ class Lwbody
      * Set size
      *
      * @param float $size
-     *
-     * @return lwbody
      */
     public function setSize($size)
     {
         $this->size = $size;
-
-        return $this;
     }
 
     /**
      * Get size
      *
-     * @return float
+     * @return float 
      */
     public function getSize()
     {
@@ -494,20 +444,16 @@ class Lwbody
      * Set avDepth
      *
      * @param float $avDepth
-     *
-     * @return lwbody
      */
     public function setAvDepth($avDepth)
     {
         $this->avDepth = $avDepth;
-
-        return $this;
     }
 
     /**
      * Get avDepth
      *
-     * @return float
+     * @return float 
      */
     public function getAvDepth()
     {
@@ -518,20 +464,16 @@ class Lwbody
      * Set lakeShape
      *
      * @param string $lakeShape
-     *
-     * @return lwbody
      */
     public function setLakeShape($lakeShape)
     {
         $this->lakeShape = $lakeShape;
-
-        return $this;
     }
 
     /**
      * Get lakeShape
      *
-     * @return string
+     * @return string 
      */
     public function getLakeShape()
     {
@@ -542,20 +484,16 @@ class Lwbody
      * Set resTime
      *
      * @param float $resTime
-     *
-     * @return lwbody
      */
     public function setResTime($resTime)
     {
         $this->resTime = $resTime;
-
-        return $this;
     }
 
     /**
      * Get resTime
      *
-     * @return float
+     * @return float 
      */
     public function getResTime()
     {
@@ -566,20 +504,16 @@ class Lwbody
      * Set mixing
      *
      * @param string $mixing
-     *
-     * @return lwbody
      */
     public function setMixing($mixing)
     {
         $this->mixing = $mixing;
-
-        return $this;
     }
 
     /**
      * Get mixing
      *
-     * @return string
+     * @return string 
      */
     public function getMixing()
     {
@@ -590,20 +524,16 @@ class Lwbody
      * Set critmdo
      *
      * @param string $critmdo
-     *
-     * @return lwbody
      */
     public function setCritmdo($critmdo)
     {
         $this->critmdo = $critmdo;
-
-        return $this;
     }
 
     /**
      * Get critmdo
      *
-     * @return string
+     * @return string 
      */
     public function getCritmdo()
     {
@@ -614,20 +544,16 @@ class Lwbody
      * Set cgenesur
      *
      * @param string $cgenesur
-     *
-     * @return lwbody
      */
     public function setCgenesur($cgenesur)
     {
         $this->cgenesur = $cgenesur;
-
-        return $this;
     }
 
     /**
      * Get cgenesur
      *
-     * @return string
+     * @return string 
      */
     public function getCgenesur()
     {
@@ -638,20 +564,16 @@ class Lwbody
      * Set typeFr
      *
      * @param string $typeFr
-     *
-     * @return lwbody
      */
     public function setTypeFr($typeFr)
     {
         $this->typeFr = $typeFr;
-
-        return $this;
     }
 
     /**
      * Get typeFr
      *
-     * @return string
+     * @return string 
      */
     public function getTypeFr()
     {
@@ -662,20 +584,16 @@ class Lwbody
      * Set hydroecor
      *
      * @param string $hydroecor
-     *
-     * @return lwbody
      */
     public function setHydroecor($hydroecor)
     {
         $this->hydroecor = $hydroecor;
-
-        return $this;
     }
 
     /**
      * Get hydroecor
      *
-     * @return string
+     * @return string 
      */
     public function getHydroecor()
     {
@@ -686,20 +604,16 @@ class Lwbody
      * Set capTotal
      *
      * @param float $capTotal
-     *
-     * @return lwbody
      */
     public function setCapTotal($capTotal)
     {
         $this->capTotal = $capTotal;
-
-        return $this;
     }
 
     /**
      * Get capTotal
      *
-     * @return float
+     * @return float 
      */
     public function getCapTotal()
     {
@@ -710,20 +624,16 @@ class Lwbody
      * Set capUseful
      *
      * @param float $capUseful
-     *
-     * @return lwbody
      */
     public function setCapUseful($capUseful)
     {
         $this->capUseful = $capUseful;
-
-        return $this;
     }
 
     /**
      * Get capUseful
      *
-     * @return float
+     * @return float 
      */
     public function getCapUseful()
     {
@@ -734,20 +644,16 @@ class Lwbody
      * Set perimeter
      *
      * @param float $perimeter
-     *
-     * @return lwbody
      */
     public function setPerimeter($perimeter)
     {
         $this->perimeter = $perimeter;
-
-        return $this;
     }
 
     /**
      * Get perimeter
      *
-     * @return float
+     * @return float 
      */
     public function getPerimeter()
     {
@@ -758,20 +664,16 @@ class Lwbody
      * Set barrage
      *
      * @param string $barrage
-     *
-     * @return lwbody
      */
     public function setBarrage($barrage)
     {
         $this->barrage = $barrage;
-
-        return $this;
     }
 
     /**
      * Get barrage
      *
-     * @return string
+     * @return string 
      */
     public function getBarrage()
     {

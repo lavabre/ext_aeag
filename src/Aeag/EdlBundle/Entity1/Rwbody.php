@@ -5,7 +5,7 @@ namespace Aeag\EdlBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Rwbody
+ * Aeag\EdlBundle\Entity\Rwbody
  *
  * @ORM\Table(name="rwbody")
  * @ORM\Entity
@@ -13,159 +13,157 @@ use Doctrine\ORM\Mapping as ORM;
 class Rwbody
 {
     /**
-     * @var string
+     * @var string $euCd
      *
      * @ORM\Column(name="eu_cd", type="string", length=24, nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="SEQUENCE")
-     * @ORM\SequenceGenerator(sequenceName="rwbody_eu_cd_seq", allocationSize=1, initialValue=1)
-     */
+       */
     private $euCd;
 
     /**
-     * @var string
+     * @var string $regionCd
      *
-     * @ORM\Column(name="region_cd", type="string", length=2, nullable=true)
+     * @ORM\Column(name="region_cd", type="string", nullable=true)
      */
     private $regionCd;
 
     /**
-     * @var string
+     * @var string $system
      *
-     * @ORM\Column(name="system", type="string", length=1, nullable=true)
+     * @ORM\Column(name="system", type="string", nullable=true)
      */
     private $system;
 
     /**
-     * @var string
+     * @var string $altCat
      *
-     * @ORM\Column(name="alt_cat", type="string", length=4, nullable=true)
+     * @ORM\Column(name="alt_cat", type="string", nullable=true)
      */
     private $altCat;
 
     /**
-     * @var string
+     * @var string $geolCat
      *
-     * @ORM\Column(name="geol_cat", type="string", length=1, nullable=true)
+     * @ORM\Column(name="geol_cat", type="string", nullable=true)
      */
     private $geolCat;
 
     /**
-     * @var string
+     * @var string $sizeCat
      *
-     * @ORM\Column(name="size_cat", type="string", length=2, nullable=true)
+     * @ORM\Column(name="size_cat", type="string", nullable=true)
      */
     private $sizeCat;
 
     /**
-     * @var float
+     * @var float $lat
      *
-     * @ORM\Column(name="lat", type="float", precision=10, scale=0, nullable=true)
+     * @ORM\Column(name="lat", type="float", nullable=true)
      */
     private $lat;
 
     /**
-     * @var float
+     * @var float $lon
      *
-     * @ORM\Column(name="lon", type="float", precision=10, scale=0, nullable=true)
+     * @ORM\Column(name="lon", type="float", nullable=true)
      */
     private $lon;
 
     /**
-     * @var string
+     * @var string $geology
      *
-     * @ORM\Column(name="geology", type="string", length=254, nullable=true)
+     * @ORM\Column(name="geology", type="string", nullable=true)
      */
     private $geology;
 
     /**
-     * @var string
+     * @var string $critmdo
      *
-     * @ORM\Column(name="critmdo", type="string", length=1, nullable=true)
+     * @ORM\Column(name="critmdo", type="string", nullable=true)
      */
     private $critmdo;
 
     /**
-     * @var string
+     * @var string $ecorEu
      *
-     * @ORM\Column(name="ecor_eu", type="string", length=2, nullable=true)
+     * @ORM\Column(name="ecor_eu", type="string", nullable=true)
      */
     private $ecorEu;
 
     /**
-     * @var string
+     * @var string $hydroecor
      *
-     * @ORM\Column(name="hydroecor", type="string", length=4, nullable=true)
+     * @ORM\Column(name="hydroecor", type="string", nullable=true)
      */
     private $hydroecor;
 
     /**
-     * @var float
+     * @var float $size
      *
-     * @ORM\Column(name="size", type="float", precision=10, scale=0, nullable=true)
+     * @ORM\Column(name="size", type="float", nullable=true)
      */
     private $size;
 
     /**
-     * @var string
+     * @var string $typeFr
      *
-     * @ORM\Column(name="type_fr", type="string", length=9, nullable=true)
+     * @ORM\Column(name="type_fr", type="string", nullable=true)
      */
     private $typeFr;
 
     /**
-     * @var string
+     * @var string $strahMax
      *
-     * @ORM\Column(name="strah_max", type="string", length=2, nullable=true)
+     * @ORM\Column(name="strah_max", type="string", nullable=true)
      */
     private $strahMax;
 
     /**
-     * @var string
+     * @var string $strahMin
      *
-     * @ORM\Column(name="strah_min", type="string", length=2, nullable=true)
+     * @ORM\Column(name="strah_min", type="string", nullable=true)
      */
     private $strahMin;
 
     /**
-     * @var string
+     * @var string $tpme
      *
      * @ORM\Column(name="tpme", type="string", length=4, nullable=true)
      */
     private $tpme;
 
     /**
-     * @var string
+     * @var string $ctxPisci
      *
-     * @ORM\Column(name="ctx_pisci", type="string", length=1, nullable=true)
+     * @ORM\Column(name="ctx_pisci", type="string", nullable=true)
      */
     private $ctxPisci;
 
     /**
-     * @var string
+     * @var decimal $refIbgn
      *
-     * @ORM\Column(name="ref_ibgn", type="decimal", precision=4, scale=2, nullable=true)
+     * @ORM\Column(name="ref_ibgn", type="decimal", nullable=true)
      */
     private $refIbgn;
 
     /**
-     * @var string
+     * @var decimal $refIbd
      *
-     * @ORM\Column(name="ref_ibd", type="decimal", precision=4, scale=2, nullable=true)
+     * @ORM\Column(name="ref_ibd", type="decimal", nullable=true)
      */
     private $refIbd;
 
     /**
-     * @var string
+     * @var decimal $refIp
      *
-     * @ORM\Column(name="ref_ip", type="decimal", precision=4, scale=2, nullable=true)
+     * @ORM\Column(name="ref_ip", type="decimal", nullable=true)
      */
     private $refIp;
 
     /**
-     * @var string
+     * @var decimal $refIbmr
      *
-     * @ORM\Column(name="ref_ibmr", type="decimal", precision=4, scale=2, nullable=true)
+     * @ORM\Column(name="ref_ibmr", type="decimal", nullable=true)
      */
     private $refIbmr;
 
@@ -174,7 +172,7 @@ class Rwbody
     /**
      * Get euCd
      *
-     * @return string
+     * @return string 
      */
     public function getEuCd()
     {
@@ -185,20 +183,16 @@ class Rwbody
      * Set regionCd
      *
      * @param string $regionCd
-     *
-     * @return rwbody
      */
     public function setRegionCd($regionCd)
     {
         $this->regionCd = $regionCd;
-
-        return $this;
     }
 
     /**
      * Get regionCd
      *
-     * @return string
+     * @return string 
      */
     public function getRegionCd()
     {
@@ -209,20 +203,16 @@ class Rwbody
      * Set system
      *
      * @param string $system
-     *
-     * @return rwbody
      */
     public function setSystem($system)
     {
         $this->system = $system;
-
-        return $this;
     }
 
     /**
      * Get system
      *
-     * @return string
+     * @return string 
      */
     public function getSystem()
     {
@@ -233,20 +223,16 @@ class Rwbody
      * Set altCat
      *
      * @param string $altCat
-     *
-     * @return rwbody
      */
     public function setAltCat($altCat)
     {
         $this->altCat = $altCat;
-
-        return $this;
     }
 
     /**
      * Get altCat
      *
-     * @return string
+     * @return string 
      */
     public function getAltCat()
     {
@@ -257,20 +243,16 @@ class Rwbody
      * Set geolCat
      *
      * @param string $geolCat
-     *
-     * @return rwbody
      */
     public function setGeolCat($geolCat)
     {
         $this->geolCat = $geolCat;
-
-        return $this;
     }
 
     /**
      * Get geolCat
      *
-     * @return string
+     * @return string 
      */
     public function getGeolCat()
     {
@@ -281,20 +263,16 @@ class Rwbody
      * Set sizeCat
      *
      * @param string $sizeCat
-     *
-     * @return rwbody
      */
     public function setSizeCat($sizeCat)
     {
         $this->sizeCat = $sizeCat;
-
-        return $this;
     }
 
     /**
      * Get sizeCat
      *
-     * @return string
+     * @return string 
      */
     public function getSizeCat()
     {
@@ -305,20 +283,16 @@ class Rwbody
      * Set lat
      *
      * @param float $lat
-     *
-     * @return rwbody
      */
     public function setLat($lat)
     {
         $this->lat = $lat;
-
-        return $this;
     }
 
     /**
      * Get lat
      *
-     * @return float
+     * @return float 
      */
     public function getLat()
     {
@@ -329,20 +303,16 @@ class Rwbody
      * Set lon
      *
      * @param float $lon
-     *
-     * @return rwbody
      */
     public function setLon($lon)
     {
         $this->lon = $lon;
-
-        return $this;
     }
 
     /**
      * Get lon
      *
-     * @return float
+     * @return float 
      */
     public function getLon()
     {
@@ -353,20 +323,16 @@ class Rwbody
      * Set geology
      *
      * @param string $geology
-     *
-     * @return rwbody
      */
     public function setGeology($geology)
     {
         $this->geology = $geology;
-
-        return $this;
     }
 
     /**
      * Get geology
      *
-     * @return string
+     * @return string 
      */
     public function getGeology()
     {
@@ -377,20 +343,16 @@ class Rwbody
      * Set critmdo
      *
      * @param string $critmdo
-     *
-     * @return rwbody
      */
     public function setCritmdo($critmdo)
     {
         $this->critmdo = $critmdo;
-
-        return $this;
     }
 
     /**
      * Get critmdo
      *
-     * @return string
+     * @return string 
      */
     public function getCritmdo()
     {
@@ -401,20 +363,16 @@ class Rwbody
      * Set ecorEu
      *
      * @param string $ecorEu
-     *
-     * @return rwbody
      */
     public function setEcorEu($ecorEu)
     {
         $this->ecorEu = $ecorEu;
-
-        return $this;
     }
 
     /**
      * Get ecorEu
      *
-     * @return string
+     * @return string 
      */
     public function getEcorEu()
     {
@@ -425,20 +383,16 @@ class Rwbody
      * Set hydroecor
      *
      * @param string $hydroecor
-     *
-     * @return rwbody
      */
     public function setHydroecor($hydroecor)
     {
         $this->hydroecor = $hydroecor;
-
-        return $this;
     }
 
     /**
      * Get hydroecor
      *
-     * @return string
+     * @return string 
      */
     public function getHydroecor()
     {
@@ -449,20 +403,16 @@ class Rwbody
      * Set size
      *
      * @param float $size
-     *
-     * @return rwbody
      */
     public function setSize($size)
     {
         $this->size = $size;
-
-        return $this;
     }
 
     /**
      * Get size
      *
-     * @return float
+     * @return float 
      */
     public function getSize()
     {
@@ -473,20 +423,16 @@ class Rwbody
      * Set typeFr
      *
      * @param string $typeFr
-     *
-     * @return rwbody
      */
     public function setTypeFr($typeFr)
     {
         $this->typeFr = $typeFr;
-
-        return $this;
     }
 
     /**
      * Get typeFr
      *
-     * @return string
+     * @return string 
      */
     public function getTypeFr()
     {
@@ -497,20 +443,16 @@ class Rwbody
      * Set strahMax
      *
      * @param string $strahMax
-     *
-     * @return rwbody
      */
     public function setStrahMax($strahMax)
     {
         $this->strahMax = $strahMax;
-
-        return $this;
     }
 
     /**
      * Get strahMax
      *
-     * @return string
+     * @return string 
      */
     public function getStrahMax()
     {
@@ -521,20 +463,16 @@ class Rwbody
      * Set strahMin
      *
      * @param string $strahMin
-     *
-     * @return rwbody
      */
     public function setStrahMin($strahMin)
     {
         $this->strahMin = $strahMin;
-
-        return $this;
     }
 
     /**
      * Get strahMin
      *
-     * @return string
+     * @return string 
      */
     public function getStrahMin()
     {
@@ -545,20 +483,16 @@ class Rwbody
      * Set tpme
      *
      * @param string $tpme
-     *
-     * @return rwbody
      */
     public function setTpme($tpme)
     {
         $this->tpme = $tpme;
-
-        return $this;
     }
 
     /**
      * Get tpme
      *
-     * @return string
+     * @return string 
      */
     public function getTpme()
     {
@@ -569,20 +503,16 @@ class Rwbody
      * Set ctxPisci
      *
      * @param string $ctxPisci
-     *
-     * @return rwbody
      */
     public function setCtxPisci($ctxPisci)
     {
         $this->ctxPisci = $ctxPisci;
-
-        return $this;
     }
 
     /**
      * Get ctxPisci
      *
-     * @return string
+     * @return string 
      */
     public function getCtxPisci()
     {
@@ -592,21 +522,17 @@ class Rwbody
     /**
      * Set refIbgn
      *
-     * @param string $refIbgn
-     *
-     * @return rwbody
+     * @param decimal $refIbgn
      */
     public function setRefIbgn($refIbgn)
     {
         $this->refIbgn = $refIbgn;
-
-        return $this;
     }
 
     /**
      * Get refIbgn
      *
-     * @return string
+     * @return decimal 
      */
     public function getRefIbgn()
     {
@@ -616,21 +542,17 @@ class Rwbody
     /**
      * Set refIbd
      *
-     * @param string $refIbd
-     *
-     * @return rwbody
+     * @param decimal $refIbd
      */
     public function setRefIbd($refIbd)
     {
         $this->refIbd = $refIbd;
-
-        return $this;
     }
 
     /**
      * Get refIbd
      *
-     * @return string
+     * @return decimal 
      */
     public function getRefIbd()
     {
@@ -640,21 +562,17 @@ class Rwbody
     /**
      * Set refIp
      *
-     * @param string $refIp
-     *
-     * @return rwbody
+     * @param decimal $refIp
      */
     public function setRefIp($refIp)
     {
         $this->refIp = $refIp;
-
-        return $this;
     }
 
     /**
      * Get refIp
      *
-     * @return string
+     * @return decimal 
      */
     public function getRefIp()
     {
@@ -664,24 +582,21 @@ class Rwbody
     /**
      * Set refIbmr
      *
-     * @param string $refIbmr
-     *
-     * @return rwbody
+     * @param decimal $refIbmr
      */
     public function setRefIbmr($refIbmr)
     {
         $this->refIbmr = $refIbmr;
-
-        return $this;
     }
 
     /**
      * Get refIbmr
      *
-     * @return string
+     * @return decimal 
      */
     public function getRefIbmr()
     {
         return $this->refIbmr;
     }
+
 }
