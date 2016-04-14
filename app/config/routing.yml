@@ -22,9 +22,9 @@ AeagDieBundle:
     resource: "@AeagDieBundle/Resources/config/routing.yml"
     prefix:   /die
     
-#Aeag_edl:
-#    resource: "@AeagEdlBundle/Resources/config/routing.yml"
-#    prefix:   /edl
+aeag_edl:
+    resource: "@AeagEdlBundle/Resources/config/routing.yml"
+    prefix:   /edl
     
 aeag_user:
     resource: "@AeagUserBundle/Resources/config/routing.yml"

@@ -21,7 +21,7 @@ security:
         # Firewall principal pour le reste de notre site
         main:
             pattern : ^/
-            anonymous: false
+            anonymous: true
             provider: main
             form_login:
                 login_path: fos_user_security_login

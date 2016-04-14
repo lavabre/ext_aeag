@@ -1,0 +1,70 @@
+{% extends "AeagEdlBundle::layout.html.twig" %}
+
+
+{% block contenu %}
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+
+
+<div class="block-content"> 
+    <h1>Masse d'eau {{ me.euCd }}</h1>
+
+    <div class="columns">
+
+        <div class="colx3-left-double">
+            <div class="align-center">
+                <h2>{{ me.nomMasseEau }}</h2>
+
+                <img width="100px" height="100px" src="http://adour-garonne.eaufrance.fr/porteau/index.php/carto/vignetteMasdo?id={{ me.euCd }}"/>
+            </div>
+        </div>
+        <div class="colx3-right" width="10%">
+            <div class="align-left">
+                <a class="big-button blue" TARGET="_blanck" href="http://adour-garonne.eaufrance.fr/massedeau/{{me.euCd}}">Voir la fiche sur le portail de bassin</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls-buttons"> 
+        <a class="button" href="{{ path('AeagEdlBundle_etatGroupe', {'code':me.euCd}) }}">Etats</a>
+        <a class="button" href="{{ path('AeagEdlBundle_pressionGroupe', {'code':me.euCd}) }}">Pressions</a>
+       <!--<a class="button" href="{{ path('AeagEdlBundle_impactGroupe', {'code':me.euCd}) }}">Impacts</a>-->
+        <a class="button red" href="#">Risques</a>
+    </div>
+
+
+</div>    
+
+
+
+
+
+
+<div class="block-content"> 
+
+    <h1>Risques sur la masse d'eau  {{ me.euCd }}</h1>
+
+    <!-- ---------------------------------  RISQUES ----------------------------------------- -->        
+    <div id="tabRisques">
+        <input type='hidden' id='euCd' value="{{ me.euCd }}" />
+        <br>
+
+         <dl class="accordion">
+        {% for risqueGroupe in risqueGroupes %}
+            {% render "AeagEdlBundle:Default:risque" with {'code': me.euCd, 'cdGroupe': risqueGroupe.cdGroupe}, {'ignore_errors':false} %}
+        {% endfor %}
+        </dl>
+
+        <br><br>
+        <div align="center">
+            <a  href="{{ url }}">
+                <img src="{{ asset('bundles/aeagetatdeslieux/images/icons/web-app/24/Exit.png')}}" width="24" height="24">
+            </a>
+        </div>
+
+    </div>    
+
+
+{% endblock %}
+
