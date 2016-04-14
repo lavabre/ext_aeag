@@ -89,8 +89,8 @@ class EchangeFichiersController extends Controller {
         if ($pgCmdDemande) {
             // Récupération du fichier
             $zipName = str_replace('xml', 'zip', $pgCmdDemande->getNomFichier());
-
-            $pathBase = $this->getCheminEchange($pgCmdDemande);
+            $chemin = $this->getParameter('repertoire_echange');
+            $pathBase = $this->get('aeag_sqe.process_rai')->getCheminEchange($chemin, $pgCmdDemande);
 
             // Changement de la phase s'il est téléchargé par un presta pour la première fois
             if ($user->hasRole('ROLE_PRESTASQE') && substr($pgCmdDemande->getPhaseDemande()->getCodePhase(), 1) < '25') {
@@ -203,7 +203,8 @@ class EchangeFichiersController extends Controller {
         $emSqe->flush();
 
         // Enregistrement du fichier sur le serveur
-        $pathBase = $this->getCheminEchange($pgCmdDemande, $reponse->getId());
+        $chemin = $this->getParameter('repertoire_echange');
+        $pathBase = $this->get('aeag_sqe.process_rai')->getCheminEchange($chemin, $pgCmdDemande, $reponse->getId());
         if (!mkdir($pathBase)) {
             $session->getFlashBag()->add('notice-error', 'Le répertoire n\'a pas pu être créé');
         }
@@ -211,7 +212,7 @@ class EchangeFichiersController extends Controller {
         if (move_uploaded_file($_FILES['fichier']['tmp_name'], $pathBase . '/' . $nomFichier)) {
 
             // Envoi du fichier sur le serveur du sandre pour validationFormat
-            if ($this->envoiFichierValidationFormat($emSqe, $session, $reponse, $pathBase . '/' . $nomFichier)) {
+            if ($this->get('aeag_sqe.process_rai')->envoiFichierValidationFormat($emSqe, $reponse, $pathBase . '/' . $nomFichier, $session)) {
                 // Changement de la phase de la réponse 
                 $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R15');
                 $reponse->setPhaseFichier($pgProgPhases);
@@ -258,8 +259,8 @@ class EchangeFichiersController extends Controller {
         $pgCmdFichiersRps = $repoPgCmdFichiersRps->findOneById($reponseId);
 
         // Récupération du fichier
-        $pathBase = $this->getCheminEchange($pgCmdFichiersRps->getDemande(), $reponseId);
-
+        $chemin = $this->getParameter('repertoire_echange');
+        $pathBase = $this->get('aeag_sqe.process_rai')->getCheminEchange($chemin, $pgCmdFichiersRps->getDemande(), $reponseId);
         switch ($typeFichier) {
             case "RPS" :
                 $contentType = "application/zip";
@@ -307,7 +308,8 @@ class EchangeFichiersController extends Controller {
         $pgCmdFichiersRps = $repoPgCmdFichiersRps->findOneById($reponseId);
 
         // Suppression physique des fichiers
-        $pathBase = $this->getCheminEchange($pgCmdFichiersRps->getDemande(), $reponseId);
+        $chemin = $this->getParameter('repertoire_echange');
+        $pathBase = $this->get('aeag_sqe.process_rai')->getCheminEchange($chemin, $pgCmdFichiersRps->getDemande(), $reponseId);
         if (file_exists($pathBase)) {
             if ($this->_rmdirRecursive($pathBase)) {
                 // Suppression en base
@@ -322,132 +324,6 @@ class EchangeFichiersController extends Controller {
         }
 
         return $this->redirect($this->generateUrl('AeagSqeBundle_echangefichiers_demandes', array('lotanId' => $pgCmdFichiersRps->getDemande()->getLotan()->getId())));
-    }
-
-    public function envoiFichierValidationFormat($em, $session, $pgCmdFichierRps, $fullFileName) {
-        
-        $xmlFileName = $this->extractXmlFile($session, $fullFileName);
-        
-        if ($xmlFileName == false) {
-            return false;
-        }
-        
-        $versionEdilabo = $this->getVersionEdilabo($xmlFileName);
-        
-        // Données POST
-        $params = array (
-                "XML" => $xmlFileName,
-                "XSD" => $versionEdilabo, 
-                "NomSI" => "Logiciel version 1", 
-                "VersionSI" => "4.3", 
-                "Transformation" => "1",
-                "NomIntervenant" => "AGENCE DE L'EAU ADOUR-GARONNE",
-                "CdIntervenant" => "18310006400033"
-        );
-        
-        $r = $this->post("http://sandre.eaufrance.fr/PS/parseurSANDRE", $params);
-        
-        if ($r !== '') {
-            // Analyse de la réponse 
-            // Récupération des valeurs dans la réponse
-            $reponseTab = json_decode(json_encode(\simplexml_load_string($r)), true);
-
-            // Stockage des valeurs en base
-            if (isset($reponseTab['LienAcquittement']) && isset($reponseTab['LienCertificat'])) {
-                $pgCmdFichierRps->setLienAcquitSandre($reponseTab['LienAcquittement']);
-                $pgCmdFichierRps->setLienCertifSandre($reponseTab['LienCertificat']);
-                $em->persist($pgCmdFichierRps);
-                $em->flush();
-
-                return true;
-            }        
-            return false;
-        } else {
-            $session->getFlashBag()->add('notice-error', 'Le webservice retourne un fichier vide');
-            return false;
-        }
-        
-    }
-
-    protected function extractXmlFile($session, $fullFileName) {
-        
-        // Récupération de la version d'edilabo
-        // Dézippe du fichier
-        $zip = new \ZipArchive();
-        // Ouvrir l'archive
-        if ($zip->open($fullFileName) !== true) {
-            $session->getFlashBag()->add('notice-error', 'Fichier zip erroné');
-            return false;
-        }
-        // Extraire le contenu dans le dossier de destination
-        $destination = str_replace(".zip", "", $fullFileName);
-        $zip->extractTo($destination);
-        // Fermer l'archive
-        $zip->close();
-
-        // Lecture du fichier
-        $files = scandir($destination);
-
-        if (count($files) != 3) {
-            $session->getFlashBag()->add('notice-error', 'L\'archive zip contient trop de fichier (un seul requis)');
-            return false;
-        }
-
-        $fichierXml = '';
-        foreach ($files as $file) {
-            if (strpos($file, '.xml') !== false) {
-                $fichierXml = $destination . '/' . $file;
-            }
-        }
-
-        if ($fichierXml == '') {
-            $session->getFlashBag()->add('notice-error', 'Le fichier RAI n\'est pas au format XML ' . strpos($file, '.xml') . ' || ' . $destination . '/' . $file);
-            return false;
-        }
-        
-        return $fichierXml;
-    }
-    
-    protected function getVersionEdilabo($xmlFileName) {
-        $raiTab = json_decode(json_encode(\simplexml_load_file($xmlFileName)), true);
-        
-        $codeScenario = $raiTab['Scenario']['CodeScenario'];
-        $versionScenario = $raiTab['Scenario']['VersionScenario'];
-        
-        return $codeScenario.';'.$versionScenario;
-        
-    }
-
-    protected function getCheminEchange($pgCmdDemande, $reponseId = null) {
-        $chemin = $this->container->getParameter('repertoire_echange');
-        $chemin .= $pgCmdDemande->getAnneeProg() . '/' . $pgCmdDemande->getCommanditaire()->getNomCorres() .
-                '/' . $pgCmdDemande->getLotan()->getLot()->getId() . '/' . $pgCmdDemande->getLotan()->getId() . '/';
-        if (!is_null($reponseId)) {
-            $chemin .= $reponseId;
-        }
-
-        return $chemin;
-    }
-    
-    protected function post($url, $params) {
-
-        if (isset ($params['XML'])) {
-            $params['XML'] = \curl_file_create($params['XML'], 'application/xml', 'data.xml');
-        }
-        
-        // Initialisation de CURL
-        $ch = \curl_init($url);
-                        
-        //\curl_setopt($ch, CURLOPT_URL, $url);
-        \curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        \curl_setopt($ch, CURLOPT_POST, 1);
-        \curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
-
-        // Executer et fermer la session curl
-        $result = \curl_exec($ch);
-        $result = \urldecode($result);
-        \curl_close($ch);
-        return $result;
     }
 
     protected function _envoiMessage($em, $txtMessage, $destinataire, $objet, $expediteur = 'automate@eau-adour-garonne.fr') {
