@@ -30,7 +30,7 @@ class DeclarationProducteurRepository extends EntityRepository {
         $query = "select d";
         $query = $query . " from Aeag\DecBundle\Entity\DeclarationProducteur d";
         $query = $query . " where d.annee = " . $annee;
-        $query = $query . " order by d.id  ";
+        $query = $query . " order by d.Producteur  ";
         $qb = $this->_em->createQuery($query);
         //print_r($query);
         return $qb->getResult();
@@ -48,6 +48,19 @@ class DeclarationProducteurRepository extends EntityRepository {
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
+    
+//     public function getDeclarationProducteursByProducteurAnnee($producteur, $annee) {
+//
+//        $query = "select d";
+//        $query = $query . " from Aeag\DecBundle\Entity\DeclarationProducteur d";
+//        $query = $query . " where d.Producteur = " . $producteur;
+//        $query = $query . " and d.annee = " . $annee;
+//
+//        $qb = $this->_em->createQuery($query);
+//
+//        //print_r($query);
+//        return $qb->getResult();
+//    }
 
     public function getQuantiteDeclarationProducteurByProducteurAnnee($producteur, $annee) {
 

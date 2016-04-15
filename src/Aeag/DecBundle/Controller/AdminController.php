@@ -565,6 +565,7 @@ class AdminController extends Controller {
         $repoDeclarationProducteur = $emDec->getRepository('AeagDecBundle:DeclarationProducteur');
         $repoStatut = $emDec->getRepository('AeagDecBundle:Statut');
 
+        
 //        $declarationProducteurs = $repoDeclarationProducteur->getDeclarationProducteursByAnnee($annee);
 //        $declarationProducteurEncours = null;
 //        $nbModifier = 0;
@@ -585,11 +586,11 @@ class AdminController extends Controller {
 //                    $declarationProducteurEncours->setMontReel($declarationProducteurEncours->getMontReel() + $declarationProducteur->getMontReel());
 //                    $declarationProducteurEncours->setMontRet($declarationProducteurEncours->getMontRet() + $declarationProducteur->getMontRet());
 //                    $declarationProducteurEncours->setMontAide($declarationProducteurEncours->getMontAide() + $declarationProducteur->getMontAide());
-//                       $declarationDetails = $repoDeclarationDetail->getDeclarationDetailsByDeclarationProducteur($declarationProducteur->getId());
+//                    $declarationDetails = $repoDeclarationDetail->getDeclarationDetailsByDeclarationProducteur($declarationProducteur->getId());
 //                    foreach ($declarationDetails as $declarationDetail) {
 //                        $declarationDetail->setDeclarationProducteur($declarationProducteurEncours);
 //                        $emDec->persist($declarationDetail);
-//                        $emDec->flush();
+// //                       $emDec->flush();
 ////                        print_r ('declaration detail modifie : ' . $declarationDetail->getId() . '  DeclarationProducteur devient : ' . $declarationProducteurEncours->getId());
 //                    }
 //                    $emDec->remove($declarationProducteur);
@@ -602,7 +603,7 @@ class AdminController extends Controller {
 //                    $nbModifier++;
 //                }
 //                $declarationProducteurEncours = $declarationProducteur;
-//                $nb = 0;
+//                $nb = 1;
 //            }
 //        }
 //        if ($nb > 1) {
@@ -611,8 +612,8 @@ class AdminController extends Controller {
 //        }
 //        $emDec->flush();
 //        return new Response('nb : ' . count($declarationProducteurs) . ' Lus : ' . $nbLus . ' modifier : ' . $nbModifier . ' supprimer : ' . $nbSupprimer);
-//
-//
+
+
 //        $producteurs = $repoOuvrage->getAllProducteurs();
 //        $producteurEncours = null;
 //

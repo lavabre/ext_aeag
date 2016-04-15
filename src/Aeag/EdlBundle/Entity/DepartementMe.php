@@ -5,12 +5,12 @@ namespace Aeag\EdlBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * DepUtilisateur
+ * DepartementMe
  *
- * @ORM\Table(name="dep_utilisateur", indexes={@ORM\Index(name="idx_956fa98550eae44", columns={"id_utilisateur"})})
+ * @ORM\Table(name="departement_me")
  * @ORM\Entity
  */
-class DepUtilisateur
+class DepartementMe
 {
     /**
      * @var string
@@ -22,16 +22,13 @@ class DepUtilisateur
     private $inseeDepartement;
 
     /**
-     * @var \Utilisateur
+     * @var string
      *
+     * @ORM\Column(name="eu_cd", type="string", length=24, nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\OneToOne(targetEntity="Utilisateur")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="id_utilisateur", referencedColumnName="id")
-     * })
      */
-    private $utilisateur;
+    private $euCd;
 
 
 
@@ -40,7 +37,7 @@ class DepUtilisateur
      *
      * @param string $inseeDepartement
      *
-     * @return depUtilisateur
+     * @return departementMe
      */
     public function setInseeDepartement($inseeDepartement)
     {
@@ -60,26 +57,26 @@ class DepUtilisateur
     }
 
     /**
-     * Set utilisateur
+     * Set euCd
      *
-     * @param \Aeag\EdlBundle\Entity\Utilisateur $utilisateur
+     * @param string $euCd
      *
-     * @return depUtilisateur
+     * @return departementMe
      */
-    public function setUtilisateur(\Aeag\EdlBundle\Entity\Utilisateur $utilisateur)
+    public function setEuCd($euCd)
     {
-        $this->utilisateur = $utilisateur;
+        $this->euCd = $euCd;
 
         return $this;
     }
 
     /**
-     * Get utilisateur
+     * Get euCd
      *
-     * @return \Aeag\EdlBundle\Entity\Utilisateur
+     * @return string
      */
-    public function getUtilisateur()
+    public function getEuCd()
     {
-        return $this->utilisateur;
+        return $this->euCd;
     }
 }

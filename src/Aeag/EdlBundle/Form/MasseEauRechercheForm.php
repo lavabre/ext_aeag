@@ -18,7 +18,7 @@ class MasseEauRechercheForm extends AbstractType
                 ))
             ->add('deptcle', 'entity', array(
 		'class' => 'Aeag\EdlBundle\Entity\AdminDepartement',
-		'property' => 'DeptLibelle',
+		'property' => 'nomDepartement',
 		'expanded' => false,
 		'multiple' => false,
 		'required' => false,
@@ -33,7 +33,7 @@ class MasseEauRechercheForm extends AbstractType
              ->add('typecle', 'choice', array(
 		'choices' => array('CW' => 'Cotière',
                                    'TW' => 'Transition',
-                                   'LW' => 'lacs',
+                                   'LW' => 'Lac',
                                    'RW' => 'Rivière',
                                    'GW' => 'Souterraine'),
 		'expanded' => false,

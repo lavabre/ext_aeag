@@ -3,18 +3,17 @@
 namespace Aeag\EdlBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Aeag\EdlBundle\Entity\PressionMeProposed
+ * PressionMeProposed
  *
- * @ORM\Table(name="pression_me_proposed")
+ * @ORM\Table(name="pression_me_proposed", indexes={@ORM\Index(name="idx_eb36ba9850eae44", columns={"id_utilisateur"})})
  * @ORM\Entity
  */
-class PressionMeProposed {
-
+class PressionMeProposed
+{
     /**
-     * @var string $euCd
+     * @var string
      *
      * @ORM\Column(name="eu_cd", type="string", length=24, nullable=false)
      * @ORM\Id
@@ -23,16 +22,16 @@ class PressionMeProposed {
     private $euCd;
 
     /**
-     * @var string $propositionDate
+     * @var string
      *
-     * @ORM\Column(name="proposition_date", type="string", nullable=false)
+     * @ORM\Column(name="proposition_date", type="string", length=255, nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
      */
     private $propositionDate;
 
     /**
-     * @var string $cdPression
+     * @var string
      *
      * @ORM\Column(name="cd_pression", type="string", length=16, nullable=false)
      * @ORM\Id
@@ -41,102 +40,83 @@ class PressionMeProposed {
     private $cdPression;
 
     /**
-     * @var string $valeur
+     * @var string
      *
-     * @ORM\Column(name="valeur", type="string", nullable=false)
-     * Assert\notNull(message = "l'état est obligatoire");
+     * @ORM\Column(name="valeur", type="string", length=1, nullable=true)
      */
     private $valeur;
 
     /**
-     * @var text $commentaire
+     * @var string
      *
      * @ORM\Column(name="commentaire", type="text", nullable=false)
-     * Assert\notBlanck(message = "le commentaire est obligatoire");
      */
     private $commentaire;
 
     /**
-     * @var string $role
+     * @var string
      *
-     * @ORM\Column(name="role", type="string", nullable=false)
+     * @ORM\Column(name="role", type="string", length=255, nullable=false)
      */
     private $role;
 
     /**
-     * @var PressionMe
+     * @var \Utilisateur
      *
-     * @ORM\ManyToOne(targetEntity="PressionMe", inversedBy="proposed")
-     * @ORM\JoinColumns({
-     * @ORM\JoinColumn(name="eu_cd", referencedColumnName="eu_cd"),
-     * @ORM\JoinColumn(name="cd_pression", referencedColumnName="cd_pression")
-     * })
-     */
-    private $pressionOriginale;
-
-    /**
-     * @var Utilisateur
-     * 
-     * @ORM\ManyToOne(targetEntity="Aeag\EdlBundle\Entity\Utilisateur")
+     * @ORM\ManyToOne(targetEntity="Utilisateur")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="id_utilisateur", referencedColumnName="id")
      * })
      */
     private $utilisateur;
 
-    public function getValueLib() {
-        if ($this->cdPression == 'RW_HYM_CONT' or
-                $this->cdPression == 'RW_HYM_HYD' or
-                $this->cdPression == 'RW_HYM_MOR') {
-            switch ($this->valeur) {
-                case '1' : return 'Minime';
-                case '2' : return 'Modérée';
-                case '3' : return 'Elevée';
-                case 'U' : return 'Inconnu';
-            }
-        } else {
-            switch ($this->valeur) {
-                case '1' : return 'Pas de pression';
-                case '2' : return 'Pression non significative';
-                case '3' : return 'Pression significative';
-                case 'U' : return 'Inconnu';
-            }
-        }
-    }
+
 
     /**
      * Set euCd
      *
      * @param string $euCd
+     *
+     * @return pressionMeProposed
      */
-    public function setEuCd($euCd) {
+    public function setEuCd($euCd)
+    {
         $this->euCd = $euCd;
+
+        return $this;
     }
 
     /**
      * Get euCd
      *
-     * @return string 
+     * @return string
      */
-    public function getEuCd() {
+    public function getEuCd()
+    {
         return $this->euCd;
     }
 
     /**
      * Set propositionDate
      *
-     * @param datetime $propositionDate
+     * @param string $propositionDate
+     *
+     * @return pressionMeProposed
      */
-    public function setPropositionDate($propositionDate) {
+    public function setPropositionDate($propositionDate)
+    {
         $this->propositionDate = $propositionDate;
+
+        return $this;
     }
 
     /**
      * Get propositionDate
      *
-     * @return datetime 
+     * @return string
      */
-    public function getPropositionDate() {
+    public function getPropositionDate()
+    {
         return $this->propositionDate;
     }
 
@@ -144,17 +124,23 @@ class PressionMeProposed {
      * Set cdPression
      *
      * @param string $cdPression
+     *
+     * @return pressionMeProposed
      */
-    public function setCdPression($cdPression) {
+    public function setCdPression($cdPression)
+    {
         $this->cdPression = $cdPression;
+
+        return $this;
     }
 
     /**
      * Get cdPression
      *
-     * @return string 
+     * @return string
      */
-    public function getCdPression() {
+    public function getCdPression()
+    {
         return $this->cdPression;
     }
 
@@ -162,80 +148,95 @@ class PressionMeProposed {
      * Set valeur
      *
      * @param string $valeur
+     *
+     * @return pressionMeProposed
      */
-    public function setValeur($valeur) {
+    public function setValeur($valeur)
+    {
         $this->valeur = $valeur;
+
+        return $this;
     }
 
     /**
      * Get valeur
      *
-     * @return string 
+     * @return string
      */
-    public function getValeur() {
+    public function getValeur()
+    {
         return $this->valeur;
     }
 
     /**
      * Set commentaire
      *
-     * @param text $commentaire
+     * @param string $commentaire
+     *
+     * @return pressionMeProposed
      */
-    public function setCommentaire($commentaire) {
+    public function setCommentaire($commentaire)
+    {
         $this->commentaire = $commentaire;
+
+        return $this;
     }
 
     /**
      * Get commentaire
      *
-     * @return text 
+     * @return string
      */
-    public function getCommentaire() {
+    public function getCommentaire()
+    {
         return $this->commentaire;
     }
 
     /**
-     * Set pressionOriginale
+     * Set role
      *
-     * @param Aeag\EdlBundle\Entity\PressionMe $pressionOriginale
+     * @param string $role
+     *
+     * @return pressionMeProposed
      */
-    public function setPressionOriginale(\Aeag\EdlBundle\Entity\PressionMe $pressionOriginale) {
-        $this->pressionOriginale = $pressionOriginale;
+    public function setRole($role)
+    {
+        $this->role = $role;
+
+        return $this;
     }
 
     /**
-     * Get pressionOriginale
+     * Get role
      *
-     * @return Aeag\EdlBundle\Entity\PressionMe 
+     * @return string
      */
-    public function getPressionOriginale() {
-        return $this->pressionOriginale;
+    public function getRole()
+    {
+        return $this->role;
     }
 
     /**
      * Set utilisateur
      *
-     * @param Aeag\EdlBundle\Entity\Utilisateur $utilisateur
+     * @param \Aeag\EdlBundle\Entity\Utilisateur $utilisateur
+     *
+     * @return pressionMeProposed
      */
-    public function setUtilisateur(\Aeag\EdlBundle\Entity\Utilisateur $utilisateur) {
+    public function setUtilisateur(\Aeag\EdlBundle\Entity\Utilisateur $utilisateur = null)
+    {
         $this->utilisateur = $utilisateur;
+
+        return $this;
     }
 
     /**
      * Get utilisateur
      *
-     * @return Aeag\EdlBundle\Entity\Utilisateur 
+     * @return \Aeag\EdlBundle\Entity\Utilisateur
      */
-    public function getUtilisateur() {
+    public function getUtilisateur()
+    {
         return $this->utilisateur;
     }
-
-    public function getRole() {
-        return $this->role;
-    }
-
-    public function setRole($role) {
-        $this->role = $role;
-    }
-
 }

@@ -1,13 +1,13 @@
 
-<div id="formEtatListProposed{{ etat.cdEtat }}">
+<div id="formEtatListProposed{{ etat.etatType.cdEtat }}">
 <table class="table" cellspacing="0" width="100%" align="center"> 
-    <input type='hidden' id='UrlActuel' value="{{ path('AeagEdlBundle_etat', { 'code': etat.euCd }) }}" /> 
+    <input type='hidden' id='UrlActuel' value="{{ path('AeagEdlBundle_etat', { 'code': etat.masseEau.euCd }) }}" /> 
 
    <input type='hidden' id='newEtatRoute' value="{{ path('AeagEdlBundle_etatForm') }}" /> 
    
 
     <tr>
-        <td align="left" width="70%">{{ etat.type.libelle }}</td>
+        <td align="left" width="70%">{{ etat.etatType.libelle }}</td>
         <td width="10%" nowrap><span class="dce_etat_{{ etat.valeur }}">{{ etat.getValueLib() }}</span></td>
    {% if derniereProp %}
         <td width="10%" nowrap><span class="dce_etat_{{ derniereProp.valeur }}">{{ derniereProp.getValueLib() }}</span></td>
@@ -15,8 +15,8 @@
         <td width="10%" nowrap></td>
    {% endif %}
    {% if is_granted("IS_AUTHENTICATED_REMEMBERED")and is_granted("ROLE_COMMENTATEUR") %}
-        <td width="10%"><a id="newEtat{{ etat.cdEtat }}" title="Proposer une nouvelle évaluation" cdEtat="{{ etat.cdEtat }}">
-                <img src="{{ asset('bundles/aeagetatdeslieux/images/icons/web-app/24/Comment.png')}}" width="24" height="24">
+        <td width="10%"><a id="newEtat{{ etat.etatType.cdEtat }}" title="Proposer une nouvelle évaluation" cdEtat="{{ etat.etatType.cdEtat }}">
+                <img src="{{ asset('bundles/aeagedl/images/icons/web-app/24/Comment.png')}}" width="24" height="24">
             </a>
         </td>
    {% else %}
@@ -25,7 +25,7 @@
 
     </tr>
     <div id="EtatsParametre">  
-        <div id="divProposed{{ etat.cdEtat }}">
+        <div id="divProposed{{ etat.etatType.cdEtat }}">
 
     {% if etat.proposed|length > 0 %} 
 
@@ -56,12 +56,12 @@
                                 <td width="10%" nowrap><span class="dce_etat_{{ pp.valeur }}">{{ pp.getValueLib() }}</span></td>
                                 {% if is_granted("IS_AUTHENTICATED_REMEMBERED")and is_granted("ROLE_COMMENTATEUR") and  pp.role ==  'local' and pp.utilisateur.id == user.id %} 
                                 <td width="10%"><a name="removeEtat{{ pp.cdEtat }}" title="Supprimer cette proposition" login="{{ pp.utilisateur.id }}" propositionDate="{{ pp.propositionDate }}">
-                                        <img src="{{ asset('bundles/aeagetatdeslieux/images/icons/web-app/24/Delete.png')}}">
+                                        <img src="{{ asset('bundles/aeagetatedl/images/icons/web-app/24/Delete.png')}}">
                                     </a>
                                 </td>
                                     {% elseif is_granted("IS_AUTHENTICATED_REMEMBERED")and is_granted("ROLE_SUPERVISEUR") %}
                                 <td width="10%"><a name="removeEtat{{ pp.cdEtat }}" title="Supprimer cette proposition" login="{{ pp.utilisateur.id }}" propositionDate="{{ pp.propositionDate }}">
-                                        <img src="{{ asset('bundles/aeagetatdeslieux/images/icons/web-app/24/Delete.png')}}">
+                                        <img src="{{ asset('bundles/aeagedl/images/icons/web-app/24/Delete.png')}}">
                                     </a>
                                 </td>
                                     {% else %}
@@ -90,7 +90,7 @@
 </table>
 
 
-<div id ="divNewEtat{{ etat.cdEtat }}">
+<div id ="divNewEtat{{ etat.etatType.cdEtat }}">
   
 </div> 
 
@@ -106,7 +106,7 @@
  
       
 $(document).ready(function() { 	// Sur clic "Proposer un nouvel etat"
-        $('#newEtat{{ etat.cdEtat }}').click(function(e){
+        $('#newEtat{{ etat.etatType.cdEtat }}').click(function(e){
                 //$("body").css("cursor", "wait");
                
                 //conserver l'url actuel
@@ -116,12 +116,12 @@ $(document).ready(function() { 	// Sur clic "Proposer un nouvel etat"
                 var $url = $('input#newEtatRoute').val();
                 
                 // conserver l'id du div qui hébergera le formulaire de saisie
-                var $div = "#divNewEtat{{ etat.cdEtat }}";
+                var $div = "#divNewEtat{{ etat.etatType.cdEtat }}";
                 
                 $.post($url,
                        { 
-                                euCd: "{{ etat.euCd }}", 
-                                cdEtat: "{{ etat.cdEtat }}"
+                                euCd: "{{ etat.masseEau.euCd }}", 
+                                cdEtat: "{{ etat.etatType.cdEtat }}"
                         },
                         function(data) {
                                             // placer le formulaire sous le div
@@ -143,7 +143,7 @@ $(document).ready(function() { 	// Sur clic "Proposer un nouvel etat"
                   
         });
 
-        $('a[name="removeEtat{{ etat.cdEtat }}"]').click(function(e){
+        $('a[name="removeEtat{{ etat.etatType.cdEtat }}"]').click(function(e){
                 $("body").css("cursor", "wait");
 
                 // obtenir l'url
@@ -152,14 +152,14 @@ $(document).ready(function() { 	// Sur clic "Proposer un nouvel etat"
                 // lancer la requête ajax  
                 $.post($url, 
                         { 
-                                euCd: "{{ etat.euCd }}", 
-                                cdEtat: "{{ etat.cdEtat }}",
+                                euCd: "{{ etat.masseEau.euCd }}", 
+                                cdEtat: "{{ etat.etatType.cdEtat }}",
                                 login: $(this).attr('login'),
                                 propositionDate: $(this).attr('propositionDate')
                         }, 
                         function(data) {
                                 // placer le formulaire sous le div
-                                $("#divEtat{{ etat.cdEtat }}").html(data); 
+                                $("#divEtat{{ etat.etatType.cdEtat }}").html(data); 
                                
                                 // rétablir curseur
                                 $("body").css("cursor", "auto");

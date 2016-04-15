@@ -5,32 +5,31 @@ namespace Aeag\EdlBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * AdminCommune
+ * Aeag\EdlBundle\Entity\AdminCommune
  *
- * @ORM\Table(name="admin_commune", indexes={@ORM\Index(name="IDX_EEFADED72AE24E6C", columns={"insee_departement"})})
+ * @ORM\Table(name="admin_commune")
  * @ORM\Entity
  */
 class AdminCommune
 {
+
     /**
-     * @var string
+     * @var string $inseeCommune
      *
-     * @ORM\Column(name="insee_commune", type="string", length=5, nullable=false)
+     * @ORM\Column(name="insee_commune", type="string", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="SEQUENCE")
-     * @ORM\SequenceGenerator(sequenceName="admin_commune_insee_commune_seq", allocationSize=1, initialValue=1)
-     */
+      */
     private $inseeCommune;
 
     /**
-     * @var string
+     * @var string $nomCommune
      *
-     * @ORM\Column(name="nom_commune", type="string", length=50, nullable=true)
+     * @ORM\Column(name="nom_commune", type="string", nullable=true)
      */
     private $nomCommune;
 
     /**
-     * @var \AdminDepartement
+     * @var AdminDepartement
      *
      * @ORM\ManyToOne(targetEntity="AdminDepartement")
      * @ORM\JoinColumns({
@@ -44,7 +43,7 @@ class AdminCommune
     /**
      * Get inseeCommune
      *
-     * @return string
+     * @return string 
      */
     public function getInseeCommune()
     {
@@ -55,20 +54,16 @@ class AdminCommune
      * Set nomCommune
      *
      * @param string $nomCommune
-     *
-     * @return adminCommune
      */
     public function setNomCommune($nomCommune)
     {
         $this->nomCommune = $nomCommune;
-
-        return $this;
     }
 
     /**
      * Get nomCommune
      *
-     * @return string
+     * @return string 
      */
     public function getNomCommune()
     {
@@ -78,24 +73,21 @@ class AdminCommune
     /**
      * Set inseeDepartement
      *
-     * @param \Aeag\EdlBundle\Entity\AdminDepartement $inseeDepartement
-     *
-     * @return adminCommune
+     * @param Aeag\EdlBundle\Entity\AdminDepartement $inseeDepartement
      */
-    public function setInseeDepartement(\Aeag\EdlBundle\Entity\AdminDepartement $inseeDepartement = null)
+    public function setInseeDepartement(\Aeag\EdlBundle\Entity\AdminDepartement $inseeDepartement)
     {
         $this->inseeDepartement = $inseeDepartement;
-
-        return $this;
     }
 
     /**
      * Get inseeDepartement
      *
-     * @return \Aeag\EdlBundle\Entity\AdminDepartement
+     * @return Aeag\EdlBundle\Entity\AdminDepartement 
      */
     public function getInseeDepartement()
     {
         return $this->inseeDepartement;
     }
+
 }

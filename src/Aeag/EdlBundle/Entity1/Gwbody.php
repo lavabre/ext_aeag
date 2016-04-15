@@ -5,146 +5,145 @@ namespace Aeag\EdlBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Gwbody
+ * Aeag\EdlBundle\Entity\Gwbody
  *
  * @ORM\Table(name="gwbody")
  * @ORM\Entity
  */
 class Gwbody
 {
+
     /**
-     * @var string
+     * @var string $euCd
      *
      * @ORM\Column(name="eu_cd", type="string", length=24, nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="SEQUENCE")
-     * @ORM\SequenceGenerator(sequenceName="gwbody_eu_cd_seq", allocationSize=1, initialValue=1)
-     */
+      */
     private $euCd;
 
     /**
-     * @var string
+     * @var string $regionCd
      *
-     * @ORM\Column(name="region_cd", type="string", length=2, nullable=true)
+     * @ORM\Column(name="region_cd", type="string", nullable=true)
      */
     private $regionCd;
 
     /**
-     * @var string
+     * @var string $statusYr
      *
-     * @ORM\Column(name="status_yr", type="string", length=8, nullable=true)
+     * @ORM\Column(name="status_yr", type="string", nullable=true)
      */
     private $statusYr;
 
     /**
-     * @var float
+     * @var float $surfKm2
      *
-     * @ORM\Column(name="surf_km2", type="float", precision=10, scale=0, nullable=true)
+     * @ORM\Column(name="surf_km2", type="float", nullable=true)
      */
     private $surfKm2;
 
     /**
-     * @var float
+     * @var float $surAff
      *
-     * @ORM\Column(name="sur_aff", type="float", precision=10, scale=0, nullable=true)
+     * @ORM\Column(name="sur_aff", type="float", nullable=true)
      */
     private $surAff;
 
     /**
-     * @var float
+     * @var float $surfSsc
      *
-     * @ORM\Column(name="surf_ssc", type="float", precision=10, scale=0, nullable=true)
+     * @ORM\Column(name="surf_ssc", type="float", nullable=true)
      */
     private $surfSsc;
 
     /**
-     * @var string
+     * @var string $transdist
      *
-     * @ORM\Column(name="transdist", type="string", length=11, nullable=true)
+     * @ORM\Column(name="transdist", type="string", nullable=true)
      */
     private $transdist;
 
     /**
-     * @var string
+     * @var string $transfron
      *
-     * @ORM\Column(name="transfron", type="string", length=8, nullable=true)
+     * @ORM\Column(name="transfron", type="string", nullable=true)
      */
     private $transfron;
 
     /**
-     * @var string
+     * @var string $typeFr
      *
-     * @ORM\Column(name="type_fr", type="string", length=13, nullable=true)
+     * @ORM\Column(name="type_fr", type="string", nullable=true)
      */
     private $typeFr;
 
     /**
-     * @var string
+     * @var string $diss
      *
-     * @ORM\Column(name="diss", type="string", length=11, nullable=true)
+     * @ORM\Column(name="diss", type="string", nullable=true)
      */
     private $diss;
 
     /**
-     * @var string
+     * @var string $libre
      *
-     * @ORM\Column(name="libre", type="string", length=11, nullable=true)
+     * @ORM\Column(name="libre", type="string", nullable=true)
      */
     private $libre;
 
     /**
-     * @var string
+     * @var string $captif
      *
-     * @ORM\Column(name="captif", type="string", length=7, nullable=true)
+     * @ORM\Column(name="captif", type="string", nullable=true)
      */
     private $captif;
 
     /**
-     * @var string
+     * @var string $assCaptif
      *
-     * @ORM\Column(name="ass_captif", type="string", length=7, nullable=true)
+     * @ORM\Column(name="ass_captif", type="string", nullable=true)
      */
     private $assCaptif;
 
     /**
-     * @var string
+     * @var string $assLibre
      *
-     * @ORM\Column(name="ass_libre", type="string", length=7, nullable=true)
+     * @ORM\Column(name="ass_libre", type="string", nullable=true)
      */
     private $assLibre;
 
     /**
-     * @var string
+     * @var string $karstique
      *
-     * @ORM\Column(name="karstique", type="string", length=7, nullable=true)
+     * @ORM\Column(name="karstique", type="string", nullable=true)
      */
     private $karstique;
 
     /**
-     * @var string
+     * @var string $frangeLit
      *
-     * @ORM\Column(name="frange_lit", type="string", length=7, nullable=true)
+     * @ORM\Column(name="frange_lit", type="string", nullable=true)
      */
     private $frangeLit;
 
     /**
-     * @var string
+     * @var string $regroupe
      *
-     * @ORM\Column(name="regroupe", type="string", length=7, nullable=true)
+     * @ORM\Column(name="regroupe", type="string", nullable=true)
      */
     private $regroupe;
 
     /**
-     * @var string
+     * @var string $comment
      *
-     * @ORM\Column(name="comment", type="string", length=254, nullable=true)
+     * @ORM\Column(name="comment", type="string", nullable=true)
      */
     private $comment;
 
     /**
-     * @var string
+     * @var string $codeMasdoGoc
      *
-     * @ORM\Column(name="code_masdo_goc", type="string", length=10, nullable=true)
+     * @ORM\Column(name="code_masdo_goc", type="string", nullable=true)
      */
     private $codeMasdoGoc;
 
@@ -153,7 +152,7 @@ class Gwbody
     /**
      * Get euCd
      *
-     * @return string
+     * @return string 
      */
     public function getEuCd()
     {
@@ -164,20 +163,16 @@ class Gwbody
      * Set regionCd
      *
      * @param string $regionCd
-     *
-     * @return gwbody
      */
     public function setRegionCd($regionCd)
     {
         $this->regionCd = $regionCd;
-
-        return $this;
     }
 
     /**
      * Get regionCd
      *
-     * @return string
+     * @return string 
      */
     public function getRegionCd()
     {
@@ -188,20 +183,16 @@ class Gwbody
      * Set statusYr
      *
      * @param string $statusYr
-     *
-     * @return gwbody
      */
     public function setStatusYr($statusYr)
     {
         $this->statusYr = $statusYr;
-
-        return $this;
     }
 
     /**
      * Get statusYr
      *
-     * @return string
+     * @return string 
      */
     public function getStatusYr()
     {
@@ -212,20 +203,16 @@ class Gwbody
      * Set surfKm2
      *
      * @param float $surfKm2
-     *
-     * @return gwbody
      */
     public function setSurfKm2($surfKm2)
     {
         $this->surfKm2 = $surfKm2;
-
-        return $this;
     }
 
     /**
      * Get surfKm2
      *
-     * @return float
+     * @return float 
      */
     public function getSurfKm2()
     {
@@ -236,20 +223,16 @@ class Gwbody
      * Set surAff
      *
      * @param float $surAff
-     *
-     * @return gwbody
      */
     public function setSurAff($surAff)
     {
         $this->surAff = $surAff;
-
-        return $this;
     }
 
     /**
      * Get surAff
      *
-     * @return float
+     * @return float 
      */
     public function getSurAff()
     {
@@ -260,20 +243,16 @@ class Gwbody
      * Set surfSsc
      *
      * @param float $surfSsc
-     *
-     * @return gwbody
      */
     public function setSurfSsc($surfSsc)
     {
         $this->surfSsc = $surfSsc;
-
-        return $this;
     }
 
     /**
      * Get surfSsc
      *
-     * @return float
+     * @return float 
      */
     public function getSurfSsc()
     {
@@ -284,20 +263,16 @@ class Gwbody
      * Set transdist
      *
      * @param string $transdist
-     *
-     * @return gwbody
      */
     public function setTransdist($transdist)
     {
         $this->transdist = $transdist;
-
-        return $this;
     }
 
     /**
      * Get transdist
      *
-     * @return string
+     * @return string 
      */
     public function getTransdist()
     {
@@ -308,20 +283,16 @@ class Gwbody
      * Set transfron
      *
      * @param string $transfron
-     *
-     * @return gwbody
      */
     public function setTransfron($transfron)
     {
         $this->transfron = $transfron;
-
-        return $this;
     }
 
     /**
      * Get transfron
      *
-     * @return string
+     * @return string 
      */
     public function getTransfron()
     {
@@ -332,20 +303,16 @@ class Gwbody
      * Set typeFr
      *
      * @param string $typeFr
-     *
-     * @return gwbody
      */
     public function setTypeFr($typeFr)
     {
         $this->typeFr = $typeFr;
-
-        return $this;
     }
 
     /**
      * Get typeFr
      *
-     * @return string
+     * @return string 
      */
     public function getTypeFr()
     {
@@ -356,20 +323,16 @@ class Gwbody
      * Set diss
      *
      * @param string $diss
-     *
-     * @return gwbody
      */
     public function setDiss($diss)
     {
         $this->diss = $diss;
-
-        return $this;
     }
 
     /**
      * Get diss
      *
-     * @return string
+     * @return string 
      */
     public function getDiss()
     {
@@ -380,20 +343,16 @@ class Gwbody
      * Set libre
      *
      * @param string $libre
-     *
-     * @return gwbody
      */
     public function setLibre($libre)
     {
         $this->libre = $libre;
-
-        return $this;
     }
 
     /**
      * Get libre
      *
-     * @return string
+     * @return string 
      */
     public function getLibre()
     {
@@ -404,20 +363,16 @@ class Gwbody
      * Set captif
      *
      * @param string $captif
-     *
-     * @return gwbody
      */
     public function setCaptif($captif)
     {
         $this->captif = $captif;
-
-        return $this;
     }
 
     /**
      * Get captif
      *
-     * @return string
+     * @return string 
      */
     public function getCaptif()
     {
@@ -428,20 +383,16 @@ class Gwbody
      * Set assCaptif
      *
      * @param string $assCaptif
-     *
-     * @return gwbody
      */
     public function setAssCaptif($assCaptif)
     {
         $this->assCaptif = $assCaptif;
-
-        return $this;
     }
 
     /**
      * Get assCaptif
      *
-     * @return string
+     * @return string 
      */
     public function getAssCaptif()
     {
@@ -452,20 +403,16 @@ class Gwbody
      * Set assLibre
      *
      * @param string $assLibre
-     *
-     * @return gwbody
      */
     public function setAssLibre($assLibre)
     {
         $this->assLibre = $assLibre;
-
-        return $this;
     }
 
     /**
      * Get assLibre
      *
-     * @return string
+     * @return string 
      */
     public function getAssLibre()
     {
@@ -476,20 +423,16 @@ class Gwbody
      * Set karstique
      *
      * @param string $karstique
-     *
-     * @return gwbody
      */
     public function setKarstique($karstique)
     {
         $this->karstique = $karstique;
-
-        return $this;
     }
 
     /**
      * Get karstique
      *
-     * @return string
+     * @return string 
      */
     public function getKarstique()
     {
@@ -500,20 +443,16 @@ class Gwbody
      * Set frangeLit
      *
      * @param string $frangeLit
-     *
-     * @return gwbody
      */
     public function setFrangeLit($frangeLit)
     {
         $this->frangeLit = $frangeLit;
-
-        return $this;
     }
 
     /**
      * Get frangeLit
      *
-     * @return string
+     * @return string 
      */
     public function getFrangeLit()
     {
@@ -524,20 +463,16 @@ class Gwbody
      * Set regroupe
      *
      * @param string $regroupe
-     *
-     * @return gwbody
      */
     public function setRegroupe($regroupe)
     {
         $this->regroupe = $regroupe;
-
-        return $this;
     }
 
     /**
      * Get regroupe
      *
-     * @return string
+     * @return string 
      */
     public function getRegroupe()
     {
@@ -548,20 +483,16 @@ class Gwbody
      * Set comment
      *
      * @param string $comment
-     *
-     * @return gwbody
      */
     public function setComment($comment)
     {
         $this->comment = $comment;
-
-        return $this;
     }
 
     /**
      * Get comment
      *
-     * @return string
+     * @return string 
      */
     public function getComment()
     {
@@ -572,23 +503,20 @@ class Gwbody
      * Set codeMasdoGoc
      *
      * @param string $codeMasdoGoc
-     *
-     * @return gwbody
      */
     public function setCodeMasdoGoc($codeMasdoGoc)
     {
         $this->codeMasdoGoc = $codeMasdoGoc;
-
-        return $this;
     }
 
     /**
      * Get codeMasdoGoc
      *
-     * @return string
+     * @return string 
      */
     public function getCodeMasdoGoc()
     {
         return $this->codeMasdoGoc;
     }
+
 }

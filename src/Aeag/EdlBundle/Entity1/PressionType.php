@@ -5,39 +5,44 @@ namespace Aeag\EdlBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * PressionType
+ * Aeag\EdlBundle\Entity\PressionType
  *
- * @ORM\Table(name="pression_type", indexes={@ORM\Index(name="IDX_D77B6AB5B7A0B352", columns={"cd_groupe"})})
+ * @ORM\Table(name="pression_type")
  * @ORM\Entity
  */
 class PressionType
 {
     /**
-     * @var string
+     * @var string $cdPression
      *
      * @ORM\Column(name="cd_pression", type="string", length=16, nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="SEQUENCE")
-     * @ORM\SequenceGenerator(sequenceName="pression_type_cd_pression_seq", allocationSize=1, initialValue=1)
      */
     private $cdPression;
 
     /**
-     * @var string
+     * @var string $libelle
      *
      * @ORM\Column(name="libelle", type="string", length=255, nullable=false)
      */
     private $libelle;
 
     /**
-     * @var integer
+     * @var integer $ordre
      *
      * @ORM\Column(name="ordre", type="integer", nullable=false)
      */
     private $ordre;
 
     /**
-     * @var \PressionGroupe
+     * @var string $typeMe
+     *
+     * @ORM\Column(name="type_me", type="string", nullable=false)
+     */
+    private $typeMe;
+
+    /**
+     * @var PressionGroupe
      *
      * @ORM\ManyToOne(targetEntity="PressionGroupe")
      * @ORM\JoinColumns({
@@ -47,11 +52,10 @@ class PressionType
     private $cdGroupe;
 
 
-
     /**
      * Get cdPression
      *
-     * @return string
+     * @return string 
      */
     public function getCdPression()
     {
@@ -62,20 +66,16 @@ class PressionType
      * Set libelle
      *
      * @param string $libelle
-     *
-     * @return pressionType
      */
     public function setLibelle($libelle)
     {
         $this->libelle = $libelle;
-
-        return $this;
     }
 
     /**
      * Get libelle
      *
-     * @return string
+     * @return string 
      */
     public function getLibelle()
     {
@@ -86,20 +86,16 @@ class PressionType
      * Set ordre
      *
      * @param integer $ordre
-     *
-     * @return pressionType
      */
     public function setOrdre($ordre)
     {
         $this->ordre = $ordre;
-
-        return $this;
     }
 
     /**
      * Get ordre
      *
-     * @return integer
+     * @return integer 
      */
     public function getOrdre()
     {
@@ -107,26 +103,52 @@ class PressionType
     }
 
     /**
+     * Set typeMe
+     *
+     * @param string $typeMe
+     */
+    public function setTypeMe($typeMe)
+    {
+        $this->typeMe = $typeMe;
+    }
+
+    /**
+     * Get typeMe
+     *
+     * @return string 
+     */
+    public function getTypeMe()
+    {
+        return $this->typeMe;
+    }
+
+    /**
      * Set cdGroupe
      *
-     * @param \Aeag\EdlBundle\Entity\PressionGroupe $cdGroupe
-     *
-     * @return pressionType
+     * @param Aeag\EdlBundle\Entity\PressionGroupe $cdGroupe
      */
-    public function setCdGroupe(\Aeag\EdlBundle\Entity\PressionGroupe $cdGroupe = null)
+    public function setCdGroupe(\Aeag\EdlBundle\Entity\PressionGroupe $cdGroupe)
     {
         $this->cdGroupe = $cdGroupe;
-
-        return $this;
     }
 
     /**
      * Get cdGroupe
      *
-     * @return \Aeag\EdlBundle\Entity\PressionGroupe
+     * @return Aeag\EdlBundle\Entity\PressionGroupe 
      */
     public function getCdGroupe()
     {
         return $this->cdGroupe;
+    }
+
+    /**
+     * Set cdPression
+     *
+     * @param string $cdPression
+     */
+    public function setCdPression($cdPression)
+    {
+        $this->cdPression = $cdPression;
     }
 }

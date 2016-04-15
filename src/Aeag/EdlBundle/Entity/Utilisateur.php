@@ -3,632 +3,592 @@
 namespace Aeag\EdlBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * Aeag\EdlBundle\Entity\Utilisateur
- * @ORM\Table(name="utilisateur")
+ * Utilisateur
+ *
+ * @ORM\Table(name="utilisateur", uniqueConstraints={@ORM\UniqueConstraint(name="uniq_9b80ec6492fc23a8", columns={"username_canonical"})})
  * @ORM\Entity
  */
-class Utilisateur {
-
+class Utilisateur
+{
     /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\generatedValue(strategy="AUTO")
+     * @ORM\GeneratedValue(strategy="SEQUENCE")
+     * @ORM\SequenceGenerator(sequenceName="utilisateur_id_seq", allocationSize=1, initialValue=1)
      */
-    protected $id;
+    private $id;
 
     /**
      * @var string
+     *
+     * @ORM\Column(name="username", type="string", length=255, nullable=false)
      */
-    protected $username;
+    private $username;
 
     /**
      * @var string
+     *
+     * @ORM\Column(name="username_canonical", type="string", length=255, nullable=false)
      */
-    protected $usernameCanonical;
+    private $usernameCanonical;
 
     /**
      * @var string
+     *
+     * @ORM\Column(name="email", type="string", length=255, nullable=true)
      */
-    protected $email;
+    private $email;
 
     /**
      * @var string
+     *
+     * @ORM\Column(name="email_canonical", type="string", length=255, nullable=true)
      */
-    protected $emailCanonical;
+    private $emailCanonical;
 
     /**
      * @var boolean
+     *
+     * @ORM\Column(name="enabled", type="boolean", nullable=false)
      */
-    protected $enabled;
+    private $enabled;
 
     /**
-     * The salt to use for hashing
-     *
      * @var string
+     *
+     * @ORM\Column(name="algorithm", type="string", length=255, nullable=false)
      */
-    protected $salt;
+    private $algorithm;
 
     /**
-     * Encrypted password. Must be persisted.
-     *
      * @var string
+     *
+     * @ORM\Column(name="salt", type="string", length=255, nullable=false)
      */
-    protected $password;
+    private $salt;
 
     /**
-     * Plain password. Used for model validation. Must not be persisted.
-     *
      * @var string
+     *
+     * @ORM\Column(name="password", type="string", length=255, nullable=false)
      */
-    protected $plainPassword;
+    private $password;
 
     /**
      * @var \DateTime
-     */
-    protected $lastLogin;
-
-    /**
-     * Random string sent to the user email address in order to verify it
      *
-     * @var string
+     * @ORM\Column(name="last_login", type="datetime", nullable=true)
      */
-    protected $confirmationToken;
-
-    /**
-     * @var \DateTime
-     */
-    protected $passwordRequestedAt;
-
-   
+    private $lastLogin;
 
     /**
      * @var boolean
+     *
+     * @ORM\Column(name="locked", type="boolean", nullable=false)
      */
-    protected $locked;
+    private $locked;
 
     /**
      * @var boolean
+     *
+     * @ORM\Column(name="expired", type="boolean", nullable=false)
      */
-    protected $expired;
+    private $expired;
 
     /**
      * @var \DateTime
+     *
+     * @ORM\Column(name="expires_at", type="datetime", nullable=true)
      */
-    protected $expiresAt;
+    private $expiresAt;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="confirmation_token", type="string", length=255, nullable=true)
+     */
+    private $confirmationToken;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="password_requested_at", type="datetime", nullable=true)
+     */
+    private $passwordRequestedAt;
 
     /**
      * @var array
+     *
+     * @ORM\Column(name="roles", type="array", nullable=false)
      */
-    protected $roles;
+    private $roles;
 
     /**
      * @var boolean
+     *
+     * @ORM\Column(name="credentials_expired", type="boolean", nullable=false)
      */
-    protected $credentialsExpired;
+    private $credentialsExpired;
 
     /**
      * @var \DateTime
-     */
-    protected $credentialsExpireAt;
-
-    /**
-     * @ORM\Column(type="string", length=30, name="passwordEnClair", nullable=false)
      *
-     * @var string $passwordEnClair
+     * @ORM\Column(name="credentials_expire_at", type="datetime", nullable=true)
      */
-    protected $passwordEnClair;
+    private $credentialsExpireAt;
 
     /**
-     * @ORM\OneToMany(targetEntity="Aeag\EdlBundle\Entity\DepUtilisateur", mappedBy="utilisateur")
+     * @var string
+     *
+     * @ORM\Column(name="passwordenclair", type="string", length=30, nullable=false)
      */
-    protected $dept;
+    private $passwordenclair;
 
-    /**
-     * @ORM\OneToMany(targetEntity="Aeag\EdlBundle\Entity\EtatMeProposed", mappedBy="utilisateur")
-     */
-    protected $etatMeProposed;
 
-    /**
-     * @ORM\OneToMany(targetEntity="Aeag\EdlBundle\Entity\PressionMeProposed", mappedBy="utilisateur")
-     */
-    protected $pressionMeProposed;
-
-    /**
-     * @ORM\OneToMany(targetEntity="Aeag\EdlBundle\Entity\ImpactMeProposed", mappedBy="utilisateur")
-     */
-    protected $impactMeProposed;
-
-    /**
-     * @ORM\OneToMany(targetEntity="Aeag\EdlBundle\Entity\RisqueMeProposed", mappedBy="utilisateur")
-     */
-    protected $risqueMeProposed;
-  
-    public function __construct() {
-        $this->salt = base_convert(sha1(uniqid(mt_rand(), true)), 16, 36);
-        $this->enabled = false;
-        $this->locked = false;
-        $this->expired = false;
-        $this->roles = array();
-        $this->credentialsExpired = false;
-
-        $this->dept = new ArrayCollection();
-        $this->etatMeProposed = new ArrayCollection();
-        $this->pressionMeProposed = new ArrayCollection();
-        $this->impactMeProposed = new ArrayCollection();
-        $this->risqueMeProposed = new ArrayCollection();
-    }
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
-    public function getId() {
+    public function getId()
+    {
         return $this->id;
     }
 
-    public function setId($id) {
-        $this->id = $id;
-    }
-
     /**
-     * Add dept
+     * Set username
      *
-     * @param Aeag\EdlBundle\Entity\DepUtilisateur $dept
+     * @param string $username
+     *
+     * @return utilisateur
      */
-    public function addDepUtilisateur(\Aeag\EdlBundle\Entity\DepUtilisateur $dept) {
-        $this->dept[] = $dept;
-    }
-
-    /**
-     * Get dept
-     *
-     * @return Doctrine\Common\Collections\Collection 
-     */
-    public function getDept() {
-        return $this->dept;
-    }
-
-    /**
-     * Add etatMeProposed
-     *
-     * @param Aeag\EdlBundle\Entity\EtatMeProposed $etatMe
-     */
-    public function addEtatMeProposed(\Aeag\EdlBundle\Entity\EtatMeProposed $etatMe) {
-        $this->etatMeProposed[] = $etatMe;
-    }
-
-    /**
-     * Get etatMeProposed
-     *
-     * @return Doctrine\Common\Collections\Collection 
-     */
-    public function getEtatMeProposed() {
-        return $this->etatMeproposed;
-    }
-
-    /**
-     * Add pressionMeProposed
-     *
-     * @param Aeag\pressiondeslieuxBundle\Entity\PressionMeProposed $pressionMe
-     */
-    public function addPressionMeProposed(\Aeag\EdlBundle\Entity\PressionMeProposed $pressionMe) {
-        $this->pressionMeProposed[] = $pressionMe;
-    }
-
-    /**
-     * Get pressionMeProposed
-     *
-     * @return Doctrine\Common\Collections\Collection 
-     */
-    public function getPressionMeProposed() {
-        return $this->pressionMeproposed;
-    }
-
-    /**
-     * Add impactMeProposed
-     *
-     * @param Aeag\EdlBundle\Entity\ImpactMeProposed $impactMe
-     */
-    public function addImpactMeProposed(\Aeag\EdlBundle\Entity\ImpactMeProposed $impactMe) {
-        $this->impactMeProposed[] = $impactMe;
-    }
-
-    /**
-     * Get impactMeProposed
-     *
-     * @return Doctrine\Common\Collections\Collection 
-     */
-    public function getImpactMeProposed() {
-        return $this->impactMeproposed;
-    }
-
-    /**
-     * Add risqueMeProposed
-     *
-     * @param Aeag\EdlBundle\Entity\RisqueMeProposed $risqueMe
-     */
-    public function addRisqueMeProposed(\Aeag\EdlBundle\Entity\RisqueMeProposed $risqueMe) {
-        $this->risqueMeProposed[] = $risqueMe;
-    }
-
-    /**
-     * Get risqueMeProposed
-     *
-     * @return Doctrine\Common\Collections\Collection 
-     */
-    public function getRisqueMeProposed() {
-        return $this->risqueMeproposed;
-    }
-
-    public function getPasswordEnClair() {
-        return $this->passwordEnClair;
-    }
-
-    public function setPasswordEnClair($passwordEnClair) {
-        $this->passwordEnClair = $passwordEnClair;
-    }
-
-    
-
-    public function addRole($role) {
-        $role = strtoupper($role);
-        if ($role === static::ROLE_DEFAULT) {
-            return $this;
-        }
-
-        if (!in_array($role, $this->roles, true)) {
-            $this->roles[] = $role;
-        }
-
-        return $this;
-    }
-
-    /**
-     * Serializes the user.
-     *
-     * The serialized data have to contain the fields used during check for
-     * changes and the id.
-     *
-     * @return string
-     */
-    public function serialize() {
-        return serialize(array(
-            $this->password,
-            $this->salt,
-            $this->usernameCanonical,
-            $this->username,
-            $this->expired,
-            $this->locked,
-            $this->credentialsExpired,
-            $this->enabled,
-            $this->id,
-            $this->expiresAt,
-            $this->credentialsExpireAt,
-            $this->email,
-            $this->emailCanonical,
-        ));
-    }
-
-    /**
-     * Unserializes the user.
-     *
-     * @param string $serialized
-     */
-    public function unserialize($serialized) {
-        $data = unserialize($serialized);
-        // add a few extra elements in the array to ensure that we have enough keys when unserializing
-        // older data which does not include all properties.
-        $data = array_merge($data, array_fill(0, 2, null));
-
-        list(
-                $this->password,
-                $this->salt,
-                $this->usernameCanonical,
-                $this->username,
-                $this->expired,
-                $this->locked,
-                $this->credentialsExpired,
-                $this->enabled,
-                $this->id,
-                $this->expiresAt,
-                $this->credentialsExpireAt,
-                $this->email,
-                $this->emailCanonical
-                ) = $data;
-    }
-
-    /**
-     * Removes sensitive data from the user.
-     */
-    public function eraseCredentials() {
-        $this->plainPassword = null;
-    }
-
-   
-
-    public function getUsername() {
-        return $this->username;
-    }
-
-    public function getUsernameCanonical() {
-        return $this->usernameCanonical;
-    }
-
-    public function getSalt() {
-        return $this->salt;
-    }
-
-    public function getEmail() {
-        return $this->email;
-    }
-
-    public function getEmailCanonical() {
-        return $this->emailCanonical;
-    }
-
-    /**
-     * Gets the encrypted password.
-     *
-     * @return string
-     */
-    public function getPassword() {
-        return $this->password;
-    }
-
-    public function getPlainPassword() {
-        return $this->plainPassword;
-    }
-
-    /**
-     * Gets the last login time.
-     *
-     * @return \DateTime
-     */
-    public function getLastLogin() {
-        return $this->lastLogin;
-    }
-
-    public function getConfirmationToken() {
-        return $this->confirmationToken;
-    }
-
-    /**
-     * Returns the user roles
-     *
-     * @return array The roles
-     */
-    public function getRoles() {
-        $roles = $this->roles;
-
-       
-
-        // we need to make sure to have at least one role
-        $roles[] = static::ROLE_DEFAULT;
-
-        return array_unique($roles);
-    }
-
-    /**
-     * Never use this to check if this user has access to anything!
-     *
-     * Use the SecurityContext, or an implementation of AccessDecisionManager
-     * instead, e.g.
-     *
-     *         $securityContext->isGranted('ROLE_USER');
-     *
-     * @param string $role
-     *
-     * @return boolean
-     */
-    public function hasRole($role) {
-        return in_array(strtoupper($role), $this->getRoles(), true);
-    }
-
-    public function isAccountNonExpired() {
-        if (true === $this->expired) {
-            return false;
-        }
-
-        if (null !== $this->expiresAt && $this->expiresAt->getTimestamp() < time()) {
-            return false;
-        }
-
-        return true;
-    }
-
-    public function isAccountNonLocked() {
-        return !$this->locked;
-    }
-
-    public function isCredentialsNonExpired() {
-        if (true === $this->credentialsExpired) {
-            return false;
-        }
-
-        if (null !== $this->credentialsExpireAt && $this->credentialsExpireAt->getTimestamp() < time()) {
-            return false;
-        }
-
-        return true;
-    }
-
-    public function isCredentialsExpired() {
-        return !$this->isCredentialsNonExpired();
-    }
-
-    public function isEnabled() {
-        return $this->enabled;
-    }
-
-    public function isExpired() {
-        return !$this->isAccountNonExpired();
-    }
-
-    public function isLocked() {
-        return !$this->isAccountNonLocked();
-    }
-
-    public function isSuperAdmin() {
-        return $this->hasRole(static::ROLE_SUPER_ADMIN);
-    }
-
-    public function removeRole($role) {
-        if (false !== $key = array_search(strtoupper($role), $this->roles, true)) {
-            unset($this->roles[$key]);
-            $this->roles = array_values($this->roles);
-        }
-
-        return $this;
-    }
-
-    public function setUsername($username) {
+    public function setUsername($username)
+    {
         $this->username = $username;
 
         return $this;
     }
 
-    public function setUsernameCanonical($usernameCanonical) {
+    /**
+     * Get username
+     *
+     * @return string
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    /**
+     * Set usernameCanonical
+     *
+     * @param string $usernameCanonical
+     *
+     * @return utilisateur
+     */
+    public function setUsernameCanonical($usernameCanonical)
+    {
         $this->usernameCanonical = $usernameCanonical;
 
         return $this;
     }
 
     /**
-     * @param \DateTime $date
+     * Get usernameCanonical
      *
-     * @return User
+     * @return string
      */
-    public function setCredentialsExpireAt(\DateTime $date = null) {
-        $this->credentialsExpireAt = $date;
-
-        return $this;
+    public function getUsernameCanonical()
+    {
+        return $this->usernameCanonical;
     }
 
     /**
-     * @param boolean $boolean
+     * Set email
      *
-     * @return User
+     * @param string $email
+     *
+     * @return utilisateur
      */
-    public function setCredentialsExpired($boolean) {
-        $this->credentialsExpired = $boolean;
-
-        return $this;
-    }
-
-    public function setEmail($email) {
+    public function setEmail($email)
+    {
         $this->email = $email;
 
         return $this;
     }
 
-    public function setEmailCanonical($emailCanonical) {
+    /**
+     * Get email
+     *
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * Set emailCanonical
+     *
+     * @param string $emailCanonical
+     *
+     * @return utilisateur
+     */
+    public function setEmailCanonical($emailCanonical)
+    {
         $this->emailCanonical = $emailCanonical;
 
         return $this;
     }
 
-    public function setEnabled($boolean) {
-        $this->enabled = (Boolean) $boolean;
+    /**
+     * Get emailCanonical
+     *
+     * @return string
+     */
+    public function getEmailCanonical()
+    {
+        return $this->emailCanonical;
+    }
+
+    /**
+     * Set enabled
+     *
+     * @param boolean $enabled
+     *
+     * @return utilisateur
+     */
+    public function setEnabled($enabled)
+    {
+        $this->enabled = $enabled;
 
         return $this;
     }
 
     /**
-     * Sets this user to expired.
+     * Get enabled
      *
-     * @param Boolean $boolean
-     *
-     * @return User
+     * @return boolean
      */
-    public function setExpired($boolean) {
-        $this->expired = (Boolean) $boolean;
+    public function getEnabled()
+    {
+        return $this->enabled;
+    }
+
+    /**
+     * Set algorithm
+     *
+     * @param string $algorithm
+     *
+     * @return utilisateur
+     */
+    public function setAlgorithm($algorithm)
+    {
+        $this->algorithm = $algorithm;
 
         return $this;
     }
 
     /**
-     * @param \DateTime $date
+     * Get algorithm
      *
-     * @return User
+     * @return string
      */
-    public function setExpiresAt(\DateTime $date = null) {
-        $this->expiresAt = $date;
+    public function getAlgorithm()
+    {
+        return $this->algorithm;
+    }
+
+    /**
+     * Set salt
+     *
+     * @param string $salt
+     *
+     * @return utilisateur
+     */
+    public function setSalt($salt)
+    {
+        $this->salt = $salt;
 
         return $this;
     }
 
-    public function setPassword($password) {
+    /**
+     * Get salt
+     *
+     * @return string
+     */
+    public function getSalt()
+    {
+        return $this->salt;
+    }
+
+    /**
+     * Set password
+     *
+     * @param string $password
+     *
+     * @return utilisateur
+     */
+    public function setPassword($password)
+    {
         $this->password = $password;
 
         return $this;
     }
 
-    public function setSuperAdmin($boolean) {
-        if (true === $boolean) {
-            $this->addRole(static::ROLE_SUPER_ADMIN);
-        } else {
-            $this->removeRole(static::ROLE_SUPER_ADMIN);
-        }
-
-        return $this;
+    /**
+     * Get password
+     *
+     * @return string
+     */
+    public function getPassword()
+    {
+        return $this->password;
     }
 
-    public function setPlainPassword($password) {
-        $this->plainPassword = $password;
-
-        return $this;
-    }
-
-    public function setLastLogin(\DateTime $time = null) {
-        $this->lastLogin = $time;
-
-        return $this;
-    }
-
-    public function setLocked($boolean) {
-        $this->locked = $boolean;
-
-        return $this;
-    }
-
-    public function setConfirmationToken($confirmationToken) {
-        $this->confirmationToken = $confirmationToken;
-
-        return $this;
-    }
-
-    public function setPasswordRequestedAt(\DateTime $date = null) {
-        $this->passwordRequestedAt = $date;
+    /**
+     * Set lastLogin
+     *
+     * @param \DateTime $lastLogin
+     *
+     * @return utilisateur
+     */
+    public function setLastLogin($lastLogin)
+    {
+        $this->lastLogin = $lastLogin;
 
         return $this;
     }
 
     /**
-     * Gets the timestamp that the user requested a password reset.
+     * Get lastLogin
      *
-     * @return null|\DateTime
+     * @return \DateTime
      */
-    public function getPasswordRequestedAt() {
-        return $this->passwordRequestedAt;
+    public function getLastLogin()
+    {
+        return $this->lastLogin;
     }
 
-    public function isPasswordRequestNonExpired($ttl) {
-        return $this->getPasswordRequestedAt() instanceof \DateTime &&
-                $this->getPasswordRequestedAt()->getTimestamp() + $ttl > time();
-    }
-
-    public function setRoles(array $roles) {
-        $this->roles = array();
-
-        foreach ($roles as $role) {
-            $this->addRole($role);
-        }
+    /**
+     * Set locked
+     *
+     * @param boolean $locked
+     *
+     * @return utilisateur
+     */
+    public function setLocked($locked)
+    {
+        $this->locked = $locked;
 
         return $this;
     }
 
+    /**
+     * Get locked
+     *
+     * @return boolean
+     */
+    public function getLocked()
+    {
+        return $this->locked;
+    }
+
+    /**
+     * Set expired
+     *
+     * @param boolean $expired
+     *
+     * @return utilisateur
+     */
+    public function setExpired($expired)
+    {
+        $this->expired = $expired;
+
+        return $this;
+    }
+
+    /**
+     * Get expired
+     *
+     * @return boolean
+     */
+    public function getExpired()
+    {
+        return $this->expired;
+    }
+
+    /**
+     * Set expiresAt
+     *
+     * @param \DateTime $expiresAt
+     *
+     * @return utilisateur
+     */
+    public function setExpiresAt($expiresAt)
+    {
+        $this->expiresAt = $expiresAt;
+
+        return $this;
+    }
+
+    /**
+     * Get expiresAt
+     *
+     * @return \DateTime
+     */
+    public function getExpiresAt()
+    {
+        return $this->expiresAt;
+    }
+
+    /**
+     * Set confirmationToken
+     *
+     * @param string $confirmationToken
+     *
+     * @return utilisateur
+     */
+    public function setConfirmationToken($confirmationToken)
+    {
+        $this->confirmationToken = $confirmationToken;
+
+        return $this;
+    }
+
+    /**
+     * Get confirmationToken
+     *
+     * @return string
+     */
+    public function getConfirmationToken()
+    {
+        return $this->confirmationToken;
+    }
+
+    /**
+     * Set passwordRequestedAt
+     *
+     * @param \DateTime $passwordRequestedAt
+     *
+     * @return utilisateur
+     */
+    public function setPasswordRequestedAt($passwordRequestedAt)
+    {
+        $this->passwordRequestedAt = $passwordRequestedAt;
+
+        return $this;
+    }
+
+    /**
+     * Get passwordRequestedAt
+     *
+     * @return \DateTime
+     */
+    public function getPasswordRequestedAt()
+    {
+        return $this->passwordRequestedAt;
+    }
+
+    /**
+     * Set roles
+     *
+     * @param array $roles
+     *
+     * @return utilisateur
+     */
+    public function setRoles($roles)
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    /**
+     * Get roles
+     *
+     * @return array
+     */
+    public function getRoles()
+    {
+        return $this->roles;
+    }
+
+    /**
+     * Set credentialsExpired
+     *
+     * @param boolean $credentialsExpired
+     *
+     * @return utilisateur
+     */
+    public function setCredentialsExpired($credentialsExpired)
+    {
+        $this->credentialsExpired = $credentialsExpired;
+
+        return $this;
+    }
+
+    /**
+     * Get credentialsExpired
+     *
+     * @return boolean
+     */
+    public function getCredentialsExpired()
+    {
+        return $this->credentialsExpired;
+    }
+
+    /**
+     * Set credentialsExpireAt
+     *
+     * @param \DateTime $credentialsExpireAt
+     *
+     * @return utilisateur
+     */
+    public function setCredentialsExpireAt($credentialsExpireAt)
+    {
+        $this->credentialsExpireAt = $credentialsExpireAt;
+
+        return $this;
+    }
+
+    /**
+     * Get credentialsExpireAt
+     *
+     * @return \DateTime
+     */
+    public function getCredentialsExpireAt()
+    {
+        return $this->credentialsExpireAt;
+    }
+
+    /**
+     * Set passwordenclair
+     *
+     * @param string $passwordenclair
+     *
+     * @return utilisateur
+     */
+    public function setPasswordenclair($passwordenclair)
+    {
+        $this->passwordenclair = $passwordenclair;
+
+        return $this;
+    }
+
+    /**
+     * Get passwordenclair
+     *
+     * @return string
+     */
+    public function getPasswordenclair()
+    {
+        return $this->passwordenclair;
+    }
 }
