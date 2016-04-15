@@ -23,7 +23,7 @@ class CheckProcessRaiCommand extends AeagCommand {
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) {
-        
+
         parent::execute($input, $output);
 
         // Chargement des fichiers csv dans des tableaux 
@@ -89,17 +89,20 @@ class CheckProcessRaiCommand extends AeagCommand {
             $txtMessage .= "L'état final est le suivant : <strong>" . $pgCmdFichierRps->getPhaseFichier()->getLibellePhase() . "</strong><br/>";
             $txtMessage .= 'Vous pouvez lire le récapitulatif dans le fichier disponible à l\'adresse suivante : <a href="' . $url . '">' . $pgCmdFichierRps->getNomFichierCompteRendu() . '</a>';
             $destinataire = $this->repoPgProgWebUsers->findOneByPrestataire($pgCmdFichierRps->getDemande()->getPrestataire());
-            $this->_envoiMessage($txtMessage, $destinataire, $objetMessage, $pgCmdFichierRps);
+            $mailer = $this->getContainer()->get('mailer');
+            if (!$this->getContainer()->get('aeag_sqe.message')->createMail($this->em, $mailer, $txtMessage, $destinataire, $objetMessage)) {
+                $this->_addLog('warning', $pgCmdFichierRps->getDemande()->getId(), $pgCmdFichierRps->getId(), "Erreur lors de l\'envoi de mail dans le process de verification des RAIs", null, $destinataire);
+            }
 
             // Insertion données brutes
             if ((count($logErrorsVraisemblance) == 0) && (count($logErrorsCoherence) == 0 )) {
                 $this->_integrationDonneesBrutes($pgCmdFichierRps);
-                
+
                 // Evolution de la phase
                 $this->_updatePhase($pgCmdFichierRps, 'R45', $this->phase82atteinte);
-                
+
                 // TODO Fichier csv
-                
+
                 $cptRaisTraitesOk++;
             } else {
                 $cptRaisTraitesNok++;
@@ -108,10 +111,10 @@ class CheckProcessRaiCommand extends AeagCommand {
             // Vider la table tempo des lignes correspondant à la RAI
             $this->_cleanTmpTable($pgCmdFichierRps);
         }
-        
+
         $date = new \DateTime();
         $cptRaisTraitesTot = $cptRaisTraitesOk + $cptRaisTraitesNok;
-        $this->output->writeln($date->format('d/m/Y H:i:s').'- Process RAI : '.$cptRaisTraitesTot." RAI(s) traitée(s), ".$cptRaisTraitesOk." OK, ".$cptRaisTraitesNok." NOK");
+        $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : ' . $cptRaisTraitesTot . " RAI(s) traitée(s), " . $cptRaisTraitesOk . " OK, " . $cptRaisTraitesNok . " NOK");
     }
 
     protected function _coherenceRaiDai($pgCmdFichierRps) {
@@ -240,19 +243,18 @@ class CheckProcessRaiCommand extends AeagCommand {
             $meSituHydro = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1726, $demandeId, $reponseId, $codePrelevement);
 
             if (!is_null($meSituHydro) && $meSituHydro <= 2) {
-                $this->_addLog('warning', $demandeId, $reponseId, "Situation Hydro = ".$meSituHydro, $codePrelevement, 1726);
-                $codesRqValides = $this->repoPgTmpValidEdilabo->getCodeRqByCodePrelevement();
-                if (count($codesRqValides) > 0 ) {
+                $this->_addLog('warning', $demandeId, $reponseId, "Situation Hydro = " . $meSituHydro, $codePrelevement, 1726);
+                $codesRqValides = $this->repoPgTmpValidEdilabo->getCodeRqValideByCodePrelevement($demandeId, $reponseId, $codePrelevement);
+                if (count($codesRqValides) > 0) {
                     $this->_addLog('error', $demandeId, $reponseId, "Situation Hydro : Code Remarque impossible ", $codePrelevement, 1726);
                 } else {
                     //todo update tmp set code_remarque = 0 and res = null where in_situ = 0
                     $pgTmpValidEdilabos = $this->repoPgTmpValidEdilabo->findBy(array('fichierRpsId' => $reponseId, 'demandeId' => $demandeId, 'codePrelevement' => $codePrelevement, 'inSitu' => 0));
-                    foreach($pgTmpValidEdilabos as $pgTmpValidEdilabo) {
+                    foreach ($pgTmpValidEdilabos as $pgTmpValidEdilabo) {
                         $pgTmpValidEdilabo->setCodeRqM(0);
-                        $pgTmpValidEdilabo->setResM();
+                        $pgTmpValidEdilabo->setResM(null);
                     }
                     $this->emSqe->flush();
-                    
                 }
             } else {
                 $pgTmpValidEdilabos = $this->repoPgTmpValidEdilabo->findBy(array('fichierRpsId' => $reponseId, 'demandeId' => $demandeId, 'codePrelevement' => $codePrelevement));
@@ -947,20 +949,20 @@ class CheckProcessRaiCommand extends AeagCommand {
 
         return $result;
     }
-    
+
     protected function _cleanTmpTable($pgCmdFichierRps) {
         $demandeId = $pgCmdFichierRps->getDemande()->getId();
         $reponseId = $pgCmdFichierRps->getId();
         $pgTmpValidEdilabos = $this->repoPgTmpValidEdilabo->findBy(array('demandeId' => $demandeId, 'fichierRpsId' => $reponseId));
-        foreach($pgTmpValidEdilabos as $pgTmpValidEdilabo) {
+        foreach ($pgTmpValidEdilabos as $pgTmpValidEdilabo) {
             $this->emSqe->remove($pgTmpValidEdilabo);
         }
-        
+
         $pgPgLogValidEdilabos = $this->repoPgLogValidEdilabo->findBy(array('demandeId' => $demandeId, 'fichierRpsId' => $reponseId));
-        foreach($pgPgLogValidEdilabos as $pgPgLogValidEdilabo) {
+        foreach ($pgPgLogValidEdilabos as $pgPgLogValidEdilabo) {
             $this->emSqe->remove($pgPgLogValidEdilabo);
         }
-        
+
         $this->emSqe->flush();
     }
 
