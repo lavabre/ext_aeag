@@ -57,7 +57,9 @@ class ProcessRai {
         $zip = new \ZipArchive();
         // Ouvrir l'archive
         if ($zip->open($fullFileName) !== true) {
-            $session->getFlashBag()->add('notice-error', 'Fichier zip erroné');
+            if (!is_null($session)) {
+                $session->getFlashBag()->add('notice-error', 'Fichier zip erroné');
+            }
             return false;
         }
         // Extraire le contenu dans le dossier de destination

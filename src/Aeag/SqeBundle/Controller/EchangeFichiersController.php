@@ -223,9 +223,13 @@ class EchangeFichiersController extends Controller {
                 $objetMessage = "RAI " . $reponse->getId() . " soumise et en cours de validation";
                 $txtMessage = "Votre RAI (id " . $reponse->getId() . ") concernant la DAI " . $pgCmdDemande->getCodeDemandeCmd() . " a été soumise. Le fichier " . $reponse->getNomFichier() . " est en cours de validation. "
                         . "Vous serez informé lorsque celle-ci sera validée. ";
-                $this->_envoiMessage($em, $txtMessage, $pgProgWebUser, $objetMessage);
-
-                $session->getFlashBag()->add('notice-success', 'Le fichier ' . $nomFichier . ' a été traité, un email vous a été envoyé');
+                $mailer = $this->get('mailer');
+                if ($this->get('aeag_sqe.message')->envoiMessage($em, $mailer, $txtMessage, $pgProgWebUser, $objetMessage)) {
+                    $session->getFlashBag()->add('notice-success', 'Le fichier ' . $nomFichier . ' a été traité, un email vous a été envoyé');
+                } else {
+                    $session->getFlashBag()->add('notice-warning', 'Le fichier ' . $nomFichier . ' a été traité, mais l\'email n\'a pas pu être envoyé');
+                }
+                
             } else {
                 $session->getFlashBag()->add('notice-error', 'Le fichier ' . $nomFichier . ' a rencontré une erreur lors de la validation');
                 $this->_rmdirRecursive($pathBase);
@@ -324,44 +328,6 @@ class EchangeFichiersController extends Controller {
         }
 
         return $this->redirect($this->generateUrl('AeagSqeBundle_echangefichiers_demandes', array('lotanId' => $pgCmdFichiersRps->getDemande()->getLotan()->getId())));
-    }
-
-    protected function _envoiMessage($em, $txtMessage, $destinataire, $objet, $expediteur = 'automate@eau-adour-garonne.fr') {
-
-        $message = new Message();
-        $message->setRecepteur($destinataire->getId());
-        $message->setEmetteur($destinataire->getId());
-        $message->setNouveau(true);
-        $message->setIteration(2);
-        $texte = "Bonjour ," . PHP_EOL;
-        $texte .= " " . PHP_EOL;
-        $texte .= $txtMessage;
-        $texte .= " " . PHP_EOL;
-        $texte .= "Cordialement.";
-        $message->setMessage($texte);
-        $em->persist($message);
-
-        $notification = new Notification();
-        $notification->setRecepteur($destinataire->getId());
-        $notification->setEmetteur($destinataire->getId());
-        $notification->setNouveau(true);
-        $notification->setIteration(2);
-        $notification->setMessage($txtMessage);
-        $em->persist($notification);
-
-        // Récupération du service
-        $mailer = $this->get('mailer');
-        // Création de l'e-mail : le service mailer utilise SwiftMailer, donc nous créons une instance de Swift_Message.
-        $mail = \Swift_Message::newInstance('Wonderful Subject')
-                ->setSubject($objet)
-                ->setFrom($expediteur)
-                ->setTo($destinataire->getMail())
-                ->setBody($this->renderView('AeagSqeBundle:EchangeFichiers:reponseEmail.txt.twig', array('message' => $txtMessage
-        )));
-
-        $mailer->send($mail);
-
-        $em->flush();
     }
 
     private function _rmdirRecursive($dir) {

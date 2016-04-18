@@ -68,30 +68,6 @@ class AeagCommand extends ContainerAwareCommand {
         $this->repoPgProgLotParamAn = $this->emSqe->getRepository('AeagSqeBundle:PgProgLotParamAn');
     }
 
-    protected function _envoiMessage($txtMessage, $destinataire, $objet, $pgCmdFichierRps, $expediteur = 'automate@eau-adour-garonne.fr') {
-        $htmlMessage = "<html><head></head><body>";
-        $htmlMessage .= "Bonjour, <br/><br/>";
-        $htmlMessage .= $txtMessage;
-        $htmlMessage .= "<br/><br/>Cordialement, <br/>L'équipe SQE";
-        $htmlMessage .= "</body></html>";
-        try {
-            // Récupération du service
-            $mailer = $this->getContainer()->get('mailer');
-            // Création de l'e-mail : le service mailer utilise SwiftMailer, donc nous créons une instance de Swift_Message.
-            $mail = \Swift_Message::newInstance('Wonderful Subject')
-                    ->setSubject($objet)
-                    ->setFrom($expediteur)
-                    ->setTo($destinataire->getMail())
-                    ->setBody($htmlMessage, 'text/html');
-
-            $mailer->send($mail);
-
-            $this->em->flush();
-        } catch (\Swift_TransportException $ex) {
-            $this->_addLog('warning', $pgCmdFichierRps->getDemande()->getId(), $pgCmdFichierRps->getId(), "Erreur lors de l\'envoi de mail dans le process de verification des RAIs", null, $ex->getMessage());
-        }
-    }
-
     protected function _updatePhase($pgCmdFichierRps, $phase) {
         $pgProgPhases = $this->repoPgProgPhases->findOneByCodePhase($phase);
         $pgCmdFichierRps->setPhaseFichier($pgProgPhases);

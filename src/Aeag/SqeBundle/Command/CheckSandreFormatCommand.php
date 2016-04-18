@@ -74,7 +74,10 @@ class CheckSandreFormatCommand extends AeagCommand {
                         $destinataires[] = $this->repoPgProgWebUsers->findOneByPrestataire($pgCmdFichierRps->getDemande()->getPrestataire());
                         foreach ($destinataires as $destinataire) {
                             if (!is_null($destinataire)) {
-                                $this->_envoiMessage($txtMessage, $destinataire, $objetMessage, $pgCmdFichierRps);
+                                $mailer = $this->getContainer()->get('mailer');
+                                if (!$this->getContainer()->get('aeag_sqe.message')->createMail($this->em, $mailer, $txtMessage, $destinataire, $objetMessage)) {
+                                    $this->_addLog('warning', $pgCmdFichierRps->getDemande()->getId(), $pgCmdFichierRps->getId(), "Erreur lors de l\'envoi de mail dans le process de verification des RAIs", null, $destinataire);
+                                }
                             }
                         }
                     }

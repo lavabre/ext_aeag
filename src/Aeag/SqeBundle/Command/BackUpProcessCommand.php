@@ -45,7 +45,10 @@ class BackUpProcessCommand extends AeagCommand {
                     $txtMessage = "Votre RAI (id " . $pgCmdFichierRps->getId() . ") concernant la DAI " . $pgCmdFichierRps->getDemande()->getCodeDemandeCmd() . " a été soumise. Le fichier " . $pgCmdFichierRps->getNomFichier() . " est en cours de validation. "
                             . "Vous serez informé lorsque celle-ci sera validée. ";
                     $destinataire = $this->repoPgProgWebUsers->findOneByPrestataire($pgCmdFichierRps->getDemande()->getPrestataire());
-                    $this->_envoiMessage($txtMessage, $destinataire, $objetMessage, $pgCmdFichierRps);
+                    $mailer = $this->getContainer()->get('mailer');
+                    if (!$this->getContainer()->get('aeag_sqe.message')->createMail($this->em, $mailer, $txtMessage, $destinataire, $objetMessage)) {
+                        $this->_addLog('warning', $pgCmdFichierRps->getDemande()->getId(), $pgCmdFichierRps->getId(), "Erreur lors de l\'envoi de mail dans le process de verification des RAIs", null, $destinataire);
+                    }
                     
                     $cptPhaseR10Fait++;
                 }

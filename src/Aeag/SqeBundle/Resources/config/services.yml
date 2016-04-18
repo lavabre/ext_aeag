@@ -1,6 +1,7 @@
 parameters:
     aeag_sqe.tools.class: Aeag\SqeBundle\Utils\Tools
     aeag_sqe.process_rai.class: Aeag\SqeBundle\Utils\ProcessRai
+    aeag_sqe.message.class: Aeag\SqeBundle\Utils\MessageMaker
     
 services:
     # keep your service names short
@@ -9,3 +10,6 @@ services:
 #       arguments: [@service_id, "plain_value", %parameter%]
     aeag_sqe.process_rai:
         class: %aeag_sqe.process_rai.class%
+    aeag_sqe.message:
+        class: %aeag_sqe.message.class%
+        arguments: [@mailer]
