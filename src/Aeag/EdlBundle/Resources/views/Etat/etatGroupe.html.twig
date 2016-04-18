@@ -1,71 +1,112 @@
 {% extends "AeagEdlBundle::layout.html.twig" %}
 
+{% block breadcrumb %}
+    <li>
+        <i class="icon-home"></i>
+        <a href="{{ path('Aeag_edl') }}">Accueil</a> 
+    </li>
+    <li>
+       <a href="{{ path('AeagEdlBundle_listeMasseEau') }}">Résultat</a> 
+    </li>
+     <li class="active">
+         Etat
+    </li>
+{% endblock breadcrumb %}
+
+
+{%block panel_heading %}
+     <div class="row">
+            <div class="col-md-offset-3 col-md-7">
+                    <h3 class="page-title">
+                        Masse d'eau {{ me.euCd }}
+                    </h3>
+            </div>
+    </div>
+   
+{%endblock panel_heading %}
+
 
 {% block content %}
 
 
-
-<div class="block-content"> 
-    <h1>Masse d'eau {{ me.euCd }}</h1>
-
-    <div class="columns">
-
-        <div class="colx3-left-double">
-            <div class="align-center">
-                <h2>{{ me.nomMasseEau }}</h2>
-
-                <img width="100px" height="100px" src="http://adour-garonne.eaufrance.fr/porteau/index.php/carto/vignetteMasdo?id={{ me.euCd }}"/>
-            </div>
-        </div>
-        <div class="colx3-right" width="10%">
-            <div class="align-left">
-                <a class="big-button blue" TARGET="_blanck" href="http://adour-garonne.eaufrance.fr/massedeau/{{me.euCd}}">Voir la fiche sur le portail de bassin</a>
-            </div>
-        </div>
+    <div class="row">
+         <div class="colx3-left-double">
+             <div class="align-center">
+                 <h2>{{ me.nomMasseEau }}</h2>
+                       <img width="100px" height="100px" src="http://adour-garonne.eaufrance.fr/porteau/index.php/carto/vignetteMasdo?id={{ me.euCd }}"/>
+             </div>
+         </div>
+         <div class="colx3-right" width="10%">
+             <div class="align-left">
+                 <a  TARGET="_blanck" href="http://adour-garonne.eaufrance.fr/massedeau/{{me.euCd}}">
+                     <button type="button" class="btn btn-primary">
+                     Voir la fiche sur le portail de bassin
+                      </button>
+                 </a>
+             </div>
+         </div> 
     </div>
-
-    <div class="controls-buttons"> 
-        <a class="button red" href="#">Etats</a>
-        <a class="button" href="{{ path('AeagEdlBundle_pressionGroupe', {'code':me.euCd}) }}">Pressions</a>
-       
-    </div>
-
-
-</div>    
-
-
-
-
-
-
-<div class="block-content"> 
-
-    <h1>Etats de la masse d'eau  {{ me.euCd }}</h1>
-
-
-
-    <!-- --------------------------------- ETATS ----------------------------------------- -->        
-    <div id="tabEtats">
-        <input type='hidden' id='euCd' value="{{ me.euCd }}" />
-        <br>
-        <dl class="accordion"> 
-            {% for etatGroupe in etatGroupes %}
-
-                {{ render(controller('AeagEdlBundle:Default:etat', {'code': me.euCd, 'cdGroupe': etatGroupe.cdGroupe})) }}
-                  
-
-
-            {% endfor %}
-        </dl>
-        <br><br>
-        <div align="center">
-            <a  href="{{ url }}">
-                <img src="{{ asset('bundles/aeageedl/images/icons/web-app/24/Exit.png')}}" width="24" height="24">
+    </br>
+    <div class="row">
+            <a href="#">
+                <button type="button" class="btn btn-success">
+                        Etats
+                 </button>
             </a>
-        </div>
-
-    </div>    
+            <a  href="{{ path('AeagEdlBundle_pressionGroupe', {'code':me.euCd}) }}">
+                  <button type="button" class="btn btn-default">
+                       Pressions
+                  </button>
+              </a>
+    </div>   
+         </br>
+         
+        <div class="panel panel-info">
+            <div class="panel-heading">
+              <h3 class="panel-title">Etats de la masse d'eau  {{ me.euCd }}</h3>
+            </div>
+            <div class="panel-body">
+                    <!-- --------------------------------- ETATS ----------------------------------------- -->        
+                    <div id="tabEtats">
+                        <input type='hidden' id='euCd' value="{{ me.euCd }}" />
+                        <br>
+                        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                          {% for etatGroupe in etatGroupes %}
+                             {{ render(controller('AeagEdlBundle:Default:etat', {'code': me.euCd, 'cdGroupe': etatGroupe.cdGroupe})) }}
+                            {% endfor %}
+                        </div>
+                        <br><br>
+                        <div align="center">
+                            <a  href="{{ url }}">
+                               <button type="button" class="btn btn-primary"><i class="fa fa-undo"></i> retour</button>
+                             </a>
+                        </div>
+                </div>    
+            </div>
+          </div>
 
 
 {% endblock content %}
+
+{#{% block scripts %}
+    
+    jQuery(document).ready(function() {
+    
+         {% for etatGroupe in etatGroupes %}
+                var table = $('#idTable{{ etatGroupe.cdGroupe }}').DataTable(
+                    {"stateSave": true,
+                     "order": [[ 1, "asc" ]],
+                    "language": {
+                                         "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
+                                     },
+                    "aLengthMenu": [
+                                        [10, 25, 50, 100, -1],
+                                        [10, 25, 50, 100, "Tous"]
+                                    ],
+                     "iDisplayLength": 10
+                   });
+          {% endfor %}
+    });
+    
+{%endblock scripts %}#}
 

@@ -11,15 +11,47 @@ AeagEdlBundle_rechercherMasseEau:
     defaults: { _controller: AeagEdlBundle:Default:rechercherMasseEau }
     requirements:
          methods: POST
-   
-    
+      
 AeagEdlBundle_listeMasseEau:
     path: /avis/ListeEtat
     defaults: { _controller: "AeagEdlBundle:Default:listeMasseEau" }
+    
+    
 
 AeagEdlBundle_etatGroupe:
     path:  /avis/etatgroupe/{code}
     defaults: { _controller: AeagEdlBundle:Default:etatGroupe }
+    
+AeagEdlBundle_etat:
+    path:  /avis/etat/{code}
+    defaults: { _controller: AeagEdlBundle:Default:etat }
+    
+AeagEdlBundle_etatListProposed:
+    path:  /avis/etatListProposed
+    defaults: { _controller: AeagEdlBundle:Etat:etatListProposed }        
+    
+AeagEdlBundle_removeEtat:
+    path:  /avis/removeEtat
+    defaults: { _controller: AeagEdlBundle:Etat:removeEtat }
+    
+AeagEdlBundle_etatForm:
+    path:  /avis/etatForm
+    defaults: { _controller: AeagEdlBundle:Etat:etatForm }
+    
+
+AeagEdlBundle_etatSubmit:
+    path:  /avis/etatSubmit
+    defaults: { _controller: AeagEdlBundle:Etat:etatSubmit }    
+    
+    
+    
+AeagEdlBundle_pressionGroupe:
+    path:  /avis/pressiongroupe/{code}
+    defaults: { _controller: AeagEdlBundle:Default:pressionGroupe }
+    
+AeagEdlBundle_pression:
+    path:  /avis/pression/{code}
+    defaults: { _controller: AeagEdlBundle:Default:pression }
     
     
     
@@ -52,35 +84,16 @@ AeagEdlBundle_removePression:
     path:  /avis/removePression
     defaults: { _controller: AeagEdlBundle:Pression:removePression }
     
-AeagEdlBundle_pression:
-    path:  /avis/pression/{code}
-    defaults: { _controller: AeagEdlBundle:Default:pression }
-    
-AeagEdlBundle_pressionGroupe:
-    path:  /avis/pressiongroupe/{code}
-    defaults: { _controller: AeagEdlBundle:Default:pressionGroupe }
-    
-    
-AeagEdlBundle_etatForm:
-    path:  /avis/etatForm
-    defaults: { _controller: AeagEdlBundle:Etat:etatForm }
+
     
 
-AeagEdlBundle_etatSubmit:
-    path:  /avis/etatSubmit
-    defaults: { _controller: AeagEdlBundle:Etat:etatSubmit }    
     
-AeagEdlBundle_etatListProposed:
-    path:  /avis/etatListProposed
-    defaults: { _controller: AeagEdlBundle:Etat:etatListProposed }        
     
-AeagEdlBundle_removeEtat:
-    path:  /avis/removeEtat
-    defaults: { _controller: AeagEdlBundle:Etat:removeEtat }
+
     
-AeagEdlBundle_etat:
-    path:  /avis/etat/{code}
-    defaults: { _controller: AeagEdlBundle:Default:etat }
+
+    
+
     
 
 

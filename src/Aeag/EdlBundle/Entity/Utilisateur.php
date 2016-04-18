@@ -147,6 +147,13 @@ class Utilisateur
      * @ORM\Column(name="passwordenclair", type="string", length=30, nullable=false)
      */
     private $passwordenclair;
+    
+     /**
+     * @var string
+     *
+     * @ORM\Column(name="ext_id", type="integer", nullable=true)
+     */
+    private $extId;
 
 
 
@@ -591,4 +598,14 @@ class Utilisateur
     {
         return $this->passwordenclair;
     }
+    
+    function getExtId() {
+        return $this->extId;
+    }
+
+    function setExtId($extId) {
+        $this->extId = $extId;
+    }
+
+
 }

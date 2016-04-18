@@ -1,98 +1,107 @@
 
 <div id="formEtatListProposed{{ etat.etatType.cdEtat }}">
-<table class="table" cellspacing="0" width="100%" align="center"> 
-    <input type='hidden' id='UrlActuel' value="{{ path('AeagEdlBundle_etat', { 'code': etat.masseEau.euCd }) }}" /> 
-
-   <input type='hidden' id='newEtatRoute' value="{{ path('AeagEdlBundle_etatForm') }}" /> 
-   
-
     <tr>
-        <td align="left" width="70%">{{ etat.etatType.libelle }}</td>
-        <td width="10%" nowrap><span class="dce_etat_{{ etat.valeur }}">{{ etat.getValueLib() }}</span></td>
-   {% if derniereProp %}
-        <td width="10%" nowrap><span class="dce_etat_{{ derniereProp.valeur }}">{{ derniereProp.getValueLib() }}</span></td>
-   {% else %}
-        <td width="10%" nowrap></td>
-   {% endif %}
-   {% if is_granted("IS_AUTHENTICATED_REMEMBERED")and is_granted("ROLE_COMMENTATEUR") %}
-        <td width="10%"><a id="newEtat{{ etat.etatType.cdEtat }}" title="Proposer une nouvelle évaluation" cdEtat="{{ etat.etatType.cdEtat }}">
-                <img src="{{ asset('bundles/aeagedl/images/icons/web-app/24/Comment.png')}}" width="24" height="24">
-            </a>
+        {% if is_granted("IS_AUTHENTICATED_REMEMBERED")and is_granted("ROLE_COMMENTATEUREDL") %}
+            <td ><a id="newEtat{{ etat.etatType.cdEtat }}" title="Proposer une nouvelle évaluation" cdEtat="{{ etat.etatType.cdEtat }}">
+                    <i class="fa fa-commenting fa-2x"></i> 
+                </a>
+            </td>
+        {% else %}
+            <td ></td>
+        {% endif %}
+        <td align="left">
+            <input type='hidden' id='UrlActuel' value="{{ path('AeagEdlBundle_etat', { 'code': etat.masseEau.euCd }) }}" /> 
+            <input type='hidden' id='newEtatRoute' value="{{ path('AeagEdlBundle_etatForm') }}" /> 
+            {{ etat.etatType.libelle }}
         </td>
-   {% else %}
-        <td width="10%"></td>
-   {% endif %}
+        <td  nowrap><span class="dce_etat_{{ etat.valeur }}">{{ etat.getValueLib() }}</span></td>
+            {% if derniereProp %}
+            <td  nowrap><span class="dce_etat_{{ derniereProp.valeur }}">{{ derniereProp.getValueLib() }}</span></td>
+            {% else %}
+            <td nowrap></td>
+        {% endif %}
+
 
     </tr>
     <div id="EtatsParametre">  
         <div id="divProposed{{ etat.etatType.cdEtat }}">
 
-    {% if etat.proposed|length > 0 %} 
+            {% if etat.proposed|length > 0 %} 
 
-            <tr>
-                <td colspan=4>
-                    <table class="table" cellspacing="0" width="90%" align="right">
-                        <tr>
-                            <th nowrap width="5%">Date</th>
-                            <th nowrap width="5%">Auteur</th>
-                            <th nowrap width="55%">Commentaire</th>
-                            <th nowrap width="10%">Etat proposé</th>
-                            <th nowrap width="10%">Action</th>
-                        </tr>
-
-        
-            {% set i = 1 %}
-            {% for pp in etat.proposed %}
-                        <div id="EtatsProposed{{i}}">
-
+                <tr>
+                    <td colspan=4>
+                        <table class="table table-bordered table-condensed table-advance" cellspacing="0" width="90%" align="right">
                             <tr>
-                                <td width="5%" nowrap>{{ pp.propositionDate }}</td>
-                                {% if pp.role == 'local' %}
-                                <td width="5%" nowrap>acteur local : {{ pp.utilisateur.username }}</td>
-                                {% else %}
-                                <td width="5%" nowrap>expert : {{ pp.utilisateur.username }}</td>
-                                {% endif %}
-                                <td width="55%" align="left">{{ pp.commentaire }}</td>
-                                <td width="10%" nowrap><span class="dce_etat_{{ pp.valeur }}">{{ pp.getValueLib() }}</span></td>
-                                {% if is_granted("IS_AUTHENTICATED_REMEMBERED")and is_granted("ROLE_COMMENTATEUR") and  pp.role ==  'local' and pp.utilisateur.id == user.id %} 
-                                <td width="10%"><a name="removeEtat{{ pp.cdEtat }}" title="Supprimer cette proposition" login="{{ pp.utilisateur.id }}" propositionDate="{{ pp.propositionDate }}">
-                                        <img src="{{ asset('bundles/aeagetatedl/images/icons/web-app/24/Delete.png')}}">
-                                    </a>
-                                </td>
-                                    {% elseif is_granted("IS_AUTHENTICATED_REMEMBERED")and is_granted("ROLE_SUPERVISEUR") %}
-                                <td width="10%"><a name="removeEtat{{ pp.cdEtat }}" title="Supprimer cette proposition" login="{{ pp.utilisateur.id }}" propositionDate="{{ pp.propositionDate }}">
-                                        <img src="{{ asset('bundles/aeagedl/images/icons/web-app/24/Delete.png')}}">
-                                    </a>
-                                </td>
-                                    {% else %}
-                                <td width="10%"></td>
-                                    {% endif %}
+                                <th nowrap width="5%">Action</th>
+                                <th nowrap width="5%">Date</th>
+                                <th nowrap width="5%">Auteur</th>
+                                <th nowrap width="55%">Commentaire</th>
+                                <th nowrap width="10%">Etat proposé</th>
                             </tr>
 
 
-                        </div>
+                            {% set i = 1 %}
+                            {% for pp in etat.proposed %}
+                                <div id="EtatsProposed{{i}}">
+                                    <tr>
+                                        {% if is_granted("IS_AUTHENTICATED_REMEMBERED")and is_granted("ROLE_COMMENTATEUREDL") and  pp.role ==  'local' and pp.utilisateur.id == user.id %} 
+                                            <td ><a name="removeEtat{{ pp.cdEtat }}" title="Supprimer cette proposition" login="{{ pp.utilisateur.id }}" propositionDate="{{ pp.propositionDate }}">
+                                                    <i class="fa fa-remove fa-2x"></i> 
+                                                </a>
+                                            </td>
+                                        {% elseif is_granted("IS_AUTHENTICATED_REMEMBERED")and is_granted("ROLE_SUPERVISEUREDL") %}
+                                            <td ><a name="removeEtat{{ pp.cdEtat }}" title="Supprimer cette proposition" login="{{ pp.utilisateur.id }}" propositionDate="{{ pp.propositionDate }}">
+                                                    <i class="fa fa-remove fa-2x"></i> 
+                                                </a>
+                                            </td>
+                                        {% else %}
+                                            <td></td>
+                                        {% endif %}
+                                        <td  nowrap>{{ pp.propositionDate }}</td>
+                                        {% if pp.role == 'local' %}
+                                            <td nowrap>acteur local : {{ pp.utilisateur.username }}</td>
+                                        {% else %}
+                                            <td  nowrap>expert : {{ pp.utilisateur.username }}</td>
+                                        {% endif %}
+                                        <td align="left">{{ pp.commentaire }}</td>
+                                        <td  nowrap><span class="dce_etat_{{ pp.valeur }}">{{ pp.getValueLib() }}</span></td>
+                                    </tr>
+                                </div>
 
-                {% set i = i + 1 %}
-                {% if i > 2 %}
-                {% set i = 1 %}
-                {% endif %}
-                {% endfor %}
+                                {% set i = i + 1 %}
+                                {% if i > 2 %}
+                                    {% set i = 1 %}
+                                {% endif %}
+                            {% endfor %}
 
-        
-                    </table>
-                </td>
-            </tr>
 
-    {% endif %}
+                        </table>
+                    </td>
+                </tr>
+
+            {% endif %}
 
         </div>
     </div>
-</table>
 
-
-<div id ="divNewEtat{{ etat.etatType.cdEtat }}">
-  
-</div> 
+    <div id ="divNewEtat{{ etat.etatType.cdEtat }}"></div> 
+   
+    
+    <div class="modal fade" id="modalEtatEdit" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title"><div class="label label-primary">Proposer une nouvelle évaluation</div></h4>
+        </div>
+        <div id="idEtatEdit" class="modal-body"></div>
+        <div class="modal-footer">
+          <button id="annuler" type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+          <button  id="valider" type="button" class="btn btn-primary">valider</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
 
 
 </div>
@@ -100,78 +109,64 @@
 
 
 <script type="text/javascript">
-    
-   
-  
- 
-      
-$(document).ready(function() { 	// Sur clic "Proposer un nouvel etat"
-        $('#newEtat{{ etat.etatType.cdEtat }}').click(function(e){
-                //$("body").css("cursor", "wait");
-               
-                //conserver l'url actuel
-                var $urlActuel = $('input#UrlActuel').val();
-                
-                // obtenir l'url
-                var $url = $('input#newEtatRoute').val();
-                
-                // conserver l'id du div qui hébergera le formulaire de saisie
-                var $div = "#divNewEtat{{ etat.etatType.cdEtat }}";
-                
-                $.post($url,
-                       { 
-                                euCd: "{{ etat.masseEau.euCd }}", 
-                                cdEtat: "{{ etat.etatType.cdEtat }}"
-                        },
-                        function(data) {
-                                            // placer le formulaire sous le div
-                                                                                      
-                                            $($div).html(data);
-                                            
-                                            // $($div).hide();
-                                            
-                                            // cosmétique
-                                            //$($div).slideDown('fast');
-                                            // rétablir curseur
-                                            $("body").css("cursor", "auto");
-                                    }
-                            ).error(function() { 
-                                    // rétablir curseur
-                                    $("body").css("cursor", "auto");
-                                    alert("Erreur non déterminée");    
-                  });                      
-                  
+
+    $(document).ready(function () { 	// Sur clic "Proposer un nouvel etat"
+        $('#newEtat{{ etat.etatType.cdEtat }}').click(function (e) {
+            $('#modalTraitementEncours').modal('toggle');
+            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+            //conserver l'url actuel
+            var $urlActuel = $('input#UrlActuel').val();
+            // obtenir l'url
+            var $url = $('input#newEtatRoute').val();
+            // conserver l'id du div qui hébergera le formulaire de saisie
+            var $div = "#divNewEtat{{ etat.etatType.cdEtat }}";
+            $.post($url,
+                    {
+                        euCd: "{{ etat.masseEau.euCd }}",
+                        cdEtat: "{{ etat.etatType.cdEtat }}"
+                    },
+            function (data) {
+                $("#idEtatEdit").empty().html(data);
+                $('#modalEtatEdit').modal();
+                $('#modalTraitementEncours').modal('hide');
+            }
+            ).error(function () {
+                // rétablir curseur
+                $("body").css("cursor", "auto");
+                alert("Erreur non déterminée");
+            });
+
         });
 
-        $('a[name="removeEtat{{ etat.etatType.cdEtat }}"]').click(function(e){
-                $("body").css("cursor", "wait");
+        $('a[name="removeEtat{{ etat.etatType.cdEtat }}"]').click(function (e) {
+            $("body").css("cursor", "wait");
 
-                // obtenir l'url
-                var $url = "{{ path('AeagEdlBundle_removeEtat') }}";
-		
-                // lancer la requête ajax  
-                $.post($url, 
-                        { 
-                                euCd: "{{ etat.masseEau.euCd }}", 
-                                cdEtat: "{{ etat.etatType.cdEtat }}",
-                                login: $(this).attr('login'),
-                                propositionDate: $(this).attr('propositionDate')
-                        }, 
-                        function(data) {
-                                // placer le formulaire sous le div
-                                $("#divEtat{{ etat.etatType.cdEtat }}").html(data); 
-                               
-                                // rétablir curseur
-                                $("body").css("cursor", "auto");
-                        }
-                ).error(function() { 
-                        // rétablir curseur
-                        $("body").css("cursor", "auto");
-                        alert("Erreur non déterminée"); 
-                }); 
+            // obtenir l'url
+            var $url = "{{ path('AeagEdlBundle_removeEtat') }}";
+
+            // lancer la requête ajax  
+            $.post($url,
+                    {
+                        euCd: "{{ etat.masseEau.euCd }}",
+                        cdEtat: "{{ etat.etatType.cdEtat }}",
+                        login: $(this).attr('login'),
+                        propositionDate: $(this).attr('propositionDate')
+                    },
+            function (data) {
+                // placer le formulaire sous le div
+                $("#divEtat{{ etat.etatType.cdEtat }}").html(data);
+
+                // rétablir curseur
+                $("body").css("cursor", "auto");
+            }
+            ).error(function () {
+                // rétablir curseur
+                $("body").css("cursor", "auto");
+                alert("Erreur non déterminée");
+            });
         });
-});
-    </script>
+    });
+</script>
 
 
 

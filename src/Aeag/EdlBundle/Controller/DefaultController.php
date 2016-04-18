@@ -11,6 +11,7 @@ use Aeag\EdlBundle\Form\MasseEauRechercheForm;
 use Aeag\EdlBundle\Entity\Contact;
 use Aeag\EdlBundle\Entity\Criteres;
 use Aeag\EdlBundle\Form\ContactType;
+use Aeag\UserBundle\Entity\User;
 
 class MyDateTime extends \DateTime {
 
@@ -32,17 +33,25 @@ class DefaultController extends Controller {
         $user = $this->getUser();
         $session = $this->get('session');
         $session->set('retourErreur', $this->generateUrl('Aeag_edl'));
-        $session->set('menu', 'acceuil');
+        $session->set('menu', 'index');
         $session->set('controller', 'default');
         $session->set('fonction', 'index');
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
 
-        $session->set('codecle', null);
-        $session->set('masseEaucle', null);
-        $session->set('deptcle', null);
-        $session->set('typecle', null);
-        $session->set('territoirecle', null);
+        if (is_object($user) && ($this->get('security.authorization_checker')->isGranted('ROLE_ADMINEDL'))) {
+            // insertion des users
+            // $message = $this->majUtilisateurs();
+            $message = $this->initUtilisateurs();
+            //return new Response($message);
+            //$session->getFlashBag()->add('notice-success', $message);
+        }
+
+//        $session->set('codecle', null);
+//        $session->set('masseEaucle', null);
+//        $session->set('deptcle', null);
+//        $session->set('typecle', null);
+//        $session->set('territoirecle', null);
         $session->set('recherche', 'N');
 
         $critere = new Criteres();
@@ -54,12 +63,7 @@ class DefaultController extends Controller {
     }
 
     /**
-     *  Liste des masses d'eau  (suite)
-     *
-     * @ Method("POST")
-     * @Route("/masseEau/{page}", defaults={"page"=1}, name="AeagEdlBundle_listeMasseEau")
-     *
-     * @Template("AeagEdlBundle:MasseEau:listeMasseEau.html.twig")
+     *  Liste des masses d'eau
      *
      */
     public function listeMasseEauAction(Request $request) {
@@ -286,7 +290,7 @@ class DefaultController extends Controller {
         return $this->render('AeagEdlBundle:MasseEau:listeMasseEau.html.twig', $variables);
     }
 
-    public function etatGroupeAction($code = null) {
+    public function etatGroupeAction($code = null, Request $request) {
 
         $user = $this->getUser();
         $session = $this->get('session');
@@ -295,8 +299,6 @@ class DefaultController extends Controller {
         $session->set('fonction', 'etatGroupe');
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
-
-        $request = $this->container->get('request');
 
 
         $repo = $emEdl->getRepository('AeagEdlBundle:EtatGroupe');
@@ -327,8 +329,8 @@ class DefaultController extends Controller {
                         )
         );
     }
-    
-    public function etatAction($code = null, $cdGroupe = null) {
+
+    public function etatAction($code = null, $cdGroupe = null, Request $request) {
 
         $user = $this->getUser();
         $session = $this->get('session');
@@ -338,12 +340,9 @@ class DefaultController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
 
-        $request = $this->container->get('request');
 
         $repo = $emEdl->getRepository('AeagEdlBundle:EtatGroupe');
         $etatGroupe = $repo->findOneBy(array('cdGroupe' => $cdGroupe));
-
-        
 
         $repo = $emEdl->getRepository('AeagEdlBundle:EtatMe');
         $etats = $repo->getEtatMe($code, $cdGroupe);
@@ -354,7 +353,6 @@ class DefaultController extends Controller {
             $session->set('UrlRetour', $this->generateUrl('AeagEdlBundle_listeMasseEau'));
         }
 
-
         return $this->render('AeagEdlBundle:Etat:etat.html.twig', array(
                     'etatGroupe' => $etatGroupe,
                     'etats' => $etats,
@@ -364,58 +362,16 @@ class DefaultController extends Controller {
         );
     }
 
-    public function massedeauAction($code) {
+    public function pressionGroupeAction($code = null, Request $request) {
 
-        $request = $this->container->get('request');
+        $user = $this->getUser();
+        $session = $this->get('session');
+        $session->clear();
+        $session->set('controller', 'default');
+        $session->set('fonction', 'pressionGroupe');
+        $em = $this->get('doctrine')->getManager();
+        $emEdl = $this->get('doctrine')->getManager('edl');
 
-        $meRepo = $this->getDoctrine()
-                ->getRepository('AeagEdlBundle:MasseEau');
-
-        $me = $meRepo->findOneBy(array('euCd' => $code));
-
-        if (!$me) {
-            throw $this->createNotFoundException('Masse d\'eau non trouvée : ' . $code);
-        }
-
-        return $this->render('AeagEdlBundle:Default:massedeau.html.twig', array(
-                    'me' => $me,
-                    'url' => $request->headers->get('referer'),
-                        )
-        );
-    }
-
-    public function pressionAction($code = null, $cdGroupe = null) {
-
-        $request = $this->container->get('request');
-
-        $session = $request->getSession();
-
-        $repo = $this->getDoctrine()->getRepository('AeagEdlBundle:PressionGroupe');
-        $pressionGroupe = $repo->findOneBy(array('cdGroupe' => $cdGroupe));
-
-        $repo = $this->getDoctrine()->getRepository('AeagEdlBundle:PressionMe');
-        $pressions = $repo->getPressionMe($code, $cdGroupe);
-        $nbPressions = $repo->getNbPressionMe($code, $cdGroupe);
-
-        if ($session->get('UrlRetour') == '') {
-            $session->set('UrlRetour', $this->generateUrl('AeagEdlBundle_listeMasseEau', array('page' => 1)));
-        }
-
-
-        return $this->render('AeagEdlBundle:Pression:pression.html.twig', array(
-                    'pressionGroupe' => $pressionGroupe,
-                    'pressions' => $pressions,
-                    'nbPressions' => $nbPressions,
-                    'url' => $session->get('UrlRetour'),
-                        )
-        );
-    }
-
-    public function pressionGroupeAction($code = null) {
-
-        $request = $this->container->get('request');
-
-        $session = $request->getSession();
 
         $repo = $this->getDoctrine()->getRepository('AeagEdlBundle:PressionGroupe');
         $pressionGroupes = $repo->getPressionGroupe();
@@ -442,7 +398,55 @@ class DefaultController extends Controller {
         );
     }
 
-    
+    public function pressionAction($code = null, $cdGroupe = null, Request $request) {
+
+        $user = $this->getUser();
+        $session = $this->get('session');
+        $session->clear();
+        $session->set('controller', 'default');
+        $session->set('fonction', 'pression');
+        $em = $this->get('doctrine')->getManager();
+        $emEdl = $this->get('doctrine')->getManager('edl');
+
+        $repo = $emEdl->getRepository('AeagEdlBundle:PressionGroupe');
+        $pressionGroupe = $repo->findOneBy(array('cdGroupe' => $cdGroupe));
+
+        $repo = $emEdl->getRepository('AeagEdlBundle:PressionMe');
+        $pressions = $repo->getPressionMe($code, $cdGroupe);
+        $nbPressions = $repo->getNbPressionMe($code, $cdGroupe);
+
+        if ($session->get('UrlRetour') == '') {
+            $session->set('UrlRetour', $this->generateUrl('AeagEdlBundle_listeMasseEau', array('page' => 1)));
+        }
+
+        return $this->render('AeagEdlBundle:Pression:pression.html.twig', array(
+                    'pressionGroupe' => $pressionGroupe,
+                    'pressions' => $pressions,
+                    'nbPressions' => $nbPressions,
+                    'url' => $session->get('UrlRetour'),
+                        )
+        );
+    }
+
+    public function massedeauAction($code) {
+
+        $request = $this->container->get('request');
+
+        $meRepo = $this->getDoctrine()
+                ->getRepository('AeagEdlBundle:MasseEau');
+
+        $me = $meRepo->findOneBy(array('euCd' => $code));
+
+        if (!$me) {
+            throw $this->createNotFoundException('Masse d\'eau non trouvée : ' . $code);
+        }
+
+        return $this->render('AeagEdlBundle:Default:massedeau.html.twig', array(
+                    'me' => $me,
+                    'url' => $request->headers->get('referer'),
+                        )
+        );
+    }
 
     public function impactAction($code = null, $cdGroupe = null) {
 
@@ -591,6 +595,108 @@ class DefaultController extends Controller {
         return $this->render('AeagEdlBundle:Default:contact.html.twig', array(
                     'form' => $form->createView()
         ));
+    }
+
+    public function majUtilisateurs() {
+
+        $em = $this->get('doctrine')->getManager();
+        $emEdl = $this->get('doctrine')->getManager('edl');
+
+        $repoUsers = $em->getRepository('AeagUserBundle:User');
+        $repo = $emEdl->getRepository('AeagSqeBundle:Utilisateur');
+
+        $utilisateurs = $repo->findAll();
+        $utilisateursNbModifies = 0;
+        $message = '';
+
+
+        foreach ($utilisateurs as $utilisateur) {
+            $entityUser = $repoUsers->getUserByUsernamePassword($utilisateur->getUsername(), $utilisateur->getPassword());
+            if ($entityUser) {
+                $utilisateur->setExtId($entityUser->getId());
+                $utilisateur->setMail($entityUser->getEmail());
+                $utilisateur->setPassword($entityUser->getPassword());
+                $utilisateur->setPasswordEnClair($entityUser->getPassword());
+                $emEdl->persist($utilisateur);
+                $utilisateursNbModifies++;
+            }
+        }
+        $emEdl->flush();
+        $message = "utilisateur  modifiés : " . $utilisateursNbModifies;
+        return $message;
+    }
+
+    public function initUtilisateurs() {
+
+        $em = $this->get('doctrine')->getManager();
+        $emEdl = $this->get('doctrine')->getManager('edl');
+        $factory = $this->get('security.encoder_factory');
+
+        $repoUsers = $em->getRepository('AeagUserBundle:User');
+        $repo = $emEdl->getRepository('AeagEdlBundle:Utilisateur');
+
+        $utilisateurs = $repo->findAll();
+
+        $utilisateursNbCrees = 0;
+        $utilisateursNbModifies = 0;
+        $message = ' ';
+
+
+        foreach ($utilisateurs as $utilisateur) {
+            if ($utilisateur->getExtId()) {
+                $user = $repoUsers->getUserById($utilisateur->getExtId());
+            } else {
+                $user = null;
+            }
+            if (!$user) {
+                $entityUser = new User();
+                $entityUser->setEnabled(true);
+                $utilisateursNbCrees++;
+            } else {
+                $entityUser = $user;
+                $utilisateursNbModifies++;
+            }
+            $tabRoles = array();
+            $tabRoles[] = 'ROLE_EDL';
+            $entityUser->setRoles($tabRoles);
+            $roles = $utilisateur->getRoles();
+            for ($i = 0; $i < count($roles); $i++) {
+                if ($roles[$i] == 'ROLE_COMMENTATEUR') {
+                    $entityUser->addRole('ROLE_COMMENTATEUREDL');
+                }
+                if ($roles[$i] == 'ROLE_SUPERVISEUR') {
+                    $entityUser->addRole('ROLE_SUPERVISEUREDL');
+                }
+                if ($roles[$i] == 'ROLE_ADMIN') {
+                    $entityUser->addRole('ROLE_ADMINEDL');
+                }
+            }
+            $encoder = $factory->getEncoder($entityUser);
+            $entityUser->setUsername($utilisateur->getUserName());
+            $entityUser->setSalt('');
+            $password = $encoder->encodePassword($utilisateur->getPasswordenclair(), $entityUser->getSalt());
+            $entityUser->setpassword($password);
+            $entityUser->setPlainPassword($entityUser->getPassword());
+            $email = $utilisateur->getEmail();
+            if ($email) {
+                $entityUser->setEmail($email);
+            } else {
+                $entityUser->setEmail($utilisateur->getUserName() . '@a-renseigner-merci.svp');
+            }
+            $em->persist($entityUser);
+
+            //print_r('user : ' . $entityUser->getid() . ' ' . $entityUser->getUsername() . ' ' . $entityUser->getEmail() . ' ' . $entityUser->getPassword() . '  edluser : ' . $utilisateur->getid() . ' ' . $utilisateur->getUserName() . '\n  ');
+
+            $utilisateur->setExtId($entityUser->getId());
+            $utilisateur->setEmail($entityUser->getEmail());
+            $utilisateur->setPassword($entityUser->getPassword());
+            $utilisateur->setPasswordEnClair($entityUser->getPassword());
+            $emEdl->persist($utilisateur);
+        }
+        $em->flush();
+        $emEdl->flush();
+        $message = "users edl crees : " . $utilisateursNbCrees . "   users edl modifiés : " . $utilisateursNbModifies;
+        return $message;
     }
 
 }

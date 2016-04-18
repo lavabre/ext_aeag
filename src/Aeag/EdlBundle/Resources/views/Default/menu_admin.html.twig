@@ -1,4 +1,4 @@
-         {%if app.session.get('menu') == 'accueil'%}
+         {%if app.session.get('menu') == 'index'%}
              <li  class="active">
          {% else %}
             <li>
@@ -6,6 +6,18 @@
              <a href="{{ path('Aeag_edl') }}">
                  <span class="selected">
                      <i class="fa fa-home"></i>&nbsp; Accueil
+                 </span>
+             </a>
+         </li>
+         
+          {%if app.session.get('menu') == 'utilisateur'%}
+             <li  class="active">
+         {% else %}
+            <li>
+         {% endif %}
+             <a href="{{ path('AeagUserBundle_User', { 'role': 'ROLE_EDL' }) }}">
+                 <span class="selected">
+                     <i class="fa fa-user-plus"></i>&nbsp; Utilisateurs
                  </span>
              </a>
          </li>

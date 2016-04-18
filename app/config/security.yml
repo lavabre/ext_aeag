@@ -2,6 +2,7 @@ security:
     encoders:
         Symfony\Component\Security\Core\User\User: plaintext
         Aeag\UserBundle\Entity\User: plaintext
+        Aeag\UserBundle\Entity\UserEdl: plaintext
 
     providers:
         main:
@@ -72,8 +73,8 @@ security:
          #- { path: ^/aeag*, role: ROLE_AEAG }
          
          # PAGES ACCESSIBLES AUX ADMINISTRATEUR CONNECTES
-         - { path: ^/user/compte, role: [ROLE_ODEC, ROLE_FRD, ROLE_SQE, ROLE_STOCK] }
-         - { path: ^/user*, role: [ROLE_ADMINDEC, ROLE_ADMINFRD, ROLE_ADMINSQE, ROLE_ADMINSTOCK] }
+         - { path: ^/user/compte, role: [ROLE_ODEC, ROLE_FRD, ROLE_SQE, ROLE_STOCK, ROLE_EDL] }
+         - { path: ^/user*, role: [ROLE_ADMINDEC, ROLE_ADMINFRD, ROLE_ADMINSQE, ROLE_ADMINSTOCK, ROLE_ADMINEDL] }
 
           # PAGES ACCESSIBLES AUX ADMINISTRATEURS DECHETS
          - { path: ^/admindec*, role: [ROLE_ADMINDEC] }
