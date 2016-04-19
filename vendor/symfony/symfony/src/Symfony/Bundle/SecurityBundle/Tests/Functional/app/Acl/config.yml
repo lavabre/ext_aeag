@@ -20,5 +20,5 @@ security:
         in_memory:
             memory:
                 users:
-                    kevin: { password: test, roles: [ROLE_USER] }
+                    kevin: { password: test, roles: [ROLE_AEAG] }
                     anne:  { password: test, roles: [ROLE_ADMIN]}

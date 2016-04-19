@@ -25,9 +25,9 @@ abstract class CompleteConfigurationTest extends \PHPUnit_Framework_TestCase
     {
         $container = $this->getContainer('container1');
         $this->assertEquals(array(
-            'ROLE_ADMIN' => array('ROLE_USER'),
-            'ROLE_SUPER_ADMIN' => array('ROLE_USER', 'ROLE_ADMIN', 'ROLE_ALLOWED_TO_SWITCH'),
-            'ROLE_REMOTE' => array('ROLE_USER', 'ROLE_ADMIN'),
+            'ROLE_ADMIN' => array('ROLE_AEAG'),
+            'ROLE_SUPER_ADMIN' => array('ROLE_AEAG', 'ROLE_ADMIN', 'ROLE_ALLOWED_TO_SWITCH'),
+            'ROLE_REMOTE' => array('ROLE_AEAG', 'ROLE_ADMIN'),
         ), $container->getParameter('security.role_hierarchy.roles'));
     }
 
@@ -143,7 +143,7 @@ abstract class CompleteConfigurationTest extends \PHPUnit_Framework_TestCase
 
             $i = count($matcherIds);
             if (1 === $i) {
-                $this->assertEquals(array('ROLE_USER'), $attributes);
+                $this->assertEquals(array('ROLE_AEAG'), $attributes);
                 $this->assertEquals('https', $channel);
                 $this->assertEquals(
                     array('/blog/524', null, array('GET', 'POST')),

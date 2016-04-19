@@ -81,25 +81,25 @@ class SecurityDataCollectorTest extends \PHPUnit_Framework_TestCase
         return array(
             // Basic roles
             array(
-                array('ROLE_USER'),
-                array('ROLE_USER'),
+                array('ROLE_AEAG'),
+                array('ROLE_AEAG'),
                 array(),
             ),
             array(
-                array(new Role('ROLE_USER')),
-                array('ROLE_USER'),
+                array(new Role('ROLE_AEAG')),
+                array('ROLE_AEAG'),
                 array(),
             ),
             // Inherited roles
             array(
                 array('ROLE_ADMIN'),
                 array('ROLE_ADMIN'),
-                array('ROLE_USER', 'ROLE_ALLOWED_TO_SWITCH'),
+                array('ROLE_AEAG', 'ROLE_ALLOWED_TO_SWITCH'),
             ),
             array(
                 array(new Role('ROLE_ADMIN')),
                 array('ROLE_ADMIN'),
-                array('ROLE_USER', 'ROLE_ALLOWED_TO_SWITCH'),
+                array('ROLE_AEAG', 'ROLE_ALLOWED_TO_SWITCH'),
             ),
         );
     }
@@ -107,7 +107,7 @@ class SecurityDataCollectorTest extends \PHPUnit_Framework_TestCase
     private function getRoleHierarchy()
     {
         return new RoleHierarchy(array(
-            'ROLE_ADMIN' => array('ROLE_USER', 'ROLE_ALLOWED_TO_SWITCH'),
+            'ROLE_ADMIN' => array('ROLE_AEAG', 'ROLE_ALLOWED_TO_SWITCH'),
         ));
     }
 

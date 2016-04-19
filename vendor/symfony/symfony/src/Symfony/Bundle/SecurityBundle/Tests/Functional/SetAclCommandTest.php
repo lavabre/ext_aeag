@@ -139,7 +139,7 @@ class SetAclCommandTest extends WebTestCase
     {
         $objectId = 1;
         $grantedPermission = 'VIEW';
-        $role = 'ROLE_USER';
+        $role = 'ROLE_AEAG';
 
         $application = $this->getApplication();
         $application->add(new SetAclCommand());

@@ -72,9 +72,9 @@ class SecurityIdentityRetrievalStrategyTest extends \PHPUnit_Framework_TestCase
     public function getSecurityIdentityRetrievalTests()
     {
         return array(
-            array($this->getAccount('johannes', 'FooUser'), array('ROLE_USER', 'ROLE_SUPERADMIN'), 'fullFledged', array(
+            array($this->getAccount('johannes', 'FooUser'), array('ROLE_AEAG', 'ROLE_SUPERADMIN'), 'fullFledged', array(
                 new UserSecurityIdentity('johannes', 'FooUser'),
-                new RoleSecurityIdentity('ROLE_USER'),
+                new RoleSecurityIdentity('ROLE_AEAG'),
                 new RoleSecurityIdentity('ROLE_SUPERADMIN'),
                 new RoleSecurityIdentity('IS_AUTHENTICATED_FULLY'),
                 new RoleSecurityIdentity('IS_AUTHENTICATED_REMEMBERED'),

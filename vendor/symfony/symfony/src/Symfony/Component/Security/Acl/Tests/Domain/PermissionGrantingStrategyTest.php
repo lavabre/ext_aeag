@@ -60,7 +60,7 @@ class PermissionGrantingStrategyTest extends \PHPUnit_Framework_TestCase
     {
         $strategy = new PermissionGrantingStrategy();
         $sid = new UserSecurityIdentity('johannes', 'Foo');
-        $anotherSid = new UserSecurityIdentity('ROLE_USER', 'Foo');
+        $anotherSid = new UserSecurityIdentity('ROLE_AEAG', 'Foo');
 
         $acl = $this->getAcl($strategy);
         $acl->insertClassAce($anotherSid, 1, 0, false);
@@ -89,7 +89,7 @@ class PermissionGrantingStrategyTest extends \PHPUnit_Framework_TestCase
         $strategy = new PermissionGrantingStrategy();
         $acl = $this->getAcl($strategy);
         $sid = new UserSecurityIdentity('johannes', 'Foo');
-        $aSid = new RoleSecurityIdentity('ROLE_USER');
+        $aSid = new RoleSecurityIdentity('ROLE_AEAG');
 
         $acl->insertClassAce($aSid, 1);
         $acl->insertClassAce($sid, 1, 1, false);

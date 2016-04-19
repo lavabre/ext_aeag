@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(name="admin_departement")
  * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Aeag\EdlBundle\Repository\AdminDepartementRepository")
  */
 class AdminDepartement
 {
@@ -17,8 +18,7 @@ class AdminDepartement
      *
      * @ORM\Column(name="insee_departement", type="string", length=2, nullable=false)
      * @ORM\Id
-     * @ORM\Entity(repositoryClass="Aeag\EdlBundle\Repository\AdminDepartementRepository")
-     */
+      */
     private $inseeDepartement;
 
     /**

@@ -169,7 +169,7 @@
                               <div class="input-group">
                           {% endif %}
                               <span class="input-group-addon"><i class="fa fa-graduation-cap"></i></span>
-                                     <select id="aeag_userbundle_userrtype_roles" class="form-control valid" multiple="multiple" placeholder="Rôle" size="7" required="required" name="aeag_userbundle_userrtype[roles][]" aria-required="true" aria-invalid="false">
+                                     <select id="aeag_userbundle_usertype_roles" class="form-control valid" multiple="multiple" placeholder="Rôle" size="7" required="required" name="aeag_userbundle_usertype[roles][]" aria-required="true" aria-invalid="false">
                                             {% if role == 'ROLE_AEAG' %}
                                                       <option value="ROLE_ADMIN">Administrateur </option>
                                                       <option value="ROLE_ADMINDEC">Administrateur Déchet</option>
@@ -207,6 +207,7 @@
                                     </select>
                             </div>
                     </div>
+           
                                     
                       {% if  role == 'ROLE_EDL' %}
                            <div class="form-group">

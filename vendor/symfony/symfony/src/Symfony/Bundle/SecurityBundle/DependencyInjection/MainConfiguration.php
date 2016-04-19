@@ -350,8 +350,8 @@ class MainConfiguration implements ConfigurationInterface
                         'my_memory_provider' => array(
                             'memory' => array(
                                 'users' => array(
-                                    'foo' => array('password' => 'foo', 'roles' => 'ROLE_USER'),
-                                    'bar' => array('password' => 'bar', 'roles' => '[ROLE_USER, ROLE_ADMIN]'),
+                                    'foo' => array('password' => 'foo', 'roles' => 'ROLE_AEAG'),
+                                    'bar' => array('password' => 'bar', 'roles' => '[ROLE_AEAG, ROLE_ADMIN]'),
                                 ),
                             ),
                         ),

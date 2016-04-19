@@ -243,8 +243,8 @@ class AclProviderTest extends \PHPUnit_Framework_TestCase
             array(1, 'SomeClass-john.doe', 1),
             array(2, 'MyClass-john.doe@foo.com', 1),
             array(3, 'FooClass-123', 1),
-            array(4, 'MooClass-ROLE_USER', 1),
-            array(5, 'ROLE_USER', 0),
+            array(4, 'MooClass-ROLE_AEAG', 1),
+            array(5, 'ROLE_AEAG', 0),
             array(6, 'IS_AUTHENTICATED_FULLY', 0),
         );
     }

@@ -6,9 +6,9 @@ security:
         in_memory:
             memory:
                 users:
-                    user_can_switch:      { password: test, roles: [ROLE_USER, ROLE_ALLOWED_TO_SWITCH] }
-                    user_cannot_switch_1: { password: test, roles: [ROLE_USER] }
-                    user_cannot_switch_2: { password: test, roles: [ROLE_USER] }
+                    user_can_switch:      { password: test, roles: [ROLE_AEAG, ROLE_ALLOWED_TO_SWITCH] }
+                    user_cannot_switch_1: { password: test, roles: [ROLE_AEAG] }
+                    user_cannot_switch_2: { password: test, roles: [ROLE_AEAG] }
     firewalls:
         default:
             switch_user: true

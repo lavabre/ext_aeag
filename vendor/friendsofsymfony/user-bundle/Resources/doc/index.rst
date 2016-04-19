@@ -270,7 +270,7 @@ in your application:
             FOS\UserBundle\Model\UserInterface: bcrypt
 
         role_hierarchy:
-            ROLE_ADMIN:       ROLE_USER
+            ROLE_ADMIN:       ROLE_AEAG
             ROLE_SUPER_ADMIN: ROLE_ADMIN
 
         providers:

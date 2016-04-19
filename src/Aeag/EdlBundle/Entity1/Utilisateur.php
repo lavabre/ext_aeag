@@ -418,7 +418,7 @@ class Utilisateur {
      * Use the SecurityContext, or an implementation of AccessDecisionManager
      * instead, e.g.
      *
-     *         $securityContext->isGranted('ROLE_USER');
+     *         $securityContext->isGranted('ROLE_AEAG');
      *
      * @param string $role
      *

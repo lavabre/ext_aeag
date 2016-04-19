@@ -31,7 +31,7 @@ security:
             logout:          true            # On autorise la déconnexion manuelle (désactivé par défaut)
 
     role_hierarchy:
-        ROLE_ADMIN:  [ROLE_USER ]  
+        ROLE_ADMIN:  [ROLE_AEAG ]  
         ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH] # On garde ce rôle superadmin, il nous resservira par la suite
 
     access_control:
@@ -50,7 +50,7 @@ security:
             - { path: ^/utilisateur, role: ROLE_ADMIN }
             
            # PAGES ACCESSIBLES AUX UTILISATEURS CONNECTES
-            - { path: ^/change-password, role: [ROLE_USER] }
+            - { path: ^/change-password, role: [ROLE_AEAG] }
           
             # PAGES ACCESSIBLES À TOUS
             - { path: ^/.*, role: IS_AUTHENTICATED_ANONYMOUSLY }

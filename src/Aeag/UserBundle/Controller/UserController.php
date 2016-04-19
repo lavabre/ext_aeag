@@ -145,9 +145,9 @@ class UserController extends Controller {
         };
 
         $entity = new User();
-            $entity->setEnabled(true);
-            $form = $this->createForm(new UserType(), $entity);
-     
+        $entity->setEnabled(true);
+        $form = $this->createForm(new UserType(), $entity);
+
         return $this->render('AeagUserBundle:User:new.html.twig', array(
                     'entity' => $entity,
                     'role' => $role,
@@ -192,7 +192,7 @@ class UserController extends Controller {
 
         $entity = new User();
         $form = $this->createForm(new UserType(), $entity);
-     
+
         $form->handleRequest($request);
 
         $message = null;
@@ -213,7 +213,7 @@ class UserController extends Controller {
 
         if (is_null($entity->getRoles())) {
             $message = 'Le role est obligatoire ';
-        } 
+        }
 
         if ($message) {
             return $this->render('AeagUserBundle:User:new.html.twig', array(
@@ -232,7 +232,7 @@ class UserController extends Controller {
             $password = $encoder->encodePassword($entity->getPassword(), $entity->getSalt());
             $entity->setpassword($password);
             $entity->setPlainPassword($entity->getPassword());
-            //return new Response ('enabled : ' . $entity->getEnabled());
+
             if ($entity->getEnabled() == '0') {
                 $entity->setEnabled(FALSE);
             } else {
@@ -240,6 +240,7 @@ class UserController extends Controller {
             }
             if ($entity->hasRole('ROLE_COMMENTATEUREDL') or $entity->hasRole('ROLE_SUPERVISEUREDL') or $entity->hasRole('ROLE_ADMINEDL')) {
                 $entity->addRole('ROLE_EDL');
+                $entity->removeRole('ROLE_AEAG');
             } else {
                 if (!$entity->hasRole('ROLE_AEAG')) {
                     $entity->addRole('ROLE_AEAG');
@@ -257,15 +258,32 @@ class UserController extends Controller {
                 $utilisateur->setAlgorithm($entity->getSalt());
                 $utilisateur->setSalt($entity->getSalt());
                 $utilisateur->setPassword($entity->getPassword());
+                $utilisateur->setPasswordEnClair($entity->getPassword());
                 $utilisateur->setLocked(false);
                 $utilisateur->setExpired(false);
+                $utilisateur->setCredentialsExpired(false);
+                $utilisateur->setExtId($entity->getId());
+                $utilisateur->removeRole('ROLE_AEAG');
+                if ($entity->hasRole('ROLE_COMMENTATEUREDL')) {
+                    $utilisateur->addRole('ROLE_COMMENTATEUR');
+                } elseif ($entity->hasRole('ROLE_SUPERVISEUREDL')) {
+                    $utilisateur->addRole('ROLE_SUPERVISEUR');
+                } elseif ($entity->hasRole('ROLE_ADMINEDL')) {
+                    $utilisateur->addRole('ROLE_ADMIN');
+                }
+
+//                $roles = $utilisateur->getRoles();
+//                for ($i = 0; $i < count($roles); $i++) {
+//                    print_r('role ' . $i . ' :  ' . $roles[$i]);
+//                }
+                //return new Response('  ici : ');
+
+
                 $emEdl->persist($utilisateur);
                 $depts = $entity->getDepts();
-                $repoAdminDepartrement = $em->getRepository('AeagEdlBundle:AdminDepartement');
                 foreach ($depts as $dept) {
-                    $adminDepartement = $repoAdminDepartrement->getDepartementByDept($dept);
                     $depUtilisateur = new DepUtilisateur();
-                    $depUtilisateur->setInseeDepartement($adminDepartement->getInseeDepartement());
+                    $depUtilisateur->setInseeDepartement($dept->getInseeDepartement());
                     $depUtilisateur->setUtilisateur($utilisateur);
                     $emEdl->persist($depUtilisateur);
                 }
@@ -281,8 +299,6 @@ class UserController extends Controller {
             $notification->setMessage('Votre compte a été crée.');
             $em->persist($notification);
             $em->flush();
-            $notifications = $repoNotifications->getNotificationByRecepteur($entity);
-            $session->set('Notifications', $notifications);
 
 
             if ($security->isGranted('ROLE_ADMIN')) {
@@ -299,6 +315,9 @@ class UserController extends Controller {
                 return $this->redirect($this->generateUrl('AeagUserBundle_User', array('role' => 'ROLE_SQE')));
             };
             if ($security->isGranted('ROLE_ADMINSTOCK')) {
+                return $this->redirect($this->generateUrl('AeagUserBundle_User', array('role' => 'ROLE_STOCK')));
+            };
+            if ($security->isGranted('ROLE_ADMINEDL')) {
                 return $this->redirect($this->generateUrl('AeagUserBundle_User', array('role' => 'ROLE_EDL')));
             };
         }
@@ -319,10 +338,23 @@ class UserController extends Controller {
      *
      */
     public function editAction($id) {
+
+        $session = $this->get('session');
         $security = $this->get('security.authorization_checker');
         $factory = $this->get('security.encoder_factory');
         $em = $this->getDoctrine()->getManager();
+        $emEdl = $this->getDoctrine()->getManager('edl');
         $user = $this->getUser();
+        $repoUtilisateur = $emEdl->getRepository('AeagEdlBundle:Utilisateur');
+        $repoDeptUtilisateur = $emEdl->getRepository('AeagEdlBundle:DepUtilisateur');
+
+        $entity = $em->getRepository('AeagUserBundle:User')->find($id);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find User entity.');
+        }
+        
+       
         $role = 'ROLE_AEAG';
 
         if ($security->isGranted('ROLE_ADMIN')) {
@@ -343,26 +375,24 @@ class UserController extends Controller {
 
         if ($security->isGranted('ROLE_ADMINEDL')) {
             $role = 'ROLE_EDL';
-        };
-
-        $entity = $em->getRepository('AeagUserBundle:User')->find($id);
-
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find User entity.');
+            $utilisateur = $repoUtilisateur->getUtilisateurByExtid($entity->getId());
+            $deptUtilisateurs = $repoDeptUtilisateur->getDepartementByUtilisateur($utilisateur);
+        } else {
+            $utilisateur = null;
+            $deptUtilisateurs = null;
         }
-
-
-        $editForm = $this->createForm(new UsersUpdateType(), $entity);
-        $deleteForm = $this->createDeleteForm($id);
-        $message = null;
+        
+         $message = null;
+         $editForm = $this->createForm(new UsersUpdateType(), $entity);
         $maj = 'ko';
         return $this->render('AeagUserBundle:User:edit.html.twig', array(
                     'entity' => $entity,
                     'role' => $role,
+                    'utilisateur' => $utilisateur,
+                    'depUtilisateurs' => $deptUtilisateurs,
                     'message' => $message,
                     'form' => $editForm->createView(),
-                    'delete_form' => $deleteForm->createView(),
-                    'maj' => $maj
+                     'maj' => $maj
         ));
     }
 
@@ -372,12 +402,24 @@ class UserController extends Controller {
      */
     public function updateAction($id, Request $request) {
 
+        $session = $this->get('session');
         $security = $this->get('security.authorization_checker');
         $factory = $this->get('security.encoder_factory');
         $em = $this->getDoctrine()->getManager();
+        $emEdl = $this->getDoctrine()->getManager('edl');
         $user = $this->getUser();
-        $session = $this->get('session');
+        $repoUtilisateur = $emEdl->getRepository('AeagEdlBundle:Utilisateur');
+        $repoDeptUtilisateur = $emEdl->getRepository('AeagEdlBundle:DepUtilisateur');
         $repoUsers = $em->getRepository('AeagUserBundle:User');
+
+        $entity = $em->getRepository('AeagUserBundle:User')->find($id);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Impossible de retrouver l\' entity.' . $id);
+        }
+        
+        $message = null;
+      
         $role = 'ROLE_AEAG';
 
         if ($security->isGranted('ROLE_ADMIN')) {
@@ -400,38 +442,39 @@ class UserController extends Controller {
 
         if ($security->isGranted('ROLE_ADMINEDL')) {
             $role = 'ROLE_EDL';
-        };
-
-        $entity = $em->getRepository('AeagUserBundle:User')->find($id);
-
-        if (!$entity) {
-            throw $this->createNotFoundException('Impossible de retrouver l\' entity.' . $id);
+            $utilisateur = $repoUtilisateur->getUtilisateurByExtid($entity->getId());
+            $deptUtilisateurs = $repoDeptUtilisateur->getDepartementByUtilisateur($utilisateur);
+        } else {
+            $utilisateur = null;
+            $deptUtilisateurs = null;
         }
+
+
 
         $maj = 'ko';
         $form = $this->createForm(new UsersUpdateType(), $entity);
-        $deleteForm = $this->createDeleteForm($id);
-
 
         $form->handleRequest($request);
 
-
-        $message = null;
+        //$message = null;
 
         if ($entity->getRoles() == null) {
             $message = 'Le role est obligatoire ';
         }
-        if ($entity->getPassword() == null) {
+        
+       if ($entity->getPassword() == null) {
             if ($message) {
                 $message = 'Le login et le mot de passe sont obligatoire';
             } else {
                 $message = 'Le mot de passe est obligatoire';
             }
         }
-
+        
         if ($message) {
             return $this->render('AeagUserBundle:User:edit.html.twig', array(
                         'entity' => $entity,
+                        'utilisateur' => $utilisateur,
+                        'depUtilisateurs' => $deptUtilisateurs,
                         'role' => $role,
                         'message' => $message,
                         'form' => $form->createView()
@@ -439,32 +482,80 @@ class UserController extends Controller {
         }
 
 
-
         if ($form->isValid()) {
+            // return new Response('username : ' . $entity->getUsername() );
             $encoder = $factory->getEncoder($entity);
             $entity->setSalt('');
             $password = $encoder->encodePassword($entity->getPassword(), $entity->getSalt());
             $entity->setpassword($password);
             $entity->setPlainPassword($entity->getPassword());
-            //return new Response ('enabled : ' . $entity->getEnabled());
+
             if ($entity->getEnabled() == '0') {
                 $entity->setEnabled(FALSE);
             } else {
                 $entity->setEnabled(TRUE);
             }
-
+            
+            $entityHold = clone($entity);
+            
+            if ($entity->hasRole('ROLE_ADMINEDL')) {
+                $entity->removeRole('ROLE_COMMENTATEUREDL');
+                $entity->removeRole('ROLE_SUPERVISEUREDL');
+            }
+            if ($entity->hasRole('ROLE_SUPERVISEUREDL')) {
+                $entity->removeRole('ROLE_COMMENTATEUREDL');
+                $entity->removeRole('ROLE_ADMINEDL');
+            }
+            if ($entity->hasRole('ROLE_COMMENTATEUREDL')) {
+                $entity->removeRole('ROLE_ADMINEDL');
+                $entity->removeRole('ROLE_SUPERVISEUREDL');
+            }
             if ($entity->hasRole('ROLE_COMMENTATEUREDL') or $entity->hasRole('ROLE_SUPERVISEUREDL') or $entity->hasRole('ROLE_ADMINEDL')) {
                 $entity->addRole('ROLE_EDL');
+                $entity->removeRole('ROLE_AEAG');
             } else {
                 if (!$entity->hasRole('ROLE_AEAG')) {
                     $entity->addRole('ROLE_AEAG');
                 }
             }
-
-
-
             $em->persist($entity);
             $em->flush();
+            if ($entity->hasRole('ROLE_EDL')) {
+                $utilisateur->setEmail($entity->getEmail());
+                $utilisateur->setEmailCanonical($entity->getEmailCanonical());
+                $utilisateur->removeRole('ROLE_ADMIN');
+                $utilisateur->removeRole('ROLE_SUPERVISEUR');
+                $utilisateur->removeRole('ROLE_COMMENTATEUR');
+                if ($entity->hasRole('ROLE_COMMENTATEUREDL')) {
+                    $utilisateur->addRole('ROLE_COMMENTATEUR');
+                } elseif ($entity->hasRole('ROLE_SUPERVISEUREDL')) {
+                    $utilisateur->addRole('ROLE_SUPERVISEUR');
+                } elseif ($entity->hasRole('ROLE_ADMINEDL')) {
+                    $utilisateur->addRole('ROLE_ADMIN');
+                }
+
+//                $roles = $utilisateur->getRoles();
+//                for ($i = 0; $i < count($roles); $i++) {
+//                    print_r('role ' . $i . ' :  ' . $roles[$i]);
+//                }
+                //return new Response('  ici : ');
+
+
+                $emEdl->persist($utilisateur);
+                 $depUtilisateurs = $repoDeptUtilisateur->getDepartementByUtilisateur($utilisateur);
+                foreach ($depUtilisateurs as $depUtilisateur) {
+                    $emEdl->remove($depUtilisateur);
+                }
+                $emEdl->flush();
+                $depts = $entity->getDepts();
+                foreach ($depts as $dept) {
+                    $depUtilisateur = new DepUtilisateur();
+                    $depUtilisateur->setInseeDepartement($dept->getInseeDepartement());
+                    $depUtilisateur->setUtilisateur($utilisateur);
+                    $emEdl->persist($depUtilisateur);
+                }
+                $emEdl->flush();
+            }
 
             $repoNotifications = $em->getRepository('AeagAeagBundle:Notification');
             $notification = new Notification();
@@ -476,48 +567,38 @@ class UserController extends Controller {
             $em->persist($notification);
             $em->flush();
 
-            // message aux administrateurs du site
-            if ($entity->hasRole('ROLE_STOCK')) {
-                $admins = $repoUsers->getUsersByRole('ROLE_ADMINSTOCK');
-            } elseif ($entity->hasRole('ROLE_FRD')) {
-                $admins = $repoUsers->getUsersByRole('ROLE_ADMINFRD');
-            } elseif ($entity->hasRole('ROLE_SQE')) {
-                $admins = $repoUsers->getUsersByRole('ROLE_ADMINSQE');
-            } elseif ($entity->hasRole('ROLE_DEC')) {
-                $admins = $repoUsers->getUsersByRole('ROLE_ADMINDEC');
-            } elseif ($entity->hasRole('ROLE_EDL')) {
-                $admins = $repoUsers->getUsersByRole('ROLE_ADMINEDL');
-            } else {
-                $admins = null;
-            }
-            if ($admins) {
-                foreach ($admins as $admin) {
-                    $notification = new Notification();
-                    $notification->setRecepteur($admin->getId());
-                    $notification->setEmetteur($user->getId());
-                    $notification->setNouveau(true);
-                    $notification->setIteration(2);
-                    $notification->setMessage('le compte de ' . $entity->getUserName() . ' a été modifié.');
-                    $em->persist($notification);
-                    $em->flush();
-                }
-            }
 
-            $mes = AeagController::notificationAction($user, $em, $session);
-            $mes1 = AeagController::messageAction($user, $em, $session);
-            $maj = 'ok';
-            $session->getFlashBag()->add('notice-success', "le compte de  " . $entity->getUserName() . " a été modifié !");
-            return $this->redirect($this->generateUrl('AeagUserBundle_User', array('role' => $role)));
+            if ($security->isGranted('ROLE_ADMIN')) {
+                return $this->redirect($this->generateUrl('AeagUserBundle_User', array('role' => 'ROLE_AEAG')));
+            };
+            if ($security->isGranted('ROLE_ADMINDEC')) {
+                return $this->redirect($this->generateUrl('AeagUserBundle_User', array('role' => 'ROLE_ODEC')));
+            };
+            if ($security->isGranted('ROLE_ADMINFRD')) {
+                return $this->redirect($this->generateUrl('AeagUserBundle_User', array('role' => 'ROLE_FRD')));
+            };
+
+            if ($security->isGranted('ROLE_ADMINSQE')) {
+                return $this->redirect($this->generateUrl('AeagUserBundle_User', array('role' => 'ROLE_SQE')));
+            };
+            if ($security->isGranted('ROLE_ADMINSTOCK')) {
+                return $this->redirect($this->generateUrl('AeagUserBundle_User', array('role' => 'ROLE_STOCK')));
+            };
+            if ($security->isGranted('ROLE_ADMINEDL')) {
+                return $this->redirect($this->generateUrl('AeagUserBundle_User', array('role' => 'ROLE_EDL')));
+            };
         }
+
 
 
         return $this->render('AeagUserBundle:User:edit.html.twig', array(
                     'entity' => $entity,
+                    'utilisateur' => $utilisateur,
+                    'depUtilisateurs' => $deptUtilisateurs,
                     'role' => $role,
                     'message' => $message,
                     'form' => $form->createView(),
-                    'delete_form' => $deleteForm->createView(),
-                    'maj' => $maj
+                     'maj' => $maj
         ));
     }
 

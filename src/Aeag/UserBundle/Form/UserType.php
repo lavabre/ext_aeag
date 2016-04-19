@@ -31,15 +31,14 @@ class UserType extends AbstractType
                                      'ROLE_ADMINSQE' => 'Administrateur Sqe',
                                      'ROLE_ADMINEDL' => 'Administrateur Edl',
                                      'ROLE_PROGSQE' => 'Programmeur Sqe',
-                                        'ROLE_PRESTASQE' => 'Prestataire Sqe',
+                                     'ROLE_PRESTASQE' => 'Prestataire Sqe',
                                      'ROLE_ODEC' => 'Collecteur  Déchet',
                                     'ROLE_FRD' => 'Membre Frd ',
                                     'ROLE_SQE' => 'Consultant Sqe ',
                                     'ROLE_COMMENTATEUREDL' => 'Commentateur Edl',
                                     'ROLE_SUPERVISEUREDL' => 'Superviseur Edl',),
                'empty_value' => 'Choisissez un rôle',
-               'empty_data'  => array('ROLE_AEAG'),
-               'required'  => true,
+                'required'  => true,
                 'multiple' => true,
               ))
                 

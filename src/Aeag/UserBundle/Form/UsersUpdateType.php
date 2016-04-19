@@ -37,6 +37,19 @@ class UsersUpdateType extends AbstractType {
                     'required' => true,
                     'multiple' => true,
                 ))
+               
+                 ->add('depts', 'entity', array(
+                    'class' => 'Aeag\EdlBundle\Entity\AdminDepartement',
+                    'property' => 'nomDepartement',
+                    'expanded' => false,
+                    'multiple' => true,
+                    'required' => false,
+                    'empty_value' => '     ',
+                    'query_builder' => function(\Doctrine\ORM\EntityRepository $er) {
+                        $qb = $er->createQueryBuilder('d');
+                        return $qb->orderBy('d.inseeDepartement', 'ASC');
+                    },
+                ))
            ;
 
         ;
