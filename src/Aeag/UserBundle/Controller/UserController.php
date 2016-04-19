@@ -8,13 +8,12 @@ use Aeag\UserBundle\Entity\UserEdl;
 use Aeag\AeagBundle\Entity\Correspondant;
 use Aeag\AeagBundle\Entity\Notification;
 use Aeag\UserBundle\Form\UserType;
-use Aeag\UserBundle\Form\UserEdlType;
 use Aeag\UserBundle\Form\UsersUpdateType;
-use Aeag\UserBundle\Form\UsersEdlUpdateType;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Aeag\AeagBundle\Controller\AeagController;
 use Aeag\EdlBundle\Entity\Utilisateur;
+use Aeag\EdlBundle\Entity\AdminDepartement;
 use Aeag\EdlBundle\Entity\DepUtilisateur;
 
 /**
@@ -145,17 +144,10 @@ class UserController extends Controller {
             $role = 'ROLE_EDL';
         };
 
-
-        if ($role == 'ROLE_EDL') {
-            $entity = new UserEdl();
-            $entity->setEnabled(true);
-            $form = $this->createForm(new UserEdlType(), $entity);
-        } else {
-            $entity = new User();
+        $entity = new User();
             $entity->setEnabled(true);
             $form = $this->createForm(new UserType(), $entity);
-        }
-
+     
         return $this->render('AeagUserBundle:User:new.html.twig', array(
                     'entity' => $entity,
                     'role' => $role,
@@ -198,15 +190,9 @@ class UserController extends Controller {
             $role = 'ROLE_EDL';
         };
 
-
-        if ($role == 'ROLE_EDL') {
-            $entity = new UserEdl();
-            $form = $this->createForm(new UserEdlType(), $entity);
-        } else {
-            $entity = new User();
-            $form = $this->createForm(new UserType(), $entity);
-        }
-
+        $entity = new User();
+        $form = $this->createForm(new UserType(), $entity);
+     
         $form->handleRequest($request);
 
         $message = null;
@@ -227,7 +213,7 @@ class UserController extends Controller {
 
         if (is_null($entity->getRoles())) {
             $message = 'Le role est obligatoire ';
-        }
+        } 
 
         if ($message) {
             return $this->render('AeagUserBundle:User:new.html.twig', array(
@@ -259,23 +245,7 @@ class UserController extends Controller {
                     $entity->addRole('ROLE_AEAG');
                 }
             }
-            $utilisateur = new User();
-            $utilisateur->setUsername($entity->getUsername());
-            $utilisateur->setUsernameCanonical($entity->getUsernameCanonical());
-            $utilisateur->setEmail($entity->getEmail());
-            $utilisateur->setEmail1($entity->getEmail1());
-            $utilisateur->setEmail2($entity->getEmail2());
-            $utilisateur->setEmailCanonical($entity->getEmailCanonical());
-            $utilisateur->setTel($entity->getTel());
-            $utilisateur->setTel1($entity->getTel1());
-            $utilisateur->setEnabled($entity->getEnabled());
-            $utilisateur->setSalt($entity->getSalt());
-            $utilisateur->setPassword($entity->getPassword());
-             $utilisateur->setRoles($entity->getRoles());
-            $utilisateur->setLocked(false);
-            $utilisateur->setExpired(false);
-            $utilisateur->setCredentialsExpired(false);
-            $em->persist($utilisateur);
+            $em->persist($entity);
             $em->flush();
             if ($user->hasRole('ROLE_EDL')) {
                 $utilisateur = new Utilisateur();
@@ -290,9 +260,12 @@ class UserController extends Controller {
                 $utilisateur->setLocked(false);
                 $utilisateur->setExpired(false);
                 $emEdl->persist($utilisateur);
-                foreach ($entity->getDept() as $dept) {
+                $depts = $entity->getDepts();
+                $repoAdminDepartrement = $em->getRepository('AeagEdlBundle:AdminDepartement');
+                foreach ($depts as $dept) {
+                    $adminDepartement = $repoAdminDepartrement->getDepartementByDept($dept);
                     $depUtilisateur = new DepUtilisateur();
-                    $depUtilisateur->setInseeDepartement($dept->getInseeDepartement());
+                    $depUtilisateur->setInseeDepartement($adminDepartement->getInseeDepartement());
                     $depUtilisateur->setUtilisateur($utilisateur);
                     $emEdl->persist($depUtilisateur);
                 }

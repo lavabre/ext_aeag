@@ -211,46 +211,18 @@
                       {% if  role == 'ROLE_EDL' %}
                            <div class="form-group">
                                 <label class="col-xm-3 control-label">Départements attribués</label>
-                                 {% if form_errors(form.dept) %}
+                                 {% if form_errors(form.depts) %}
                                      <div class="input-group has-error has-feedback">
                                  {% else %}
                                       <div class="input-group">
                                   {% endif %}
                                       <span class="input-group-addon"><i class="fa fa-globe"></i></span>
-                                      {{ form_widget(form.dept, { 'attr': {'class': 'form-control', 'placeholder': 'Départements attribués'} }) }}
+                                      {{ form_widget(form.depts, { 'attr': {'class': 'form-control', 'placeholder': 'Départements attribués'} }) }}
                                     </div>
                             </div>
                       {% endif %}
                         
-                     <div class="form-group">
-                        <label class="col-xm-3 control-label">Autorisation</label>
-                         {% if form_errors(form.enabled) %}
-                             <div class="input-group has-error has-feedback">
-                         {% else %}
-                              <div class="input-group">
-                          {% endif %}
-                              <span class="input-group-addon"><i class="fa fa-graduation-cap"></i></span>
-                              {{ form_widget(form.enabled, { 'attr': {'class': 'form-control', 'placeholder': 'Autoriser'} }) }}
-                            </div>
-                    </div>
-                        
-                    <div class="form-group">
-                        <div class="col-xs-offset-4 col-xs-8">
-                           <button id="btForm" type="submit" class="btn btn-success"><i class="fa fa-save"></i> Enregister</button>
-                           <a id="btFermer" class="btn btn-danger" href="{{ path('AeagUserBundle_User', { 'role': role }) }}"><i class="fa fa-power-off"></i> Annuler</a>
-                         </div>
-                     </div>
-                   
-                   
-                                       
-                  <div class="hide">
-                  {{ form_rest(form) }}
-                  </div>
-                        
-          </form>
-          
-             
-      </div>
+           
                         
             <div class="form-group">
                <label class="col-xm-3 control-label">Autorisation</label>
@@ -274,6 +246,8 @@
                        <a class="btn btn-danger  pull-right" href="{{ path('AeagUserBundle_User', { 'role': 'ROLE_FRD' }) }}"><i class="fa fa-power-off"></i>  Annuler</a>
                     {% elseif is_granted('ROLE_ADMINSQE')%}
                        <a class="btn btn-danger  pull-right" href="{{ path('AeagUserBundle_User', { 'role': 'ROLE_SQE' }) }}"><i class="fa fa-power-off"></i>  Annuler</a>
+                   {% elseif is_granted('ROLE_ADMINEDL')%}
+                       <a class="btn btn-danger  pull-right" href="{{ path('AeagUserBundle_User', { 'role': 'ROLE_EDL' }) }}"><i class="fa fa-power-off"></i>  Annuler</a>
                     {% endif %}
                     <button type="submit" class="btn btn-success  pull-right"><i class="fa fa-save"></i> Enregister</button>
                 </div>

@@ -68,9 +68,15 @@ class User extends BaseUser {
      * @var string
      */
     protected $salt;
+    
+      /**
+     * @var array
+     */
+    protected $depts;
 
     public function _construct() {
         $this->roles = array();
+        $this->depts = array();
     }
 
     public function getId() {
@@ -140,5 +146,15 @@ class User extends BaseUser {
     public function setSalt($salt) {
         $this->salt = $salt;
     }
+    
+    function getDepts() {
+        return $this->depts;
+    }
+
+    function setDepts($depts) {
+        $this->depts = $depts;
+    }
+
+
 
 }
