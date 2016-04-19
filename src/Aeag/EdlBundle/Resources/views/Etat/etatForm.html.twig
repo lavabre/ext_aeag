@@ -55,21 +55,20 @@
 	// validation de la saisie
 	$("#valider").click(function(e){
             
-               alert($("#form{{ cdEtat }} > #form_valeur").val());
-                if ( $("#form{{ cdEtat }} > #form_commentaire").val() == '' || $("#form{{ cdEtat }} > #form_valeur").val() == '')
-                {
-                    alert("Choisissez un état et saisissez un commentaire svp");
-               
-                } else
-                {
-            
-		// lancer la requête ajax qui valide la saisie
-                
-		e.preventDefault();
+                            if ( $("#form{{ cdEtat }} > #form_commentaire").val() == '' || $("#form{{ cdEtat }} > #form_valeur").val() == '')
+                            {
+                                alert("Choisissez un état et saisissez un commentaire svp");
+
+                            } else
+                            {
+                        	// lancer la requête ajax qui valide la saisie
+                                          $('#modalEtatEdit').modal('hide');
+                                          $('#modalTraitementEncours').modal('toggle');
+                                        e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
 		 		
 		//alert($("#form{{ cdEtat }} > #form_valeur").val());
                 
-                // obtenir l'url
+                                     // obtenir l'url
 		var $url = "{{ path('AeagEdlBundle_etatSubmit') }}";
                                
 		$.getJSON($url,
@@ -88,23 +87,22 @@
 	
 				// masquer le div de saisie
 	   			$("#divNewEtat{{ cdEtat }}").hide();
+                                                                             
 	
 	   			// charger et afficher les propositions pour cette etat
 	   			//alert(json.message);
-				$("body").css("cursor", "wait");
-                                
-                                $.post("{{ path('AeagEdlBundle_etatListProposed') }}", 
+			
+                                                                              $.post("{{ path('AeagEdlBundle_etatListProposed') }}", 
    					{ 
-   						euCd: "{{ euCd }}", 
-   						cdEtat: "{{ cdEtat }}"
+                                                                                                euCd: "{{ euCd }}", 
+                                                                                                cdEtat: "{{ cdEtat }}"
    					}, 
    					function(data) {
    	   					//alert(data);
-   	   					var $div = "#divEtat{{ cdEtat }}";
+   	   					var $div = "#divEtat-{{ euCd }}-{{ cdEtat }}";
    						// placer le formulaire sous le div
    						$($div).html(data); 
-   						// rétablir curseur
-   						$("body").css("cursor", "auto");
+   						$('#modalTraitementEncours').modal('hide');
                                               
    					}
    				).error(function() { 

@@ -20,12 +20,13 @@
                           </tr>
                     </thead>
                     <tbody>
-                            {% for etat in etats %}
-                                <div id="divEtat{{ etatGroupe.cdGroupe }}_{{ etat.etatType.cdEtat }}" >
-                                           {{ render(controller('AeagEdlBundle:Etat:etatListProposed', {'euCd':etat.masseEau.euCd, 'cdEtat':etat.etatType.cdEtat})) }}
+                           {% for etat in etats %}
+                                <div id="divEtat-{{ etat.euCd }}-{{ etat.cdEtat }}" >
+                                           {{ render(controller('AeagEdlBundle:Etat:etatListProposed', {'euCd':etat.euCd, 'cdEtat':etat.cdEtat})) }}
                                </div>     
                            {% endfor %}
-                          </tbody>
+                  
+                    </tbody>
                 </table>
               </div>
             </div>

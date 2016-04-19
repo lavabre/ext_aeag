@@ -1904,11 +1904,12 @@ class CollecteurController extends Controller {
                                 $message = $message . "dans le fichier CSV : siret " . $tab[0] . " incorrect à la ligne " . $ligne . ".  \n";
                             }
                             $producteurs = $repoOuvrage->getOuvragesBySiretType($tab[0], 'PDEC');
-                            if ($producteurs) {
+                            $producteur = null;
+                            if (count($producteurs) > 0) {
                                 $producteur = $producteurs[0];
-                            }
+                             }
                             if (!$producteur) {
-                                $producteur = new Ouvrage();
+                                  $producteur = new Ouvrage();
                                 $producteur->setLibelle($this->wd_remove_accents($tab[1]));
                                 if ($tab[2]) {
                                     $tab[2] = str_replace(' ', '', $tab[2]);
@@ -1951,7 +1952,8 @@ class CollecteurController extends Controller {
                                 $em->persist($producteur);
                                 $em->flush();
                             }
-
+                            
+                          
                             $naf = null;
                             if ($tab[3] != "") {
                                 $tab[3] = str_replace(' ', '', $tab[3]);

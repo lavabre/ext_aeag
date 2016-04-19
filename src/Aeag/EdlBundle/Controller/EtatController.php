@@ -31,7 +31,7 @@ class EtatController extends Controller {
         $cdEtat = $request->get('cdEtat');
 
         $repo = $emEdl->getRepository('AeagEdlBundle:EtatMe');
-        $etatInitiale = $repo->findOneBy(array('masseEau' => $euCd, 'etatType' => $cdEtat));
+        $etatInitiale = $repo->findOneBy(array('euCd' => $euCd, 'cdEtat' => $cdEtat));
 
         $proposed = new EtatMeProposed();
         $proposed->setEuCd($euCd);
@@ -70,6 +70,9 @@ class EtatController extends Controller {
         $session->set('fonction', 'etatForm');
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
+        $repoUtilisateur = $emEdl->getRepository('AeagEdlBundle:Utilisateur');
+        $utilisateur = $repoUtilisateur->getUtilisateurByExtid($user->getId());
+        
         // récupération des paramètres
         $euCd = $request->get('euCd');
         $cdEtat = $request->get('cdEtat');
@@ -94,7 +97,7 @@ class EtatController extends Controller {
             }
 
 
-            $proposed->setUtilisateur($user);
+            $proposed->setUtilisateur( $utilisateur);
             $proposed->setValeur($valeur);
             $proposed->setCommentaire($commentaire);
 
@@ -154,7 +157,7 @@ class EtatController extends Controller {
         $cdEtat = $request->get('cdEtat');
     
         $repo = $emEdl->getRepository('AeagEdlBundle:EtatMe');
-        $etatInitiale = $repo->findOneBy(array('masseEau' => $euCd, 'etatType' => $cdEtat));
+        $etatInitiale = $repo->findOneBy(array('euCd' => $euCd, 'cdEtat' => $cdEtat));
         
        // return new Response ('$masseEau : ' . $euCd. '  $etatType : ' . $cdEtat);
         $repo = $emEdl->getRepository('AeagEdlBundle:EtatMe');
@@ -175,6 +178,8 @@ class EtatController extends Controller {
         $session->set('fonction', 'etatListProposed');
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
+        $repoUtilisateur = $emEdl->getRepository('AeagEdlBundle:Utilisateur');
+        $utilisateur = $repoUtilisateur->getUtilisateurByExtid($user->getId());
 
         $euCd = $request->get('euCd');
         $cdEtat = $request->get('cdEtat');
@@ -185,8 +190,8 @@ class EtatController extends Controller {
 
         $proposition = $repo->findOneBy(array('euCd' => $euCd, 'cdEtat' => $cdEtat, 'utilisateur' => $login, 'propositionDate' => $propositionDate));
 
-        $em->remove($proposition);
-        $em->flush();
+        $emEdl->remove($proposition);
+        $emEdl->flush();
 
         return $this->forward('AeagEdlBundle:Etat:etatListProposed', array(
                     'euCd' => $euCd,
