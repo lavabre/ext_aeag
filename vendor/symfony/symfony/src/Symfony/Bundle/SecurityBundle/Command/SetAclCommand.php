@@ -69,7 +69,7 @@ problem.
 
 To set permissions for a role, use the <info>--role</info> option:
 
-  <info>php %command.full_name% --role=ROLE_USER VIEW Acme/MyClass:1936</info>
+  <info>php %command.full_name% --role=ROLE_AEAG VIEW Acme/MyClass:1936</info>
 
 To set permissions at the class scope, use the <info>--class-scope</info> option:
 

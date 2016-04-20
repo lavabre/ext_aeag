@@ -23,9 +23,9 @@ class AccessMapTest extends \PHPUnit_Framework_TestCase
 
         $map = new AccessMap();
         $map->add($requestMatcher1, array('ROLE_ADMIN'), 'http');
-        $map->add($requestMatcher2, array('ROLE_USER'), 'https');
+        $map->add($requestMatcher2, array('ROLE_AEAG'), 'https');
 
-        $this->assertSame(array(array('ROLE_USER'), 'https'), $map->getPatterns($request));
+        $this->assertSame(array(array('ROLE_AEAG'), 'https'), $map->getPatterns($request));
     }
 
     public function testReturnsEmptyPatternIfNoneMatched()
@@ -34,7 +34,7 @@ class AccessMapTest extends \PHPUnit_Framework_TestCase
         $requestMatcher = $this->getRequestMatcher($request, false);
 
         $map = new AccessMap();
-        $map->add($requestMatcher, array('ROLE_USER'), 'https');
+        $map->add($requestMatcher, array('ROLE_AEAG'), 'https');
 
         $this->assertSame(array(null, null), $map->getPatterns($request));
     }

@@ -9,7 +9,7 @@ security:
         in_memory:
             memory:
                 users:
-                    johannes: { password: test, roles: [ROLE_USER] }
+                    johannes: { password: test, roles: [ROLE_AEAG] }
 
     firewalls:
         default:
@@ -23,4 +23,4 @@ security:
             anonymous: ~
 
     access_control:
-        - { path: '^/(?:[a-z]{2})/secure/.*', roles: ROLE_USER }
+        - { path: '^/(?:[a-z]{2})/secure/.*', roles: ROLE_AEAG }

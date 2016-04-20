@@ -51,7 +51,7 @@ class ControllerTest extends TestCase
     public function testGetUser()
     {
         $user = new User('user', 'pass');
-        $token = new UsernamePasswordToken($user, 'pass', 'default', array('ROLE_USER'));
+        $token = new UsernamePasswordToken($user, 'pass', 'default', array('ROLE_AEAG'));
 
         $controller = new TestController();
         $controller->setContainer($this->getContainerWithTokenStorage($token));

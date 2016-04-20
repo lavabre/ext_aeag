@@ -22,13 +22,13 @@ class InMemoryUserProviderTest extends \PHPUnit_Framework_TestCase
             'fabien' => array(
                 'password' => 'foo',
                 'enabled' => false,
-                'roles' => array('ROLE_USER'),
+                'roles' => array('ROLE_AEAG'),
             ),
         ));
 
         $user = $provider->loadUserByUsername('fabien');
         $this->assertEquals('foo', $user->getPassword());
-        $this->assertEquals(array('ROLE_USER'), $user->getRoles());
+        $this->assertEquals(array('ROLE_AEAG'), $user->getRoles());
         $this->assertFalse($user->isEnabled());
     }
 

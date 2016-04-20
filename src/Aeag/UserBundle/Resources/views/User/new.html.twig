@@ -15,7 +15,11 @@
             {% elseif is_granted('ROLE_ADMINFRD')%}
                <a href="{{ path('AeagUserBundle_User', { 'role': 'ROLE_FRD' }) }}">Utilisateurs</a>
             {% elseif is_granted('ROLE_ADMINSQE')%}
-            <a href="{{ path('AeagUserBundle_User', { 'role': 'ROLE_FRD' }) }}">Utilisateurs</a>
+            <a href="{{ path('AeagUserBundle_User', { 'role': 'ROLE_SQE' }) }}">Utilisateurs</a>
+            {% elseif is_granted('ROLE_ADMINEDL')%}
+            <a href="{{ path('AeagUserBundle_User', { 'role': 'ROLE_EDL' }) }}">Utilisateurs</a>
+            {% elseif is_granted('ROLE_ADMINSTOCK')%}
+            <a href="{{ path('AeagUserBundle_User', { 'role': 'ROLE_STOCK' }) }}">Utilisateurs</a>
             {% endif %}
           </i>
         </li>
@@ -56,18 +60,20 @@
              {% endif %} 
 
          {% endspaceless %}
-               
-      <div class="form-group">
-            <label for="aeag_userbundle_userrtype_correspondant" class="col-xm-3 control-label">Référence Aeag</label>
-            {% if form_errors(form.correspondant) %}
-                <div class="input-group has-error has-feedback">
-            {% else %}
-                 <div class="input-group">
-             {% endif %}
-               <span class="input-group-addon"><i class="fa fa-user"></i></span>
-               {{ form_widget(form.correspondant, { 'attr': {'class': 'form-control', 'placeholder': 'Référenence aeag (cor_id)'} }) }}
-             </div>
-         </div>
+             
+         {%if not is_granted('ROLE_ADMINEDL')%}
+        <div class="form-group">
+              <label for="aeag_userbundle_userrtype_correspondant" class="col-xm-3 control-label">Référence Aeag</label>
+              {% if form_errors(form.correspondant) %}
+                  <div class="input-group has-error has-feedback">
+              {% else %}
+                   <div class="input-group">
+               {% endif %}
+                 <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                 {{ form_widget(form.correspondant, { 'attr': {'class': 'form-control', 'placeholder': 'Référenence aeag (cor_id)'} }) }}
+               </div>
+           </div>
+         {% endif %}
           
         <div class="form-group">
             <label for="aeag_userbundle_userrtype_username" class="col-xm-3 control-label">Login</label>
@@ -154,17 +160,70 @@
                         </div>
               </div> 
                                    
-            <div class="form-group">
-                 <label class="col-xm-3 control-label">Rôle</label>
-                  {% if form_errors(form.roles) %}
-                      <div class="input-group has-error has-feedback">
-                  {% else %}
-                       <div class="input-group">
-                   {% endif %}
-                       <span class="input-group-addon"><i class="fa fa-graduation-cap"></i></span>
-                       {{ form_widget(form.roles, { 'attr': {'size':'7', 'class': 'form-control', 'placeholder': 'Rôle'} }) }}
-                     </div>
-             </div>
+                            
+                 <div class="form-group">
+                        <label class="col-xm-3 control-label">Rôle</label>
+                         {% if form_errors(form.roles) %}
+                             <div class="input-group has-error has-feedback">
+                         {% else %}
+                              <div class="input-group">
+                          {% endif %}
+                              <span class="input-group-addon"><i class="fa fa-graduation-cap"></i></span>
+                                     <select id="aeag_userbundle_usertype_roles" class="form-control valid" multiple="multiple" placeholder="Rôle" size="7" required="required" name="aeag_userbundle_usertype[roles][]" aria-required="true" aria-invalid="false">
+                                            {% if role == 'ROLE_AEAG' %}
+                                                      <option value="ROLE_ADMIN">Administrateur </option>
+                                                      <option value="ROLE_ADMINDEC">Administrateur Déchet</option>
+                                                      <option value="ROLE_ADMINFRD">Administrateur Frd</option>
+                                                      <option value="ROLE_ADMINSQE">Administrateur Sqe</option>
+                                                      <option value="ROLE_ADMINEDL">Administrateur Edl</option>
+                                                      <option value="ROLE_ADMINSTOCK">Administrateur Stock</option>
+                                                      <option value="ROLE_PROGSQE"> Programmeur Sqe</option>
+                                                       <option value="ROLE_ODEC"> Collecteur  Déchet</option>
+                                                       <option value="ROLE_FRD"> Membre Frd</option>
+                                                       <option value="ROLE_SQE">Consultant Sqe</option>
+                                                       <option value="ROLE_STOCK">Utilisateur Stock</option>
+                                                      <option value="ROLE_COMMENTATEUREDL">Commentateur Edl</option>
+                                                       <option value="ROLE_SUPERVISEUREDL">Superviseur Edl</option>
+                                                        <option selected="selected" value="ROLE_AEAG">Consultant</option>
+                                            {% elseif  role == 'ROLE_ODEC' %}
+                                                      <option value="ROLE_ADMINDEC">Administrateur Déchet</option>
+                                                      <option selected="selected" value="ROLE_ODEC"> Collecteur  Déchet</option>
+                                             {% elseif  role == 'ROLE_FRD' %}
+                                                     <option value="ROLE_ADMINFRD">Administrateur Frd</option>
+                                                     <option selected="selected"  value="ROLE_FRD"> Membre Frd</option>
+                                              {% elseif  role == 'ROLE_SQE' %}
+                                                     <option value="ROLE_ADMINSQE">Administrateur Sqe</option>
+                                                     <option value="ROLE_PRESTASQE">Administrateur Sqe</option>
+                                                     <option value="ROLE_PROGSQE"> Programmeur Sqe</option>
+                                                     <option selected="selected" value="ROLE_SQE">Consultant Sqe</option>
+                                             {% elseif  role == 'ROLE_STOCK' %}
+                                                     <option value="ROLE_ADMINSTOCK">Administrateur Stock</option>
+                                                     <option selected="selected" value="ROLE_STOCK">Utilisateur Stock</option>
+                                              {% elseif  role == 'ROLE_EDL' %}
+                                                     <option value="ROLE_ADMINEDL">Administrateur Edl</option>
+                                                     <option value="ROLE_SUPERVISEUREDL">Superviseur Edl</option>
+                                                     <option selected="selected" value="ROLE_COMMENTATEUREDL">Commentateur Edl</option>
+                                              {% endif %}
+                                    </select>
+                            </div>
+                    </div>
+           
+                                    
+                      {% if  role == 'ROLE_EDL' %}
+                           <div class="form-group">
+                                <label class="col-xm-3 control-label">Départements attribués</label>
+                                 {% if form_errors(form.depts) %}
+                                     <div class="input-group has-error has-feedback">
+                                 {% else %}
+                                      <div class="input-group">
+                                  {% endif %}
+                                      <span class="input-group-addon"><i class="fa fa-globe"></i></span>
+                                      {{ form_widget(form.depts, { 'attr': {'class': 'form-control', 'placeholder': 'Départements attribués'} }) }}
+                                    </div>
+                            </div>
+                      {% endif %}
+                        
+           
                         
             <div class="form-group">
                <label class="col-xm-3 control-label">Autorisation</label>
@@ -188,6 +247,8 @@
                        <a class="btn btn-danger  pull-right" href="{{ path('AeagUserBundle_User', { 'role': 'ROLE_FRD' }) }}"><i class="fa fa-power-off"></i>  Annuler</a>
                     {% elseif is_granted('ROLE_ADMINSQE')%}
                        <a class="btn btn-danger  pull-right" href="{{ path('AeagUserBundle_User', { 'role': 'ROLE_SQE' }) }}"><i class="fa fa-power-off"></i>  Annuler</a>
+                   {% elseif is_granted('ROLE_ADMINEDL')%}
+                       <a class="btn btn-danger  pull-right" href="{{ path('AeagUserBundle_User', { 'role': 'ROLE_EDL' }) }}"><i class="fa fa-power-off"></i>  Annuler</a>
                     {% endif %}
                     <button type="submit" class="btn btn-success  pull-right"><i class="fa fa-save"></i> Enregister</button>
                 </div>

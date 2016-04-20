@@ -53,8 +53,8 @@ CHANGELOG
                 providers: [my_memory_provider, my_doctrine_provider]
             my_memory_provider:
                 users:
-                    toto: { password: foobar, roles: [ROLE_USER] }
-                    foo: { password: bar, roles: [ROLE_USER, ROLE_ADMIN] }
+                    toto: { password: foobar, roles: [ROLE_AEAG] }
+                    foo: { password: bar, roles: [ROLE_AEAG, ROLE_ADMIN] }
     ```
 
     After:
@@ -68,8 +68,8 @@ CHANGELOG
             my_memory_provider:
                 memory:
                     users:
-                        toto: { password: foobar, roles: [ROLE_USER] }
-                        foo: { password: bar, roles: [ROLE_USER, ROLE_ADMIN] }
+                        toto: { password: foobar, roles: [ROLE_AEAG] }
+                        foo: { password: bar, roles: [ROLE_AEAG, ROLE_ADMIN] }
     ```
 
  * [BC BREAK] Method `equals` was removed from `UserInterface` to its own new

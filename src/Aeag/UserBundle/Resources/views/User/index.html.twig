@@ -43,16 +43,7 @@
                                 <th>Rôles</th>
                                 <th>dernière connexion</th>
                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        </thead>
+                         </thead>
                         <tbody>
                             {% for entity in entities %}
                                 <tr>
@@ -82,9 +73,12 @@
                                          {% if role == 'ROLE_ADMINDEC' %} {{'Gestionnaire Déchet'}} {% endif %}
                                          {% if role == 'ROLE_ADMINFRD' %} {{'Gestionnaire Frd'}} {% endif %}
                                          {% if role == 'ROLE_ADMINSQE' %} {{'Gestionnaire Sqe'}} {% endif %}
+                                         {% if role == 'ROLE_ADMINEDL' %} {{'Gestionnaire Edl'}} {% endif %}
                                          {% if role == 'ROLE_ODEC' %} {{'Collecteur Déchet'}} {% endif %}
                                          {% if role == 'ROLE_FRD' %} {{'Membre Frd'}} {% endif %}
                                          {% if role == 'ROLE_SQE' %} {{'Intervenant Sqe'}} {% endif %}
+                                         {% if role == 'ROLE_COMMENTATEUREDL' %} {{'Commentateur Edl'}} {% endif %}
+                                         {% if role == 'ROLE_SUPERVISEUREDL' %} {{'Superviseur Edl'}} {% endif %}
                                     {% endfor %}
                                      </td>
                                     <td>{% if entity.0.lastLogin %}{{ entity.0.lastLogin|date('d/m/Y H:i:s') }}{% endif%}</td>
@@ -98,51 +92,18 @@
   {%endblock content %}
  
   {% block scripts %}
-   
-      // DataTable
-          var table = $('#idTable').DataTable(
-                      {"stateSave": true,
-                       "oLanguage": {
-                          "sSearch": "Filtre",
-                          "sFirst": "1ere page",
-                          "sLast": "Dernière page",
-                          "sNext": "Prochaine page",
-                          "sPrevious": "Page précédente",
-                          "EmptyTable": "Pas de données",
-                          "sInfo": "Nombre d'enregistrements :  _TOTAL_",
-                          "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
-                          "sZeroRecords": "Pas d'enregistrement à afficher",
-                          "sInfoEmpty": "Pas d'enregistrement à afficher",
-                          "sInfoThousands": " ",
-                          "sLengthMenu": 'Afficher <select>' +
-                                  '<option value="10">10</option>' +
-                                  '<option value="20">20</option>' +
-                                  '<option value="30">30</option>' +
-                                  '<option value="40">40</option>' +
-                                  '<option value="50">50</option>' +
-                                  '<option value="-1">Tous</option>' +
-                                  '</select> enregistrements',
-                          "sPaginationType": "full_numbers"
-                      }
-                     }
-                    );
-       
-  
-    $("#idTable thead td").each( function ( i ) {
-    
-     if (i != 0){
-        var select = $('<select><option value=""></option></select>')
-            .appendTo( $(this).empty() )
-            .on( 'change', function () {
-                table.column( i )
-                    .search( $(this).val() )
-                    .draw();
-            } );
- 
-        table.column( i ).data().unique().sort().each( function ( d, j ) {
-            select.append( '<option value="'+d+'">'+d+'</option>' )
-        } );
-        };
-    } );
-   
+      jQuery(document).ready(function() {
+        var table = $('#idTable').DataTable(
+            {"stateSave": true,
+             "order": [[ 1, "asc" ]],
+            "language": {
+                                 "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
+                             },
+            "aLengthMenu": [
+                                [10, 25, 50, 100, -1],
+                                [10, 25, 50, 100, "Tous"]
+                            ],
+             "iDisplayLength": 10
+           });
+    });
    {% endblock scripts %}

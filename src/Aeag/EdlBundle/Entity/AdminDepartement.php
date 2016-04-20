@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(name="admin_departement")
  * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Aeag\EdlBundle\Repository\AdminDepartementRepository")
  */
 class AdminDepartement
 {
@@ -17,9 +18,7 @@ class AdminDepartement
      *
      * @ORM\Column(name="insee_departement", type="string", length=2, nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="SEQUENCE")
-     * @ORM\SequenceGenerator(sequenceName="admin_departement_insee_departement_seq", allocationSize=1, initialValue=1)
-     */
+      */
     private $inseeDepartement;
 
     /**

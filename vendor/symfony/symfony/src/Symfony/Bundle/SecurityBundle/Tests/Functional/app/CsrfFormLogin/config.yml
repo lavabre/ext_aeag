@@ -18,7 +18,7 @@ security:
         in_memory:
             memory:
                 users:
-                    johannes: { password: test, roles: [ROLE_USER] }
+                    johannes: { password: test, roles: [ROLE_AEAG] }
 
     firewalls:
         # This firewall doesn't make sense in combination with the rest of the

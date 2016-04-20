@@ -24,16 +24,16 @@ security:
         default:
             memory:
                 users:
-                    foo: { password: foo, roles: ROLE_USER }
+                    foo: { password: foo, roles: ROLE_AEAG }
         digest:
             memory:
                 users:
-                    foo: { password: foo, roles: 'ROLE_USER, ROLE_ADMIN' }
+                    foo: { password: foo, roles: 'ROLE_AEAG, ROLE_ADMIN' }
         basic:
             memory:
                 users:
                     foo: { password: 0beec7b5ea3f0fdbc95d0dd47f3c5bc275da8a33, roles: ROLE_SUPER_ADMIN }
-                    bar: { password: 0beec7b5ea3f0fdbc95d0dd47f3c5bc275da8a33, roles: [ROLE_USER, ROLE_ADMIN] }
+                    bar: { password: 0beec7b5ea3f0fdbc95d0dd47f3c5bc275da8a33, roles: [ROLE_AEAG, ROLE_ADMIN] }
         service:
             id: user.manager
         chain:
@@ -64,12 +64,12 @@ security:
             http_basic: true
 
     role_hierarchy:
-        ROLE_ADMIN:       ROLE_USER
-        ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
-        ROLE_REMOTE:      ROLE_USER,ROLE_ADMIN
+        ROLE_ADMIN:       ROLE_AEAG
+        ROLE_SUPER_ADMIN: [ROLE_AEAG, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
+        ROLE_REMOTE:      ROLE_AEAG,ROLE_ADMIN
 
     access_control:
-        - { path: /blog/524, role: ROLE_USER, requires_channel: https, methods: [get, POST]}
+        - { path: /blog/524, role: ROLE_AEAG, requires_channel: https, methods: [get, POST]}
         -
             path: /blog/.*
             role: IS_AUTHENTICATED_ANONYMOUSLY

@@ -18,14 +18,19 @@ class DateTimeEtat extends \DateTime {
 
 class EtatController extends Controller {
 
-    public function etatFormAction() {
-        $request = $this->getRequest();
+    public function etatFormAction(Request $request) {
+        $user = $this->getUser();
+        $session = $this->get('session');
+        $session->clear();
+        $session->set('controller', 'Etat');
+        $session->set('fonction', 'etatForm');
+        $em = $this->get('doctrine')->getManager();
+        $emEdl = $this->get('doctrine')->getManager('edl');
         //if ($request->isXmlHttpRequest()) { // is it an Ajax request?
         $euCd = $request->get('euCd');
         $cdEtat = $request->get('cdEtat');
 
-        $repo = $this->getDoctrine()
-                ->getRepository('AeagEdlBundle:EtatMe');
+        $repo = $emEdl->getRepository('AeagEdlBundle:EtatMe');
         $etatInitiale = $repo->findOneBy(array('euCd' => $euCd, 'cdEtat' => $cdEtat));
 
         $proposed = new EtatMeProposed();
@@ -39,40 +44,36 @@ class EtatController extends Controller {
                 ->add('commentaire', 'textarea')
                 ->getForm();
 
-        $repo = $this->getDoctrine()->getRepository('AeagEdlBundle:EtatMe');
+        $repo = $emEdl->getRepository('AeagEdlBundle:EtatMe');
         $derniereProp = $repo->getLastProposition($euCd, $cdEtat);
 
-        $ua = php\fonctions::getBrowser();
-      
-        if ($ua['name'] == 'Internet Explorer' and $ua['version'] <= 8.0) {
-
-            return $this->render('AeagEdlBundle:Etat:etatFormIe8.html.twig', array(
+       
+            return $this->render('AeagEdlBundle:Etat:etatForm.html.twig', array(
                         'form' => $form->createView(),
                         'euCd' => $euCd,
                         'cdEtat' => $cdEtat,
                         'derniereProposition' => $derniereProp ? $derniereProp->getValeur() : $etatInitiale->getValeur()
                     ));
-        } else {
-
-
-            return $this->render('AeagEdlBundle:Etat:etatFormIe8.html.twig', array(
-                        'form' => $form->createView(),
-                        'euCd' => $euCd,
-                        'cdEtat' => $cdEtat,
-                        'derniereProposition' => $derniereProp ? $derniereProp->getValeur() : $etatInitiale->getValeur()
-                    ));
-        };
-        //}    
+         //}    
     }
 
  
     /**
      * Réception du formulaire, retour vers le navigateur au format json
      */
-    public function etatSubmitAction() {
+    public function etatSubmitAction(Request $request) {
 
+        $user = $this->getUser();
+        $session = $this->get('session');
+        $session->clear();
+        $session->set('controller', 'Etat');
+        $session->set('fonction', 'etatForm');
+        $em = $this->get('doctrine')->getManager();
+        $emEdl = $this->get('doctrine')->getManager('edl');
+        $repoUtilisateur = $emEdl->getRepository('AeagEdlBundle:Utilisateur');
+        $utilisateur = $repoUtilisateur->getUtilisateurByExtid($user->getId());
+        
         // récupération des paramètres
-        $request = $this->getRequest();
         $euCd = $request->get('euCd');
         $cdEtat = $request->get('cdEtat');
         $commentaire = $request->get('commentaire');
@@ -80,9 +81,8 @@ class EtatController extends Controller {
 
 
         try {
-            $em = $this->getDoctrine()->getEntityManager();
-
-            //return new Response('eucd : ' . $euCd . ' etat : ' . $cdEtat . ' commentaire : ' . $commentaire . ' valeur : ' . $valeur  );
+      
+           //return new Response('eucd : ' . $euCd . ' etat : ' . $cdEtat . ' commentaire : ' . $commentaire . ' valeur : ' . $valeur  );
             // sauvegarde
             $proposed = new EtatMeProposed();
 
@@ -91,29 +91,24 @@ class EtatController extends Controller {
             $proposed->setPropositionDate(new DateTimeEtat("now"));
             $proposed->setCdEtat($cdEtat);
 
-
-
-            // recuperatiion de l'user connecté
-            $user = $this->container->get('security.context')->getToken()->getUser();
-
             // Et pour vérifier que l'utilisateur est authentifié (et non un anonyme)
             if (!is_object($user)) {
                 throw new AccessDeniedException('Vous n\'êtes pas authentifié.');
             }
 
 
-            $proposed->setUtilisateur($user);
+            $proposed->setUtilisateur( $utilisateur);
             $proposed->setValeur($valeur);
             $proposed->setCommentaire($commentaire);
 
-            if ($this->get('security.context')->isGranted('ROLE_SUPERVISEUR')) {
+            if ($this->get('security.context')->isGranted('ROLE_SUPERVISEUREDL')) {
                 $proposed->setRole('expert');
             } else {
                 $proposed->setRole('local');
             };
 
 
-            $repo = $this->getDoctrine()->getRepository('AeagEdlBundle:EtatMe');
+            $repo = $emEdl->getRepository('AeagEdlBundle:EtatMe');
             $etatInitiale = $repo->findOneBy(array('euCd' => $euCd, 'cdEtat' => $cdEtat));
             $proposed->setEtatOriginal($etatInitiale);
 
@@ -126,8 +121,8 @@ class EtatController extends Controller {
                     $msg .= $err->getMessage() . "\n";
                 }
             } else {
-                $em->persist($proposed);
-                $em->flush();
+                $emEdl->persist($proposed);
+                $emEdl->flush();
                 $msg = "Etat enregistrée... $commentaire";
             }
 
@@ -153,27 +148,21 @@ class EtatController extends Controller {
         $user = $this->getUser();
         $session = $this->get('session');
         $session->clear();
-        $session->set('controller', 'default');
-        $session->set('fonction', 'etat');
+        $session->set('controller', 'Etat');
+        $session->set('fonction', 'etatListProposed');
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
-        
-        
-       
+          
         $euCd = $request->get('euCd');
         $cdEtat = $request->get('cdEtat');
-        
-        return new Response ('$euCd : ' . $euCd. '  $cdEtat : ' . $cdEtat);
-
+    
         $repo = $emEdl->getRepository('AeagEdlBundle:EtatMe');
         $etatInitiale = $repo->findOneBy(array('euCd' => $euCd, 'cdEtat' => $cdEtat));
-
-
+        
+       // return new Response ('$masseEau : ' . $euCd. '  $etatType : ' . $cdEtat);
         $repo = $emEdl->getRepository('AeagEdlBundle:EtatMe');
         $derniereProp = $repo->getLastProposition($euCd, $cdEtat);
-        
-        
-        
+          
         return $this->render('AeagEdlBundle:Etat:etatListProposed.html.twig', array(
                     'etat' => $etatInitiale,
                     'derniereProp' => $derniereProp,
@@ -181,21 +170,28 @@ class EtatController extends Controller {
                 ));
     }
 
-    public function removeEtatAction() {
-        $request = $this->getRequest();
+    public function removeEtatAction(Request $request) {
+        $user = $this->getUser();
+        $session = $this->get('session');
+        $session->clear();
+        $session->set('controller', 'Etat');
+        $session->set('fonction', 'etatListProposed');
+        $em = $this->get('doctrine')->getManager();
+        $emEdl = $this->get('doctrine')->getManager('edl');
+        $repoUtilisateur = $emEdl->getRepository('AeagEdlBundle:Utilisateur');
+        $utilisateur = $repoUtilisateur->getUtilisateurByExtid($user->getId());
 
         $euCd = $request->get('euCd');
         $cdEtat = $request->get('cdEtat');
         $login = $request->get('login');
         $propositionDate = $request->get('propositionDate');
 
-        $em = $this->getDoctrine()->getEntityManager();
-        $repo = $this->getDoctrine()->getRepository('AeagEdlBundle:EtatMeProposed');
+        $repo = $emEdl->getRepository('AeagEdlBundle:EtatMeProposed');
 
         $proposition = $repo->findOneBy(array('euCd' => $euCd, 'cdEtat' => $cdEtat, 'utilisateur' => $login, 'propositionDate' => $propositionDate));
 
-        $em->remove($proposition);
-        $em->flush();
+        $emEdl->remove($proposition);
+        $emEdl->flush();
 
         return $this->forward('AeagEdlBundle:Etat:etatListProposed', array(
                     'euCd' => $euCd,

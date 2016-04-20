@@ -31,14 +31,14 @@ $container->loadFromExtension('security', array(
         'default' => array(
             'memory' => array(
                 'users' => array(
-                    'foo' => array('password' => 'foo', 'roles' => 'ROLE_USER'),
+                    'foo' => array('password' => 'foo', 'roles' => 'ROLE_AEAG'),
                 ),
             ),
         ),
         'digest' => array(
             'memory' => array(
                 'users' => array(
-                    'foo' => array('password' => 'foo', 'roles' => 'ROLE_USER, ROLE_ADMIN'),
+                    'foo' => array('password' => 'foo', 'roles' => 'ROLE_AEAG, ROLE_ADMIN'),
                 ),
             ),
         ),
@@ -46,7 +46,7 @@ $container->loadFromExtension('security', array(
             'memory' => array(
                 'users' => array(
                     'foo' => array('password' => '0beec7b5ea3f0fdbc95d0dd47f3c5bc275da8a33', 'roles' => 'ROLE_SUPER_ADMIN'),
-                    'bar' => array('password' => '0beec7b5ea3f0fdbc95d0dd47f3c5bc275da8a33', 'roles' => array('ROLE_USER', 'ROLE_ADMIN')),
+                    'bar' => array('password' => '0beec7b5ea3f0fdbc95d0dd47f3c5bc275da8a33', 'roles' => array('ROLE_AEAG', 'ROLE_ADMIN')),
                 ),
             ),
         ),
@@ -83,14 +83,14 @@ $container->loadFromExtension('security', array(
     ),
 
     'access_control' => array(
-        array('path' => '/blog/524', 'role' => 'ROLE_USER', 'requires_channel' => 'https', 'methods' => array('get', 'POST')),
+        array('path' => '/blog/524', 'role' => 'ROLE_AEAG', 'requires_channel' => 'https', 'methods' => array('get', 'POST')),
         array('path' => '/blog/.*', 'role' => 'IS_AUTHENTICATED_ANONYMOUSLY'),
         array('path' => '/blog/524', 'role' => 'IS_AUTHENTICATED_ANONYMOUSLY', 'allow_if' => "token.getUsername() matches '/^admin/'"),
     ),
 
     'role_hierarchy' => array(
-        'ROLE_ADMIN' => 'ROLE_USER',
-        'ROLE_SUPER_ADMIN' => array('ROLE_USER', 'ROLE_ADMIN', 'ROLE_ALLOWED_TO_SWITCH'),
-        'ROLE_REMOTE' => 'ROLE_USER,ROLE_ADMIN',
+        'ROLE_ADMIN' => 'ROLE_AEAG',
+        'ROLE_SUPER_ADMIN' => array('ROLE_AEAG', 'ROLE_ADMIN', 'ROLE_ALLOWED_TO_SWITCH'),
+        'ROLE_REMOTE' => 'ROLE_AEAG,ROLE_ADMIN',
     ),
 ));

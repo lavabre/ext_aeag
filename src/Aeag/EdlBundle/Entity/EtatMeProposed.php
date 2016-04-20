@@ -10,8 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="etat_me_proposed", indexes={@ORM\Index(name="idx_b7e685ba50eae44", columns={"id_utilisateur"}), @ORM\Index(name="idx_b7e685baa8feab267a9ab42e", columns={"eu_cd", "cd_etat"})})
  * @ORM\Entity
  */
-class EtatMeProposed
-{
+class EtatMeProposed {
+
     /**
      * @var string
      *
@@ -61,6 +61,17 @@ class EtatMeProposed
     private $role;
 
     /**
+     * @var EtatMe
+     *
+     * @ORM\ManyToOne(targetEntity="EtatMe", inversedBy="proposed")
+     * @ORM\JoinColumns({
+     * @ORM\JoinColumn(name="eu_cd", referencedColumnName="eu_cd"),
+     * @ORM\JoinColumn(name="cd_etat", referencedColumnName="cd_etat")
+     * })
+     */
+    private $etatOriginal;
+
+    /**
      * @var \Utilisateur
      *
      * @ORM\ManyToOne(targetEntity="Utilisateur")
@@ -70,7 +81,16 @@ class EtatMeProposed
      */
     private $utilisateur;
 
-
+    public function getValueLib() {
+        switch ($this->valeur) {
+            case '1' : return 'Très bon état';
+            case '2' : return 'Bon';
+            case '3' : return 'Moyen';
+            case '4' : return 'Médiocre';
+            case '5' : return 'Mauvais';
+            case 'U' : return 'Inconnu';
+        }
+    }
 
     /**
      * Set euCd
@@ -79,8 +99,7 @@ class EtatMeProposed
      *
      * @return etatMeProposed
      */
-    public function setEuCd($euCd)
-    {
+    public function setEuCd($euCd) {
         $this->euCd = $euCd;
 
         return $this;
@@ -91,8 +110,7 @@ class EtatMeProposed
      *
      * @return string
      */
-    public function getEuCd()
-    {
+    public function getEuCd() {
         return $this->euCd;
     }
 
@@ -103,8 +121,7 @@ class EtatMeProposed
      *
      * @return etatMeProposed
      */
-    public function setPropositionDate($propositionDate)
-    {
+    public function setPropositionDate($propositionDate) {
         $this->propositionDate = $propositionDate;
 
         return $this;
@@ -115,8 +132,7 @@ class EtatMeProposed
      *
      * @return string
      */
-    public function getPropositionDate()
-    {
+    public function getPropositionDate() {
         return $this->propositionDate;
     }
 
@@ -127,8 +143,7 @@ class EtatMeProposed
      *
      * @return etatMeProposed
      */
-    public function setCdEtat($cdEtat)
-    {
+    public function setCdEtat($cdEtat) {
         $this->cdEtat = $cdEtat;
 
         return $this;
@@ -139,8 +154,7 @@ class EtatMeProposed
      *
      * @return string
      */
-    public function getCdEtat()
-    {
+    public function getCdEtat() {
         return $this->cdEtat;
     }
 
@@ -151,8 +165,7 @@ class EtatMeProposed
      *
      * @return etatMeProposed
      */
-    public function setValeur($valeur)
-    {
+    public function setValeur($valeur) {
         $this->valeur = $valeur;
 
         return $this;
@@ -163,8 +176,7 @@ class EtatMeProposed
      *
      * @return string
      */
-    public function getValeur()
-    {
+    public function getValeur() {
         return $this->valeur;
     }
 
@@ -175,8 +187,7 @@ class EtatMeProposed
      *
      * @return etatMeProposed
      */
-    public function setCommentaire($commentaire)
-    {
+    public function setCommentaire($commentaire) {
         $this->commentaire = $commentaire;
 
         return $this;
@@ -187,8 +198,7 @@ class EtatMeProposed
      *
      * @return string
      */
-    public function getCommentaire()
-    {
+    public function getCommentaire() {
         return $this->commentaire;
     }
 
@@ -199,8 +209,7 @@ class EtatMeProposed
      *
      * @return etatMeProposed
      */
-    public function setRole($role)
-    {
+    public function setRole($role) {
         $this->role = $role;
 
         return $this;
@@ -211,9 +220,26 @@ class EtatMeProposed
      *
      * @return string
      */
-    public function getRole()
-    {
+    public function getRole() {
         return $this->role;
+    }
+
+    /**
+     * Set etatOriginal
+     *
+     * @param Aeag\EdlBundle\Entity\EtatMe $etatOriginal
+     */
+    public function setEtatOriginal(\Aeag\EdlBundle\Entity\EtatMe $etatOriginal) {
+        $this->etatOriginal = $etatOriginal;
+    }
+
+    /**
+     * Get etatOriginal
+     *
+     * @return Aeag\EdlBundle\Entity\EtatMe 
+     */
+    public function getEtatOriginal() {
+        return $this->etatOriginal;
     }
 
     /**
@@ -223,8 +249,7 @@ class EtatMeProposed
      *
      * @return etatMeProposed
      */
-    public function setUtilisateur(\Aeag\EdlBundle\Entity\Utilisateur $utilisateur = null)
-    {
+    public function setUtilisateur(\Aeag\EdlBundle\Entity\Utilisateur $utilisateur = null) {
         $this->utilisateur = $utilisateur;
 
         return $this;
@@ -235,8 +260,8 @@ class EtatMeProposed
      *
      * @return \Aeag\EdlBundle\Entity\Utilisateur
      */
-    public function getUtilisateur()
-    {
+    public function getUtilisateur() {
         return $this->utilisateur;
     }
+
 }

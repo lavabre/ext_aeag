@@ -1,10 +1,15 @@
 {% extends '::base.html.twig' %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/aeagaeag/bootstrap/css/edl.css')}}" rel="stylesheet" type="text/css">
+ {% endblock %}
+
 {% block titre %}
     {% if  app.environment == 'dev' %}
-        AEAG - Etat des lieux en test
+        Agence de l'eau "Adour-garonne" </br> Etat des lieux en test
     {% else %}
-        AEAG - Etat des lieux
+        Agence de l'eau "Adour-garonne" </br> Etat des lieux
     {% endif %}
 {% endblock titre %}
 

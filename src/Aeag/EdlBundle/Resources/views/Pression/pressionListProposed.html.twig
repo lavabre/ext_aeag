@@ -1,25 +1,25 @@
-<table class="table" cellspacing="0" width="100%" align="center"> 
-<input type='hidden' id='UrlActuel' value="{{ path('AeagEdlBundle_pression', { 'code': pression.euCd }) }}" /> 
-
-<input type='hidden' id='newPressionRoute' value="{{ path('AeagEdlBundle_pressionForm') }}" /> 
-
-
+<div id="formEtatListProposed{{ pression.etatType.cdEtat }}">
     <tr>
-        <td align="left" width="70%">{{ pression.type.libelle }}</td>
-        <td width="10%"><span class="dce_pression_{{ pression.valeur }}">{{ pression.getValueLib() }}</span></td>
-   {% if derniereProp %}
-        <td width="10%" nowrap><span class="dce_pression_{{ derniereProp.valeur }}">{{ derniereProp.getValueLib() }}</span></td>
-   {% else %}
-        <td width="10%"></td>
-   {% endif %}
-   {% if is_granted("IS_AUTHENTICATED_REMEMBERED")and is_granted("ROLE_COMMENTATEUR") %}
-        <td width="10%"><a id="newPression{{ pression.cdPression }}" title="Proposer une nouvelle évaluation" cdPression="{{ pression.cdPression }}">
-                <img src="{{ asset('bundles/aeagetatdeslieux/images/icons/web-app/24/Comment.png')}}" width="24" height="24">
+    {% if is_granted("IS_AUTHENTICATED_REMEMBERED")and is_granted("ROLE_COMMENTATEUREDL") %}
+        <td><a id="newPression{{ pression.cdPression }}" title="Proposer une nouvelle évaluation" cdPression="{{ pression.cdPression }}">
+                 <i class="fa fa-commenting fa-2x"></i> 
             </a>
         </td>
    {% else %}
-        <td width="10%"></td>
+        <td></td>
    {% endif %}
+        <td align="left">
+            {{ pression.type.libelle }}
+            <input type='hidden' id='UrlActuel' value="{{ path('AeagEdlBundle_pression', { 'code': pression.euCd }) }}" /> 
+            <input type='hidden' id='newPressionRoute' value="{{ path('AeagEdlBundle_pressionForm') }}" /> 
+       </td>
+        <td><span class="dce_pression_{{ pression.valeur }}">{{ pression.getValueLib() }}</span></td>
+   {% if derniereProp %}
+        <td nowrap><span class="dce_pression_{{ derniereProp.valeur }}">{{ derniereProp.getValueLib() }}</span></td>
+   {% else %}
+        <td></td>
+   {% endif %}
+  
 
     </tr>
 
@@ -32,11 +32,12 @@
                 <td colspan=4>
                     <table class="table" cellspacing="0" width="90%" align="right">
                         <tr>
+                             <th nowrap width="5%">Action</th>
                             <th nowrap width="5%">Date</th>
                             <th nowrap width="5%">Auteur</th>
                             <th nowrap width="55%">Commentaire</th>
                             <th nowrap width="10%">Pression proposé</th>
-                            <th nowrap width="10%">Action</th>
+                           
                         </tr>
 
         
@@ -45,6 +46,19 @@
                         <div id="PressionsProposed{{i}}">
 
                             <tr>
+                                 {% if is_granted("IS_AUTHENTICATED_REMEMBERED")and is_granted("ROLE_COMMENTATEUREDL") and  pp.role ==  'local' and pp.utilisateur.id == user.id %} 
+                                  <td width="10%"><a name="removePression{{ pp.cdPression }}" title="Supprimer cette proposition" login="{{ pp.utilisateur.id }}" propositionDate="{{ pp.propositionDate }}">
+                                            <i class="fa fa-remove fa-2x"></i> 
+                                       </a>
+                                  </td>
+                            {% elseif is_granted("IS_AUTHENTICATED_REMEMBERED")and is_granted("ROLE_SUPERVISEUR") %}
+                                    <td width="10%"><a name="removePression{{ pp.cdPression }}" title="Supprimer cette proposition" login="{{ pp.utilisateur.id }}" propositionDate="{{ pp.propositionDate }}">
+                                             <i class="fa fa-remove fa-2x"></i> 
+                                        </a>
+                                    </td>
+                            {% else %}
+                                <td width="10%"></td>
+                            {% endif %}
                                 <td width="5%" nowrap>{{ pp.propositionDate }}</td>
                                 {% if pp.role == 'local' %}
                                    <td width="5%" nowrap>acteur local : {{ pp.utilisateur.username }}</td>
@@ -53,19 +67,7 @@
                                 {% endif %}
                                 <td width="55%" align="left">{{ pp.commentaire }}</td>
                                 <td width="10%" nowrap><span class="dce_pression_{{ pp.valeur }}">{{ pp.getValueLib() }}</span></td>
-                            {% if is_granted("IS_AUTHENTICATED_REMEMBERED")and is_granted("ROLE_COMMENTATEUR") and  pp.role ==  'local' and pp.utilisateur.id == user.id %} 
-                                  <td width="10%"><a name="removePression{{ pp.cdPression }}" title="Supprimer cette proposition" login="{{ pp.utilisateur.id }}" propositionDate="{{ pp.propositionDate }}">
-                                            <img src="{{ asset('bundles/aeagetatdeslieux/images/icons/web-app/24/Delete.png')}}">
-                                       </a>
-                                  </td>
-                            {% elseif is_granted("IS_AUTHENTICATED_REMEMBERED")and is_granted("ROLE_SUPERVISEUR") %}
-                                    <td width="10%"><a name="removePression{{ pp.cdPression }}" title="Supprimer cette proposition" login="{{ pp.utilisateur.id }}" propositionDate="{{ pp.propositionDate }}">
-                                            <img src="{{ asset('bundles/aeagetatdeslieux/images/icons/web-app/24/Delete.png')}}">
-                                        </a>
-                                    </td>
-                            {% else %}
-                                <td width="10%"></td>
-                            {% endif %}
+                           
                             </tr>
 
 
@@ -86,12 +88,11 @@
 
         </div>
     </div>
- </table>
-            
+           
 
 <div id ="divNewPression{{ pression.cdPression }}"></div> 
 
-
+</div>
 
 <script type="text/javascript">
     

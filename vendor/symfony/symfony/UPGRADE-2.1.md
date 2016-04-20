@@ -219,8 +219,8 @@
                  providers: [my_memory_provider, my_doctrine_provider]
              my_memory_provider:
                  users:
-                     toto: { password: foobar, roles: [ROLE_USER] }
-                     foo: { password: bar, roles: [ROLE_USER, ROLE_ADMIN] }
+                     toto: { password: foobar, roles: [ROLE_AEAG] }
+                     foo: { password: bar, roles: [ROLE_AEAG, ROLE_ADMIN] }
      ```
 
      After:
@@ -234,8 +234,8 @@
              my_memory_provider:
                  memory:
                      users:
-                         toto: { password: foobar, roles: [ROLE_USER] }
-                         foo: { password: bar, roles: [ROLE_USER, ROLE_ADMIN] }
+                         toto: { password: foobar, roles: [ROLE_AEAG] }
+                         foo: { password: bar, roles: [ROLE_AEAG, ROLE_ADMIN] }
      ```
 
   * `MutableAclInterface::setParentAcl` now accepts `null`, review any

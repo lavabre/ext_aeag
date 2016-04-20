@@ -121,31 +121,53 @@
                                                       <option value="ROLE_ADMINDEC">Administrateur Déchet</option>
                                                       <option value="ROLE_ADMINFRD">Administrateur Frd</option>
                                                       <option value="ROLE_ADMINSQE">Administrateur Sqe</option>
+                                                      <option value="ROLE_ADMINEDL">Administrateur Edl</option>
                                                       <option value="ROLE_ADMINSTOCK">Administrateur Stock</option>
                                                       <option value="ROLE_PROGSQE"> Programmeur Sqe</option>
                                                        <option value="ROLE_ODEC"> Collecteur  Déchet</option>
                                                        <option value="ROLE_FRD"> Membre Frd</option>
                                                        <option value="ROLE_SQE">Consultant Sqe</option>
                                                        <option value="ROLE_STOCK">Utilisateur Stock</option>
-                                                        <option selected="selected" value="ROLE_AEAG">Consultant</option>
+                                                      <option value="ROLE_COMMENTATEUREDL">Commentateur Edl</option>
+                                                       <option value="ROLE_SUPERVISEUREDL">Superviseur Edl</option>
+                                                        <option  value="ROLE_AEAG">Consultant</option>
                                             {% elseif  role == 'ROLE_ODEC' %}
                                                       <option value="ROLE_ADMINDEC">Administrateur Déchet</option>
-                                                      <option selected="selected" value="ROLE_ODEC"> Collecteur  Déchet</option>
+                                                      <option  value="ROLE_ODEC"> Collecteur  Déchet</option>
                                              {% elseif  role == 'ROLE_FRD' %}
                                                      <option value="ROLE_ADMINFRD">Administrateur Frd</option>
-                                                     <option selected="selected"  value="ROLE_FRD"> Membre Frd</option>
+                                                     <option   value="ROLE_FRD"> Membre Frd</option>
                                               {% elseif  role == 'ROLE_SQE' %}
                                                      <option value="ROLE_ADMINSQE">Administrateur Sqe</option>
                                                      <option value="ROLE_PRESTASQE">Administrateur Sqe</option>
                                                      <option value="ROLE_PROGSQE"> Programmeur Sqe</option>
-                                                     <option selected="selected" value="ROLE_SQE">Consultant Sqe</option>
+                                                     <option  value="ROLE_SQE">Consultant Sqe</option>
                                              {% elseif  role == 'ROLE_STOCK' %}
                                                      <option value="ROLE_ADMINSTOCK">Administrateur Stock</option>
-                                                     <option selected="selected" value="ROLE_STOCK">Utilisateur Stock</option>
+                                                     <option  value="ROLE_STOCK">Utilisateur Stock</option>
+                                              {% elseif  role == 'ROLE_EDL' %}
+                                                     <option value="ROLE_ADMINEDL">Administrateur Edl</option>
+                                                     <option value="ROLE_SUPERVISEUREDL">Superviseur Edl</option>
+                                                     <option  value="ROLE_COMMENTATEUREDL">Commentateur Edl</option>
                                               {% endif %}
                                     </select>
                             </div>
                     </div>
+                                    
+                       {% if  role == 'ROLE_EDL' %}
+                           <div class="form-group">
+                                <label class="col-xm-3 control-label">Départements attribués</label>
+                                 {% if form_errors(form.depts) %}
+                                     <div class="input-group has-error has-feedback">
+                                 {% else %}
+                                      <div class="input-group">
+                                  {% endif %}
+                                      <span class="input-group-addon"><i class="fa fa-globe"></i></span>
+                                      {{ form_widget(form.depts, { 'attr': {'class': 'form-control', 'placeholder': 'Départements attribués'} }) }}
+                                    </div>
+                            </div>
+                      {% endif %}
+                        
                         
                      <div class="form-group">
                         <label class="col-xm-3 control-label">Autorisation</label>
@@ -178,4 +200,32 @@
       </div>
     {%endblock content %}
 
+{% block scripts %}
     
+     {% if entity.roles %}
+                   var  liste = $('#aeag_userbundle_userrtype_roles>option');
+                   for(var i = 0; i < liste.length; i++) {
+                        {% for role in entity.roles %}
+                                var valeur = '{{role }}';
+                              {#  alert ('i : ' + i + ' option : '  + $('#aeag_userbundle_userrtype_roles>option').eq(i).val() + ' valeur : ' + valeur +  ' pour entity = ' + {{ entity.id }});#}
+                                if ($('#aeag_userbundle_userrtype_roles>option').eq(i).val() == valeur) {
+                                  $('#aeag_userbundle_userrtype_roles>option').eq(i).attr('selected','selected');;
+                                } 
+                        {% endfor %}
+                     }
+      {% endif %}
+    
+    {% if depUtilisateurs %}
+                   var  liste = $('#aeag_userbundle_userrtype_depts>option');
+                   for(var i = 0; i < liste.length; i++) {
+                        {% for dep in depUtilisateurs %}
+                                var valeur = '{{dep.inseeDepartement }}';
+                                {#alert ('i : ' + i + ' option : '  + $('#aeag_userbundle_userrtype_depts>option').eq(i).val() + ' valeur : ' + valeur);#}
+                                if ($('#aeag_userbundle_userrtype_depts>option').eq(i).val() == valeur) {
+                                  $('#aeag_userbundle_userrtype_depts>option').eq(i).attr('selected','selected');;
+                                } 
+                        {% endfor %}
+                     }
+      {% endif %}
+    
+{% endblock scripts %}

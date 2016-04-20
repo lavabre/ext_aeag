@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="aeag_user",indexes={@ORM\Index(name="userCorrespondant_idx", columns={"correspondant"})})
  * @ORM\Entity(repositoryClass="Aeag\UserBundle\Repository\UserRepository")
  */
-class User extends BaseUser {
+class UserEdl extends BaseUser {
 
     /**
      * @ORM\Id
@@ -69,14 +69,14 @@ class User extends BaseUser {
      */
     protected $salt;
     
-      /**
-     * @var array
+    /**
+     * @ORM\OneToMany(targetEntity="Aeag\EdlBundle\Entity\DepUtilisateur", mappedBy="utilisateur")
      */
-    protected $depts;
+    protected $dept;
+    
 
     public function _construct() {
         $this->roles = array();
-        $this->depts = array();
     }
 
     public function getId() {
@@ -147,12 +147,12 @@ class User extends BaseUser {
         $this->salt = $salt;
     }
     
-    function getDepts() {
-        return $this->depts;
+    function getDept() {
+        return $this->dept;
     }
 
-    function setDepts($depts) {
-        $this->depts = $depts;
+    function setDept($dept) {
+        $this->dept = $dept;
     }
 
 

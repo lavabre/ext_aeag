@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(name="utilisateur", uniqueConstraints={@ORM\UniqueConstraint(name="uniq_9b80ec6492fc23a8", columns={"username_canonical"})})
  * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Aeag\EdlBundle\Repository\UtilisateurRepository")
  */
 class Utilisateur
 {
@@ -120,7 +121,7 @@ class Utilisateur
      */
     private $passwordRequestedAt;
 
-    /**
+   /**
      * @var array
      *
      * @ORM\Column(name="roles", type="array", nullable=false)
@@ -147,8 +148,23 @@ class Utilisateur
      * @ORM\Column(name="passwordenclair", type="string", length=30, nullable=false)
      */
     private $passwordenclair;
+    
+     /**
+     * @var string
+     *
+     * @ORM\Column(name="ext_id", type="integer", nullable=true)
+     */
+    private $extId;
 
-
+ public function __construct()
+    {
+        $this->salt = base_convert(sha1(uniqid(mt_rand(), true)), 16, 36);
+        $this->enabled = false;
+        $this->locked = false;
+        $this->expired = false;
+        $this->roles = array();
+        $this->credentialsExpired = false;
+    }
 
     /**
      * Get id
@@ -495,6 +511,18 @@ class Utilisateur
     {
         return $this->passwordRequestedAt;
     }
+    
+    public function addRole($role)
+    {
+        $role = strtoupper($role);
+      
+        if (!in_array($role, $this->roles, true)) {
+            $this->roles[] = $role;
+        }
+
+        return $this;
+    }
+
 
     /**
      * Set roles
@@ -503,9 +531,13 @@ class Utilisateur
      *
      * @return utilisateur
      */
-    public function setRoles($roles)
+      public function setRoles(array $roles)
     {
-        $this->roles = $roles;
+        $this->roles = array();
+
+        foreach ($roles as $role) {
+            $this->addRole($role);
+        }
 
         return $this;
     }
@@ -518,6 +550,16 @@ class Utilisateur
     public function getRoles()
     {
         return $this->roles;
+    }
+    
+      public function removeRole($role)
+    {
+        if (false !== $key = array_search(strtoupper($role), $this->roles, true)) {
+            unset($this->roles[$key]);
+            $this->roles = array_values($this->roles);
+        }
+
+        return $this;
     }
 
     /**
@@ -591,4 +633,14 @@ class Utilisateur
     {
         return $this->passwordenclair;
     }
+    
+    function getExtId() {
+        return $this->extId;
+    }
+
+    function setExtId($extId) {
+        $this->extId = $extId;
+    }
+
+
 }

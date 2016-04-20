@@ -184,7 +184,7 @@ Under `security.providers`, the `in_memory` example was updated to the following
                 in_memory:
                     memory:
                         users:
-                            user:  { password: userpass, roles: [ 'ROLE_USER' ] }
+                            user:  { password: userpass, roles: [ 'ROLE_AEAG' ] }
                             admin: { password: adminpass, roles: [ 'ROLE_ADMIN' ] }
 
 ### `app/AppKernel.php`

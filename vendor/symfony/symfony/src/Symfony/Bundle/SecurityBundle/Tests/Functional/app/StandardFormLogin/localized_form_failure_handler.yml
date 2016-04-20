@@ -9,7 +9,7 @@ security:
         in_memory:
             memory:
                 users:
-                    johannes: { password: test, roles: [ROLE_USER] }
+                    johannes: { password: test, roles: [ROLE_AEAG] }
 
     firewalls:
         default:

@@ -22,20 +22,20 @@
 
         <provider name="default">
             <memory>
-                <user name="foo" password="foo" roles="ROLE_USER" />
+                <user name="foo" password="foo" roles="ROLE_AEAG" />
             </memory>
         </provider>
 
         <provider name="digest">
             <memory>
-                <user name="foo" password="foo" roles="ROLE_USER, ROLE_ADMIN" />
+                <user name="foo" password="foo" roles="ROLE_AEAG, ROLE_ADMIN" />
             </memory>
         </provider>
 
         <provider name="basic">
             <memory>
                 <user name="foo" password="0beec7b5ea3f0fdbc95d0dd47f3c5bc275da8a33" roles="ROLE_SUPER_ADMIN" />
-                <user name="bar" password="0beec7b5ea3f0fdbc95d0dd47f3c5bc275da8a33" roles="ROLE_USER, ROLE_ADMIN" />
+                <user name="bar" password="0beec7b5ea3f0fdbc95d0dd47f3c5bc275da8a33" roles="ROLE_AEAG, ROLE_ADMIN" />
             </memory>
         </provider>
 
@@ -64,11 +64,11 @@
             <http-basic />
         </firewall>
 
-        <role id="ROLE_ADMIN">ROLE_USER</role>
-        <role id="ROLE_SUPER_ADMIN">ROLE_USER,ROLE_ADMIN,ROLE_ALLOWED_TO_SWITCH</role>
-        <role id="ROLE_REMOTE">ROLE_USER,ROLE_ADMIN</role>
+        <role id="ROLE_ADMIN">ROLE_AEAG</role>
+        <role id="ROLE_SUPER_ADMIN">ROLE_AEAG,ROLE_ADMIN,ROLE_ALLOWED_TO_SWITCH</role>
+        <role id="ROLE_REMOTE">ROLE_AEAG,ROLE_ADMIN</role>
 
-        <rule path="/blog/524" role="ROLE_USER" requires-channel="https" methods="get,POST" />
+        <rule path="/blog/524" role="ROLE_AEAG" requires-channel="https" methods="get,POST" />
         <rule role='IS_AUTHENTICATED_ANONYMOUSLY' path="/blog/.*" />
         <rule role='IS_AUTHENTICATED_ANONYMOUSLY' allow-if="token.getUsername() matches '/^admin/'" path="/blog/524" />
     </config>

@@ -1,38 +1,36 @@
 
 {% if nbEtats > 0 %} 
-
-<dt>{{etatGroupe.libelle}} </dt>   
-
-<dd>
-    <table class="table table-bordered table-condensed table-advance" id="idTable">
-        <thead>
-            <tr>
-                <th  width="70%">libelle</th>
-                <th  width="10%" nowrap>Valeur provioire</th>
-                <th  width="10%" nowrap>Proposition STL</th>
-                <th  width="10%" nowrap>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td colspan=4>
-
-
-                        {% for etat in etats %}
-
-                   <div id="divEtat{{ etat.etatType.cdEtat }}" >
-                                    {{ render(controller('AeagEdlBundle:Etat:etatListProposed', {'euCd':etat.masseEau.euCd, 'cdEtat':etat.etatType.cdEtat})) }}
-                        </div>     
-               
-                        {% endfor %}
-
-
-
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </dd>
-
-
-{% endif %} 
+         <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="heading{{ etatGroupe.cdGroupe }}">
+              <h4 class="panel-title">
+                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ etatGroupe.cdGroupe }}" aria-expanded="true" aria-controls="collapse{{ etatGroupe.cdGroupe }}">
+                  {{etatGroupe.libelle}}
+                </a>
+              </h4>
+            </div>
+            <div id="collapse{{ etatGroupe.cdGroupe }}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading{{ etatGroupe.cdGroupe }}">
+              <div class="panel-body">
+                   <table class="table table-bordered table-condensed table-advance" id="idTable{{ etatGroupe.cdGroupe }}">
+                    <thead>
+                        <tr>
+                            <th  width="5%" nowrap>Action</th>
+                            <th  width="70%">libelle</th>
+                            <th  width="10%" nowrap>Valeur provisoire</th>
+                            <th  width="10%" nowrap>Proposition STL</th>
+                          </tr>
+                    </thead>
+                    <tbody>
+                           {% for etat in etats %}
+                                <div id="divEtat-{{ etat.euCd }}-{{ etat.cdEtat }}" >
+                                           {{ render(controller('AeagEdlBundle:Etat:etatListProposed', {'euCd':etat.euCd, 'cdEtat':etat.cdEtat})) }}
+                               </div>     
+                           {% endfor %}
+                  
+                    </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+ {% endif %} 
+ 
+ 

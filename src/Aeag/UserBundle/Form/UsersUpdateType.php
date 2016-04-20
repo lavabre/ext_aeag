@@ -6,7 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
 
-class UserUpdateType extends AbstractType {
+class UsersUpdateType extends AbstractType {
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
        $builder
@@ -22,33 +22,35 @@ class UserUpdateType extends AbstractType {
                     'expanded' => true,
                 ))
                 ->add('roles', 'choice', array(
-                    'choices' => array('ROLE_ADMINEDL' => 'Administrateur Edl',
-                          'ROLE_COMMENTATEUREDL' => 'Commentateur Edl',
-                         'ROLE_SUPERVISEUREDL' => 'Superviseur Edl',),
+                    'choices' => array('ROLE_ADMIN' => 'Administrateur ',
+                        'ROLE_ADMINDEC' => 'Administrateur Déchet',
+                        'ROLE_ADMINFRD' => 'Administrateur Frd',
+                        'ROLE_ADMINSQE' => 'Administrateur Sqe',
+                        'ROLE_ADMINEDL' => 'Administrateur Edl',
+                       'ROLE_PROGSQE' => 'Programmeur Sqe',
+                       'ROLE_PRESTASQE' => 'Prestataire Sqe',
+                        'ROLE_ODEC' => 'Collecteur  Déchet',
+                        'ROLE_FRD' => 'Membre Frd ',
+                        'ROLE_SQE' => 'Consultant Sqe ',
+                        'ROLE_COMMENTATEUREDL' => 'Commentateur Edl',
+                        'ROLE_SUPERVISEUREDL' => 'Superviseur Edl',),
                     'required' => true,
                     'multiple' => true,
                 ))
                
-           ->add('dept', 'entity', array(
-		'class' => 'Aeag\EdlBundle\Entity\AdminDepartement',
-		'property' => 'DeptLibelle',
-		'expanded' => false,
-		'multiple' => true,
-		'required' => false,
-                'empty_value' => '     ',
-                'query_builder' => function(\Doctrine\ORM\EntityRepository $er)
-                                    {
-                                    $qb = $er->createQueryBuilder('d');
-                                    return $qb->orderBy('d.inseeDepartement', 'ASC');
-                                    },
-		))
-                
-            ->add('current_password', 'password', array(
-            'label' => 'form.current_password',
-            'translation_domain' => 'FOSUserBundle',
-            'mapped' => false,
-            'constraints' => new UserPassword(),
-        ));
+                 ->add('depts', 'entity', array(
+                    'class' => 'Aeag\EdlBundle\Entity\AdminDepartement',
+                    'property' => 'nomDepartement',
+                    'expanded' => false,
+                    'multiple' => true,
+                    'required' => false,
+                    'empty_value' => '     ',
+                    'query_builder' => function(\Doctrine\ORM\EntityRepository $er) {
+                        $qb = $er->createQueryBuilder('d');
+                        return $qb->orderBy('d.inseeDepartement', 'ASC');
+                    },
+                ))
+           ;
 
         ;
     }

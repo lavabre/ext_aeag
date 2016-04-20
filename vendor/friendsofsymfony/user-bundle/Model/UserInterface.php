@@ -19,7 +19,7 @@ use Symfony\Component\Security\Core\User\AdvancedUserInterface;
  */
 interface UserInterface extends AdvancedUserInterface, \Serializable
 {
-    const ROLE_DEFAULT = 'ROLE_USER';
+    const ROLE_DEFAULT = 'ROLE_AEAG';
     const ROLE_SUPER_ADMIN = 'ROLE_SUPER_ADMIN';
 
     /**
@@ -192,7 +192,7 @@ interface UserInterface extends AdvancedUserInterface, \Serializable
      * Use the SecurityContext, or an implementation of AccessDecisionManager
      * instead, e.g.
      *
-     *         $securityContext->isGranted('ROLE_USER');
+     *         $securityContext->isGranted('ROLE_AEAG');
      *
      * @param string $role
      *

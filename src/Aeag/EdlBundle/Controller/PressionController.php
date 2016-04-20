@@ -25,14 +25,19 @@ class DateTimePression extends \DateTime {
 
 class PressionController extends Controller {
 
-    public function pressionFormAction() {
-        $request = $this->getRequest();
+    public function pressionFormAction(Request $request) {
+          $user = $this->getUser();
+        $session = $this->get('session');
+        $session->clear();
+        $session->set('controller', 'Pression');
+        $session->set('fonction', 'pressionListProposed');
+        $em = $this->get('doctrine')->getManager();
+        $emEdl = $this->get('doctrine')->getManager('edl');
         //if ($request->isXmlHttpRequest()) { // is it an Ajax request?
         $euCd = $request->get('euCd');
         $cdPression = $request->get('cdPression');
 
-        $repo = $this->getDoctrine()
-                ->getRepository('AeagEdlBundle:PressionMe');
+        $repo = $emEdl->getRepository('AeagEdlBundle:PressionMe');
         $pressionInitiale = $repo->findOneBy(array('euCd' => $euCd, 'cdPression' => $cdPression));
 
         $proposed = new PressionMeProposed();
@@ -46,49 +51,39 @@ class PressionController extends Controller {
                 ->add('commentaire', 'textarea')
                 ->getForm();
 
-        $repo = $this->getDoctrine()->getRepository('AeagEdlBundle:PressionMe');
+        $repo = $emEdl->getRepository('AeagEdlBundle:PressionMe');
         $derniereProp = $repo->getLastPropositionSuperviseur($euCd, $cdPression);
         if (!is_object($derniereProp)) {
             $derniereProp = $repo->getLastProposition($euCd, $cdPression);
         }
 
-        $ua = php\fonctions::getBrowser();
-
-        if ($ua['name'] == 'Internet Explorer' and $ua['version'] <= 8.0) {
-
-            return $this->render('AeagEdlBundle:Pression:pressionFormIe8.html.twig', array(
+         return $this->render('AeagEdlBundle:Pression:pressionFormIe8.html.twig', array(
                         'form' => $form->createView(),
                         'euCd' => $euCd,
                         'cdPression' => $cdPression,
                         'derniereProposition' => $derniereProp ? $derniereProp->getValeur() : $pressionInitiale->getValeur()
                     ));
-        } else {
-
-            return $this->render('AeagEdlBundle:Pression:pressionFormIe8.html.twig', array(
-                        'form' => $form->createView(),
-                        'euCd' => $euCd,
-                        'cdPression' => $cdPression,
-                        'derniereProposition' => $derniereProp ? $derniereProp->getValeur() : $pressionInitiale->getValeur()
-                    ));
-        }
         //}    
     }
 
     /**
      * Réception du formulaire, retour vers le navigateur au format json
      */
-    public function pressionSubmitAction() {
+    public function pressionSubmitAction(Request $request) {
+        $user = $this->getUser();
+        $session = $this->get('session');
+        $session->clear();
+        $session->set('controller', 'Pression');
+        $session->set('fonction', 'pressionListProposed');
+        $em = $this->get('doctrine')->getManager();
+        $emEdl = $this->get('doctrine')->getManager('edl');
+        
         try {
-            $em = $this->getDoctrine()->getEntityManager();
-
-            // récupération des paramètres
-            $request = $this->getRequest();
-            $euCd = $request->get('euCd');
+           // récupération des paramètres
+           $euCd = $request->get('euCd');
             $cdPression = $request->get('cdPression');
             $commentaire = $request->get('commentaire');
             $valeur = $request->get('valeur');
-
-
 
             // sauvegarde
             $proposed = new PressionMeProposed();
@@ -97,11 +92,6 @@ class PressionController extends Controller {
             $proposed->setEuCd($euCd);
             $proposed->setPropositionDate(new DateTimePression("now"));
             $proposed->setCdPression($cdPression);
-
-
-
-            // recuperatiion de l'user connecté
-            $user = $this->container->get('security.context')->getToken()->getUser();
 
             // Et pour vérifier que l'utilisateur est authentifié (et non un anonyme)
             if (!is_object($user)) {
@@ -113,13 +103,13 @@ class PressionController extends Controller {
             $proposed->setValeur($valeur);
             $proposed->setCommentaire($commentaire);
 
-            if ($this->get('security.context')->isGranted('ROLE_SUPERVISEUR')) {
+            if ($this->get('security.context')->isGranted('ROLE_SUPERVISEUREDL')) {
                 $proposed->setRole('expert');
             } else {
                 $proposed->setRole('local');
             };
 
-            $repo = $this->getDoctrine()->getRepository('AeagEdlBundle:PressionMe');
+            $repo = $emEdl->getRepository('AeagEdlBundle:PressionMe');
             $pressionInitiale = $repo->findOneBy(array('euCd' => $euCd, 'cdPression' => $cdPression));
             $proposed->setPressionOriginale($pressionInitiale);
 
@@ -132,8 +122,8 @@ class PressionController extends Controller {
                     $msg .= $err->getMessage() . "\n";
                 }
             } else {
-                $em->persist($proposed);
-                $em->flush();
+                $emEdl->persist($proposed);
+                $emEdl->flush();
                 $msg = "Pression enregistrée... $commentaire";
             }
 
@@ -153,41 +143,49 @@ class PressionController extends Controller {
      * 
      * mode Ajax
      */
-    public function pressionListProposedAction() {
-        $request = $this->getRequest();
-
+    public function pressionListProposedAction(Request $request) {
+         $user = $this->getUser();
+        $session = $this->get('session');
+        $session->clear();
+        $session->set('controller', 'Pression');
+        $session->set('fonction', 'pressionListProposed');
+        $em = $this->get('doctrine')->getManager();
+        $emEdl = $this->get('doctrine')->getManager('edl');
+       
         $euCd = $request->get('euCd');
         $cdPression = $request->get('cdPression');
 
-        $repo = $this->getDoctrine()->getRepository('AeagEdlBundle:PressionMe');
+        $repo = $emEdl->getRepository('AeagEdlBundle:PressionMe');
         $pressionInitiale = $repo->findOneBy(array('euCd' => $euCd, 'cdPression' => $cdPression));
 
-        $repo = $this->getDoctrine()->getRepository('AeagEdlBundle:PressionMe');
+        $repo = $emEdl->getRepository('AeagEdlBundle:PressionMe');
         $derniereProp = $repo->getLastPropositionSuperviseur($euCd, $cdPression);
         if (!is_object($derniereProp)) {
             $derniereProp = $repo->getLastProposition($euCd, $cdPression);
         }
         
-        // recuperatiion de l'user connecté
-        $user = $this->container->get('security.context')->getToken()->getUser();
-
-        return $this->render('AeagEdlBundle:Pression:pressionListProposed.html.twig', array(
+          return $this->render('AeagEdlBundle:Pression:pressionListProposed.html.twig', array(
                     'pression' => $pressionInitiale,
                     'derniereProp' => $derniereProp,
                     'user' => $user
                 ));
     }
 
-    public function removePressionAction() {
-        $request = $this->getRequest();
+    public function removePressionAction(Request $request) {
+          $user = $this->getUser();
+        $session = $this->get('session');
+        $session->clear();
+        $session->set('controller', 'Pression');
+        $session->set('fonction', 'pressionListProposed');
+        $em = $this->get('doctrine')->getManager();
+        $emEdl = $this->get('doctrine')->getManager('edl');
 
         $euCd = $request->get('euCd');
         $cdPression = $request->get('cdPression');
         $login = $request->get('login');
         $propositionDate = $request->get('propositionDate');
 
-        $em = $this->getDoctrine()->getEntityManager();
-        $repo = $this->getDoctrine()->getRepository('AeagEdlBundle:PressionMeProposed');
+       $repo = $emEdl->getRepository('AeagEdlBundle:PressionMeProposed');
 
         $proposition = $repo->findOneBy(array('euCd' => $euCd, 'cdPression' => $cdPression, 'utilisateur' => $login, 'propositionDate' => $propositionDate));
 
