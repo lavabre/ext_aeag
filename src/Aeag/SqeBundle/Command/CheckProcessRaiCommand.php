@@ -11,8 +11,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class CheckProcessRaiCommand extends AeagCommand {
 
-    private $detectionCodeRemarqueComplet;
-    private $detectionCodeRemarqueMoitie;
     private $phase82atteinte = false;
 
     protected function configure() {
@@ -26,10 +24,6 @@ class CheckProcessRaiCommand extends AeagCommand {
 
         parent::execute($input, $output);
 
-        // Chargement des fichiers csv dans des tableaux 
-        $cheminCourant = __DIR__ . '/../../../../';
-        $this->detectionCodeRemarqueComplet = $this->_csvToArray($cheminCourant . "/web/tablesCorrespondancesRai/detectionCodeRemarqueComplet.csv");
-        $this->detectionCodeRemarqueMoitie = $this->_csvToArray($cheminCourant . "/web/tablesCorrespondancesRai/detectionCodeRemarqueMoitie.csv");
         // On récupère les RAIs dont les phases sont en R25
         $pgProgPhases = $this->repoPgProgPhases->findOneByCodePhase('R25');
         $pgCmdFichiersRps = $this->repoPgCmdFichiersRps->findBy(array('phaseFichier' => $pgProgPhases, 'typeFichier' => 'RPS', 'suppr' => 'N'));
@@ -37,21 +31,21 @@ class CheckProcessRaiCommand extends AeagCommand {
         $cptRaisTraitesNok = 0;
         foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
 
+            // TODO On vérifie que l'on insère pas deux fois la même RAI
             $this->_coherenceRaiDai($pgCmdFichierRps);
 
             // Changement de la phase en fonction des retours
             $logErrorsCoherence = $this->repoPgLogValidEdilabo->findBy(array('demandeId' => $pgCmdFichierRps->getDemande()->getId(), 'fichierRpsId' => $pgCmdFichierRps->getId(), 'typeErreur' => 'error'));
             $logWarningsCoherence = $this->repoPgLogValidEdilabo->findBy(array('demandeId' => $pgCmdFichierRps->getDemande()->getId(), 'fichierRpsId' => $pgCmdFichierRps->getId(), 'typeErreur' => 'warning'));
 
-
             if (count($logErrorsCoherence) > 0) {
-                $this->_updatePhase($pgCmdFichierRps, 'R82');
+                $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R82');
                 $this->phase82atteinte = true;
             } else {
                 if (count($logWarningsCoherence) > 0) { // Avec avertissements
-                    $this->_updatePhase($pgCmdFichierRps, 'R31');
+                    $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R31');
                 } else { // Sans avertissements
-                    $this->_updatePhase($pgCmdFichierRps, 'R30');
+                    $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R30');
                 }
             }
 
@@ -63,12 +57,12 @@ class CheckProcessRaiCommand extends AeagCommand {
 
             if (count($logErrorsVraisemblance) > 0) {
                 // Erreur
-                $this->_updatePhase($pgCmdFichierRps, 'R84', $this->phase82atteinte);
+                $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R84', $this->phase82atteinte);
             } else { // Succes
                 if (count($logWarningsVraisemblance) > 0) { // Avec avertissements
-                    $this->_updatePhase($pgCmdFichierRps, 'R41', $this->phase82atteinte);
+                    $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R41', $this->phase82atteinte);
                 } else { // Sans avertissements
-                    $this->_updatePhase($pgCmdFichierRps, 'R40', $this->phase82atteinte);
+                    $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R40', $this->phase82atteinte);
                 }
             }
 
@@ -99,9 +93,12 @@ class CheckProcessRaiCommand extends AeagCommand {
                 $this->_integrationDonneesBrutes($pgCmdFichierRps);
 
                 // Evolution de la phase
-                $this->_updatePhase($pgCmdFichierRps, 'R45', $this->phase82atteinte);
-
-                // TODO Fichier csv
+                $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R45', $this->phase82atteinte);
+                
+                $this->_updatePhaseDemande($pgCmdFichierRps);
+                
+                // Fichier csv
+                $this->_exportCsvDonneesBrutes($pgCmdFichierRps);
 
                 $cptRaisTraitesOk++;
             } else {
@@ -118,7 +115,7 @@ class CheckProcessRaiCommand extends AeagCommand {
     }
 
     protected function _coherenceRaiDai($pgCmdFichierRps) {
-        $this->_updatePhase($pgCmdFichierRps, 'R26');
+        $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R26');
 
         $demandeId = $pgCmdFichierRps->getDemande()->getId();
         $reponseId = $pgCmdFichierRps->getId();
@@ -230,7 +227,7 @@ class CheckProcessRaiCommand extends AeagCommand {
     }
 
     protected function _controleVraisemblance($pgCmdFichierRps) {
-        $this->_updatePhase($pgCmdFichierRps, 'R36', $this->phase82atteinte);
+        $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R36', $this->phase82atteinte);
 
         $demandeId = $pgCmdFichierRps->getDemande()->getId();
         $reponseId = $pgCmdFichierRps->getId();
@@ -355,6 +352,7 @@ class CheckProcessRaiCommand extends AeagCommand {
     }
 
     protected function _integrationDonneesBrutes($pgCmdFichierRps) {
+
         $demandeId = $pgCmdFichierRps->getDemande()->getId();
         $reponseId = $pgCmdFichierRps->getId();
         $pgTmpValidEdilabos = $this->repoPgTmpValidEdilabo->findBy(array('fichierRpsId' => $reponseId, 'demandeId' => $demandeId));
@@ -363,114 +361,137 @@ class CheckProcessRaiCommand extends AeagCommand {
         foreach ($pgTmpValidEdilabos as $pgTmpValidEdilabo) {
             $pgCmdPrelev = $this->repoPgCmdPrelev->findOneBy(array('demande' => $pgTmpValidEdilabo->getDemandeId(), 'codePrelevCmd' => $pgTmpValidEdilabo->getCodePrelevement()));
             if (!is_null($pgCmdPrelev)) {
-                $pgCmdPrelev->setFichierRps($pgCmdFichierRps);
-                if (!is_null($pgTmpValidEdilabo->getDatePrel())) {
-                    $datePrel = \DateTime::createFromFormat('Y-m-d', $pgTmpValidEdilabo->getDatePrel());
-                    $pgCmdPrelev->setDatePrelev($datePrel);
-                }
-                $pgCmdPrelev->setCodeMethode($pgTmpValidEdilabo->getMethPrel());
-                $pgCmdPrelev->setRealise("1");
-                $this->emSqe->persist($pgCmdPrelev);
-
-                // Cas particulier selon num_ordre => creer une nouvelle ligne
-                // Ne faire qu'une fois le traitement $pgCmdPrelevPc
-                if (!$dejaFait) {
-                    if ($pgTmpValidEdilabo->getNumOrdre() == 1) {
-                        $pgCmdPrelevPc = $this->repoPgCmdPrelevPc->findOneBy(array('prelev' => $pgCmdPrelev, 'numOrdre' => $pgTmpValidEdilabo->getNumOrdre()));
-                    } else {
-                        $pgCmdPrelevPc = new \Aeag\SqeBundle\Entity\PgCmdPrelevPc();
-                        $pgCmdPrelevPc->setPrelev($pgCmdPrelev);
-                        $pgCmdPrelevPc->setNumOrdre($pgTmpValidEdilabo->getNumOrdre());
-                        $pgCmdPrelevPc->setRefEchCmd($pgTmpValidEdilabo->getRefEchCmd());
-                    }
-                    $pgCmdPrelevPc->setConformite($pgTmpValidEdilabo->getConformPrel());
-                    $pgCmdPrelevPc->setAccreditation($pgTmpValidEdilabo->getAccredPrel());
-                    $pgCmdPrelevPc->setAgrement($pgTmpValidEdilabo->getAgrePrel());
-                    $pgCmdPrelevPc->setReserves($pgTmpValidEdilabo->getReservPrel());
-                    $pgCmdPrelevPc->setCommentaire($pgTmpValidEdilabo->getCommentaire());
-                    $pgCmdPrelevPc->setXPrel($pgTmpValidEdilabo->getXPrel());
-                    $pgCmdPrelevPc->setYPrel($pgTmpValidEdilabo->getYPrel());
-                    $pgCmdPrelevPc->setLocalisation($pgTmpValidEdilabo->getLocalisation());
-                    $pgSandreZoneVerticaleProspectee = $this->repoPgSandreZoneVerticaleProspectee->findOneByCodeZone($pgTmpValidEdilabo->getZoneVert());
-                    if (!is_null($pgSandreZoneVerticaleProspectee)) {
-                        $pgCmdPrelevPc->setZoneVerticale($pgSandreZoneVerticaleProspectee);
-                    }
-                    $pgCmdPrelevPc->setProfondeur($pgTmpValidEdilabo->getProf());
-                    $pgCmdPrelevPc->setRefEchPrel($pgTmpValidEdilabo->getRefEchPrel());
-                    $pgCmdPrelevPc->setRefEchLabo($pgTmpValidEdilabo->getRefEchLabo());
-                    $pgCmdPrelevPc->setCompletudeEch($pgTmpValidEdilabo->getCompletEch());
-                    $pgCmdPrelevPc->setAcceptabiliteEch($pgTmpValidEdilabo->getAcceptEch());
-                    if (!is_null($pgTmpValidEdilabo->getDateRecepEch())) {
-                        $dateRecepEch = \DateTime::createFromFormat('Y-m-d', $pgTmpValidEdilabo->getDateRecepEch());
-                        $pgCmdPrelevPc->setDateRecepEch($dateRecepEch);
-                    }
-                    $this->emSqe->persist($pgCmdPrelevPc);
-
-                    $dejaFait = true;
-                }
-
-                if ($pgTmpValidEdilabo->getInSitu() == 0) {
-                    $pgCmdMesureEnv = new \Aeag\SqeBundle\Entity\PgCmdMesureEnv();
-                    $pgCmdMesureEnv->setPrelev($pgCmdPrelev);
-                    $pgSandreParametres = $this->repoPgSandreParametres->findOneByCodeParametre($pgTmpValidEdilabo->getCodeParametre());
-                    if (!is_null($pgSandreParametres)) {
-                        $pgCmdMesureEnv->setCodeParametre($pgSandreParametres);
-                    }
-                    if (!is_null($pgTmpValidEdilabo->getDateM())) {
-                        $dateM = \DateTime::createFromFormat('Y-m-d', $pgTmpValidEdilabo->getDateM());
-                        $pgCmdMesureEnv->setDateMes($dateM);
-                    }
-                    $pgCmdMesureEnv->setResultat($pgTmpValidEdilabo->getResM());
-                    $pgSandreUnites = $this->repoPgSandreUnites->findOneByCodeUnite($pgTmpValidEdilabo->getCodeUnite());
-                    if (!is_null($pgSandreUnites)) {
-                        $pgCmdMesureEnv->setCodeUnite($pgSandreUnites);
-                    }
-                    $pgCmdMesureEnv->setCodeRemarque($pgTmpValidEdilabo->getCodeRqM());
-                    $pgCmdMesureEnv->setCodeMethode($pgTmpValidEdilabo->getMethPrel());
-                    $pgCmdMesureEnv->setCodeStatut($pgTmpValidEdilabo->getCodeStatut());
-                    $pgProgLotParamAn = $this->repoPgProgLotParamAn->findOneById($pgTmpValidEdilabo->getParamProgId());
-                    if (!is_null($pgProgLotParamAn)) {
-                        $pgCmdMesureEnv->setParamProg($pgProgLotParamAn);
-                    }
-                    $this->emSqe->persist($pgCmdMesureEnv);
+                if ($this->isAlreadyAdded($pgCmdFichierRps, $pgCmdPrelev)) {
+                    $this->_addLog('warning', $pgCmdFichierRps->getDemande()->getId(), $pgCmdFichierRps->getId(), "Cette RAI a déjà été intégrée dans SQE");
                 } else {
-                    $pgCmdAnalyse = new \Aeag\SqeBundle\Entity\PgCmdAnalyse();
-                    $pgCmdAnalyse->setPrelevId($pgCmdPrelev->getId());
-                    $pgCmdAnalyse->setNumOrdre($pgTmpValidEdilabo->getNumOrdre());
-                    $pgSandreParametres = $this->repoPgSandreParametres->findOneByCodeParametre($pgTmpValidEdilabo->getCodeParametre());
-                    if (!is_null($pgSandreParametres)) {
-                        $pgCmdAnalyse->setCodeParametre($pgSandreParametres);
+                    $pgCmdPrelev->setFichierRps($pgCmdFichierRps);
+                    if (!is_null($pgTmpValidEdilabo->getDatePrel())) {
+                        if (!is_null($pgTmpValidEdilabo->getHeurePrel())) {
+                            $date = $pgTmpValidEdilabo->getDatePrel().' '.$pgTmpValidEdilabo->getHeurePrel();
+                            $datePrel = \DateTime::createFromFormat('Y-m-d H:i:s', $date);
+                        } else {
+                            $datePrel = \DateTime::createFromFormat('Y-m-d', $pgTmpValidEdilabo->getDatePrel());
+                        }
+                        $pgCmdPrelev->setDatePrelev($datePrel);
                     }
-                    $pgSandreFractions = $this->repoPgSandreFractions->findOneByCodeFraction($pgTmpValidEdilabo->getCodeFraction());
-                    if (!is_null($pgSandreFractions)) {
-                        $pgCmdAnalyse->setCodeFraction($pgSandreFractions);
-                    }
-                    $pgCmdAnalyse->setLieuAna($pgTmpValidEdilabo->getInSitu());
-                    if (!is_null($pgTmpValidEdilabo->getDateM())) {
-                        $dateM = \DateTime::createFromFormat('Y-m-d', $pgTmpValidEdilabo->getDateM());
-                        $pgCmdAnalyse->setDateAna($dateM);
-                    }
-                    $pgCmdAnalyse->setResultat($pgTmpValidEdilabo->getResM());
-                    $pgSandreUnites = $this->repoPgSandreUnites->findOneByCodeUnite($pgTmpValidEdilabo->getCodeUnite());
-                    if (!is_null($pgSandreUnites)) {
-                        $pgCmdAnalyse->setCodeUnite($pgSandreUnites);
-                    }
-                    $pgCmdAnalyse->setCodeRemarque($pgTmpValidEdilabo->getCodeRqM());
-                    $pgCmdAnalyse->setLqAna($pgTmpValidEdilabo->getLqM());
-                    $pgCmdAnalyse->setRefAnaLabo($pgTmpValidEdilabo->getRefAnaLabo());
-                    $pgCmdAnalyse->setCodeMethode($pgTmpValidEdilabo->getMethAna());
-                    $pgCmdAnalyse->setAccreditation($pgTmpValidEdilabo->getAccredAna());
-                    $pgCmdAnalyse->setConfirmation($pgTmpValidEdilabo->getConfirmAna());
-                    $pgCmdAnalyse->setReserve($pgTmpValidEdilabo->getReservAna());
-                    $pgCmdAnalyse->setCodeStatut($pgTmpValidEdilabo->getCodeStatut());
-                    $pgProgLotParamAn = $this->repoPgProgLotParamAn->findOneById($pgTmpValidEdilabo->getParamProgId());
-                    if (!is_null($pgProgLotParamAn)) {
-                        $pgCmdAnalyse->setParamProg($pgProgLotParamAn);
-                    }
-                    $this->emSqe->persist($pgCmdAnalyse);
-                }
+                    $pgCmdPrelev->setCodeMethode($pgTmpValidEdilabo->getMethPrel());
+                    $pgCmdPrelev->setRealise("1");
+                    $this->emSqe->persist($pgCmdPrelev);
 
-                $this->emSqe->flush();
+                    // Cas particulier selon num_ordre => creer une nouvelle ligne
+                    // Ne faire qu'une fois le traitement $pgCmdPrelevPc
+                    if (!$dejaFait) {
+                        if ($pgTmpValidEdilabo->getNumOrdre() == 1) {
+                            $pgCmdPrelevPc = $this->repoPgCmdPrelevPc->findOneBy(array('prelev' => $pgCmdPrelev, 'numOrdre' => $pgTmpValidEdilabo->getNumOrdre()));
+                        } else {
+                            $pgCmdPrelevPc = new \Aeag\SqeBundle\Entity\PgCmdPrelevPc();
+                            $pgCmdPrelevPc->setPrelev($pgCmdPrelev);
+                            $pgCmdPrelevPc->setNumOrdre($pgTmpValidEdilabo->getNumOrdre());
+                            $pgCmdPrelevPc->setRefEchCmd($pgTmpValidEdilabo->getRefEchCmd());
+                        }
+                        $pgCmdPrelevPc->setConformite($pgTmpValidEdilabo->getConformPrel());
+                        $pgCmdPrelevPc->setAccreditation($pgTmpValidEdilabo->getAccredPrel());
+                        $pgCmdPrelevPc->setAgrement($pgTmpValidEdilabo->getAgrePrel());
+                        $pgCmdPrelevPc->setReserves($pgTmpValidEdilabo->getReservPrel());
+                        $pgCmdPrelevPc->setCommentaire($pgTmpValidEdilabo->getCommentaire());
+                        $pgCmdPrelevPc->setXPrel($pgTmpValidEdilabo->getXPrel());
+                        $pgCmdPrelevPc->setYPrel($pgTmpValidEdilabo->getYPrel());
+                        $pgCmdPrelevPc->setLocalisation($pgTmpValidEdilabo->getLocalisation());
+                        $pgSandreZoneVerticaleProspectee = $this->repoPgSandreZoneVerticaleProspectee->findOneByCodeZone($pgTmpValidEdilabo->getZoneVert());
+                        if (!is_null($pgSandreZoneVerticaleProspectee)) {
+                            $pgCmdPrelevPc->setZoneVerticale($pgSandreZoneVerticaleProspectee);
+                        }
+                        $pgCmdPrelevPc->setProfondeur($pgTmpValidEdilabo->getProf());
+                        $pgCmdPrelevPc->setRefEchPrel($pgTmpValidEdilabo->getRefEchPrel());
+                        $pgCmdPrelevPc->setRefEchLabo($pgTmpValidEdilabo->getRefEchLabo());
+                        $pgCmdPrelevPc->setCompletudeEch($pgTmpValidEdilabo->getCompletEch());
+                        $pgCmdPrelevPc->setAcceptabiliteEch($pgTmpValidEdilabo->getAcceptEch());
+                        if (!is_null($pgTmpValidEdilabo->getDateRecepEch())) {
+                            $dateRecepEch = \DateTime::createFromFormat('Y-m-d', $pgTmpValidEdilabo->getDateRecepEch());
+                            $pgCmdPrelevPc->setDateRecepEch($dateRecepEch);
+                        }
+                        $this->emSqe->persist($pgCmdPrelevPc);
+
+                        $dejaFait = true;
+                    }
+
+                    if ($pgTmpValidEdilabo->getInSitu() == 0) {
+                        $pgCmdMesureEnv = new \Aeag\SqeBundle\Entity\PgCmdMesureEnv();
+                        $pgCmdMesureEnv->setPrelev($pgCmdPrelev);
+                        $pgSandreParametres = $this->repoPgSandreParametres->findOneByCodeParametre($pgTmpValidEdilabo->getCodeParametre());
+                        if (!is_null($pgSandreParametres)) {
+                            $pgCmdMesureEnv->setCodeParametre($pgSandreParametres);
+                        }
+                        if (!is_null($pgTmpValidEdilabo->getDateM())) {
+                            if (!is_null($pgTmpValidEdilabo->getHeureM())) {
+                                $date = $pgTmpValidEdilabo->getDateM().' '.$pgTmpValidEdilabo->getHeureM();
+                                $dateM = \DateTime::createFromFormat('Y-m-d H:i:s', $date);
+                            } else {
+                                $dateM = \DateTime::createFromFormat('Y-m-d', $pgTmpValidEdilabo->getDateM());
+                            }
+                            $pgCmdMesureEnv->setDateMes($dateM);
+                        }
+                        
+                        $pgCmdMesureEnv->setResultat($pgTmpValidEdilabo->getResM());
+                        $pgSandreUnites = $this->repoPgSandreUnites->findOneByCodeUnite($pgTmpValidEdilabo->getCodeUnite());
+                        if (!is_null($pgSandreUnites)) {
+                            $pgCmdMesureEnv->setCodeUnite($pgSandreUnites);
+                        }
+                        $pgCmdMesureEnv->setCodeRemarque($pgTmpValidEdilabo->getCodeRqM());
+                        $pgCmdMesureEnv->setCodeMethode($pgTmpValidEdilabo->getMethPrel());
+                        $pgCmdMesureEnv->setCodeStatut($pgTmpValidEdilabo->getCodeStatut());
+                        $pgProgLotParamAn = $this->repoPgProgLotParamAn->findOneById($pgTmpValidEdilabo->getParamProgId());
+                        if (!is_null($pgProgLotParamAn)) {
+                            $pgCmdMesureEnv->setParamProg($pgProgLotParamAn);
+                        }
+                        $this->emSqe->persist($pgCmdMesureEnv);
+                    } else {
+                        $pgCmdAnalyse = new \Aeag\SqeBundle\Entity\PgCmdAnalyse();
+                        $pgCmdAnalyse->setPrelevId($pgCmdPrelev->getId());
+                        $pgCmdAnalyse->setNumOrdre($pgTmpValidEdilabo->getNumOrdre());
+                        $pgSandreParametres = $this->repoPgSandreParametres->findOneByCodeParametre($pgTmpValidEdilabo->getCodeParametre());
+                        if (!is_null($pgSandreParametres)) {
+                            $pgCmdAnalyse->setCodeParametre($pgSandreParametres);
+                        }
+                        $pgSandreFractions = $this->repoPgSandreFractions->findOneByCodeFraction($pgTmpValidEdilabo->getCodeFraction());
+                        if (!is_null($pgSandreFractions)) {
+                            $pgCmdAnalyse->setCodeFraction($pgSandreFractions);
+                        }
+                        $pgCmdAnalyse->setLieuAna($pgTmpValidEdilabo->getInSitu());
+                        
+                         if (!is_null($pgTmpValidEdilabo->getDateM())) {
+                            if (!is_null($pgTmpValidEdilabo->getHeureM())) {
+                                $date = $pgTmpValidEdilabo->getDateM().' '.$pgTmpValidEdilabo->getHeureM();
+                                $dateM = \DateTime::createFromFormat('Y-m-d H:i:s', $date);
+                            } else {
+                                $dateM = \DateTime::createFromFormat('Y-m-d', $pgTmpValidEdilabo->getDateM());
+                            }
+                            $pgCmdAnalyse->setDateAna($dateM);
+                        }
+                        
+                        $pgCmdAnalyse->setResultat($pgTmpValidEdilabo->getResM());
+                        $pgSandreUnites = $this->repoPgSandreUnites->findOneByCodeUnite($pgTmpValidEdilabo->getCodeUnite());
+                        if (!is_null($pgSandreUnites)) {
+                            $pgCmdAnalyse->setCodeUnite($pgSandreUnites);
+                        }
+                        $pgCmdAnalyse->setCodeRemarque($pgTmpValidEdilabo->getCodeRqM());
+                        $pgCmdAnalyse->setLqAna($pgTmpValidEdilabo->getLqM());
+                        $pgCmdAnalyse->setRefAnaLabo($pgTmpValidEdilabo->getRefAnaLabo());
+                        $pgCmdAnalyse->setCodeMethode($pgTmpValidEdilabo->getMethAna());
+                        $pgCmdAnalyse->setAccreditation($pgTmpValidEdilabo->getAccredAna());
+                        $pgCmdAnalyse->setConfirmation($pgTmpValidEdilabo->getConfirmAna());
+                        $pgCmdAnalyse->setReserve($pgTmpValidEdilabo->getReservAna());
+                        $pgCmdAnalyse->setCodeStatut($pgTmpValidEdilabo->getCodeStatut());
+                        $pgProgLotParamAn = $this->repoPgProgLotParamAn->findOneById($pgTmpValidEdilabo->getParamProgId());
+                        if (!is_null($pgProgLotParamAn)) {
+                            $pgCmdAnalyse->setParamProg($pgProgLotParamAn);
+                        }
+                        $this->emSqe->persist($pgCmdAnalyse);
+                    }
+                    $this->emSqe->flush();
+                }
+                // Evolution de la phase du prelevement
+                $this->_updatePhasePrelevement($pgCmdPrelev, 'M40');
             }
         }
     }
@@ -907,6 +928,52 @@ class CheckProcessRaiCommand extends AeagCommand {
             }
         }
     }
+    
+    protected function _exportCsvDonneesBrutes($pgCmdFichierRps) {
+        
+        // Fichier CSV :
+        // Récupérer le nom du fichier déposé
+        // Supprimer l'extension, rajouter csv
+        $nomFichierRps = str_replace('zip', 'csv', $pgCmdFichierRps->getNomFichier());
+        $chemin = $this->getContainer()->getParameter('repertoire_echange');
+        $pathBase = $this->getContainer()->get('aeag_sqe.process_rai')->getCheminEchange($chemin, $pgCmdFichierRps->getDemande(), $pgCmdFichierRps->getId());
+        $fullFileName = $pathBase . '/' . $nomFichierRps;
+        
+        $fichier_csv = fopen($fullFileName, 'w+');
+        
+        // Chaque ligne du tableau correspond a une ligne du fichier csv
+        $lignes = array();
+        // Entete
+        $lignes[] = array('Année', 'Code station','Nom station','Code masse d\'eau','Code du prélèvement',
+                        'Siret préleveur','Nom préleveur','Date-heure du prélèvement','Code du paramètre', 
+                        'Libellé court paramètre', 'Nom paramètre','Zone verticale','Profondeur', 'Code support',
+                        'Nom support', 'Code fraction', 'Nom fraction', 'Code méthode', 'Nom méthode', 'Code remarque',
+                        'Résultat', 'Valeur textuelle', 'Code unité', 'libellé unité', 'symbole unité', 'LQ', 'Siret labo',
+                        'Nom labo', 'Code réseau', 'Nom réseau', 'Siret prod', 'Nom prod', 'Commentaire');
+        
+        // Requete de récupération des différents champs
+        $donneesBrutes = $this->repoPgCmdPrelev->getDonneesBrutes($pgCmdFichierRps);
+        $lignes = array_merge($lignes, $donneesBrutes);
+        foreach ($lignes as $ligne) {
+            fputcsv($fichier_csv, $ligne, ';');
+        }
+        
+        fclose($fichier_csv);
+        
+        // Mettre à jour la table pgCmdFichierRps avec le lien vers le fichier des données brutes
+        $pgCmdFichierRps->setNomFichierDonneesBrutes($nomFichierRps);
+        $this->emSqe->persist($pgCmdFichierRps);
+        $this->emSqe->flush();
+    }
+
+    protected function isAlreadyAdded($pgCmdFichierRps, $pgCmdPrelev) {
+        $pgProgPhase = $this->repoPgProgPhases->findOneBy('M30');
+        $pgCmdPrelevExisting = $this->repoPgCmdPrelev->getPgCmdPrelevByCodePrelevCodeDmdAndPhase($pgCmdPrelev, $pgCmdFichierRps->getDemande(), $pgProgPhase);
+        if (count($pgCmdPrelevExisting) > 0) {
+            return false;
+        }
+        return true;
+    }
 
     protected function _convertMultiArray($array) {
         $out = implode(",", array_map(function($a) {
@@ -922,10 +989,8 @@ class CheckProcessRaiCommand extends AeagCommand {
         $logs = $this->repoPgLogValidEdilabo->findBy(array('demandeId' => $demandeId, 'fichierRpsId' => $reponseId));
 
         // Récupération et ouverture du fichier de log
-        $pathBase = $this->getContainer()->getParameter('repertoire_echange');
-        $pathBase .= $pgCmdFichierRps->getDemande()->getAnneeProg() . '/' . $pgCmdFichierRps->getDemande()->getCommanditaire()->getNomCorres() .
-                '/' . $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getId() . '/' . $pgCmdFichierRps->getDemande()->getLotan()->getId() . '/' . $pgCmdFichierRps->getId();
-
+        $chemin = $this->getContainer()->getParameter('repertoire_echange');
+        $pathBase = $this->getContainer()->get('aeag_sqe.process_rai')->getCheminEchange($chemin, $pgCmdFichierRps->getDemande(), $pgCmdFichierRps->getId());
         $fullFileName = $pathBase . '/' . $fileName;
 
         $cr = '';

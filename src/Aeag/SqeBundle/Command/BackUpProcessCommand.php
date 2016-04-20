@@ -38,7 +38,7 @@ class BackUpProcessCommand extends AeagCommand {
             if ($pgCmdFichierRps->getNomFichier()) {
                 if ($this->getContainer()->get('aeag_sqe.process_rai')->envoiFichierValidationFormat($this->emSqe, $pgCmdFichierRps, $pathBase . '/' . $pgCmdFichierRps->getNomFichier())) {
                     // Changement de la phase de la réponse 
-                    $this->_updatePhase($pgCmdFichierRps, 'R15');
+                    $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R15');
 
                     // Envoi d'un mail
                     $objetMessage = "RAI " . $pgCmdFichierRps->getId() . " soumise et en cours de validation";
