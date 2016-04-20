@@ -227,7 +227,12 @@ class EtatMe {
     public function getProposed() {
         return $this->proposed;
     }
+    
+    function setProposed($proposed) {
+        $this->proposed = $proposed;
+    }
 
+    
     /**
      * Add proposed
      *

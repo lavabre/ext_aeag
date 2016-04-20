@@ -5,15 +5,7 @@ namespace Aeag\EdlBundle\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Aeag\EdlBundle\Entity\PressionMeProposed;
-use Aeag\EdlBundle\Entity\PressionType;
-use Aeag\EdlBundle\Entity\PressionMe;
-use Aeag\EdlBundle\Entity\PressionMeRepository;
-use Aeag\EdlBundle\Entity\MasseEau;
-use Aeag\EdlBundle\Resources\php;
 
 class DateTimePression extends \DateTime {
 
@@ -26,7 +18,7 @@ class DateTimePression extends \DateTime {
 class PressionController extends Controller {
 
     public function pressionFormAction(Request $request) {
-          $user = $this->getUser();
+        $user = $this->getUser();
         $session = $this->get('session');
         $session->clear();
         $session->set('controller', 'Pression');
@@ -53,16 +45,21 @@ class PressionController extends Controller {
 
         $repo = $emEdl->getRepository('AeagEdlBundle:PressionMe');
         $derniereProp = $repo->getLastPropositionSuperviseur($euCd, $cdPression);
-        if (!is_object($derniereProp)) {
+        if (!$derniereProp) {
             $derniereProp = $repo->getLastProposition($euCd, $cdPression);
         }
+          if (!$derniereProp) {
+            $derniereProposition = null;
+        } else {
+            $derniereProposition = $derniereProp[0];
+        }
 
-         return $this->render('AeagEdlBundle:Pression:pressionFormIe8.html.twig', array(
-                        'form' => $form->createView(),
-                        'euCd' => $euCd,
-                        'cdPression' => $cdPression,
-                        'derniereProposition' => $derniereProp ? $derniereProp->getValeur() : $pressionInitiale->getValeur()
-                    ));
+        return $this->render('AeagEdlBundle:Pression:pressionForm.html.twig', array(
+                    'form' => $form->createView(),
+                    'euCd' => $euCd,
+                    'cdPression' => $cdPression,
+                    'derniereProposition' => $derniereProposition ? $derniereProposition->getValeur() : $pressionInitiale->getValeur()
+        ));
         //}    
     }
 
@@ -77,10 +74,10 @@ class PressionController extends Controller {
         $session->set('fonction', 'pressionListProposed');
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
-        
+
         try {
-           // récupération des paramètres
-           $euCd = $request->get('euCd');
+            // récupération des paramètres
+            $euCd = $request->get('euCd');
             $cdPression = $request->get('cdPression');
             $commentaire = $request->get('commentaire');
             $valeur = $request->get('valeur');
@@ -144,35 +141,41 @@ class PressionController extends Controller {
      * mode Ajax
      */
     public function pressionListProposedAction(Request $request) {
-         $user = $this->getUser();
+        $user = $this->getUser();
         $session = $this->get('session');
         $session->clear();
         $session->set('controller', 'Pression');
         $session->set('fonction', 'pressionListProposed');
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
-       
+
         $euCd = $request->get('euCd');
         $cdPression = $request->get('cdPression');
 
         $repo = $emEdl->getRepository('AeagEdlBundle:PressionMe');
         $pressionInitiale = $repo->findOneBy(array('euCd' => $euCd, 'cdPression' => $cdPression));
 
-        $repo = $emEdl->getRepository('AeagEdlBundle:PressionMe');
         $derniereProp = $repo->getLastPropositionSuperviseur($euCd, $cdPression);
-        if (!is_object($derniereProp)) {
+
+        if (!$derniereProp) {
             $derniereProp = $repo->getLastProposition($euCd, $cdPression);
         }
-        
-          return $this->render('AeagEdlBundle:Pression:pressionListProposed.html.twig', array(
+
+        if (!$derniereProp) {
+            $derniereProposition = null;
+        } else {
+            $derniereProposition = $derniereProp[0];
+        }
+
+        return $this->render('AeagEdlBundle:Pression:pressionListProposed.html.twig', array(
                     'pression' => $pressionInitiale,
-                    'derniereProp' => $derniereProp,
+                    'derniereProp' => $derniereProposition,
                     'user' => $user
-                ));
+        ));
     }
 
     public function removePressionAction(Request $request) {
-          $user = $this->getUser();
+        $user = $this->getUser();
         $session = $this->get('session');
         $session->clear();
         $session->set('controller', 'Pression');
@@ -185,7 +188,7 @@ class PressionController extends Controller {
         $login = $request->get('login');
         $propositionDate = $request->get('propositionDate');
 
-       $repo = $emEdl->getRepository('AeagEdlBundle:PressionMeProposed');
+        $repo = $emEdl->getRepository('AeagEdlBundle:PressionMeProposed');
 
         $proposition = $repo->findOneBy(array('euCd' => $euCd, 'cdPression' => $cdPression, 'utilisateur' => $login, 'propositionDate' => $propositionDate));
 
@@ -195,7 +198,7 @@ class PressionController extends Controller {
         return $this->forward('AeagEdlBundle:Pression:pressionListProposed', array(
                     'euCd' => $euCd,
                     'cdPression' => $cdPression
-                ));
+        ));
     }
 
     /* Exemple de gestion ajax    

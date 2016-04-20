@@ -10,8 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="pression_me_proposed", indexes={@ORM\Index(name="idx_eb36ba9850eae44", columns={"id_utilisateur"})})
  * @ORM\Entity
  */
-class PressionMeProposed
-{
+class PressionMeProposed {
+
     /**
      * @var string
      *
@@ -61,6 +61,17 @@ class PressionMeProposed
     private $role;
 
     /**
+     * @var PressionMe
+     *
+     * @ORM\ManyToOne(targetEntity="PressionMe", inversedBy="proposed")
+     * @ORM\JoinColumns({
+     * @ORM\JoinColumn(name="eu_cd", referencedColumnName="eu_cd"),
+     * @ORM\JoinColumn(name="cd_pression", referencedColumnName="cd_pression")
+     * })
+     */
+    private $pressionOriginale;
+
+    /**
      * @var \Utilisateur
      *
      * @ORM\ManyToOne(targetEntity="Utilisateur")
@@ -70,7 +81,29 @@ class PressionMeProposed
      */
     private $utilisateur;
 
-
+    public function getValueLib() {
+        if ($this->cdPression == 'RW_HYM_CONT' or
+                $this->cdPression == 'RW_HYM_HYD' or
+                $this->cdPression == 'RW_HYM_MOR') {
+            switch ($this->valeur) {
+                case '1' : return 'Minime';
+                case '2' : return 'Modérée';
+                case '3' : return 'Elevée';
+                case 'U' : return 'Inconnu';
+            }
+        } else {
+            if ($this->valeur) {
+                switch ($this->valeur) {
+                    case '1' : return 'Pas de pression';
+                    case '2' : return 'Pression non significative';
+                    case '3' : return 'Pression significative';
+                    case 'U' : return 'Inconnu';
+                }
+            } else {
+                return 'manque valeur';
+            }
+        }
+    }
 
     /**
      * Set euCd
@@ -79,8 +112,7 @@ class PressionMeProposed
      *
      * @return pressionMeProposed
      */
-    public function setEuCd($euCd)
-    {
+    public function setEuCd($euCd) {
         $this->euCd = $euCd;
 
         return $this;
@@ -91,8 +123,7 @@ class PressionMeProposed
      *
      * @return string
      */
-    public function getEuCd()
-    {
+    public function getEuCd() {
         return $this->euCd;
     }
 
@@ -103,8 +134,7 @@ class PressionMeProposed
      *
      * @return pressionMeProposed
      */
-    public function setPropositionDate($propositionDate)
-    {
+    public function setPropositionDate($propositionDate) {
         $this->propositionDate = $propositionDate;
 
         return $this;
@@ -115,8 +145,7 @@ class PressionMeProposed
      *
      * @return string
      */
-    public function getPropositionDate()
-    {
+    public function getPropositionDate() {
         return $this->propositionDate;
     }
 
@@ -127,8 +156,7 @@ class PressionMeProposed
      *
      * @return pressionMeProposed
      */
-    public function setCdPression($cdPression)
-    {
+    public function setCdPression($cdPression) {
         $this->cdPression = $cdPression;
 
         return $this;
@@ -139,8 +167,7 @@ class PressionMeProposed
      *
      * @return string
      */
-    public function getCdPression()
-    {
+    public function getCdPression() {
         return $this->cdPression;
     }
 
@@ -151,8 +178,7 @@ class PressionMeProposed
      *
      * @return pressionMeProposed
      */
-    public function setValeur($valeur)
-    {
+    public function setValeur($valeur) {
         $this->valeur = $valeur;
 
         return $this;
@@ -163,8 +189,7 @@ class PressionMeProposed
      *
      * @return string
      */
-    public function getValeur()
-    {
+    public function getValeur() {
         return $this->valeur;
     }
 
@@ -175,8 +200,7 @@ class PressionMeProposed
      *
      * @return pressionMeProposed
      */
-    public function setCommentaire($commentaire)
-    {
+    public function setCommentaire($commentaire) {
         $this->commentaire = $commentaire;
 
         return $this;
@@ -187,9 +211,26 @@ class PressionMeProposed
      *
      * @return string
      */
-    public function getCommentaire()
-    {
+    public function getCommentaire() {
         return $this->commentaire;
+    }
+
+    /**
+     * Set pressionOriginale
+     *
+     * @param Aeag\EtatdeslieuxBundle\Entity\PressionMe $pressionOriginale
+     */
+    public function setPressionOriginale($pressionOriginale) {
+        $this->pressionOriginale = $pressionOriginale;
+    }
+
+    /**
+     * Get pressionOriginale
+     *
+     * @return Aeag\EtatdeslieuxBundle\Entity\PressionMe 
+     */
+    public function getPressionOriginale() {
+        return $this->pressionOriginale;
     }
 
     /**
@@ -199,8 +240,7 @@ class PressionMeProposed
      *
      * @return pressionMeProposed
      */
-    public function setRole($role)
-    {
+    public function setRole($role) {
         $this->role = $role;
 
         return $this;
@@ -211,8 +251,7 @@ class PressionMeProposed
      *
      * @return string
      */
-    public function getRole()
-    {
+    public function getRole() {
         return $this->role;
     }
 
@@ -223,8 +262,7 @@ class PressionMeProposed
      *
      * @return pressionMeProposed
      */
-    public function setUtilisateur(\Aeag\EdlBundle\Entity\Utilisateur $utilisateur = null)
-    {
+    public function setUtilisateur(\Aeag\EdlBundle\Entity\Utilisateur $utilisateur = null) {
         $this->utilisateur = $utilisateur;
 
         return $this;
@@ -235,8 +273,8 @@ class PressionMeProposed
      *
      * @return \Aeag\EdlBundle\Entity\Utilisateur
      */
-    public function getUtilisateur()
-    {
+    public function getUtilisateur() {
         return $this->utilisateur;
     }
+
 }

@@ -188,9 +188,9 @@ class EtatMeProposed {
     /**
      * Set etatOriginal
      *
-     * @param Aeag\EdlBundle\Entity\EtatMe $etatOriginal
+     * 
      */
-    public function setEtatOriginal(\Aeag\EdlBundle\Entity\EtatMe $etatOriginal) {
+    public function setEtatOriginal($etatOriginal) {
         $this->etatOriginal = $etatOriginal;
     }
 

@@ -82,13 +82,17 @@ class EtatMeProposed {
     private $utilisateur;
 
     public function getValueLib() {
-        switch ($this->valeur) {
-            case '1' : return 'Très bon état';
-            case '2' : return 'Bon';
-            case '3' : return 'Moyen';
-            case '4' : return 'Médiocre';
-            case '5' : return 'Mauvais';
-            case 'U' : return 'Inconnu';
+        if ($this->valeur) {
+            switch ($this->valeur) {
+                case '1' : return 'Très bon état';
+                case '2' : return 'Bon';
+                case '3' : return 'Moyen';
+                case '4' : return 'Médiocre';
+                case '5' : return 'Mauvais';
+                case 'U' : return 'Inconnu';
+            }
+        } else {
+            return 'manque valeur';
         }
     }
 

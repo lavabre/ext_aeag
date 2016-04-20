@@ -239,9 +239,10 @@ class DefaultController extends Controller {
         $i = 0;
         foreach ($MasseEaux as $MasseEau) {
             $repo = $emEdl->getRepository('AeagEdlBundle:EtatMe');
-            $etatMe = $repo->getDerniereProposition($MasseEau->getEuCd());
+            $etatMes = $repo->getDerniereProposition($MasseEau->getEuCd());
 
-            if ($etatMe) {
+            if ($etatMes) {
+                $etatMe = $etatMes[0];
                 $etat_user = $etatMe->getUtilisateur();
                 $etat_date = $etatMe->getpropositionDate();
             } else {
@@ -251,11 +252,12 @@ class DefaultController extends Controller {
 
 
             $repo = $emEdl->getRepository('AeagEdlBundle:PressionMe');
-            $pressionMe = $repo->getDerniereProposition($MasseEau->getEuCd());
+            $pressionMes = $repo->getDerniereProposition($MasseEau->getEuCd());
 
-            if ($pressionMe) {
+            if ($pressionMes) {
+                $pressionMe = $pressionMes[0];
                 $pression_user = $pressionMe->getUtilisateur();
-                $pression_date = $pressionMe->getpropositionDate();
+                $pression_date = $pressionMe->getPropositionDate();
             } else {
                 $pression_user = null;
                 $pression_date = null;
@@ -302,22 +304,22 @@ class DefaultController extends Controller {
 
 
         $repo = $emEdl->getRepository('AeagEdlBundle:EtatGroupe');
+        $meRepo = $emEdl->getRepository('AeagEdlBundle:MasseEau');
+        $repoAvisHistorique = $emEdl->getRepository('AeagEdlBundle:AvisHistorique');
+        
         $etatGroupes = $repo->getEtatGroupe();
 
         if (!$etatGroupes) {
             throw $this->createNotFoundException('Table EtatGroupe non trouvée : ');
         }
-
-
-        $meRepo = $emEdl->getRepository('AeagEdlBundle:MasseEau');
-
         $me = $meRepo->findOneBy(array('euCd' => $code));
 
         if (!$me) {
             throw $this->createNotFoundException('Masse d\'eau non trouvée : ' . $code);
         }
-
-
+        
+        $avisHistorique = $repoAvisHistorique->getAvisHistoriqueByCodeEpr($code, 'Etat');
+     
         $session->set('UrlRetour', $this->generateUrl('AeagEdlBundle_listeMasseEau'));
 
 
@@ -325,7 +327,8 @@ class DefaultController extends Controller {
         return $this->render('AeagEdlBundle:Etat:etatGroupe.html.twig', array(
                     'etatGroupes' => $etatGroupes,
                     'me' => $me,
-                    'url' => $session->get('UrlRetour')
+                    'avisHistorique' => $avisHistorique,
+                     'url' => $session->get('UrlRetour')
                         )
         );
     }
@@ -343,11 +346,11 @@ class DefaultController extends Controller {
 
         $repo = $emEdl->getRepository('AeagEdlBundle:EtatGroupe');
         $etatGroupe = $repo->findOneBy(array('cdGroupe' => $cdGroupe));
-
+      
         $repo = $emEdl->getRepository('AeagEdlBundle:EtatMe');
         $etats = $repo->getEtatMe($code, $cdGroupe);
         $nbEtats = $repo->getNbEtatMe($code, $cdGroupe);
-
+     
 
         if ($session->get('UrlRetour') == '') {
             $session->set('UrlRetour', $this->generateUrl('AeagEdlBundle_listeMasseEau'));
@@ -355,7 +358,7 @@ class DefaultController extends Controller {
 
         return $this->render('AeagEdlBundle:Etat:etat.html.twig', array(
                     'etatGroupe' => $etatGroupe,
-                    'etats' => $etats,
+                   'etats' => $etats,
                     'nbEtats' => $nbEtats,
                     'url' => $session->get('UrlRetour')
                         )
@@ -373,15 +376,16 @@ class DefaultController extends Controller {
         $emEdl = $this->get('doctrine')->getManager('edl');
 
 
-        $repo = $this->getDoctrine()->getRepository('AeagEdlBundle:PressionGroupe');
+        $repo = $emEdl->getRepository('AeagEdlBundle:PressionGroupe');
+        $meRepo = $emEdl->getRepository('AeagEdlBundle:MasseEau');
+        $repoAvisHistorique = $emEdl->getRepository('AeagEdlBundle:AvisHistorique');
+        
+        
         $pressionGroupes = $repo->getPressionGroupe();
 
         if (!$pressionGroupes) {
             throw $this->createNotFoundException('Table PressionGroupe non trouvée : ');
         }
-
-        $meRepo = $this->getDoctrine()
-                ->getRepository('AeagEdlBundle:MasseEau');
 
         $me = $meRepo->findOneBy(array('euCd' => $code));
 
@@ -389,9 +393,11 @@ class DefaultController extends Controller {
             throw $this->createNotFoundException('Masse d\'eau non trouvée : ' . $code);
         }
 
+        $avisHistorique = $repoAvisHistorique->getAvisHistoriqueByCodeEpr($code, 'Pression');
 
         return $this->render('AeagEdlBundle:Pression:pressionGroupe.html.twig', array(
                     'pressionGroupes' => $pressionGroupes,
+                     'avisHistorique' => $avisHistorique,
                     'me' => $me,
                     'url' => $session->get('UrlRetour')
                         )

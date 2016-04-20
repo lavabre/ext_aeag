@@ -197,9 +197,9 @@ class PressionMeProposed {
     /**
      * Set pressionOriginale
      *
-     * @param Aeag\EdlBundle\Entity\PressionMe $pressionOriginale
+     * 
      */
-    public function setPressionOriginale(\Aeag\EdlBundle\Entity\PressionMe $pressionOriginale) {
+    public function setPressionOriginale($pressionOriginale) {
         $this->pressionOriginale = $pressionOriginale;
     }
 

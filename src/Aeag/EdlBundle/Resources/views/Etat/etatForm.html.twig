@@ -1,5 +1,3 @@
-<div class="block-border"> 
- <div class="align-center">
 <form id="form{{ cdEtat }}" action="#" method="post" {{ form_enctype(form) }}>
 {{ form_errors(form) }}
 
@@ -30,12 +28,10 @@
         <br><br>
         
 </form>
-       
-</div>
-</div>
+
 <script type="text/javascript">
-	$("#{{ cdEtat }}_{{ derniereProposition }}").removeClass('unselected');
-	$("#form{{ cdEtat }} > #form_valeur").val("{{ derniereProposition }}");
+	
+                 $("#form{{ cdEtat }} > #form_valeur").val("{{ derniereProposition }}");
 
 	// choix de la valeur de l etat
 	$("span[id^='{{ cdEtat }}_']").click(function(e){
@@ -101,7 +97,7 @@
    	   					//alert(data);
    	   					var $div = "#divEtat-{{ euCd }}-{{ cdEtat }}";
    						// placer le formulaire sous le div
-   						$($div).html(data); 
+   						$($div).empty().html(data); 
    						$('#modalTraitementEncours').modal('hide');
                                               
    					}
@@ -119,9 +115,7 @@
 
 	// annulation de la saisie
 	$("#annuler").click(function(e){
-		// masquer le div de saisie
-		$("#divNewEtat{{ cdEtat }}").hide();
-                $.post("{{ path('AeagEdlBundle_etatListProposed') }}", 
+		 $.post("{{ path('AeagEdlBundle_etatListProposed') }}", 
    					{ 
    						euCd: "{{ euCd }}", 
    						cdEtat: "{{ cdEtat }}"

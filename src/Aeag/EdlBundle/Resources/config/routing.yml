@@ -37,7 +37,6 @@ AeagEdlBundle_removeEtat:
 AeagEdlBundle_etatForm:
     path:  /avis/etatForm
     defaults: { _controller: AeagEdlBundle:Etat:etatForm }
-    
 
 AeagEdlBundle_etatSubmit:
     path:  /avis/etatSubmit
@@ -52,6 +51,22 @@ AeagEdlBundle_pressionGroupe:
 AeagEdlBundle_pression:
     path:  /avis/pression/{code}
     defaults: { _controller: AeagEdlBundle:Default:pression }
+    
+AeagEdlBundle_pressionForm:
+    path:  /avis/pressionForm
+    defaults: { _controller: AeagEdlBundle:Pression:pressionForm }
+    
+AeagEdlBundle_pressionSubmit:
+    path:  /avis/pressionSubmit
+    defaults: { _controller: AeagEdlBundle:Pression:pressionSubmit }    
+    
+AeagEdlBundle_pressionListProposed:
+    path:  /avis/pressionListProposed
+    defaults: { _controller: AeagEdlBundle:Pression:pressionListProposed }        
+    
+AeagEdlBundle_removePression:
+    path:  /avis/removePression
+    defaults: { _controller: AeagEdlBundle:Pression:removePression }
     
     
     
@@ -68,21 +83,7 @@ AeagEdlBundle_massedeau:
     defaults: { _controller: AeagEdlBundle:Default:massedeau }
     
 
-AeagEdlBundle_pressionForm:
-    path:  /avis/pressionForm
-    defaults: { _controller: AeagEdlBundle:Pression:pressionForm }
-    
-AeagEdlBundle_pressionSubmit:
-    path:  /avis/pressionSubmit
-    defaults: { _controller: AeagEdlBundle:Pression:pressionSubmit }    
-    
-AeagEdlBundle_pressionListProposed:
-    path:  /avis/pressionListProposed
-    defaults: { _controller: AeagEdlBundle:Pression:pressionListProposed }        
-    
-AeagEdlBundle_removePression:
-    path:  /avis/removePression
-    defaults: { _controller: AeagEdlBundle:Pression:removePression }
+
     
 
     

@@ -1,7 +1,3 @@
-
-
-
-<div id="dialog-form" title="Creation d'un nouveau commentaire">
     <form id="form{{ cdPression }}" action="#" method="post" {{ form_enctype(form) }}>
         {{ form_errors(form) }}
 
@@ -34,83 +30,17 @@
                 <textarea id="commentaire" cols=60, rows=5 wrap="soft" onkeyup="EnvoyerCommentaire(this)" ></textarea>
             </p>
         </form>
-    </div>
-
-
-
-
-{% block modal %}
-
+   
          <script type="text/javascript">
           
-               $('#divNewPression{{cdPression }}').remove;
-          
-               $('textarea#form_commentaire').hide();
+                  $('textarea#form_commentaire').hide();
           
               function EnvoyerCommentaire(textarea){
                           if (textarea != '') {
                           $('textarea#form_commentaire').val($(textarea).val());
                           };
                           };
-       
-           
-                
-                  $("#dialog-form").hide();  
-                
-                  $('#dialog-form').modal({
-                          title: 'Nouveau commentaire',
-                          height:300,
-                          width:650,
-                          resizable:false,
-                          buttons: { 'valider': function(e) { 
-                                               //alert($("#form{{ cdPression }} > #form_valeur").val());
-                                               if ( $('textarea#form_commentaire').val() == '' || $("input#form_valeur").val() == '') {
-                                                   alert("Choisissez un état et saisissez un commentaire svp");
-                                               } else {
-                                               // obtenir l'url
-                                               var $url = "{{ path('AeagEdlBundle_pressionSubmit') }}";
-                                               $.getJSON($url,
-                                                      {
-                                                      euCd: $("input#form_euCd").val(),
-                                                      cdPression: $("input#form_cdPression").val(),
-                                                      commentaire: $("textarea#form_commentaire").val() ,
-                                                      valeur: $("input#form_valeur").val()
-                                                      }, 
-
-                                                      function(json) {
-                                                              //alert(json.message);
-                                                              // masquer le div de saisie
-                                                              $("#divNewPression{{ cdPression }}").hide();
-                                                              // charger et afficher les propositions pour cette Pression
-                                                              //alert(json.message);
-                                                              $("body").css("cursor", "wait");
-                                                              $.post("{{ path('AeagEdlBundle_pressionListProposed') }}", 
-                                                                      { 
-                                                                              euCd: "{{ euCd }}", 
-                                                                              cdPression: "{{ cdPression }}"
-                                                                      }, 
-                                                                      function(data) {
-                                                                              //alert(data);
-                                                                              var $div = "#divPression{{ cdPression }}";
-                                                                              // placer le formulaire sous le div
-                                                                              $($div).html(data); 
-                                                                              // rétablir curseur
-                                                                              $("body").css("cursor", "auto");
-                                                                      }
-                                                              ).error(function() { 
-                                                                      // rétablir curseur
-                                                                      $("body").css("cursor", "auto");
-                                                                      alert("Erreur non déterminée"); 
-                                                              });
-                                                          }); 
-                                          
-                                               e.closeModal();} },
-                                     'Annuler': function(e) { 
-                                               e.closeModal(); }
-                                  }
-                  });
-
-           
+        
                    //$("#{{ cdPression }}_{{ derniereProposition }}").removeClass('unselected');
                    //$("#form{{ cdPression }} > #form_valeur").val("{{ derniereProposition }}");
 
@@ -128,9 +58,93 @@
                            // affecter valeur 
                            $("#form{{ cdPression }} > #form_valeur").val($newPression);
                    });
+                   
+                   // validation de la saisie
+	$("#valider").click(function(e){
+            
+                            if ( $("#form{{ cdPression }} > #form_commentaire").val() == '' || $("#form{{ cdPression }} > #form_valeur").val() == '')
+                            {
+                                alert("Choisissez un état et saisissez un commentaire svp");
+
+                            } else
+                            {
+                        	// lancer la requête ajax qui valide la saisie
+                                          $('#modalPressionEdit').modal('hide');
+                                          $('#modalTraitementEncours').modal('toggle');
+                                        e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+		 		
+		//alert($("#form{{ cdPression }} > #form_valeur").val());
+                
+                                     // obtenir l'url
+		var $url = "{{ path('AeagEdlBundle_pressionSubmit') }}";
+                               
+		$.getJSON($url,
+			{
+	    		euCd: $("#form{{ cdPression }} > #form_euCd").val(),
+	    		cdPression: $("#form{{ cdPression }} > #form_cdPression").val(),
+		    	commentaire: $("#form{{ cdPression }} > #form_commentaire").val() ,
+		    	valeur: $("#form{{ cdPression }} > #form_valeur").val()
+			}, 
+                        
+			function(json) {
+				//alert(json.message);
+				
+				// rétablir le style du bouton crayon
+				$('a[name="newPression{{ cdPression }}"]').removeClass("inEdit");
+	
+				
+	   			// charger et afficher les propositions pour cette etat
+	   			//alert(json.message);
+			
+                                                                              $.post("{{ path('AeagEdlBundle_pressionListProposed') }}", 
+   					{ 
+                                                                                                euCd: "{{ euCd }}", 
+                                                                                                cdPression: "{{ cdPression }}"
+   					}, 
+   					function(data) {
+   	   					//alert(data);
+   	   					var $div = "#divPression-{{ euCd }}-{{ cdPression }}";
+   						// placer le formulaire sous le div
+   						$($div).empty().html(data); 
+   						$('#modalTraitementEncours').modal('hide');
+                                              
+   					}
+   				).error(function() { 
+   					// rétablir curseur
+   					$("body").css("cursor", "auto");
+   					alert("Erreur non déterminée"); 
+   				}); 
+	   			
+                              
+			}
+		);
+	    }	
+	}); 
+        
+                    // annulation de la saisie
+	$("#annuler").click(function(e){
+		    $.post("{{ path('AeagEdlBundle_PressionListProposed') }}", 
+   					{ 
+   						euCd: "{{ euCd }}", 
+   						cdPression: "{{ cdPression }}"
+   					}, 
+   					function(data) {
+   	   					//alert(data);
+   	   					var $div = "#divPression{{ cdPression }}";
+   						// placer le formulaire sous le div
+   						$($div).html(data); 
+   						// rétablir curseur
+   						$("body").css("cursor", "auto");
+                                              
+   					}
+   				).error(function() { 
+   					// rétablir curseur
+   					$("body").css("cursor", "auto");
+   					alert("Erreur non déterminée"); 
+                               }); 
+               
+	});
 
        
    
             </script>
-
-{% endblock modal %}

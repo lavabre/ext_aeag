@@ -14,26 +14,64 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class EtatMeRepository extends EntityRepository {
 
+    public function getLastPropositionSuperviseur($euCd, $cdEtat) {
+
+        $query = "select p ";
+        $query = $query . " from Aeag\EdlBundle\Entity\EtatMeProposed p";
+        $query = $query . " where p.euCd = '" . $euCd . "' and p.cdEtat = '" . $cdEtat . "' and p.role ='expert'";
+        $query = $query . " order by p.propositionDate desc";
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+        return $qb->getResult();
+
+//          
+//        $qb = $this->_em->createQueryBuilder();
+//
+//        try {
+//            $query = $qb->select('p') // string 'u' is converted to array internally
+//                    ->from('Aeag\EdlBundle\Entity\EtaMeProposed', 'p')
+//                    ->where('p.euCd = :euCd and p.cdPression = :cdPression and p.role = :role')
+//                    ->setParameter('euCd', $euCd)
+//                    ->setParameter('cdEtat', $cdEtat)
+//                    ->setParameter('role', 'expert')
+//                    ->orderBy('p.propositionDate', 'DESC')
+//                    ->setMaxResults(1)
+//                    ->getQuery();
+//
+//            $r = $query->getResult();
+//            return reset($r);
+//        } catch (Exception $e) {
+//            return null;
+//        }
+    }
+
     public function getLastProposition($euCd, $cdEtat) {
-        
-        $qb = $this->_em->createQueryBuilder();
 
-        try {
-            $query = $qb->select('p') // string 'u' is converted to array internally
-                    ->from('Aeag\EdlBundle\Entity\EtatMeProposed', 'p')
-                    ->where('p.euCd = :euCd and p.cdEtat = :cdEtat and p.role = :role')
-                    ->setParameter('euCd', $euCd)
-                    ->setParameter('cdEtat', $cdEtat)
-                    ->setParameter('role', 'expert')
-                    ->orderBy('p.propositionDate', 'DESC')
-                    ->setMaxResults(1)
-                    ->getQuery();
-
-            $r = $query->getResult();
-            return reset($r);
-        } catch (Exception $e) {
-            return null;
-        }
+        $query = "select p ";
+        $query = $query . " from Aeag\EdlBundle\Entity\EtatMeProposed p";
+        $query = $query . " where p.euCd = '" . $euCd . "' and p.cdEtat = '" . $cdEtat . "'";
+        $query = $query . " order by p.propositionDate desc";
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+        return $qb->getResult();
+//        
+//        $qb = $this->_em->createQueryBuilder();
+//
+//        try {
+//            $query = $qb->select('p') // string 'u' is converted to array internally
+//                    ->from('Aeag\EdlBundle\Entity\EtatMeProposed', 'p')
+//                    ->where('p.euCd = :euCd and p.cdEtat = :cdEtat')
+//                    ->setParameter('euCd', $euCd)
+//                    ->setParameter('cdEtat', $cdEtat)
+//                    ->orderBy('p.propositionDate', 'DESC')
+//                    ->setMaxResults(1)
+//                    ->getQuery();
+//
+//            $r = $query->getResult();
+//            return reset($r);
+//        } catch (Exception $e) {
+//            return null;
+//        }
     }
 
     public function getEtatMe($code, $cdGroupe) {
@@ -54,8 +92,8 @@ class EtatMeRepository extends EntityRepository {
             return null;
         }
     }
-    
-     public function getNbEtatMe($code, $cdGroupe) {
+
+    public function getNbEtatMe($code, $cdGroupe) {
 
         $query = "select count(e.valeur) from Aeag\EdlBundle\Entity\MasseEau m";
         $query = $query . " , Aeag\EdlBundle\Entity\EtatType t";
@@ -66,32 +104,42 @@ class EtatMeRepository extends EntityRepository {
 
         try {
             $r = $this->_em->createQuery($query)
-                    ->getSingleScalarResult();;
+                    ->getSingleScalarResult();
+            ;
             return $r;
         } catch (Exception $e) {
             return null;
         }
     }
-    
-     public function getDerniereProposition($euCd) {
-         
-        
-        $qb = $this->_em->createQueryBuilder();
 
-        try {
-            $query = $qb->select('p') // string 'u' is converted to array internally
-                    ->from('Aeag\EdlBundle\Entity\EtatMeProposed', 'p')
-                    ->where('p.euCd = :euCd ')
-                    ->setParameter('euCd', $euCd)
-                    ->orderBy('p.propositionDate', 'DESC')
-                    ->setMaxResults(1)
-                    ->getQuery();
+    public function getDerniereProposition($euCd) {
 
-            $r = $query->getResult();
-            return reset($r);
-        } catch (Exception $e) {
-            return null;
-        }
+        $query = "select p ";
+        $query = $query . " from Aeag\EdlBundle\Entity\EtatMeProposed p";
+        $query = $query . " where p.euCd = '" . $euCd . "'";
+        $query = $query . " order by p.propositionDate desc";
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+        return $qb->getResult();
+
+//         
+//        
+//        $qb = $this->_em->createQueryBuilder();
+//
+//        try {
+//            $query = $qb->select('p') // string 'u' is converted to array internally
+//                    ->from('Aeag\EdlBundle\Entity\EtatMeProposed', 'p')
+//                    ->where('p.euCd = :euCd ')
+//                    ->setParameter('euCd', $euCd)
+//                    ->orderBy('p.propositionDate', 'DESC')
+//                    ->setMaxResults(1)
+//                    ->getQuery();
+//
+//            $r = $query->getResult();
+//            return reset($r);
+//        } catch (Exception $e) {
+//            return null;
+//        }
     }
 
 }
