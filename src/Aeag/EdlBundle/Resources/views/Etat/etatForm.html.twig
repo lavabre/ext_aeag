@@ -4,7 +4,8 @@
     {{ form_widget(form.euCd) }}
     {{ form_widget(form.cdEtat) }}
          
-        <h2>{{ form_label(form.valeur, 'Choisir une valeur :') }}</h2>
+        <h3>{{ form_label(form.valeur, 'Choisir une valeur :') }}</h3>
+        </br>
            {%if cdEtat == "GW_CHIMIE_VAL" or cdEtat == "GW_QUANT" or cdEtat == "RW_CHIMIE_VAL"%}
                 <span id="{{ cdEtat|e }}_U" p="U" class="dce_etat_U unselected">Inconnu</span>
                 <span id="{{ cdEtat|e }}_2" p="2" class="dce_etat_2 unselected">Bon</span>
@@ -19,8 +20,8 @@
             {%endif%}
             {{ form_widget(form.valeur) }}
             {{ form_errors(form.valeur) }}
-        <br><br>    
-        <h2>{{ form_label(form.commentaire, 'Saisir un commentaire et éventuellement vos coordonnées :') }}</h2>
+        </br></br>    
+        <h3>{{ form_label(form.commentaire, 'Saisir un commentaire et éventuellement vos coordonnées :') }}</h3>
        
         
             {{ form_errors(form.commentaire) }}

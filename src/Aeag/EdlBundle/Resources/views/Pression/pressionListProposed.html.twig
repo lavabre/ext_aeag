@@ -38,7 +38,7 @@
           {% for pp in pression.proposed %}
                     <div class="row" id="rowProposed-ligne-{{ pression.euCd }}-{{ pression.cdPression }}-{{ i }}">
                         {% if  is_granted("ROLE_COMMENTATEUREDL") %}
-                            <div class="  col-sm-offset-1  col-sm-1  alert alert-warning">
+                            <div class="  col-sm-offset-1  col-sm-1">
                                  {% if  is_granted("ROLE_COMMENTATEUREDL") and  pp.role ==  'local' and pp.utilisateur.id == user.id %} 
                                   <a id="removePression-{{ pression.euCd }}-{{ pression.cdPression }}-{{ i }}"  title="Supprimer cette proposition" login="{{ pp.utilisateur.id }}" propositionDate="{{ pp.propositionDate }}">
                                             <button type="button" class="btn btn-danger"><i class="fa fa-remove"></i> </button>

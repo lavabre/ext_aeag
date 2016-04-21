@@ -20,8 +20,7 @@ class PressionController extends Controller {
     public function pressionFormAction(Request $request) {
         $user = $this->getUser();
         $session = $this->get('session');
-        $session->clear();
-        $session->set('controller', 'Pression');
+         $session->set('controller', 'Pression');
         $session->set('fonction', 'pressionListProposed');
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
@@ -69,11 +68,12 @@ class PressionController extends Controller {
     public function pressionSubmitAction(Request $request) {
         $user = $this->getUser();
         $session = $this->get('session');
-        $session->clear();
         $session->set('controller', 'Pression');
         $session->set('fonction', 'pressionListProposed');
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
+        $repoUtilisateur = $emEdl->getRepository('AeagEdlBundle:Utilisateur');
+        $utilisateur = $repoUtilisateur->getUtilisateurByExtid($user->getId());
 
         try {
             // récupération des paramètres
@@ -96,7 +96,7 @@ class PressionController extends Controller {
             }
 
 
-            $proposed->setUtilisateur($user);
+            $proposed->setUtilisateur($utilisateur);
             $proposed->setValeur($valeur);
             $proposed->setCommentaire($commentaire);
 
@@ -143,7 +143,6 @@ class PressionController extends Controller {
     public function pressionListProposedAction(Request $request) {
         $user = $this->getUser();
         $session = $this->get('session');
-        $session->clear();
         $session->set('controller', 'Pression');
         $session->set('fonction', 'pressionListProposed');
         $em = $this->get('doctrine')->getManager();
@@ -177,7 +176,6 @@ class PressionController extends Controller {
     public function removePressionAction(Request $request) {
         $user = $this->getUser();
         $session = $this->get('session');
-        $session->clear();
         $session->set('controller', 'Pression');
         $session->set('fonction', 'pressionListProposed');
         $em = $this->get('doctrine')->getManager();
@@ -187,13 +185,15 @@ class PressionController extends Controller {
         $cdPression = $request->get('cdPression');
         $login = $request->get('login');
         $propositionDate = $request->get('propositionDate');
+        
+        //return new Response ('eucd : ' . $euCd . '  cdPression : ' . $cdPression . '  login : ' . $login . ' date : ' . $propositionDate);
 
         $repo = $emEdl->getRepository('AeagEdlBundle:PressionMeProposed');
 
         $proposition = $repo->findOneBy(array('euCd' => $euCd, 'cdPression' => $cdPression, 'utilisateur' => $login, 'propositionDate' => $propositionDate));
 
-        $em->remove($proposition);
-        $em->flush();
+        $emEdl->remove($proposition);
+        $emEdl->flush();
 
         return $this->forward('AeagEdlBundle:Pression:pressionListProposed', array(
                     'euCd' => $euCd,

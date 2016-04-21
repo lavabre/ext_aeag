@@ -21,7 +21,6 @@ class EtatController extends Controller {
     public function etatFormAction(Request $request) {
         $user = $this->getUser();
         $session = $this->get('session');
-        $session->clear();
         $session->set('controller', 'Etat');
         $session->set('fonction', 'etatForm');
         $em = $this->get('doctrine')->getManager();
@@ -45,7 +44,13 @@ class EtatController extends Controller {
                 ->getForm();
 
         $repo = $emEdl->getRepository('AeagEdlBundle:EtatMe');
-        $derniereProp = $repo->getLastProposition($euCd, $cdEtat);
+        $derniereProps = $repo->getLastProposition($euCd, $cdEtat);
+        
+        if ($derniereProps){
+            $derniereProp = $derniereProps[0];
+        }else{
+            $derniereProp = null;
+        }
 
        
             return $this->render('AeagEdlBundle:Etat:etatForm.html.twig', array(
@@ -65,7 +70,6 @@ class EtatController extends Controller {
 
         $user = $this->getUser();
         $session = $this->get('session');
-        $session->clear();
         $session->set('controller', 'Etat');
         $session->set('fonction', 'etatForm');
         $em = $this->get('doctrine')->getManager();
@@ -149,7 +153,6 @@ class EtatController extends Controller {
         
         $user = $this->getUser();
         $session = $this->get('session');
-        $session->clear();
         $session->set('controller', 'Etat');
         $session->set('fonction', 'etatListProposed');
         $em = $this->get('doctrine')->getManager();
@@ -186,7 +189,6 @@ class EtatController extends Controller {
     public function removeEtatAction(Request $request) {
         $user = $this->getUser();
         $session = $this->get('session');
-        $session->clear();
         $session->set('controller', 'Etat');
         $session->set('fonction', 'etatListProposed');
         $em = $this->get('doctrine')->getManager();

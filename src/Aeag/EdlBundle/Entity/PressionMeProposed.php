@@ -85,12 +85,16 @@ class PressionMeProposed {
         if ($this->cdPression == 'RW_HYM_CONT' or
                 $this->cdPression == 'RW_HYM_HYD' or
                 $this->cdPression == 'RW_HYM_MOR') {
+           if ($this->valeur) {
             switch ($this->valeur) {
                 case '1' : return 'Minime';
                 case '2' : return 'Modérée';
                 case '3' : return 'Elevée';
                 case 'U' : return 'Inconnu';
             }
+           }else{
+               return 'manque valeur';
+           }
         } else {
             if ($this->valeur) {
                 switch ($this->valeur) {

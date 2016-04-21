@@ -1,5 +1,5 @@
 {% if nbPressions > 0 %} 
-    <div class="panel panel-default">
+    <div class="panel panel-primary">
         <div class="panel-heading" role="tab" id="heading{{pressionGroupe.cdGroupe }}">
             <h4 class="panel-title">
                 <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ pressionGroupe.cdGroupe }}" aria-expanded="true" aria-controls="collapse{{ pressionGroupe.cdGroupe }}">
@@ -9,7 +9,7 @@
         </div>
         <div id="collapse{{ pressionGroupe.cdGroupe }}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading{{ pressionGroupe.cdGroupe }}">
             <div class="panel-body">
-                <div class="row row-border">
+                <div class="row">
                     {% if  is_granted("ROLE_COMMENTATEUREDL") %}
                     <div class="col-sm-1 alert  alert-info">Action</div>
                     {% endif %}

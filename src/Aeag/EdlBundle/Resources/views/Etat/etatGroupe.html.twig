@@ -88,9 +88,17 @@
     </br>
 
     <div class="panel panel-primary">
-        <div class="panel-heading">
-            <h3 class="panel-title">Etats de la masse d'eau  {{ me.euCd }}</h3>
-        </div>
+           <div class="panel-heading">
+                 <div class="row">
+                     <div class="col-sm-10">
+                                <h3 class="panel-title">Etats de la masse d'eau  {{ me.euCd }}</h3>
+                     </div>
+                    <div class="col-sm-2  pull-left">
+                            <a id="expandAll" href="#" class="btn btn-primary" role="button"><i class="fa fa-expand"></i></a>
+                            <a id="collapseAll" href="#" class="btn btn-primary" role="button"><i class="fa fa-compress"></i></a>
+                    </div>
+                 </div>
+            </div>
         <div class="panel-body">
             <!-- --------------------------------- ETATS ----------------------------------------- -->        
             <div id="tabEtats">
@@ -103,7 +111,7 @@
                 </div>
                 <br><br>
                 <div align="center">
-                    <a  href="{{ url }}">
+                    <a  href="{{ path('AeagEdlBundle_listeMasseEau') }}">
                         <button type="button" class="btn btn-primary"><i class="fa fa-undo"></i> retour</button>
                     </a>
                 </div>
@@ -114,25 +122,25 @@
 
 {% endblock content %}
 
-{#{% block scripts %}
+{% block scripts %}
     
-    jQuery(document).ready(function() {
-    
-         {% for etatGroupe in etatGroupes %}
-                var table = $('#idTable{{ etatGroupe.cdGroupe }}').DataTable(
-                    {"stateSave": true,
-                     "order": [[ 1, "asc" ]],
-                    "language": {
-                                         "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
-                                     },
-                    "aLengthMenu": [
-                                        [10, 25, 50, 100, -1],
-                                        [10, 25, 50, 100, "Tous"]
-                                    ],
-                     "iDisplayLength": 10
-                   });
-          {% endfor %}
-    });
-    
-{%endblock scripts %}#}
+           $('#expandAll').hide();
+            $('#collapseAll').show();          
 
+           $('#expandAll').on('click',function(){
+                   {% for etatGroupe   in  etatGroupes %}
+                           $('#collapse{{ etatGroupe.cdGroupe }}').collapse('show');
+                     {% endfor %}
+                      $('#expandAll').hide();
+                      $('#collapseAll').show();
+               });
+
+           $('#collapseAll').on('click',function(){
+                    {% for etatGroupe   in  etatGroupes %}
+                           $('#collapse{{ etatGroupe.cdGroupe }}').collapse('hide');
+                       {% endfor %}
+                      $('#expandAll').show();
+                      $('#collapseAll').hide();
+           });
+    
+{%endblock scripts %}    

@@ -296,7 +296,6 @@ class DefaultController extends Controller {
 
         $user = $this->getUser();
         $session = $this->get('session');
-        $session->clear();
         $session->set('controller', 'default');
         $session->set('fonction', 'etatGroupe');
         $em = $this->get('doctrine')->getManager();
@@ -337,8 +336,7 @@ class DefaultController extends Controller {
 
         $user = $this->getUser();
         $session = $this->get('session');
-        $session->clear();
-        $session->set('controller', 'default');
+         $session->set('controller', 'default');
         $session->set('fonction', 'etat');
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
@@ -369,8 +367,7 @@ class DefaultController extends Controller {
 
         $user = $this->getUser();
         $session = $this->get('session');
-        $session->clear();
-        $session->set('controller', 'default');
+         $session->set('controller', 'default');
         $session->set('fonction', 'pressionGroupe');
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
@@ -408,8 +405,7 @@ class DefaultController extends Controller {
 
         $user = $this->getUser();
         $session = $this->get('session');
-        $session->clear();
-        $session->set('controller', 'default');
+         $session->set('controller', 'default');
         $session->set('fonction', 'pression');
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');

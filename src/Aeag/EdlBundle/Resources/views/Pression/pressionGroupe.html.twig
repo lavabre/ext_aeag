@@ -89,7 +89,15 @@
 
           <div class="panel panel-primary">
             <div class="panel-heading">
-              <h3 class="panel-title">Pressions sur la masse d'eau  {{ me.euCd }}</h3>
+                 <div class="row">
+                     <div class="col-sm-10">
+                                <h3 class="panel-title">Pressions sur la masse d'eau  {{ me.euCd }}</h3>
+                     </div>
+                    <div class="col-sm-2  pull-left">
+                            <a id="expandAll" href="#" class="btn btn-primary" role="button"><i class="fa fa-expand"></i></a>
+                            <a id="collapseAll" href="#" class="btn btn-primary" role="button"><i class="fa fa-compress"></i></a>
+                    </div>
+                 </div>
             </div>
             <div class="panel-body">
                     <!-- --------------------------------- ETATS ----------------------------------------- -->        
@@ -103,7 +111,7 @@
                         </div>
                         <br><br>
                         <div align="center">
-                            <a  href="{{ url }}">
+                            <a  href="{{ path('AeagEdlBundle_listeMasseEau') }}">
                                <button type="button" class="btn btn-primary"><i class="fa fa-undo"></i> retour</button>
                              </a>
                         </div>
@@ -113,3 +121,25 @@
 
 {% endblock %}
 
+{% block scripts %}
+    
+           $('#expandAll').hide();
+            $('#collapseAll').show();          
+
+           $('#expandAll').on('click',function(){
+                   {% for pressionGroupe   in  pressionGroupes %}
+                           $('#collapse{{ pressionGroupe.cdGroupe }}').collapse('show');
+                     {% endfor %}
+                      $('#expandAll').hide();
+                      $('#collapseAll').show();
+               });
+
+           $('#collapseAll').on('click',function(){
+                    {% for pressionGroupe   in  pressionGroupes %}
+                           $('#collapse{{ pressionGroupe.cdGroupe }}').collapse('hide');
+                       {% endfor %}
+                      $('#expandAll').show();
+                      $('#collapseAll').hide();
+           });
+    
+{%endblock scripts %}    
