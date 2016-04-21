@@ -140,5 +140,20 @@ class AeagCommand extends ContainerAwareCommand {
         $this->emSqe->persist($pgLogValidEdilabo);
         $this->emSqe->flush();
     }
+    
+    protected function _csvToArray($nomFichier) {
+        $result = array();
+        if (($handle = fopen($nomFichier, "r")) !== FALSE) {
+            $row = 0;
+            while ((($data = fgetcsv($handle, 1000, ";")) !== FALSE)) {
+                if ($row !== 0) {
+                    $result[] = $data;
+                }
+                $row++;
+            }
+        }
+
+        return $result;
+    }
 
 }

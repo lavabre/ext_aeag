@@ -1000,21 +1000,6 @@ class CheckProcessRaiCommand extends AeagCommand {
         file_put_contents($fullFileName, $cr, FILE_APPEND);
     }
 
-    protected function _csvToArray($nomFichier) {
-        $result = array();
-        if (($handle = fopen($nomFichier, "r")) !== FALSE) {
-            $row = 0;
-            while ((($data = fgetcsv($handle, 1000, ";")) !== FALSE)) {
-                if ($row !== 0) {
-                    $result[] = $data;
-                }
-                $row++;
-            }
-        }
-
-        return $result;
-    }
-
     protected function _cleanTmpTable($pgCmdFichierRps) {
         $demandeId = $pgCmdFichierRps->getDemande()->getId();
         $reponseId = $pgCmdFichierRps->getId();
