@@ -27,7 +27,7 @@ class CheckSandreFormatCommand extends AeagCommand {
         $pgCmdFichiersRps = $this->repoPgCmdFichiersRps->findBy(array('phaseFichier' => $pgProgPhases, 'typeFichier' => 'RPS', 'suppr' => 'N'));
 
         foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
-            $this->_updatePhase($pgCmdFichierRps, 'R16');
+            $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R16');
             // recuperation du lien d'acquittement
             $lienAcquit = $pgCmdFichierRps->getLienAcquitSandre();
             // Récupération du fichier xml correspondant
@@ -40,14 +40,14 @@ class CheckSandreFormatCommand extends AeagCommand {
                     $destinataires = array();
                     
                     if ($etatTraitement == 1 && !isset($reponseTab['AccuseReception']['Erreur'])) { // Le traitement est terminé et le fichier est conforme sans erreur
-                        $this->_updatePhase($pgCmdFichierRps, 'R20');
+                        $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R20');
                         $validMessage = " conforme";
                     } else if (($etatTraitement == 1 && isset($reponseTab['AccuseReception']['Erreur'])) || $etatTraitement == 2) {
                         if ($etatTraitement == 1) {
-                            $this->_updatePhase($pgCmdFichierRps, 'R21');
+                            $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R21');
                             $validMessage = " conforme avec erreurs";
                         } else {
-                            $this->_updatePhase($pgCmdFichierRps, 'R80');
+                            $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R80');
                             $validMessage = " non conforme";
                         }
                         if (isset($reponseTab['AccuseReception']['Erreur']["DescriptifErreur"])) { // Une seule erreur
@@ -91,9 +91,8 @@ class CheckSandreFormatCommand extends AeagCommand {
 
     protected function _creationFichierCr($pgCmdFichierRps, $erreurs) {
         // Création du fichier de compte rendu
-        $pathBase = $this->getContainer()->getParameter('repertoire_echange');
-        $pathBase .= $pgCmdFichierRps->getDemande()->getAnneeProg() . '/' . $pgCmdFichierRps->getDemande()->getCommanditaire()->getNomCorres() .
-                '/' . $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getId() . '/' . $pgCmdFichierRps->getDemande()->getLotan()->getId() . '/' . $pgCmdFichierRps->getId();
+        $chemin = $this->getContainer()->getParameter('repertoire_echange');
+        $pathBase = $this->getContainer()->get('aeag_sqe.process_rai')->getCheminEchange($chemin, $pgCmdFichierRps->getDemande(), $pgCmdFichierRps->getId());
 
         $fileName = str_replace('.', '_', $pgCmdFichierRps->getNomFichier() . '_CR').'.txt';
         $fullFileName = $pathBase . '/' . $fileName;

@@ -30,6 +30,10 @@ class AeagCommand extends ContainerAwareCommand {
     protected $repoPgSandreParametres;
     protected $repoPgSandreUnites;
     protected $repoPgSandreZoneVerticaleProspectee;
+    protected $repoPgProgSuiviPhases;
+    
+    protected $detectionCodeRemarqueComplet;
+    protected $detectionCodeRemarqueMoitie;
 
     protected function configure() {
         $this
@@ -66,20 +70,65 @@ class AeagCommand extends ContainerAwareCommand {
         $this->repoPgSandreUnites = $this->emSqe->getRepository('AeagSqeBundle:PgSandreUnites');
         $this->repoPgSandreZoneVerticaleProspectee = $this->emSqe->getRepository('AeagSqeBundle:PgSandreZoneVerticaleProspectee');
         $this->repoPgProgLotParamAn = $this->emSqe->getRepository('AeagSqeBundle:PgProgLotParamAn');
+        $this->repoPgProgSuiviPhases = $this->emSqe->getRepository('AeagSqeBundle:PgProgSuiviPhases');
+        
+        // Chargement des fichiers csv dans des tableaux 
+        $cheminCourant = __DIR__ . '/../../../../';
+        $this->detectionCodeRemarqueComplet = $this->_csvToArray($cheminCourant . "/web/tablesCorrespondancesRai/detectionCodeRemarqueComplet.csv");
+        $this->detectionCodeRemarqueMoitie = $this->_csvToArray($cheminCourant . "/web/tablesCorrespondancesRai/detectionCodeRemarqueMoitie.csv");
     }
 
-    protected function _updatePhase($pgCmdFichierRps, $phase) {
+    protected function _updatePhaseFichierRps($pgCmdFichierRps, $phase, $phaseExclu = false) {
         $pgProgPhases = $this->repoPgProgPhases->findOneByCodePhase($phase);
-        $pgCmdFichierRps->setPhaseFichier($pgProgPhases);
-        $this->emSqe->persist($pgCmdFichierRps);
+        if (!$phaseExclu) {
+            $pgCmdFichierRps->setPhaseFichier($pgProgPhases);
+            $this->emSqe->persist($pgCmdFichierRps);
+        }
 
+        $this->emSqe->flush();
+
+        $this->_addSuiviPhase('RPS', $pgCmdFichierRps->getId(), $pgProgPhases);
+    }
+    
+    protected function _updatePhasePrelevement($pgCmdPrelev, $phase) {
+        $pgProgPhases = $this->repoPgProgPhases->findOneByCodePhase($phase);
+        $pgCmdPrelev->setPhaseDmd($pgProgPhases);
+        $this->emSqe->persist($pgCmdPrelev);
+
+        $this->emSqe->flush();
+        
+        //$this->_addSuiviPhase('PRL', $pgCmdPrelev->getId(), $pgProgPhases);
+        
+    }
+    
+    protected function _updatePhaseDemande($pgCmdDemande) {
+        // Si la demande < D30, mettre en D30
+        if ($this->repoPgCmdDemande->getPhaseDemande() < $this->repoPgProgPhases->findOneByCodePhase('D30') ) {
+            $pgProgPhases = $this->repoPgProgPhases->findOneByCodePhase('D30');
+        } 
+        
+        // Si tous les prélèvements de la demande sont en M40, passer la demande en D40
+        $phase = $this->repoPgProgPhases->findOneByCodePhase('M40');
+        if ($this->repoPgCmdPrelev->getCountPgCmdPrelevByPhase($pgCmdDemande, $phase) == $this->repoPgCmdPrelev->getCountAllPgCmdPrelev($pgCmdDemande)) {
+            $pgProgPhases = $this->repoPgProgPhases->findOneByCodePhase('D40');
+            
+        }
+        
+        $pgCmdDemande->setPhaseDemande($pgProgPhases);
+        
+        $this->emSqe->persist($pgCmdDemande);
+        $this->emSqe->flush();
+        
+    }
+    
+    protected function _addSuiviPhase($typeObj, $objId, $pgProgPhase) {
         $pgProgSuiviPhases = new \Aeag\SqeBundle\Entity\PgProgSuiviPhases;
-        $pgProgSuiviPhases->setTypeObjet('RPS');
-        $pgProgSuiviPhases->setObjId($pgCmdFichierRps->getId());
+        $pgProgSuiviPhases->setTypeObjet($typeObj);
+        $pgProgSuiviPhases->setObjId($objId);
         $pgProgSuiviPhases->setDatePhase(new \DateTime());
-        $pgProgSuiviPhases->setPhase($pgProgPhases);
+        $pgProgSuiviPhases->setPhase($pgProgPhase);
         $this->emSqe->persist($pgProgSuiviPhases);
-
+        
         $this->emSqe->flush();
     }
     
@@ -92,6 +141,21 @@ class AeagCommand extends ContainerAwareCommand {
 
         $this->emSqe->persist($pgLogValidEdilabo);
         $this->emSqe->flush();
+    }
+    
+    protected function _csvToArray($nomFichier) {
+        $result = array();
+        if (($handle = fopen($nomFichier, "r")) !== FALSE) {
+            $row = 0;
+            while ((($data = fgetcsv($handle, 1000, ";")) !== FALSE)) {
+                if ($row !== 0) {
+                    $result[] = $data;
+                }
+                $row++;
+            }
+        }
+
+        return $result;
     }
 
 }
