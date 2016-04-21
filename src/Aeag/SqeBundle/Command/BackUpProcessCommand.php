@@ -61,17 +61,47 @@ class BackUpProcessCommand extends AeagCommand {
 
     protected function _phaseR26() {
         
-//        $date = new \DateTime();
-//        
-//        $this->output->writeln($date->format('d/m/Y H:i:s').'- BackUp Process : '.$cptPhaseR10Fait." RAI(s) en phase R10 traitée(s)");
+        $pgProgPhase = $this->repoPgProgPhases->findOneByCodePhase('R26');
+        $pgCmdFichiersRps = $this->repoPgCmdFichiersRps->findBy(array('typeFichier' => 'RPS', 'phaseFichier' => $pgProgPhase));
         
-        return true;
+        $cptPhaseR26Fait = 0;
+        foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
+            $pgProgSuiviPhases = $this->repoPgProgSuiviPhases->findOneBy(array('objId'=> $pgCmdFichierRps->getId(), 'typeObjet' => 'RPS', 'phase' => $pgProgPhase),array('datePhase' => 'DESC'));
+            
+            $datePhase = $pgProgSuiviPhases->getDatePhase();
+            $datePhase->add(new \DateInterval('P1D'));
+            $dateDuJour = new \DateTime();
+            // Date de la phase (suivi phase) + 24h < date du jour
+            if ($datePhase < $dateDuJour) {
+                $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R25');
+                $cptPhaseR26Fait++;
+            }
+        }
+        
+        $date = new \DateTime();
+        $this->output->writeln($date->format('d/m/Y H:i:s').'- BackUp Process : '.$cptPhaseR26Fait." RAI(s) en phase R26 traitée(s)");
     }
 
     protected function _phaseR36() {
         
-//        $date = new \DateTime();
-//        $this->output->writeln($date->format('d/m/Y H:i:s').'- BackUp Process : '.$cptPhaseR10Fait." RAI(s) en phase R10 traitée(s)");
+        $pgProgPhase = $this->repoPgProgPhases->findOneByCodePhase('R36');
+        $pgCmdFichiersRps = $this->repoPgCmdFichiersRps->findBy(array('typeFichier' => 'RPS', 'phaseFichier' => $pgProgPhase));
+        $cptPhaseR36Fait = 0;
+        foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
+            $pgProgSuiviPhases = $this->repoPgProgSuiviPhases->findOneBy(array('objId'=> $pgCmdFichierRps->getId(), 'typeObjet' => 'RPS', 'phase' => $pgProgPhase),array('datePhase' => 'DESC'));
+            
+            $datePhase = $pgProgSuiviPhases->getDatePhase();
+            $datePhase->add(new \DateInterval('P1D'));
+            $dateDuJour = new \DateTime();
+            // Date de la phase (suivi phase) + 24h < date du jour
+            if ($datePhase < $dateDuJour) {
+                $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R25');
+                $cptPhaseR36Fait++;
+            }
+        }
+        
+        $date = new \DateTime();
+        $this->output->writeln($date->format('d/m/Y H:i:s').'- BackUp Process : '.$cptPhaseR36Fait." RAI(s) en phase R36 traitée(s)");
         return true;
     }
 
