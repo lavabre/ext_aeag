@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(name="avis_historique")
  * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Aeag\EdlBundle\Repository\AvisHistoriqueRepository")
  */
 class AvisHistorique
 {

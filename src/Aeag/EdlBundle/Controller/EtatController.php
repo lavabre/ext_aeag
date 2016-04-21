@@ -21,7 +21,6 @@ class EtatController extends Controller {
     public function etatFormAction(Request $request) {
         $user = $this->getUser();
         $session = $this->get('session');
-        $session->clear();
         $session->set('controller', 'Etat');
         $session->set('fonction', 'etatForm');
         $em = $this->get('doctrine')->getManager();
@@ -29,7 +28,7 @@ class EtatController extends Controller {
         //if ($request->isXmlHttpRequest()) { // is it an Ajax request?
         $euCd = $request->get('euCd');
         $cdEtat = $request->get('cdEtat');
-
+            
         $repo = $emEdl->getRepository('AeagEdlBundle:EtatMe');
         $etatInitiale = $repo->findOneBy(array('euCd' => $euCd, 'cdEtat' => $cdEtat));
 
@@ -45,7 +44,13 @@ class EtatController extends Controller {
                 ->getForm();
 
         $repo = $emEdl->getRepository('AeagEdlBundle:EtatMe');
-        $derniereProp = $repo->getLastProposition($euCd, $cdEtat);
+        $derniereProps = $repo->getLastProposition($euCd, $cdEtat);
+        
+        if ($derniereProps){
+            $derniereProp = $derniereProps[0];
+        }else{
+            $derniereProp = null;
+        }
 
        
             return $this->render('AeagEdlBundle:Etat:etatForm.html.twig', array(
@@ -65,7 +70,6 @@ class EtatController extends Controller {
 
         $user = $this->getUser();
         $session = $this->get('session');
-        $session->clear();
         $session->set('controller', 'Etat');
         $session->set('fonction', 'etatForm');
         $em = $this->get('doctrine')->getManager();
@@ -143,11 +147,12 @@ class EtatController extends Controller {
      * 
      * mode Ajax
      */
+    
+    
     public function etatListProposedAction(Request $request) {
         
         $user = $this->getUser();
         $session = $this->get('session');
-        $session->clear();
         $session->set('controller', 'Etat');
         $session->set('fonction', 'etatListProposed');
         $em = $this->get('doctrine')->getManager();
@@ -155,25 +160,35 @@ class EtatController extends Controller {
           
         $euCd = $request->get('euCd');
         $cdEtat = $request->get('cdEtat');
+      
     
         $repo = $emEdl->getRepository('AeagEdlBundle:EtatMe');
         $etatInitiale = $repo->findOneBy(array('euCd' => $euCd, 'cdEtat' => $cdEtat));
-        
+     
        // return new Response ('$masseEau : ' . $euCd. '  $etatType : ' . $cdEtat);
-        $repo = $emEdl->getRepository('AeagEdlBundle:EtatMe');
-        $derniereProp = $repo->getLastProposition($euCd, $cdEtat);
+       $derniereProp = $repo->getLastPropositionSuperviseur($euCd, $cdEtat);
+       
+        if (!$derniereProp) {
+            $derniereProp = $repo->getLastProposition($euCd, $cdEtat);
+        }
+        
+          if (!$derniereProp) {
+            $derniereProposition = null;
+        } else {
+            $derniereProposition = $derniereProp[0];
+        }
           
         return $this->render('AeagEdlBundle:Etat:etatListProposed.html.twig', array(
                     'etat' => $etatInitiale,
-                    'derniereProp' => $derniereProp,
-                    'user' => $user
+                    'derniereProp' => $derniereProposition,
+                    'user' => $user,
                 ));
     }
+
 
     public function removeEtatAction(Request $request) {
         $user = $this->getUser();
         $session = $this->get('session');
-        $session->clear();
         $session->set('controller', 'Etat');
         $session->set('fonction', 'etatListProposed');
         $em = $this->get('doctrine')->getManager();
@@ -195,7 +210,8 @@ class EtatController extends Controller {
 
         return $this->forward('AeagEdlBundle:Etat:etatListProposed', array(
                     'euCd' => $euCd,
-                    'cdEtat' => $cdEtat
+                    'cdEtat' => $cdEtat,
+                    'delete' =>  "O"
                 ));
     }
 

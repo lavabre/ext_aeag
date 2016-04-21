@@ -1,171 +1,168 @@
-<div id="formEtatListProposed{{ pression.etatType.cdEtat }}">
-    <tr>
-    {% if is_granted("IS_AUTHENTICATED_REMEMBERED")and is_granted("ROLE_COMMENTATEUREDL") %}
-        <td><a id="newPression{{ pression.cdPression }}" title="Proposer une nouvelle évaluation" cdPression="{{ pression.cdPression }}">
-                 <i class="fa fa-commenting fa-2x"></i> 
-            </a>
-        </td>
-   {% else %}
-        <td></td>
-   {% endif %}
-        <td align="left">
-            {{ pression.type.libelle }}
+
+    <div class="row" id="row-{{ pression.euCd }}-{{ pression.cdPression }}">
+    {% if  is_granted("ROLE_COMMENTATEUREDL") %}
+        <div class="col-sm-1">
+                     <a id="newPression-{{ pression.euCd }}-{{ pression.cdPression }}" title="Proposer une nouvelle évaluation" cdPression="{{ pression.cdPression }}">
+                         <button type="button" class="btn btn-primary"><i class="fa fa-commenting"></i></button> 
+                    </a>
+         </div>
+       {% endif %}
+        <div class="col-sm-5">
             <input type='hidden' id='UrlActuel' value="{{ path('AeagEdlBundle_pression', { 'code': pression.euCd }) }}" /> 
-            <input type='hidden' id='newPressionRoute' value="{{ path('AeagEdlBundle_pressionForm') }}" /> 
-       </td>
-        <td><span class="dce_pression_{{ pression.valeur }}">{{ pression.getValueLib() }}</span></td>
-   {% if derniereProp %}
-        <td nowrap><span class="dce_pression_{{ derniereProp.valeur }}">{{ derniereProp.getValueLib() }}</span></td>
-   {% else %}
-        <td></td>
-   {% endif %}
-  
-
-    </tr>
-
-    <div id="PressionsParametre">  
-        <div id="divProposed{{ pression.cdPression }}">
-
+           <input type='hidden' id='newPressionRoute' value="{{ path('AeagEdlBundle_pressionForm') }}" /> 
+           {{ pression.type.libelle }} 
+         </div>
+       <div class="col-sm-3">
+           <span class="dce_pression_{{ pression.valeur }}">{{ pression.getValueLib() }}</span>
+       </div>   
+       <div class="col-sm-3">
+           {% if derniereProp %}
+                    <span class="dce_pression_{{ derniereProp.valeur }}">{{ derniereProp.getValueLib() }}</span>
+           {% endif %}
+       </div>
+  </div>
+       </br>
     {% if pression.proposed|length > 0 %} 
-
-            <tr>
-                <td colspan=4>
-                    <table class="table" cellspacing="0" width="90%" align="right">
-                        <tr>
-                             <th nowrap width="5%">Action</th>
-                            <th nowrap width="5%">Date</th>
-                            <th nowrap width="5%">Auteur</th>
-                            <th nowrap width="55%">Commentaire</th>
-                            <th nowrap width="10%">Pression proposé</th>
-                           
-                        </tr>
-
-        
-            {% set i = 1 %}
-            {% for pp in pression.proposed %}
-                        <div id="PressionsProposed{{i}}">
-
-                            <tr>
-                                 {% if is_granted("IS_AUTHENTICATED_REMEMBERED")and is_granted("ROLE_COMMENTATEUREDL") and  pp.role ==  'local' and pp.utilisateur.id == user.id %} 
-                                  <td width="10%"><a name="removePression{{ pp.cdPression }}" title="Supprimer cette proposition" login="{{ pp.utilisateur.id }}" propositionDate="{{ pp.propositionDate }}">
-                                            <i class="fa fa-remove fa-2x"></i> 
-                                       </a>
-                                  </td>
-                            {% elseif is_granted("IS_AUTHENTICATED_REMEMBERED")and is_granted("ROLE_SUPERVISEUR") %}
-                                    <td width="10%"><a name="removePression{{ pp.cdPression }}" title="Supprimer cette proposition" login="{{ pp.utilisateur.id }}" propositionDate="{{ pp.propositionDate }}">
-                                             <i class="fa fa-remove fa-2x"></i> 
-                                        </a>
-                                    </td>
-                            {% else %}
-                                <td width="10%"></td>
-                            {% endif %}
-                                <td width="5%" nowrap>{{ pp.propositionDate }}</td>
-                                {% if pp.role == 'local' %}
-                                   <td width="5%" nowrap>acteur local : {{ pp.utilisateur.username }}</td>
-                                {% else %}
-                                   <td width="5%" nowrap>expert : {{ pp.utilisateur.username }}</td>
-                                {% endif %}
-                                <td width="55%" align="left">{{ pp.commentaire }}</td>
-                                <td width="10%" nowrap><span class="dce_pression_{{ pp.valeur }}">{{ pp.getValueLib() }}</span></td>
-                           
-                            </tr>
-
-
-                        </div>
-
-                {% set i = i + 1 %}
-                {% if i > 2 %}
-                {% set i = 1 %}
+           <div class="row " id="rowProposed-titre-{{ pression.euCd }}-{{ pression.cdPression }}">
+               {% if  is_granted("ROLE_COMMENTATEUREDL") %}
+                    <div class=" col-sm-offset-1  col-sm-1 alert alert-warning">Action</div>
+                    <div class="col-sm-2 alert alert-warning">Date</div>
+                    {% else %}
+                     <div class="col-sm-offset-1 col-sm-2 alert alert-warning">Date</div>   
                 {% endif %}
-                {% endfor %}
-
-       
-
-                    </table>
-                </td>
-            </tr>
+                    <div class="col-sm-2 alert alert-warning">Auteur</div>   
+                   <div class="col-sm-3 alert alert-warning">Commentaire</div>
+                   <div class="col-sm-3 alert alert-warning">Pression  proposée</div>  
+                 </div>
+          {% set i = 1 %}
+          {% for pp in pression.proposed %}
+                    <div class="row" id="rowProposed-ligne-{{ pression.euCd }}-{{ pression.cdPression }}-{{ i }}">
+                        {% if  is_granted("ROLE_COMMENTATEUREDL") %}
+                            <div class="  col-sm-offset-1  col-sm-1">
+                                 {% if  is_granted("ROLE_COMMENTATEUREDL") and  pp.role ==  'local' and pp.utilisateur.id == user.id %} 
+                                  <a id="removePression-{{ pression.euCd }}-{{ pression.cdPression }}-{{ i }}"  title="Supprimer cette proposition" login="{{ pp.utilisateur.id }}" propositionDate="{{ pp.propositionDate }}">
+                                            <button type="button" class="btn btn-danger"><i class="fa fa-remove"></i> </button>
+                                   </a>
+                                 {% elseif  is_granted("ROLE_SUPERVISEUREDL") %}
+                                    <a id="removePression-{{ pression.euCd }}-{{ pression.cdPression }}-{{ i }}" title="Supprimer cette proposition" login="{{ pp.utilisateur.id }}" propositionDate="{{ pp.propositionDate }}">
+                                            <button type="button" class="btn btn-danger"><i class="fa fa-remove"></i> </button>
+                                     </a>
+                               {% endif %}
+                            </div>
+                             <div class="col-sm-2">
+                                {{ pp.propositionDate }}
+                            </div>
+                            {% else %}
+                               <div class="col-sm-offset-1 col-sm-2">
+                                {{ pp.propositionDate }}
+                            </div> 
+                         {% endif %}
+                          
+                           <div class="col-sm-2">
+                                  {% if pp.role == 'local' %}
+                                   Acteur local : {{ pp.utilisateur.username }}
+                                    {% else %}
+                                    Expert : {{ pp.utilisateur.username }}
+                                    {% endif %}
+                           </div>   
+                           <div class="col-sm-3">
+                               {{ pp.commentaire }}
+                           </div>
+                           <div class="col-sm-3">
+                               <span class="dce_pression_{{ pp.valeur }}">{{ pp.getValueLib() }}</span>
+                           </div>  
+                   </div>
+                    </br>
+                   {% set i = i + 1 %}
+         {% endfor %}
+   
      {% endif %}
-
+ 
+ <div class="modal fade" id="modalPressionEdit" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title"><div class="label label-primary">Proposer une nouvelle évaluation</div></h4>
         </div>
-    </div>
-           
-
-<div id ="divNewPression{{ pression.cdPression }}"></div> 
-
-</div>
+        <div id="idPressionEdit" class="modal-body"></div>
+        <div class="modal-footer">
+          <button id="annuler" type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+          <button  id="valider" type="button" class="btn btn-primary">valider</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
 
 <script type="text/javascript">
     
       
-$(document).ready(function() { 	// Sur clic "Proposer un nouvel pression"
-        $('#newPression{{ pression.cdPression }}').click(function(e){
-                //$("body").css("cursor", "wait");
-               
-                //conserver l'url actuel
-                var $urlActuel = $('input#UrlActuel').val();
-                
-                // obtenir l'url
-                var $url = $('input#newPressionRoute').val();
-		
-                // conserver l'id du div qui hébergera le formulaire de saisie
-                var $div = "#divNewPression{{ pression.cdPression }}";
-                
-                
-                              
-                $.post($url,
-                       { 
-                                euCd: "{{ pression.euCd }}", 
-                                cdPression: "{{ pression.cdPression }}"
-                        },
-                        function(data) {
-                                            // placer le formulaire sous le div
-                                            //$($div).hide();
-                                                                                         
-                                            $($div).html(data);
-                                            
-                                            //$($div).hide();
-                                            
-                                            // cosmétique
-                                            //$($div).slideDown('fast');
-                                            // rétablir curseur
-                                            //$("body").css("cursor", "auto");
-                                    }
-                            ).error(function() { 
-                                    // rétablir curseur
-                                    //$("body").css("cursor", "auto");
-                                    alert("Erreur non déterminée");    
-                  });                      
-                  
+$(document).ready(function() { 	
+    
+        // Sur clic "Proposer un nouvel pression"
+        $('#newPression-{{ pression.euCd }}-{{ pression.cdPression }}').click(function(e){
+                   $('#modalTraitementEncours').modal('toggle');
+            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+            //conserver l'url actuel
+            var $urlActuel = $('input#UrlActuel').val();
+            // obtenir l'url
+            var $url = $('input#newPressionRoute').val();
+            // conserver l'id du div qui hébergera le formulaire de saisie
+             idTr = '#divPression-{{ pression.euCd }}-{{ pression.cdPression }}';
+             $.post($url,
+                    {
+                        euCd: "{{ pression.euCd }}",
+                        cdPression: "{{ pression.cdPression }}"
+                    },
+            function (data) {
+                $('#idPressionEdit').empty().append(data);
+                $('#modalPressionEdit').modal();
+                $('#modalTraitementEncours').modal('hide');
+            }
+            ).error(function () {
+                $('#modalTraitementEncours').modal('hide');
+                alert("Erreur non déterminée");
+            });
+
         });
-
-        $('a[name="removePression{{ pression.cdPression }}"]').click(function(e){
-                $("body").css("cursor", "wait");
-
+         
+        {% set i = 1 %}
+         {% for pp in pression.proposed %}
+               $('#removePression-{{ pression.euCd }}-{{ pression.cdPression }}-{{ i }}').click(function (e) {
+                $('#modalTraitementEncours').modal('toggle');
+                e.preventDefault();
                 // obtenir l'url
                 var $url = "{{ path('AeagEdlBundle_removePression') }}";
-		
-                // lancer la requête ajax  
-                $.post($url, 
-                        { 
-                                euCd: "{{ pression.euCd }}", 
-                                cdPression: "{{ pression.cdPression }}",
-                                login: $(this).attr('login'),
-                                propositionDate: $(this).attr('propositionDate')
-                        }, 
-                        function(data) {
-                                // placer le formulaire sous le div
-                                $("#divPression{{ pression.cdPression }}").html(data); 
-                               
-                                // rétablir curseur
-                                $("body").css("cursor", "auto");
-                        }
-                ).error(function() { 
-                        // rétablir curseur
-                        $("body").css("cursor", "auto");
-                        alert("Erreur non déterminée"); 
-                }); 
-        });
-});
+                idTr = '#rowProposed-ligne-{{ pression.euCd }}-{{ pression.cdPression }}-{{ i }}';
+                 // lancer la requête ajax  
+                $.post($url,
+                        {
+                            euCd: "{{ pression.euCd }}",
+                            cdPression: "{{ pression.cdPression }}",
+                            login: $(this).attr('login'),
+                            propositionDate: $(this).attr('propositionDate')
+                        },
+                function (data) {
+                    // placer le formulaire sous le div
+                    $(idTr).remove();
+                   {% if  i == 1 %}
+                            idTr = '#rowProposed-titre-{{ pression.euCd }}-{{ pression.cdPression }}';
+                            $(idTr).remove();
+                    {% endif %}
+                     idTr = '#divPression-{{ pression.euCd }}-{{ pression.cdPression }}';
+                    $(idTr).html(data);
+                    $('#modalTraitementEncours').modal('hide');
+                     }
+                ).error(function () {
+                    // rétablir curseur
+                    $('#modalTraitementEncours').modal('hide');
+                    alert("Erreur non déterminée");
+                });
+            });
+             {% set i = i + 1 %}
+          {% endfor %}
+        
+    });
     </script>
 
 

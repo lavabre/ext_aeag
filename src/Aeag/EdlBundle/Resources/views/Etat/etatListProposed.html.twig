@@ -1,78 +1,82 @@
-
-<div id="formEtatListProposed{{ etat.cdEtat }}">
-         <input type='hidden' id='UrlActuel' value="{{ path('AeagEdlBundle_etat', { 'code': etat.euCd }) }}" /> 
-        <input type='hidden' id='newEtatRoute' value="{{ path('AeagEdlBundle_etatForm') }}" /> 
-        <tr>
-            {% if is_granted("IS_AUTHENTICATED_REMEMBERED")and is_granted("ROLE_COMMENTATEUREDL") %}
-                <td width="5%"><a id="newEtat{{ etat.cdEtat }}" title="Proposer une nouvelle évaluation" cdEtat="{{ etat.cdEtat }}">
-                        <i class="fa fa-commenting fa-2x"></i> 
+ <div class="row" id="row-{{ etat.euCd }}-{{ etat.cdEtat }}">
+     {% if  is_granted("ROLE_COMMENTATEUREDL") %}
+        <div class="col-sm-1">
+                     <a id="newEtat-{{ etat.euCd }}-{{ etat.cdEtat }}" title="Proposer une nouvelle évaluation" cdEtat="{{ etat.cdEtat }}">
+                         <button type="button" class="btn btn-primary"><i class="fa fa-commenting"></i></button> 
                     </a>
-                </td>
-           {% else %}
-                <td width="10%"></td>
-           {% endif %}
-            <td align="left" width="70%">{{ etat.type.libelle }}</td>
-            <td width="10%" nowrap><span class="dce_etat_{{ etat.valeur }}">{{ etat.getValueLib() }}</span></td>
-       {% if derniereProp %}
-            <td width="10%" nowrap><span class="dce_etat_{{ derniereProp.valeur }}">{{ derniereProp.getValueLib() }}</span></td>
-       {% else %}
-            <td width="10%" nowrap></td>
-       {% endif %}
-        </tr>
-        <div id="EtatsParametre">  
-            <div id="divProposed{{ etat.cdEtat }}">
-             {% if etat.proposed|length > 0 %} 
-                 <tr>
-                    <td colspan=4>
-                        <table class="table" cellspacing="0" width="90%" align="right">
-                            <tr>
-                                <th nowrap width="5%">Action</th>
-                                <th nowrap width="5%">Date</th>
-                                <th nowrap width="5%">Auteur</th>
-                                <th nowrap width="55%">Commentaire</th>
-                                <th nowrap width="10%">Etat proposé</th>
-                           </tr>
-                           {% set i = 1 %}
-                           {% for pp in etat.proposed %}
-                            <div id="EtatsProposed{{i}}">
-                                  <tr>
-                                    {% if is_granted("IS_AUTHENTICATED_REMEMBERED")and is_granted("ROLE_COMMENTATEUREDL") and  pp.role ==  'local' and pp.utilisateur.id == user.id %} 
-                                    <td width="5%"><a name="removeEtat{{ pp.cdEtat }}" title="Supprimer cette proposition" login="{{ pp.utilisateur.id }}" propositionDate="{{ pp.propositionDate }}">
-                                            <i class="fa fa-remove fa-2x"></i> 
-                                        </a>
-                                    </td>
-                                        {% elseif is_granted("IS_AUTHENTICATED_REMEMBERED")and is_granted("ROLE_SUPERVISEUREDL") %}
-                                    <td width="10%"><a name="removeEtat{{ pp.cdEtat }}" title="Supprimer cette proposition" login="{{ pp.utilisateur.id }}" propositionDate="{{ pp.propositionDate }}">
-                                            <i class="fa fa-remove fa-2x"></i> 
-                                        </a>
-                                    </td>
-                                        {% else %}
-                                    <td width="10%"></td>
-                                        {% endif %}
-                                    <td width="5%" nowrap>{{ pp.propositionDate }}</td>
-                                    {% if pp.role == 'local' %}
-                                    <td width="5%" nowrap>acteur local : {{ pp.utilisateur.username }}</td>
-                                    {% else %}
-                                    <td width="5%" nowrap>expert : {{ pp.utilisateur.username }}</td>
-                                    {% endif %}
-                                    <td width="55%" align="left">{{ pp.commentaire }}</td>
-                                    <td width="10%" nowrap><span class="dce_etat_{{ pp.valeur }}">{{ pp.getValueLib() }}</span></td>
-                               </tr>
-                          </div>
-
-                            {% set i = i + 1 %}
-                            {% if i > 2 %}
-                            {% set i = 1 %}
-                            {% endif %}
-                            {% endfor %}
-                      </table>
-                    </td>
-                </tr>
-             {% endif %}
-         </div>
         </div>
-     <div id ="divNewEtat{{ etat.cdEtat }}"></div> 
-</div>
+        {% endif %}
+        <div class="col-sm-7">
+           <input type='hidden' id='UrlActuel' value="{{ path('AeagEdlBundle_etat', { 'code': etat.euCd }) }}" /> 
+           <input type='hidden' id='newEtatRoute' value="{{ path('AeagEdlBundle_etatForm') }}" /> 
+           {{ etat.type.libelle }}
+        </div>
+       <div class="col-sm-2">
+           <span class="dce_etat_{{ etat.valeur }}">{{ etat.getValueLib() }}</span>
+       </div>   
+       <div class="col-sm-2">
+            {% if derniereProp %}
+                    <span class="dce_etat_{{ derniereProp.valeur }}">{{ derniereProp.getValueLib() }}</span>
+           {% endif %}
+       </div>
+ </div>
+ 
+       {% if etat.proposed|length > 0 %} 
+           <div class="row row-border " id="rowProposed-titre-{{ etat.euCd }}-{{ etat.cdEtat }}">
+               {% if  is_granted("ROLE_COMMENTATEUREDL") %}
+                    <div class=" col-sm-offset-1  col-sm-1 alert alert-warning">Action</div>
+                    <div class="col-sm-2 alert alert-warning">Date</div>
+                    {% else %}
+                     <div class="col-sm-offset-1 col-sm-2 alert alert-warning">Date</div>   
+               {% endif %}
+                    <div class="col-sm-2 alert alert-warning">Auteur</div>   
+                   <div class="col-sm-4 alert alert-warning">Commentaire</div>
+                   <div class="col-sm-2 alert alert-warning">Etat proposé</div>  
+           </div>
+          {% set i = 1 %}
+          {% for pp in etat.proposed %}
+                    <div class="row" id="rowProposed-ligne-{{ etat.euCd }}-{{ etat.cdEtat }}-{{ i }}">
+                        {% if  is_granted("ROLE_COMMENTATEUREDL") %}
+                            <div class="  col-sm-offset-1  col-sm-1">
+                                 {% if  is_granted("ROLE_COMMENTATEUREDL") and  pp.role ==  'local' and pp.utilisateur.id == user.id %} 
+                                  <a id="removeEtat-{{ etat.euCd }}-{{ etat.cdEtat }}-{{ i }}"  title="Supprimer cette proposition" login="{{ pp.utilisateur.id }}" propositionDate="{{ pp.propositionDate }}">
+                                            <button type="button" class="btn btn-danger"><i class="fa fa-remove"></i> </button>
+                                   </a>
+                                 {% elseif  is_granted("ROLE_SUPERVISEUREDL") %}
+                                    <a id="removeEtat-{{ etat.euCd }}-{{ etat.cdEtat }}-{{ i }}" title="Supprimer cette proposition" login="{{ pp.utilisateur.id }}" propositionDate="{{ pp.propositionDate }}">
+                                            <button type="button" class="btn btn-danger"><i class="fa fa-remove"></i> </button>
+                                     </a>
+                               {% endif %}
+                            </div>
+                              <div class="col-sm-2">
+                                {{ pp.propositionDate }}
+                            </div>
+                           {% else %}
+                                <div class=" col-sm-offset-1 col-sm-2">
+                                {{ pp.propositionDate }}
+                                </div>
+                         {% endif %}
+                           
+                           <div class="col-sm-2">
+                                  {% if pp.role == 'local' %}
+                                   Acteur local : {{ pp.utilisateur.username }}
+                                    {% else %}
+                                    Expert : {{ pp.utilisateur.username }}
+                                    {% endif %}
+                           </div>   
+                           <div class="col-sm-4">
+                               {{ pp.commentaire }}
+                           </div>
+                           <div class="col-sm-2">
+                               <span class="dce_etat_{{ pp.valeur }}">{{ pp.getValueLib() }}</span>
+                           </div>  
+                   </div>
+                    </br>
+                   {% set i = i + 1 %}
+         {% endfor %}
+     {% endif %}
+                    
+      
 
      <div class="modal fade" id="modalEtatEdit" tabindex="-1" role="dialog">
     <div class="modal-dialog">
@@ -92,9 +96,12 @@
 
 
 <script type="text/javascript">
-
-    $(document).ready(function () { 	// Sur clic "Proposer un nouvel etat"
-        $('#newEtat{{ etat.cdEtat }}').click(function (e) {
+   var idTr = '';
+    $(document).ready(function () { 	
+        
+           
+        // Sur clic "Proposer un nouvel etat"
+        $('#newEtat-{{ etat.euCd }}-{{ etat.cdEtat }}').click(function (e) {
             $('#modalTraitementEncours').modal('toggle');
             e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
             //conserver l'url actuel
@@ -102,7 +109,8 @@
             // obtenir l'url
             var $url = $('input#newEtatRoute').val();
             // conserver l'id du div qui hébergera le formulaire de saisie
-            var $div = "#divNewEtat{{ etat.cdEtat }}";
+             idTr = '#divEtat-{{ etat.euCd }}-{{ etat.cdEtat }}';
+         
             $.post($url,
                     {
                         euCd: "{{ etat.euCd }}",
@@ -114,44 +122,52 @@
                 $('#modalTraitementEncours').modal('hide');
             }
             ).error(function () {
-                // rétablir curseur
-                $("body").css("cursor", "auto");
+                $('#modalTraitementEncours').modal('hide');
                 alert("Erreur non déterminée");
             });
 
         });
-
-        $('a[name="removeEtat{{ etat.cdEtat }}"]').click(function (e) {
-            $("body").css("cursor", "wait");
-
-            // obtenir l'url
-            var $url = "{{ path('AeagEdlBundle_removeEtat') }}";
-
-            // lancer la requête ajax  
-            $.post($url,
-                    {
-                        euCd: "{{ etat.euCd }}",
-                        cdEtat: "{{ etat.cdEtat }}",
-                        login: $(this).attr('login'),
-                        propositionDate: $(this).attr('propositionDate')
-                    },
-            function (data) {
-                // placer le formulaire sous le div
-                $("#divEtat-{{ etat.euCd }}-{{ etat.cdEtat }}").html(data);
-
-                // rétablir curseur
-                $("body").css("cursor", "auto");
-            }
-            ).error(function () {
-                // rétablir curseur
-                $("body").css("cursor", "auto");
-                alert("Erreur non déterminée");
+         
+        {% set i = 1 %}
+         {% for pp in etat.proposed %}
+               $('#removeEtat-{{ etat.euCd }}-{{ etat.cdEtat }}-{{ i }}').click(function (e) {
+                $('#modalTraitementEncours').modal('toggle');
+                e.preventDefault();
+                // obtenir l'url
+                var $url = "{{ path('AeagEdlBundle_removeEtat') }}";
+                idTr = '#rowProposed-ligne-{{ etat.euCd }}-{{ etat.cdEtat }}-{{ i }}';
+                 // lancer la requête ajax  
+                $.post($url,
+                        {
+                            euCd: "{{ etat.euCd }}",
+                            cdEtat: "{{ etat.cdEtat }}",
+                            login: $(this).attr('login'),
+                            propositionDate: $(this).attr('propositionDate')
+                        },
+                function (data) {
+                    // placer le formulaire sous le div
+                    $(idTr).remove();
+                   {% if  i == 1 %}
+                            idTr = '#rowProposed-titre-{{ etat.euCd }}-{{ etat.cdEtat }}';
+                            $(idTr).remove();
+                    {% endif %}
+                     idTr = '#divEtat-{{ etat.euCd }}-{{ etat.cdEtat }}';
+                    $(idTr).html(data);
+                    $('#modalTraitementEncours').modal('hide');
+                     }
+                ).error(function () {
+                    // rétablir curseur
+                    $('#modalTraitementEncours').modal('hide');
+                    alert("Erreur non déterminée");
+                });
             });
-        });
+             {% set i = i + 1 %}
+          {% endfor %}
+        
     });
 </script>
 
-
+     
 
 
 

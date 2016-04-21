@@ -1,35 +1,32 @@
 {% if nbPressions > 0 %} 
-    <div class="panel panel-default">
-            <div class="panel-heading" role="tab" id="heading{{pressionGroupe.cdGroupe }}">
-              <h4 class="panel-title">
+    <div class="panel panel-primary">
+        <div class="panel-heading" role="tab" id="heading{{pressionGroupe.cdGroupe }}">
+            <h4 class="panel-title">
                 <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ pressionGroupe.cdGroupe }}" aria-expanded="true" aria-controls="collapse{{ pressionGroupe.cdGroupe }}">
-                  {{pressionGroupe.libelle}}
+                    {{pressionGroupe.libelle}}  
                 </a>
-              </h4>
+            </h4>
+        </div>
+        <div id="collapse{{ pressionGroupe.cdGroupe }}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading{{ pressionGroupe.cdGroupe }}">
+            <div class="panel-body">
+                <div class="row">
+                    {% if  is_granted("ROLE_COMMENTATEUREDL") %}
+                    <div class="col-sm-1 alert  alert-info">Action</div>
+                    {% endif %}
+                    <div class="col-sm-5 alert  alert-info">Libelle</div>
+                    <div class="col-sm-3 alert  alert-info">Valeur provisoire</div>   
+                    <div class="col-sm-3 alert  alert-info">Proposition STL</div>
+                
+                {% for pression in pressions %}
+                    <div id="divPression-{{ pression.euCd }}-{{ pression.cdPression }}" >
+                        {{ render(controller('AeagEdlBundle:Pression:pressionListProposed', {'euCd':pression.euCd, 'cdPression':pression.cdPression})) }}
+                    </div>     
+                    </br>
+                {% endfor %}
+                </div>
             </div>
-            <div id="collapse{{ pressionGroupe.cdGroupe }}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading{{ pressionGroupe.cdGroupe }}">
-              <div class="panel-body">
-                   <table class="table table-bordered table-condensed table-advance" id="idTable{{ pressionGroupe.cdGroupe }}">
-                    <thead>
-                        <tr>
-                            <th  width="5%" nowrap>Action</th>
-                            <th  width="70%">libelle</th>
-                            <th  width="10%" nowrap>Valeur provisoire</th>
-                            <th  width="10%" nowrap>Proposition STL</th>
-                          </tr>
-                    </thead>
-                    <tbody>
-                            {% for etat in etats %}
-                                <div id="divEtat{{ pressionGroupe.cdGroupe }}_{{ pression.etatType.cdEtat }}" >
-                                           {{ render(controller('AeagEdlBundle:Pression:pressionListProposed', {'euCd':pression.masseEau.euCd, 'cdPression':pression.etatType.cdEtat})) }}
-                               </div>     
-                           {% endfor %}
-                          </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-    
+        </div>
+    </div>    
 {% endif %} 
 
 

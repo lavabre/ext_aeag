@@ -9,9 +9,30 @@
        <a href="{{ path('AeagEdlBundle_listeMasseEau') }}">Résultat</a> 
     </li>
      <li class="active">
-         Pression
+         {{ me.euCd }}
     </li>
 {% endblock breadcrumb %}
+
+{% block modal %}
+    <div class="modal fade" id="modal-historique">
+        <div class="modal-dialog modal-window">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" >Historique</h4>
+                </div>
+                <div class="modal-body">
+                    {% if avisHistorique %}
+                        {{ avisHistorique.avis | nl2br }}
+                    {% endif %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Fermer</button>
+                </div>
+            </div>
+        </div>
+    </div>  
+{% endblock modal %}
 
 {%block panel_heading %}
      <div class="row">
@@ -27,44 +48,56 @@
 
 {% block content %}
   
-   <div class="row">
-    <div class="colx3-left-double">
-            <div class="align-center">
-                <h2>{{ me.nomMasseEau }}</h2>
-                   <img width="100px" height="100px" src="http://adour-garonne.eaufrance.fr/porteau/index.php/carto/vignetteMasdo?id={{ me.euCd }}"/>
-            </div>
+    <div class="row">
+        <h2 class="text-center">{{ me.nomMasseEau }}</h2>
+        <div class="col-sm-offset-5  col-sm-2">
+            <img class="img-responsive" alt="Responsive image" width="100px" height="100px" src="http://adour-garonne.eaufrance.fr/porteau/index.php/carto/vignetteMasdo?id={{ me.euCd }}"/>
         </div>
-        <div class="colx3-right" width="10%">
-            <div class="align-left">
-                <a class="big-button blue" TARGET="_blanck" href="http://adour-garonne.eaufrance.fr/massedeau/{{me.euCd}}">
-                     <button type="button" class="btn btn-primary">
-                     Voir la fiche sur le portail de bassin
-                      </button>
-                </a>
-            </div>
-        </div>
+        <div class="col-sm-4">
+            </br>
+            <a  TARGET="_blanck" href="http://adour-garonne.eaufrance.fr/massedeau/{{me.euCd}}">
+                <button type="button" class="btn btn-primary">
+                    <i class="fa fa-eye"> Voir la fiche sur le portail de bassin</i>
+                </button>
+            </a>
+            </br></br>
+            <a class="btn btn-warning" data-toggle="modal" href="#modal-historique" title="Historique">
+                <i class="fa fa-archive"> Historique</i>
+             </a>
+           </div> 
     </div>
                      
       </br>
       
-       <div class="row">
-              <a  href="{{ path('AeagEdlBundle_etatGroupe', {'code':me.euCd}) }}">
-                  <button type="button" class="btn btn-default">
-                       Etats
-                  </button>
-              </a>
-            <a href="#">
-                <button type="button" class="btn btn-success">
-                        Etats
-                 </button>
+      <div class="row">
+     <div class="col-sm-2 col-sm-push-10">
+             <a  href="{{ path('AeagEdlBundle_etatGroupe', {'code':me.euCd}) }}">
+                <button type="button" class="btn btn-default">
+                    Etats
+                </button>
             </a>
-    </div>   
+            <a  href=#">
+                <button type="button" class="btn btn-success">
+                    Pressions
+                </button>
+            </a>
+        </div>
+    </div>
+    
                   
      </br>
 
-          <div class="panel panel-info">
+          <div class="panel panel-primary">
             <div class="panel-heading">
-              <h3 class="panel-title">Pressions sur la masse d'eau  {{ me.euCd }}</h3>
+                 <div class="row">
+                     <div class="col-sm-10">
+                                <h3 class="panel-title">Pressions sur la masse d'eau  {{ me.euCd }}</h3>
+                     </div>
+                    <div class="col-sm-2  pull-left">
+                            <a id="expandAll" href="#" class="btn btn-primary" role="button"><i class="fa fa-expand"></i></a>
+                            <a id="collapseAll" href="#" class="btn btn-primary" role="button"><i class="fa fa-compress"></i></a>
+                    </div>
+                 </div>
             </div>
             <div class="panel-body">
                     <!-- --------------------------------- ETATS ----------------------------------------- -->        
@@ -78,7 +111,7 @@
                         </div>
                         <br><br>
                         <div align="center">
-                            <a  href="{{ url }}">
+                            <a  href="{{ path('AeagEdlBundle_listeMasseEau') }}">
                                <button type="button" class="btn btn-primary"><i class="fa fa-undo"></i> retour</button>
                              </a>
                         </div>
@@ -88,3 +121,25 @@
 
 {% endblock %}
 
+{% block scripts %}
+    
+           $('#expandAll').hide();
+            $('#collapseAll').show();          
+
+           $('#expandAll').on('click',function(){
+                   {% for pressionGroupe   in  pressionGroupes %}
+                           $('#collapse{{ pressionGroupe.cdGroupe }}').collapse('show');
+                     {% endfor %}
+                      $('#expandAll').hide();
+                      $('#collapseAll').show();
+               });
+
+           $('#collapseAll').on('click',function(){
+                    {% for pressionGroupe   in  pressionGroupes %}
+                           $('#collapse{{ pressionGroupe.cdGroupe }}').collapse('hide');
+                       {% endfor %}
+                      $('#expandAll').show();
+                      $('#collapseAll').hide();
+           });
+    
+{%endblock scripts %}    
