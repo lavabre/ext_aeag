@@ -10,3 +10,4 @@ cp -Rf /base/extranet/preprod/ext_aeag/app/config/parameters_preprod.yml /base/e
 cp -Rf /base/extranet/preprod/ext_aeag/app/config/parameters_preprod.yml /base/extranet/preprod/ext_aeag/app/config/parameters.yml
 
 /base/extranet/preprod/ext_aeag/cc-vg
+
