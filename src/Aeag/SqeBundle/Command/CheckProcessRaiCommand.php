@@ -98,7 +98,7 @@ class CheckProcessRaiCommand extends AeagCommand {
                 $this->_updatePhaseDemande($pgCmdFichierRps);
                 
                 // Fichier csv
-                $this->_exportCsvDonneesBrutes($pgCmdFichierRps);
+                //$this->_exportCsvDonneesBrutes($pgCmdFichierRps);
 
                 $cptRaisTraitesOk++;
             } else {

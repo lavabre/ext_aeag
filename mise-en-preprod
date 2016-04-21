@@ -1,0 +1,5 @@
+#!/bin/bash
+git pull
+cp -Rf /base/extranet/preprod/ext_aeag/app/config/config_preprod /base/extranet/preprod/ext_aeag/app/config/config_dev
+cp -Rf /base/extranet/preprod/ext_aeag/app/config/parameters_preprod /base/extranet/preprod/ext_aeag/app/config/parameters_dev
+cp -Rf /base/extranet/preprod/ext_aeag/app/config/parameters_preprod /base/extranet/preprod/ext_aeag/app/config/parameters
