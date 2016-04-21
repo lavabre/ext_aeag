@@ -5,7 +5,7 @@
         <a href="{{ path('aeag_homepage') }}">Accueil</a> 
     </li>
     <li>
-           <a href="{{ path('AeagSqeBundle_suiviPrelevements_index') }}">Suivi des prélèvements</a> 
+           <a href="{{ path('AeagSqeBundle_suiviPrelevements_index') }}">Suivi Hydrobio</a> 
     </li>
     <li>
            <a href="{{ path('AeagSqeBundle_suiviPrelevements_index') }}">Lots</a> 
@@ -34,7 +34,7 @@
                              <div class="modal-content" >
                                       <div class="modal-header">
                                           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                          <h4 class="modal-title" id="myModalLabel">Suivi du prélèvement du {{ cmdPrelev.cmdPrelev.datePrelev | date("d/m/Y") }}</h4>
+                                          <h4 class="modal-title" id="myModalLabel">Suivi Hydrobio du {{ cmdPrelev.cmdPrelev.datePrelev | date("d/m/Y") }}</h4>
                                         </div>
                                       <div class="modal-body">
                                           <div id="idModalContentNouveauSuivi{{ cmdPrelev.cmdPrelev.id }}"></div>
@@ -77,7 +77,7 @@
                                                   <div class="modal-content" >
                                                            <div class="modal-header">
                                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                                               <h4 class="modal-title" id="myModalLabel">Suivi du prélèvement du {{ cmdPrelev.cmdPrelev.datePrelev | date("d/m/Y") }}</h4>
+                                                               <h4 class="modal-title" id="myModalLabel">Suivi Hydrobio du {{ cmdPrelev.cmdPrelev.datePrelev | date("d/m/Y") }}</h4>
                                                              </div>
                                                            <div class="modal-body">
                                                                <div id="idModalContentMajSuivi{{ suiviPrel.suiviPrel.id }}"></div>
@@ -124,7 +124,7 @@
             <div class="col-md-offset-3 col-md-7">
                         <h3 class="page-title">
                             <table>
-                                <tr><td>Suivi des prélèvements </td></tr>
+                                <tr><td>Suivi Hydrobio </td></tr>
                                 <tr><td>demande  du {{ demande.cmdDemande.dateDemande | date("d/m/Y") }}</td></tr>
                                 <tr><td>Station {{ station.code }} {{ station.libelle }}</td></tr>
                                 <tr><td>entre le  {{ periodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;et&nbsp;&nbsp; {{periodeAn.periode.dateFin | date("d/m/Y") }}</td></tr>

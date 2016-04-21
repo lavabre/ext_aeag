@@ -36,14 +36,26 @@ class SuiviPrelevementsController extends Controller {
         $repoPgProgLotAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotAn');
         if ($user->hasRole('ROLE_ADMINSQE')) {
             $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByAdmin();
-        } else if ($user->hasRole('ROLE_PRESTASQE')) {
+         } else if ($user->hasRole('ROLE_PRESTASQE')) {
             $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByPresta($user);
         } else if ($user->hasRole('ROLE_PROGSQE')) {
             $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByProg($user);
         }
-
+        
+        $tabProglotAns = array();
+        $i = 0;
+        foreach($pgProgLotAns as $pgProgLotAn){
+             $pgProgLot = $pgProgLotAn->getLot();
+             $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
+            // if (substr($pgProgTypeMilieu->getCodeMilieu(),1,2) === 'HB'){
+                 $tabProglotAns[$i] = $pgProgLotAn;
+                 $i++;
+           //  }
+        }
+        
+      
         return $this->render('AeagSqeBundle:SuiviPrelevements:index.html.twig', array('user' => $user,
-                    'lotans' => $pgProgLotAns));
+                    'lotans' => $tabProglotAns));
     }
 
     public function lotPeriodesAction($lotanId) {
@@ -92,6 +104,10 @@ class SuiviPrelevementsController extends Controller {
                 $tabPeriodeAns[$i]['stations'] = $tabStations;
                 $i++;
             }
+        }
+        
+        if (count($tabPeriodeAns) == 1){
+            return $this->redirect($this->generateUrl('AeagSqeBundle_suiviPrelevements_lot_periode_stations', array('periodeAnId' => $tabPeriodeAns[0]['pgProgLotPeriodeAn']->getId())));
         }
 
 
@@ -163,7 +179,11 @@ class SuiviPrelevementsController extends Controller {
                         }
                       
                     }
+                }else{
+                     $tabStations[$i]['cmdDemande'] = null;
                 }
+                   
+                   
                 $tabStations[$i]['suiviPrels'] = $tabSuiviPrels;
                 $i++;
             }

@@ -36,8 +36,8 @@ class DefaultController extends Controller {
         if (is_object($user)) {
             $mes = AeagController::notificationAction($user, $em, $session);
             $mes1 = AeagController::messageAction($user, $em, $session);
-        }else{
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        } else {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
 
         $ua = $this->getBrowser();
@@ -46,10 +46,10 @@ class DefaultController extends Controller {
         $session->set('browser', $ua['name']);
 
         $parametre = $repoParametre->getParametreByCode('EVOLUTION');
-        if ($parametre->getLibelle() == 'false'){
-                $session->set('evolution',false);
-        }else{
-               $session->set('evolution',true);
+        if ($parametre->getLibelle() == 'false') {
+            $session->set('evolution', false);
+        } else {
+            $session->set('evolution', true);
         }
 
         $message = $repoParametre->getParametreByCode('LIB_MESSAGE');
@@ -71,8 +71,8 @@ class DefaultController extends Controller {
             }
         }
 
-       if (is_object($user) && ($this->get('security.authorization_checker')->isGranted('ROLE_ADMINSQE'))) {
-             // insertion des users
+        if (is_object($user) && ($this->get('security.authorization_checker')->isGranted('ROLE_ADMINSQE'))) {
+            // insertion des users
             $message = $this->majPgProgWebusers();
             $message = $this->initPgProgWebusers();
             // return new Response  ($message);
@@ -94,8 +94,8 @@ class DefaultController extends Controller {
         if (is_object($user)) {
             $mes = AeagController::notificationAction($user, $em, $session);
             $mes1 = AeagController::messageAction($user, $em, $session);
-        }else{
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        } else {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'contact');
@@ -128,11 +128,11 @@ class DefaultController extends Controller {
             $nb = 0;
             foreach ($destinataires as $destinataire) {
                 // Création de l'e-mail : le service mailer utilise SwiftMailer, donc nous créons une instance de Swift_Message.
-                $bodyMsg = 'Envoyé par : '.$pgProgWebuser->getNom().' ('.$pgProgWebuser->getMail().')'.PHP_EOL.PHP_EOL;
+                $bodyMsg = 'Envoyé par : ' . $pgProgWebuser->getNom() . ' (' . $pgProgWebuser->getMail() . ')' . PHP_EOL . PHP_EOL;
                 $bodyMsg .= $envoyerMessage->getMessage();
                 $desti = explode(" ", $destinataire);
                 $mail = \Swift_Message::newInstance()
-                        ->setSubject('[SQE Question] - '.$envoyerMessage->getSujet())
+                        ->setSubject('[SQE Question] - ' . $envoyerMessage->getSujet())
                         ->setFrom(array('automate@eau-adour-garonne.fr'))
                         ->setTo(array($desti[0]))
                         ->setBody($bodyMsg);
@@ -296,7 +296,7 @@ class DefaultController extends Controller {
 //        $emSqe->persist($statut);
 //        $emSqe->flush();
     }
-    
+
     public function majPgProgWebusers() {
 
         $em = $this->get('doctrine')->getManager();
@@ -307,19 +307,19 @@ class DefaultController extends Controller {
         $repoPgProgWebusers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
 
         $pgProgWebusers = $repoPgProgWebusers->getPgProgWebusers();
-          $pgProgWebusersNbModifies = 0;
+        $pgProgWebusersNbModifies = 0;
         $message = '';
 
 
         foreach ($pgProgWebusers as $pgProgWebuser) {
-           $entityUser = $repoUsers->getUserByUsernamePassword($pgProgWebuser->getlogin(), $pgProgWebuser->getPwd());
-           if ($entityUser) {
-            $pgProgWebuser->setExtId($entityUser->getId());
-            $pgProgWebuser->setMail($entityUser->getEmail());
-            $pgProgWebuser->setPwd($entityUser->getPassword());
-            $emSqe->persist($pgProgWebuser);
-            $pgProgWebusersNbModifies++;
-        }
+            $entityUser = $repoUsers->getUserByUsernamePassword($pgProgWebuser->getlogin(), $pgProgWebuser->getPwd());
+            if ($entityUser) {
+                $pgProgWebuser->setExtId($entityUser->getId());
+                $pgProgWebuser->setMail($entityUser->getEmail());
+                $pgProgWebuser->setPwd($entityUser->getPassword());
+                $emSqe->persist($pgProgWebuser);
+                $pgProgWebusersNbModifies++;
+            }
         }
         $em->flush();
         $emSqe->flush();
@@ -372,9 +372,6 @@ class DefaultController extends Controller {
                 $tabRoles[] = 'ROLE_PRESTASQE';
             }
             $entityUser->setRoles($tabRoles);
-            if ($pgProgWebuser->getLogin() == 'jla'){
-                $entityUser->addRole('ROLE_ADMINEDL');
-            }
             $encoder = $factory->getEncoder($entityUser);
             $entityUser->setUsername($pgProgWebuser->getLogin());
             $entityUser->setSalt('');
