@@ -1,5 +1,5 @@
 #!/bin/bash
-git checkout /base/extranet/preprod/ext_aeag/app/config/config_dev
+git checkout /base/extranet/preprod/ext_aeag/app/config/config_dev.yml
 git checkout /base/extranet/preprod/ext_aeag/app/config/parameters.yml
 git checkout /base/extranet/preprod/ext_aeag/app/config/parameters_dev.yml
 
