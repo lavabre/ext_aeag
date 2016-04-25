@@ -11,8 +11,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Entity(repositoryClass="Aeag\SqeBundle\Repository\PgCmdSuiviPrelRepository")
  */
-class PgCmdSuiviPrel
-{
+class PgCmdSuiviPrel {
+
     /**
      * @var string
      *
@@ -74,15 +74,19 @@ class PgCmdSuiviPrel
      */
     private $user;
 
-
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="validation", type="string", length=2, nullable=true)
+     */
+    private $validation;
 
     /**
      * Get id
      *
      * @return string
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -93,8 +97,7 @@ class PgCmdSuiviPrel
      *
      * @return PgCmdSuiviPrel
      */
-    public function setDatePrel($datePrel)
-    {
+    public function setDatePrel($datePrel) {
         $this->datePrel = $datePrel;
 
         return $this;
@@ -105,8 +108,7 @@ class PgCmdSuiviPrel
      *
      * @return \DateTime
      */
-    public function getDatePrel()
-    {
+    public function getDatePrel() {
         return $this->datePrel;
     }
 
@@ -117,8 +119,7 @@ class PgCmdSuiviPrel
      *
      * @return PgCmdSuiviPrel
      */
-    public function setStatutPrel($statutPrel)
-    {
+    public function setStatutPrel($statutPrel) {
         $this->statutPrel = $statutPrel;
 
         return $this;
@@ -129,8 +130,7 @@ class PgCmdSuiviPrel
      *
      * @return string
      */
-    public function getStatutPrel()
-    {
+    public function getStatutPrel() {
         return $this->statutPrel;
     }
 
@@ -141,8 +141,7 @@ class PgCmdSuiviPrel
      *
      * @return PgCmdSuiviPrel
      */
-    public function setCommentaire($commentaire)
-    {
+    public function setCommentaire($commentaire) {
         $this->commentaire = $commentaire;
 
         return $this;
@@ -153,8 +152,7 @@ class PgCmdSuiviPrel
      *
      * @return string
      */
-    public function getCommentaire()
-    {
+    public function getCommentaire() {
         return $this->commentaire;
     }
 
@@ -165,8 +163,7 @@ class PgCmdSuiviPrel
      *
      * @return PgCmdSuiviPrel
      */
-    public function setPrelev(\Aeag\SqeBundle\Entity\PgCmdPrelev $prelev = null)
-    {
+    public function setPrelev(\Aeag\SqeBundle\Entity\PgCmdPrelev $prelev = null) {
         $this->prelev = $prelev;
 
         return $this;
@@ -177,8 +174,7 @@ class PgCmdSuiviPrel
      *
      * @return \Aeag\SqeBundle\Entity\PgCmdPrelev
      */
-    public function getPrelev()
-    {
+    public function getPrelev() {
         return $this->prelev;
     }
 
@@ -189,8 +185,7 @@ class PgCmdSuiviPrel
      *
      * @return PgCmdSuiviPrel
      */
-    public function setFichierRps(\Aeag\SqeBundle\Entity\PgCmdFichiersRps $fichierRps = null)
-    {
+    public function setFichierRps(\Aeag\SqeBundle\Entity\PgCmdFichiersRps $fichierRps = null) {
         $this->fichierRps = $fichierRps;
 
         return $this;
@@ -201,8 +196,7 @@ class PgCmdSuiviPrel
      *
      * @return \Aeag\SqeBundle\Entity\PgCmdFichiersRps
      */
-    public function getFichierRps()
-    {
+    public function getFichierRps() {
         return $this->fichierRps;
     }
 
@@ -213,8 +207,7 @@ class PgCmdSuiviPrel
      *
      * @return PgCmdSuiviPrel
      */
-    public function setUser(\Aeag\SqeBundle\Entity\PgProgWebusers $user = null)
-    {
+    public function setUser(\Aeag\SqeBundle\Entity\PgProgWebusers $user = null) {
         $this->user = $user;
 
         return $this;
@@ -225,8 +218,16 @@ class PgCmdSuiviPrel
      *
      * @return \Aeag\SqeBundle\Entity\PgProgWebusers
      */
-    public function getUser()
-    {
+    public function getUser() {
         return $this->user;
     }
+
+    function getValidation() {
+        return $this->validation;
+    }
+
+    function setValidation($validation) {
+        $this->validation = $validation;
+    }
+
 }

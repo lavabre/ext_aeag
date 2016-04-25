@@ -176,7 +176,7 @@ class SuiviHydrobioController extends Controller {
                     if ($pgCmdPrelev) {
                         $tabStations[$i]['cmdPrelev'] = $pgCmdPrelev;
                         $tabCmdPrelevs[$i]['maj'] = 'N';
-                        $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelev($pgCmdPrelev);
+                        $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelevOrderDate($pgCmdPrelev);
                         $tabSuiviPrels = array();
                         $j = 0;
                          if (count($pgCmdSuiviPrels) == 0) {
@@ -335,32 +335,36 @@ class SuiviHydrobioController extends Controller {
 
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevById($prelevId);
+        $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelev($pgCmdPrelev);
+        if ($pgCmdSuiviPrels){
+            $pgCmdSuiviPrelActuel = $pgCmdSuiviPrels[0];
+        }
         $pgCmdSuiviPrel = new PgCmdSuiviPrel();
-        $form = $this->createForm(new PgCmdSuiviPrelMajType($user), $pgCmdSuiviPrel);
+        $form = $this->createForm(new PgCmdSuiviPrelMajType($user, $pgCmdSuiviPrelActuel), $pgCmdSuiviPrel);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
             $pgCmdSuiviPrel->setPrelev($pgCmdPrelev);
             $pgCmdSuiviPrel->setUser($pgProgWebUser);
+            $pgCmdSuiviPrel->setValidation('E');
             $datePrel = $pgCmdSuiviPrel->getDatePrel();
             $emSqe->persist($pgCmdSuiviPrel);
-            if ($pgCmdSuiviPrel->getStatutPrel() == 'F') {
+            if ($pgCmdSuiviPrel->getStatutPrel() == 'F' and $pgCmdSuiviPrel->getValidation() == 'A') {
                 $pgCmdPrelev->setDatePrelev($datePrel);
                 $pgCmdPrelev->setRealise('O');
             } elseif ($pgCmdSuiviPrel->getStatutPrel() == 'N') {
                 $pgCmdPrelev->setDatePrelev($datePrel);
                 $pgCmdPrelev->setRealise('N');
             } else {
-                $pgCmdPrelev->setDatePrelev(null);
+                //$pgCmdPrelev->setDatePrelev(null);
                 $pgCmdPrelev->setRealise(null);
             }
             $emSqe->persist($pgCmdPrelev);
             $emSqe->flush();
             $session->getFlashBag()->add('notice-success', 'le suivi du ' . $datePrel->format('d/m/Y') . ' a été créé !');
 
-            return $this->redirect($this->generateUrl('AeagSqeBundle_suiviHydrobio_lot_periode_station_demande', array('stationId' => $pgCmdPrelev->getStation()->getOuvFoncId(),
-                                'periodeAnId' => $periodeAnId,
-                                'cmdDemandeId' => $pgCmdPrelev->getDemande()->getId())));
+            return $this->redirect($this->generateUrl('AeagSqeBundle_suiviHydrobio_lot_periode_stations', array('stationId' => $pgCmdPrelev->getStation()->getOuvFoncId(),
+                                'periodeAnId' => $periodeAnId)));
         }
 
         return $this->render('AeagSqeBundle:SuiviHydrobio:lotPeriodeStationDemandeSuiviNew.html.twig', array(
@@ -400,23 +404,22 @@ class SuiviHydrobioController extends Controller {
         if ($form->isValid()) {
             $datePrel = $pgCmdSuiviPrel->getDatePrel();
             $emSqe->persist($pgCmdSuiviPrel);
-            if ($pgCmdSuiviPrel->getStatutPrel() == 'F') {
+            if ($pgCmdSuiviPrel->getStatutPrel() == 'F' and $pgCmdSuiviPrel->getValidation() == 'A') {
                 $pgCmdPrelev->setDatePrelev($datePrel);
                 $pgCmdPrelev->setRealise('O');
             } elseif ($pgCmdSuiviPrel->getStatutPrel() == 'N') {
                 $pgCmdPrelev->setDatePrelev($datePrel);
                 $pgCmdPrelev->setRealise('N');
             } else {
-                $pgCmdPrelev->setDatePrelev(null);
+                //$pgCmdPrelev->setDatePrelev(null);
                 $pgCmdPrelev->setRealise(null);
             }
             $emSqe->persist($pgCmdPrelev);
             $emSqe->flush();
             $session->getFlashBag()->add('notice-success', 'le suivi du ' . $datePrel->format('d/m/Y') . ' a été modifié !');
 
-            return $this->redirect($this->generateUrl('AeagSqeBundle_suiviHydrobio_lot_periode_station_demande', array('stationId' => $pgCmdPrelev->getStation()->getOuvFoncId(),
-                                'periodeAnId' => $periodeAnId,
-                                'cmdDemandeId' => $pgCmdPrelev->getDemande()->getId())));
+            return $this->redirect($this->generateUrl('AeagSqeBundle_suiviHydrobio_lot_periode_stations', array('stationId' => $pgCmdPrelev->getStation()->getOuvFoncId(),
+                                'periodeAnId' => $periodeAnId)));
         }
 
         return $this->render('AeagSqeBundle:SuiviHydrobio:lotPeriodeStationDemandeSuiviMaj.html.twig', array(
