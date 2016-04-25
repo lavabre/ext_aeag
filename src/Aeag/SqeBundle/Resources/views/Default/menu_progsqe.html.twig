@@ -77,12 +77,12 @@
           </li>
                   
         {% if  not app.session.get('evolution')%}           
-           {%if app.session.get('menu') == 'suiviPrelevements'%}
+           {%if app.session.get('menu') == 'suiviHydrobio'%}
                     <li class="active">
                  {% else %}
                     <li> 
                 {%endif%}
-                      <a href="{{ path('AeagSqeBundle_suiviPrelevements_index')}}">Suivi Hydrobio</a>
+                      <a href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}">Suivi Hydrobio</a>
                   </li>
           {% endif %}  
             

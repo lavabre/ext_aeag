@@ -24,9 +24,9 @@ aeag_sqe_echangeFichiers:
     resource: "@AeagSqeBundle/Resources/config/routing_echangefichiers.yml"
     prefix:   /echangefichiers   
     
-aeag_sqe_suiviPrelevements:
-    resource: "@AeagSqeBundle/Resources/config/routing_suiviPrelevements.yml"
-    prefix:   /suiviPrel  
+aeag_sqe_suiviHydrobio:
+    resource: "@AeagSqeBundle/Resources/config/routing_suiviHydrobio.yml"
+    prefix:   /suiviHydrobio 
     
 aeag_sqe_SaisieDonnees:
     resource: "@AeagSqeBundle/Resources/config/routing_saisieDonnees.yml"

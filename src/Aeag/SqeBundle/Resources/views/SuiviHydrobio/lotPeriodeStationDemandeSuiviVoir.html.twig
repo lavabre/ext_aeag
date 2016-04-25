@@ -38,7 +38,7 @@
                             <input class="form-control" type="text" name="file"  readonly= true value="{{ suiviPrel.fichierRps.nomFichier}} déposé le {{ suiviPrel.fichierRps.dateDepot | date('d/m/Y')}}">
                    </div>
                    <div class="col-xs-1">
-                             <a id="id{{ suiviPrel.fichierRps.id}}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_fichier_telecharger',{'suiviPrelId' : suiviPrel.id})}}" title="Télécharger le fichier">
+                             <a id="id{{ suiviPrel.fichierRps.id}}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_fichier_telecharger',{'suiviPrelId' : suiviPrel.id})}}" title="Télécharger le fichier">
                                <i class="fa fa-upload"></i> 
                              </a>
                    </div>
