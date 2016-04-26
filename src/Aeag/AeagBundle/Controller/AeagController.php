@@ -41,12 +41,12 @@ class AeagController extends Controller {
         if ($security->isGranted('ROLE_ADMIN')) {
             return $this->render('AeagAeagBundle:Admin:index.html.twig');
         };
-        
-         if ($security->isGranted('ROLE_ADMINEDL')) {
+
+        if ($security->isGranted('ROLE_ADMINEDL')) {
             $session->set('appli', 'edl');
             return $this->redirect($this->generateUrl('Aeag_edl'));
         };
-        
+
         if ($security->isGranted('ROLE_ODEC')) {
             $session->set('appli', 'dec');
             return $this->redirect($this->generateUrl('aeag_dec'));
@@ -56,20 +56,22 @@ class AeagController extends Controller {
             return $this->redirect($this->generateUrl('aeag_frd'));
         };
 
-        if ($security->isGranted('ROLE_SQE')) {
-            $session->set('appli', 'sqe');
-            return $this->redirect($this->generateUrl('aeag_sqe'));
-        };
-        
-         if ($security->isGranted('ROLE_EDL')) {
+
+        if ($security->isGranted('ROLE_EDL')) {
             $session->set('appli', 'edl');
             return $this->redirect($this->generateUrl('aeag_edl'));
         };
 
         if ($security->isGranted('ROLE_STOCK')) {
-            $session->set('appli', 'sqe');
+            $session->set('appli', 'stock');
             return $this->redirect($this->generateUrl('aeag_stock'));
         };
+
+        if ($security->isGranted('ROLE_SQE')) {
+            $session->set('appli', 'sqe');
+            return $this->redirect($this->generateUrl('aeag_sqe'));
+        };
+
 
         return $this->render('AeagAeagBundle:Default:index.html.twig', array('roles' => $roles));
     }

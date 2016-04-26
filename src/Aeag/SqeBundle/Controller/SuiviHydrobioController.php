@@ -17,9 +17,8 @@ use Aeag\AeagBundle\Controller\AeagController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 
-class SuiviPrelevementsController extends Controller {
+class SuiviHydrobioController extends Controller {
 
-   
     public function indexAction() {
         $user = $this->getUser();
         if (!$user) {
@@ -27,8 +26,8 @@ class SuiviPrelevementsController extends Controller {
         }
 
         $session = $this->get('session');
-        $session->set('menu', 'suiviPrelevements');
-        $session->set('controller', 'SuiviPrelevements');
+        $session->set('menu', 'suiviHydrobio');
+        $session->set('controller', 'SuiviHydrobio');
         $session->set('fonction', 'index');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
@@ -42,8 +41,20 @@ class SuiviPrelevementsController extends Controller {
             $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByProg($user);
         }
 
-        return $this->render('AeagSqeBundle:SuiviPrelevements:index.html.twig', array('user' => $user,
-                    'lotans' => $pgProgLotAns));
+        $tabProglotAns = array();
+        $i = 0;
+        foreach ($pgProgLotAns as $pgProgLotAn) {
+            $pgProgLot = $pgProgLotAn->getLot();
+            $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
+            // if (substr($pgProgTypeMilieu->getCodeMilieu(),1,2) === 'HB'){
+            $tabProglotAns[$i] = $pgProgLotAn;
+            $i++;
+            //  }
+        }
+
+
+        return $this->render('AeagSqeBundle:SuiviHydrobio:index.html.twig', array('user' => $user,
+                    'lotans' => $tabProglotAns));
     }
 
     public function lotPeriodesAction($lotanId) {
@@ -52,8 +63,8 @@ class SuiviPrelevementsController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'suiviPrelevements');
-        $session->set('controller', 'SuiviPrelevements');
+        $session->set('menu', 'suiviHydrobio');
+        $session->set('controller', 'SuiviHydrobio');
         $session->set('fonction', 'lotPeriodes');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
@@ -94,8 +105,11 @@ class SuiviPrelevementsController extends Controller {
             }
         }
 
+        if (count($tabPeriodeAns) == 1) {
+            return $this->redirect($this->generateUrl('AeagSqeBundle_suiviHydrobio_lot_periode_stations', array('periodeAnId' => $tabPeriodeAns[0]['pgProgLotPeriodeAn']->getId())));
+        }
 
-        return $this->render('AeagSqeBundle:SuiviPrelevements:lotPeriodes.html.twig', array(
+        return $this->render('AeagSqeBundle:SuiviHydrobio:lotPeriodes.html.twig', array(
                     'user' => $pgProgWebUser,
                     'lotan' => $pgProgLotAn,
                     'periodeAns' => $tabPeriodeAns));
@@ -107,8 +121,8 @@ class SuiviPrelevementsController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'suiviPrelevements');
-        $session->set('controller', 'SuiviPrelevements');
+        $session->set('menu', 'suiviHydrobio');
+        $session->set('controller', 'SuiviHydrobio');
         $session->set('fonction', 'lotPeriodeStations');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
@@ -119,9 +133,10 @@ class SuiviPrelevementsController extends Controller {
         $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
         $repoPgProgLotParamAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotParamAn');
-         $repoPgProgPrestaTypfic = $emSqe->getRepository('AeagSqeBundle:PgProgPrestaTypfic');
+        $repoPgProgPrestaTypfic = $emSqe->getRepository('AeagSqeBundle:PgProgPrestaTypfic');
         $repoPgCmdMesureEnv = $emSqe->getRepository('AeagSqeBundle:PgCmdMesureEnv');
         $repoPgCmdAnalyse = $emSqe->getRepository('AeagSqeBundle:PgCmdAnalyse');
+         $repoPgRefReseauMesure = $emSqe->getRepository('AeagSqeBundle:PgRefReseauMesure');
 
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($periodeAnId);
@@ -146,33 +161,62 @@ class SuiviPrelevementsController extends Controller {
             if (!$trouve) {
                 $pgProgLotStationAn = $pgProgLotPeriodeProg->getStationAn();
                 $tabStations[$i]['station'] = $pgProgLotStationAn->getStation();
-                $tabStations[$i]['lien'] = '/sqe_fiches_stations/' . str_replace('/','-',$pgProgLotPeriodeProg->getStationAn()->getStation()->getCode()) . '.pdf';
+                $tabStations[$i]['lien'] = '/sqe_fiches_stations/' . str_replace('/', '-', $pgProgLotPeriodeProg->getStationAn()->getStation()->getCode()) . '.pdf';
+                $pgRefReseauMesure = $repoPgRefReseauMesure->getPgRefReseauMesureByGroupementId($pgProgLotStationAn->getRsxId());
+                if ( $pgRefReseauMesure){
+                    $tabStations[$i]['reseau'] = $pgRefReseauMesure;
+                }else{
+                   $tabStations[$i]['reseau'] = null;
+                }
                 $tabStations[$i]['cmdPrelev'] = null;
-                $tabSuiviPrels = array();
-                $j = 0;
                 $pgCmdDemande = $repoPgCmdDemande->getPgCmdDemandeByLotanPrestatairePeriode($pgProgLotAn, $pgProgLotPeriodeProg->getGrparAn()->getPrestaDft(), $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
                 if ($pgCmdDemande) {
                     $tabStations[$i]['cmdDemande'] = $pgCmdDemande;
                     $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($pgProgLotPeriodeProg->getGrparAn()->getPrestaDft(), $pgCmdDemande, $pgProgLotPeriodeProg->getStationAn()->getStation(), $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
                     if ($pgCmdPrelev) {
-                        $tabStations[$i]['cmdPrelev']['cmdPrelev'] = $pgCmdPrelev;
-                         $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelev($pgCmdPrelev);
-                        foreach ($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
-                            $tabSuiviPrels[$j] = $pgCmdSuiviPrel;
-                            $j++;
+                        $tabStations[$i]['cmdPrelev'] = $pgCmdPrelev;
+                        $tabCmdPrelevs[$i]['maj'] = 'N';
+                        $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelevOrderDate($pgCmdPrelev);
+                        $tabSuiviPrels = array();
+                        $j = 0;
+                         if (count($pgCmdSuiviPrels) == 0) {
+                            $tabSuiviPrels[$j]['suiviPrel'] = array();
+                            $tabSuiviPrels[$j]['maj'] = 'O';
+                            $tabCmdPrelevs[$i]['maj'] = 'O';
+                            $tabDemande[$i]['maj'] = 'O';
+                        } else {
+                            foreach ($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
+                                $tabSuiviPrels[$j]['suiviPrel'] = $pgCmdSuiviPrel;
+                                $tabSuiviPrels[$j]['maj'] = 'N';
+                                if ($user->hasRole('ROLE_ADMINSQE') or $pgCmdSuiviPrel->getUser()->getPrestataire()) {
+                                    $tabSuiviPrels[$j]['maj'] = 'O';
+                                    $tabCmdPrelevs[$i]['maj'] = 'O';
+                                    $tabDemande[$i]['maj'] = 'O';
+                                } else {
+                                    if ($user->hasRole('ROLE_ADMINSQE')) {
+                                        $tabSuiviPrels[$j]['maj'] = 'O';
+                                        $tabCmdPrelevs[$i]['maj'] = 'O';
+                                        $tabDemande[$i]['maj'] = 'O';
+                                    } else {
+                                        $tabSuiviPrels[$j]['maj'] = 'N';
+                                    }
+                                }
+                                $j++;
+                            }
                         }
-                      
+                         $tabStations[$i]['suiviPrels'] = $tabSuiviPrels;
                     }
+                } else {
+                    $tabStations[$i]['cmdDemande'] = null;
                 }
-                $tabStations[$i]['suiviPrels'] = $tabSuiviPrels;
-                $i++;
+                  $i++;
             }
         }
 
-//        \Symfony\Component\VarDumper\VarDumper::dump($tabDates);
+//        \Symfony\Component\VarDumper\VarDumper::dump($tabStations);
 //        return new Response ('');   
 
-        return $this->render('AeagSqeBundle:SuiviPrelevements:lotPeriodeStations.html.twig', array(
+        return $this->render('AeagSqeBundle:SuiviHydrobio:lotPeriodeStations.html.twig', array(
                     'user' => $pgProgWebUser,
                     'lotan' => $pgProgLotAn,
                     'periodeAn' => $pgProgLotPeriodeAn,
@@ -185,8 +229,8 @@ class SuiviPrelevementsController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'suiviPrelevements');
-        $session->set('controller', 'SuiviPrelevements');
+        $session->set('menu', 'suiviHydrobio');
+        $session->set('controller', 'SuiviHydrobio');
         $session->set('fonction', 'lotPeriodeStationDemande');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
@@ -224,7 +268,7 @@ class SuiviPrelevementsController extends Controller {
                     if ($pgCmdPrelev->getStation()->getOuvFoncId() == $stationId and $pgCmdPrelev->getPeriode()->getId() == $pgProgPeriode->getId()) {
                         $tabCmdPrelevs[$i]['cmdPrelev'] = $pgCmdPrelev;
                         $tabCmdPrelevs[$i]['maj'] = 'N';
-                         $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelev($pgCmdPrelev);
+                        $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelev($pgCmdPrelev);
                         $tabSuiviPrels = array();
                         $j = 0;
                         if (count($pgCmdSuiviPrels) == 0) {
@@ -240,7 +284,7 @@ class SuiviPrelevementsController extends Controller {
                                     $tabSuiviPrels[$j]['maj'] = 'O';
                                     $tabCmdPrelevs[$i]['maj'] = 'O';
                                     $tabDemande[$i]['maj'] = 'O';
-                                   } else {
+                                } else {
                                     if ($user->hasRole('ROLE_ADMINSQE')) {
                                         $tabSuiviPrels[$j]['maj'] = 'O';
                                         $tabCmdPrelevs[$i]['maj'] = 'O';
@@ -265,7 +309,7 @@ class SuiviPrelevementsController extends Controller {
 //       \Symfony\Component\VarDumper\VarDumper::dump($tabDemande);
 //        return new Response('');
 
-        return $this->render('AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemande.html.twig', array(
+        return $this->render('AeagSqeBundle:SuiviHydrobio:lotPeriodeStationDemande.html.twig', array(
                     'user' => $pgProgWebUser,
                     'lotan' => $pgProgLotAn,
                     'station' => $pgRefStationMesure,
@@ -280,8 +324,8 @@ class SuiviPrelevementsController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'suiviPrelevements');
-        $session->set('controller', 'SuiviPrelevements');
+        $session->set('menu', 'suiviHydrobio');
+        $session->set('controller', 'SuiviHydrobio');
         $session->set('fonction', 'lotPeriodeStationDemandeSuiviNew');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
@@ -291,35 +335,39 @@ class SuiviPrelevementsController extends Controller {
 
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevById($prelevId);
+        $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelev($pgCmdPrelev);
+        if ($pgCmdSuiviPrels){
+            $pgCmdSuiviPrelActuel = $pgCmdSuiviPrels[0];
+        }
         $pgCmdSuiviPrel = new PgCmdSuiviPrel();
-        $form = $this->createForm(new PgCmdSuiviPrelMajType($user), $pgCmdSuiviPrel);
+        $form = $this->createForm(new PgCmdSuiviPrelMajType($user, $pgCmdSuiviPrelActuel), $pgCmdSuiviPrel);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
             $pgCmdSuiviPrel->setPrelev($pgCmdPrelev);
             $pgCmdSuiviPrel->setUser($pgProgWebUser);
+            $pgCmdSuiviPrel->setValidation('E');
             $datePrel = $pgCmdSuiviPrel->getDatePrel();
             $emSqe->persist($pgCmdSuiviPrel);
-            if ($pgCmdSuiviPrel->getStatutPrel() == 'F') {
+            if ($pgCmdSuiviPrel->getStatutPrel() == 'F' and $pgCmdSuiviPrel->getValidation() == 'A') {
                 $pgCmdPrelev->setDatePrelev($datePrel);
                 $pgCmdPrelev->setRealise('O');
             } elseif ($pgCmdSuiviPrel->getStatutPrel() == 'N') {
                 $pgCmdPrelev->setDatePrelev($datePrel);
                 $pgCmdPrelev->setRealise('N');
             } else {
-                $pgCmdPrelev->setDatePrelev(null);
+                //$pgCmdPrelev->setDatePrelev(null);
                 $pgCmdPrelev->setRealise(null);
             }
             $emSqe->persist($pgCmdPrelev);
             $emSqe->flush();
             $session->getFlashBag()->add('notice-success', 'le suivi du ' . $datePrel->format('d/m/Y') . ' a été créé !');
 
-            return $this->redirect($this->generateUrl('AeagSqeBundle_suiviPrelevements_lot_periode_station_demande', array('stationId' => $pgCmdPrelev->getStation()->getOuvFoncId(),
-                                'periodeAnId' => $periodeAnId,
-                                'cmdDemandeId' => $pgCmdPrelev->getDemande()->getId())));
+            return $this->redirect($this->generateUrl('AeagSqeBundle_suiviHydrobio_lot_periode_stations', array('stationId' => $pgCmdPrelev->getStation()->getOuvFoncId(),
+                                'periodeAnId' => $periodeAnId)));
         }
 
-        return $this->render('AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemandeSuiviNew.html.twig', array(
+        return $this->render('AeagSqeBundle:SuiviHydrobio:lotPeriodeStationDemandeSuiviNew.html.twig', array(
                     'prelev' => $pgCmdPrelev,
                     'periodeAnId' => $periodeAnId,
                     'form' => $form->createView(),
@@ -338,8 +386,8 @@ class SuiviPrelevementsController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'suiviPrelevements');
-        $session->set('controller', 'SuiviPrelevements');
+        $session->set('menu', 'suiviHydrobio');
+        $session->set('controller', 'SuiviHydrobio');
         $session->set('fonction', 'lotPeriodeStationDemandeSuiviMaj');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
@@ -356,26 +404,25 @@ class SuiviPrelevementsController extends Controller {
         if ($form->isValid()) {
             $datePrel = $pgCmdSuiviPrel->getDatePrel();
             $emSqe->persist($pgCmdSuiviPrel);
-            if ($pgCmdSuiviPrel->getStatutPrel() == 'F') {
+            if ($pgCmdSuiviPrel->getStatutPrel() == 'F' and $pgCmdSuiviPrel->getValidation() == 'A') {
                 $pgCmdPrelev->setDatePrelev($datePrel);
                 $pgCmdPrelev->setRealise('O');
             } elseif ($pgCmdSuiviPrel->getStatutPrel() == 'N') {
                 $pgCmdPrelev->setDatePrelev($datePrel);
                 $pgCmdPrelev->setRealise('N');
             } else {
-                $pgCmdPrelev->setDatePrelev(null);
+                //$pgCmdPrelev->setDatePrelev(null);
                 $pgCmdPrelev->setRealise(null);
             }
             $emSqe->persist($pgCmdPrelev);
             $emSqe->flush();
             $session->getFlashBag()->add('notice-success', 'le suivi du ' . $datePrel->format('d/m/Y') . ' a été modifié !');
 
-            return $this->redirect($this->generateUrl('AeagSqeBundle_suiviPrelevements_lot_periode_station_demande', array('stationId' => $pgCmdPrelev->getStation()->getOuvFoncId(),
-                                'periodeAnId' => $periodeAnId,
-                                'cmdDemandeId' => $pgCmdPrelev->getDemande()->getId())));
+            return $this->redirect($this->generateUrl('AeagSqeBundle_suiviHydrobio_lot_periode_stations', array('stationId' => $pgCmdPrelev->getStation()->getOuvFoncId(),
+                                'periodeAnId' => $periodeAnId)));
         }
 
-        return $this->render('AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemandeSuiviMaj.html.twig', array(
+        return $this->render('AeagSqeBundle:SuiviHydrobio:lotPeriodeStationDemandeSuiviMaj.html.twig', array(
                     'prelev' => $pgCmdPrelev,
                     'periodeAnId' => $periodeAnId,
                     'suiviPrel' => $pgCmdSuiviPrel,
@@ -395,8 +442,8 @@ class SuiviPrelevementsController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'suiviPrelevements');
-        $session->set('controller', 'SuiviPrelevements');
+        $session->set('menu', 'suiviHydrobio');
+        $session->set('controller', 'SuiviHydrobio');
         $session->set('fonction', 'lotPeriodeStationDemandeSuiviVoir');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
@@ -415,7 +462,7 @@ class SuiviPrelevementsController extends Controller {
         $pgCmdPrelev = $pgCmdSuiviPrel->getPrelev();
         $form = $this->createForm(new PgCmdSuiviPrelVoirType($user), $pgCmdSuiviPrel);
 
-        return $this->render('AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemandeSuiviVoir.html.twig', array(
+        return $this->render('AeagSqeBundle:SuiviHydrobio:lotPeriodeStationDemandeSuiviVoir.html.twig', array(
                     'prelev' => $pgCmdPrelev,
                     'periodeAnId' => $periodeAnId,
                     'suiviPrel' => $pgCmdSuiviPrel,
@@ -436,8 +483,8 @@ class SuiviPrelevementsController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'suiviPrelevements');
-        $session->set('controller', 'SuiviPrelevements');
+        $session->set('menu', 'suiviHydrobio');
+        $session->set('controller', 'SuiviHydrobio');
         $session->set('fonction', 'lotPeriodeStationDemandeSuiviDeposer');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
@@ -448,7 +495,7 @@ class SuiviPrelevementsController extends Controller {
         $pgCmdPrelev = $pgCmdSuiviPrel->getPrelev();
 
 
-        return $this->render('AeagSqeBundle:SuiviPrelevements:lotPeriodeStationDemandeSuiviDeposer.html.twig', array(
+        return $this->render('AeagSqeBundle:SuiviHydrobio:lotPeriodeStationDemandeSuiviDeposer.html.twig', array(
                     'prelev' => $pgCmdPrelev,
                     'periodeAnId' => $periodeAnId,
                     'suiviPrel' => $pgCmdSuiviPrel
@@ -467,8 +514,8 @@ class SuiviPrelevementsController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'suiviPrelevements');
-        $session->set('controller', 'SuiviPrelevements');
+        $session->set('menu', 'suiviHydrobio');
+        $session->set('controller', 'SuiviHydrobio');
         $session->set('fonction', 'lotPeriodeStationDemandeSuiviSupprimer');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
@@ -502,7 +549,7 @@ class SuiviPrelevementsController extends Controller {
 
         $session->getFlashBag()->add('notice-success', 'le suivi du prélèvement du   : ' . $datePrel->format('d/m/Y') . ' a été supprimé !');
 
-        return $this->redirect($this->generateUrl('AeagSqeBundle_suiviPrelevements_lot_periode_station_demande', array('stationId' => $pgCmdPrelev->getStation()->getOuvFoncId(),
+        return $this->redirect($this->generateUrl('AeagSqeBundle_suiviHydrobio_lot_periode_station_demande', array('stationId' => $pgCmdPrelev->getStation()->getOuvFoncId(),
                             'periodeAnId' => $periodeAnId,
                             'cmdDemandeId' => $pgCmdPrelev->getDemande()->getId())));
 
@@ -518,8 +565,8 @@ class SuiviPrelevementsController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'suiviPrelevements');
-        $session->set('controller', 'SuiviPrelevements');
+        $session->set('menu', 'suiviHydrobio');
+        $session->set('controller', 'SuiviHydrobio');
         $session->set('fonction', 'lotPeriodeStationDemandeSuiviFichierDeposer');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
@@ -621,8 +668,8 @@ class SuiviPrelevementsController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'suiviPrelevements');
-        $session->set('controller', 'SuiviPrelevements');
+        $session->set('menu', 'suiviHydrobio');
+        $session->set('controller', 'SuiviHydrobio');
         $session->set('fonction', 'lotPeriodeStationDemandeSuiviFichierSupprimer');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
@@ -676,8 +723,8 @@ class SuiviPrelevementsController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'suiviPrelevements');
-        $session->set('controller', 'SuiviPrelevements');
+        $session->set('menu', 'suiviHydrobio');
+        $session->set('controller', 'SuiviHydrobio');
         $session->set('fonction', 'lotPeriodeStationDemandeSuiviFichierTelecharger');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
@@ -706,5 +753,4 @@ class SuiviPrelevementsController extends Controller {
         return $chemin;
     }
 
- 
 }

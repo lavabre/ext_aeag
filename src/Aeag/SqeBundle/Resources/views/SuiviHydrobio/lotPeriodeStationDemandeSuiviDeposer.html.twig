@@ -36,7 +36,7 @@
                     $('#idDeposer').on('click', function (e) {
                          e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
                          $('#idProgress').show();
-                        var url = '{{ path("AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_fichier_deposer",{"suiviPrelId":  "par1", "periodeAnId": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
+                        var url = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_fichier_deposer",{"suiviPrelId":  "par1", "periodeAnId": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
                          url = url.replace("par1", {{ suiviPrel.id }});
                          url = url.replace("par2", {{ periodeAnId }});
                          url = url.replace("amp;","");
@@ -59,6 +59,11 @@
                                              $('#idProgress').hide();
                                             $('#idDeposer').hide();
                                             $('#idSupprimer').show();
+                                            var url = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_stations",{"suiviPrelId":  "par1", "periodeAnId": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                            url = url.replace("par1", {{ suiviPrel.id }});
+                                            url = url.replace("par2", {{ periodeAnId }});
+                                            url = url.replace("amp;","");
+                                            window.location.replace(url);
                                       },
                                        error: function(html) { // Je récupère la réponse du fichier PHP
                                                {# $('#idResultat').empty().append('erreur lors du dépot');#}
@@ -76,7 +81,7 @@
                      $('#idSupprimer').on('click', function (e) {
                          e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
                            $('#idProgress').show();
-                        var url = '{{ path("AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_fichier_supprimer",{"suiviPrelId":  "par1", "periodeAnId": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
+                        var url = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_fichier_supprimer",{"suiviPrelId":  "par1", "periodeAnId": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
                          url = url.replace("par1", {{ suiviPrel.id }});
                          url = url.replace("par2", {{ periodeAnId }});
                          url = url.replace("amp;","");

@@ -5,16 +5,16 @@
         <a href="{{ path('aeag_homepage') }}">Accueil</a> 
     </li>
     <li>
-           <a href="{{ path('AeagSqeBundle_suiviPrelevements_index') }}">Suivi des prélèvements</a> 
+           <a href="{{ path('AeagSqeBundle_suiviHydrobio_index') }}">Suivi Hydrobio</a> 
     </li>
     <li>
-           <a href="{{ path('AeagSqeBundle_suiviPrelevements_index') }}">Lots</a> 
+           <a href="{{ path('AeagSqeBundle_suiviHydrobio_index') }}">Lots</a> 
     </li>
     <li>
-           <a href="{{path('AeagSqeBundle_suiviPrelevements_lot_periodes',{ 'lotanId': lotan.id })}}">Périodes</a> 
+           <a href="{{path('AeagSqeBundle_suiviHydrobio_lot_periodes',{ 'lotanId': lotan.id })}}">Périodes</a> 
     </li>
      <li>
-           <a href="{{path('AeagSqeBundle_suiviPrelevements_lot_periode_stations',{ 'periodeAnId': periodeAn.id })}}">Stations</a> 
+           <a href="{{path('AeagSqeBundle_suiviHydrobio_lot_periode_stations',{ 'periodeAnId': periodeAn.id })}}">Stations</a> 
     </li>
      <li class="active">
           Demande
@@ -34,7 +34,7 @@
                              <div class="modal-content" >
                                       <div class="modal-header">
                                           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                          <h4 class="modal-title" id="myModalLabel">Suivi du prélèvement du {{ cmdPrelev.cmdPrelev.datePrelev | date("d/m/Y") }}</h4>
+                                          <h4 class="modal-title" id="myModalLabel">Suivi Hydrobio du {{ cmdPrelev.cmdPrelev.datePrelev | date("d/m/Y") }}</h4>
                                         </div>
                                       <div class="modal-body">
                                           <div id="idModalContentNouveauSuivi{{ cmdPrelev.cmdPrelev.id }}"></div>
@@ -77,7 +77,7 @@
                                                   <div class="modal-content" >
                                                            <div class="modal-header">
                                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                                               <h4 class="modal-title" id="myModalLabel">Suivi du prélèvement du {{ cmdPrelev.cmdPrelev.datePrelev | date("d/m/Y") }}</h4>
+                                                               <h4 class="modal-title" id="myModalLabel">Suivi Hydrobio du {{ cmdPrelev.cmdPrelev.datePrelev | date("d/m/Y") }}</h4>
                                                              </div>
                                                            <div class="modal-body">
                                                                <div id="idModalContentMajSuivi{{ suiviPrel.suiviPrel.id }}"></div>
@@ -104,7 +104,7 @@
                                                   </div>
                                                   <div class="modal-footer">
                                                       <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
-                                                      <a  id="idSupprimerGroupe"  class="btn btn-danger"  href="{{ path('AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_supprimer', { 'suiviPrelId': suiviPrel.suiviPrel.id, 'periodeAnId': periodeAn.id }) }}" title="Supprimer">
+                                                      <a  id="idSupprimerGroupe"  class="btn btn-danger"  href="{{ path('AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_supprimer', { 'suiviPrelId': suiviPrel.suiviPrel.id, 'periodeAnId': periodeAn.id }) }}" title="Supprimer">
                                                           <i class="fa fa-trash-o"> Supprimer</i>
                                                       </a>
                                                   </div>
@@ -124,7 +124,7 @@
             <div class="col-md-offset-3 col-md-7">
                         <h3 class="page-title">
                             <table>
-                                <tr><td>Suivi des prélèvements </td></tr>
+                                <tr><td>Suivi Hydrobio </td></tr>
                                 <tr><td>demande  du {{ demande.cmdDemande.dateDemande | date("d/m/Y") }}</td></tr>
                                 <tr><td>Station {{ station.code }} {{ station.libelle }}</td></tr>
                                 <tr><td>entre le  {{ periodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;et&nbsp;&nbsp; {{periodeAn.periode.dateFin | date("d/m/Y") }}</td></tr>
@@ -176,7 +176,7 @@
                                                                   <i class="fa fa-download"></i> 
                                                               </a>
                                                           {% else %}
-                                                                 <a id="idTelechargerSuivi{{ suiviPrel.suiviPrel.id }}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_fichier_telecharger',{'suiviPrelId': suiviPrel.suiviPrel.id })}}" title="Télécharger le fichier terrain">
+                                                                 <a id="idTelechargerSuivi{{ suiviPrel.suiviPrel.id }}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_fichier_telecharger',{'suiviPrelId': suiviPrel.suiviPrel.id })}}" title="Télécharger le fichier terrain">
                                                                     <i class="fa fa-upload"></i> 
                                                                 </a>
                                                           {% endif %}
@@ -252,7 +252,7 @@
                    $(document).on('click','#idNouveauSuivi{{ cmdPrelev.cmdPrelev.id }}',function(e){
                             e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
                             $('#modalTraitementEncours').modal('toggle');
-                           var url = '{{ path("AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_new",{"prelevId":  "par1", "periodeAnId": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
+                           var url = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_new",{"prelevId":  "par1", "periodeAnId": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
                             url = url.replace("par1", {{ cmdPrelev.cmdPrelev.id }});
                             url = url.replace("par2", {{ periodeAn.id }});
                             url = url.replace("amp;","");
@@ -274,7 +274,7 @@
                                     $(document).on('click','#idMajSuivi{{ suiviPrel.suiviPrel.id }}',function(e){
                                            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
                                            $('#modalTraitementEncours').modal('toggle');
-                                          var url = '{{ path("AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_maj",{"suiviPrelId":  "par1", "periodeAnId": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                          var url = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_maj",{"suiviPrelId":  "par1", "periodeAnId": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
                                            url = url.replace("par1", {{ suiviPrel.suiviPrel.id }});
                                             url = url.replace("par2", {{ periodeAn.id }});
                                            url = url.replace("amp;","");
@@ -292,7 +292,7 @@
                                        $(document).on('click','#idVoirSuivi{{ suiviPrel.suiviPrel.id }}',function(e){
                                            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
                                            $('#modalTraitementEncours').modal('toggle');
-                                          var url = '{{ path("AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_voir",{"suiviPrelId":  "par1", "periodeAnId": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                          var url = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_voir",{"suiviPrelId":  "par1", "periodeAnId": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
                                            url = url.replace("par1", {{ suiviPrel.suiviPrel.id }});
                                             url = url.replace("par2", {{ periodeAn.id }});
                                            url = url.replace("amp;","");
@@ -310,7 +310,7 @@
                                       $(document).on('click','#idDeposerSuivi{{ suiviPrel.suiviPrel.id }}',function(e){
                                            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
                                            $('#modalTraitementEncours').modal('toggle');
-                                          var url = '{{ path("AeagSqeBundle_suiviPrelevements_lot_periode_station_demande_suivi_deposer",{"suiviPrelId":  "par1", "periodeAnId": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                          var url = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_deposer",{"suiviPrelId":  "par1", "periodeAnId": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
                                            url = url.replace("par1", {{ suiviPrel.suiviPrel.id }});
                                             url = url.replace("par2", {{ periodeAn.id }});
                                            url = url.replace("amp;","");

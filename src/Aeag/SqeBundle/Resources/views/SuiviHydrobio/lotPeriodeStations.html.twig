@@ -1,0 +1,382 @@
+{% extends "AeagSqeBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+    <li>
+        <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+    </li>
+    <li>
+        <a href="{{ path('AeagSqeBundle_suiviHydrobio_index') }}">Suivi Hydrobio</a> 
+    </li>
+    <li>
+        <a href="{{ path('AeagSqeBundle_suiviHydrobio_index') }}">Lots</a> 
+    </li>
+    <li>
+        <a href="{{path('AeagSqeBundle_suiviHydrobio_lot_periodes',{ 'lotanId': lotan.id })}}">Périodes</a> 
+    </li>
+    <li class="active">
+        Stations
+    </li>
+{% endblock breadcrumb %} 
+
+{% block modal %}
+
+    {%if stations | length%} 
+        {% for station in stations %}
+            {% if  station.cmdPrelev %}
+
+                {#modal nouveau suivi #}
+                <div class="modal fade" id="modalNouveauSuivi{{ station.cmdPrelev.id }}" >
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content" >
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title" id="myModalLabel">Suivi Hydrobio du {{ station.cmdPrelev.datePrelev | date("d/m/Y") }}</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div id="idModalContentNouveauSuivi{{ station.cmdPrelev.id }}"></div>
+                            </div>   
+                        </div>
+                    </div>
+                </div>
+
+                {#modal saisie des résultats #}
+                <div class="modal fade" id="modalArchive{{ station.cmdPrelev.id }}" >
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content" >
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <h4 class="modal-title" id="myModalLabel">Historique des suivis de la demande du {{ station.cmdDemande.dateDemande | date("d/m/Y") }}</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-body">
+                                <div id="idModalContentSaisir{{ station.cmdPrelev.id }}">
+                                    <table class="table table-bordered  table-advance" id="idTable_{{ station.cmdPrelev.id }}">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Statut</th>
+                                                <th>validation</th>
+                                                <th>Commentaire</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                {%if station.suiviPrels | length%} 
+                                                    {% for suiviPrel  in station.suiviPrels %}
+                                                        {% if suiviPrel.suiviPrel %}
+                                                            <tr>
+                                                                <td>
+                                                                    {{ suiviPrel.suiviPrel.datePrel | date("d/m/Y") }}
+                                                                 </td>
+                                                                 <td> 
+                                                                        {% if suiviPrel.suiviPrel.statutPrel == 'P' %}
+                                                                            Prévisionnel
+                                                                        {% elseif suiviPrel.suiviPrel.statutPrel == 'F' %}
+                                                                            Effectué
+                                                                        {% elseif suiviPrel.suiviPrel.statutPrel == 'N' %}
+                                                                            Non effectué
+                                                                        {% elseif suiviPrel.suiviPrel.statutPrel == 'A' %}
+                                                                            Analyses effectuées
+                                                                        {% elseif suiviPrel.suiviPrel.statutPrel == 'V' %}
+                                                                            Validé
+                                                                        {% elseif suiviPrel.suiviPrel.statutPrel == 'R' %}
+                                                                            Réfusé
+                                                                        {% endif %}
+                                                                </td>
+                                                                <td>
+                                                                     {% if suiviPrel.suiviPrel.validation == 'E' %}
+                                                                            En attente
+                                                                        {% elseif suiviPrel.suiviPrel.validation == 'R' %}
+                                                                            Refusé
+                                                                        {% elseif suiviPrel.suiviPrel.validation == 'A' %}
+                                                                            Accepté
+                                                                        {% endif %}
+                                                                </td>
+                                                                <td>
+                                                                    {{ suiviPrel.suiviPrel.commentaire | nl2br }}
+                                                                </td>
+                                                            </tr>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% endif %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>   
+                            <div class="modal-footer"></div>
+                        </div>
+                    </div>
+                </div>
+
+                {%if station.suiviPrels.0.suiviPrel | length%} 
+                             {#modal maj suivi #}
+                            <div class="modal fade" id="maj-{{ station.suiviPrels.0.suiviPrel.id }}" >
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content" >
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title" id="myModalLabel">Suivi Hydrobio du {{ station.cmdPrelev.datePrelev | date("d/m/Y") }}</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div id="idModalContentMajSuivi{{ station.suiviPrels.0.suiviPrel.id }}"></div>
+                                        </div>  
+                                        <div class="modal-footer"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            {#modal suppression suivi #}                          
+                            <div class="modal fade" id="sup-{{ station.suiviPrels.0.suiviPrel.id }}">
+                                <div class="modal-dialog modal-sm">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title" id="supLabel-{{ station.suiviPrels.0.suiviPrel.id }}">Prélèvement  du {{ station.cmdPrelev.datePrelev | date("d/m/Y") }}</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <h4>Cliquer sur la corbeille pour valider la suppression du suivi {{ station.suiviPrels.0.suiviPrel.datePrel | date("d/m/Y") }}</h4>
+                                            <br/><br/>
+                                            <div class="alert alert-danger">Attention : Une fois supprimée, le suivi sera supprimé définitivement</div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
+                                            <a  id="idSupprimerGroupe"  class="btn btn-danger"  href="{{ path('AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_supprimer', { 'suiviPrelId': station.suiviPrels.0.suiviPrel.id, 'periodeAnId': periodeAn.id }) }}" title="Supprimer">
+                                                <i class="fa fa-trash-o"> Supprimer</i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>  
+                {% endif %}
+
+            {% endif%}
+        {% endfor %}
+    {% endif %}
+
+{% endblock modal %}
+
+{%block panel_heading %}
+    <div class="row">
+        <div class="col-md-offset-3 col-md-7">
+            <h3 class="page-title ">
+                <table>
+                    <tr><td>Suivi Hydrobio</td></tr>
+                    <tr><td>Liste des stations</td></tr>
+                    <tr><td>entre le  {{ periodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;et&nbsp;&nbsp; {{periodeAn.periode.dateFin | date("d/m/Y") }}</td></tr>
+                    <tr><td>Lot  {{ lotan.lot.nomLot }} - {{ lotan.anneeProg }}  - version :  {{ lotan.version }}</td></tr>
+                </table>
+            </h3>
+        </div>
+    </div>
+{%endblock panel_heading %}
+
+{%block content %}
+
+
+    <div class="form-body">        
+        <table class="table table-bordered t table-advance" id="idTable_demandes">
+            <thead>
+                <tr>
+                    <th>Action</th>
+                    <th>Code</th>
+                    <th>Libellé</th>
+                    <th>Réseau</th>
+                    <th>Statut</th>
+                </tr>
+            </thead>
+            <tbody>
+                {%if stations | length%} 
+                    {% for station in stations %}
+                        <tr>
+                            {#<td align="center">
+                                  {% if station.cmdDemande | length %}
+                                    <a id="id_{{ station.station.ouvFoncId }}" class="btn btn-primary" href="{{path('AeagSqeBundle_suiviHydrobio_lot_periode_station_demande',{  'stationId': station.station.ouvFoncId,  'periodeAnId': periodeAn.id, 'cmdDemandeId': station.cmdDemande.id })}}" title="Voir">
+                                        <i class="fa fa-eye"> <span class="badge">{{ station.suiviPrels | length }}</span></i> 
+                                   </a>
+                                  {% endif %}
+                             </td>#}
+                            <td width="10%" nowrap>
+                                 
+                                    {% if  station.suiviPrels.0.maj == 'O' %}
+                                        <a class="btn btn-success" id="idNouveauSuivi{{ station.cmdPrelev.id  }}" href="#" title="Nouveau suivi">
+                                            <i class="fa fa-plus"></i>
+                                        </a>
+                                      {%if station.suiviPrels.0.suiviPrel | length%}
+                                               <a id="idVoirSuivi{{ station.cmdPrelev.id }}" class="btn btn-primary" href="#" title="consulter l'historique">
+                                                    <i class="fa fa-archive"></i> 
+                                                </a>
+                                                {% if station.suiviPrels.0.suiviPrel.statutPrel  == 'F' %}
+                                                    {% if  not station.suiviPrels.0.suiviPrel.fichierRps %}
+                                                        <a id="idDeposerSuivi{{ station.suiviPrels.0.suiviPrel.id }}" class="btn btn-primary btn-deposer-reponse"  title="Déposer un fichier terrain">
+                                                            <i class="fa fa-download"></i> 
+                                                        </a>
+                                                    {% else %}
+                                                        <a id="idTelechargerSuivi{{ station.suiviPrels.0.suiviPrel.id }}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_fichier_telecharger',{'suiviPrelId': station.suiviPrels.0.suiviPrel.id })}}" title="Télécharger le fichier terrain">
+                                                            <i class="fa fa-upload"></i> 
+                                                        </a>
+                                                    {% endif %}
+                                                {% endif %}
+                                                {% if is_granted('ROLE_ADMINSQE') %}
+                                                    <a  id="idMaj-{{ station.suiviPrels.0.suiviPrel.id }}" class="btn btn-warning"  title="valider le suivi">
+                                                        <i class="fa fa-check"></i>
+                                                    </a>
+                                                    <a class="btn btn-danger" data-toggle="modal" href="#sup-{{ station.suiviPrels.0.suiviPrel.id }}" title="Supprimer le suivi">
+                                                        <i class="fa fa-trash-o"></i>
+                                                    </a>
+                                                {% endif %}
+                                           {% endif %}
+                                    {% else %}
+                                        {%if station.suiviPrels.0.suiviPrel | length%}
+                                                <a id="idVoirSuivi{{ station.cmdPrelev.id }}" class="btn btn-primary" href="#" title="consulter le suivi">
+                                                    <i class="fa fa-archive"></i> 
+                                                </a>
+                                         {% endif %}
+                                    {% endif %}
+                             
+                            </td>
+                            <td>
+                                <a  href="{{ station.lien }}" target="_blank" title="Localisation">{{ station.station.code }}</a>
+                            </td>
+                            <td>
+                                {{ station.station.libelle }}
+                            </td>
+                            <td>
+                                {{ station.reseau.nomRsx }}
+                            </td>
+                            <td>
+                                {%if station.suiviPrels.0.suiviPrel | length%} 
+                                    {% if station.suiviPrels.0.suiviPrel.statutPrel == 'P' %}
+                                        Prévisionnel
+                                    {% elseif station.suiviPrels.0.suiviPrel.statutPrel == 'F' %}
+                                        Effectué
+                                    {% elseif station.suiviPrels.0.suiviPrel.statutPrel == 'N' %}
+                                        Non effectué
+                                    {% elseif suiviPrels.0.suiviPrel.statutPrel == 'A' %}
+                                        Analyses effectuées
+                                    {% elseif station.suiviPrels.0.suiviPrel.statutPrel == 'V' %}
+                                        Validé
+                                    {% elseif station.suiviPrels.0.suiviPrel.statutPrel == 'R' %}
+                                        Réfusé
+                                    {% endif %}
+                                    ({{ station.suiviPrels.0.suiviPrel.datePrel | date("d/m/Y") }}) 
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+
+    </div>
+{%endblock content %}    
+
+
+{% block scripts %}
+    jQuery(document).ready(function() {
+
+    var table = $('#idTable_demandes').DataTable(
+                                                {"stateSave": true,
+                                                "order": [[ 1, "asc" ]],
+                                                "language": {
+                                                "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
+                                                },
+                                                "aLengthMenu": [
+                                                [10, 25, 50, 100, -1],
+                                                [10, 25, 50, 100, "Tous"]
+                                                ],
+                                                "iDisplayLength": -1
+                                                }
+                                                );
+
+
+
+    {%if stations | length%} 
+        {% for station in stations %}
+            {% if  station.cmdPrelev %}
+
+                $("#modalArchive{{ station.cmdPrelev.id }}").draggable({
+                handle: ".modal-header"
+                }); 
+
+                $(document).on('click','#idVoirSuivi{{ station.cmdPrelev.id }}',function(e){
+                        e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                        $('#modalTraitementEncours').modal('toggle');
+                        $('#modalArchive{{ station.cmdPrelev.id }}').modal('show');
+                        $('#modalTraitementEncours').modal('hide');
+                });
+
+
+                $(document).on('click','#idNouveauSuivi{{ station.cmdPrelev.id }}',function(e){
+                        e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                        $('#modalTraitementEncours').modal('toggle');
+                        var url = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_new",{"prelevId":  "par1", "periodeAnId": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
+                        url = url.replace("par1", {{ station.cmdPrelev.id }});
+                        url = url.replace("par2", {{ periodeAn.id }});
+                        url = url.replace("amp;","");
+                        $.ajax({
+                        url: url,
+                        type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+                        success: function(html) { // Je récupère la réponse du fichier PHP
+                        $('#idModalContentNouveauSuivi{{ station.cmdPrelev.id }}').empty().append(html);
+                        $('#modalNouveauSuivi{{ station.cmdPrelev.id }}').modal('show');
+                        $('#modalTraitementEncours').modal('hide');
+                        }
+                        });
+                });
+
+                 {%if station.suiviPrels.0.suiviPrel | length%} 
+                     
+                        $(document).on('click','#idMaj-{{ station.suiviPrels.0.suiviPrel.id }}',function(e){
+                               e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                                $('#modalTraitementEncours').modal('toggle');
+                                var url = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_maj",{"suiviPrelId":  "par1", "periodeAnId": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                url = url.replace("par1", {{ station.suiviPrels.0.suiviPrel.id }});
+                                url = url.replace("par2", {{ periodeAn.id }});
+                                url = url.replace("amp;","");
+                                $.ajax({
+                                url: url,
+                                type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+                                success: function(html) { // Je récupère la réponse du fichier PHP
+                                    $('#idModalContentMajSuivi{{ station.suiviPrels.0.suiviPrel.id}}').empty().append(html);
+                                    $('#maj-{{ station.suiviPrels.0.suiviPrel.id }}').modal('show');
+                                    $('#modalTraitementEncours').modal('hide');
+                                    }
+                                });
+                        });
+                        
+                         $(document).on('click','#idDeposerSuivi{{ station.suiviPrels.0.suiviPrel.id }}',function(e){
+                            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                            $('#modalTraitementEncours').modal('toggle');
+                            var url = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_deposer",{"suiviPrelId":  "par1", "periodeAnId": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
+                            url = url.replace("par1", {{ station.suiviPrels.0.suiviPrel.id }});
+                            url = url.replace("par2", {{ periodeAn.id }});
+                            url = url.replace("amp;","");
+                            $.ajax({
+                                url: url,
+                                type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+                                success: function(html) { // Je récupère la réponse du fichier PHP
+                                    $('#idModalContentMajSuivi{{ station.suiviPrels.0.suiviPrel.id }}').empty().append(html);
+                                    $('#maj-{{ station.suiviPrels.0.suiviPrel.id }}').modal('show');
+                                   $('#modalTraitementEncours').modal('hide');
+                                    }
+                                });
+                            });
+                        
+                        
+                        
+                {% endif %}
+
+            {% endif %}
+        {% endfor %}              
+    {% endif %}   
+
+    });
+
+
+
+
+{%endblock scripts %}    
