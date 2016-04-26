@@ -975,13 +975,6 @@ class CheckProcessRaiCommand extends AeagCommand {
         return true;
     }
 
-    protected function _convertMultiArray($array) {
-        $out = implode(",", array_map(function($a) {
-                    return implode("-", $a);
-                }, $array));
-        return $out;
-    }
-
     protected function _insertFichierLog($pgCmdFichierRps) {
         $demandeId = $pgCmdFichierRps->getDemande()->getId();
         $reponseId = $pgCmdFichierRps->getId();

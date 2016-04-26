@@ -5,7 +5,7 @@ parameters:
     database_port: null
     database_name: aeag
     database_user: postgres
-    database_password: null
+    database_password: 
     
     database_driver2: pdo_pgsql
     database_host2: vslindev211
