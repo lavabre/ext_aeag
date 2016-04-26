@@ -35,7 +35,7 @@ class AppKernel extends Kernel
             $bundles[] = new Symfony\Bundle\DebugBundle\DebugBundle();
          }
 
-        return $bundles;
+        return $bundles; 
     }
 
     public function registerContainerConfiguration(LoaderInterface $loader)
