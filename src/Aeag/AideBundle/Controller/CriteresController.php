@@ -94,24 +94,48 @@ class CriteresController extends Controller {
             $session->set('categorie_libelle', $variables['categorie_libelle']);
 
             // Critère annee
-            if ($criteres->getDebutAnnee()) {
-                if (!$criteres->getFinAnnee()) {
-                    $criteres->setFinAnnee($criteres->getDebutAnnee());
+//            if ($criteres->getDebutAnnee()) {
+//                if (!$criteres->getFinAnnee()) {
+//                    $criteres->setFinAnnee($criteres->getDebutAnnee());
+//                }
+//                if ($criteres->getDebutAnnee()->getAnnee() != $criteres->getFinAnnee()->getAnnee()) {
+//                    $variables['annees'] = true;
+//                } else {
+//                    $variables['annees'] = false;
+//                }
+//                $session->set('annees', $variables['annees']);
+//                $variables['annee_libelle'] = "décision prise entre le 1er janvier " . $criteres->getDebutAnnee()->getAnnee() . " et le 31 décembre " . $criteres->getFinAnnee()->getAnnee();
+//                $where_annee = " and a.annee >= " . $criteres->getDebutAnnee()->getAnnee() . " and a.annee <= " . $criteres->getFinAnnee()->getAnnee();
+//            } else {
+//                $variables['annee_libelle'] = "décision prise depuis le 1er janvier 2000";
+//                $where_annee = " and a.annee >= 2000 ";
+//            }
+//            $session->set('annee_libelle', $variables['annee_libelle']);
+
+              // Critère date de decicion
+            if ($criteres->getDateDebut()) {
+                if (!$criteres->getDateFin()) {
+                    $criteres->setDateFin($criteres->getDateDebut());
                 }
-                if ($criteres->getDebutAnnee()->getAnnee() != $criteres->getFinAnnee()->getAnnee()) {
+                $mois_fr = Array("", "janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", 
+                        "septembre", "octobre", "novembre", "décembre");
+                list( $jour, $mois, $anneeDebut) = explode('/', $criteres->getDateDebut()->format("d/n/Y"));
+                $dateDebut =  $jour.' '.$mois_fr[$mois].' '.$anneeDebut; 
+                list($jour, $mois, $anneeFin) = explode('/', $criteres->getDateFin()->format("d/n/Y"));
+                $dateFin =  $jour.' '.$mois_fr[$mois].' '.$anneeFin; 
+                $variables['decision_libelle'] = "décision prise entre le  " . $dateDebut . " et le  " . $dateFin;
+                $where_date_decision= " and a.date_decision >= '" . $criteres->getDateDebut()->format('Y-m-d') . "' and a.date_decision <= '" . $criteres->getDateFin()->format('Y-m-d') . "'";
+            } else {
+                $variables['decision_libelle'] = "décision prise depuis le 1er janvier 2000";
+                $where_date_decision = " and a.annee >= 2000 ";
+            }
+            $session->set('decicion_libelle', $variables['decision_libelle']);
+             if ($anneeDebut != $anneeFin) {
                     $variables['annees'] = true;
                 } else {
                     $variables['annees'] = false;
                 }
                 $session->set('annees', $variables['annees']);
-                $variables['annee_libelle'] = "décision prise entre le 1er janvier " . $criteres->getDebutAnnee()->getAnnee() . " et le 31 décembre " . $criteres->getFinAnnee()->getAnnee();
-                $where_annee = " and a.annee >= " . $criteres->getDebutAnnee()->getAnnee() . " and a.annee <= " . $criteres->getFinAnnee()->getAnnee();
-            } else {
-                $variables['annee_libelle'] = "décision prise depuis le 1er janvier 2000";
-                $where_annee = " and a.annee >= 2000 ";
-            }
-            $session->set('annee_libelle', $variables['annee_libelle']);
-
 
 
             // Critère Region administrative
@@ -151,7 +175,8 @@ class CriteresController extends Controller {
 
             $where = "a.ligne = " . $where_ligne;
             $where .= $where_cate;
-            $where .= $where_annee;
+//            $where .= $where_annee;
+            $where .= $where_date_decision;
             $where .= " and a.regadmin = " . $where_regionAdmin;
             $where .= " and a.dept = " . $where_departement;
             $where .= " and a.reghydro = " . $where_regionHydro;
@@ -206,6 +231,7 @@ class CriteresController extends Controller {
                     $dos[$i] = array(
                         'dossier' => $dossier->getLigne()->getLigne() . '-' . $dossier->getDept()->getDept() . '-' . $dossier->getNo_ordre(),
                         'annee' => $dossier->getAnnee()->getAnnee(),
+                        'date_decision' => $dossier->getDate_decision()->format("d/m/Y"),
                         'montant_retenu' => $montantRetenu,
                         'montant_aide_interne' => $montant,
                         'forme_aide' => $dossier->getForme_aide(),

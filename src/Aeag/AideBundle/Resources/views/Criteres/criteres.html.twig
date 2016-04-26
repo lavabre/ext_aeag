@@ -36,19 +36,22 @@
                        {{ form_widget(form.cate, { 'attr': {'class': 'form-control ', 'placeholder': 'Catégorie du bénéficiaire'} }) }}
                      </div>
                 </div>
-                <div class="form-group">
-                    <label class="col-md-3 col-md-offset-1 left">Décision prise entre le 1er janvier </label>
+                     
+              <div class="form-group">
+                    <label class="col-md-3 col-md-offset-1 left">Décision prise entre le </label>
                     <div class="col-md-2 input-group">
-                        {{ form_widget(form.DebutAnnee, { 'attr': {'class': 'form-control ', 'placeholder': 'Annee début'} }) }}
+                        {#{{ form_widget(form.DebutAnnee, { 'attr': {'class': 'form-control ', 'placeholder': 'Annee début'} }) }}#}
+                        {{ form_widget(form.dateDebut , { 'attr': {'class': 'form-control  text-right'} }) }}
                     </div>
                 </div>
                 <div class="form-group">
-                    <label  class="col-md-3 col-md-offset-1 left"> et le 31 décembre </label>
+                    <label  class="col-md-3 col-md-offset-1 left"> et le </label>
                     <div class="col-md-2 input-group">
-                      {{ form_widget(form.FinAnnee, { 'attr': {'class': 'form-control ', 'placeholder': 'Annee fin'} }) }}
+                      {#{{ form_widget(form.FinAnnee, { 'attr': {'class': 'form-control ', 'placeholder': 'Annee fin'} }) }}#}
+                      {{ form_widget(form.dateFin , { 'attr': {'class': 'form-control text-right'} }) }}
                    </div>
                 </div>
-                   
+                               
                 <div class="form-group">
                     <label  class="col-md-11 col-md-offset-1 left"><h3>Localisation de l'action</h3></label>
                 </div>
@@ -103,6 +106,14 @@
 {% endblock content %}
 
 {% block scripts %}          
+    
+       $('#criteres_dateDebut').datepicker({
+                    format: "dd/mm/yyyy"
+                });
+       $('#criteres_dateFin').datepicker({
+                    format: "dd/mm/yyyy"
+                });
+    
        $('#btFermer').click(function (e) {
            e.preventDefault();
            $('#criteres_ligne').val(null);

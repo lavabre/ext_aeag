@@ -10,8 +10,6 @@ class CriteresRequest {
     private $cate;
     private $debutAnnee;
     private $finAnnee;
-    private $dateDebut;
-    private $dateFin;
     private $regionAdmin;
     private $departement;
     private $regionHydro;
@@ -70,22 +68,6 @@ class CriteresRequest {
 
     public function setRegionHydro($regionHydro) {
         $this->regionHydro = $regionHydro;
-    }
-
-    function getDateDebut() {
-        return $this->dateDebut;
-    }
-
-    function getDateFin() {
-        return $this->dateFin;
-    }
-
-    function setDateDebut($dateDebut) {
-        $this->dateDebut = $dateDebut;
-    }
-
-    function setDateFin($dateFin) {
-        $this->dateFin = $dateFin;
     }
 
 }

@@ -20,7 +20,8 @@
                     ligne : {{ criteres.ligne_libelle }}
                   {% endif %}
                    <br>Type de bénéficiaire : {{ criteres.categorie_libelle }}
-                   <br>{{ criteres.annee_libelle }}
+                  {# <br>{{ criteres.annee_libelle }}#}
+                   <br>{{ criteres.decision_libelle }}
                   {% if not(criteres.region_admin_libelle == null) %}
                       <br>Région administrative : {{ criteres.region_admin_libelle }}
                   {% endif %}
