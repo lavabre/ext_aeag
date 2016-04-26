@@ -136,7 +136,7 @@ class SuiviHydrobioController extends Controller {
         $repoPgProgPrestaTypfic = $emSqe->getRepository('AeagSqeBundle:PgProgPrestaTypfic');
         $repoPgCmdMesureEnv = $emSqe->getRepository('AeagSqeBundle:PgCmdMesureEnv');
         $repoPgCmdAnalyse = $emSqe->getRepository('AeagSqeBundle:PgCmdAnalyse');
-         $repoPgRefReseauMesure = $emSqe->getRepository('AeagSqeBundle:PgRefReseauMesure');
+        $repoPgRefReseauMesure = $emSqe->getRepository('AeagSqeBundle:PgRefReseauMesure');
 
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($periodeAnId);
@@ -163,53 +163,58 @@ class SuiviHydrobioController extends Controller {
                 $tabStations[$i]['station'] = $pgProgLotStationAn->getStation();
                 $tabStations[$i]['lien'] = '/sqe_fiches_stations/' . str_replace('/', '-', $pgProgLotPeriodeProg->getStationAn()->getStation()->getCode()) . '.pdf';
                 $pgRefReseauMesure = $repoPgRefReseauMesure->getPgRefReseauMesureByGroupementId($pgProgLotStationAn->getRsxId());
-                if ( $pgRefReseauMesure){
+                if ($pgRefReseauMesure) {
                     $tabStations[$i]['reseau'] = $pgRefReseauMesure;
-                }else{
-                   $tabStations[$i]['reseau'] = null;
+                } else {
+                    $tabStations[$i]['reseau'] = null;
                 }
-                $tabStations[$i]['cmdPrelev'] = null;
+                $tabStations[$i]['cmdPrelevs'] = null;
                 $pgCmdDemande = $repoPgCmdDemande->getPgCmdDemandeByLotanPrestatairePeriode($pgProgLotAn, $pgProgLotPeriodeProg->getGrparAn()->getPrestaDft(), $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
                 if ($pgCmdDemande) {
                     $tabStations[$i]['cmdDemande'] = $pgCmdDemande;
-                    $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($pgProgLotPeriodeProg->getGrparAn()->getPrestaDft(), $pgCmdDemande, $pgProgLotPeriodeProg->getStationAn()->getStation(), $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
-                    if ($pgCmdPrelev) {
-                        $tabStations[$i]['cmdPrelev'] = $pgCmdPrelev;
-                        $tabCmdPrelevs[$i]['maj'] = 'N';
+                    $tabCmdPrelevs = array();
+                    $nbCmdPrelevs = 0;
+                    $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($pgProgLotPeriodeProg->getGrparAn()->getPrestaDft(), $pgCmdDemande, $pgProgLotPeriodeProg->getStationAn()->getStation(), $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
+                    foreach ($pgCmdPrelevs as $pgCmdPrelev) {
+                        $tabCmdPrelevs[$nbCmdPrelevs]['cmdPrelev'] = $pgCmdPrelev;
+                        $tabCmdPrelevs[$nbCmdPrelevs]['maj'] = 'N';
                         $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelevOrderDate($pgCmdPrelev);
                         $tabSuiviPrels = array();
-                        $j = 0;
-                         if (count($pgCmdSuiviPrels) == 0) {
-                            $tabSuiviPrels[$j]['suiviPrel'] = array();
-                            $tabSuiviPrels[$j]['maj'] = 'O';
-                            $tabCmdPrelevs[$i]['maj'] = 'O';
-                            $tabDemande[$i]['maj'] = 'O';
-                        } else {
+                        $nbSuiviPrels = 0;
+                        if (count($pgCmdSuiviPrels) == 0) {
+                            $tabSuiviPrels[$nbSuiviPrels]['suiviPrel'] = array();
+                            $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'O';
+                            $tabCmdPrelevs[$nbCmdPrelevs]['maj'] = 'O';
+                          } else {
                             foreach ($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
-                                $tabSuiviPrels[$j]['suiviPrel'] = $pgCmdSuiviPrel;
-                                $tabSuiviPrels[$j]['maj'] = 'N';
-                                if ($user->hasRole('ROLE_ADMINSQE') or $pgCmdSuiviPrel->getUser()->getPrestataire()) {
-                                    $tabSuiviPrels[$j]['maj'] = 'O';
-                                    $tabCmdPrelevs[$i]['maj'] = 'O';
-                                    $tabDemande[$i]['maj'] = 'O';
+                                $tabSuiviPrels[$nbSuiviPrels]['suiviPrel'] = $pgCmdSuiviPrel;
+                                $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'N';
+                                if ($user->hasRole('ROLE_ADMINSQE') or ( $pgCmdSuiviPrel->getUser()->getPrestataire() == $pgCmdDemande->getPrestataire())) {
+                                    if ($pgCmdSuiviPrel->getStatutPrel() != 'F' or ( $pgCmdSuiviPrel->getStatutPrel() == 'F' and $pgCmdSuiviPrel->getValidation() != 'A')) {
+                                        $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'O';
+                                        $tabCmdPrelevs[$nbCmdPrelevs]['maj'] = 'O';
+                                      }
                                 } else {
                                     if ($user->hasRole('ROLE_ADMINSQE')) {
-                                        $tabSuiviPrels[$j]['maj'] = 'O';
-                                        $tabCmdPrelevs[$i]['maj'] = 'O';
-                                        $tabDemande[$i]['maj'] = 'O';
+                                        if ($pgCmdSuiviPrel->getStatutPrel() != 'F' or ( $pgCmdSuiviPrel->getStatutPrel() == 'F' and $pgCmdSuiviPrel->getValidation() != 'A')) {
+                                            $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'O';
+                                            $tabCmdPrelevs[$nbCmdPrelevs]['maj'] = 'O';
+                                      }
                                     } else {
-                                        $tabSuiviPrels[$j]['maj'] = 'N';
+                                        $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'N';
                                     }
                                 }
-                                $j++;
+                                $nbSuiviPrels++;
                             }
                         }
-                         $tabStations[$i]['suiviPrels'] = $tabSuiviPrels;
+                        $tabCmdPrelevs[$nbCmdPrelevs]['suiviPrels'] = $tabSuiviPrels;
+                        $nbCmdPrelevs++;
                     }
+                    $tabStations[$i]['cmdPrelevs'] = $tabCmdPrelevs;
                 } else {
                     $tabStations[$i]['cmdDemande'] = null;
                 }
-                  $i++;
+                $i++;
             }
         }
 
@@ -333,22 +338,30 @@ class SuiviHydrobioController extends Controller {
         $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
 
-        $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevById($prelevId);
-        $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelev($pgCmdPrelev);
-        if ($pgCmdSuiviPrels){
+        if ($user->hasRole('ROLE_ADMINSQE')){
+             $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByPrestataire($pgCmdPrelev->getPrestaPrel());
+        }else{
+            $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
+        }
+        $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelevOrderDate($pgCmdPrelev);
+        if ($pgCmdSuiviPrels) {
             $pgCmdSuiviPrelActuel = $pgCmdSuiviPrels[0];
+        } else {
+            $pgCmdSuiviPrelActuel = null;
         }
         $pgCmdSuiviPrel = new PgCmdSuiviPrel();
         $form = $this->createForm(new PgCmdSuiviPrelMajType($user, $pgCmdSuiviPrelActuel), $pgCmdSuiviPrel);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            $pgCmdSuiviPrel->setPrelev($pgCmdPrelev);
+           $pgCmdSuiviPrel->setPrelev($pgCmdPrelev);
             $pgCmdSuiviPrel->setUser($pgProgWebUser);
-            $pgCmdSuiviPrel->setValidation('E');
+            if (!$pgCmdSuiviPrel->getValidation()) {
+                $pgCmdSuiviPrel->setValidation('E');
+            }
             $datePrel = $pgCmdSuiviPrel->getDatePrel();
-            $emSqe->persist($pgCmdSuiviPrel);
+             $emSqe->persist($pgCmdSuiviPrel);
             if ($pgCmdSuiviPrel->getStatutPrel() == 'F' and $pgCmdSuiviPrel->getValidation() == 'A') {
                 $pgCmdPrelev->setDatePrelev($datePrel);
                 $pgCmdPrelev->setRealise('O');
@@ -356,7 +369,7 @@ class SuiviHydrobioController extends Controller {
                 $pgCmdPrelev->setDatePrelev($datePrel);
                 $pgCmdPrelev->setRealise('N');
             } else {
-                //$pgCmdPrelev->setDatePrelev(null);
+                $pgCmdPrelev->setDatePrelev($pgCmdPrelev->getDemande()->getDateDemande());
                 $pgCmdPrelev->setRealise(null);
             }
             $emSqe->persist($pgCmdPrelev);
@@ -398,7 +411,13 @@ class SuiviHydrobioController extends Controller {
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgCmdSuiviPrel = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelById($suiviPrelId);
         $pgCmdPrelev = $pgCmdSuiviPrel->getPrelev();
-        $form = $this->createForm(new PgCmdSuiviPrelMajType($user), $pgCmdSuiviPrel);
+        $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelevOrderDate($pgCmdPrelev);
+        if ($pgCmdSuiviPrels) {
+            $pgCmdSuiviPrelActuel = $pgCmdSuiviPrels[0];
+        } else {
+            $pgCmdSuiviPrelActuel = null;
+        }
+        $form = $this->createForm(new PgCmdSuiviPrelMajType($user, $pgCmdSuiviPrelActuel), $pgCmdSuiviPrel);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
@@ -549,9 +568,8 @@ class SuiviHydrobioController extends Controller {
 
         $session->getFlashBag()->add('notice-success', 'le suivi du prélèvement du   : ' . $datePrel->format('d/m/Y') . ' a été supprimé !');
 
-        return $this->redirect($this->generateUrl('AeagSqeBundle_suiviHydrobio_lot_periode_station_demande', array('stationId' => $pgCmdPrelev->getStation()->getOuvFoncId(),
-                            'periodeAnId' => $periodeAnId,
-                            'cmdDemandeId' => $pgCmdPrelev->getDemande()->getId())));
+       return $this->redirect($this->generateUrl('AeagSqeBundle_suiviHydrobio_lot_periode_stations', array('stationId' => $pgCmdPrelev->getStation()->getOuvFoncId(),
+                                'periodeAnId' => $periodeAnId)));
 
 
 //          \Symfony\Component\VarDumper\VarDumper::dump($tabDemande);

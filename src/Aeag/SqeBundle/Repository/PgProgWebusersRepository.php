@@ -70,5 +70,14 @@ class PgProgWebusersRepository extends EntityRepository {
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
+    
+     public function getPgProgWebusersByPrestataire($prestataire) {
+        $query = "select p";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgProgWebusers p";
+        $query = $query . " where p.prestataire = " . $prestataire->getAdrCorId();
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+        return $qb->getOneOrNullResult();
+    }
 
 }
