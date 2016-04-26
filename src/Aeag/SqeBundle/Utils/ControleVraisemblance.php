@@ -78,14 +78,18 @@ class ControleVraisemblance {
         // III.10 [PO4] (1433) en P < [P total](1350) 
         $mPo4 = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1433, $demandeId, $reponseId, $codePrelevement);
         $mP = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1350, $demandeId, $reponseId, $codePrelevement);
-        if (($result = $this->_orthophosphate($mPo4, $mP)!== true)) {
+        $codeRqPo4 = $this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre(1433, $demandeId, $reponseId, $codePrelevement);
+        $codeRqP = $this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre(1350, $demandeId, $reponseId, $codePrelevement);
+        if (($result = $this->_orthophosphate($mPo4, $mP, $codeRqPo4, $codeRqP)!== true)) {
             $this->_addLog($result[0], $demandeId, $reponseId, $result[1], $codePrelevement, $codeParametre);
         }
 
         // III.11 NH4 (1335) en N < Nkj (1319)
         $mNh4 = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1335, $demandeId, $reponseId, $codePrelevement);
         $mNkj = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1319, $demandeId, $reponseId, $codePrelevement);
-        if (($result = $this->_ammonium($mNh4, $mNkj)!== true)) {
+        $codeRqNh4 = $this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre(1335, $demandeId, $reponseId, $codePrelevement);
+        $codeRqNkj = $this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre(1319, $demandeId, $reponseId, $codePrelevement);
+        if (($result = $this->_ammonium($mNh4, $mNkj, $codeRqNh4, $codeRqNkj)!== true)) {
             $this->_addLog($result[0], $demandeId, $reponseId, $result[1], $codePrelevement, $codeParametre);
         }
 
@@ -203,7 +207,6 @@ class ControleVraisemblance {
     }
 
     // III.6 1 < pH(1302) < 14
-    //$mPh = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1302, $demandeId, $reponseId, $codePrelevement);
     protected function _pH($mPh) {
         if (!is_null($mPh)) {
             if ($mPh < 1 || $mPh > 14) {
@@ -242,6 +245,7 @@ class ControleVraisemblance {
     }
 
     // III.8 Balance ionique (meq) sauf si tous les résultats < LQ
+    // TODO A Retoucher
     protected function _balanceIonique($cCationParams, $cAnionParams) {
         // Vérification de l'existence des paramètres
         $valid = true;
@@ -325,6 +329,7 @@ class ControleVraisemblance {
     }
 
     // III.9 Comparaison Balance ionique / conductivité (Feret)
+    // TODO A Retoucher
     protected function _balanceIoniqueTds2($cCationParams, $cAnionParams, $mConductivite) {
 
         // Vérification de l'existence des paramètres
@@ -401,10 +406,9 @@ class ControleVraisemblance {
     }
 
     // III.10 [PO4] (1433) en P < [P total](1350) 
-    protected function _orthophosphate($mPo4, $mP) {
+    protected function _orthophosphate($mPo4, $mP, $codeRqPo4, $codeRqP) {
         if (!is_null($mPo4) && !is_null($mP)) {
-            if (($this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre(1433, $demandeId, $reponseId, $codePrelevement) != 10) ||
-                    ($this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre(1350, $demandeId, $reponseId, $codePrelevement) != 10)) {
+            if (($codeRqPo4 != 10) || ($codeRqP != 10)) {
                 $indP = ($mPo4 * 0.3261379) / $mP;
                 if (1 < $indP && $indP <= 1.25) {
                     //$this->_addLog('warning', $demandeId, $reponseId, "Orthophosphate : Réserve", $codePrelevement, $indP);
@@ -419,10 +423,9 @@ class ControleVraisemblance {
     }
 
     // III.11 NH4 (1335) en N < Nkj (1319)
-    protected function _ammonium($mNh4, $mNkj) {
+    protected function _ammonium($mNh4, $mNkj, $codeRqNh4, $codeRqNkj) {
         if (!is_null($mNh4) && !is_null($mNkj)) {
-            if (($this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre(1335, $demandeId, $reponseId, $codePrelevement) != 10) ||
-                    ($this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre(1319, $demandeId, $reponseId, $codePrelevement) != 10)) {
+            if (($codeRqNh4 != 10) || ($codeRqNkj != 10)) {
                 $indP = ($mNh4 * 0.7765) / $mNkj;
                 if (1 < $indP && $indP <= 1.25) {
                     //$this->_addLog('warning', $demandeId, $reponseId, "Ammonium : Réserve", $codePrelevement, $indP);
@@ -486,7 +489,7 @@ class ControleVraisemblance {
         if ($valid) {
             foreach ($sommeParams as $idx => $sommeParam) {
                 $somme = 0;
-                foreach ($sommeParam as $key => $param) {
+                foreach ($sommeParam as $param) {
                     $somme += $param;
                 }
 
@@ -495,13 +498,14 @@ class ControleVraisemblance {
                 $resultParamMax = $resultParams[$idx] + $percent;
                 if (($resultParamMin > $somme) || ($somme > $resultParamMax)) {
                     //$this->_addLog('error', $demandeId, $reponseId, "Somme Parametres Distincts : La somme des paramètres ne correspond pas au paramètre global " . $params[$idx], $codePrelevement, $somme);
-                    return array("error", "Somme Parametres Distincts : La somme des paramètres ne correspond pas au paramètre global");
+                    return array("error", "Somme Parametres Distincts : La somme des paramètres ne correspond pas au paramètre global" . $params[$idx]);
                 }
             }
         }
     }
 
-//III.14 Contrôle de vraisemblance par parmètres macropolluants : Résultat d’analyse< Valeur max de la base x 2 
+    //III.14 Contrôle de vraisemblance par parmètres macropolluants : Résultat d’analyse< Valeur max de la base x 2 
+    // TODO A Retoucher
     protected function _controleVraisemblanceMacroPolluants($demandeId, $reponseId, $codePrelevement) {
         $pgProgUnitesPossiblesParams = $this->repoPgProgUnitesPossiblesParam->getPgProgUnitesPossiblesParamWithValeurMax();
         foreach ($pgProgUnitesPossiblesParams as $pgProgUnitesPossiblesParam) {
@@ -515,13 +519,14 @@ class ControleVraisemblance {
         }
     }
 
-//III.15 Détection Code remarque Lot 7 (Etat chimique, Substance pertinentes, Complément AEAG, PSEE) :  % de détection différent de 100 (= recherche d'absence de code remarque) suivant liste ref-doc
+    //III.15 Détection Code remarque Lot 7 (Etat chimique, Substance pertinentes, Complément AEAG, PSEE) :  % de détection différent de 100 (= recherche d'absence de code remarque) suivant liste ref-doc
+    // TODO A Retoucher
     protected function _detectionCodeRemarqueLot7($demandeId, $reponseId, $codePrelevement) {
 
-// Vérification marché Demande = marché Aeag
+        // Vérification marché Demande = marché Aeag
         $demandeAeag = $this->repoPgCmdDemande->isPgCmdDemandesMarcheAeag($demandeId);
         if (count($demandeAeag) > 0) {
-// Récupération des codes Parametre de la RAI
+            // Récupération des codes Parametre de la RAI
             $codesParams = $this->repoPgTmpValidEdilabo->getCodesParametres($demandeId, $reponseId, $codePrelevement);
             $nbCodeRqTot = 0;
             $nbCodeRq1 = 0;
@@ -544,14 +549,15 @@ class ControleVraisemblance {
         }
     }
 
-//III.16
+    //III.16
+    // TODO A Retoucher
     protected function _detectionCodeRemarqueLot8($demandeId, $reponseId, $codePrelevement) {
 
-// Vérification marché Demande = marché Aeag
+        // Vérification marché Demande = marché Aeag
         $demandeAeag = $this->repoPgCmdDemande->isPgCmdDemandesMarcheAeag($demandeId);
 
         if (count($demandeAeag) > 0) {
-// Récupération des codes Parametre de la RAI
+            // Récupération des codes Parametre de la RAI
             $codesParams = $this->repoPgTmpValidEdilabo->getCodesParametres($demandeId, $reponseId, $codePrelevement);
             $nbTotalCodeRq = 0;
             $nbCodeRq10 = 0;
@@ -574,7 +580,8 @@ class ControleVraisemblance {
         }
     }
 
-// III.17
+    // III.17
+    // TODO A Retoucher
     protected function _controleLqAeag($pgCmdFichierRps, $codePrelevement) {
         $demandeId = $pgCmdFichierRps->getDemande()->getId();
         $reponseId = $pgCmdFichierRps->getId();
