@@ -143,6 +143,14 @@ class AeagCommand extends ContainerAwareCommand {
         $this->emSqe->flush();
     }
     
+    
+    protected function _convertMultiArray($array) {
+        $out = implode(",", array_map(function($a) {
+                    return implode("-", $a);
+                }, $array));
+        return $out;
+    }
+    
     protected function _csvToArray($nomFichier) {
         $result = array();
         if (($handle = fopen($nomFichier, "r")) !== FALSE) {
