@@ -46,7 +46,7 @@ class CriteresRequestType extends AbstractType {
                ->add('dateDebut', 'datetime', array('widget' => 'single_text',
                                               'format' => 'dd/MM/yyyy',
                                               'required' => false,
-                                              'read_only' => false))
+                                              'read_only' => true))
                         
           
 //                ->add('FinAnnee', 'entity', array(
@@ -64,7 +64,7 @@ class CriteresRequestType extends AbstractType {
                  ->add('dateFin', 'datetime', array('widget' => 'single_text',
                                               'format' => 'dd/MM/yyyy',
                                               'required' => false,
-                                              'read_only' => false))
+                                              'read_only' => true))
                         
                         
                 ->add('regionAdmin', 'entity', array(
