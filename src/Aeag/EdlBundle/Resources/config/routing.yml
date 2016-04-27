@@ -67,10 +67,7 @@ AeagEdlBundle_pressionListProposed:
 AeagEdlBundle_removePression:
     path:  /avis/removePression
     defaults: { _controller: AeagEdlBundle:Pression:removePression }
-    
-    
-    
-    
+     
         
 AeagEdlBundle_contact:
     path:  /contact
@@ -83,96 +80,6 @@ AeagEdlBundle_massedeau:
     defaults: { _controller: AeagEdlBundle:Default:massedeau }
     
 
-
-    
-
-    
-
-    
-    
-
-    
-
-    
-
-    
-
-
-    
-    
-AeagEdlBundle_impactForm:
-    path:  /avis/impactForm
-    defaults: { _controller: AeagEdlBundle:Impact:impactForm }
-    
-AeagEdlBundle_impactSubmit:
-    path:  /avis/impactSubmit
-    defaults: { _controller: AeagEdlBundle:Impact:impactSubmit }    
-    
-AeagEdlBundle_impactListProposed:
-    path:  /avis/impactListProposed
-    defaults: { _controller: AeagEdlBundle:Impact:impactListProposed }        
-    
-AeagEdlBundle_removeImpact:
-    path:  /avis/removeImpact
-    defaults: { _controller: AeagEdlBundle:Impact:removeImpact }
-    
-AeagEdlBundle_impact:
-    path:  /avis/impact/{code}
-    defaults: { _controller: AeagEdlBundle:Default:impact }
-    
-AeagEdlBundle_impactGroupe:
-    path:  /avis/impactgroupe/{code}
-    defaults: { _controller: AeagEdlBundle:Default:impactGroupe }
-    
-    
-    
-AeagEdlBundle_risqueForm:
-    path:  /avis/risqueForm
-    defaults: { _controller: AeagEdlBundle:Risque:risqueForm }
-    
-AeagEdlBundle_risqueSubmit:
-    path:  /avis/risqueSubmit
-    defaults: { _controller: AeagEdlBundle:Risque:risqueSubmit }    
-    
-AeagEdlBundle_risqueListProposed:
-    path:  /avis/risqueListProposed
-    defaults: { _controller: AeagEdlBundle:Risque:risqueListProposed }        
-    
-AeagEdlBundle_removeRisque:
-    path:  /avis/removeRisque
-    defaults: { _controller: AeagEdlBundle:Risque:removeRisque }
-    
-AeagEdlBundle_risque:
-    path:  /avis/risque/{code}
-    defaults: { _controller: AeagEdlBundle:Default:risque }
-    
-AeagEdlBundle_risqueGroupe:
-    path:  /avis/risquegroupe/{code}
-    defaults: { _controller: AeagEdlBundle:Default:risqueGroupe }
-     
-
-
-
-fos_user_security:
-    resource: "@FOSUserBundle/Resources/config/routing/security.xml"
-    prefix: /
-
-fos_user_profile:
-    resource: "@FOSUserBundle/Resources/config/routing/profile.xml"
-    prefix: /profile
-
-fos_user_register:
-    resource: "@FOSUserBundle/Resources/config/routing/registration.xml"
-    prefix: /register
-
-fos_user_resetting:
-    resource: "@FOSUserBundle/Resources/config/routing/resetting.xml"
-    prefix: /resetting
-
-fos_user_change_password:
-    resource: "@FOSUserBundle/Resources/config/routing/change_password.xml"
-    prefix: /change-password  
-    
 AeagEdlBundle_utilisateur:
     path:  /utilisateur
     defaults: { _controller: AeagEdlBundle:Utilisateur:index }

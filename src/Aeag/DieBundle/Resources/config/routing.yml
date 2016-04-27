@@ -16,8 +16,8 @@ aeag_die_message:
 aeag_die_create:
     path:  /die/create
     defaults: { _controller: "AeagDieBundle:Default:create" }
-    requirements: { _method: post }
-
+    methods:  GET|POST
+     
 aeag_die_listesoustheme:
     path: /die/listesoustheme
     defaults : { _controller: "AeagDieBundle:Default:listesoustheme"}

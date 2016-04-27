@@ -278,8 +278,11 @@ class SaisieDonneesController extends Controller {
                             $tabStations[$i]['cmdPrelev'][$j]['nbSaisisParametresTerrainIncorrect'] = $NbCmdMesureEnvIncorrect + $NbCmdAnalyseIncorrect;
                             $tabStations[$i]['cmdPrelev'][$j]['nbSaisisParametresTerrainErreur'] = $NbCmdMesureEnvErreur + $NbCmdAnalyseErreur;
                             if ($pgCmdPrelev->getPhaseDmd()->getcodePhase() != 'M40') {
-                                if (strtoupper($pgProgPrestaTypfic->getFormatFic()) == 'SAISIE_TA' or strtoupper($pgProgPrestaTypfic->getFormatFic()) == 'SAISIE_T') {
+                               if (strtoupper($pgProgPrestaTypfic->getFormatFic()) == 'SAISIE_TA' or strtoupper($pgProgPrestaTypfic->getFormatFic()) == 'SAISIE_T') {
                                     $tabStations[$i]['cmdPrelev'][$j]['saisieTerrain'] = 'O';
+                                }
+                                if ($user->hasRole('ROLE_ADMINSQE')){
+                                     $tabStations[$i]['cmdPrelev'][$j]['saisieTerrain'] = 'O';
                                 }
                             }
                             $NbProgLotParamAn = 0;
@@ -325,9 +328,12 @@ class SaisieDonneesController extends Controller {
                             $tabStations[$i]['cmdPrelev'][$j]['nbSaisisParametresAnalyseIncorrect'] = $NbCmdAnalyseIncorrect;
                             $tabStations[$i]['cmdPrelev'][$j]['nbSaisisParametresAnalyseErreur'] = $NbCmdAnalyseErreur;
                             if ($pgCmdPrelev->getPhaseDmd()->getcodePhase() != 'M40') {
-                                if (strtoupper($pgProgPrestaTypfic->getFormatFic()) == 'SAISIE_TA' or strtoupper($pgProgPrestaTypfic->getFormatFic()) == 'SAISIE_A') {
+                             if (strtoupper($pgProgPrestaTypfic->getFormatFic()) == 'SAISIE_TA' or strtoupper($pgProgPrestaTypfic->getFormatFic()) == 'SAISIE_A') {
                                     $tabStations[$i]['cmdPrelev'][$j]['saisieAnalyse'] = 'O';
-                                }
+                               }
+                             if ($user->hasRole('ROLE_ADMINSQE')){
+                                   $tabStations[$i]['cmdPrelev'][$j]['saisieAnalyse'] = 'O';
+                              }
                             }
                         }
                     }

@@ -171,7 +171,7 @@ class CriteresController extends Controller {
             $variables['nb_dossiers'] = $nb_dossiers;
             $session->set('nb_dossiers', $variables['nb_dossiers']);
 
-            if ($nb_dossiers > 10000) {
+            if ($nb_dossiers > 2000) {
                 $full = true;
                 $csv = false;
             } else {
