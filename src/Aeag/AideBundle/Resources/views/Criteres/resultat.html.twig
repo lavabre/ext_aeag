@@ -213,11 +213,15 @@
     }
     );
     var info = table.page.info();
-    if (info.pages > 0 ){
+     if (info.pages > 0 ){
     $('#idTable_processing').hide();
     $('#modalTraitementEncours').modal('hide');
     }
-
+    
+    {% if criteres.nb_dossiers == 0 %}
+         $('#idTable_processing').hide();
+        $('#modalTraitementEncours').modal('hide');
+     {% endif %}
   
 {% endblock scripts %}
 

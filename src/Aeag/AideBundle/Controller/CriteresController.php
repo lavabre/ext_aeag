@@ -96,7 +96,7 @@ class CriteresController extends Controller {
               // Critère date de decision
              if ($criteres->getDateDebut()) {
                 if (!$criteres->getDateFin()) {
-                    $criteres->setDateFin($criteres->getDateDebut());
+                    $criteres->setDateFin(new \DateTime(date('Y-m-d')));
                 }
                 $mois_fr = Array("", "janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", 
                         "septembre", "octobre", "novembre", "décembre");
