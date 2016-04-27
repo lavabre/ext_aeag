@@ -51,8 +51,8 @@ class PdfAidesAccordees extends PageGroup {
 
 // Tableau coloré
     function Formatage($data) {
-        
-    
+
+
         // Restauration des couleurs et de la police
         $this->SetFillColor(224, 235, 255);
         $this->SetTextColor(0, 0, 102);
@@ -67,10 +67,12 @@ class PdfAidesAccordees extends PageGroup {
         $this->Cell(10, 3, 'Ligne : ' . $data['ligne_libelle'], 0, 0, 'L');
         $this->Ln();
         $this->Cell(120);
-        $this->Cell(10, 3, 'Categorie : ' . $data['categorie_libelle'], 0, 0, 'L');
-        $this->Ln();
-        $this->Cell(120);
-        $this->Cell(10, 3, $data['annee_libelle'], 0, 0, 'L');
+        $this->Cell(10, 3, 'Type de bénéficiaire : ' . $data['categorie_libelle'], 0, 0, 'L');
+        if ($data['decision_libelle'] !== null) {
+            $this->Ln();
+            $this->Cell(120);
+            $this->Cell(10, 3, $data['decision_libelle'], 0, 0, 'L');
+        }
         if ($data['region_admin_libelle'] !== null) {
             $this->Ln();
             $this->Cell(120);
@@ -189,10 +191,12 @@ class PdfAidesAccordees extends PageGroup {
                 $this->Cell(10, 3, 'Ligne : ' . $data['ligne_libelle'], 0, 0, 'L');
                 $this->Ln();
                 $this->Cell(120);
-                $this->Cell(10, 3, 'Categorie : ' . $data['categorie_libelle'], 0, 0, 'L');
-                $this->Ln();
-                $this->Cell(120);
-                $this->Cell(10, 3, $data['annee_libelle'], 0, 0, 'L');
+                $this->Cell(10, 3, 'Type de bénéficiaire : ' . $data['categorie_libelle'], 0, 0, 'L');
+                if ($data['decision_libelle'] !== null) {
+                    $this->Ln();
+                    $this->Cell(120);
+                    $this->Cell(10, 3, $data['decision_libelle'], 0, 0, 'L');
+                }
                 if ($data['region_admin_libelle'] !== null) {
                     $this->Ln();
                     $this->Cell(120);
@@ -232,6 +236,7 @@ class PdfAidesAccordees extends PageGroup {
                 $this->SetFont('Arial', '', 6);
 
                 $nbLignes = 0;
+                $montantRetenuPage = 0;
                 $montantPage = 0;
             }
         }

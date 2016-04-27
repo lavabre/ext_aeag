@@ -93,27 +93,8 @@ class CriteresController extends Controller {
             }
             $session->set('categorie_libelle', $variables['categorie_libelle']);
 
-            // Critère annee
-//            if ($criteres->getDebutAnnee()) {
-//                if (!$criteres->getFinAnnee()) {
-//                    $criteres->setFinAnnee($criteres->getDebutAnnee());
-//                }
-//                if ($criteres->getDebutAnnee()->getAnnee() != $criteres->getFinAnnee()->getAnnee()) {
-//                    $variables['annees'] = true;
-//                } else {
-//                    $variables['annees'] = false;
-//                }
-//                $session->set('annees', $variables['annees']);
-//                $variables['annee_libelle'] = "décision prise entre le 1er janvier " . $criteres->getDebutAnnee()->getAnnee() . " et le 31 décembre " . $criteres->getFinAnnee()->getAnnee();
-//                $where_annee = " and a.annee >= " . $criteres->getDebutAnnee()->getAnnee() . " and a.annee <= " . $criteres->getFinAnnee()->getAnnee();
-//            } else {
-//                $variables['annee_libelle'] = "décision prise depuis le 1er janvier 2000";
-//                $where_annee = " and a.annee >= 2000 ";
-//            }
-//            $session->set('annee_libelle', $variables['annee_libelle']);
-
-              // Critère date de decicion
-            if ($criteres->getDateDebut()) {
+              // Critère date de decision
+             if ($criteres->getDateDebut()) {
                 if (!$criteres->getDateFin()) {
                     $criteres->setDateFin($criteres->getDateDebut());
                 }
@@ -128,8 +109,10 @@ class CriteresController extends Controller {
             } else {
                 $variables['decision_libelle'] = "décision prise depuis le 1er janvier 2000";
                 $where_date_decision = " and a.annee >= 2000 ";
+                $anneeDebut = null;
+                $anneeFin = null;
             }
-            $session->set('decicion_libelle', $variables['decision_libelle']);
+            $session->set('decision_libelle', $variables['decision_libelle']);
              if ($anneeDebut != $anneeFin) {
                     $variables['annees'] = true;
                 } else {
@@ -175,7 +158,6 @@ class CriteresController extends Controller {
 
             $where = "a.ligne = " . $where_ligne;
             $where .= $where_cate;
-//            $where .= $where_annee;
             $where .= $where_date_decision;
             $where .= " and a.regadmin = " . $where_regionAdmin;
             $where .= " and a.dept = " . $where_departement;
@@ -312,8 +294,10 @@ class CriteresController extends Controller {
         $variables['categorie_libelle'] = $session->get('categorie_libelle');
 
         // Critère annee
-        $variables['annee_libelle'] = $session->get('annee_libelle');
         $variables['annees'] = $session->get('annees');
+        
+        // Critère decision dates
+        $variables['decision_libelle'] = $session->get('decision_libelle');
 
         // Critère Region administrative
         $variables['region_admin_libelle'] = $session->get('region_admin_libelle');

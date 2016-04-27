@@ -46,7 +46,9 @@ class CriteresRequestType extends AbstractType {
                ->add('dateDebut', 'datetime', array('widget' => 'single_text',
                                               'format' => 'dd/MM/yyyy',
                                               'required' => false,
-                                              'read_only' => true))
+                                              'read_only' => false))
+                        
+          
 //                ->add('FinAnnee', 'entity', array(
 //                    'class' => 'Aeag\\AideBundle\\Entity\\Annee',
 //                    'multiple' => false,
@@ -58,10 +60,13 @@ class CriteresRequestType extends AbstractType {
 //                                ->orderBy('a.annee', 'desc');
 //                    }
 //                ))
+                        
                  ->add('dateFin', 'datetime', array('widget' => 'single_text',
                                               'format' => 'dd/MM/yyyy',
                                               'required' => false,
-                                              'read_only' => true))
+                                              'read_only' => false))
+                        
+                        
                 ->add('regionAdmin', 'entity', array(
                     'class' => 'Aeag\\AeagBundle\\Entity\\Region',
                     'multiple' => false,

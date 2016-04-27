@@ -1982,6 +1982,7 @@ class CollecteurController extends Controller {
                                 $err = true;
                                 $message = $message . "dans le fichier CSV : Date facture obligatoire à la ligne " . $ligne . " \n";
                             } else {
+                                //print_r('date facture : ' . $tab[5] . ' a la ligne : ' . $ligne);
                                 $tab[5] = str_replace(' ', '', $tab[5]);
                                 $dateFact = split("/", $tab[5]);
                                 if (strlen($dateFact[2] == 2)) {

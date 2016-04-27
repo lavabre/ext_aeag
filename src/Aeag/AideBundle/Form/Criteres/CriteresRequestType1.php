@@ -10,7 +10,7 @@ use Symfony\Component\Form\FormBuilderInterface;
  *
  * @author lavabre
  */
-class CriteresRequestType extends AbstractType {
+class CriteresRequestType1 extends AbstractType {
 
     public function buildform(FormBuilderInterface $builder, array $options) {
         $builder

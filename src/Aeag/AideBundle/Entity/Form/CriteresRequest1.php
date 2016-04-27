@@ -4,7 +4,7 @@ namespace Aeag\AideBundle\Entity\Form;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-class CriteresRequest {
+class CriteresRequest1 {
 
     private $ligne;
     private $cate;
