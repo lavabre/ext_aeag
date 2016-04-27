@@ -75,6 +75,7 @@
                                    {% endif %}
                                    <td  class="text-nowrap text-center">
                                         {% if cmdPrelev.saisieTerrain == 'O' %}
+                                                 {% if  cmdPrelev.nbParametresTerrain > 0 or is_granted('ROLE_ADMINSQE') %}
                                                       <ul class="list-inline">
                                                                 <li>
                                                                    <a class="btn btn-warning" id="idSaisirDonneesTerrain{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Saisie des données terrains">
@@ -84,25 +85,46 @@
                                                                 <li><span  class="label label-success">{{ cmdPrelev.nbSaisisParametresTerrainCorrect}}</li>
                                                                 <li><span  class="label label-warning">{{ cmdPrelev.nbSaisisParametresTerrainIncorrect}}</li>
                                                                 <li><span  class="label label-danger">{{ cmdPrelev.nbSaisisParametresTerrainErreur}}</li>
-                                                               <li><span  class="label label-default">{{ cmdPrelev.nbSaisisParametresTerrain  }}/{{ cmdPrelev.nbParametresTerrain }}</li>
-                                                      </ul>  
+                                                               <li><span  class="label label-default">{{ cmdPrelev.nbSaisisParametresTerrain  }}/{{ cmdPrelev.nbParametresTerrain}}</li>
+                                                      </ul> 
+                                                 {% elseif cmdPrelev.nbAutresParametresAnalyse > 0 %}
+                                                          <ul class="list-inline">
+                                                               <li>
+                                                                  <a class="btn btn-success" id="idConsulterDonneesTerrain{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Consulter les données terrains">
+                                                                     <i class="fa fa-eye"> Consulter </i>
+                                                                   </a>
+                                                                </li>
+                                                                <li><span  class="label label-default">{{ cmdPrelev.nbAutresParametresTerrain }}</li>
+                                                         </ul> 
+                                                {% endif %}
                                               {% else %}
-                                                  <ul class="list-inline">
-                                                            <li>
-                                                              <a class="btn btn-success" id="idConsulterDonneesTerrain{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Consulter les données terrains">
-                                                                 <i class="fa fa-eye"> consulter</i>
-                                                              </a>
-                                                            </li>
-                                                            <li><span  class="label label-success">{{ cmdPrelev.nbSaisisParametresTerrainCorrect}}</li>
-                                                           <li><span  class="label label-warning">{{ cmdPrelev.nbSaisisParametresTerrainIncorrect}}</li>
-                                                           <li><span  class="label label-danger">{{ cmdPrelev.nbSaisisParametresTerrainErreur}}</li>
-                                                           <li><span  class="label label-default">{{ cmdPrelev.nbSaisisParametresTerrain  }}/{{ cmdPrelev.nbParametresTerrain }}</li>
-                                                    </ul>  
+                                                   {% if  cmdPrelev.nbParametresTerrain > 0 %}
+                                                        <ul class="list-inline">
+                                                                  <li>
+                                                                    <a class="btn btn-success" id="idConsulterDonneesTerrain{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Consulter les données terrains">
+                                                                       <i class="fa fa-eye"> consulter</i>
+                                                                    </a>
+                                                                  </li>
+                                                                  <li><span  class="label label-success">{{ cmdPrelev.nbSaisisParametresTerrainCorrect}}</li>
+                                                                 <li><span  class="label label-warning">{{ cmdPrelev.nbSaisisParametresTerrainIncorrect}}</li>
+                                                                 <li><span  class="label label-danger">{{ cmdPrelev.nbSaisisParametresTerrainErreur}}</li>
+                                                                 <li><span  class="label label-default">{{ cmdPrelev.nbSaisisParametresTerrain  }}/{{ cmdPrelev.nbParametresTerrain }}</li>
+                                                          </ul>  
+                                                   {% elseif cmdPrelev.nbAutresParametresAnalyse > 0 %}
+                                                          <ul class="list-inline">
+                                                               <li>
+                                                                  <a class="btn btn-success" id="idConsulterDonneesTerrain{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Consulter les données terrains">
+                                                                     <i class="fa fa-eye"> Consulter </i>
+                                                                   </a>
+                                                                </li>
+                                                                <li><span  class="label label-default">{{ cmdPrelev.nbAutresParametresTerrain }}</li>
+                                                         </ul> 
+                                                {% endif %}
                                             {% endif %}
                                    </td>
                                    <td  class="text-nowrap text-center">
                                          {% if cmdPrelev.saisieAnalyse == 'O' %}
-                                             {% if  cmdPrelev.nbParametresAnalyse > 0 %}
+                                             {% if  cmdPrelev.nbParametresAnalyse > 0 or is_granted('ROLE_ADMINSQE')%}
                                                       <ul class="list-inline">
                                                            <li>
                                                                <a class="btn btn-warning" id="idSaisirAnalyses{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Saisie des analyses">
@@ -112,7 +134,7 @@
                                                             <li><span  class="label label-success">{{ cmdPrelev.nbSaisisParametresAnalyseCorrect}}</li>
                                                            <li><span  class="label label-warning">{{ cmdPrelev.nbSaisisParametresAnalyseIncorrect}}</li>
                                                            <li><span  class="label label-danger">{{ cmdPrelev.nbSaisisParametresAnalyseErreur}}</li>
-                                                           <li><span  class="label label-default">{{ cmdPrelev.nbSaisisParametresAnalyse }}/{{ cmdPrelev.nbParametresAnalyse }}</li>
+                                                           <li><span  class="label label-default">{{ cmdPrelev.nbSaisisParametresAnalyse }}/{{ cmdPrelev.nbParametresAnalyse + cmdPrelev.nbAutresParametresAnalyse }}</li>
                                                      </ul> 
                                                 {% elseif cmdPrelev.nbAutresParametresAnalyse > 0 %}
                                                           <ul class="list-inline">

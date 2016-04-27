@@ -64,6 +64,16 @@ class PgCmdMesureEnvRepository extends EntityRepository {
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
+    
+    public function getPgCmdMesureEnvsByPrelevParamProg($pgCmdPrelev, $pgProgLotParamAn) {
+        $query = "select c";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdMesureEnv c";
+        $query = $query . " where c.prelev = " . $pgCmdPrelev->getId();
+        $query = $query . " and  c.paramProg = " . $pgProgLotParamAn->getId();
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+        return $qb->getResult();
+    }
 
     public function getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, $parametre) {
         $query = "select c";

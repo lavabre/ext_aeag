@@ -214,8 +214,13 @@ class SaisieDonneesController extends Controller {
                                         if ($pgProgLotGrparAn->getvalide() == 'O' and $pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'ENV') {
                                             $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
                                             foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
+                                                 $pgCmdMesureEnvs = $repoPgCmdMesureEnv->getPgCmdMesureEnvsByPrelevParamProg($pgCmdPrelev, $pgProgLotParamAn);
                                                 if ($pgCmdPrelev->getprestaPrel()->getAdrCorId() == $pgProgLotParamAn->getPrestataire()->getAdrCorId()) {
-                                                    $NbProgLotParamAn++;
+                                                    if (count($pgCmdMesureEnvs) > 0) {
+                                                        $NbProgLotParamAn += count($pgCmdMesureEnvs);
+                                                    } else {
+                                                        $NbProgLotParamAn++;
+                                                    }
                                                 }
                                             }
                                         }
@@ -229,7 +234,7 @@ class SaisieDonneesController extends Controller {
                                                     } else {
                                                         $NbProgLotParamAn++;
                                                     }
-                                                }
+                                               }
                                             }
                                         }
                                     }
@@ -243,8 +248,13 @@ class SaisieDonneesController extends Controller {
                                         if ($pgProgLotGrparAn->getvalide() == 'O' and $pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'ENV') {
                                             $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
                                             foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
+                                                 $pgCmdMesureEnvs = $repoPgCmdMesureEnv->getPgCmdMesureEnvsByPrelevParamProg($pgCmdPrelev, $pgProgLotParamAn);
                                                 if ($pgCmdPrelev->getprestaPrel()->getAdrCorId() != $pgProgLotParamAn->getPrestataire()->getAdrCorId()) {
-                                                    $NbProgLotParamAn++;
+                                                     if (count($pgCmdMesureEnvs) > 0) {
+                                                        $NbProgLotParamAn += count($pgCmdMesureEnvs);
+                                                    } else {
+                                                        $NbProgLotParamAn++;
+                                                    }
                                                 }
                                             }
                                         }
@@ -665,7 +675,7 @@ class SaisieDonneesController extends Controller {
                                     if (isset($_POST['numOrdre-' . $pgProgLotParamAn->getId() . '-' . $pgCmdPrelevPc->getNumOrdre()])) {
                                         $numOrdre = $_POST['numOrdre-' . $pgProgLotParamAn->getId() . '-' . $pgCmdPrelevPc->getNumOrdre()];
                                     } else {
-                                        $numOrdre = null;
+                                        $numOrdre = 1;
                                     }
 
                                     $tabSaisies[$i]['valeur'] = $valeur;

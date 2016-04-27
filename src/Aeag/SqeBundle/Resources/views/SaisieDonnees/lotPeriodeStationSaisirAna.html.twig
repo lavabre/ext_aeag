@@ -201,11 +201,8 @@
                                                                                                                                         {% else %}
                                                                                                                                              {% if paramAn.pgCmdAnalyse %}
                                                                                                                                                    <input id="idUniteCode{{ paramAn.paramAn.id}}" type="hidden" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdAnalyse.codeUnite.codeUnite }}">
-                                                                                                                                                   <input id="idUnite{{ paramAn.paramAn.id}}" type="text" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{paramAn.unites.0.codeUnite.codeUnite}} : {{ paramAn.pgCmdAnalyse.codeUnite.nomUnite }}">
-                                                                                                                                               {% else %}
-                                                                                                                                                    <input id="idUniteCode{{ paramAn.paramAn.id}}" type="hidden" class="form-control" placeholder="unite" name ="uniteCode{{ paramAn.paramAn.id}}" value="{{ paramAn.unite.codeUnite }}">
-                                                                                                                                                     <input id="idUnite{{ paramAn.paramAn.id}}" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{paramAn.unites.0.codeUnite.codeUnite}} : {{ paramAn.unite.nomUnite }}" readonly="readonly">
-                                                                                                                                             {% endif %}
+                                                                                                                                                   <input id="idUnite{{ paramAn.paramAn.id}}" type="text" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdAnalyse.codeUnite.codeUnite}} : {{ paramAn.pgCmdAnalyse.codeUnite.nomUnite }}">
+                                                                                                                                              {% endif %}
                                                                                                                                         {% endif %}
                                                                                                                                     </div>
                                                                                                                                 </div> 
@@ -373,10 +370,10 @@
                                                  $("#idUniteCode{{ paramAn.paramAn.id}} option[value='" + valeur + "']").attr('selected','selected');
                                                  $("#idUniteCode{{ paramAn.paramAn.id}}").val(valeur);
                                         {% endif %}
-                                 {% elseif paramAn.unite %}
-                                        {% if paramAn.unite.codeUnite == unite.codeUnite.codeUnite %}
+                                 {% elseif paramAn.unites.0 %}
+                                        {% if paramAn.unites.0.codeUnite == unite.codeUnite.codeUnite %}
                                                  $('#idUniteCode{{ paramAn.paramAn.id}} option:selected').removeAttr('selected');
-                                                var valeur =   {{ paramAn.unite.codeUnite }};
+                                                var valeur =   {{ paramAn.unites.0.codeUnite }};
                                                 $("#idUniteCode{{ paramAn.paramAn.id}} option[value='" + valeur + "']").attr('selected','selected');
                                                 $("#idUniteCode{{ paramAn.paramAn.id}}").val(valeur);
                                          {% endif %}
