@@ -18,7 +18,7 @@ class PgProgGrparRefZoneVert {
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="PgProgGrpParamRef")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="grpar_ref_id", referencedColumnName="id")
      * })
      */
     private $pgProgGrpParamRef;
@@ -28,7 +28,7 @@ class PgProgGrparRefZoneVert {
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="PgSandreZoneVerticaleProspectee")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="code_zone_vert", referencedColumnName="codeZone")
      * })
      */
     private $pgSandreZoneVerticaleProspectee;
