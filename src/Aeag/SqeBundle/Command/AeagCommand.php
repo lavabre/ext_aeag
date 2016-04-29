@@ -78,7 +78,7 @@ class AeagCommand extends ContainerAwareCommand {
         $this->detectionCodeRemarqueMoitie = $this->_csvToArray($cheminCourant . "/web/tablesCorrespondancesRai/detectionCodeRemarqueMoitie.csv");
     }
 
-    protected function _updatePhaseFichierRps($pgCmdFichierRps, $phase, $phaseExclu = false) {
+    protected function _updatePhaseFichierRps(\Aeag\SqeBundle\Entity\PgCmdFichiersRps $pgCmdFichierRps, $phase, $phaseExclu = false) {
         $pgProgPhases = $this->repoPgProgPhases->findOneByCodePhase($phase);
         if (!$phaseExclu) {
             $pgCmdFichierRps->setPhaseFichier($pgProgPhases);
@@ -90,7 +90,7 @@ class AeagCommand extends ContainerAwareCommand {
         $this->_addSuiviPhase('RPS', $pgCmdFichierRps->getId(), $pgProgPhases);
     }
     
-    protected function _updatePhasePrelevement($pgCmdPrelev, $phase) {
+    protected function _updatePhasePrelevement(\Aeag\SqeBundle\Entity\PgCmdPrelev $pgCmdPrelev, $phase) {
         $pgProgPhases = $this->repoPgProgPhases->findOneByCodePhase($phase);
         $pgCmdPrelev->setPhaseDmd($pgProgPhases);
         $this->emSqe->persist($pgCmdPrelev);
@@ -101,24 +101,26 @@ class AeagCommand extends ContainerAwareCommand {
         
     }
     
-    protected function _updatePhaseDemande($pgCmdDemande) {
+    protected function _updatePhaseDemande(\Aeag\SqeBundle\Entity\PgCmdDemande $pgCmdDemande) {
         // Si la demande < D30, mettre en D30
-        if ($this->repoPgCmdDemande->getPhaseDemande() < $this->repoPgProgPhases->findOneByCodePhase('D30') ) {
+        if ($pgCmdDemande->getPhaseDemande() < $this->repoPgProgPhases->findOneByCodePhase('D30') ) {
             $pgProgPhases = $this->repoPgProgPhases->findOneByCodePhase('D30');
+            $pgCmdDemande->setPhaseDemande($pgProgPhases);
+            
+            $this->emSqe->persist($pgCmdDemande);
+            $this->emSqe->flush();
         } 
         
         // Si tous les prélèvements de la demande sont en M40, passer la demande en D40
         $phase = $this->repoPgProgPhases->findOneByCodePhase('M40');
         if ($this->repoPgCmdPrelev->getCountPgCmdPrelevByPhase($pgCmdDemande, $phase) == $this->repoPgCmdPrelev->getCountAllPgCmdPrelev($pgCmdDemande)) {
             $pgProgPhases = $this->repoPgProgPhases->findOneByCodePhase('D40');
+            $pgCmdDemande->setPhaseDemande($pgProgPhases);
             
+            $this->emSqe->persist($pgCmdDemande);
+            $this->emSqe->flush();
         }
-        
-        $pgCmdDemande->setPhaseDemande($pgProgPhases);
-        
-        $this->emSqe->persist($pgCmdDemande);
-        $this->emSqe->flush();
-        
+
     }
     
     protected function _addSuiviPhase($typeObj, $objId, $pgProgPhase) {

@@ -81,7 +81,7 @@ class PgCmdPrelevRepository extends EntityRepository {
     public function getPgCmdPrelevByCodePrelevCodeDmdAndPhase($pgCmdPrelev, $pgCmdDemande, $pgProgPhase) {
         $query = "select p";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdPrelev p";
-        $query .= " and p.demande = :demande";
+        $query .= " where p.demande = :demande";
         $query .= " and p.codePrelevCmd = :codeprelev";
         $query .= " and p.phaseDmd >= :phase";
         $query .= " and p.fichierRps IS NOT NULL";
@@ -96,7 +96,7 @@ class PgCmdPrelevRepository extends EntityRepository {
     public function getCountPgCmdPrelevByPhase($pgCmdDemande, $pgProgPhase) {
         $query = "select count(p)";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdPrelev p";
-        $query .= " and p.demande = :demande";
+        $query .= " where p.demande = :demande";
         $query .= " and p.phaseDmd = :phase";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('demande', $pgCmdDemande);
@@ -108,7 +108,7 @@ class PgCmdPrelevRepository extends EntityRepository {
     public function getCountAllPgCmdPrelev($pgCmdDemande) {
         $query = "select count(p)";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdPrelev p";
-        $query .= " and p.demande = :demande";
+        $query .= " where p.demande = :demande";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('demande', $pgCmdDemande);
         
