@@ -10,7 +10,7 @@ use Symfony\Component\Form\FormBuilderInterface;
  *
  * @author lavabre
  */
-class CriteresRequestType extends AbstractType {
+class CriteresRequestType1 extends AbstractType {
 
     public function buildform(FormBuilderInterface $builder, array $options) {
         $builder
@@ -31,44 +31,30 @@ class CriteresRequestType extends AbstractType {
                                 ->orderBy('c.cate', 'desc');
                     }
                 ))
-//                ->add('DebutAnnee', 'entity', array(
-//                    'class' => 'Aeag\\AideBundle\\Entity\\Annee',
-//                    'multiple' => false,
-//                    'required' => true,
-//                    'label' => "",
-//                    'choice_label' => 'annee',
-//                    'query_builder' => function(\Doctrine\ORM\EntityRepository $er) {
-//                        return $er->createQueryBuilder('a')
-//                                ->orderBy('a.annee', 'desc');
-//                    }
-//                ))
-//               
-               ->add('dateDebut', 'datetime', array('widget' => 'single_text',
-                                              'format' => 'dd/MM/yyyy',
-                                              'required' => false,
-                                              'read_only' => true))
-                        
-          
-//                ->add('FinAnnee', 'entity', array(
-//                    'class' => 'Aeag\\AideBundle\\Entity\\Annee',
-//                    'multiple' => false,
-//                    'required' => true,
-//                    'label' => "",
-//                    'choice_label' => 'annee',
-//                    'query_builder' => function(\Doctrine\ORM\EntityRepository $er) {
-//                        return $er->createQueryBuilder('a')
-//                                ->orderBy('a.annee', 'desc');
-//                    }
-//                ))
-                        
-                 ->add('dateFin', 'datetime', array('widget' => 'single_text',
-                                              'format' => 'dd/MM/yyyy',
-                                              'required' => false,
-                                              'read_only' => true))
-                        
-                        
+                ->add('DebutAnnee', 'entity', array(
+                    'class' => 'Aeag\\AideBundle\\Entity\\Annee',
+                    'multiple' => false,
+                    'required' => true,
+                    'label' => "",
+                    'choice_label' => 'annee',
+                    'query_builder' => function(\Doctrine\ORM\EntityRepository $er) {
+                        return $er->createQueryBuilder('a')
+                                ->orderBy('a.annee', 'desc');
+                    }
+                ))
+                ->add('FinAnnee', 'entity', array(
+                    'class' => 'Aeag\\AideBundle\\Entity\\Annee',
+                    'multiple' => false,
+                    'required' => true,
+                    'label' => "",
+                    'choice_label' => 'annee',
+                    'query_builder' => function(\Doctrine\ORM\EntityRepository $er) {
+                        return $er->createQueryBuilder('a')
+                                ->orderBy('a.annee', 'desc');
+                    }
+                ))
                 ->add('regionAdmin', 'entity', array(
-                    'class' => 'Aeag\\AeagBundle\\Entity\\Region',
+                    'class' => 'Aeag\\AideBundle\\Entity\\RegionAdmin',
                     'multiple' => false,
                     'required' => false,
                     'label' => "",
@@ -76,7 +62,7 @@ class CriteresRequestType extends AbstractType {
                   
                 )) 
                 ->add('departement', 'entity', array(
-                    'class' => 'Aeag\\AeagBundle\\Entity\\Departement',
+                    'class' => 'Aeag\\AideBundle\\Entity\\Departement',
                     'multiple' => false,
                     'required' => false,
                     'label' => "",

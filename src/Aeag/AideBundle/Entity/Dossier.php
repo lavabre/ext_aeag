@@ -60,6 +60,11 @@ class Dossier {
     private $annee;
 
     /**
+     * @ORM\Column(type="datetime")
+     */
+    protected $date_decision;
+
+    /**
      * @ORM\Column(type="string", length=5)
      * 
      * @Assert\NotBlank()
@@ -145,7 +150,7 @@ class Dossier {
      * 
      */
     private $mod_phase;
-    
+
     /**
      * @ORM\Column(type="decimal", length=12, nullable=true)
      * 
@@ -447,6 +452,14 @@ class Dossier {
 
     public function setRegadmin(array $regadmin) {
         $this->regadmin = $regadmin;
+    }
+
+    function getDate_decision() {
+        return $this->date_decision;
+    }
+
+    function setDate_decision($date_decision) {
+        $this->date_decision = $date_decision;
     }
 
 }

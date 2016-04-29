@@ -14,7 +14,7 @@
            <a href="{{path('AeagSqeBundle_saisieDonnees_lot_periodes',{ 'lotanId': lotan.id })}}">Périodes</a> 
     </li>
      <li>
-           <a href="{{path('AeagSqeBundle_saisieDonnees_lot_periode_stations',{ 'periodeAnId': periodeAn.id })}}">Stations</a> 
+           <a href="{{path('AeagSqeBundle_saisieDonnees_lot_periode_stations',{ 'periodeAnId': periodeAn.id })}}">lacs</a> 
     </li>
      <li class="active">
           Saisie des analyses
@@ -41,7 +41,7 @@
 
 {%block content %}
  
-    <form class="form" id="idForm" role="form" action="{{ path("AeagSqeBundle_saisieDonnees_lot_periode_station_ana_resultat",{"prelevId":  cmdPrelev.id, "periodeAnId":  periodeAn.id, "stationId": station.ouvFoncId}) }}" method="post">
+    <form class="form" id="idForm" role="form" action="{{ path("AeagSqeBundle_saisieDonnees_lot_periode_lac_ana_resultat",{"prelevId":  cmdPrelev.id, "periodeAnId":  periodeAn.id, "stationId": station.ouvFoncId}) }}" method="post">
     
     <div class="form-body">  
         
@@ -286,7 +286,7 @@
            <div class="col-md-offset-5 col-md-8">
      {% endif %}
             <a href="lotPeriodeStationSaisirEnvSitu.html.twig"></a>
-           <a class="btn btn-danger" href="{{path('AeagSqeBundle_saisieDonnees_lot_periode_stations',{'stationId': station.ouvFoncId, 'periodeAnId': periodeAn.id, 'cmdDemandeId': demande.id })}}">
+           <a class="btn btn-danger" href="{{path('AeagSqeBundle_saisieDonnees_lot_periode_lacs',{'stationId': station.ouvFoncId, 'periodeAnId': periodeAn.id, 'cmdDemandeId': demande.id })}}">
                 <i class="fa fa-undo"> Annuler</i>
             </a>
           </div>
