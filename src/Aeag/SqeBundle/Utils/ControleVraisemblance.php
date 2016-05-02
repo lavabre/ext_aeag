@@ -374,6 +374,7 @@ class ControleVraisemblance {
                 }
             }
         }
+        return true;
     }
 
 }

@@ -41,8 +41,8 @@ AeagSqeBundle_saisieDonnees_lot_periode_lacs:
     defaults: { _controller: AeagSqeBundle:SaisieDonnees:lotPeriodeLacs, periodeAnId : null}
     
 AeagSqeBundle_saisieDonnees_lot_periode_lac_saisir_env_situ:
-    path:  /saisir_lac/env/{prelevId}/{periodeAnId}/{stationId}/{maj}
-    defaults: { _controller: AeagSqeBundle:SaisieDonnees:lotPeriodeLacSaisirEnvSitu, prelevId : null, periodeAnId : null, stationId : null, maj : null}
+    path:  /saisir_lac/env/{demandeId}/{periodeAnId}/{stationId}/{maj}
+    defaults: { _controller: AeagSqeBundle:SaisieDonnees:lotPeriodeLacSaisirEnvSitu,demandeId : null, periodeAnId : null, stationId : null, maj : null}
     requirements:
         methods:  GET|POST
         

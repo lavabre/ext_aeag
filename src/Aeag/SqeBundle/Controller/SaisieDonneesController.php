@@ -1180,7 +1180,7 @@ class SaisieDonneesController extends Controller {
                         $tabStatut['statut'] = 0;
                         $tabStatut['libelle'] = null;
                         $parametre = $pgProgLotParamAn->getCodeParametre()->getCodeparametre();
-                        $inSitu = 2;
+                        $inSitu = 0;
 
                         if (strlen($valeur) > 0) {
                             $pgSandreFraction = $repoPgSandreFractions->getPgSandreFractionsByCodeFraction($pgProgLotParamAn->getCodeFraction());
@@ -1322,8 +1322,7 @@ class SaisieDonneesController extends Controller {
             )));
         }
     }
-    
-    
+
     public function lotPeriodeLacsAction($periodeAnId) {
         $user = $this->getUser();
         if (!$user) {
@@ -1411,7 +1410,7 @@ class SaisieDonneesController extends Controller {
             $j = 0;
             if ($pgCmdDemande) {
                 $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($pgCmdDemande->getPrestataire(), $pgCmdDemande, $station, $pgProgLotPeriodeAn->getPeriode());
-                $tabStations[$i]['nbPrelev'] = count( $pgCmdPrelevs);
+                $tabStations[$i]['nbPrelev'] = count($pgCmdPrelevs);
                 foreach ($pgCmdPrelevs as $pgCmdPrelev) {
                     if ($pgCmdPrelev) {
                         $tabStations[$i]['cmdPrelev'][$j]['cmdPrelev'] = $pgCmdPrelev;
@@ -1607,8 +1606,8 @@ class SaisieDonneesController extends Controller {
                     'periodeAn' => $pgProgLotPeriodeAn,
                     'stations' => $tabStations));
     }
-    
-    public function lotPeriodeLacSaisirEnvSituAction($prelevId = null, $periodeAnId = null, $stationId = null, $maj = null, Request $request) {
+
+    public function lotPeriodeLacSaisirEnvSituAction($demandeId = null, $periodeAnId = null, $stationId = null, $maj = null, Request $request) {
 
         $user = $this->getUser();
         if (!$user) {
@@ -1620,6 +1619,7 @@ class SaisieDonneesController extends Controller {
         $session->set('fonction', 'lotPeriodeStationSaisirEnvSitu');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
+        $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
         $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
         $repoPgCmdMesureEnv = $emSqe->getRepository('AeagSqeBundle:PgCmdMesureEnv');
         $repoPgCmdAnalyse = $emSqe->getRepository('AeagSqeBundle:PgCmdAnalyse');
@@ -1636,8 +1636,7 @@ class SaisieDonneesController extends Controller {
         $repoPgCmdPrelevPc = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelevPc');
 
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
-        $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevById($prelevId);
-
+        $pgCmdDemande = $repoPgCmdDemande->getPgCmdDemandeById($demandeId);
         $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($periodeAnId);
         $pgProgLotAn = $pgProgLotPeriodeAn->getLotAn();
         $pgProgLot = $pgProgLotAn->getLot();
@@ -1653,27 +1652,31 @@ class SaisieDonneesController extends Controller {
             $userPrestataire = $pgProgLot->getTitulaire();
         }
 
+
+
         $tabGroupes = array();
         $nbGroupes = 0;
         foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
-            $pgProgLotGrparAn = $pgProgLotPeriodeProg->getGrparAn();
-            if ($pgProgLotGrparAn->getvalide() == 'O' and ( $pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'ENV' or $pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'SIT')) {
-                $pgProgGrpParamRef = $pgProgLotGrparAn->getGrparRef();
+            $pgProgPeriodes = $pgProgLotPeriodeProg->getPeriodAn()->getPeriode();
+            $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($userPrestataire, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
+            foreach ($pgCmdPrelevs as $pgCmdPrelev) {
+                $pgProgLotGrparAn = $pgProgLotPeriodeProg->getGrparAn();
+                if ($pgProgLotGrparAn->getvalide() == 'O' and $pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'ENV') {
+                    $pgProgGrpParamRef = $pgProgLotGrparAn->getGrparRef();
 // if ($pgProgGrpParamRef->getCodeMilieu()->getCodeMilieu() == $pgProgTypeMilieu->getCodeMilieu()) {
-                $tabGroupes[$nbGroupes]['grparAn'] = $pgProgLotGrparAn;
-                $tabGroupes[$nbGroupes]['correct'] = 0;
-                $tabGroupes[$nbGroupes]['warning'] = 0;
-                $tabGroupes[$nbGroupes]['erreur'] = 0;
-                $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
-                $tabParamAns = array();
-                $nbParamAns = 0;
-                foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
-                    $tabParamAns[$nbParamAns]['paramAn'] = $pgProgLotParamAn;
-                    $pgSandreUnites = $repoPgSandreUnites->getPgSandreUnitesByCodeUnite($pgProgLotParamAn->getCodeUnite());
-                    if ($pgSandreUnites) {
-                        $tabParamAns[$nbParamAns]['unite'] = $pgSandreUnites;
-                    }
-                    if ($pgProgGrpParamRef->getTypeGrp() == 'ENV') {
+                    $tabGroupes[$nbGroupes]['grparAn'] = $pgProgLotGrparAn;
+                    $tabGroupes[$nbGroupes]['correct'] = 0;
+                    $tabGroupes[$nbGroupes]['warning'] = 0;
+                    $tabGroupes[$nbGroupes]['erreur'] = 0;
+                    $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
+                    $tabParamAns = array();
+                    $nbParamAns = 0;
+                    foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
+                        $tabParamAns[$nbParamAns]['paramAn'] = $pgProgLotParamAn;
+                        $pgSandreUnites = $repoPgSandreUnites->getPgSandreUnitesByCodeUnite($pgProgLotParamAn->getCodeUnite());
+                        if ($pgSandreUnites) {
+                            $tabParamAns[$nbParamAns]['unite'] = $pgSandreUnites;
+                        }
                         $pgCmdMesureEnv = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParamProg($pgCmdPrelev, $pgProgLotParamAn);
                         if ($pgCmdMesureEnv) {
                             if ($pgCmdMesureEnv->getCodeStatut() == '0') {
@@ -1709,96 +1712,120 @@ class SaisieDonneesController extends Controller {
                         }
                         $nbParamAns++;
                     }
+                    sort($tabParamAns);
+                    $tabGroupes[$nbGroupes]['paramAns'] = $tabParamAns;
+                    $nbGroupes++;
+// }
+                }
 
-                    if ($pgProgGrpParamRef->getTypeGrp() == 'SIT') {
+                if ($pgProgLotGrparAn->getvalide() == 'O' and $pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'SIT') {
+                    $pgProgGrpParamRef = $pgProgLotGrparAn->getGrparRef();
+// if ($pgProgGrpParamRef->getCodeMilieu()->getCodeMilieu() == $pgProgTypeMilieu->getCodeMilieu()) {
+                    $tabGroupes[$nbGroupes]['grparAn'] = $pgProgLotGrparAn;
+                    $tabGroupes[$nbGroupes]['correct'] = 0;
+                    $tabGroupes[$nbGroupes]['warning'] = 0;
+                    $tabGroupes[$nbGroupes]['erreur'] = 0;
+                    $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
+                    $tabParamAns = array();
+                    $nbParamAns = 0;
+                    foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
+                        $tabParamAns[$nbParamAns]['paramAn'] = $pgProgLotParamAn;
+                        $pgSandreUnites = $repoPgSandreUnites->getPgSandreUnitesByCodeUnite($pgProgLotParamAn->getCodeUnite());
+                        if ($pgSandreUnites) {
+                            $tabParamAns[$nbParamAns]['unite'] = $pgSandreUnites;
+                        }
+
                         $pgCmdPrelevPcs = $repoPgCmdPrelevPc->getPgCmdPrelevPcByPrelev($pgCmdPrelev);
-                        if ($pgCmdPrelevPcs) {
-                            foreach ($pgCmdPrelevPcs as $pgCmdPrelevPc) {
-                                $pgCmdAnalyse = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, $pgProgLotParamAn->getCodeParametre()->getCodeParametre(), $pgCmdPrelevPc->getNumOrdre());
-                                if ($pgCmdAnalyse) {
-                                    if ($pgCmdAnalyse->getCodeStatut() == '0') {
-                                        $tabGroupes[$nbGroupes]['correct'] = $tabGroupes[$nbGroupes]['correct'] + 1;
-                                    } elseif ($pgCmdAnalyse->getCodeStatut() == '1') {
-                                        $tabGroupes[$nbGroupes]['warning'] = $tabGroupes[$nbGroupes]['warning'] + 1;
-                                    } elseif ($pgCmdAnalyse->getCodeStatut() == '2') {
-                                        $tabGroupes[$nbGroupes]['erreur'] = $tabGroupes[$nbGroupes]['erreur'] + 1;
-                                    }
-                                    $tabParamAns[$nbParamAns]['paramAn'] = $pgProgLotParamAn;
-                                    $tabParamAns[$nbParamAns]['pgCmdAnalyse'] = $pgCmdAnalyse;
-                                    $tabParamAns[$nbParamAns]['pgCmdPrelevPc'] = $pgCmdPrelevPc;
-                                    $tabParamAns[$nbParamAns]['unite'] = $pgCmdAnalyse->getCodeUnite();
-                                    $pgSandreUnitesPossiblesParamsEnv = $repoPgSandreUnitesPossiblesParamsEnv->getPgSandreUnitesPossiblesParamsEnvByCodeParametre($pgProgLotParamAn->getCodeParametre()->getCodeParametre());
-                                    if ($pgSandreUnitesPossiblesParamsEnv) {
-                                        $tabParamAns[$nbParamAns]['valeurs'] = $pgSandreUnitesPossiblesParamsEnv;
-                                    } else {
-                                        $tabParamAns[$nbParamAns]['valeurs'] = null;
-                                    }
-                                    $pgProgUnitesPossiblesParam = $repoPgProgUnitesPossiblesParam->getPgProgUnitesPossiblesParamByCodeParametre($pgProgLotParamAn->getCodeParametre()->getCodeParametre());
-                                    if ($pgProgUnitesPossiblesParam) {
-                                        $tabParamAns[$nbParamAns]['unites'] = $pgProgUnitesPossiblesParam;
-                                    } else {
-                                        $tabParamAns[$nbParamAns]['unites'] = null;
-                                    }
+                        foreach ($pgCmdPrelevPcs as $pgCmdPrelevPc) {
+                            $pgCmdPrelev = $pgCmdPrelevPc->getPrelev();
+                            $pgCmdPrelevPcs = $repoPgCmdPrelevPc->getPgCmdPrelevPcByPrelev($pgCmdPrelev);
+                            if ($pgCmdPrelevPcs) {
+                                foreach ($pgCmdPrelevPcs as $pgCmdPrelevPc) {
+                                    $pgCmdAnalyse = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, $pgProgLotParamAn->getCodeParametre()->getCodeParametre(), $pgCmdPrelevPc->getNumOrdre());
+                                    if ($pgCmdAnalyse) {
+                                        if ($pgCmdAnalyse->getCodeStatut() == '0') {
+                                            $tabGroupes[$nbGroupes]['correct'] = $tabGroupes[$nbGroupes]['correct'] + 1;
+                                        } elseif ($pgCmdAnalyse->getCodeStatut() == '1') {
+                                            $tabGroupes[$nbGroupes]['warning'] = $tabGroupes[$nbGroupes]['warning'] + 1;
+                                        } elseif ($pgCmdAnalyse->getCodeStatut() == '2') {
+                                            $tabGroupes[$nbGroupes]['erreur'] = $tabGroupes[$nbGroupes]['erreur'] + 1;
+                                        }
+                                        $tabParamAns[$nbParamAns]['paramAn'] = $pgProgLotParamAn;
+                                        $tabParamAns[$nbParamAns]['pgCmdAnalyse'] = $pgCmdAnalyse;
+                                        $tabParamAns[$nbParamAns]['pgCmdPrelevPc'] = $pgCmdPrelevPc;
+                                        $tabParamAns[$nbParamAns]['unite'] = $pgCmdAnalyse->getCodeUnite();
+                                        $pgSandreUnitesPossiblesParamsEnv = $repoPgSandreUnitesPossiblesParamsEnv->getPgSandreUnitesPossiblesParamsEnvByCodeParametre($pgProgLotParamAn->getCodeParametre()->getCodeParametre());
+                                        if ($pgSandreUnitesPossiblesParamsEnv) {
+                                            $tabParamAns[$nbParamAns]['valeurs'] = $pgSandreUnitesPossiblesParamsEnv;
+                                        } else {
+                                            $tabParamAns[$nbParamAns]['valeurs'] = null;
+                                        }
+                                        $pgProgUnitesPossiblesParam = $repoPgProgUnitesPossiblesParam->getPgProgUnitesPossiblesParamByCodeParametre($pgProgLotParamAn->getCodeParametre()->getCodeParametre());
+                                        if ($pgProgUnitesPossiblesParam) {
+                                            $tabParamAns[$nbParamAns]['unites'] = $pgProgUnitesPossiblesParam;
+                                        } else {
+                                            $tabParamAns[$nbParamAns]['unites'] = null;
+                                        }
 
-                                    if ($pgProgLotParamAn->getCodeFraction()) {
-                                        $pgSandreFraction = $repoPgSandreFractions->getPgSandreFractionsByCodeFraction($pgProgLotParamAn->getCodeFraction());
-                                        $tabParamAns[$nbParamAns]['fraction'] = $pgSandreFraction;
+                                        if ($pgProgLotParamAn->getCodeFraction()) {
+                                            $pgSandreFraction = $repoPgSandreFractions->getPgSandreFractionsByCodeFraction($pgProgLotParamAn->getCodeFraction());
+                                            $tabParamAns[$nbParamAns]['fraction'] = $pgSandreFraction;
+                                        } else {
+                                            $tabParamAns[$nbParamAns]['fraction'] = null;
+                                        }
                                     } else {
-                                        $tabParamAns[$nbParamAns]['fraction'] = null;
-                                    }
-                                } else {
-                                    $tabParamAns[$nbParamAns]['paramAn'] = $pgProgLotParamAn;
-                                    $tabParamAns[$nbParamAns]['pgCmdAnalyse'] = null;
-                                    $tabParamAns[$nbParamAns]['pgCmdPrelevPc'] = $pgCmdPrelevPc;
-                                    $pgSandreUnitesPossiblesParamsEnv = $repoPgSandreUnitesPossiblesParamsEnv->getPgSandreUnitesPossiblesParamsEnvByCodeParametre($pgProgLotParamAn->getCodeParametre()->getCodeParametre());
-                                    if ($pgSandreUnitesPossiblesParamsEnv) {
-                                        $tabParamAns[$nbParamAns]['valeurs'] = $pgSandreUnitesPossiblesParamsEnv;
-                                    } else {
-                                        $tabParamAns[$nbParamAns]['valeurs'] = null;
-                                    }
-                                    $pgProgUnitesPossiblesParam = $repoPgProgUnitesPossiblesParam->getPgProgUnitesPossiblesParamByCodeParametre($pgProgLotParamAn->getCodeParametre()->getCodeParametre());
-                                    if ($pgProgUnitesPossiblesParam) {
-                                        $tabParamAns[$nbParamAns]['unites'] = $pgProgUnitesPossiblesParam;
-                                    } else {
-                                        $tabParamAns[$nbParamAns]['unites'] = null;
-                                    }
-                                    $tabParamAns[$nbParamAns]['unite'] = null;
+                                        $tabParamAns[$nbParamAns]['paramAn'] = $pgProgLotParamAn;
+                                        $tabParamAns[$nbParamAns]['pgCmdAnalyse'] = null;
+                                        $tabParamAns[$nbParamAns]['pgCmdPrelevPc'] = $pgCmdPrelevPc;
+                                        $pgSandreUnitesPossiblesParamsEnv = $repoPgSandreUnitesPossiblesParamsEnv->getPgSandreUnitesPossiblesParamsEnvByCodeParametre($pgProgLotParamAn->getCodeParametre()->getCodeParametre());
+                                        if ($pgSandreUnitesPossiblesParamsEnv) {
+                                            $tabParamAns[$nbParamAns]['valeurs'] = $pgSandreUnitesPossiblesParamsEnv;
+                                        } else {
+                                            $tabParamAns[$nbParamAns]['valeurs'] = null;
+                                        }
+                                        $pgProgUnitesPossiblesParam = $repoPgProgUnitesPossiblesParam->getPgProgUnitesPossiblesParamByCodeParametre($pgProgLotParamAn->getCodeParametre()->getCodeParametre());
+                                        if ($pgProgUnitesPossiblesParam) {
+                                            $tabParamAns[$nbParamAns]['unites'] = $pgProgUnitesPossiblesParam;
+                                        } else {
+                                            $tabParamAns[$nbParamAns]['unites'] = null;
+                                        }
+                                        $tabParamAns[$nbParamAns]['unite'] = null;
 
-                                    if ($pgProgLotParamAn->getCodeFraction()) {
-                                        $pgSandreFraction = $repoPgSandreFractions->getPgSandreFractionsByCodeFraction($pgProgLotParamAn->getCodeFraction());
-                                        $tabParamAns[$nbParamAns]['fraction'] = $pgSandreFraction;
-                                    } else {
-                                        $tabParamAns[$nbParamAns]['fraction'] = null;
+                                        if ($pgProgLotParamAn->getCodeFraction()) {
+                                            $pgSandreFraction = $repoPgSandreFractions->getPgSandreFractionsByCodeFraction($pgProgLotParamAn->getCodeFraction());
+                                            $tabParamAns[$nbParamAns]['fraction'] = $pgSandreFraction;
+                                        } else {
+                                            $tabParamAns[$nbParamAns]['fraction'] = null;
+                                        }
                                     }
+                                    $nbParamAns++;
                                 }
-                                $nbParamAns++;
                             }
                         }
                     }
-                }
-                sort($tabParamAns);
-                $tabGroupes[$nbGroupes]['paramAns'] = $tabParamAns;
-                $nbGroupes++;
+                    sort($tabParamAns);
+                    $tabGroupes[$nbGroupes]['paramAns'] = $tabParamAns;
+                    $nbGroupes++;
 // }
+                }
             }
         }
 
 //\Symfony\Component\VarDumper\VarDumper::dump($tabParamAns);
 //return new Response ('');
 
-      return $this->render('AeagSqeBundle:SaisieDonnees:lotPeriodeLacSaisirEnvSitu.html.twig', array(
-                        'user' => $pgProgWebUser,
-                        'typeMilieu' => $pgProgTypeMilieu,
-                        'lotan' => $pgProgLotAn,
-                        'station' => $pgRefStationMesure,
-                        'periodeAn' => $pgProgLotPeriodeAn,
-                        'demande' => $pgCmdPrelev->getDemande(),
-                        'cmdPrelev' => $pgCmdPrelev,
-                        'groupes' => $tabGroupes,
-                        'maj' => $maj));
-        
+        return $this->render('AeagSqeBundle:SaisieDonnees:lotPeriodeLacSaisirEnvSitu.html.twig', array(
+                    'user' => $pgProgWebUser,
+                    'typeMilieu' => $pgProgTypeMilieu,
+                    'lotan' => $pgProgLotAn,
+                    'station' => $pgRefStationMesure,
+                    'periodeAn' => $pgProgLotPeriodeAn,
+                    'demande' => $pgCmdPrelev->getDemande(),
+                    'cmdPrelev' => $pgCmdPrelev,
+                    'groupes' => $tabGroupes,
+                    'maj' => $maj));
     }
-    
+
     public function lotPeriodeLacResultatEnvSituAction($prelevId = null, $periodeAnId = null, $stationId = null, Request $request) {
 
         $user = $this->getUser();
@@ -1811,6 +1838,7 @@ class SaisieDonneesController extends Controller {
         $session->set('fonction', ' otPeriodeStationResultatEnvSitu');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
+        $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
         $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
         $repoPgCmdMesureEnv = $emSqe->getRepository('AeagSqeBundle:PgCmdMesureEnv');
         $repoPgCmdPrelevPc = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelevPc');
@@ -1878,90 +1906,62 @@ class SaisieDonneesController extends Controller {
 
                         if ($pgProgGrpParamRef->getTypeGrp() == 'SIT') {
 
+                            $pgCmdPrelevPcs = $repoPgCmdPrelevPc->getPgCmdPrelevPcByPrelev($pgCmdPrelev);
 
-                            if (isset($_POST['valeur' . $pgProgLotParamAn->getId()])) {
-                                $valeur = $_POST['valeur' . $pgProgLotParamAn->getId()];
-                            } else {
-                                $valeur = null;
-                            }
-                            if (isset($_POST['uniteCode' . $pgProgLotParamAn->getId()])) {
-                                $unite = $_POST['uniteCode' . $pgProgLotParamAn->getId()];
-                            } else {
-                                $unite = null;
-                            }
-                            if (isset($_POST['remarque' . $pgProgLotParamAn->getId()])) {
-                                $remarque = $_POST['remarque' . $pgProgLotParamAn->getId()];
-                            } else {
-                                $remarque = null;
-                            }
-
-                            $AnalyseNumOrdre = 1;
-
-
-                            $nbParametresEnvSit++;
-                            $tabStatut = array();
-                            $tabStatut['ko'] = 0;
-                            $tabStatut['statut'] = 0;
-                            $tabStatut['libelle'] = null;
-                            $parametre = $pgProgLotParamAn->getCodeParametre()->getCodeparametre();
-                            $inSitu = 1;
-
-                            if (strlen($valeur) > 0) {
-                                $pgSandreFraction = $repoPgSandreFractions->getPgSandreFractionsByCodeFraction($pgProgLotParamAn->getCodeFraction());
-                                $tabStatut = $this->_controleVraisemblance($parametre, $valeur, $remarque, $unite, $inSitu, $pgSandreFraction, $tabStatut);
-                                $okControleVraisemblance = $okControleVraisemblance + $tabStatut['ko'];
-                            }
-                            if ($pgProgLotParamAn->getCodeFraction()) {
-                                $pgSandreFraction = $repoPgSandreFractions->getPgSandreFractionsByCodeFraction($pgProgLotParamAn->getCodeFraction());
-                            } else {
-                                $pgSandreFraction = null;
-                            }
-                            if (strlen($valeur) > 0) {
-                                $pgCmdPrelevPc = $repoPgCmdPrelevPc->getPgCmdPrelevPcByPrelevNumOrdre($pgCmdPrelev, $AnalyseNumOrdre);
-                                if (!$pgCmdPrelevPc) {
-                                    $pgCmdPrelevPc = new PgCmdPrelevPc();
-                                    $pgCmdPrelevPc->setPrelev($pgCmdPrelev);
-                                    $pgCmdPrelevPc->setNumOrdre($AnalyseNumOrdre);
-                                    $emSqe->persist($pgCmdPrelevPc);
-                                    $emSqe->flush();
+                            foreach ($pgCmdPrelevPcs as $pgCmdPrelevPc) {
+                                if ($pgCmdPrelevPc->getZoneVerticale()->getCodeZone() == '6') {
+                                    $pgCmdPrelev = $pgCmdPrelevPc->getPrelev();
+                                    break;
                                 }
-                                $pgCmdAnalyse = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, $parametre, $AnalyseNumOrdre);
-                                if (!$pgCmdAnalyse) {
-                                    $pgCmdAnalyse = new PgCmdAnalyse();
-                                    $pgCmdAnalyse->setLieuAna('1');
-                                    $pgCmdAnalyse->setPrelevId($pgCmdPrelev->getId());
-                                    $pgCmdAnalyse->setNumOrdre($AnalyseNumOrdre);
-                                    $pgCmdAnalyse->setParamProg($pgProgLotParamAn);
-                                    $pgCmdAnalyse->setCodeParametre($pgProgLotParamAn->getCodeParametre());
-                                    $pgCmdAnalyse->setCodeFraction($pgSandreFraction);
-                                }
+                            }
 
-                                $pgCmdAnalyse->setDateAna($today);
-                                $pgCmdAnalyse->setResultat($valeur);
-                                $pgCmdAnalyse->setCodeRemarque($remarque);
-                                $pgCmdAnalyse->setCodeStatut($tabStatut['statut']);
-                                $pgCmdAnalyse->setLibelleStatut($tabStatut['libelle']);
-                                if ($unite) {
-                                    $pgSandreUnites = $repoPgSandreUnites->getPgSandreUnitesByCodeUnite($unite);
-                                    if ($pgSandreUnites) {
-                                        $pgCmdAnalyse->setCodeUnite($pgSandreUnites);
-                                    } else {
-                                        $pgCmdAnalyse->setCodeUnite(null);
-                                    }
+                            $pgCmdPrelevPcs = $repoPgCmdPrelevPc->getPgCmdPrelevPcByPrelev($pgCmdPrelev);
+
+                            foreach ($pgCmdPrelevPcs as $pgCmdPrelevPc) {
+
+                                $numOrdre = $pgCmdPrelevPc->getNumOrdre();
+
+                                if (isset($_POST['valeur' . $pgProgLotParamAn->getId() . '-' . $numOrdre])) {
+                                    $valeur = $_POST['valeur' . $pgProgLotParamAn->getId() . '-' . $numOrdre];
                                 } else {
-                                    $pgCmdAnalyse->setCodeUnite(null);
+                                    $valeur = null;
                                 }
-                                $emSqe->persist($pgCmdAnalyse);
-                            } else {
-                                if ($remarque == '0') {
-                                    $pgCmdPrelevPc = $repoPgCmdPrelevPc->getPgCmdPrelevPcByPrelevNumOrdre($pgCmdPrelev, $AnalyseNumOrdre);
-                                    if (!$pgCmdPrelevPc) {
-                                        $pgCmdPrelevPc = new PgCmdPrelevPc();
-                                        $pgCmdPrelevPc->setPrelev($pgCmdPrelev);
-                                        $pgCmdPrelevPc->setNumOrdre($AnalyseNumOrdre);
-                                        $emSqe->persist($pgCmdPrelevPc);
-                                        $emSqe->flush();
-                                    }
+                                if (isset($_POST['uniteCode' . $pgProgLotParamAn->getId() . '-' . $numOrdre])) {
+                                    $unite = $_POST['uniteCode' . $pgProgLotParamAn->getId() . '-' . $numOrdre];
+                                } else {
+                                    $unite = null;
+                                }
+                                if (isset($_POST['remarque' . $pgProgLotParamAn->getId() . '-' . $numOrdre])) {
+                                    $remarque = $_POST['remarque' . $pgProgLotParamAn->getId() . '-' . $numOrdre];
+                                } else {
+                                    $remarque = null;
+                                }
+
+
+
+                                $AnalyseNumOrdre = $numOrdre;
+
+
+                                $nbParametresEnvSit++;
+                                $tabStatut = array();
+                                $tabStatut['ko'] = 0;
+                                $tabStatut['statut'] = 0;
+                                $tabStatut['libelle'] = null;
+                                $parametre = $pgProgLotParamAn->getCodeParametre()->getCodeparametre();
+                                $inSitu = 1;
+
+
+                                if (strlen($valeur) > 0) {
+                                    $pgSandreFraction = $repoPgSandreFractions->getPgSandreFractionsByCodeFraction($pgProgLotParamAn->getCodeFraction());
+                                    $tabStatut = $this->_controleVraisemblance($parametre, $valeur, $remarque, $unite, $inSitu, $pgSandreFraction, $tabStatut);
+                                    $okControleVraisemblance = $okControleVraisemblance + $tabStatut['ko'];
+                                }
+                                if ($pgProgLotParamAn->getCodeFraction()) {
+                                    $pgSandreFraction = $repoPgSandreFractions->getPgSandreFractionsByCodeFraction($pgProgLotParamAn->getCodeFraction());
+                                } else {
+                                    $pgSandreFraction = null;
+                                }
+                                if (strlen($valeur) > 0) {
                                     $pgCmdAnalyse = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, $parametre, $AnalyseNumOrdre);
                                     if (!$pgCmdAnalyse) {
                                         $pgCmdAnalyse = new PgCmdAnalyse();
@@ -1972,11 +1972,12 @@ class SaisieDonneesController extends Controller {
                                         $pgCmdAnalyse->setCodeParametre($pgProgLotParamAn->getCodeParametre());
                                         $pgCmdAnalyse->setCodeFraction($pgSandreFraction);
                                     }
+
                                     $pgCmdAnalyse->setDateAna($today);
-                                    $pgCmdAnalyse->setResultat(null);
+                                    $pgCmdAnalyse->setResultat($valeur);
                                     $pgCmdAnalyse->setCodeRemarque($remarque);
-                                    $pgCmdAnalyse->setCodeStatut(1);
-                                    $pgCmdAnalyse->setLibelleStatut('Valeur absente');
+                                    $pgCmdAnalyse->setCodeStatut($tabStatut['statut']);
+                                    $pgCmdAnalyse->setLibelleStatut($tabStatut['libelle']);
                                     if ($unite) {
                                         $pgSandreUnites = $repoPgSandreUnites->getPgSandreUnitesByCodeUnite($unite);
                                         if ($pgSandreUnites) {
@@ -1988,6 +1989,35 @@ class SaisieDonneesController extends Controller {
                                         $pgCmdAnalyse->setCodeUnite(null);
                                     }
                                     $emSqe->persist($pgCmdAnalyse);
+                                } else {
+                                    if ($remarque == '0') {
+                                        $pgCmdAnalyse = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, $parametre, $AnalyseNumOrdre);
+                                        if (!$pgCmdAnalyse) {
+                                            $pgCmdAnalyse = new PgCmdAnalyse();
+                                            $pgCmdAnalyse->setLieuAna('1');
+                                            $pgCmdAnalyse->setPrelevId($pgCmdPrelev->getId());
+                                            $pgCmdAnalyse->setNumOrdre($AnalyseNumOrdre);
+                                            $pgCmdAnalyse->setParamProg($pgProgLotParamAn);
+                                            $pgCmdAnalyse->setCodeParametre($pgProgLotParamAn->getCodeParametre());
+                                            $pgCmdAnalyse->setCodeFraction($pgSandreFraction);
+                                        }
+                                        $pgCmdAnalyse->setDateAna($today);
+                                        $pgCmdAnalyse->setResultat(null);
+                                        $pgCmdAnalyse->setCodeRemarque($remarque);
+                                        $pgCmdAnalyse->setCodeStatut(1);
+                                        $pgCmdAnalyse->setLibelleStatut('Valeur absente');
+                                        if ($unite) {
+                                            $pgSandreUnites = $repoPgSandreUnites->getPgSandreUnitesByCodeUnite($unite);
+                                            if ($pgSandreUnites) {
+                                                $pgCmdAnalyse->setCodeUnite($pgSandreUnites);
+                                            } else {
+                                                $pgCmdAnalyse->setCodeUnite(null);
+                                            }
+                                        } else {
+                                            $pgCmdAnalyse->setCodeUnite(null);
+                                        }
+                                        $emSqe->persist($pgCmdAnalyse);
+                                    }
                                 }
                             }
                         }
@@ -2169,7 +2199,7 @@ class SaisieDonneesController extends Controller {
             )));
         }
     }
-    
+
     public function lotPeriodeLacSaisirAnaAction($prelevId = null, $periodeAnId = null, $stationId = null, $maj = null, Request $request) {
 
         $user = $this->getUser();
@@ -2183,7 +2213,7 @@ class SaisieDonneesController extends Controller {
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
         $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
-        $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
+        $repoPgCmdPrelevPc = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelevPc');
         $repoPgCmdAnalyse = $emSqe->getRepository('AeagSqeBundle:PgCmdAnalyse');
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
         $repoPgRefStationMesure = $emSqe->getRepository('AeagSqeBundle:PgRefStationMesure');
@@ -2195,9 +2225,12 @@ class SaisieDonneesController extends Controller {
         $repoPgProgUnitesPossiblesParam = $emSqe->getRepository('AeagSqeBundle:PgProgUnitesPossiblesParam');
         $repoPgSandreUnitesPossiblesParamsEnv = $emSqe->getRepository('AeagSqeBundle:PgSandreUnitesPossiblesParamsEnv');
         $repoPgSandreFractions = $emSqe->getRepository('AeagSqeBundle:PgSandreFractions');
+        $repoPgProgGrparRefZoneVert = $emSqe->getRepository('AeagSqeBundle:PgProgGrparRefZoneVert');
 
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevById($prelevId);
+        $pgPrelevPcs = $repoPgCmdPrelevPc->getPgCmdPrelevPcByPrelev($pgCmdPrelev);
+        $pgPrelevPc = $pgPrelevPcs[0];
 
         $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($periodeAnId);
         $pgProgLotAn = $pgProgLotPeriodeAn->getLotAn();
@@ -2218,34 +2251,65 @@ class SaisieDonneesController extends Controller {
         foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
             $pgProgLotGrparAn = $pgProgLotPeriodeProg->getGrparAn();
             if ($pgProgLotGrparAn->getvalide() == 'O' and $pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'ANA') {
-                $pgProgGrpParamRef = $pgProgLotGrparAn->getGrparRef();
-// if ($pgProgGrpParamRef->getCodeMilieu()->getCodeMilieu() == $pgProgTypeMilieu->getCodeMilieu()) {
-                $tabGroupes[$nbGroupes]['grparAn'] = $pgProgLotGrparAn;
-                $tabGroupes[$nbGroupes]['correct'] = 0;
-                $tabGroupes[$nbGroupes]['warning'] = 0;
-                $tabGroupes[$nbGroupes]['erreur'] = 0;
-                $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
-                $tabParamAns = array();
-                $nbParamAns = 0;
-                foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
-                    $tabParamAns[$nbParamAns]['paramAn'] = $pgProgLotParamAn;
-                    $pgSandreUnites = $repoPgSandreUnites->getPgSandreUnitesByCodeUnite($pgProgLotParamAn->getCodeUnite());
-                    if ($pgSandreUnites) {
-                        $tabParamAns[$nbParamAns]['unite'] = $pgSandreUnites;
-                    }
+                if ($pgPrelevPc) {
+                    $nbgProgGrparRefZoneVert = $repoPgProgGrparRefZoneVert->getNbPgProgGrparRefZoneVertByGrparRefPgSandreZoneVerticaleProspectee($pgProgLotGrparAn->getGrparRef(), $pgPrelevPc->getZoneVerticale());
+                } else {
+                    $nbgProgGrparRefZoneVert = 0;
+                }
+                if ($nbgProgGrparRefZoneVert > 0) {
 
-                    $pgCmdAnalyses = $repoPgCmdAnalyse->getPgCmdAnalysesByPrelevParamProg($pgCmdPrelev, $pgProgLotParamAn);
-                    if (count($pgCmdAnalyses) > 0) {
-                        foreach ($pgCmdAnalyses as $pgCmdAnalyse) {
-                            if ($pgCmdAnalyse->getCodeStatut() == '0') {
-                                $tabGroupes[$nbGroupes]['correct'] = $tabGroupes[$nbGroupes]['correct'] + 1;
-                            } elseif ($pgCmdAnalyse->getCodeStatut() == '1') {
-                                $tabGroupes[$nbGroupes]['warning'] = $tabGroupes[$nbGroupes]['warning'] + 1;
-                            } elseif ($pgCmdAnalyse->getCodeStatut() == '2') {
-                                $tabGroupes[$nbGroupes]['erreur'] = $tabGroupes[$nbGroupes]['erreur'] + 1;
+                    $pgProgGrpParamRef = $pgProgLotGrparAn->getGrparRef();
+// if ($pgProgGrpParamRef->getCodeMilieu()->getCodeMilieu() == $pgProgTypeMilieu->getCodeMilieu()) {
+                    $tabGroupes[$nbGroupes]['grparAn'] = $pgProgLotGrparAn;
+                    $tabGroupes[$nbGroupes]['correct'] = 0;
+                    $tabGroupes[$nbGroupes]['warning'] = 0;
+                    $tabGroupes[$nbGroupes]['erreur'] = 0;
+                    $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
+                    $tabParamAns = array();
+                    $nbParamAns = 0;
+                    foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
+                        $tabParamAns[$nbParamAns]['paramAn'] = $pgProgLotParamAn;
+                        $pgSandreUnites = $repoPgSandreUnites->getPgSandreUnitesByCodeUnite($pgProgLotParamAn->getCodeUnite());
+                        if ($pgSandreUnites) {
+                            $tabParamAns[$nbParamAns]['unite'] = $pgSandreUnites;
+                        }
+
+                        $pgCmdAnalyses = $repoPgCmdAnalyse->getPgCmdAnalysesByPrelevParamProg($pgCmdPrelev, $pgProgLotParamAn);
+                        if (count($pgCmdAnalyses) > 0) {
+                            foreach ($pgCmdAnalyses as $pgCmdAnalyse) {
+                                if ($pgCmdAnalyse->getCodeStatut() == '0') {
+                                    $tabGroupes[$nbGroupes]['correct'] = $tabGroupes[$nbGroupes]['correct'] + 1;
+                                } elseif ($pgCmdAnalyse->getCodeStatut() == '1') {
+                                    $tabGroupes[$nbGroupes]['warning'] = $tabGroupes[$nbGroupes]['warning'] + 1;
+                                } elseif ($pgCmdAnalyse->getCodeStatut() == '2') {
+                                    $tabGroupes[$nbGroupes]['erreur'] = $tabGroupes[$nbGroupes]['erreur'] + 1;
+                                }
+                                $tabParamAns[$nbParamAns]['pgCmdAnalyse'] = $pgCmdAnalyse;
+                                $tabParamAns[$nbParamAns]['unite'] = $pgCmdAnalyse->getCodeUnite();
+                                $pgSandreUnitesPossiblesParamsEnv = $repoPgSandreUnitesPossiblesParamsEnv->getPgSandreUnitesPossiblesParamsEnvByCodeParametre($pgProgLotParamAn->getCodeParametre()->getCodeParametre());
+                                if ($pgSandreUnitesPossiblesParamsEnv) {
+                                    $tabParamAns[$nbParamAns]['valeurs'] = $pgSandreUnitesPossiblesParamsEnv;
+                                } else {
+                                    $tabParamAns[$nbParamAns]['valeurs'] = null;
+                                }
+                                $pgProgUnitesPossiblesParam = $repoPgProgUnitesPossiblesParam->getPgProgUnitesPossiblesParamByCodeParametre($pgProgLotParamAn->getCodeParametre()->getCodeParametre());
+                                if ($pgProgUnitesPossiblesParam) {
+                                    $tabParamAns[$nbParamAns]['unites'] = $pgProgUnitesPossiblesParam;
+                                } else {
+                                    $tabParamAns[$nbParamAns]['unites'] = null;
+                                }
+
+                                if ($pgProgLotParamAn->getCodeFraction()) {
+                                    $pgSandreFraction = $repoPgSandreFractions->getPgSandreFractionsByCodeFraction($pgProgLotParamAn->getCodeFraction());
+                                    $tabParamAns[$nbParamAns]['fraction'] = $pgSandreFraction;
+                                } else {
+                                    $tabParamAns[$nbParamAns]['fraction'] = null;
+                                }
+                                $nbParamAns++;
                             }
-                            $tabParamAns[$nbParamAns]['pgCmdAnalyse'] = $pgCmdAnalyse;
-                            $tabParamAns[$nbParamAns]['unite'] = $pgCmdAnalyse->getCodeUnite();
+                        } else {
+                            $tabParamAns[$nbParamAns]['pgCmdAnalyse'] = null;
+
                             $pgSandreUnitesPossiblesParamsEnv = $repoPgSandreUnitesPossiblesParamsEnv->getPgSandreUnitesPossiblesParamsEnvByCodeParametre($pgProgLotParamAn->getCodeParametre()->getCodeParametre());
                             if ($pgSandreUnitesPossiblesParamsEnv) {
                                 $tabParamAns[$nbParamAns]['valeurs'] = $pgSandreUnitesPossiblesParamsEnv;
@@ -2265,40 +2329,17 @@ class SaisieDonneesController extends Controller {
                             } else {
                                 $tabParamAns[$nbParamAns]['fraction'] = null;
                             }
-                            $nbParamAns++;
                         }
-                    } else {
-                        $tabParamAns[$nbParamAns]['pgCmdAnalyse'] = null;
-
-                        $pgSandreUnitesPossiblesParamsEnv = $repoPgSandreUnitesPossiblesParamsEnv->getPgSandreUnitesPossiblesParamsEnvByCodeParametre($pgProgLotParamAn->getCodeParametre()->getCodeParametre());
-                        if ($pgSandreUnitesPossiblesParamsEnv) {
-                            $tabParamAns[$nbParamAns]['valeurs'] = $pgSandreUnitesPossiblesParamsEnv;
-                        } else {
-                            $tabParamAns[$nbParamAns]['valeurs'] = null;
-                        }
-                        $pgProgUnitesPossiblesParam = $repoPgProgUnitesPossiblesParam->getPgProgUnitesPossiblesParamByCodeParametre($pgProgLotParamAn->getCodeParametre()->getCodeParametre());
-                        if ($pgProgUnitesPossiblesParam) {
-                            $tabParamAns[$nbParamAns]['unites'] = $pgProgUnitesPossiblesParam;
-                        } else {
-                            $tabParamAns[$nbParamAns]['unites'] = null;
-                        }
-
-                        if ($pgProgLotParamAn->getCodeFraction()) {
-                            $pgSandreFraction = $repoPgSandreFractions->getPgSandreFractionsByCodeFraction($pgProgLotParamAn->getCodeFraction());
-                            $tabParamAns[$nbParamAns]['fraction'] = $pgSandreFraction;
-                        } else {
-                            $tabParamAns[$nbParamAns]['fraction'] = null;
-                        }
-                    }
-                    $nbParamAns++;
+                        $nbParamAns++;
 //                    if ($pgProgLotParamAn->getCodeParametre()->getCodeParametre() == '1319') {
 //                        return new Response(\Symfony\Component\VarDumper\VarDumper::dump($tabParamAns));
 //                    }
-                }
+                    }
 
-                $tabGroupes[$nbGroupes]['paramAns'] = $tabParamAns;
-                $nbGroupes++;
+                    $tabGroupes[$nbGroupes]['paramAns'] = $tabParamAns;
+                    $nbGroupes++;
 // }
+                }
             }
         }
 
@@ -2315,8 +2356,8 @@ class SaisieDonneesController extends Controller {
                     'groupes' => $tabGroupes,
                     'maj' => $maj));
     }
-    
-     public function lotPeriodeLacResultatAnaAction($prelevId = null, $periodeAnId = null, $stationId = null, Request $request) {
+
+    public function lotPeriodeLacResultatAnaAction($prelevId = null, $periodeAnId = null, $stationId = null, Request $request) {
 
         $user = $this->getUser();
         if (!$user) {
@@ -2408,7 +2449,7 @@ class SaisieDonneesController extends Controller {
                         $tabStatut['statut'] = 0;
                         $tabStatut['libelle'] = null;
                         $parametre = $pgProgLotParamAn->getCodeParametre()->getCodeparametre();
-                        $inSitu = 2;
+                        $inSitu = 0;
 
                         if (strlen($valeur) > 0) {
                             $pgSandreFraction = $repoPgSandreFractions->getPgSandreFractionsByCodeFraction($pgProgLotParamAn->getCodeFraction());
@@ -2752,12 +2793,12 @@ class SaisieDonneesController extends Controller {
             }
         }
         // usort($tabParamAns, create_function('$a,$b', 'return $a[paramAn]->getCodeParametre()->getCodeParametre()-$b[paramAn]->getCodeParametre()->getCodeParametre();'));
-        krsort($tabParamAns, create_function('$a,$b', 'return $a[paramAn]->getCodeParametre()->getCodeParametre()-$b[paramAn]->getCodeParametre()->getCodeParametre();'));
+        krsort($tabParamAns);
         $tabGroupe['paramAns'] = $tabParamAns;
 
         //  \Symfony\Component\VarDumper\VarDumper::dump($tabGroupe);
 //return new Response ('');
-        return $this->render('AeagSqeBundle:SaisieDonnees:lotPeriodeStationGenererEnvSitu.html.twig', array(
+        return $this->render('AeagSqeBundle:SaisieDonnees:lotPeriodeLacGenererEnvSitu.html.twig', array(
                     'user' => $pgProgWebUser,
                     'typeMilieu' => $pgProgTypeMilieu,
                     'lotan' => $pgProgLotAn,
@@ -2784,6 +2825,7 @@ class SaisieDonneesController extends Controller {
 
         $emSqe = $this->get('doctrine')->getManager('sqe');
         $repoPgProgUnitesPossiblesParam = $emSqe->getRepository('AeagSqeBundle:PgProgUnitesPossiblesParam');
+        $controleVraisemblance = $this->get('aeag_sqe.controle_vraisemblance');
 
 // Contrôles sur toutes les valeurs insérées
         $mesure = $valeur;
@@ -2792,108 +2834,61 @@ class SaisieDonneesController extends Controller {
 
 
 // III.1 Champs non renseignés (valeurs et code remarque) ou valeurs non numériques ou valeurs impossibles params env / code remarque peut ne pas être renseigné pour cette liste (car réponse en edilabo 1.0) => avertissement
-        if (is_null($mesure)) {
-            if ($codeRq != 0 || is_null($codeRq)) { // III.2 Si valeur "vide" avec code remarque "0" hors lecture échelle (1429),,,,,,,'ABSENT' / on doit avoir un code remarque = 0 pour les valeurs vides, sinon avertissement, sauf pour le 1429 (cote échelle) => Avertissement
-                if ($codeParametre == 1429 || $inSitu == 1) {
-                    $tabStatut['statut'] = 1;
-                    $tabStatut['libelle'] = 'Valeur non renseignée et code remarque différent de 0';
-                } else {
-                    $tabStatut['ko'] = $tabStatut['ko'] + 1;
-                    $tabStatut['statut'] = 2;
-                    $tabStatut['libelle'] = 'Valeur non renseignée et code remarque différent de 0';
-                }
+        $result = $controleVraisemblance->champsNonRenseignes($mesure, $codeRq, $codeParametre, $inSitu);
+        if (is_bool($result)) {
+            $result = $controleVraisemblance->valeursNumeriques($mesure, $codeRq);
+        }
+        if (is_bool($result)) {
+            $result = $controleVraisemblance->valeursEgalZero($mesure, $codeParametre, $inSitu);
+        }
+        if (is_bool($result)) {
+            $result = $controleVraisemblance->valeursInfZero($mesure, $codeParametre);
+        }
+        if (is_bool($result)) {
+            $result = $controleVraisemblance->valeursSupTrois($codeParametre, $codeRq);
+        }
+        if (is_bool($result)) {
+            if ($codeParametre == '1302') {
+                $result = $controleVraisemblance->pH($mesure);
             }
         }
 
-        if (is_null($codeRq) && !is_null($mesure)) {
-            if ($codeParametre == 1429 || $inSitu == 1) {
-                $tabStatut['statut'] = 1;
-                $tabStatut['libelle'] = 'Valeur renseignée et code remarque vide';
-            } else {
-                $tabStatut['ko'] = $tabStatut['ko'] + 1;
-                $tabStatut['statut'] = 2;
-                $tabStatut['libelle'] = 'Valeur renseignée et code remarque vide';
-            }
-        }
-
-        if (!is_null($codeRq) && !is_null($mesure)) {
-            if (!is_numeric($mesure) || !is_numeric($codeRq)) {
-                $tabStatut['ko'] = $tabStatut['ko'] + 1;
-                $tabStatut['statut'] = 2;
-                $tabStatut['libelle'] = 'La valeur n\'est pas un nombre';
-            }
-        }
-
-// Codes Params Env
-// TODO Utiliser champ in_situ == 0
-        $codeParamsEnv = array(
-            1015, 1018, 1408, 1409, 1410, 1411, 1412, 1413, 1415, 1416,
-            1420, 1422, 1423, 1424, 1425, 1427, 1428, 1429, 1434, 1726,
-            1799, 1841, 1947, 1948, 5915, 6565, 6566, 6567, 7036
-        );
-
-// III.3 Valeurs =0 (hors TH (1345), TA (1346), TAC (1347), Temp(1301)) hors codes observations environnementales / résultat = 0 possible pour les paramètres de cette liste (et pour 1345, 1346, 1347 et 1301) => Erreur
-        if ($mesure == 0) {
-            if ($codeParametre !== 1345 && $codeParametre !== 1346 && $codeParametre !== 1347 && $codeParametre !== 1301 && $inSitu != 1) {
-                $tabStatut['ko'] = $tabStatut['ko'] + 1;
-                $tabStatut['statut'] = 2;
-                $tabStatut['libelle'] = 'Valeur = 0 impossible pour ce paramètre';
-            }
-        }
-
-// III.4 Valeurs < 0 (hors température de air 1409, potentiel REDOX 1330)
-        if ($mesure < 0) {
-            if ($codeParametre != 1409 && $codeParametre != 1330 && $codeParametre != 1420 && $codeParametre != 1429) {
-                $tabStatut['ko'] = $tabStatut['ko'] + 1;
-                $tabStatut['statut'] = 2;
-                $tabStatut['libelle'] = 'Valeur < 0 impossible pour ce paramètre';
-            }
-        }
-
-// III.5 Valeurs avec code remarque '> (3)' hors bactério (1147,1448,1449,1451,5479,6455); code remarque ="Trace (7)"
-        $codeParamsBacterio = array(
-            1447, 1448, 1449, 1451, 5479, 6455
-        );
-        if (($codeRq == 3 && !in_array($codeParametre, $codeParamsBacterio)) || $codeRq == 7) {
-            $tabStatut['ko'] = $tabStatut['ko'] + 1;
-            $tabStatut['statut'] = 2;
-            $tabStatut['libelle'] = 'Code Remarque > 3 ou == 7 impossible pour ce paramètre';
-        }
-
-// III.6 1 < pH(1302) < 14
-        if ($codeParametre == '1302') {
-            $mPh = $mesure;
-            if (!is_null($mPh)) {
-                if ($mPh < 1 || $mPh > 14) {
-                    $tabStatut['ko'] = $tabStatut['ko'] + 1;
-                    $tabStatut['statut'] = 2;
-                    $tabStatut['libelle'] = 'Le pH n\'est pas entre 1 et 14';
-                }
-            }
-        }
+        if (is_bool($result)) {
 
 // III.12 Valeur de pourcentage hors 1312 oxygène (ex : matière sèche ou granulo) : non compris entre 0 et 100 si code unité = 243 ou 246
-        if ($unite == '243' or $unite == '246') {
-            if ($codeParametre != '1312') {
-                if ($mesure < 0 or $mesure > 100) {
-                    $tabStatut['ko'] = $tabStatut['ko'] + 1;
-                    $tabStatut['statut'] = 2;
-                    $tabStatut['libelle'] = 'Valeur pourcentage : pourcentage n\'est pas entre 0 et 100';
+            if ($unite == '243' or $unite == '246') {
+                if ($codeParametre != '1312') {
+                    if ($mesure < 0 or $mesure > 100) {
+                        $tabStatut['ko'] = $tabStatut['ko'] + 1;
+                        $tabStatut['statut'] = 2;
+                        $tabStatut['libelle'] = 'Valeur pourcentage : pourcentage n\'est pas entre 0 et 100';
+                    }
+                }
+            }
+
+            //  Résultat d’analyse< Valeur max de la base  
+
+            $pgProgUnitesPossiblesParam = $repoPgProgUnitesPossiblesParam->getPgProgUnitesPossiblesParamByCodeParametreCodeUniteNatureFraction($codeParametre, $unite, $fraction);
+            if ($pgProgUnitesPossiblesParam) {
+                if (strlen($pgProgUnitesPossiblesParam->getValMax()) > 0) {
+                    if ($mesure > $pgProgUnitesPossiblesParam->getValMax()) {
+                        $tabStatut['ko'] = $tabStatut['ko'] + 1;
+                        $tabStatut['statut'] = 2;
+                        $tabStatut['libelle'] = 'Valeur doit être inferieure à ' . $pgProgUnitesPossiblesParam->getValMax();
+                    }
                 }
             }
         }
 
-        //  Résultat d’analyse< Valeur max de la base  
-
-        $pgProgUnitesPossiblesParam = $repoPgProgUnitesPossiblesParam->getPgProgUnitesPossiblesParamByCodeParametreCodeUniteNatureFraction($codeParametre, $unite, $fraction);
-        if ($pgProgUnitesPossiblesParam) {
-            if (strlen($pgProgUnitesPossiblesParam->getValMax()) > 0) {
-                if ($mesure > $pgProgUnitesPossiblesParam->getValMax()) {
-                    $tabStatut['ko'] = $tabStatut['ko'] + 1;
-                    $tabStatut['statut'] = 2;
-                    $tabStatut['libelle'] = 'Valeur doit être inferieure à ' . $pgProgUnitesPossiblesParam->getValMax();
-                }
+        if (!is_bool($result)) {
+            $tabRetour = $result;
+            if ($tabRetour[0] == 'warning') {
+                $tabStatut['statut'] = 1;
+            } else {
+                $tabStatut['statut'] = 2;
             }
+            $tabStatut['libelle'] = $tabRetour[1];
+            $tabStatut['ko'] = $tabStatut['ko'] + 1;
         }
 
         return $tabStatut;
@@ -2907,11 +2902,8 @@ class SaisieDonneesController extends Controller {
 // III.7
         $okControles += $this->_modeleWeiss($pgCmdPrelev);
 
-// III.8 
+// III.8  et III.9
         $okControles += $this->_balanceIonique($pgCmdPrelev);
-
-// III.9
-        $okControles += $this->_balanceIoniqueTds2($pgCmdPrelev);
 
 // III.10
         $okControles += $this->_ortophosphate($pgCmdPrelev);
@@ -2939,6 +2931,7 @@ class SaisieDonneesController extends Controller {
         $session->set('controller', 'SaisieDonnees');
         $session->set('fonction', '_modeleWeiss');
         $emSqe = $this->get('doctrine')->getManager('sqe');
+        $controleVraisemblance = $this->get('aeag_sqe.controle_vraisemblance');
         $repoPgCmdMesureEnv = $emSqe->getRepository('AeagSqeBundle:PgCmdMesureEnv');
         $repoPgCmdAnalyse = $emSqe->getRepository('AeagSqeBundle:PgCmdAnalyse');
 
@@ -2962,32 +2955,22 @@ class SaisieDonneesController extends Controller {
         $mConductivite = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1303');
         if (!$mConductivite) {
             $mConductivite = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1303', 1);
+        } else {
+            $mConductivite = null;
         }
 
+        $result = $controleVraisemblance->modeleWeiss($mTxSatOx, $mOxDiss, $mTEau, $mConductivite);
 
-        if ($mTxSatOx && $mOxDiss && $mTEau && $mConductivite) {
-            if ($mConductivite->getResultat() < 10000) {
-                $mTEauK = $mTEau->getResultat() + 273.15;
-                $argExp = -173.4292 + 249.6339 * 100 / $mTEauK + 143.3483 * log($mTEauK / 100) - 21.8492 * $mTEauK / 100;
-                $txSatModel = 1.4276 * exp($argExp);
-                $indVraiWess = $txSatModel - $mTxSatOx->getResultat();
-
-                if (abs($indVraiWess) > 25) {
-//error
-                    $okWeiss++;
-                    $tabStatut['statut'] = 2;
-                    $tabStatut['libelle'] = 'Modele de Weiss : valeurs non conformes (' . abs($indVraiWess) . ')';
-                } else if (10 < abs($indVraiWess) && abs($indVraiWess) <= 25) {
-// Avertissement
-                    $tabStatut['statut'] = 1;
-                    $tabStatut['libelle'] = 'Modele de Weiss : valeur réservée (' . abs($indVraiWess) . ')';
-                }
-            } else {
-//error ou avertissement ?
+        if (!is_bool($result)) {
+            $tabRetour = $result;
+            if ($tabRetour[0] == 'warning') {
                 $tabStatut['statut'] = 1;
-                $tabStatut['libelle'] = 'Modele de Weiss : Conductivité supérieur à 10000  (' . abs($indVraiWess) . ')';
+            } else {
+                $tabStatut['statut'] = 2;
             }
-
+            $tabStatut['libelle'] = $tabRetour[1];
+            $tabStatut['ko'] = $tabStatut['ko'] + 1;
+            $okWeiss = 1;
             $mTxSatOx->setCodeStatut($tabStatut['statut']);
             $mTxSatOx->setLibelleStatut($tabStatut['libelle']);
             $emSqe->persist($mTxSatOx);
@@ -3001,8 +2984,8 @@ class SaisieDonneesController extends Controller {
             $mConductivite->setLibelleStatut($tabStatut['libelle']);
             $emSqe->persist($mConductivite);
             $emSqe->flush();
-            return $okWeiss;
         }
+        return $okWeiss;
     }
 
 // III.8 Balance ionique (meq) sauf si tous les résultats < LQ
@@ -3013,6 +2996,7 @@ class SaisieDonneesController extends Controller {
         $session->set('controller', 'SaisieDonnees');
         $session->set('fonction', '_balanceIonique');
         $emSqe = $this->get('doctrine')->getManager('sqe');
+        $controleVraisemblance = $this->get('aeag_sqe.controle_vraisemblance');
 
         $repoPgCmdMesureEnv = $emSqe->getRepository('AeagSqeBundle:PgCmdMesureEnv');
         $repoPgCmdAnalyse = $emSqe->getRepository('AeagSqeBundle:PgCmdAnalyse');
@@ -3028,8 +3012,10 @@ class SaisieDonneesController extends Controller {
         }
         if ($par1374) {
             $par1374Resultat = $par1374->getResultat();
+            $par1374CodeRemarque = $par1374->getCodeRemarque();
         } else {
             $par1374Resultat = null;
+            $par1374CodeRemarque = null;
         }
 
         $par1335 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1335');
@@ -3038,8 +3024,10 @@ class SaisieDonneesController extends Controller {
         }
         if ($par1335) {
             $par1335Resultat = $par1335->getResultat();
+            $par1335CodeRemarque = $par1335->getCodeRemarque();
         } else {
             $par1335Resultat = null;
+            $par1335CodeRemarque = null;
         }
 
         $par1372 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1372');
@@ -3048,8 +3036,10 @@ class SaisieDonneesController extends Controller {
         }
         if ($par1372) {
             $par1372Resultat = $par1372->getResultat();
+            $par1372CodeRemarque = $par1372->getCodeRemarque();
         } else {
             $par1372Resultat = null;
+            $par1372CodeRemarque = null;
         }
 
         $par1367 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1367');
@@ -3058,8 +3048,10 @@ class SaisieDonneesController extends Controller {
         }
         if ($par1367) {
             $par1367Resultat = $par1367->getResultat();
+            $par1367CodeRemarque = $par1367->getCodeRemarque();
         } else {
             $par1367Resultat = null;
+            $par1367CodeRemarque = null;
         }
 
         $par1375 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1375');
@@ -3068,8 +3060,10 @@ class SaisieDonneesController extends Controller {
         }
         if ($par1375) {
             $par1375Resultat = $par1375->getResultat();
+            $par1375CodeRemarque = $par1375->getCodeRemarque();
         } else {
             $par1375Resultat = null;
+            $par1375CodeRemarque = null;
         }
 
         $par1433 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1433');
@@ -3078,8 +3072,10 @@ class SaisieDonneesController extends Controller {
         }
         if ($par1433) {
             $par1433Resultat = $par1433->getResultat();
+            $par1433CodeRemarque = $par1433->getCodeRemarque();
         } else {
             $par1433Resultat = null;
+            $par1433CodeRemarque = null;
         }
 
 
@@ -3089,8 +3085,10 @@ class SaisieDonneesController extends Controller {
         }
         if ($par1340) {
             $par1340Resultat = $par1340->getResultat();
+            $par1340CodeRemarque = $par1340->getCodeRemarque();
         } else {
             $par1340Resultat = null;
+            $par1340CodeRemarque = null;
         }
 
         $par1338 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1338');
@@ -3099,8 +3097,10 @@ class SaisieDonneesController extends Controller {
         }
         if ($par1338) {
             $par1338Resultat = $par1338->getResultat();
+            $par1338CodeRemarque = $par1338->getCodeRemarque();
         } else {
             $par1338Resultat = null;
+            $par1338CodeRemarque = null;
         }
 
         $par1337 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1337');
@@ -3109,8 +3109,10 @@ class SaisieDonneesController extends Controller {
         }
         if ($par1337) {
             $par1337Resultat = $par1337->getResultat();
+            $par1337CodeRemarque = $par1337->getCodeRemarque();
         } else {
             $par1337Resultat = null;
+            $par1337CodeRemarque = null;
         }
 
         $par1327 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1327');
@@ -3119,8 +3121,10 @@ class SaisieDonneesController extends Controller {
         }
         if ($par1327) {
             $par1327Resultat = $par1327->getResultat();
+            $par1327CodeRemarque = $par1327->getCodeRemarque();
         } else {
             $par1327Resultat = null;
+            $par1327CodeRemarque = null;
         }
 
         $par1339 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1339');
@@ -3129,8 +3133,10 @@ class SaisieDonneesController extends Controller {
         }
         if ($par1339) {
             $par1339Resultat = $par1339->getResultat();
+            $par1339CodeRemarque = $par1339->getCodeRemarque();
         } else {
             $par1339Resultat = null;
+            $par1339CodeRemarque = null;
         }
 
         $cCationParams = array(1374 => $par1374Resultat,
@@ -3138,6 +3144,13 @@ class SaisieDonneesController extends Controller {
             1372 => $par1372Resultat,
             1367 => $par1367Resultat,
             1375 => $par1375Resultat
+        );
+
+        $codeRqCationParams = array(1374 => $par1374CodeRemarque,
+            1335 => $par1335CodeRemarque,
+            1372 => $par1372CodeRemarque,
+            1367 => $par1367CodeRemarque,
+            1375 => $par1375CodeRemarque
         );
 
         $cAnionParams = array(1433 => $par1433Resultat,
@@ -3148,389 +3161,35 @@ class SaisieDonneesController extends Controller {
             1339 => $par1339Resultat
         );
 
-// Vérification de l'existence des paramètres
-        $valid = true;
-        $cpt = 0;
-        $keys = array_keys($cCationParams);
-        while ($cpt < count($keys) && $valid) {
-            if (is_null($cCationParams[$keys[$cpt]])) {
-                $valid = false;
-            }
-            $cpt++;
-        }
-
-
-        if ($valid) {
-            $cpt = 0;
-            $keys = array_keys($cAnionParams);
-            while ($cpt < count($keys) && $valid) {
-                if (is_null($cAnionParams[$keys[$cpt]])) {
-                    $valid = false;
-                }
-                $cpt++;
-            }
-        }
-
-        if ($valid) {
-            $countLq = 0;
-            foreach ($cCationParams as $idx => $cCationParam) {
-                $parIdx = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, $idx);
-                if (!$parIdx) {
-                    $parIdx = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, $idx, 1);
-                }
-                if ($parIdx) {
-                    $parIdxResultat = $parIdx->getResultat();
-                } else {
-                    $parIdxResultat = null;
-                }
-                if ($parIdxResultat == 10) {
-                    $countLq++;
-                }
-            }
-
-            foreach ($cAnionParams as $idx => $cAnionParam) {
-                $parIdx = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, $idx);
-                if (!$parIdx) {
-                    $parIdx = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, $idx, 1);
-                }
-                if ($parIdx) {
-                    $parIdxResultat = $parIdx->getResultat();
-                } else {
-                    $parIdxResultat = null;
-                }
-                if ($parIdxResultat == 10) {
-                    $countLq++;
-                }
-            }
-
-            if ($countLq >= (count($cAnionParams) + count($cCationParams))) {
-                $okBalanceIonique++;
-                $tabStatut['statut'] = 2;
-                $tabStatut['libelle'] = 'Balance Ionique : Tous les dosages sont en LQ';
-            } else {
-                $vCationParams = array(1374 => 20.039,
-                    1335 => 18.03846,
-                    1372 => 12.1525,
-                    1367 => 39.0983,
-                    1375 => 22.98977
-                );
-
-                $vAnionParams = array(1433 => 47.48568,
-                    1340 => 63.0049,
-                    1338 => 48.0313,
-                    1337 => 35.453,
-                    1327 => 61.01684,
-                    1339 => 46.0055
-                );
-
-
-                $cCation = 0;
-                foreach ($cCationParams as $idx => $cCationParam) {
-                    $cCation += $cCationParam / $vCationParams[$idx];
-                }
-
-                $cAnion = 0;
-                foreach ($cAnionParams as $idx => $cAnionParam) {
-                    $cAnion += $cAnionParam / $vAnionParams[$idx];
-                }
-
-                $indVraiBion = ($cCation - $cAnion);
-
-                if (0.5 < $indVraiBion && $indVraiBion <= 1.25) {
-                    $tabStatut['statut'] = 1;
-                    $tabStatut['libelle'] = 'Balance Ionique : Valeur réservée';
-                } else if ($indVraiBion > 1.25) {
-                    $okBalanceIonique++;
-                    $tabStatut['statut'] = 2;
-                    $tabStatut['libelle'] = 'Balance Ionique : Valeur non conforme';
-                }
-            }
-
-
-            $par1374->setCodeStatut($tabStatut['statut']);
-            $par1374->setLibelleStatut($tabStatut['libelle']);
-            $emSqe->persist($par1374);
-            $par1335->setCodeStatut($tabStatut['statut']);
-            $par1335->setLibelleStatut($tabStatut['libelle']);
-            $emSqe->persist($par1335);
-            $par13721->setCodeStatut($tabStatut['statut']);
-            $par1372->setLibelleStatut($tabStatut['libelle']);
-            $emSqe->persist($par1372);
-            $par1367->setCodeStatut($tabStatut['statut']);
-            $par1367->setLibelleStatut($tabStatut['libelle']);
-            $emSqe->persist($par1367);
-            $par1375->setCodeStatut($tabStatut['statut']);
-            $par1375->setLibelleStatut($tabStatut['libelle']);
-            $emSqe->persist($par1375);
-
-            $par1433->setCodeStatut($tabStatut['statut']);
-            $par1433->setLibelleStatut($tabStatut['libelle']);
-            $emSqe->persist($par1433);
-            $par1340->setCodeStatut($tabStatut['statut']);
-            $par1340->setLibelleStatut($tabStatut['libelle']);
-            $emSqe->persist($par1340);
-            $par1338->setCodeStatut($tabStatut['statut']);
-            $par1338->setLibelleStatut($tabStatut['libelle']);
-            $emSqe->persist($par1338);
-            $par1337->setCodeStatut($tabStatut['statut']);
-            $par1337->setLibelleStatut($tabStatut['libelle']);
-            $emSqe->persist($par1337);
-            $par1327->setCodeStatut($tabStatut['statut']);
-            $par1327->setLibelleStatut($tabStatut['libelle']);
-            $emSqe->persist($par1327);
-            $par1339->setCodeStatut($tabStatut['statut']);
-            $par1339->setLibelleStatut($tabStatut['libelle']);
-            $emSqe->persist($par1339);
-
-            $emSqe->flush();
-        }
-        return $okBalanceIonique;
-    }
-
-// III.9 Comparaison Balance ionique / conductivité (Feret)
-    protected function _balanceIoniqueTds2($pgCmdPrelev) {
-
-        $session = $this->get('session');
-        $session->set('menu', 'saisieDonnees');
-        $session->set('controller', 'SaisieDonnees');
-        $session->set('fonction', '_balanceIoniqueTds2');
-        $emSqe = $this->get('doctrine')->getManager('sqe');
-
-        $repoPgCmdMesureEnv = $emSqe->getRepository('AeagSqeBundle:PgCmdMesureEnv');
-        $repoPgCmdAnalyse = $emSqe->getRepository('AeagSqeBundle:PgCmdAnalyse');
-
-        $tabStatut = array();
-        $tabStatut['statut'] = 0;
-        $tabStatut['libelle'] = null;
-        $okBalanceIoniqueTds2 = 0;
-
-        $par1374 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1374');
-        if (!$par1374) {
-            $par1374 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1374', 1);
-        }
-        if ($par1374) {
-            $par1374Resultat = $par1374->getResultat();
-        } else {
-            $par1374Resultat = null;
-        }
-
-        $par1335 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1335');
-        if (!$par1335) {
-            $par1335 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1335', 1);
-        }
-        if ($par1335) {
-            $par1335Resultat = $par1335->getResultat();
-        } else {
-            $par1335Resultat = null;
-        }
-
-        $par1372 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1372');
-        if (!$par1372) {
-            $par1372 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1372', 1);
-        }
-        if ($par1372) {
-            $par1372Resultat = $par1372->getResultat();
-        } else {
-            $par1372Resultat = null;
-        }
-
-        $par1367 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1367');
-        if (!$par1367) {
-            $par1367 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1367', 1);
-        }
-        if ($par1367) {
-            $par1367Resultat = $par1367->getResultat();
-        } else {
-            $par1367Resultat = null;
-        }
-
-        $par1375 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1375');
-        if (!$par1375) {
-            $par1375 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1375', 1);
-        }
-        if ($par1375) {
-            $par1375Resultat = $par1375->getResultat();
-        } else {
-            $par1375Resultat = null;
-        }
-
-        $par1433 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1433');
-        if (!$par1433) {
-            $par1433 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1433', 1);
-        }
-        if ($par1433) {
-            $par1433Resultat = $par1433->getResultat();
-        } else {
-            $par1433Resultat = null;
-        }
-
-
-        $par1340 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1340');
-        if (!$par1340) {
-            $par1340 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1340', 1);
-        }
-        if ($par1340) {
-            $par1340Resultat = $par1340->getResultat();
-        } else {
-            $par1340Resultat = null;
-        }
-
-        $par1338 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1338');
-        if (!$par1338) {
-            $par1338 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1338', 1);
-        }
-        if ($par1338) {
-            $par1338Resultat = $par1338->getResultat();
-        } else {
-            $par1338Resultat = null;
-        }
-
-        $par1337 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1337');
-        if (!$par1337) {
-            $par1337 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1337', 1);
-        }
-        if ($par1337) {
-            $par1337Resultat = $par1337->getResultat();
-        } else {
-            $par1337Resultat = null;
-        }
-
-        $par1327 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1327');
-        if (!$par1327) {
-            $par1327 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1327', 1);
-        }
-        if ($par1327) {
-            $par1327Resultat = $par1327->getResultat();
-        } else {
-            $par1327Resultat = null;
-        }
-
-        $par1339 = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1339');
-        if (!$par1339) {
-            $par1339 = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1339', 1);
-        }
-        if ($par1339) {
-            $par1339Resultat = $par1339->getResultat();
-        } else {
-            $par1339Resultat = null;
-        }
-
-        $cCationParams = array(1374 => $par1374Resultat,
-            1335 => $par1335Resultat,
-            1372 => $par1372Resultat,
-            1367 => $par1367Resultat,
-            1375 => $par1375Resultat
-        );
-
-        $cAnionParams = array(1433 => $par1433Resultat,
-            1340 => $par1340Resultat,
-            1338 => $par1338Resultat,
-            1337 => $par1337Resultat,
-            1327 => $par1327Resultat,
-            1339 => $par1339Resultat
+        $codeRqAnionParams = array(1433 => $par1433CodeRemarque,
+            1340 => $par1340CodeRemarque,
+            1338 => $par1338CodeRemarque,
+            1337 => $par1337CodeRemarque,
+            1327 => $par1327CodeRemarque,
+            1339 => $par1339CodeRemarque
         );
 
         $mConductivite = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1303');
         if (!$mConductivite) {
             $mConductivite = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, '1303', 1);
-        }
-        if ($mConductivite) {
-            $mConductiviteResultat = $mConductivite->getResultat();
         } else {
-            $mConductiviteResultat = null;
+            $mConductivite = null;
         }
 
 
-// Vérification de l'existence des paramètres
-        $valid = true;
-        $cpt = 0;
-        $keys = array_keys($cCationParams);
-        while ($cpt < count($keys) && $valid) {
-            if (is_null($cCationParams[$keys[$cpt]])) {
-                $valid = false;
-            }
-            $cpt++;
+        $result = $controleVraisemblance->balanceIonique($cCationParams, $cAnionParams, $codeRqCationParams, $codeRqAnionParams);
+
+        if (is_bool($result)) {
+            $result = $controleVraisemblance->balanceIoniqueTds2($cCationParams, $cAnionParams, $codeRqCationParams, $codeRqAnionParams, $mConductivite);
         }
 
-        if ($valid) {
-            $cpt = 0;
-            $keys = array_keys($cAnionParams);
-            while ($cpt < count($keys) && $valid) {
-                if (is_null($cAnionParams[$keys[$cpt]])) {
-                    $valid = false;
-                }
-                $cpt++;
-            }
-        }
-
-        if ($valid) {
-            if (is_null($mConductivite)) {
-                $valid = false;
-            }
-        }
-
-        if ($valid) {
-            $countLq = 0;
-            foreach ($cCationParams as $idx => $cCationParam) {
-                $parIdx = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, $idx);
-                if (!$parIdx) {
-                    $parIdx = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, $idx, 1);
-                }
-                if ($parIdx) {
-                    $parIdxResultat = $parIdx->getResultat();
-                } else {
-                    $parIdxResultat = null;
-                }
-                if ($parIdxResultat == 10) {
-                    $countLq++;
-                }
-            }
-
-            foreach ($cAnionParams as $idx => $cAnionParam) {
-                $parIdx = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, $idx);
-                if (!$parIdx) {
-                    $parIdx = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, $idx, 1);
-                }
-                if ($parIdx) {
-                    $parIdxResultat = $parIdx->getResultat();
-                } else {
-                    $parIdxResultat = null;
-                }
-                if ($parIdxResultat == 10) {
-                    $countLq++;
-                }
-            }
-
-            if ($countLq >= (count($cAnionParams) + count($cCationParams))) {
-                $okBalanceIoniqueTds2++;
-                $tabStatut['statut'] = 2;
-                $tabStatut['libelle'] = 'Balance Ionique TDS 2 : Tous les dosages sont en LQ';
+        if (!is_bool($result)) {
+            $tabRetour = $result;
+            if ($tabRetour[0] == 'warning') {
+                $tabStatut['statut'] = 1;
             } else {
-                $cCation = 0;
-                foreach ($cCationParams as $idx => $cCationParam) {
-                    $cCation += $cCationParam;
-                }
-
-                $cAnion = 0;
-                foreach ($cAnionParams as $idx => $cAnionParam) {
-                    $cAnion += $cAnionParam;
-                }
-
-                $tdsEstime = $cCation + $cAnion;
-                $tdsModele = 35.18 + 0.68 * $mConductivite;
-
-                $indVraiTds = $tdsEstime - $tdsModele;
-
-                if (175 <= abs($indVraiTds) && abs($indVraiTds) < 280) {
-                    $tabStatut['statut'] = 1;
-                    $tabStatut['libelle'] = 'Balance Ionique TDS 2 : Réserve';
-                } else if (abs($indVraiTds) >= 280) {
-                    $okBalanceIoniqueTds2++;
-                    $tabStatut['statut'] = 2;
-                    $tabStatut['libelle'] = 'Balance Ionique TDS 2 : Valeur non conforme';
-                }
+                $tabStatut['statut'] = 2;
             }
-
             $par1374->setCodeStatut($tabStatut['statut']);
             $par1374->setLibelleStatut($tabStatut['libelle']);
             $emSqe->persist($par1374);
@@ -3546,7 +3205,6 @@ class SaisieDonneesController extends Controller {
             $par1375->setCodeStatut($tabStatut['statut']);
             $par1375->setLibelleStatut($tabStatut['libelle']);
             $emSqe->persist($par1375);
-
             $par1433->setCodeStatut($tabStatut['statut']);
             $par1433->setLibelleStatut($tabStatut['libelle']);
             $emSqe->persist($par1433);
@@ -3565,11 +3223,9 @@ class SaisieDonneesController extends Controller {
             $par1339->setCodeStatut($tabStatut['statut']);
             $par1339->setLibelleStatut($tabStatut['libelle']);
             $emSqe->persist($par1339);
-
             $emSqe->flush();
         }
-
-        return $okBalanceIoniqueTds2;
+        return $okBalanceIonique;
     }
 
 // III.10 [PO4] (1433) en P < [P total](1350) 
@@ -3580,6 +3236,7 @@ class SaisieDonneesController extends Controller {
         $session->set('controller', 'SaisieDonnees');
         $session->set('fonction', '_ortophosphate');
         $emSqe = $this->get('doctrine')->getManager('sqe');
+        $controleVraisemblance = $this->get('aeag_sqe.controle_vraisemblance');
 
         $repoPgCmdMesureEnv = $emSqe->getRepository('AeagSqeBundle:PgCmdMesureEnv');
         $repoPgCmdAnalyse = $emSqe->getRepository('AeagSqeBundle:PgCmdAnalyse');
@@ -3595,8 +3252,10 @@ class SaisieDonneesController extends Controller {
         }
         if ($mPo4) {
             $mPo4Resultat = $mPo4->getResultat();
+            $mPo4CodeRemarque = $mPo4->getCodeRemarque();
         } else {
             $mPo4Resultat = null;
+            $mPo4CodeRemarque = null;
         }
 
         $mP = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1350');
@@ -3605,25 +3264,20 @@ class SaisieDonneesController extends Controller {
         }
         if ($mP) {
             $mPResultat = $mP->getResultat();
+            $mPCodeRemarque = $mP->getCodeRemarque();
         } else {
             $mPResultat = null;
+            $mPCodeRemarque = null;
         }
 
-        if (!is_null($mPo4Resultat) && !is_null($mPResultat)) {
-            if ($mPo4Resultat == 10 && $mPResultat == 10) {
-                $okOrtophosphate++;
-                $tabStatut['statut'] = 2;
-                $tabStatut['libelle'] = 'Ortophosphate : Tous les dosages sont en LQ';
+        $result = $controleVraisemblance->orthophosphate($mPo4Resultat, $mPResultat, $mPo4CodeRemarque, $mPCodeRemarque);
+
+        if (!is_bool($result)) {
+            $tabRetour = $result;
+            if ($tabRetour[0] == 'warning') {
+                $tabStatut['statut'] = 1;
             } else {
-                $indP = $mPo4Resultat / $mPResultat;
-                if (1 < $indP && $indP <= 1.25) {
-                    $tabStatut['statut'] = 1;
-                    $tabStatut['libelle'] = 'Ortophosphate : Réserve';
-                } else if ($indP > 1.25) {
-                    $okOrtophosphate++;
-                    $tabStatut['statut'] = 2;
-                    $tabStatut['libelle'] = 'Ortophosphate : Valeur non conforme';
-                }
+                $tabStatut['statut'] = 2;
             }
 
             $mPo4->setCodeStatut($tabStatut['statut']);
@@ -3646,6 +3300,7 @@ class SaisieDonneesController extends Controller {
         $session->set('controller', 'SaisieDonnees');
         $session->set('fonction', '_ammonium');
         $emSqe = $this->get('doctrine')->getManager('sqe');
+        $controleVraisemblance = $this->get('aeag_sqe.controle_vraisemblance');
 
         $repoPgCmdMesureEnv = $emSqe->getRepository('AeagSqeBundle:PgCmdMesureEnv');
         $repoPgCmdAnalyse = $emSqe->getRepository('AeagSqeBundle:PgCmdAnalyse');
@@ -3661,8 +3316,10 @@ class SaisieDonneesController extends Controller {
         }
         if ($mNh4) {
             $mNh4Resultat = $mNh4->getResultat();
+            $mNh4CodeRemarque = $mNh4->getCodeRemarque();
         } else {
             $mNh4Resultat = null;
+            $mNh4CodeRemarque = null;
         }
 
         $mNkj = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, '1319');
@@ -3671,26 +3328,20 @@ class SaisieDonneesController extends Controller {
         }
         if ($mNkj) {
             $mNkjResultat = $mNkj->getResultat();
+            $mNkjCodeRemarque = $mNkj->getCodeRemarque();
         } else {
             $mNkjResultat = null;
+            $mNkjCodeRemarque = null;
         }
 
+        $result = $controleVraisemblance->ammonium($mNh4Resultat, $mNkjResultat, $mNh4CodeRemarque, $mNkjCodeRemarque);
 
-        if (!is_null($mNh4Resultat) && !is_null($mNkjResultat)) {
-            if ($mNh4Resultat == 10 && $mNkjResultat == 10) {
-                $okAmmonium++;
-                $tabStatut['statut'] = 2;
-                $tabStatut['libelle'] = 'Ammonium : tous les dosages sont en LQ';
+        if (!is_bool($result)) {
+            $tabRetour = $result;
+            if ($tabRetour[0] == 'warning') {
+                $tabStatut['statut'] = 1;
             } else {
-                $indP = $mNh4Resultat / $mNkjResultat;
-                if (1 < $indP && $indP <= 1.25) {
-                    $tabStatut['statut'] = 1;
-                    $tabStatut['libelle'] = 'Ammonium : Réserve';
-                } else if ($indP > 1.25) {
-                    $okAmmonium++;
-                    $tabStatut['statut'] = 2;
-                    $tabStatut['libelle'] = 'Ammonium : Valeur non conforme';
-                }
+                $tabStatut['statut'] = 2;
             }
 
             $mNh4->setCodeStatut($tabStatut['statut']);
@@ -3776,6 +3427,7 @@ class SaisieDonneesController extends Controller {
         $session->set('controller', 'SaisieDonnees');
         $session->set('fonction', '_sommeParametresDistincts');
         $emSqe = $this->get('doctrine')->getManager('sqe');
+        $controleVraisemblance = $this->get('aeag_sqe.controle_vraisemblance');
 
         $repoPgCmdMesureEnv = $emSqe->getRepository('AeagSqeBundle:PgCmdMesureEnv');
         $repoPgCmdAnalyse = $emSqe->getRepository('AeagSqeBundle:PgCmdAnalyse');
@@ -4004,60 +3656,22 @@ class SaisieDonneesController extends Controller {
 
         $params = array(5537, 1743, 7146, 1780);
 
-// Test de validité
-        $valid = true;
-        $i = 0;
-        while ($i < count($sommeParams) && $valid) {
-            $j = 0;
-            $keys = array_keys($sommeParams[$i]);
-            while ($j < count($keys) && $valid) {
-                if (is_null($sommeParams[$i][$keys[$j]])) {
-                    $valid = false;
-                }
-                $j++;
+        $result = $controleVraisemblance->sommeParametresDistincts($sommeParams, $resultParams, $params);
+
+        if (!is_bool($result)) {
+            $tabRetour = $result;
+            if ($tabRetour[0] == 'warning') {
+                $tabStatut['statut'] = 1;
+            } else {
+                $tabStatut['statut'] = 2;
             }
-            $i++;
-        }
-
-        if ($valid) {
-            $i = 0;
-            while ($i < count($resultParams) && $valid) {
-                $j = 0;
-                $keys = array_keys($sommeParams[$i]);
-                while ($j < count($keys) && $valid) {
-                    if (is_null($resultParams[$i][$keys[$j]])) {
-                        $valid = false;
-                    }
-                    $j++;
-                }
-                $i++;
+            for ($i = 0; $i < count($pars); $i++) {
+                $par = $pars[$i];
+                $par->setCodeStatut($tabStatut['statut']);
+                $par->setLibelleStatut($tabStatut['libelle']);
+                $emSqe->persist($par);
             }
-        }
-
-        if ($valid) {
-            foreach ($sommeParams as $idx => $sommeParam) {
-                $somme = 0;
-                foreach ($sommeParam as $key => $param) {
-                    $somme += $param;
-                }
-
-                $percent = ((20 / 100) * $resultParams[$idx]);
-                $resultParamMin = $resultParams[$idx] - $percent;
-                $resultParamMax = $resultParams[$idx] + $percent;
-                if (($resultParamMin > $somme) || ($somme > $resultParamMax)) {
-                    $okSommeParametresDistincts++;
-                    $tabStatut['statut'] = 2;
-                    $tabStatut['libelle'] = 'Somme Parametres Distincts : La somme des paramètres ne correspond pas au paramètre global ';
-
-                    for ($i = 0; $i < count($pars); $i++) {
-                        $par = $pars[$i];
-                        $par->setCodeStatut($tabStatut['statut']);
-                        $par->setLibelleStatut($tabStatut['libelle']);
-                        $emSqe->persist($par);
-                    }
-                    $emSqe->flush();
-                }
-            }
+            $emSqe->flush();
         }
         return $okSommeParametresDistincts;
     }
