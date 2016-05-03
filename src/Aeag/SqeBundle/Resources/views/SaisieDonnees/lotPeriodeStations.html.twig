@@ -43,9 +43,6 @@
                     <th>Code</th>
                     <th>Libellé</th>
                     <th>Support</th>
-                     {% if typeMilieu.codeMilieu == 'LPC' %}
-                        <th> Zone verticale </th>
-                    {% endif %}
                     <th>Données terrains</th>
                     <th>Analyses</th>
                   </tr>
@@ -56,7 +53,25 @@
                          {% for cmdPrelev in station.cmdPrelev %}
                           <tr>
                               <td>
+                                   <ul class="list-inline">
+                                  {% if cmdPrelev.valider == 'O' %}
+                                      <li>
+                                             <a class="btn btn-success" id="idValider{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Valider la saisie des données terrainse et des analyses">
+                                                <i class="fa fa-check">Valider</i>
+                                             </a>
+                                      </li>
+                                  {% endif %}
+                                  {% if cmdPrelev.devalider == 'O' %}
+                                      <li>
+                                             <a class="btn btn-danger" id="idDeValider{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Dévalider la saisie des données terrainse et des analyses">
+                                                <i class="fa fa-close">Dévalider</i>
+                                             </a>
+                                      </li>
+                                  {% endif %}
+                                  <li>
                                     <a  href="{{ station.lien }}" target="_blank" title="Localisation">{{ station.station.code }}</a>
+                                  </li>
+                                   </ul>
                              </td>
                              <td>
                                     {{ station.station.libelle }}
@@ -66,14 +81,7 @@
                                         {{ cmdPrelev.cmdPrelev.codeSupport.nomSupport }}
                                      {% endif %}
                                  </td>
-                                   {% if typeMilieu.codeMilieu == 'LPC' %}
-                                        <td> 
-                                            {% if cmdPrelev.prelevPc %}
-                                                {{ cmdPrelev.prelevPc.zoneVerticale.nomZone }}
-                                            {% endif %}
-                                        </td>
-                                   {% endif %}
-                                   <td  class="text-nowrap text-center">
+                                    <td  class="text-nowrap text-center">
                                         {% if cmdPrelev.saisieTerrain == 'O' %}
                                                  {% if  cmdPrelev.nbParametresTerrain > 0 or is_granted('ROLE_ADMINSQE') %}
                                                       <ul class="list-inline">
@@ -257,6 +265,25 @@
                                     url = url.replace("amp;","");
                                     window.location.replace(url);
                               });
+                              
+                                $(document).on('click','#idValider{{ cmdPrelev.cmdPrelev.id }}',function(e){
+                                    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                                    $('#modalTraitementEncours').modal('toggle');
+                                   var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_station_valider",{"prelevId":  "par1"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                    url = url.replace("par1", {{ cmdPrelev.cmdPrelev.id }});
+                                     url = url.replace("amp;","");
+                                    window.location.replace(url);
+                              });
+                              
+                                   $(document).on('click','#idDevalider{{ cmdPrelev.cmdPrelev.id }}',function(e){
+                                    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                                    $('#modalTraitementEncours').modal('toggle');
+                                   var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_station_devalider",{"prelevId":  "par1"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                    url = url.replace("par1", {{ cmdPrelev.cmdPrelev.id }});
+                                     url = url.replace("amp;","");
+                                    window.location.replace(url);
+                              });
+                              
                          {% endfor %}    
                    {% endfor %}
           {% endif %}

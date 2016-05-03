@@ -282,7 +282,12 @@
                <button id="idEnregistrer" type="submit" class="btn btn-success"> 
                     <i class="fa fa-check"> Enregister</i>
                 </button>
-      {% else %}
+        {%elseif maj == 'V' %}
+                  <div class="col-md-offset-5 col-md-8">
+                      <a class="btn btn-success" href="{{ path("AeagSqeBundle_saisieDonnees_lot_periode_lac_ana_valider",{"prelevId":  cmdPrelev.id}) }}">
+                          <i class="fa fa-undo"> Valider</i>
+                      </a>  
+     {% else %}
            <div class="col-md-offset-5 col-md-8">
      {% endif %}
             <a href="lotPeriodeStationSaisirEnvSitu.html.twig"></a>

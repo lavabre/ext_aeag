@@ -29,6 +29,7 @@ class PgCmdPrelevPcRepository extends EntityRepository {
         $query = "select c";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelevPc c";
         $query = $query . " where c.prelev = " . $pgCmdPrelev->getId() ;
+        $query = $query . "order by c.zoneVerticale " ;
         $qb = $this->_em->createQuery($query);
         //print_r($query);
         return $qb->getResult();
