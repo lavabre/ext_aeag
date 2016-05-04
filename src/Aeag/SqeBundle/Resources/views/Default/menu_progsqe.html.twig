@@ -77,7 +77,7 @@
           </li>
                   
        {% if  not app.session.get('evolution')%}
-           {% if suiviDonnees %}
+           {% if app.session.get('suiviDonnees') %}
                     {%if app.session.get('menu') == 'saisieDonnees' %}
                         <li class="active">
                     {% else %}
@@ -89,7 +89,7 @@
         {% endif %}  
         
         {% if  not app.session.get('evolution')%}
-            {% if suiviHb %}
+            {% if app.session.get('suiviHb') %}
                     {%if app.session.get('menu') == 'suiviHydrobio'%}
                         <li class="active">
                     {% else %}

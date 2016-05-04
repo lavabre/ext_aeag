@@ -28,11 +28,11 @@
                     {%if   is_granted('ROLE_PRESTASQE') %}
                         <li><a class="btn btn-primary btn-lg" href="{{ path('AeagSqeBundle_echangefichiers_index')}}" title="Echange de fichiers"><i class="fa fa-download fa-2x"></i> Echange de fichiers</a></li>
                         </br>
-                        {% if suiviDonnees %}
+                        {% if app.session.get('suiviDonnees') %}
                          <li><a class="btn btn-primary btn-lg" href="{{ path('AeagSqeBundle_saisieDonnees_index')}}" title="Saisie des données"><i class="fa fa-dashboard fa-2x"></i> Saisie des données</a></li>
                         </br>
                         {% endif %}
-                        {% if suiviHb %}
+                        {% if app.session.get('suiviHb') %}
                          <li><a class="btn btn-primary btn-lg" href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}" title="Suivi hydrobio"><i class="fa fa-calendar fa-2x"></i> Suivi Hydrobio</a></li>
                          </br>
                          {% endif %}
