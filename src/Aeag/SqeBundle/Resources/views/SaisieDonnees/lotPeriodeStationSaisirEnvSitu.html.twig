@@ -350,7 +350,10 @@
                     </button>
                 {%elseif maj == 'V' %}
                     <div class="col-md-offset-5 col-md-8">
-                        <a class="btn btn-success" href="{{path('AeagSqeBundle_saisieDonnees_lot_periode_station_valider',{"prelevId":  cmdPrelev.id })}}">
+                    <button id="idEnregistrer" type="submit" class="btn btn-success"> 
+                        <i class="fa fa-check"> Enregister</i>
+                    </button>
+                        <a class="btn btn-success" href="{{path('AeagSqeBundle_saisieDonnees_lot_periode_station_valider',{"prelevId":  cmdPrelev.id, 'periodeAnId': periodeAn.id })}}">
                             <i class="fa fa-undo"> Valider</i>
                         </a>
                 {% else %}

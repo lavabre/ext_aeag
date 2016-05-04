@@ -63,7 +63,7 @@
                                   {% endif %}
                                   {% if cmdPrelev.devalider == 'O' %}
                                       <li>
-                                             <a class="btn btn-danger" id="idDeValider{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Dévalider la saisie des données terrainse et des analyses">
+                                             <a class="btn btn-danger" id="idDevalider{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Dévalider la saisie des données terrainse et des analyses">
                                                 <i class="fa fa-close">Dévalider</i>
                                              </a>
                                       </li>
@@ -269,8 +269,9 @@
                                 $(document).on('click','#idValider{{ cmdPrelev.cmdPrelev.id }}',function(e){
                                     e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
                                     $('#modalTraitementEncours').modal('toggle');
-                                   var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_station_valider",{"prelevId":  "par1"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                   var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_station_valider",{"prelevId":  "par1","periodeAnId": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
                                     url = url.replace("par1", {{ cmdPrelev.cmdPrelev.id }});
+                                    url = url.replace("par2", {{ periodeAn.id }});
                                      url = url.replace("amp;","");
                                     window.location.replace(url);
                               });
@@ -278,8 +279,9 @@
                                    $(document).on('click','#idDevalider{{ cmdPrelev.cmdPrelev.id }}',function(e){
                                     e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
                                     $('#modalTraitementEncours').modal('toggle');
-                                   var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_station_devalider",{"prelevId":  "par1"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                   var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_station_devalider",{"prelevId":  "par1", "periodeAnId": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
                                     url = url.replace("par1", {{ cmdPrelev.cmdPrelev.id }});
+                                    url = url.replace("par2", {{ periodeAn.id }});
                                      url = url.replace("amp;","");
                                     window.location.replace(url);
                               });

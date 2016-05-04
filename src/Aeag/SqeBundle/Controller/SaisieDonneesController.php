@@ -300,12 +300,12 @@ class SaisieDonneesController extends Controller {
                             }
                             if ($pgCmdPrelev->getPhaseDmd()->getcodePhase() == 'M30') {
                                 $tabStations[$i]['cmdPrelev'][$j]['valider'] = 'O';
-                            }else{
+                            } else {
                                 $tabStations[$i]['cmdPrelev'][$j]['valider'] = 'N';
                             }
-                            if ($pgCmdPrelev->getPhaseDmd()->getcodePhase() == 'M40') {
+                            if ($pgCmdPrelev->getPhaseDmd()->getcodePhase() == 'M40' and $user->hasRole('ROLE_ADMINSQE')) {
                                 $tabStations[$i]['cmdPrelev'][$j]['devalider'] = 'O';
-                            }else{
+                            } else {
                                 $tabStations[$i]['cmdPrelev'][$j]['devalider'] = 'N';
                             }
                             $NbProgLotParamAn = 0;
@@ -1248,13 +1248,13 @@ class SaisieDonneesController extends Controller {
             $nbSaisieParametresEnvSit = $nbCmdMesureEnv + $nbCmdSit;
             echo ('$nbSaisieParametresEnvSit : ' . $nbSaisieParametresEnvSit . ' </br>');
             $nbSaisieParametresAna = $repoPgCmdAnalyse->getNbCmdAnalyseAnaByPrelev($pgCmdPrelev);
-            echo ('$nbSaisieParametresAna : ' . $nbSaisieParametresAna  . ' </br>');
+            echo ('$nbSaisieParametresAna : ' . $nbSaisieParametresAna . ' </br>');
             $nbParametresTotal = $nbParametresEnvSit + $nbParametresAna;
-            echo ('$nbParametresTotal : ' . $nbParametresTotal  . ' </br>');
+            echo ('$nbParametresTotal : ' . $nbParametresTotal . ' </br>');
             $nbSaisieParametresTotal = $nbSaisieParametresEnvSit + $nbSaisieParametresAna;
-            echo ('$nbSaisieParametresTotal : ' . $nbSaisieParametresTotal  . ' </br>');
-            
-            
+            echo ('$nbSaisieParametresTotal : ' . $nbSaisieParametresTotal . ' </br>');
+
+
             if ($nbParametresTotal == $nbSaisieParametresTotal) {
                 $ok = true;
                 $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M30');
@@ -1266,7 +1266,7 @@ class SaisieDonneesController extends Controller {
                 $pgCmdPrelev->setPhaseDmd($pgProgPhases);
             }
         }
-       //return new Response ('prelev : ' . $pgCmdPrelev->getid() . '  phase :  ' . $pgProgPhases->getCodePhase());
+        //return new Response ('prelev : ' . $pgCmdPrelev->getid() . '  phase :  ' . $pgProgPhases->getCodePhase());
 
         $pgCmdPrelev->setDatePrelev($datePrel);
         $emSqe->persist($pgCmdPrelev);
@@ -1299,7 +1299,7 @@ class SaisieDonneesController extends Controller {
         }
     }
 
-    public function lotPeriodeStationValiderAction($prelevId = null, Request $request) {
+    public function lotPeriodeStationValiderAction($prelevId = null, $periodeAnId = null, Request $request) {
 
         $user = $this->getUser();
         if (!$user) {
@@ -1311,9 +1311,11 @@ class SaisieDonneesController extends Controller {
         $session->set('fonction', 'lotPeriodeStationValider');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
+        $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
         $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
         $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
 
+        $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($periodeAnId);
         $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevById($prelevId);
 
         $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R45');
@@ -1348,7 +1350,7 @@ class SaisieDonneesController extends Controller {
                             'cmdDemandeId' => $pgCmdPrelev->getDemande()->getId())));
     }
 
-    public function lotPeriodeStationDeValiderAction($prelevId = null, Request $request) {
+    public function lotPeriodeStationDeValiderAction($prelevId = null, $periodeAnId = null, Request $request) {
 
         $user = $this->getUser();
         if (!$user) {
@@ -1360,9 +1362,11 @@ class SaisieDonneesController extends Controller {
         $session->set('fonction', 'lotPeriodeStationValider');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
+        $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
         $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
         $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
 
+        $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($periodeAnId);
         $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevById($prelevId);
 
         $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R10');
@@ -1382,7 +1386,7 @@ class SaisieDonneesController extends Controller {
         $emSqe->persist($pgCmdFichiersRps);
         $pgCmdPrelev->setFichierRps($pgCmdFichiersRps);
 
-        $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M20');
+        $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M30');
         $pgCmdPrelev->setRealise('O');
         $pgCmdPrelev->setPhaseDmd($pgProgPhases);
         $emSqe->persist($pgCmdPrelev);
