@@ -14,7 +14,7 @@
            <a href="{{path('AeagSqeBundle_saisieDonnees_lot_periodes',{ 'lotanId': lotan.id })}}">Périodes</a> 
     </li>
      <li>
-           <a href="{{path('AeagSqeBundle_saisieDonnees_lot_periode_stations',{ 'periodeAnId': periodeAn.id })}}">Lacs</a> 
+           <a href="{{path('AeagSqeBundle_saisieDonnees_lot_periode_lacs',{ 'periodeAnId': periodeAn.id })}}">Lacs</a> 
     </li>
      <li class="active">
           Saisie des données terrain
@@ -65,7 +65,7 @@
 
 {%block content %}
  
-    <form class="form" id="idForm" role="form" action="{{ path("AeagSqeBundle_saisieDonnees_lot_periode_lac_env_situ_resultat",{"prelevId":  cmdPrelev.id, "periodeAnId":  periodeAn.id, "stationId": station.ouvFoncId}) }}" method="post">
+    <form class="form" id="idForm" role="form" action="{{ path("AeagSqeBundle_saisieDonnees_lot_periode_lac_env_situ_resultat",{"demandeId":  demande.id, "periodeAnId":  periodeAn.id, "stationId": station.ouvFoncId}) }}" method="post">
     
     <div class="form-body">  
         
@@ -375,7 +375,7 @@
                                                                                                                               
                                                                                                                                     </tr>
                                                                                                                                 {% else %}
-                                                                                                                                {% if paramAn.pgCmdPrelevPc.numOrdre  == 1 %}
+                                                                                                                                {#{% if paramAn.pgCmdPrelevPc.numOrdre  == 1 %}#}
                                                                                                                                  {% if paramAn.pgCmdAnalyse %}
                                                                                                                                             {% if paramAn.pgCmdAnalyse.codeStatut == '0' %}
                                                                                                                                                  <tr id='tr_{{ nbTr }}' class="success">
@@ -471,7 +471,7 @@
                                                                                                                                         </td>
                                                                                                                               
                                                                                                                                     </tr>
-                                                                                                                               {% endif %}
+                                                                                                                               {#{% endif %}#}
                                                                                                                            {% endif %}
                                                                                                                 {% endif %}
                                                                                                          {% endif %}
@@ -510,6 +510,11 @@
                <button id="idEnregistrer" type="submit" class="btn btn-success"> 
                     <i class="fa fa-check"> Enregister</i>
                 </button>
+      {%elseif maj == 'V' %}
+            <div class="col-md-offset-5 col-md-8">
+                <a class="btn btn-success" href="{{ path("AeagSqeBundle_saisieDonnees_lot_periode_lac_env_situ_valider",{"demandeId":  demande.id, "periodeAnId":  periodeAn.id, "stationId": station.ouvFoncId}) }}">
+                    <i class="fa fa-undo"> Valider</i>
+                </a>
       {% else %}
            <div class="col-md-offset-5 col-md-8">
      {% endif %}

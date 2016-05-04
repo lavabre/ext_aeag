@@ -14,7 +14,7 @@
            <a href="{{path('AeagSqeBundle_saisieDonnees_lot_periodes',{ 'lotanId': lotan.id })}}">Périodes</a> 
     </li>
      <li>
-           <a href="{{path('AeagSqeBundle_saisieDonnees_lot_periode_stations',{ 'periodeAnId': periodeAn.id })}}">lacs</a> 
+           <a href="{{path('AeagSqeBundle_saisieDonnees_lot_periode_lacs',{ 'periodeAnId': periodeAn.id })}}">lacs</a> 
     </li>
      <li class="active">
           Saisie des analyses
@@ -282,7 +282,12 @@
                <button id="idEnregistrer" type="submit" class="btn btn-success"> 
                     <i class="fa fa-check"> Enregister</i>
                 </button>
-      {% else %}
+        {%elseif maj == 'V' %}
+                  <div class="col-md-offset-5 col-md-8">
+                      <a class="btn btn-success" href="{{ path("AeagSqeBundle_saisieDonnees_lot_periode_lac_ana_valider",{"prelevId":  cmdPrelev.id}) }}">
+                          <i class="fa fa-undo"> Valider</i>
+                      </a>  
+     {% else %}
            <div class="col-md-offset-5 col-md-8">
      {% endif %}
             <a href="lotPeriodeStationSaisirEnvSitu.html.twig"></a>

@@ -185,8 +185,9 @@
                     <th>Station</th>
                     <th>Libellé</th>
                     <th>Réseau</th>
-                    <th>Prélèvement</th>
+                    <th>Date</th>
                     <th>Statut</th>
+                    <th>Validation</th>
                 </tr>
             </thead>
             <tbody>
@@ -236,36 +237,50 @@
                                     <td>
                                         {{ station.reseau.nomRsx }}
                                     </td>
-                                    <td>
-                                        {{ cmdPrelev.cmdPrelev.codePrelevCmd }}
-                                    </td>
-                                    {%if cmdPrelev.suiviPrels.0.suiviPrel | length%}
+                                    {%if cmdPrelev.suiviPrels | length == 0 %}
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    {% else %}
+                                          {% if cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'A' %}
+                                                <td class="success">
+                                                {% elseif cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'R' %}
+                                                <td class="danger">
+                                                {% else %}
+                                                <td class="warning">
+                                              {% endif %}
+                                             {{cmdPrelev.suiviPrels.0.suiviPrel.datePrel | date("d/m/Y H:i") }}
+                                      </td>
                                         {% if cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'A' %}
                                             <td class="success">
                                             {% elseif cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'R' %}
                                             <td class="danger">
-                                            {% elseif cmdPrelev.suiviPrels.0.suiviPrel.statutPrel  == 'N' %}
-                                            <td class="warning">
                                             {% else %}
-                                            <td>
-                                            {% endif %}
+                                            <td class="warning">
+                                          {% endif %}
                                             {% if cmdPrelev.suiviPrels.0.suiviPrel.statutPrel == 'P' %}
                                                 Prévisionnel
                                             {% elseif cmdPrelev.suiviPrels.0.suiviPrel.statutPrel == 'F' %}
                                                 Effectué
                                             {% elseif cmdPrelev.suiviPrels.0.suiviPrel.statutPrel == 'N' %}
                                                 Non effectué
-                                            {% elseif suiviPrels.0.suiviPrel.statutPrel == 'A' %}
-                                                Analyses effectuées
-                                            {% elseif cmdPrelev.suiviPrels.0.suiviPrel.statutPrel == 'V' %}
-                                                Validé
-                                            {% elseif cmdPrelev.suiviPrels.0.suiviPrel.statutPrel == 'R' %}
-                                                Réfusé
                                             {% endif %}
-                                            {#             ({{ cmdPrelev.suiviPrels.0.suiviPrel.datePrel | date("d/m/Y") }}) #}
                                         </td>
-                                    {% else %}
-                                        <td></td>
+                                          {% if cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'A' %}
+                                            <td class="success">
+                                            {% elseif cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'R' %}
+                                            <td class="danger">
+                                            {% else%}
+                                            <td class="warning">
+                                            {% endif %}
+                                            {% if cmdPrelev.suiviPrels.0.suiviPrel.statutPrel == 'A' %}
+                                                Accepté
+                                            {% elseif cmdPrelev.suiviPrels.0.suiviPrel.statutPrel == 'R' %}
+                                               Refusé
+                                            {% else %}
+                                               En attente
+                                              {% endif %}
+                                        </td>
                                     {% endif %}
                                 </tr>
                             {% endfor %}
@@ -279,7 +294,7 @@
             <div class="col-md-12 pull-right text-info">
                 <ul class="list-inline">
                     <li><span class="label label-success">Accepté</span></li>
-                    <li><span class="label label-warning">Non effectué</span></li>
+                    <li><span class="label label-warning">En attente</span></li>
                     <li><span class="label label-danger">Refusé</span></li>
                 </ul>  
             </div>
@@ -392,6 +407,7 @@
             {% endif %}
         {% endfor %}              
     {% endif %}   
+    
 
     });
 
