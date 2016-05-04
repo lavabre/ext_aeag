@@ -46,6 +46,12 @@ AeagSqeBundle_saisieDonnees_lot_periode_station_devalider:
     requirements:
         methods:  GET|POST
         
+AeagSqeBundle_saisieDonnees_lot_periode_station_telecharger:
+    path:  /fichier/telecharger/{prelevId}
+    defaults: { _controller: AeagSqeBundle:SaisieDonnees:lotPeriodeStationTelecharger, prelevId : null}
+    requirements:
+         methods:  GET|POST
+        
         
     
 AeagSqeBundle_saisieDonnees_lot_periode_lacs:
@@ -93,6 +99,12 @@ AeagSqeBundle_saisieDonnees_lot_periode_lac_devalider:
     defaults: { _controller: AeagSqeBundle:SaisieDonnees:lotPeriodeLacDevalider, demandeId : null, periodeAnId : null, stationId : null}
     requirements:
         methods:  GET|POST
+        
+AeagSqeBundle_saisieDonnees_lot_periode_lac_telecharger:
+    path:  /fichier_lac/telecharger/{prelevId}
+    defaults: { _controller: AeagSqeBundle:SaisieDonnees:lotPeriodeLacTelecharger, prelevId : null}
+    requirements:
+         methods:  GET|POST
         
 
         

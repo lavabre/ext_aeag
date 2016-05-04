@@ -1367,6 +1367,10 @@ class SaisieDonneesController extends Controller {
         $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M40');
         $pgCmdPrelev->setPhaseDmd($pgProgPhases);
         $emSqe->persist($pgCmdPrelev);
+        
+        $chemin = '/base/extranet/Transfert/Sqe/csv/';
+        $donneesBrutes = $repoPgCmdPrelev->getDonneesBrutes($pgCmdPrelev->getFichierRps());
+        $this->get('aeag_sqe.process_rai')->exportCsvDonneesBrutesSaisies($emSqe, $chemin, $pgCmdPrelev->getFichierRps(), $donneesBrutes);
 
         $emSqe->flush();
 
@@ -1468,6 +1472,33 @@ class SaisieDonneesController extends Controller {
         return $this->redirect($this->generateUrl('AeagSqeBundle_saisieDonnees_lot_periode_stations', array('stationId' => $pgCmdPrelev->getStation()->getOuvFoncId(),
                             'periodeAnId' => $pgProgLotPeriodeAn->getId(),
                             'cmdDemandeId' => $pgCmdPrelev->getDemande()->getId())));
+    }
+    
+    public function lotPeriodeStationTelechargerAction($prelevId = null) {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+         $session->set('menu', 'saisieDonnees');
+        $session->set('controller', 'SaisieDonnees');
+        $session->set('fonction', 'lotPeriodeStationTelecharger');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
+
+        $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevById($prelevId);
+        $pgCmdFichiersRps =$pgCmdPrelev->getFichierRps();
+        $chemin = '/base/extranet/Transfert/Sqe/csv';
+        $fichier = $pgCmdFichiersRps->getNomFichier() . '.csv';
+        $ext = strtolower(pathinfo($fichier, PATHINFO_EXTENSION));
+     
+        header('Content-Type', 'application/' . $ext);
+        header('Content-disposition: attachment; filename="' . $fichier . '"');
+        header('Content-Length: ' . filesize($chemin . '/' . $fichier));
+        readfile($chemin . '/' . $fichier);
+        exit();
     }
 
     public function lotPeriodeLacsAction($periodeAnId) {
@@ -3046,6 +3077,11 @@ class SaisieDonneesController extends Controller {
                 $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M40');
                 $pgCmdPrelev->setPhaseDmd($pgProgPhases);
                 $emSqe->persist($pgCmdPrelev);
+                
+                $chemin = $this->getParameter('repertoire_echange');
+                $donneesBrutes = $repoPgCmdPrelev->getDonneesBrutes($pgCmdPrelev->getFichierRps());
+                //$this->get('aeag_sqe.process_rai')->exportCsvDonneesBrutes($emSqe, $chemin, $pgCmdPrelev->getFichierRps(), $donneesBrutes);
+                
             }
         }
         $emSqe->flush();
@@ -3070,6 +3106,8 @@ class SaisieDonneesController extends Controller {
             $emSqe->flush();
         }
 
+
+        
 
 
 
@@ -3190,9 +3228,36 @@ class SaisieDonneesController extends Controller {
                             'periodeAnId' => $pgProgLotPeriodeAn->getId(),
                             'cmdDemandeId' => $pgCmdPrelev->getDemande()->getId())));
     }
+    
+    public function lotPeriodeLacTelechargerAction($prelevId = null) {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+         $session->set('menu', 'saisieDonnees');
+        $session->set('controller', 'SaisieDonnees');
+        $session->set('fonction', 'lotPeriodeStationTelecharger');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
+
+        $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevById($prelevId);
+        $pgCmdFichiersRps =$pgCmdPrelev->getFichierRps();
+       $chemin = $this->getParameter('repertoire_echange');
+        $fichier = $pgCmdFichiersRps->getNomFichier();
+        $ext = strtolower(pathinfo($fichier, PATHINFO_EXTENSION));
+
+        header('Content-Type', 'application/' . $ext);
+        header('Content-disposition: attachment; filename="' . $fichier . '"');
+        header('Content-Length: ' . filesize($chemin . '/' . $fichier));
+        readfile($chemin . '/' . $fichier);
+        exit();
+    }
 
     protected function getCheminEchange($pgCmdSuiviPrel) {
-        $chemin = $this->container->getParameter('repertoire_echange');
+        $chemin = $this->getParameter('repertoire_echange');
         $chemin .= $pgCmdSuiviPrel->getPrelev()->getDemande()->getAnneeProg() . '/' . $pgCmdSuiviPrel->getPrelev()->getDemande()->getCommanditaire()->getNomCorres();
         $chemin .= '/' . $pgCmdSuiviPrel->getPrelev()->getDemande()->getLotan()->getLot()->getId() . '/' . $pgCmdSuiviPrel->getPrelev()->getDemande()->getLotan()->getId();
         $chemin .= '/SUIVI/' . $pgCmdSuiviPrel->getPrelev()->getId() . '/' . $pgCmdSuiviPrel->getId();
