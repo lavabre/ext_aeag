@@ -814,7 +814,7 @@ class SaisieDonneesController extends Controller {
                                 $pgSandreFraction = $repoPgSandreFractions->getPgSandreFractionsByCodeFraction($pgProgLotParamAn->getCodeFraction());
                                 $tabStatut = $this->_controleVraisemblance($parametre, $valeur, $remarque, $unite, $inSitu, $pgSandreFraction, $tabStatut);
                                 $okControleVraisemblance = $okControleVraisemblance + $tabStatut['ko'];
-                            }
+                             }
 
                             $pgCmdMesureEnv = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParamProg($pgCmdPrelev, $pgProgLotParamAn);
                             if (strlen($valeur) > 0) {
@@ -1260,7 +1260,7 @@ class SaisieDonneesController extends Controller {
             $nbErreurs++;
         }
 
-        // return new Response ('$okControleVraisemblance : ' . $okControleVraisemblance . '  $okControlesSpecifiques :  ' . $okControlesSpecifiques . '   $nbErreurs : ' . $nbErreurs);
+        //return new Response ('$okControleVraisemblance : ' . $okControleVraisemblance . '  $okControlesSpecifiques :  ' . $okControlesSpecifiques . '   $nbErreurs : ' . $nbErreurs);
 
         $ok = false;
         if ($nbErreurs == 0) {
@@ -1277,6 +1277,7 @@ class SaisieDonneesController extends Controller {
             $nbSaisieParametresTotal = $nbSaisieParametresEnvSit + $nbSaisieParametresAna;
             echo ('$nbSaisieParametresTotal : ' . $nbSaisieParametresTotal . ' </br>');
 
+            //return new Response ('');
 
             if ($nbParametresTotal == $nbSaisieParametresTotal) {
                 $ok = true;
@@ -3279,24 +3280,32 @@ class SaisieDonneesController extends Controller {
 
 // III.7
         $okControles += $this->_modeleWeiss($pgCmdPrelev);
+        echo ('III.7 : ' . $okControles . ' </br>');
 
 // III.8  et III.9
         $okControles += $this->_balanceIonique($pgCmdPrelev);
+        echo ('IIII.8 : ' . $okControles . ' </br>');
+        
 
 // III.10
         $okControles += $this->_ortophosphate($pgCmdPrelev);
+        echo ('III.10 : ' . $okControles . ' </br>');
 
 // III.11
         $okControles += $this->_ammonium($pgCmdPrelev);
+        echo ('III.11 : ' . $okControles . ' </br>');
 
 // III.12
         $okControles += $this->_pourcentageHorsOxygene($pgCmdPrelev);
+        echo ('III.12 : ' . $okControles . ' </br>');
 
         // III.13
         $okControles += $this->_sommeParametresDistincts($pgCmdPrelev);
+        echo ('III.13 : ' . $okControles . ' </br>');
 
         // III.14
         $okControles += $this->_controleVraisemblanceMacroPolluants($pgCmdPrelev);
+        echo ('III.14 : ' . $okControles . ' </br>');
 
         return $okControles;
     }
@@ -3366,9 +3375,9 @@ class SaisieDonneesController extends Controller {
                 $tabStatut['statut'] = 1;
             } else {
                 $tabStatut['statut'] = 2;
+                $okWeiss = 1;
             }
             $tabStatut['libelle'] = $tabRetour[1];
-            $okWeiss = 1;
             $mTxSatOx->setCodeStatut($tabStatut['statut']);
             $mTxSatOx->setLibelleStatut($tabStatut['libelle']);
             $emSqe->persist($mTxSatOx);
@@ -3587,9 +3596,10 @@ class SaisieDonneesController extends Controller {
                 $tabStatut['statut'] = 1;
             } else {
                 $tabStatut['statut'] = 2;
+                $okBalanceIonique = 1;
             }
             $tabStatut['libelle'] = $tabRetour[1];
-            $okBalanceIonique = 1;
+            
             $par1374->setCodeStatut($tabStatut['statut']);
             $par1374->setLibelleStatut($tabStatut['libelle']);
             $emSqe->persist($par1374);
@@ -3678,9 +3688,10 @@ class SaisieDonneesController extends Controller {
                 $tabStatut['statut'] = 1;
             } else {
                 $tabStatut['statut'] = 2;
+                 $okOrtophosphate = 1;
             }
             $tabStatut['libelle'] = $tabRetour[1];
-            $okOrtophosphate = 1;
+           
             $mPo4->setCodeStatut($tabStatut['statut']);
             $mPo4->setLibelleStatut($tabStatut['libelle']);
             $emSqe->persist($mPo4);
@@ -3743,9 +3754,10 @@ class SaisieDonneesController extends Controller {
                 $tabStatut['statut'] = 1;
             } else {
                 $tabStatut['statut'] = 2;
+                $okAmmonium = 1;
             }
             $tabStatut['libelle'] = $tabRetour[1];
-            $okAmmonium = 1;
+            
             $mNh4->setCodeStatut($tabStatut['statut']);
             $mNh4->setLibelleStatut($tabStatut['libelle']);
             $emSqe->persist($mNh4);
@@ -4015,7 +4027,7 @@ class SaisieDonneesController extends Controller {
         }
         if ($par7146) {
             $par7146Resultat = $par7146->getResultat();
-            $pars[$i] = $par1746;
+            $pars[$i] = $pa7146;
             $i++;
         } else {
             $par7146Resultat = null;
@@ -4066,9 +4078,10 @@ class SaisieDonneesController extends Controller {
                 $tabStatut['statut'] = 1;
             } else {
                 $tabStatut['statut'] = 2;
+                 $okSommeParametresDistincts = 1;
             }
              $tabStatut['libelle'] = $tabRetour[1];
-           $okSommeParametresDistincts = 1;
+          
             for ($i = 0; $i < count($pars); $i++) {
                 $par = $pars[$i];
                 $par->setCodeStatut($tabStatut['statut']);
@@ -4119,6 +4132,7 @@ class SaisieDonneesController extends Controller {
                 }
             }
         }
+        $emSqe->flush();
         return $okControleVraisemblanceMacroPolluants;
     }
 

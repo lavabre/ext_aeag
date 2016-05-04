@@ -51,7 +51,11 @@
                  {%if stations | length%} 
                     {% for station in stations %}
                          {% for cmdPrelev in station.cmdPrelev %}
-                          <tr>
+                             {% if cmdPrelev.devalider == 'O' %}
+                               <tr class="success">
+                              {% else %}
+                              <tr>
+                           {% endif %}
                               <td nowrap>
                                    <ul class="list-inline">
                                   {% if cmdPrelev.valider == 'O' %}

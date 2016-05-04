@@ -54,7 +54,11 @@
                             {%set nbPrelev = 0 %}
                          {% for cmdPrelev in station.cmdPrelev %}
                              {% set nbPrelev = nbPrelev + 1 %}
-                          <tr>
+                            {% if cmdPrelev.devalider == 'O' %}
+                                  <tr class="success">
+                                 {% else %}
+                                 <tr>
+                              {% endif %}
                                     <td>
                                          <a  href="{{ station.lien }}" target="_blank" title="Localisation">{{ station.station.code }}</a>
                                     </td>
