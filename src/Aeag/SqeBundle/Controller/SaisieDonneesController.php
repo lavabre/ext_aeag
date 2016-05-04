@@ -377,6 +377,8 @@ class SaisieDonneesController extends Controller {
                             }
                             if ($pgCmdPrelev->getPhaseDmd()->getcodePhase() == 'M40' and $user->hasRole('ROLE_ADMINSQE')) {
                                 $tabStations[$i]['cmdPrelev'][$j]['devalider'] = 'O';
+                                $tabStations[$i]['cmdPrelev'][$j]['saisieAnalyse'] = 'N';
+                                $tabStations[$i]['cmdPrelev'][$j]['saisieTerrain'] = 'N';
                             } else {
                                 $tabStations[$i]['cmdPrelev'][$j]['devalider'] = 'N';
                             }
@@ -1688,22 +1690,6 @@ class SaisieDonneesController extends Controller {
                             }
                         }
 
-                        if ($pgCmdPrelev->getPhaseDmd()->getcodePhase() == 'M30') {
-                            $tabStations[$i]['cmdPrelev'][$j]['valider'] = 'O';
-                            $tabStations[$i]['valider'] = 'O';
-                        } else {
-                            $tabStations[$i]['cmdPrelev'][$j]['valider'] = 'N';
-                            $tabStations[$i]['valider'] = 'N';
-                        }
-                        if ($pgCmdPrelev->getPhaseDmd()->getcodePhase() == 'M40' and $user->hasRole('ROLE_ADMINSQE')) {
-                            $tabStations[$i]['cmdPrelev'][$j]['devalider'] = 'O';
-                            $tabStations[$i]['devalider'] = 'O';
-                        } else {
-                            $tabStations[$i]['cmdPrelev'][$j]['devalider'] = 'N';
-                            $tabStations[$i]['devalider'] = 'N';
-                        }
-
-
                         $NbProgLotParamAn = 0;
                         if ($NbProgLotParamAn == 0) {
                             foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
@@ -1760,7 +1746,7 @@ class SaisieDonneesController extends Controller {
                         $tabStations[$i]['cmdPrelev'][$j]['nbSaisisParametresAnalyseCorrect'] = $NbCmdAnalyseCorrect;
                         $tabStations[$i]['cmdPrelev'][$j]['nbSaisisParametresAnalyseIncorrect'] = $NbCmdAnalyseIncorrect;
                         $tabStations[$i]['cmdPrelev'][$j]['nbSaisisParametresAnalyseErreur'] = $NbCmdAnalyseErreur;
-                        if ($pgCmdPrelev->getPhaseDmd()->getcodePhase() != 'M40') {
+                        if ($pgCmdPrelev->getPhaseDmd()->getcodePhase() <= 'M40') {
                             if (strtoupper($pgProgPrestaTypfic->getFormatFic()) == 'SAISIE_TA' or strtoupper($pgProgPrestaTypfic->getFormatFic()) == 'SAISIE_A') {
                                 $tabStations[$i]['cmdPrelev'][$j]['saisieAnalyse'] = 'O';
                             }
@@ -1768,6 +1754,25 @@ class SaisieDonneesController extends Controller {
                                 $tabStations[$i]['cmdPrelev'][$j]['saisieAnalyse'] = 'O';
                             }
                         }
+                        
+                          if ($pgCmdPrelev->getPhaseDmd()->getcodePhase() == 'M30') {
+                            $tabStations[$i]['cmdPrelev'][$j]['valider'] = 'O';
+                            $tabStations[$i]['valider'] = 'O';
+                        } else {
+                            $tabStations[$i]['cmdPrelev'][$j]['valider'] = 'N';
+                            $tabStations[$i]['valider'] = 'N';
+                        }
+                        if ($pgCmdPrelev->getPhaseDmd()->getcodePhase() == 'M40' and $user->hasRole('ROLE_ADMINSQE')) {
+                            $tabStations[$i]['cmdPrelev'][$j]['devalider'] = 'O';
+                            $tabStations[$i]['devalider'] = 'O';
+                            $tabStations[$i]['cmdPrelev'][$j]['saisieAnalyse'] = 'N';
+                            $tabStations[$i]['cmdPrelev'][$j]['saisieTerrain'] = 'N';
+                            $tabStations[$i]['saisieTerrain'] = 'N';
+                        } else {
+                            $tabStations[$i]['cmdPrelev'][$j]['devalider'] = 'N';
+                            $tabStations[$i]['devalider'] = 'N';
+                        }
+                        
                         $j++;
                     }
                 }
