@@ -656,7 +656,7 @@ class SaisieDonneesController extends Controller {
         } else {
             $datePrel = null;
         }
-        foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
+           foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
             $pgProgLotGrparAn = $pgProgLotPeriodeProg->getGrparAn();
             if ($pgProgLotGrparAn->getvalide() == 'O') {
                 $pgProgGrpParamRef = $pgProgLotGrparAn->getGrparRef();
@@ -919,6 +919,7 @@ class SaisieDonneesController extends Controller {
 
         $pgCmdPrelev->setDatePrelev($datePrel);
         $emSqe->persist($pgCmdPrelev);
+        $emSqe->flush();
 
 //  return new Response(  \Symfony\Component\VarDumper\VarDumper::dump($tabParamAns));
 //return new Response ('');
