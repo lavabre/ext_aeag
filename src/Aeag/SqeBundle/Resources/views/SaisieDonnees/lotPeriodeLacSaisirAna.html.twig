@@ -48,7 +48,7 @@
          <div class="form-group form-inline">
                      <label class=" col-md-offset-3 col-xs-2 control-label">Date prélèvement :</label>
                      <div class="col-xs-2  input-group">
-                            <input type="text" id="datePrel" name="datePrel" required="required" class="form-control text-center" placeholder="Date prélèvement" value="{{ cmdPrelev.datePrelev | date("d/m/Y H:i") }}">
+                            <input type="text" id="datePrel" name="datePrel" required="required" class="form-control text-center" placeholder="Date prélèvement" value="{%if cmdPrelev.datePrelev %}{{ cmdPrelev.datePrelev | date("d/m/Y H:i") }}{% endif %}">
                      </div>
         </div>
     
@@ -180,7 +180,7 @@
                                                                                                                                                 </select>
                                                                                                                                          {% else %}
                                                                                                                                              {% if paramAn.pgCmdAnalyse %}
-                                                                                                                                                   <input id="idValeur{{ paramAn.paramAn.id}}" class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdAnalyse.resultat | replace({".0000000000" : ""})  }}">
+                                                                                                                                                   <input id="idValeur{{ paramAn.paramAn.id}}" class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdAnalyse.resultat | replace({".0000000000" : "", "000000000" : "", "00000000" : "", "0000000" : "", "000000" : "", "00000000" : "", "0000000" : "", "000000" : ""})  }}">
                                                                                                                                                {% else %}
                                                                                                                                                      <input id="idValeur{{ paramAn.paramAn.id}}" class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}" value="">
                                                                                                                                              {% endif %}
@@ -242,7 +242,7 @@
                                                                                                                          {% set nbTd = nbTd + 1 %}
                                                                                                                         <td  id='td_{{ nbTd }}' align="right">
                                                                                                                              {% if paramAn.pgCmdAnalyse %}
-                                                                                                                                 <span class="text-right">{{ paramAn.pgCmdAnalyse.resultat | replace({".0000000000" : ""})  }}</span>
+                                                                                                                                 <span class="text-right">{{ paramAn.pgCmdAnalyse.resultat | replace({".0000000000" : "", "000000000" : "", "00000000" : "", "0000000" : "", "000000" : "", "00000000" : "", "0000000" : "", "000000" : ""}) }}</span>
                                                                                                                              {% endif %}
                                                                                                                           </td>
                                                                                                                           {% set nbTd = nbTd + 1 %}
@@ -378,7 +378,7 @@
                                 $("#idRemarque{{ paramAn.paramAn.id}} option[value='" + valeur + "']").attr('selected','selected');
                                 $("#idRemarque{{ paramAn.paramAn.id}}").val(valeur);
                                 {% for valeur in paramAn.valeurs %}
-                                              {% if paramAn.pgCmdAnalyse.resultat | replace({".0000000000" : ""})  == valeur.valeur  | replace({".00" : ""}) %}
+                                              {% if paramAn.pgCmdAnalyse.resultat | replace({".0000000000" : "", "000000000" : "", "00000000" : "", "0000000" : "", "000000" : "", "00000000" : "", "0000000" : "", "000000" : ""})  == valeur.valeur  | replace({".00" : ""}) %}
                                                         $('#idValeur{{ paramAn.paramAn.id}} option:selected').removeAttr('selected');
                                                         var valeur =   {{ valeur.valeur |  replace({".00" : ""})}}
                                                         $("#idValeur{{ paramAn.paramAn.id}} option[value='" + valeur + "']").attr('selected','selected');

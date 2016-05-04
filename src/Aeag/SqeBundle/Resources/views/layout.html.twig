@@ -28,7 +28,7 @@
      
      {% if is_granted('ROLE_ADMINSQE') %}
          <!-- Menu admin sqe -->
-         {% include 'AeagSqeBundle:Default:menu_admin.html.twig'%}
+         {% include 'AeagSqeBundle:Default:menu_admin.html.twig'  with { 'suiviHb' : suiviHb , 'suiviDonnees': suiviDonnees}%}
          
     {%elseif is_granted('ROLE_PROGSQE') %}
         <!-- Menu prog sqe -->
@@ -36,7 +36,7 @@
         
     {%elseif is_granted('ROLE_PRESTASQE') %}
         <!-- Menu presta sqe -->
-        {% include 'AeagSqeBundle:Default:menu_prestasqe.html.twig'%}
+        {% include 'AeagSqeBundle:Default:menu_prestasqe.html.twig'  with { 'suiviHb' : suiviHb, 'suiviDonnees': suiviDonnees }%}
     {% else %}
         <!-- Menu sqe -->
         {% include 'AeagSqeBundle:Default:menu_sqe.html.twig'%}

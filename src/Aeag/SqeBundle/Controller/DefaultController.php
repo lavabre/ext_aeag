@@ -27,7 +27,11 @@ class DefaultController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emSqe = $this->get('doctrine')->getManager('sqe');
         $factory = $this->get('security.encoder_factory');
+
         $repoParametre = $emSqe->getRepository('AeagSqeBundle:Parametre');
+        $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
+        $repoPgProgPrestaTypfic = $emSqe->getRepository('AeagSqeBundle:PgProgPrestaTypfic');
+
         $annee = $repoParametre->getParametreByCode('ANNEE');
         if (!$annee) {
             $this->initBase($emSqe, $em);
@@ -79,8 +83,26 @@ class DefaultController extends Controller {
             //$session->getFlashBag()->add('notice-success', $message);
         }
 
+        $suiviHb = false;
+        $suiviDonnees = false;
+        $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
+        if ($pgProgWebUser->getTypeUser() == 'PREST') {
+            $pgProgPrestaTypfics = $repoPgProgPrestaTypfic->getPgProgPrestaTypficByPrestataire($pgProgWebUser->getPrestataire());
+            foreach ($pgProgPrestaTypfics as $pgProgPrestaTypfic) {
+                if ($pgProgPrestaTypfic->getFormatFic() == 'Suivi_HB') {
+                    $suiviHb = true;
+                }
+                if (substr($pgProgPrestaTypfic->getFormatFic(), 0, 7) == 'Saisie_') {
+                    $suiviDonnees = true;
+                }
+            }
+        }
+         if (is_object($user) && ($this->get('security.authorization_checker')->isGranted('ROLE_ADMINSQE'))) {
+             $suiviHb = true;
+            $suiviDonnees =true;
+         }
 
-        return $this->render('AeagSqeBundle:Default:index.html.twig');
+        return $this->render('AeagSqeBundle:Default:index.html.twig', array('suiviHb' => $suiviHb, 'suiviDonnees' => $suiviDonnees));
     }
 
     public function envoyerMessageAction(Request $request) {

@@ -319,16 +319,7 @@ class SaisieDonneesController extends Controller {
                                     $tabStations[$i]['cmdPrelev'][$j]['saisieTerrain'] = 'O';
                                 }
                             }
-                            if ($pgCmdPrelev->getPhaseDmd()->getcodePhase() == 'M30') {
-                                $tabStations[$i]['cmdPrelev'][$j]['valider'] = 'O';
-                            } else {
-                                $tabStations[$i]['cmdPrelev'][$j]['valider'] = 'N';
-                            }
-                            if ($pgCmdPrelev->getPhaseDmd()->getcodePhase() == 'M40' and $user->hasRole('ROLE_ADMINSQE')) {
-                                $tabStations[$i]['cmdPrelev'][$j]['devalider'] = 'O';
-                            } else {
-                                $tabStations[$i]['cmdPrelev'][$j]['devalider'] = 'N';
-                            }
+                         
                             $NbProgLotParamAn = 0;
                             if ($NbProgLotParamAn == 0) {
                                 foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
@@ -371,13 +362,23 @@ class SaisieDonneesController extends Controller {
                             $tabStations[$i]['cmdPrelev'][$j]['nbSaisisParametresAnalyseCorrect'] = $NbCmdAnalyseCorrect;
                             $tabStations[$i]['cmdPrelev'][$j]['nbSaisisParametresAnalyseIncorrect'] = $NbCmdAnalyseIncorrect;
                             $tabStations[$i]['cmdPrelev'][$j]['nbSaisisParametresAnalyseErreur'] = $NbCmdAnalyseErreur;
-                            if ($pgCmdPrelev->getPhaseDmd()->getcodePhase() != 'M40') {
+                            if ($pgCmdPrelev->getPhaseDmd()->getcodePhase() <= 'M40') {
                                 if (strtoupper($pgProgPrestaTypfic->getFormatFic()) == 'SAISIE_TA' or strtoupper($pgProgPrestaTypfic->getFormatFic()) == 'SAISIE_A') {
                                     $tabStations[$i]['cmdPrelev'][$j]['saisieAnalyse'] = 'O';
                                 }
-                                if ($user->hasRole('ROLE_ADMINSQE')) {
+                                if ($user->hasRole('ROLE_ADMINSQE') and $pgCmdPrelev->getPhaseDmd()->getcodePhase() < 'M50') {
                                     $tabStations[$i]['cmdPrelev'][$j]['saisieAnalyse'] = 'O';
                                 }
+                            }
+                               if ($pgCmdPrelev->getPhaseDmd()->getcodePhase() == 'M30') {
+                                $tabStations[$i]['cmdPrelev'][$j]['valider'] = 'O';
+                            } else {
+                                $tabStations[$i]['cmdPrelev'][$j]['valider'] = 'N';
+                            }
+                            if ($pgCmdPrelev->getPhaseDmd()->getcodePhase() == 'M40' and $user->hasRole('ROLE_ADMINSQE')) {
+                                $tabStations[$i]['cmdPrelev'][$j]['devalider'] = 'O';
+                            } else {
+                                $tabStations[$i]['cmdPrelev'][$j]['devalider'] = 'N';
                             }
                         }
                     }
@@ -1332,10 +1333,12 @@ class SaisieDonneesController extends Controller {
         $session->set('fonction', 'lotPeriodeStationValider');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
+        $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
         $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
         $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
         $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
 
+        $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($periodeAnId);
         $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevById($prelevId);
         $pgCmdDemande = $pgCmdPrelev->getDemande();
@@ -1403,10 +1406,12 @@ class SaisieDonneesController extends Controller {
         $session->set('fonction', 'lotPeriodeStationValider');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
+        $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
         $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
         $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
         $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
 
+        $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($periodeAnId);
         $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevById($prelevId);
         $pgCmdDemande = $pgCmdPrelev->getDemande();

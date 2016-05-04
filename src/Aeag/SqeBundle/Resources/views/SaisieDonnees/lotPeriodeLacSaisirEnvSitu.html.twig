@@ -223,7 +223,7 @@
                                                                                                                                            </select>
                                                                                                                                     {% else %}
                                                                                                                                         {% if paramAn.pgCmdMesureEnv %}
-                                                                                                                                              <input id="idValeur{{ paramAn.paramAn.id}}"  class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdMesureEnv.resultat | replace({".0000000000" : ""})}}">
+                                                                                                                                              <input id="idValeur{{ paramAn.paramAn.id}}"  class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdMesureEnv.resultat | replace({".0000000000" : "", "000000000" : "", "00000000" : "", "0000000" : "", "000000" : "", "00000000" : "", "0000000" : "", "000000" : ""}) }}">
                                                                                                                                            {% else %}
                                                                                                                                                 <input id="idValeur{{ paramAn.paramAn.id}}" class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}" value="">
                                                                                                                                         {% endif %}
@@ -331,7 +331,7 @@
                                                                                                                                                               </select>
                                                                                                                                                        {% else %}
                                                                                                                                                            {% if paramAn.pgCmdAnalyse %}
-                                                                                                                                                                  <input id="idValeur{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdPrelevPc.numOrdre }}" class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdPrelevPc.numOrdre }}" value="{{ paramAn.pgCmdAnalyse.resultat | replace({".0000000000" : ""}) }}">
+                                                                                                                                                                  <input id="idValeur{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdPrelevPc.numOrdre }}" class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdPrelevPc.numOrdre }}" value="{{ paramAn.pgCmdAnalyse.resultat | replace({".0000000000" : "", "000000000" : "", "00000000" : "", "0000000" : "", "000000" : "", "00000000" : "", "0000000" : "", "000000" : ""}) }}">
                                                                                                                                                              {% else %}
                                                                                                                                                                     <input id="idValeur{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdPrelevPc.numOrdre }}" class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdPrelevPc.numOrdre }}" value="">
                                                                                                                                                            {% endif %}
@@ -428,7 +428,7 @@
                                                                                                                                                               </select>
                                                                                                                                                        {% else %}
                                                                                                                                                            {% if paramAn.pgCmdAnalyse %}
-                                                                                                                                                                  <input id="idValeur{{ paramAn.paramAn.id}}" class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdAnalyse.resultat | replace({".0000000000" : ""}) }}">
+                                                                                                                                                                  <input id="idValeur{{ paramAn.paramAn.id}}" class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdAnalyse.resultat | replace({".0000000000" : "", "000000000" : "", "00000000" : "", "0000000" : "", "000000" : "", "00000000" : "", "0000000" : "", "000000" : ""}) }}">
                                                                                                                                                              {% else %}
                                                                                                                                                                     <input id="idValeur{{ paramAn.paramAn.id}}" class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}" value="">
                                                                                                                                                            {% endif %}
@@ -618,7 +618,7 @@
                                                 $("#idRemarque{{ paramAn.paramAn.id}}").val(remarque);
                                              };
                                            {% for valeur in paramAn.valeurs %}
-                                                    {% if paramAn.pgCmdMesureEnv.resultat | replace({".0000000000" : ""})   == valeur.valeur  | replace({".00" : ""}) %}
+                                                    {% if paramAn.pgCmdMesureEnv.resultat | replace({".0000000000" : "", "000000000" : "", "00000000" : "", "0000000" : "", "000000" : "", "00000000" : "", "0000000" : "", "000000" : ""})  == valeur.valeur  | replace({".00" : ""}) %}
                                                             $('#idValeur{{ paramAn.paramAn.id}} option:selected').removeAttr('selected');
                                                             var valeur =   {{ valeur.valeur |  replace({".00" : ""})}}
                                                             $("#idValeur{{ paramAn.paramAn.id}} option[value='" + valeur + "']").attr('selected','selected');
@@ -712,7 +712,7 @@
                                                                           $("#idRemarque{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }}").val(remarque);
                                                                       };
                                                                       {% for valeur in paramAn.valeurs %}
-                                                                                   {% if paramAn.pgCmdAnalyse.resultat | replace({".0000000000" : ""})  == valeur.valeur  | replace({".00" : ""}) %}
+                                                                                   {% if paramAn.pgCmdAnalyse.resultat | replace({".0000000000" : "", "000000000" : "", "00000000" : "", "0000000" : "", "000000" : "", "00000000" : "", "0000000" : "", "000000" : ""})  == valeur.valeur  | replace({".00" : ""}) %}
                                                                                           $('#idValeur{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }} option:selected').removeAttr('selected');
                                                                                           var valeur =   {{ valeur.valeur |  replace({".00" : ""}) }}
                                                                                           $("#idValeur{{ paramAn.paramAn.id}}-{{ paramAn.pgCmdAnalyse.numOrdre }} option[value='" + valeur + "']").attr('selected','selected');
@@ -843,7 +843,7 @@
                                                 $("#idRemarque{{ paramAn.paramAn.id}}").val(remarque);
                                             };
                                             {% for valeur in paramAn.valeurs %}
-                                                         {% if paramAn.pgCmdAnalyse.resultat | replace({".0000000000" : ""})  == valeur.valeur  | replace({".00" : ""}) %}
+                                                         {% if paramAn.pgCmdAnalyse.resultat | replace({".0000000000" : "", "000000000" : "", "00000000" : "", "0000000" : "", "000000" : "", "00000000" : "", "0000000" : "", "000000" : ""})  == valeur.valeur  | replace({".00" : ""}) %}
                                                                 $('#idValeur{{ paramAn.paramAn.id}} option:selected').removeAttr('selected');
                                                                 var valeur =   {{ valeur.valeur |  replace({".00" : ""}) }}
                                                                 $("#idValeur{{ paramAn.paramAn.id}} option[value='" + valeur + "']").attr('selected','selected');
