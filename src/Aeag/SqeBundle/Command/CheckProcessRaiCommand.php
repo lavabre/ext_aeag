@@ -95,9 +95,11 @@ class CheckProcessRaiCommand extends AeagCommand {
                 $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R45', $this->phase82atteinte);
                 
                 $this->_updatePhaseDemande($pgCmdFichierRps->getDemande());
-                
+
                 // Fichier csv
-                //$this->_exportCsvDonneesBrutes($pgCmdFichierRps);
+                $chemin = $this->getContainer()->getParameter('repertoire_echange');
+                $donneesBrutes = $this->repoPgCmdPrelev->getDonneesBrutes($pgCmdFichierRps);
+                $this->getContainer()->get('aeag_sqe.process_rai')->exportCsvDonneesBrutes($this->emSqe, $chemin, $pgCmdFichierRps, $donneesBrutes);
 
                 $cptRaisTraitesOk++;
             } else {
@@ -370,8 +372,10 @@ class CheckProcessRaiCommand extends AeagCommand {
         // III.12 Valeur de pourcentage hors 1312 oxygène (ex : matière sèche ou granulo) : non compris entre 0 et 100 si code unité = 243 ou 246
         $tabMesures = array(243 => $this->repoPgTmpValidEdilabo->getMesureByCodeUnite(243, $demandeId, $reponseId, $codePrelevement, 1312),
             246 => $this->repoPgTmpValidEdilabo->getMesureByCodeUnite(246, $demandeId, $reponseId, $codePrelevement, 1312));
-        if (($result = $controleVraisemblaceService->pourcentageHorsOxygene($tabMesures) !== true)) {
-            $this->_addLog($result[0], $demandeId, $reponseId, $result[1], $codePrelevement, $codeParametre);
+        if (($results = $controleVraisemblaceService->pourcentageHorsOxygene($tabMesures) !== true)) {
+            foreach($results as $result) {
+                $this->_addLog($result[0], $demandeId, $reponseId, $result[1], $codePrelevement, $codeParametre);
+            }
         }
 
         // III.13 Somme des paramètres distincts (1200+1201+1202+1203=5537; 1178+1179 = 1743; 1144+1146+ 1147+1148 = 7146; 2925 + 1292 =  1780) à  (+/- 20%)
@@ -399,8 +403,10 @@ class CheckProcessRaiCommand extends AeagCommand {
             3 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1780, $demandeId, $reponseId, $codePrelevement));
 
         $params = array(5537, 1743, 7146, 1780);
-        if (($result = $controleVraisemblaceService->sommeParametresDistincts($sommeParams, $resultParams, $params) !== true)) {
-            $this->_addLog($result[0], $demandeId, $reponseId, $result[1], $codePrelevement, $codeParametre);
+        if (($results = $controleVraisemblaceService->sommeParametresDistincts($sommeParams, $resultParams, $params) !== true)) {
+            foreach ($results as $result) {
+                $this->_addLog($result[0], $demandeId, $reponseId, $result[1], $codePrelevement, $codeParametre);
+            }
         }
         
         $this->controleVraisemblanceMacroPolluants($demandeId, $reponseId, $codePrelevement);
@@ -415,7 +421,6 @@ class CheckProcessRaiCommand extends AeagCommand {
     
     
     //III.14 Contrôle de vraisemblance par parmètres macropolluants : Résultat d’analyse< Valeur max de la base x 2 
-    // TODO A Retoucher
     public function controleVraisemblanceMacroPolluants($demandeId, $reponseId, $codePrelevement) {
         $pgProgUnitesPossiblesParams = $this->repoPgProgUnitesPossiblesParam->getPgProgUnitesPossiblesParamWithValeurMax();
         foreach ($pgProgUnitesPossiblesParams as $pgProgUnitesPossiblesParam) {
@@ -430,7 +435,6 @@ class CheckProcessRaiCommand extends AeagCommand {
     }
 
     //III.15 Détection Code remarque Lot 7 (Etat chimique, Substance pertinentes, Complément AEAG, PSEE) :  % de détection différent de 100 (= recherche d'absence de code remarque) suivant liste ref-doc
-    // TODO A Retoucher
     public function detectionCodeRemarqueLot7($demandeId, $reponseId, $codePrelevement) {
 
         // Vérification marché Demande = marché Aeag
@@ -460,7 +464,6 @@ class CheckProcessRaiCommand extends AeagCommand {
     }
 
     //III.16
-    // TODO A Retoucher
     public function detectionCodeRemarqueLot8($demandeId, $reponseId, $codePrelevement) {
 
         // Vérification marché Demande = marché Aeag
@@ -491,7 +494,6 @@ class CheckProcessRaiCommand extends AeagCommand {
     }
 
     // III.17
-    // TODO A Retoucher
     public function controleLqAeag($pgCmdFichierRps, $codePrelevement) {
         $demandeId = $pgCmdFichierRps->getDemande()->getId();
         $reponseId = $pgCmdFichierRps->getId();
@@ -652,43 +654,6 @@ class CheckProcessRaiCommand extends AeagCommand {
                 $this->_updatePhasePrelevement($pgCmdPrelev, 'M40');
             }
         }
-    }
-    
-    protected function _exportCsvDonneesBrutes($pgCmdFichierRps) {
-        
-        // Fichier CSV :
-        // Récupérer le nom du fichier déposé
-        // Supprimer l'extension, rajouter csv
-        $nomFichierRps = str_replace('zip', 'csv', $pgCmdFichierRps->getNomFichier());
-        $chemin = $this->getContainer()->getParameter('repertoire_echange');
-        $pathBase = $this->getContainer()->get('aeag_sqe.process_rai')->getCheminEchange($chemin, $pgCmdFichierRps->getDemande(), $pgCmdFichierRps->getId());
-        $fullFileName = $pathBase . '/' . $nomFichierRps;
-        
-        $fichier_csv = fopen($fullFileName, 'w+');
-        
-        // Chaque ligne du tableau correspond a une ligne du fichier csv
-        $lignes = array();
-        // Entete
-        $lignes[] = array('Année', 'Code station','Nom station','Code masse d\'eau','Code du prélèvement',
-                        'Siret préleveur','Nom préleveur','Date-heure du prélèvement','Code du paramètre', 
-                        'Libellé court paramètre', 'Nom paramètre','Zone verticale','Profondeur', 'Code support',
-                        'Nom support', 'Code fraction', 'Nom fraction', 'Code méthode', 'Nom méthode', 'Code remarque',
-                        'Résultat', 'Valeur textuelle', 'Code unité', 'libellé unité', 'symbole unité', 'LQ', 'Siret labo',
-                        'Nom labo', 'Code réseau', 'Nom réseau', 'Siret prod', 'Nom prod', 'Commentaire');
-        
-        // Requete de récupération des différents champs
-        $donneesBrutes = $this->repoPgCmdPrelev->getDonneesBrutes($pgCmdFichierRps);
-        $lignes = array_merge($lignes, $donneesBrutes);
-        foreach ($lignes as $ligne) {
-            fputcsv($fichier_csv, $ligne, ';');
-        }
-        
-        fclose($fichier_csv);
-        
-        // Mettre à jour la table pgCmdFichierRps avec le lien vers le fichier des données brutes
-        $pgCmdFichierRps->setNomFichierDonneesBrutes($nomFichierRps);
-        $this->emSqe->persist($pgCmdFichierRps);
-        $this->emSqe->flush();
     }
 
     protected function isAlreadyAdded($pgCmdFichierRps, $pgCmdPrelev) {

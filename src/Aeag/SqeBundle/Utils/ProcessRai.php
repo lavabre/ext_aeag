@@ -134,5 +134,46 @@ class ProcessRai {
         \curl_close($ch);
         return $result;
     }
+    
+    public function exportCsvDonneesBrutes($em, $chemin, $pgCmdFichierRps, $donneesBrutes) {
+        
+        // Fichier CSV :
+        // Récupérer le nom du fichier déposé
+        // Supprimer l'extension, rajouter csv
+        if (strpos($pgCmdFichierRps->getNomFichier(), '.zip') !== false) {
+            $nomFichierRps = str_replace('zip', 'csv', $pgCmdFichierRps->getNomFichier());
+        } else {
+            $nomFichierRps = $pgCmdFichierRps->getNomFichier().'.csv';
+        }
+        
+        $pathBase = $this->getCheminEchange($chemin, $pgCmdFichierRps->getDemande(), $pgCmdFichierRps->getId());
+        $fullFileName = $pathBase . '/' . $nomFichierRps;
+        
+        $fichier_csv = fopen($fullFileName, 'w+');
+        
+        // Chaque ligne du tableau correspond a une ligne du fichier csv
+        $lignes = array();
+        // Entete
+        $lignes[] = array('Année', 'Code station','Nom station','Code masse d\'eau','Code du prélèvement',
+                        'Siret préleveur','Nom préleveur','Date-heure du prélèvement','Code du paramètre', 
+                        'Libellé court paramètre', 'Nom paramètre','Zone verticale','Profondeur', 'Code support',
+                        'Nom support', 'Code fraction', 'Nom fraction', 'Code méthode', 'Nom méthode', 'Code remarque',
+                        'Résultat', 'Valeur textuelle', 'Code unité', 'libellé unité', 'symbole unité', 'LQ', 'Siret labo',
+                        'Nom labo', 'Code réseau', 'Nom réseau', 'Siret prod', 'Nom prod', 'Commentaire');
+        
+        // Requete de récupération des différents champs
+        //$donneesBrutes = $this->repoPgCmdPrelev->getDonneesBrutes($pgCmdFichierRps);
+        $lignes = array_merge($lignes, $donneesBrutes);
+        foreach ($lignes as $ligne) {
+            fputcsv($fichier_csv, $ligne, ';');
+        }
+        
+        fclose($fichier_csv);
+        
+        // Mettre à jour la table pgCmdFichierRps avec le lien vers le fichier des données brutes
+        $pgCmdFichierRps->setNomFichierDonneesBrutes($nomFichierRps);
+        $em->persist($pgCmdFichierRps);
+        $em->flush();
+    }
 
 }

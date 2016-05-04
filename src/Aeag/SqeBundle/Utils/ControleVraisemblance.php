@@ -313,17 +313,23 @@ class ControleVraisemblance {
 
     // III.12 Valeur de pourcentage hors 1312 oxygène (ex : matière sèche ou granulo) : non compris entre 0 et 100 si code unité = 243 ou 246
     public function pourcentageHorsOxygene($tabMesures) {
-
+        $tabRetour = array();
         foreach ($tabMesures as $tabMesure) {
             if (!is_null($tabMesure) && count($tabMesure) > 0) {
                 foreach ($tabMesure as $mesure) {
                     if ($mesure > 100 || $mesure < 0) {
                         //$this->_addLog('error', $demandeId, $reponseId, "Valeur pourcentage : pourcentage n'est pas entre 0 et 100", $mesure);
-                        return array("error", "Valeur pourcentage : pourcentage n'est pas entre 0 et 100");
+                        $tabRetour[] = array("error", "Valeur pourcentage : pourcentage n'est pas entre 0 et 100");
                     }
                 }
             }
         }
+        if (count($tabRetour) > 0) {
+            return $tabRetour;
+        } else {
+            return true;
+        }
+        
     }
 
     // III.13 Somme des paramètres distincts (1200+1201+1202+1203=5537; 1178+1179 = 1743; 1144+1146+ 1147+1148 = 7146; 2925 + 1292 =  1780) à  (+/- 20%)
@@ -357,8 +363,9 @@ class ControleVraisemblance {
                 $i++;
             }
         }
-
+        
         if ($valid) {
+            $tabRetour = array();
             foreach ($sommeParams as $idx => $sommeParam) {
                 $somme = 0;
                 foreach ($sommeParam as $param) {
@@ -370,8 +377,13 @@ class ControleVraisemblance {
                 $resultParamMax = $resultParams[$idx] + $percent;
                 if (($resultParamMin > $somme) || ($somme > $resultParamMax)) {
                     //$this->_addLog('error', $demandeId, $reponseId, "Somme Parametres Distincts : La somme des paramètres ne correspond pas au paramètre global " . $params[$idx], $codePrelevement, $somme);
-                    return array("error", "Somme Parametres Distincts : La somme des paramètres ne correspond pas au paramètre global" . $params[$idx]);
+                    $tabRetour[] = array("error", "Somme Parametres Distincts : La somme des paramètres ne correspond pas au paramètre global" . $params[$idx]);
                 }
+            }
+            if (count($tabRetour) > 0) {
+                return $tabRetour;
+            } else {
+                return true;
             }
         }
         return true;
