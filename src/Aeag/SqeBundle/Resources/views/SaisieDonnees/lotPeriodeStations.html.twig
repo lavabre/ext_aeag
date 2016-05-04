@@ -56,14 +56,14 @@
                                    <ul class="list-inline">
                                   {% if cmdPrelev.valider == 'O' %}
                                       <li>
-                                             <a class="btn btn-success" id="idValider{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Valider la saisie des données terrainse et des analyses">
+                                             <a class="btn btn-success" id="idValider{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Valider la saisie des données terrains et des analyses">
                                                 <i class="fa fa-check">Valider</i>
                                              </a>
                                       </li>
                                   {% endif %}
                                   {% if cmdPrelev.devalider == 'O' %}
                                       <li>
-                                             <a class="btn btn-danger" id="idDevalider{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Dévalider la saisie des données terrainse et des analyses">
+                                             <a class="btn btn-danger" id="idDevalider{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Dévalider la saisie des données terrains et des analyses">
                                                 <i class="fa fa-close">Dévalider</i>
                                              </a>
                                       </li>
@@ -93,7 +93,11 @@
                                                                 <li><span  class="label label-success">{{ cmdPrelev.nbSaisisParametresTerrainCorrect}}</li>
                                                                 <li><span  class="label label-warning">{{ cmdPrelev.nbSaisisParametresTerrainIncorrect}}</li>
                                                                 <li><span  class="label label-danger">{{ cmdPrelev.nbSaisisParametresTerrainErreur}}</li>
-                                                               <li><span  class="label label-default">{{ cmdPrelev.nbSaisisParametresTerrain  }}/{{ cmdPrelev.nbParametresTerrain}}</li>
+                                                            {% if is_granted('ROLE_ADMINSQE') and cmdPrelev.nbParametresTerrain == 0 and cmdPrelev.nbAutresParametresTerrain > 0 %}
+                                                                    <li><span  class="label label-default">{{ cmdPrelev.nbAutresParametresTerrain }}</li>
+                                                             {% else %}
+                                                                     <li><span  class="label label-default">{{ cmdPrelev.nbSaisisParametresTerrain  }}/{{ cmdPrelev.nbParametresTerrain}}</li>
+                                                             {% endif %}
                                                       </ul> 
                                                  {% elseif cmdPrelev.nbAutresParametresAnalyse > 0 %}
                                                           <ul class="list-inline">
@@ -116,7 +120,11 @@
                                                                   <li><span  class="label label-success">{{ cmdPrelev.nbSaisisParametresTerrainCorrect}}</li>
                                                                  <li><span  class="label label-warning">{{ cmdPrelev.nbSaisisParametresTerrainIncorrect}}</li>
                                                                  <li><span  class="label label-danger">{{ cmdPrelev.nbSaisisParametresTerrainErreur}}</li>
-                                                                 <li><span  class="label label-default">{{ cmdPrelev.nbSaisisParametresTerrain  }}/{{ cmdPrelev.nbParametresTerrain }}</li>
+                                                                 {% if is_granted('ROLE_ADMINSQE') and cmdPrelev.nbParametresTerrain == 0 and cmdPrelev.nbAutresParametresTerrain > 0 %}
+                                                                    <li><span  class="label label-default">{{ cmdPrelev.nbAutresParametresTerrain }}</li>
+                                                             {% else %}
+                                                                     <li><span  class="label label-default">{{ cmdPrelev.nbSaisisParametresTerrain  }}/{{ cmdPrelev.nbParametresTerrain}}</li>
+                                                             {% endif %}
                                                           </ul>  
                                                    {% elseif cmdPrelev.nbAutresParametresAnalyse > 0 %}
                                                           <ul class="list-inline">
@@ -142,7 +150,11 @@
                                                             <li><span  class="label label-success">{{ cmdPrelev.nbSaisisParametresAnalyseCorrect}}</li>
                                                            <li><span  class="label label-warning">{{ cmdPrelev.nbSaisisParametresAnalyseIncorrect}}</li>
                                                            <li><span  class="label label-danger">{{ cmdPrelev.nbSaisisParametresAnalyseErreur}}</li>
-                                                           <li><span  class="label label-default">{{ cmdPrelev.nbSaisisParametresAnalyse }}/{{ cmdPrelev.nbParametresAnalyse }}</li>
+                                                            {% if is_granted('ROLE_ADMINSQE') and cmdPrelev.nbParametresAnalyse == 0 and cmdPrelev.nbAutresParametresAnalyse > 0 %}
+                                                                <li><span  class="label label-default">{{ cmdPrelev.nbAutresParametresAnalyse }}</li>
+                                                           {% else %}
+                                                                 <li><span  class="label label-default">{{ cmdPrelev.nbSaisisParametresAnalyse }}/{{ cmdPrelev.nbParametresAnalyse }}</li>
+                                                          {% endif %}
                                                      </ul> 
                                                 {% elseif cmdPrelev.nbAutresParametresAnalyse > 0 %}
                                                           <ul class="list-inline">
@@ -165,7 +177,11 @@
                                                                 <li><span  class="label label-success">{{ cmdPrelev.nbSaisisParametresAnalyseCorrect}}</li>
                                                                <li><span  class="label label-warning">{{ cmdPrelev.nbSaisisParametresAnalyseIncorrect}}</li>
                                                                <li><span  class="label label-danger">{{ cmdPrelev.nbSaisisParametresAnalyseErreur}}</li>
-                                                              <li><span  class="label label-default">{{ cmdPrelev.nbSaisisParametresAnalyse }}/{{ cmdPrelev.nbParametresAnalyse }}</li>
+                                                              {% if is_granted('ROLE_ADMINSQE') and cmdPrelev.nbParametresAnalyse == 0 and cmdPrelev.nbAutresParametresAnalyse > 0 %}
+                                                                <li><span  class="label label-default">{{ cmdPrelev.nbAutresParametresAnalyse }}</li>
+                                                           {% else %}
+                                                                 <li><span  class="label label-default">{{ cmdPrelev.nbSaisisParametresAnalyse }}/{{ cmdPrelev.nbParametresAnalyse }}</li>
+                                                          {% endif %}
                                                          </ul> 
                                                  {% elseif cmdPrelev.nbAutresParametresAnalyse > 0 %}
                                                            <ul class="list-inline">
@@ -225,10 +241,15 @@
                              $(document).on('click','#idSaisirDonneesTerrain{{ cmdPrelev.cmdPrelev.id }}',function(e){
                                     e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
                                     $('#modalTraitementEncours').modal('toggle');
-                                   var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_station_saisir_env_situ",{"prelevId":  "par1", "periodeAnId": "par2", "stationId": "par3","maj" : "M"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                   var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_station_saisir_env_situ",{"prelevId":  "par1", "periodeAnId": "par2", "stationId": "par3","maj" : "par4"}) }}', // Le nom du fichier indiqué dans le formulaire
                                     url = url.replace("par1", {{ cmdPrelev.cmdPrelev.id }});
                                     url = url.replace("par2", {{ periodeAn.id }});
                                     url = url.replace("par3", {{ station.station.ouvFoncId }});
+                                    {% if cmdPrelev.valider == 'O' %}
+                                         url = url.replace("par4", "V");
+                                    {% else %}
+                                         url = url.replace("par4", "M");
+                                    {% endif %}
                                     url = url.replace("amp;","");
                                     window.location.replace(url);
                               });
@@ -247,10 +268,15 @@
                             $(document).on('click','#idSaisirAnalyses{{ cmdPrelev.cmdPrelev.id }}',function(e){
                                     e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
                                     $('#modalTraitementEncours').modal('toggle');
-                                   var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_station_saisir_ana",{"prelevId":  "par1", "periodeAnId": "par2", "stationId": "par3", "maj" : "M"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                   var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_station_saisir_ana",{"prelevId":  "par1", "periodeAnId": "par2", "stationId": "par3", "maj" : "par4"}) }}', // Le nom du fichier indiqué dans le formulaire
                                     url = url.replace("par1", {{ cmdPrelev.cmdPrelev.id }});
                                     url = url.replace("par2", {{ periodeAn.id }});
                                     url = url.replace("par3", {{ station.station.ouvFoncId }});
+                                    {% if cmdPrelev.valider == 'O' %}
+                                         url = url.replace("par4", "V");
+                                    {% else %}
+                                         url = url.replace("par4", "M");
+                                    {% endif %}
                                     url = url.replace("amp;","");
                                     window.location.replace(url);
                               });

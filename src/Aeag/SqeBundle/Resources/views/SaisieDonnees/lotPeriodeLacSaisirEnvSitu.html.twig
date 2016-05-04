@@ -958,15 +958,8 @@
                            url = url.replace("par4", $('#profMax').val());
                            url = url.replace("par5", $('#ecart').val());
                            url = url.replace("amp;","");
-                           $.ajax({
-                                    url: url,
-                                    type: 'get', // La méthode indiquée dans le formulaire (get ou post)
-                                    success: function(html) { // Je récupère la réponse du fichier PHP
-                                         $('#idGenerer' + groupeSelectionne).empty().append(html);
-                                         $('#modalTraitementEncours').modal('hide');
-                                       }
-                                });
-                    });
+                           window.location.replace(url);
+                       });
 
    });
     
