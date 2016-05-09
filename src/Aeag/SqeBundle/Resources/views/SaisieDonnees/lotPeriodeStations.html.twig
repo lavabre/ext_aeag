@@ -61,18 +61,21 @@
                                   {% if cmdPrelev.valider == 'O' %}
                                       <li>
                                              <a class="btn btn-success" id="idValider{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Valider la saisie des données terrains et des analyses">
-                                                <i class="fa fa-check">Valider</i>
+                                                <i class="fa fa-check"> Valider</i>
                                              </a>
                                       </li>
                                   {% endif %}
                                   {% if cmdPrelev.devalider == 'O' %}
                                       <li>
                                              <a class="btn btn-danger" id="idDevalider{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Dévalider la saisie des données terrains et des analyses">
-                                                <i class="fa fa-close">Dévalider</i>
+                                                <i class="fa fa-close"> Dévalider</i>
                                              </a>
                                       </li>
                                       <li>
-                                           <a id="idTelechargerSuivi{{ cmdPrelev.cmdPrelev.id }}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_saisieDonnees_lot_periode_station_telecharger',{'prelevId': cmdPrelev.cmdPrelev.id })}}" title="Télécharger les resultats">
+                                            {#<a id="idTelechargerSuivi{{ cmdPrelev.cmdPrelev.id }}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_saisieDonnees_lot_periode_station_telecharger',{'prelevId': cmdPrelev.cmdPrelev.id })}}" title="Télécharger les resultats">
+                                                        <i class="fa fa-upload"></i> 
+                                           </a>#}
+                                           <a id="idTelechargerSuivi{{ cmdPrelev.cmdPrelev.id }}" class="btn btn-success btn-telecharger" href="/sqe_csv/SAISIE_{{ cmdPrelev.cmdPrelev.id  }}.csv" title="Télécharger les resultats">
                                                         <i class="fa fa-upload"></i> 
                                            </a>
                                       </li>

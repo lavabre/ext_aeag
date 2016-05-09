@@ -7,9 +7,9 @@
 
 {% block titre %}
     {% if  app.environment == 'dev' %}
-        Agence de l'eau "Adour-garonne" </br> Etat des lieux en test
+        Agence de l'eau "Adour-garonne" </br> Outil diagnostic masse d'eau en test
     {% else %}
-        Agence de l'eau "Adour-garonne" </br> Etat des lieux
+        Agence de l'eau "Adour-garonne" </br>  Outil diagnostic masse d'eau
     {% endif %}
 {% endblock titre %}
 
@@ -20,6 +20,9 @@
         </h5>
     {%endif%}
 {% endblock message_admin %}
+
+{% block inbox_notificaton %}
+{% endblock inbox_notificaton %}
 
 {% block menu %}
 

@@ -1,27 +1,4 @@
 
-    <div class="row" id="row-{{ pression.euCd }}-{{ pression.cdPression }}">
-    {% if  is_granted("ROLE_COMMENTATEUREDL") %}
-        <div class="col-sm-1">
-                     <a id="newPression-{{ pression.euCd }}-{{ pression.cdPression }}" title="Proposer une nouvelle évaluation" cdPression="{{ pression.cdPression }}">
-                         <button type="button" class="btn btn-primary"><i class="fa fa-commenting"></i></button> 
-                    </a>
-         </div>
-       {% endif %}
-        <div class="col-sm-5">
-            <input type='hidden' id='UrlActuel' value="{{ path('AeagEdlBundle_pression', { 'code': pression.euCd }) }}" /> 
-           <input type='hidden' id='newPressionRoute' value="{{ path('AeagEdlBundle_pressionForm') }}" /> 
-           {{ pression.type.libelle }} 
-         </div>
-       <div class="col-sm-3">
-           <span class="dce_pression_{{ pression.valeur }}">{{ pression.getValueLib() }}</span>
-       </div>   
-       <div class="col-sm-3">
-           {% if derniereProp %}
-                    <span class="dce_pression_{{ derniereProp.valeur }}">{{ derniereProp.getValueLib() }}</span>
-           {% endif %}
-       </div>
-  </div>
-       </br>
     {% if pression.proposed|length > 0 %} 
            <div class="row " id="rowProposed-titre-{{ pression.euCd }}-{{ pression.cdPression }}">
                {% if  is_granted("ROLE_COMMENTATEUREDL") %}
@@ -78,58 +55,14 @@
    
      {% endif %}
  
- <div class="modal fade" id="modalPressionEdit" tabindex="-1" role="dialog">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title"><div class="label label-primary">Proposer une nouvelle évaluation</div></h4>
-        </div>
-        <div id="idPressionEdit" class="modal-body"></div>
-        <div class="modal-footer">
-          <button id="annuler" type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
-          <button  id="valider" type="button" class="btn btn-primary">valider</button>
-        </div>
-      </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-  </div><!-- /.modal -->
+ 
 
-<script type="text/javascript">
-    
-      
-$(document).ready(function() { 	
-    
-        // Sur clic "Proposer un nouvel pression"
-        $('#newPression-{{ pression.euCd }}-{{ pression.cdPression }}').click(function(e){
-                   $('#modalTraitementEncours').modal('toggle');
-            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-            //conserver l'url actuel
-            var $urlActuel = $('input#UrlActuel').val();
-            // obtenir l'url
-            var $url = $('input#newPressionRoute').val();
-            // conserver l'id du div qui hébergera le formulaire de saisie
-             idTr = '#divPression-{{ pression.euCd }}-{{ pression.cdPression }}';
-             $.post($url,
-                    {
-                        euCd: "{{ pression.euCd }}",
-                        cdPression: "{{ pression.cdPression }}"
-                    },
-            function (data) {
-                $('#idPressionEdit').empty().append(data);
-                $('#modalPressionEdit').modal();
-                $('#modalTraitementEncours').modal('hide');
-            }
-            ).error(function () {
-                $('#modalTraitementEncours').modal('hide');
-                alert("Erreur non déterminée");
-            });
-
-        });
-         
+  <script type="text/javascript" src="{{ asset('bundles/aeagaeag/bootstrap/js/jquery-2.1.4.js') }}"> </script> 
+  <script type="text/javascript">
+            
         {% set i = 1 %}
          {% for pp in pression.proposed %}
                $('#removePression-{{ pression.euCd }}-{{ pression.cdPression }}-{{ i }}').click(function (e) {
-                $('#modalTraitementEncours').modal('toggle');
                 e.preventDefault();
                 // obtenir l'url
                 var $url = "{{ path('AeagEdlBundle_removePression') }}";
@@ -151,18 +84,16 @@ $(document).ready(function() {
                     {% endif %}
                      idTr = '#divPression-{{ pression.euCd }}-{{ pression.cdPression }}';
                     $(idTr).html(data);
-                    $('#modalTraitementEncours').modal('hide');
+                    
                      }
                 ).error(function () {
                     // rétablir curseur
-                    $('#modalTraitementEncours').modal('hide');
                     alert("Erreur non déterminée");
                 });
             });
              {% set i = i + 1 %}
           {% endfor %}
-        
-    });
+    
     </script>
 
 

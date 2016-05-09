@@ -9,24 +9,81 @@
         </div>
         <div id="collapse{{ pressionGroupe.cdGroupe }}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading{{ pressionGroupe.cdGroupe }}">
             <div class="panel-body">
-                <div class="row">
-                    {% if  is_granted("ROLE_COMMENTATEUREDL") %}
-                    <div class="col-sm-1 alert  alert-info">Action</div>
-                    {% endif %}
-                    <div class="col-sm-5 alert  alert-info">Libelle</div>
-                    <div class="col-sm-3 alert  alert-info">Valeur provisoire</div>   
-                    <div class="col-sm-3 alert  alert-info">Proposition STL</div>
                 
-                {% for pression in pressions %}
-                    <div id="divPression-{{ pression.euCd }}-{{ pression.cdPression }}" >
-                        {{ render(controller('AeagEdlBundle:Pression:pressionListProposed', {'euCd':pression.euCd, 'cdPression':pression.cdPression})) }}
-                    </div>     
-                    </br>
+                 {% for tabPression in tabPressions %}
+                        <div class="row" id="row-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}">
+                             <table class="table table-bordered table-advance" id='idtable-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}'>
+                                           <tr class="info">
+                                               <td>
+                                                   {% if  is_granted("ROLE_COMMENTATEUREDL") %}
+                                                                    <a id="newPression-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}" title="Proposer une nouvelle évaluation" cdPression="{{ tabPression.pression.cdPression }}">
+                                                                        <button type="button" class="btn btn-primary"><i class="fa fa-commenting"></i></button> 
+                                                                   </a>
+                                                  {% else %}
+                                                      &nbsp;
+                                                 {% endif %}
+                                               </td>
+                                               <td class="text-nowrap">
+                                                      <input type='hidden' id='UrlActuel' value="{{ path('AeagEdlBundle_pression', { 'code': tabPression.pression.euCd }) }}" /> 
+                                                     <input type='hidden' id='newPressionRoute' value="{{ path('AeagEdlBundle_pressionForm') }}" /> 
+                                                     {{ tabPression.pression.type.libelle }} 
+                                               </td>
+                                               <td class="text-nowrap">
+                                                     SDAGE 2016 : <span class="dce_pression_{{ tabPression.pression.valeur }}">{{ tabPression.pression.getValueLib() }}</span>
+                                                </td>
+                                               <td class="text-nowrap">
+                                                      {% if tabPression.derniereProp %}
+                                                              Proposition :<span class="dce_pression_{{ tabPression.derniereProp.valeur }}"> {{ tabPression.derniereProp.getValueLib() }}</span>
+                                                      {% else %}
+                                                             Proposition :
+                                                     {% endif %}
+                                               </td>
+                                        </tr>
+                                       <tr>
+                                            <td></td>
+                                           <td colspan='3' id="divPression-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}">
+                                                     {{ render(controller('AeagEdlBundle:Pression:pressionListProposed', {'euCd':tabPression.pression.euCd, 'cdPression':tabPression.pression.cdPression})) }}
+                                             </td>
+                                       </tr>
+                             </table>
+                        </div>
                 {% endfor %}
-                </div>
-            </div>
+              </div>
         </div>
     </div>    
 {% endif %} 
 
 
+ <script type="text/javascript">
+   
+     {% for tabPression in tabPressions %}
+            // Sur clic "Proposer un nouvel pression"
+            $('#newPression-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}').click(function(e){
+               e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                //conserver l'url actuel
+                var $urlActuel = $('input#UrlActuel').val();
+                // obtenir l'url
+                var $url = $('input#newPressionRoute').val();
+                // conserver l'id du div qui hébergera le formulaire de saisie
+                 idTr = '#divPression-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}';
+                 $.post($url,
+                        {
+                            euCd: "{{ tabPression.pression.euCd }}",
+                            cdPression: "{{ tabPression.pression.cdPression }}"
+                        },
+                function (data) {
+                    $('#idPressionEdit').empty().append(data);
+                    $('#modalPressionEdit').modal();
+                }
+                ).error(function () {
+                    alert("Erreur non déterminée");
+                });
+
+            });
+            
+     {% endfor %}
+            
+
+ 
+  </script> 
+  

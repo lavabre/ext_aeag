@@ -51,6 +51,7 @@
                      {% block message_admin %}{% endblock message_admin %}
                  </div>
                   <div class="col-xs-2  text-right">
+                      {% block inbox_notificaton %}
                      <ul class="nav navbar-nav navbar-right">
                                       <!-- BEGIN INBOX DROPDOWN -->
                                     {#if (app.session.get('Messages') | length) > 0 #}
@@ -172,6 +173,7 @@
                       
                      
                           </ul> 
+                      {% endblock inbox_notificaton %}
                  </div>
              </div>
           <!--[if lt IE 9]>

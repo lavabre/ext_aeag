@@ -88,7 +88,7 @@ AeagSqeBundle_saisieDonnees_lot_periode_lac_ana_resultat:
     requirements:
         methods:  GET|POST
         
-AeagSqeBundle_saisieDonnees_lot_periode_lac valider:
+AeagSqeBundle_saisieDonnees_lot_periode_lac_valider:
     path:  /valider_lac/ana/{demandeId}/{periodeAnId}/{stationId}
     defaults: { _controller: AeagSqeBundle:SaisieDonnees:lotPeriodeLacValider, demandeId : null, periodeAnId : null, stationId : null}
     requirements:

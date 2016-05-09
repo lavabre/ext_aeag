@@ -40,6 +40,7 @@
         <table class="table table-bordered t table-advance" id="idTable_demandes">
             <thead>
                 <tr>
+                    <th>Action</th>
                     <th>Code</th>
                     <th>Libellé</th>
                     <th>Support</th>
@@ -59,6 +60,34 @@
                                  {% else %}
                                  <tr>
                               {% endif %}
+                                     {% if nbPrelev == 1 %}
+                                         <td   nowrap  rowspan={{station.nbPrelev }}>
+                                               <ul class="list-inline">
+                                                    {% if station.valider == 'O' %}
+                                                           <li>
+                                                                  <a class="btn btn-success" id="idValider{{ station.station.ouvFoncId   }}" href="#" title="Valider la saisie des données terrains et des analyses">
+                                                                     <i class="fa fa-check"> Valider</i>
+                                                                  </a>
+                                                           </li>
+                                                       {% endif %}
+                                                       {% if station.devalider == 'O' %}
+                                                           <li>
+                                                                  <a class="btn btn-danger" id="idDevalider{{ station.station.ouvFoncId   }}" href="#" title="Dévalider la saisie des données terrainse et des analyses">
+                                                                     <i class="fa fa-close"> Dévalider</i>
+                                                                  </a>
+                                                           </li>
+                                                           <li>
+                                                                {#<a id="idTelechargerSuivi{{ cmdPrelev.cmdPrelev.id }}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_saisieDonnees_lot_periode_station_telecharger',{'prelevId': cmdPrelev.cmdPrelev.id })}}" title="Télécharger les resultats">
+                                                                            <i class="fa fa-upload"></i> 
+                                                               </a>#}
+                                                               <a id="idTelechargerSuivi{{ station.stationAn.id }}" class="btn btn-success btn-telecharger" href="/sqe_csv/SAISIE_LAC_{{ station.stationAn.id  }}.csv" title="Télécharger les resultats">
+                                                                            <i class="fa fa-upload"></i> 
+                                                               </a>
+                                                          </li>
+                                                        {% endif %}
+                                               </ul>
+                                            </td>
+                                   {% endif %}
                                     <td>
                                          <a  href="{{ station.lien }}" target="_blank" title="Localisation">{{ station.station.code }}</a>
                                     </td>
@@ -76,25 +105,11 @@
                                         {% endif %}
                                     </td>
                                     {% if nbPrelev == 1 %}
-                                     <td    rowspan={{station.nbPrelev }}>
+                                     <td   nowrap rowspan={{station.nbPrelev }}>
                                                {% if station.saisieTerrain == 'O' %}
                                                                 {% if  station.nbParametresTerrain > 0 or is_granted('ROLE_ADMINSQE') %}
                                                                      <ul class="list-inline">
-                                                                             {% if station.valider == 'O' %}
-                                                                                    <li>
-                                                                                           <a class="btn btn-success" id="idValider{{ station.station.ouvFoncId   }}" href="#" title="Valider la saisie des données terrains et des analyses">
-                                                                                              <i class="fa fa-check">Valider</i>
-                                                                                           </a>
-                                                                                    </li>
-                                                                                {% endif %}
-                                                                                {% if station.devalider == 'O' %}
-                                                                                    <li>
-                                                                                           <a class="btn btn-danger" id="idDevalider{{ station.station.ouvFoncId   }}" href="#" title="Dévalider la saisie des données terrainse et des analyses">
-                                                                                              <i class="fa fa-close">Dévalider</i>
-                                                                                           </a>
-                                                                                    </li>
-                                                                                {% endif %}
-                                                                               <li>
+                                                                              <li>
                                                                                   <a class="btn btn-warning" id="idSaisirDonneesTerrain{{ station.station.ouvFoncId  }}" href="#" title="Saisie des données terrains">
                                                                                      <i class="fa fa-pencil"> Saisir </i>
                                                                                   </a>
@@ -149,7 +164,7 @@
                                     </td>
                                     {% endif %}
                                    
-                                   <td  class="text-nowrap text-center">
+                                   <td  nowrap class="text-nowrap text-center">
                                          {% if cmdPrelev.saisieAnalyse == 'O' %}
                                              {% if  cmdPrelev.nbParametresAnalyse > 0 or is_granted('ROLE_ADMINSQE')%}
                                                       <ul class="list-inline">
@@ -279,7 +294,7 @@
                                   $(document).on('click','#idValider{{ station.station.ouvFoncId }}',function(e){
                                     e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
                                     $('#modalTraitementEncours').modal('toggle');
-                                   var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_lac valider",{"demandeId":  "par1", "periodeAnId": "par2", "stationId": "par3"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                   var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_lac_valider",{"demandeId":  "par1", "periodeAnId": "par2", "stationId": "par3"}) }}', // Le nom du fichier indiqué dans le formulaire
                                      url = url.replace("par1", {{ station.cmdDemande.id }});
                                     url = url.replace("par2", {{ periodeAn.id }});
                                     url = url.replace("par3", {{ station.station.ouvFoncId }});

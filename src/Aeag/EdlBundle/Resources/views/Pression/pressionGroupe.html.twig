@@ -32,6 +32,22 @@
             </div>
         </div>
     </div>  
+                    
+     <div class="modal fade" id="modalPressionEdit" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title"><div class="label label-primary">Proposer une nouvelle évaluation</div></h4>
+        </div>
+        <div id="idPressionEdit" class="modal-body"></div>
+        <div class="modal-footer">
+          <button id="annuler" type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+          <button  id="valider" type="button" class="btn btn-primary">valider</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
 {% endblock modal %}
 
 {%block panel_heading %}
@@ -141,5 +157,6 @@
                       $('#expandAll').show();
                       $('#collapseAll').hide();
            });
-    
+           
+              
 {%endblock scripts %}    

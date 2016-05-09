@@ -69,7 +69,6 @@
         {
             // lancer la requête ajax qui valide la saisie
             $('#modalPressionEdit').modal('hide');
-            $('#modalTraitementEncours').modal('toggle');
                      e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
 
             //alert($("#form{{ cdPression }} > #form_valeur").val());
@@ -104,8 +103,7 @@
                     var $div = "#divPression-{{ euCd }}-{{ cdPression }}";
                     // placer le formulaire sous le div
                     $($div).empty().html(data);
-                    $('#modalTraitementEncours').modal('hide');
-
+             
                 }
                 ).error(function () {
                     // rétablir curseur
