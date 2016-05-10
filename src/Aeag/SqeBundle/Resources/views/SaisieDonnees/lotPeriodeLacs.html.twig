@@ -71,11 +71,13 @@
                                                            </li>
                                                        {% endif %}
                                                        {% if station.devalider == 'O' %}
+                                                           {% if is_granted('ROLE_ADMINSQE') %}
                                                            <li>
                                                                   <a class="btn btn-danger" id="idDevalider{{ station.station.ouvFoncId   }}" href="#" title="Dévalider la saisie des données terrainse et des analyses">
                                                                      <i class="fa fa-close"> Dévalider</i>
                                                                   </a>
                                                            </li>
+                                                           {% endif %}
                                                            <li>
                                                                 {#<a id="idTelechargerSuivi{{ cmdPrelev.cmdPrelev.id }}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_saisieDonnees_lot_periode_station_telecharger',{'prelevId': cmdPrelev.cmdPrelev.id })}}" title="Télécharger les resultats">
                                                                             <i class="fa fa-upload"></i> 

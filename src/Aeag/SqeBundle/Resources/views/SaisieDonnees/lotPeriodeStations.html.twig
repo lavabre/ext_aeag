@@ -40,6 +40,7 @@
         <table class="table table-bordered t table-advance" id="idTable_demandes">
             <thead>
                 <tr>
+                    <th>Action</th>
                     <th>Code</th>
                     <th>Libellé</th>
                     <th>Support</th>
@@ -56,8 +57,8 @@
                               {% else %}
                               <tr>
                            {% endif %}
-                              <td nowrap>
-                                   <ul class="list-inline">
+                           <td nowrap>
+                                <ul class="list-inline">
                                   {% if cmdPrelev.valider == 'O' %}
                                       <li>
                                              <a class="btn btn-success" id="idValider{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Valider la saisie des données terrains et des analyses">
@@ -66,11 +67,13 @@
                                       </li>
                                   {% endif %}
                                   {% if cmdPrelev.devalider == 'O' %}
+                                      {% if is_granted('ROLE_ADMINSQE') %}
                                       <li>
                                              <a class="btn btn-danger" id="idDevalider{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Dévalider la saisie des données terrains et des analyses">
                                                 <i class="fa fa-close"> Dévalider</i>
                                              </a>
                                       </li>
+                                      {% endif %}
                                       <li>
                                             {#<a id="idTelechargerSuivi{{ cmdPrelev.cmdPrelev.id }}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_saisieDonnees_lot_periode_station_telecharger',{'prelevId': cmdPrelev.cmdPrelev.id })}}" title="Télécharger les resultats">
                                                         <i class="fa fa-upload"></i> 
@@ -80,11 +83,11 @@
                                            </a>
                                       </li>
                                   {% endif %}
-                                  <li>
-                                    <a  href="{{ station.lien }}" target="_blank" title="Localisation">{{ station.station.code }}</a>
-                                  </li>
-                                   </ul>
-                             </td>
+                                </ul>
+                           </td>
+                              <td nowrap>
+                                  <a  href="{{ station.lien }}" target="_blank" title="Localisation">{{ station.station.code }}</a>
+                               </td>
                              <td>
                                     {{ station.station.libelle }}
                              </td>
