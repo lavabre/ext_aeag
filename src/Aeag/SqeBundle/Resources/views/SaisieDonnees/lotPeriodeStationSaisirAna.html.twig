@@ -197,8 +197,10 @@
                                                                         {% if paramAn.unites | length > 1 %}
                                                                             <select class="form-control" id="idUniteCode{{ paramAn.paramAn.id}}" name="uniteCode{{ paramAn.paramAn.id}}"   >    
                                                                                 {% for unite in paramAn.unites %}
-                                                                                    {% if unite.natureFraction == paramAn.fraction.natureFraction %}
-                                                                                        <option value="{{unite.codeUnite.codeUnite}}">{{unite.codeUnite.codeUnite}} : {{ unite.codeUnite.nomUnite}}</option> 
+                                                                                    {% if paramAn.fraction | length %}
+                                                                                        {% if unite.natureFraction == paramAn.fraction.natureFraction %}
+                                                                                            <option value="{{unite.codeUnite.codeUnite}}">{{unite.codeUnite.codeUnite}} : {{ unite.codeUnite.nomUnite}}</option> 
+                                                                                        {% endif %}
                                                                                     {% endif %}
                                                                                 {% endfor %}
                                                                             </select>
