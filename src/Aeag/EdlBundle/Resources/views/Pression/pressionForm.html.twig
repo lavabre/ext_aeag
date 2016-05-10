@@ -86,17 +86,16 @@
                    },
             function (json) {
                 //alert(json.message);
-                var $div = "td-{{ cdGroupe }}-{{ euCd }}-{{ cdPression }}";
-                $($div).html(json);
-
+              
                 $.post("{{ path('AeagEdlBundle_pressionListProposed') }}",
                         {
+                            cdGroupe: {{ cdGroupe }},
                             euCd: "{{ euCd }}",
                             cdPression: "{{ cdPression }}"
                         },
                 function (data) {
                     //alert(data);
-                    var $div = "#divPression-{{ euCd }}-{{ cdPression }}";
+                    var $div = "#tdPression-{{ cdGroupe}}-{{ euCd }}-{{ cdPression }}";
                     // placer le formulaire sous le div
                     $($div).html(data);
              
@@ -107,6 +106,8 @@
                     alert("Erreur non déterminée");
                 });
 
+                var $div = "#tdProposition-{{ cdGroupe }}-{{ euCd }}-{{ cdPression }}";
+                $($div).empty().append(json);
 
             }
             );

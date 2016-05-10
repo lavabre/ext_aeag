@@ -128,12 +128,12 @@ class PressionController extends Controller {
                 $msg = "Pression enregistrée... $commentaire";
             }
             
-            $msg = "Proposition :<span class=" . $proposed->getValeur() . ">" . $proposed->getValueLib() . "</span>";
+            $msg = "Proposition :<span class=dce_pression_" . $proposed->getValeur() . ">" . $proposed->getValueLib() . "</span>";
 
             // retour vers le navigateur
             $response = new Response(json_encode(array('message' => $msg)));
             $response->headers->set('Content-Type', 'application/json');
-            return new Response($msg);
+            return new Response(json_encode($msg));
         } catch (Exception $e) {
             $response = new Response(json_encode(array('message' => $e->getMessage())));
             $response->headers->set('Content-Type', 'application/json');
@@ -154,6 +154,7 @@ class PressionController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
 
+        $cdGroupe= $request->get('cdGroupe');
         $euCd = $request->get('euCd');
         $cdPression = $request->get('cdPression');
 
@@ -173,6 +174,7 @@ class PressionController extends Controller {
         }
 
         return $this->render('AeagEdlBundle:Pression:pressionListProposed.html.twig', array(
+                    'cdGroupe' => $cdGroupe,
                     'pression' => $pressionInitiale,
                     'derniereProp' => $derniereProposition,
                     'user' => $user

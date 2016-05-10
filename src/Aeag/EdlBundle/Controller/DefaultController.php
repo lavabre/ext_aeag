@@ -429,6 +429,7 @@ class DefaultController extends Controller {
                     'pressionGroupes' => $tabPressionGroupes,
                    'avisHistorique' => $avisHistorique,
                     'me' => $me,
+                    'user' => $user,
                     'url' => $session->get('UrlRetour')
                         )
         );

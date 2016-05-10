@@ -858,7 +858,7 @@ class SaisieDonneesController extends Controller {
                                     }
                                     $pgCmdMesureEnv->setResultat(null);
                                     $pgCmdMesureEnv->setCodeRemarque($remarque);
-                                    $pgCmdMesureEnv->setCodeMethode('0');
+                                    $pgCmdMesureEnv->setCodeMethode('0'); 
                                     $pgCmdMesureEnv->setCodeStatut(1);
                                     $pgCmdMesureEnv->setLibelleStatut('Valeur absente');
                                     if ($unite) {
