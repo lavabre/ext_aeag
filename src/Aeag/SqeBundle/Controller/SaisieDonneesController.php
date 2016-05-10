@@ -4238,9 +4238,9 @@ class SaisieDonneesController extends Controller {
 
         $params = array(5537, 1743, 7146, 1780);
 
-        $results = $controleVraisemblance->sommeParametresDistincts($sommeParams, $resultParams, $params);
+        $result = $controleVraisemblance->sommeParametresDistincts($sommeParams, $resultParams, $params);
 
-        foreach ($results as $result) {
+       // foreach ($results as $result) {
 
             if (!is_bool($result)) {
                 $tabRetour = $result;
@@ -4260,7 +4260,7 @@ class SaisieDonneesController extends Controller {
                 }
                 $emSqe->flush();
             }
-        }
+        //}
         return $okSommeParametresDistincts;
     }
 

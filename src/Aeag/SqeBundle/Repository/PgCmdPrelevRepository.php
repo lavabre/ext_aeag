@@ -140,7 +140,7 @@ class PgCmdPrelevRepository extends EntityRepository {
             and prlvpc.prelev_id = prlv.id
             and sup.code_support = prlv.code_support
             and frac.code_fraction = ana.code_fraction
-            and meth.code_methode = ana.code_methode
+            and meth.code_methode = ana.code_methode 
             and unit.code_unite = ana.code_unite
             and presta2.adr_cor_id = dmd.prestataire_id
             and resmes.groupement_id = station.rsx_id
