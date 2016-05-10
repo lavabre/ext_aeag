@@ -117,13 +117,67 @@
                  </div>
             </div>
             <div class="panel-body">
-                    <!-- --------------------------------- ETATS ----------------------------------------- -->        
+                    <!-- --------------------------------- PRESSIONS ----------------------------------------- -->        
                     <div id="tabPressions">
                         <input type='hidden' id='euCd' value="{{ me.euCd }}" />
                         <br>
                         <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
                           {% for pressionGroupe in pressionGroupes %}
-                             {{ render(controller('AeagEdlBundle:Default:pression', {'code': me.euCd, 'cdGroupe': pressionGroupe.cdGroupe})) }}
+                              {#{{ render(controller('AeagEdlBundle:Default:pression', {'code': me.euCd, 'cdGroupe': pressionGroupe.cdGroupe})) }}#}
+                              {% if pressionGroupe.nbPressions > 0 %} 
+                                            <div class="panel panel-primary">
+                                                <div class="panel-heading" role="tab" id="heading{{pressionGroupe.pressionGroupe.cdGroupe }}">
+                                                    <h4 class="panel-title">
+                                                        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ pressionGroupe.pressionGroupe.cdGroupe }}" aria-expanded="true" aria-controls="collapse{{ pressionGroupe.pressionGroupe.cdGroupe }}">
+                                                            {{pressionGroupe.pressionGroupe.libelle}}  
+                                                        </a>
+                                                    </h4>
+                                                </div>
+                                                <div id="collapse{{ pressionGroupe.pressionGroupe.cdGroupe }}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading{{ pressionGroupe.pressionGroupe.cdGroupe }}">
+                                                    <div class="panel-body">
+
+                                                         {% for tabPression in pressionGroupe.pressions %} 
+                                                                <div class="row" id="row-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}">
+                                                                     <table class="table table-bordered table-advance" id='idtable-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}'>
+                                                                                   <tr class="info">
+                                                                                       <td>
+                                                                                           {% if  is_granted("ROLE_COMMENTATEUREDL") %}
+                                                                                                            <a id="newPression-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}" title="Proposer une nouvelle évaluation" cdPression="{{ tabPression.pression.cdPression }}">
+                                                                                                                <button type="button" class="btn btn-primary"><i class="fa fa-commenting"></i></button> 
+                                                                                                           </a>
+                                                                                          {% else %}
+                                                                                              &nbsp;
+                                                                                         {% endif %}
+                                                                                       </td>
+                                                                                       <td class="text-nowrap">
+                                                                                              <input type='hidden' id='UrlActuel' value="{{ path('AeagEdlBundle_pression', { 'code': tabPression.pression.euCd }) }}" /> 
+                                                                                             <input type='hidden' id='newPressionRoute' value="{{ path('AeagEdlBundle_pressionForm') }}" /> 
+                                                                                             {{ tabPression.pression.type.libelle }} 
+                                                                                       </td>
+                                                                                       <td class="text-nowrap">
+                                                                                             SDAGE 2016 : <span class="dce_pression_{{ tabPression.pression.valeur }}">{{ tabPression.pression.getValueLib() }}</span>
+                                                                                        </td>
+                                                                                       <td id="td-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}" class="text-nowrap">
+                                                                                              {% if tabPression.derniereProp %}
+                                                                                                      Proposition :<span class="dce_pression_{{ tabPression.derniereProp.valeur }}"> {{ tabPression.derniereProp.getValueLib() }}</span>
+                                                                                              {% else %}
+                                                                                                     Proposition :
+                                                                                             {% endif %}
+                                                                                       </td>
+                                                                                </tr>
+                                                                               <tr>
+                                                                                    <td></td>
+                                                                                   <td colspan='3' id="divPression-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}">
+                                                                                             {{ render(controller('AeagEdlBundle:Pression:pressionListProposed', {'euCd':tabPression.pression.euCd, 'cdPression':tabPression.pression.cdPression})) }}
+                                                                                     </td>
+                                                                               </tr>
+                                                                     </table>
+                                                                </div>
+                                                        {% endfor %}
+                                                      </div>
+                                                </div>
+                                            </div>    
+                                        {% endif %} 
                             {% endfor %}
                         </div>
                         <br><br>
@@ -145,7 +199,7 @@
 
            $('#expandAll').on('click',function(){
                    {% for pressionGroupe   in  pressionGroupes %}
-                           $('#collapse{{ pressionGroupe.cdGroupe }}').collapse('show');
+                           $('#collapse{{ pressionGroupe.pressionGroupe.cdGroupe }}').collapse('show');
                      {% endfor %}
                       $('#expandAll').hide();
                       $('#collapseAll').show();
@@ -153,11 +207,42 @@
 
            $('#collapseAll').on('click',function(){
                     {% for pressionGroupe   in  pressionGroupes %}
-                           $('#collapse{{ pressionGroupe.cdGroupe }}').collapse('hide');
+                           $('#collapse{{ pressionGroupe.pressionGroupe.cdGroupe }}').collapse('hide');
                        {% endfor %}
                       $('#expandAll').show();
                       $('#collapseAll').hide();
            });
+           
+           {% for pressionGroupe   in  pressionGroupes %}
+                {% for tabPression in pressionGroupe.pressions %}
+                        // Sur clic "Proposer un nouvel pression"
+                        $('#newPression-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}').click(function(e){
+                           e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                          $('#modalTraitementEncours').modal('toggle');
+                            //conserver l'url actuel
+                            var $urlActuel = $('input#UrlActuel').val();
+                            // obtenir l'url
+                            var $url = $('input#newPressionRoute').val();
+                            // conserver l'id du div qui hébergera le formulaire de saisie
+                             idTr = '#row-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}';
+                             $.post($url,
+                                    {
+                                        euCd: "{{ tabPression.pression.euCd }}",
+                                        cdPression: "{{ tabPression.pression.cdPression }}",
+                                        cdGroupe: "{{ pressionGroupe.pressionGroupe.cdGroupe }}"
+                                    },
+                            function (data) {
+                                $('#idPressionEdit').empty().append(data);
+                                $('#modalTraitementEncours').modal('hide');
+                                $('#modalPressionEdit').modal();
+                            }
+                            ).error(function () {
+                                alert("Erreur non déterminée");
+                            });
+
+                        });
+                {% endfor %}
+            {% endfor %}
            
               
 {%endblock scripts %}    

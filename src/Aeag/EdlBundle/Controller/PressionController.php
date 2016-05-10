@@ -15,6 +15,7 @@ class DateTimePression extends \DateTime {
 
 }
 
+
 class PressionController extends Controller {
 
     public function pressionFormAction(Request $request) {
@@ -27,6 +28,7 @@ class PressionController extends Controller {
         //if ($request->isXmlHttpRequest()) { // is it an Ajax request?
         $euCd = $request->get('euCd');
         $cdPression = $request->get('cdPression');
+        $cdGroupe = $request->get('cdGroupe');
 
         $repo = $emEdl->getRepository('AeagEdlBundle:PressionMe');
         $pressionInitiale = $repo->findOneBy(array('euCd' => $euCd, 'cdPression' => $cdPression));
@@ -55,6 +57,7 @@ class PressionController extends Controller {
 
         return $this->render('AeagEdlBundle:Pression:pressionForm.html.twig', array(
                     'form' => $form->createView(),
+                   'cdGroupe' => $cdGroupe,
                     'euCd' => $euCd,
                     'cdPression' => $cdPression,
                     'derniereProposition' => $derniereProposition ? $derniereProposition->getValeur() : $pressionInitiale->getValeur()
@@ -78,6 +81,7 @@ class PressionController extends Controller {
         try {
             // récupération des paramètres
             $euCd = $request->get('euCd');
+            $cdGroupe = $request->get('cdGroupe');
             $cdPression = $request->get('cdPression');
             $commentaire = $request->get('commentaire');
             $valeur = $request->get('valeur');
@@ -123,11 +127,13 @@ class PressionController extends Controller {
                 $emEdl->flush();
                 $msg = "Pression enregistrée... $commentaire";
             }
+            
+            $msg = "Proposition :<span class=" . $proposed->getValeur() . ">" . $proposed->getValueLib() . "</span>";
 
             // retour vers le navigateur
             $response = new Response(json_encode(array('message' => $msg)));
             $response->headers->set('Content-Type', 'application/json');
-            return $response;
+            return new Response($msg);
         } catch (Exception $e) {
             $response = new Response(json_encode(array('message' => $e->getMessage())));
             $response->headers->set('Content-Type', 'application/json');

@@ -10,7 +10,7 @@
         <div id="collapse{{ pressionGroupe.cdGroupe }}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading{{ pressionGroupe.cdGroupe }}">
             <div class="panel-body">
                 
-                 {% for tabPression in tabPressions %}
+                 {% for tabPression in tabPressions %} 
                         <div class="row" id="row-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}">
                              <table class="table table-bordered table-advance" id='idtable-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}'>
                                            <tr class="info">
@@ -60,6 +60,7 @@
             // Sur clic "Proposer un nouvel pression"
             $('#newPression-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}').click(function(e){
                e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+              $('#modalTraitementEncours').modal('toggle');
                 //conserver l'url actuel
                 var $urlActuel = $('input#UrlActuel').val();
                 // obtenir l'url
@@ -73,6 +74,7 @@
                         },
                 function (data) {
                     $('#idPressionEdit').empty().append(data);
+                    $('#modalTraitementEncours').modal('hide');
                     $('#modalPressionEdit').modal();
                 }
                 ).error(function () {

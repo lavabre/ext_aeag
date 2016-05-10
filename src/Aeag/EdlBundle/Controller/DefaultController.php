@@ -21,6 +21,7 @@ class MyDateTime extends \DateTime {
 
 }
 
+
 class DefaultController extends Controller {
 
     public function indexAction(Request $request) {
@@ -376,6 +377,7 @@ class DefaultController extends Controller {
         $repo = $emEdl->getRepository('AeagEdlBundle:PressionGroupe');
         $meRepo = $emEdl->getRepository('AeagEdlBundle:MasseEau');
         $repoAvisHistorique = $emEdl->getRepository('AeagEdlBundle:AvisHistorique');
+        $repoPressionMe = $emEdl->getRepository('AeagEdlBundle:PressionMe');
 
 
         $pressionGroupes = $repo->getPressionGroupe();
@@ -391,10 +393,41 @@ class DefaultController extends Controller {
         }
 
         $avisHistorique = $repoAvisHistorique->getAvisHistoriqueByCodeEpr($code, 'Pression');
+        
+        $nbPressions = count($pressionGroupes);
+
+        $tabPressionGroupes = array();
+        $i = 0;
+        foreach ($pressionGroupes as $pressionGroupe) {
+                 $tabPressionGroupes[$i]['pressionGroupe'] = $pressionGroupe;
+                 $pressions = $repoPressionMe->getPressionMe($code, $pressionGroupe->getCdGroupe());
+                 $nbPressions = $repoPressionMe->getNbPressionMe($code, $pressionGroupe->getCdGroupe());
+                 $tabPressionGroupes[$i]['nbPressions'] = $nbPressions;
+                 $tabPressions = array();
+                $j = 0;
+                foreach ($pressions as $pression) {
+                    $tabPressions[$j]['pression'] = $pression;
+                    $derniereProp = $repoPressionMe->getLastPropositionSuperviseur($pression->getEuCd(), $pression->getCdPression());
+
+                    if (!$derniereProp) {
+                        $derniereProp = $repoPressionMe->getLastProposition($pression->getEuCd(), $pression->getCdPression());
+                    }
+
+                    if (!$derniereProp) {
+                        $derniereProposition = null;
+                    } else {
+                        $derniereProposition = $derniereProp[0];
+                    }
+                    $tabPressions[$j]['derniereProp'] = $derniereProposition;
+                    $j++;
+                }
+                $tabPressionGroupes[$i]['pressions'] = $tabPressions;
+                $i++;
+        }
 
         return $this->render('AeagEdlBundle:Pression:pressionGroupe.html.twig', array(
-                    'pressionGroupes' => $pressionGroupes,
-                    'avisHistorique' => $avisHistorique,
+                    'pressionGroupes' => $tabPressionGroupes,
+                   'avisHistorique' => $avisHistorique,
                     'me' => $me,
                     'url' => $session->get('UrlRetour')
                         )

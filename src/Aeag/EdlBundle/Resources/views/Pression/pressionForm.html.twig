@@ -78,20 +78,16 @@
 
             $.getJSON($url,
                         {
+                                 cdGroupe: {{ cdGroupe }},
                                  euCd: $("#form{{ cdPression }} > #form_euCd").val(),
                                  cdPression: $("#form{{ cdPression }} > #form_cdPression").val(),
                                  commentaire: $("#form{{ cdPression }} > #form_commentaire").val(),
-                        valeur: $("#form{{ cdPression }} > #form_valeur").val()
+                                 valeur: $("#form{{ cdPression }} > #form_valeur").val()
                    },
             function (json) {
                 //alert(json.message);
-
-                         // rétablir le style du bouton crayon
-                $('a[name="newPression{{ cdPression }}"]').removeClass("inEdit");
-
-
-                // charger et afficher les propositions pour cette etat
-                //alert(json.message);
+                var $div = "td-{{ cdGroupe }}-{{ euCd }}-{{ cdPression }}";
+                $($div).html(json);
 
                 $.post("{{ path('AeagEdlBundle_pressionListProposed') }}",
                         {
