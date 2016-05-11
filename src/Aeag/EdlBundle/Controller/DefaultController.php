@@ -33,7 +33,7 @@ class DefaultController extends Controller {
 
         $user = $this->getUser();
         $session = $this->get('session');
-        $session->set('retourErreur', $this->generateUrl('Aeag_edl'));
+        $session->set('retourErreur', $this->generateUrl('aeag_edl'));
         $session->set('menu', 'index');
         $session->set('controller', 'default');
         $session->set('fonction', 'index');
@@ -72,7 +72,7 @@ class DefaultController extends Controller {
 // Liste des dossiers selectionnés
         $user = $this->getUser();
         $session = $this->get('session');
-        $session->set('retourErreur', $this->generateUrl('Aeag_edl'));
+        $session->set('retourErreur', $this->generateUrl('aeag_edl'));
         $session->set('menu', 'acceuil');
         $session->set('controller', 'default');
         $session->set('fonction', 'index');
@@ -306,6 +306,7 @@ class DefaultController extends Controller {
         $repo = $emEdl->getRepository('AeagEdlBundle:EtatGroupe');
         $meRepo = $emEdl->getRepository('AeagEdlBundle:MasseEau');
         $repoAvisHistorique = $emEdl->getRepository('AeagEdlBundle:AvisHistorique');
+        $repoEtatMe = $emEdl->getRepository('AeagEdlBundle:EtatMe');
 
         $etatGroupes = $repo->getEtatGroupe();
 
@@ -321,13 +322,46 @@ class DefaultController extends Controller {
         $avisHistorique = $repoAvisHistorique->getAvisHistoriqueByCodeEpr($code, 'Etat');
 
         $session->set('UrlRetour', $this->generateUrl('AeagEdlBundle_listeMasseEau'));
+        
+        $nbEtats = count($etatGroupes);
+
+        $tabEtatGroupes = array();
+        $i = 0;
+        foreach ($etatGroupes as $etatGroupe) {
+                 $tabEtatGroupes[$i]['etatGroupe'] = $etatGroupe;
+                 $etats = $repoEtatMe->getEtatMe($code, $etatGroupe->getCdGroupe());
+                 $nbEtats = $repoEtatMe->getNbEtatMe($code, $etatGroupe->getCdGroupe());
+                 $tabEtatGroupes[$i]['nbEtats'] = $nbEtats;
+                 $tabEtats = array();
+                $j = 0;
+                foreach ($etats as $etat) {
+                    $tabEtats[$j]['etat'] = $etat;
+                    $derniereProp = $repoEtatMe->getLastPropositionSuperviseur($etat->getEuCd(), $etat->getCdEtat());
+
+                    if (!$derniereProp) {
+                        $derniereProp = $repoEtatMe->getLastProposition($etat->getEuCd(), $etat->getCdEtat());
+                    }
+
+                    if (!$derniereProp) {
+                        $derniereProposition = null;
+                    } else {
+                        $derniereProposition = $derniereProp[0];
+                    }
+                    $tabEtats[$j]['derniereProp'] = $derniereProposition;
+                    $j++;
+                }
+                $tabEtatGroupes[$i]['etats'] = $tabEtats;
+                $i++;
+        }
+
 
 
 
         return $this->render('AeagEdlBundle:Etat:etatGroupe.html.twig', array(
-                    'etatGroupes' => $etatGroupes,
+                    'etatGroupes' => $tabEtatGroupes,
                     'me' => $me,
                     'avisHistorique' => $avisHistorique,
+                    'user' => $user,
                     'url' => $session->get('UrlRetour')
                         )
         );

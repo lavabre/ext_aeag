@@ -1,140 +1,124 @@
-<form id="form{{ cdEtat }}" action="#" method="post" {{ form_enctype(form) }}>
-{{ form_errors(form) }}
+<form id="form-{{ cdGroupe }}-{{ euCd }}-{{ cdEtat }}" action="#" method="post" {{ form_enctype(form) }}>
+    {{ form_errors(form) }}
 
     {{ form_widget(form.euCd) }}
     {{ form_widget(form.cdEtat) }}
-         
-        <h3>{{ form_label(form.valeur, 'Choisir une valeur :') }}</h3>
-        </br>
-           {%if cdEtat == "GW_CHIMIE_VAL" or cdEtat == "GW_QUANT" or cdEtat == "RW_CHIMIE_VAL"%}
-                <span id="{{ cdEtat|e }}_U" p="U" class="dce_etat_U unselected">Inconnu</span>
-                <span id="{{ cdEtat|e }}_2" p="2" class="dce_etat_2 unselected">Bon</span>
-                <span id="{{ cdEtat|e }}_5" p="5" class="dce_etat_5 unselected">Mauvais</span>
-            {%else%}
-                <span id="{{ cdEtat|e }}_U" p="U" class="dce_etat_U unselected">Inconnu</span>
-                <span id="{{ cdEtat|e }}_1" p="1" class="dce_etat_1 unselected">Trés bon état</span>
-                <span id="{{ cdEtat|e }}_2" p="2" class="dce_etat_2 unselected">Bon</span>
-                <span id="{{ cdEtat|e }}_3" p="3" class="dce_etat_3 unselected">Moyen</span>
-                <span id="{{ cdEtat|e }}_4" p="4" class="dce_etat_4 unselected">Mediocre</span>
-                <span id="{{ cdEtat|e }}_5" p="5" class="dce_etat_5 unselected">Mauvais</span>
-            {%endif%}
-            {{ form_widget(form.valeur) }}
-            {{ form_errors(form.valeur) }}
-        </br></br>    
-        <h3>{{ form_label(form.commentaire, 'Saisir un commentaire et éventuellement vos coordonnées :') }}</h3>
-       
-        
-            {{ form_errors(form.commentaire) }}
-            {{ form_widget(form.commentaire, {attr : {'cols': '60', 'rows': '5'}}) }}
-        <br><br>
-        
+
+    <h3>{{ form_label(form.valeur, 'Choisir une valeur :') }}</h3>
+    </br>
+    {%if cdEtat == "GW_CHIMIE_VAL" or cdEtat == "GW_QUANT" or cdEtat == "RW_CHIMIE_VAL"%}
+        <span id="{{ cdEtat|e }}_U" p="U" class="dce_etat_U unselected">Inconnu</span>
+        <span id="{{ cdEtat|e }}_2" p="2" class="dce_etat_2 unselected">Bon</span>
+        <span id="{{ cdEtat|e }}_5" p="5" class="dce_etat_5 unselected">Mauvais</span>
+    {%else%}
+        <span id="{{ cdEtat|e }}_U" p="U" class="dce_etat_U unselected">Inconnu</span>
+        <span id="{{ cdEtat|e }}_1" p="1" class="dce_etat_1 unselected">Trés bon état</span>
+        <span id="{{ cdEtat|e }}_2" p="2" class="dce_etat_2 unselected">Bon</span>
+        <span id="{{ cdEtat|e }}_3" p="3" class="dce_etat_3 unselected">Moyen</span>
+        <span id="{{ cdEtat|e }}_4" p="4" class="dce_etat_4 unselected">Mediocre</span>
+        <span id="{{ cdEtat|e }}_5" p="5" class="dce_etat_5 unselected">Mauvais</span>
+    {%endif%}
+    {{ form_widget(form.valeur) }}
+    {{ form_errors(form.valeur) }}
+    </br></br>    
+    <h3>{{ form_label(form.commentaire, 'Saisir un commentaire et éventuellement vos coordonnées :') }}</h3>
+
+
+    {{ form_errors(form.commentaire) }}
+    {{ form_widget(form.commentaire, {attr : {'cols': '60', 'rows': '5'}}) }}
+    <br><br>
+
 </form>
 
 <script type="text/javascript">
-	
-                 $("#form{{ cdEtat }} > #form_valeur").val("{{ derniereProposition }}");
 
-	// choix de la valeur de l etat
-	$("span[id^='{{ cdEtat }}_']").click(function(e){
-		var $newEtat = $(this).attr("p");
-                    // IHM
-                    $("span[id='{{ cdEtat }}_U']").addClass('unselected');
-                    $("span[id='{{ cdEtat }}_1']").addClass('unselected');
-                    $("span[id='{{ cdEtat }}_2']").addClass('unselected');
-                    $("span[id='{{ cdEtat }}_3']").addClass('unselected');
-                    $("span[id='{{ cdEtat }}_4']").addClass('unselected');
-                    $("span[id='{{ cdEtat }}_5']").addClass('unselected');
-                    $("span[id='{{ cdEtat }}_"+$newEtat+"']").removeClass('unselected'); 
-                // affecter valeur 
-		$("#form{{ cdEtat }} > #form_valeur").val($newEtat);
-	});
+    $("#form-{{ cdGroupe }}-{{ euCd }}-{{ cdEtat }} > #form_valeur").val("{{ derniereProposition }}");
+            // choix de la valeur de l etat
+            $("span[id^='{{ cdEtat }}_']").click(function(e){
+    var $newEtat = $(this).attr("p");
+            // IHM
+            $("span[id='{{ cdEtat }}_U']").addClass('unselected');
+            $("span[id='{{ cdEtat }}_1']").addClass('unselected');
+            $("span[id='{{ cdEtat }}_2']").addClass('unselected');
+            $("span[id='{{ cdEtat }}_3']").addClass('unselected');
+            $("span[id='{{ cdEtat }}_4']").addClass('unselected');
+            $("span[id='{{ cdEtat }}_5']").addClass('unselected');
+            $("span[id='{{ cdEtat }}_" + $newEtat + "']").removeClass('unselected');
+            // affecter valeur 
+            $("#form-{{ cdGroupe }}-{{ euCd }}-{{ cdEtat }} > #form_valeur").val($newEtat);
+    });
+            // validation de la saisie
+            var nb = 0;
+            $("#valider-{{ cdGroupe }}-{{ euCd }}-{{ cdEtat }}").click(function(e){
 
-	// validation de la saisie
-	$("#valider").click(function(e){
-            
-                            if ( $("#form{{ cdEtat }} > #form_commentaire").val() == '' || $("#form{{ cdEtat }} > #form_valeur").val() == '')
-                            {
-                                alert("Choisissez un état et saisissez un commentaire svp");
+                if ($("#form-{{ cdGroupe }}-{{ euCd }}-{{ cdEtat }} > #form_commentaire").val() == '' || $("#form-{{ cdGroupe }}-{{ euCd }}-{{ cdEtat }} > #form_valeur").val() == '')
+                        {
+                        alert("Choisissez un état et saisissez un commentaire svp");
+                        } else
+                        {
+                        // lancer la requête ajax qui valide la saisie
+                        $('#modalEtatEdit-{{ cdGroupe }}-{{ euCd }}-{{ cdEtat }}').modal('hide');
+                        $('#modalTraitementEncours').modal('toggle');
+                        e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
 
-                            } else
-                            {
-                        	// lancer la requête ajax qui valide la saisie
-                                          $('#modalEtatEdit').modal('hide');
-                                          $('#modalTraitementEncours').modal('toggle');
-                                        e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-		 		
-		//alert($("#form{{ cdEtat }} > #form_valeur").val());
-                
-                                     // obtenir l'url
-		var $url = "{{ path('AeagEdlBundle_etatSubmit') }}";
-                               
-		$.getJSON($url,
-			{
-	    		euCd: $("#form{{ cdEtat }} > #form_euCd").val(),
-	    		cdEtat: $("#form{{ cdEtat }} > #form_cdEtat").val(),
-		    	commentaire: $("#form{{ cdEtat }} > #form_commentaire").val() ,
-		    	valeur: $("#form{{ cdEtat }} > #form_valeur").val()
-			}, 
-                        
-			function(json) {
-				//alert(json.message);
-				
-				// rétablir le style du bouton crayon
-				$('a[name="newEtat{{ cdEtat }}"]').removeClass("inEdit");
-	
-				// masquer le div de saisie
-	   			$("#divNewEtat{{ cdEtat }}").hide();
-                                                                             
-	
-	   			// charger et afficher les propositions pour cette etat
-	   			//alert(json.message);
-			
-                                                                              $.post("{{ path('AeagEdlBundle_etatListProposed') }}", 
-   					{ 
-                                                                                                euCd: "{{ euCd }}", 
-                                                                                                cdEtat: "{{ cdEtat }}"
-   					}, 
-   					function(data) {
-   	   					//alert(data);
-   	   					var $div = "#divEtat-{{ euCd }}-{{ cdEtat }}";
-   						// placer le formulaire sous le div
-   						$($div).empty().html(data); 
-   						$('#modalTraitementEncours').modal('hide');
-                                              
-   					}
-   				).error(function() { 
-   					// rétablir curseur
-   					$("body").css("cursor", "auto");
-   					alert("Erreur non déterminée"); 
-   				}); 
-	   			
-                              
-			}
-		);
-	    }	
-	}); 
+                        //alert($("#form{{ cdEtat }} > #form_valeur").val());
 
-	// annulation de la saisie
-	$("#annuler").click(function(e){
-		 $.post("{{ path('AeagEdlBundle_etatListProposed') }}", 
-   					{ 
-   						euCd: "{{ euCd }}", 
-   						cdEtat: "{{ cdEtat }}"
-   					}, 
-   					function(data) {
-   	   					//alert(data);
-   	   					var $div = "#divEtat{{ cdEtat }}";
-   						// placer le formulaire sous le div
-   						$($div).html(data); 
-   						// rétablir curseur
-   						$("body").css("cursor", "auto");
-                                              
-   					}
-   				).error(function() { 
-   					// rétablir curseur
-   					$("body").css("cursor", "auto");
-   					alert("Erreur non déterminée"); 
-                               }); 
-               
-	});
+                        nb = nb + 1;
+                        if (nb == 1){
+
+                    // obtenir l'url
+                    var $url = "{{ path('AeagEdlBundle_etatSubmit') }}";
+                   $.getJSON($url,
+                        {
+                                cdGroupe: {{ cdGroupe }},
+                                euCd: $("#form-{{ cdGroupe }}-{{ euCd }}-{{ cdEtat }} > #form_euCd").val(),
+                                cdEtat: $("#form-{{ cdGroupe }}-{{ euCd }}-{{ cdEtat }} > #form_cdEtat").val(),
+                                commentaire: $("#form-{{ cdGroupe }}-{{ euCd }}-{{ cdEtat }} > #form_commentaire").val(),
+                                valeur: $("#form-{{ cdGroupe }}-{{ euCd }}-{{ cdEtat }} > #form_valeur").val()
+                        },
+                        function(json) {
+                        //alert(json.message);
+                        $.post("{{ path('AeagEdlBundle_etatListProposed') }}",
+                        {
+                                cdGroupe: {{ cdGroupe }},
+                                euCd: "{{ euCd }}",
+                                cdEtat: "{{ cdEtat }}"
+                        },
+                                function(data) {
+                                //alert(data);
+                                var $div = "#tdEtat-{{ cdGroupe}}-{{ euCd }}-{{ cdEtat }}";
+                                        // placer le formulaire sous le div
+                                        $($div).empty().html(data);
+                                        $('#modalTraitementEncours').modal('hide');
+                                }
+                        ).error(function() {
+                          alert("Erreur non déterminée");
+                        });
+                                var $div = "#tdProposition-{{ cdGroupe }}-{{ euCd }}-{{ cdEtat }}";
+                                $($div).empty().append(json);
+                        }
+                        );
+                }
+        }
+    });
+            // annulation de la saisie
+            $("#annuler-{{ cdGroupe }}-{{ euCd }}-{{ cdEtat }}").click(function(e){
+                    nb = nb + 1;
+                            if (nb == 1){
+                                        $.post("{{ path('AeagEdlBundle_etatListProposed') }}",
+                                        {
+                                        euCd: "{{ euCd }}",
+                                                cdEtat: "{{ cdEtat }}"
+                                        },
+                                        function(data) {
+                                        //alert(data);
+                                        var $div = "#divEtat{{ cdEtat }}";
+                                                // placer le formulaire sous le div
+                                                $($div).html(data);
+                                        }
+                                        ).error(function() {
+                                               alert("Erreur non déterminée");
+                                        });
+                    }
+    });
 </script>

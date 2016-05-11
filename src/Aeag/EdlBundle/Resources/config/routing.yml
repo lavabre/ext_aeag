@@ -1,5 +1,5 @@
 
-Aeag_edl:
+aeag_edl:
     path:  /
     defaults: { _controller: AeagEdlBundle:Default:index }
     prefix: /

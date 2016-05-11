@@ -19,14 +19,14 @@ class PgCmdSuiviPrelMajType extends AbstractType {
 
         if ($pgCmdSuiviPrelActuel) {
             if ($user->hasRole('ROLE_ADMINSQE')) {
-                switch ($pgCmdSuiviPrelActuel->getStatutPrel()) {
+                 switch ($pgCmdSuiviPrelActuel->getStatutPrel()) {
                     case 'P' :
                         switch ($pgCmdSuiviPrelActuel->getValidation()) {
                             case 'E' :
                                 $builder
-                                        ->add('datePrel', 'text', array('widget' => 'single_text',
+                                        ->add('datePrel', 'date', array('widget' => 'single_text',
                                             'format' => 'dd/MM/yyyy HH:mm',
-                                            'required' => false,
+                                            'required' => true,
                                             'data' => $pgCmdSuiviPrelActuel->getDatePrel(),
                                         ))
                                         ->add('statutPrel', 'choice', array(
@@ -37,6 +37,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                         ->add('validation', 'choice', array(
                                             'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté'),
                                             'required' => false,
+                                            'data' => $pgCmdSuiviPrelActuel->getValidation(),
                                         ))
                                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => false))
                                 ;
@@ -181,7 +182,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                         ->add('datePrel', 'date', array('widget' => 'single_text',
                                             'format' => 'dd/MM/yyyy HH:mm',
                                             'data' => $pgCmdSuiviPrelActuel->getDatePrel(),
-                                            'required' => false,
+                                            'required' => true,
                                             'disabled' => true))
                                         ->add('statutPrel', 'choice', array(
                                             'choices' => array('F' => 'Effectué', 'N' => 'Non effectué'),
@@ -206,7 +207,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                 $builder
                                         ->add('datePrel', 'date', array('widget' => 'single_text',
                                             'format' => 'dd/MM/yyyy HH:mm',
-                                            'required' => false,
+                                            'required' => true,
                                             'data' => $pgCmdSuiviPrelActuel->getDatePrel(),
                                         ))
                                         ->add('statutPrel', 'choice', array(
@@ -329,7 +330,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                         ->add('datePrel', 'date', array('widget' => 'single_text',
                                             'format' => 'dd/MM/yyyy HH:mm',
                                             'data' => $pgCmdSuiviPrelActuel->getDatePrel(),
-                                            'required' => false,
+                                            'required' => true,
                                             'disabled' => true))
                                         ->add('statutPrel', 'choice', array(
                                             'choices' => array('F' => 'Effectué', 'N' => 'Non effectué'),

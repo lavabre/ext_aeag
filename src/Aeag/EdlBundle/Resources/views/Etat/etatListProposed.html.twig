@@ -1,175 +1,101 @@
- <div class="row" id="row-{{ etat.euCd }}-{{ etat.cdEtat }}">
-     {% if  is_granted("ROLE_COMMENTATEUREDL") %}
-        <div class="col-sm-1">
-                     <a id="newEtat-{{ etat.euCd }}-{{ etat.cdEtat }}" title="Proposer une nouvelle évaluation" cdEtat="{{ etat.cdEtat }}">
-                         <button type="button" class="btn btn-primary"><i class="fa fa-commenting"></i></button> 
-                    </a>
-        </div>
-        {% endif %}
-        <div class="col-sm-7">
-           <input type='hidden' id='UrlActuel' value="{{ path('AeagEdlBundle_etat', { 'code': etat.euCd }) }}" /> 
-           <input type='hidden' id='newEtatRoute' value="{{ path('AeagEdlBundle_etatForm') }}" /> 
-           {{ etat.type.libelle }}
-        </div>
-       <div class="col-sm-2">
-           <span class="dce_etat_{{ etat.valeur }}">{{ etat.getValueLib() }}</span>
-       </div>   
-       <div class="col-sm-2">
-            {% if derniereProp %}
-                    <span class="dce_etat_{{ derniereProp.valeur }}">{{ derniereProp.getValueLib() }}</span>
-           {% endif %}
-       </div>
- </div>
- 
-       {% if etat.proposed|length > 0 %} 
-           <div class="row row-border " id="rowProposed-titre-{{ etat.euCd }}-{{ etat.cdEtat }}">
-               {% if  is_granted("ROLE_COMMENTATEUREDL") %}
-                    <div class=" col-sm-offset-1  col-sm-1 alert alert-warning">Action</div>
-                    <div class="col-sm-2 alert alert-warning">Date</div>
+  {% if etat.proposed|length > 0 %} 
+        <table class="table table-hover" id='idtableProposed-{{ cdGroupe }}-{{ etat.euCd }}-{{ etat.cdEtat }}'>
+            <tr class="active">
+                {% if  is_granted("ROLE_COMMENTATEUREDL") %}
+                    <td width="1%">Action</td>
+                    <td width="10%">Date</td>
+                {% else %}
+                    <td width="10%">Date</td>   
+                {% endif %}
+                <td width="20%">Auteur</td>   
+                <td width="40%">Commentaire</td>
+                <td width="19%">Etat  proposée</td>  
+            </tr>
+            {% set i = 1 %}
+            {% for pp in etat.proposed %}
+                <tr id="rowProposed-ligne-{{ cdGroupe }}-{{ etat.euCd }}-{{ etat.cdEtat }}-{{ i }}">
+                    {% if  is_granted("ROLE_COMMENTATEUREDL") %}
+                        <td>
+                            {% if  is_granted("ROLE_COMMENTATEUREDL") and  pp.role ==  'local' and pp.utilisateur.id == user.id %} 
+                                <a id="removeEtat-{{ cdGroupe }}-{{ etat.euCd }}-{{ etat.cdEtat }}-{{ i }}"  title="Supprimer cette proposition" login="{{ pp.utilisateur.id }}" propositionDate="{{ pp.propositionDate }}">
+                                    <button type="button" class="btn btn-danger"><i class="fa fa-remove"></i> </button>
+                                </a>
+                            {% elseif  is_granted("ROLE_SUPERVISEUREDL") %}
+                                <a id="removeEtat-{{ cdGroupe }}-{{ etat.euCd }}-{{ etat.cdEtat }}-{{ i }}" title="Supprimer cette proposition" login="{{ pp.utilisateur.id }}" propositionDate="{{ pp.propositionDate }}">
+                                    <button type="button" class="btn btn-danger"><i class="fa fa-remove"></i> </button>
+                                </a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ pp.propositionDate }}
+                        </td>
                     {% else %}
-                     <div class="col-sm-offset-1 col-sm-2 alert alert-warning">Date</div>   
-               {% endif %}
-                    <div class="col-sm-2 alert alert-warning">Auteur</div>   
-                   <div class="col-sm-4 alert alert-warning">Commentaire</div>
-                   <div class="col-sm-2 alert alert-warning">Etat proposé</div>  
-           </div>
-          {% set i = 1 %}
-          {% for pp in etat.proposed %}
-                    <div class="row" id="rowProposed-ligne-{{ etat.euCd }}-{{ etat.cdEtat }}-{{ i }}">
-                        {% if  is_granted("ROLE_COMMENTATEUREDL") %}
-                            <div class="  col-sm-offset-1  col-sm-1">
-                                 {% if  is_granted("ROLE_COMMENTATEUREDL") and  pp.role ==  'local' and pp.utilisateur.id == user.id %} 
-                                  <a id="removeEtat-{{ etat.euCd }}-{{ etat.cdEtat }}-{{ i }}"  title="Supprimer cette proposition" login="{{ pp.utilisateur.id }}" propositionDate="{{ pp.propositionDate }}">
-                                            <button type="button" class="btn btn-danger"><i class="fa fa-remove"></i> </button>
-                                   </a>
-                                 {% elseif  is_granted("ROLE_SUPERVISEUREDL") %}
-                                    <a id="removeEtat-{{ etat.euCd }}-{{ etat.cdEtat }}-{{ i }}" title="Supprimer cette proposition" login="{{ pp.utilisateur.id }}" propositionDate="{{ pp.propositionDate }}">
-                                            <button type="button" class="btn btn-danger"><i class="fa fa-remove"></i> </button>
-                                     </a>
-                               {% endif %}
-                            </div>
-                              <div class="col-sm-2">
-                                {{ pp.propositionDate }}
-                            </div>
-                           {% else %}
-                                <div class=" col-sm-offset-1 col-sm-2">
-                                {{ pp.propositionDate }}
-                                </div>
-                         {% endif %}
-                           
-                           <div class="col-sm-2">
-                                  {% if pp.role == 'local' %}
-                                   Acteur local : {{ pp.utilisateur.username }}
-                                    {% else %}
-                                    Expert : {{ pp.utilisateur.username }}
-                                    {% endif %}
-                           </div>   
-                           <div class="col-sm-4">
-                               {{ pp.commentaire }}
-                           </div>
-                           <div class="col-sm-2">
-                               <span class="dce_etat_{{ pp.valeur }}">{{ pp.getValueLib() }}</span>
-                           </div>  
-                   </div>
-                    </br>
-                   {% set i = i + 1 %}
-         {% endfor %}
-     {% endif %}
-                    
-      
-
-     <div class="modal fade" id="modalEtatEdit" tabindex="-1" role="dialog">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title"><div class="label label-primary">Proposer une nouvelle évaluation</div></h4>
-        </div>
-        <div id="idEtatEdit" class="modal-body"></div>
-        <div class="modal-footer">
-          <button id="annuler" type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
-          <button  id="valider" type="button" class="btn btn-primary">valider</button>
-        </div>
-      </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-  </div><!-- /.modal -->
-
-<script type="text/javascript" src="{{ asset('bundles/aeagaeag/bootstrap/js/jquery-2.1.4.js') }}"> </script>
-<script type="text/javascript" src="{{ asset('bundles/aeagaeag/bootstrap/js/jquery-ui/jquery-ui.js') }}"> </script>
-<script type="text/javascript" src="{{ asset('bundles/aeagaeag/bootstrap/js/jquery.form.js') }}"> </script>
-<script type="text/javascript" src="{{ asset('bundles/aeagaeag/bootstrap/js/bootstrap.js') }}"> </script>
-<script type="text/javascript">
-   var idTr = '';
-    $(document).ready(function () { 	
-        
-           
-        // Sur clic "Proposer un nouvel etat"
-        $('#newEtat-{{ etat.euCd }}-{{ etat.cdEtat }}').click(function (e) {
-            $('#modalTraitementEncours').modal('toggle');
-            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-            //conserver l'url actuel
-            var $urlActuel = $('input#UrlActuel').val();
-            // obtenir l'url
-            var $url = $('input#newEtatRoute').val();
-            // conserver l'id du div qui hébergera le formulaire de saisie
-             idTr = '#divEtat-{{ etat.euCd }}-{{ etat.cdEtat }}';
-         
-            $.post($url,
-                    {
-                        euCd: "{{ etat.euCd }}",
-                        cdEtat: "{{ etat.cdEtat }}"
-                    },
-            function (data) {
-                $('#idEtatEdit').empty().append(data);
-                $('#modalEtatEdit').modal();
-                $('#modalTraitementEncours').modal('hide');
-            }
-            ).error(function () {
-                $('#modalTraitementEncours').modal('hide');
-                alert("Erreur non déterminée");
-            });
-
-        });
-         
-        {% set i = 1 %}
-         {% for pp in etat.proposed %}
-               $('#removeEtat-{{ etat.euCd }}-{{ etat.cdEtat }}-{{ i }}').click(function (e) {
-                $('#modalTraitementEncours').modal('toggle');
-                e.preventDefault();
-                // obtenir l'url
-                var $url = "{{ path('AeagEdlBundle_removeEtat') }}";
-                idTr = '#rowProposed-ligne-{{ etat.euCd }}-{{ etat.cdEtat }}-{{ i }}';
-                 // lancer la requête ajax  
-                $.post($url,
-                        {
-                            euCd: "{{ etat.euCd }}",
-                            cdEtat: "{{ etat.cdEtat }}",
-                            login: $(this).attr('login'),
-                            propositionDate: $(this).attr('propositionDate')
-                        },
-                function (data) {
-                    // placer le formulaire sous le div
-                    $(idTr).remove();
-                   {% if  i == 1 %}
-                            idTr = '#rowProposed-titre-{{ etat.euCd }}-{{ etat.cdEtat }}';
-                            $(idTr).remove();
+                        <td>
+                            {{ pp.propositionDate }}
+                        </td> 
                     {% endif %}
-                     idTr = '#divEtat-{{ etat.euCd }}-{{ etat.cdEtat }}';
-                    $(idTr).html(data);
-                    $('#modalTraitementEncours').modal('hide');
-                     }
-                ).error(function () {
-                    // rétablir curseur
-                    $('#modalTraitementEncours').modal('hide');
-                    alert("Erreur non déterminée");
-                });
-            });
-             {% set i = i + 1 %}
-          {% endfor %}
-        
-    });
-</script>
 
+                    <td>
+                        {% if pp.role == 'local' %}
+                            Acteur local : {{ pp.utilisateur.username }}
+                        {% else %}
+                            Expert : {{ pp.utilisateur.username }}
+                        {% endif %}
+                    </td>   
+                    <td>
+                        {{ pp.commentaire }}
+                    </td>
+                    <td id="LibProposed-ligne-{{ cdGroupe }}-{{ etat.euCd }}-{{ etat.cdEtat }}-{{ i }}">
+                        <span class="dce_etat_{{ pp.valeur }}">{{ pp.getValueLib() }}</span>
+                    </td>  
+                    </tr>
+
+                    {% set i = i + 1 %}
+                {% endfor %}
+        </table>
+    {% endif %} 
+
+     <script type="text/javascript">
+            
+        {% set i = 1 %}
+             
+           {% for pp in etat.proposed %}
+                              $('#removeEtat-{{ cdGroupe}}-{{ etat.euCd }}-{{ etat.cdEtat }}-{{ i }}').click(function (e) {
+                               e.preventDefault();
+                               // obtenir l'url
+                               var $url = "{{ path('AeagEdlBundle_removeEtat') }}";
+                               idTr = '#rowProposed-ligne-{{ cdGroupe}}-{{ etat.euCd }}-{{ etat.cdEtat }}-{{ i }}';
+                               {% if  i > 1 %}
+                                  libPrec = $('#LibProposed-ligne-{{ cdGroupe}}-{{ etat.euCd }}-{{ etat.cdEtat }}-{{ i - 1}}').html();
+                                   $(idTr).remove();
+                               {% else %}
+                                   libPrec = '';
+                                   $('#idtableProposed-{{ cdGroupe }}-{{ etat.euCd }}-{{ etat.cdEtat }}').remove();
+                               {% endif %}
+                               var $div = "#tdProposition-{{ cdGroupe}}-{{ etat.euCd }}-{{ etat.cdEtat }}";
+                                 $($div).empty().append('Proposition : ' + libPrec);
+                            // lancer la requête ajax  
+                               $.post($url,
+                                       {
+                                           cdGroupe: "{{ cdGroupe }}",
+                                           euCd: "{{ etat.euCd }}",
+                                           cdEtat: "{{ etat.cdEtat }}",
+                                           login: $(this).attr('login'),
+                                           propositionDate: $(this).attr('propositionDate')
+                                       },
+                               function (data) {
+                                   // placer le formulaire sous le div
+                                    idTr = '#divEtat-{{ cdGroupe}}-{{ etat.euCd }}-{{ etat.cdEtat }}';
+                                  }
+                               ).error(function () {
+                                   // rétablir curseur
+                                   alert("Erreur non déterminée");
+                               });
+                           });
+                            {% set i = i + 1 %}
+                {% endfor %}
+    
+    </script>
      
 
 

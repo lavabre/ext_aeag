@@ -7,7 +7,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Aeag\EdlBundle\Entity\EtatMeProposed;
 
-
 class DateTimeEtat extends \DateTime {
 
     public function __toString() {
@@ -28,7 +27,8 @@ class EtatController extends Controller {
         //if ($request->isXmlHttpRequest()) { // is it an Ajax request?
         $euCd = $request->get('euCd');
         $cdEtat = $request->get('cdEtat');
-            
+        $cdGroupe = $request->get('cdGroupe');
+
         $repo = $emEdl->getRepository('AeagEdlBundle:EtatMe');
         $etatInitiale = $repo->findOneBy(array('euCd' => $euCd, 'cdEtat' => $cdEtat));
 
@@ -45,30 +45,33 @@ class EtatController extends Controller {
 
         $repo = $emEdl->getRepository('AeagEdlBundle:EtatMe');
         $derniereProps = $repo->getLastProposition($euCd, $cdEtat);
-        
-        if ($derniereProps){
+
+        if ($derniereProps) {
             $derniereProp = $derniereProps[0];
-        }else{
+        } else {
             $derniereProp = null;
         }
 
-       
-            return $this->render('AeagEdlBundle:Etat:etatForm.html.twig', array(
-                        'form' => $form->createView(),
-                        'euCd' => $euCd,
-                        'cdEtat' => $cdEtat,
-                        'derniereProposition' => $derniereProp ? $derniereProp->getValeur() : $etatInitiale->getValeur()
-                    ));
-         //}    
+
+        return $this->render('AeagEdlBundle:Etat:etatForm.html.twig', array(
+                    'form' => $form->createView(),
+                    'cdGroupe' => $cdGroupe,
+                    'euCd' => $euCd,
+                    'cdEtat' => $cdEtat,
+                    'derniereProposition' => $derniereProp ? $derniereProp->getValeur() : $etatInitiale->getValeur()
+        ));
+        //}    
     }
 
- 
     /**
      * Réception du formulaire, retour vers le navigateur au format json
      */
     public function etatSubmitAction(Request $request) {
 
         $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('controller', 'Etat');
         $session->set('fonction', 'etatForm');
@@ -76,8 +79,9 @@ class EtatController extends Controller {
         $emEdl = $this->get('doctrine')->getManager('edl');
         $repoUtilisateur = $emEdl->getRepository('AeagEdlBundle:Utilisateur');
         $utilisateur = $repoUtilisateur->getUtilisateurByExtid($user->getId());
-        
+
         // récupération des paramètres
+        $cdGroupe = $request->get('cdGroupe');
         $euCd = $request->get('euCd');
         $cdEtat = $request->get('cdEtat');
         $commentaire = $request->get('commentaire');
@@ -85,8 +89,8 @@ class EtatController extends Controller {
 
 
         try {
-      
-           //return new Response('eucd : ' . $euCd . ' etat : ' . $cdEtat . ' commentaire : ' . $commentaire . ' valeur : ' . $valeur  );
+
+            //return new Response('eucd : ' . $euCd . ' etat : ' . $cdEtat . ' commentaire : ' . $commentaire . ' valeur : ' . $valeur  );
             // sauvegarde
             $proposed = new EtatMeProposed();
 
@@ -95,13 +99,8 @@ class EtatController extends Controller {
             $proposed->setPropositionDate(new DateTimeEtat("now"));
             $proposed->setCdEtat($cdEtat);
 
-            // Et pour vérifier que l'utilisateur est authentifié (et non un anonyme)
-            if (!is_object($user)) {
-                throw new AccessDeniedException('Vous n\'êtes pas authentifié.');
-            }
 
-
-            $proposed->setUtilisateur( $utilisateur);
+            $proposed->setUtilisateur($utilisateur);
             $proposed->setValeur($valeur);
             $proposed->setCommentaire($commentaire);
 
@@ -115,25 +114,11 @@ class EtatController extends Controller {
             $repo = $emEdl->getRepository('AeagEdlBundle:EtatMe');
             $etatInitiale = $repo->findOneBy(array('euCd' => $euCd, 'cdEtat' => $cdEtat));
             $proposed->setEtatOriginal($etatInitiale);
+            $emEdl->persist($proposed);
+            $emEdl->flush();
 
-            $validator = $this->container->get('validator');
-            $errorList = $validator->validate($proposed);
-            //\var_dump($errorList);            
-            $msg = "";
-            if (count($errorList) > 0) {
-                foreach ($errorList as $err) {
-                    $msg .= $err->getMessage() . "\n";
-                }
-            } else {
-                $emEdl->persist($proposed);
-                $emEdl->flush();
-                $msg = "Etat enregistrée... $commentaire";
-            }
-
-            // retour vers le navigateur
-            $response = new Response(json_encode(array('message' => $msg)));
-            $response->headers->set('Content-Type', 'application/json');
-            return $response;
+            $msg = "Proposition :<span class=dce_etat_" . $proposed->getValeur() . ">" . $proposed->getValueLib() . "</span>";
+            return new Response(json_encode($msg));
         } catch (Exception $e) {
 
             $response = new Response(json_encode(array('message' => $e->getMessage())));
@@ -147,55 +132,54 @@ class EtatController extends Controller {
      * 
      * mode Ajax
      */
-    
-    
     public function etatListProposedAction(Request $request) {
-        
+
         $user = $this->getUser();
         $session = $this->get('session');
         $session->set('controller', 'Etat');
         $session->set('fonction', 'etatListProposed');
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
-          
+
+        $cdGroupe = $request->get('cdGroupe');
         $euCd = $request->get('euCd');
         $cdEtat = $request->get('cdEtat');
-      
-    
+
+
         $repo = $emEdl->getRepository('AeagEdlBundle:EtatMe');
         $etatInitiale = $repo->findOneBy(array('euCd' => $euCd, 'cdEtat' => $cdEtat));
-     
-       // return new Response ('$masseEau : ' . $euCd. '  $etatType : ' . $cdEtat);
-       $derniereProp = $repo->getLastPropositionSuperviseur($euCd, $cdEtat);
-       
+
+        // return new Response ('$masseEau : ' . $euCd. '  $etatType : ' . $cdEtat);
+        $derniereProp = $repo->getLastPropositionSuperviseur($euCd, $cdEtat);
+
         if (!$derniereProp) {
             $derniereProp = $repo->getLastProposition($euCd, $cdEtat);
         }
-        
-          if (!$derniereProp) {
+
+        if (!$derniereProp) {
             $derniereProposition = null;
         } else {
             $derniereProposition = $derniereProp[0];
         }
-          
+
         return $this->render('AeagEdlBundle:Etat:etatListProposed.html.twig', array(
+                    'cdGroupe' => $cdGroupe,
                     'etat' => $etatInitiale,
                     'derniereProp' => $derniereProposition,
                     'user' => $user,
-                ));
+        ));
     }
-
 
     public function removeEtatAction(Request $request) {
         $user = $this->getUser();
         $session = $this->get('session');
         $session->set('controller', 'Etat');
-        $session->set('fonction', 'etatListProposed');
+        $session->set('fonction', 'removeEtat');
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
-        $repoUtilisateur = $emEdl->getRepository('AeagEdlBundle:Utilisateur');
-        $utilisateur = $repoUtilisateur->getUtilisateurByExtid($user->getId());
 
+
+        $cdGroupe = $request->get('cdGroupe');
         $euCd = $request->get('euCd');
         $cdEtat = $request->get('cdEtat');
         $login = $request->get('login');
@@ -207,33 +191,9 @@ class EtatController extends Controller {
 
         $emEdl->remove($proposition);
         $emEdl->flush();
+        
+          return new Response (json_encode('eucd : ' . $euCd . '  cdEtat : ' . $cdEtat . '  login : ' . $login . ' date : ' . $propositionDate . ' supprimer'));
 
-        return $this->forward('AeagEdlBundle:Etat:etatListProposed', array(
-                    'euCd' => $euCd,
-                    'cdEtat' => $cdEtat,
-                    'delete' =>  "O"
-                ));
     }
 
-    /* Exemple de gestion ajax    
-      public function validateEmailAction(){
-      # Is the request an ajax one?
-      if ($this->get('request')->isXmlHttpRequest())
-      {
-      # Lets get the email parameter's value
-      $email = $this->get('request')->request->get('email');
-      #if the email is correct
-      if(....){
-      return new Response("<b>The email is valid</b>");
-      }#endif
-      #else if the email is incorrect
-      else
-      {
-      return new Response("<b>We are sorry, the email is already
-      taken</b>");
-      }#endelse
-      }# endif this is an ajax request
-      } #end of the controller.
-     */
 }
-

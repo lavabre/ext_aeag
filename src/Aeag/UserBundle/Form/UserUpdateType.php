@@ -29,19 +29,19 @@ class UserUpdateType extends AbstractType {
                     'multiple' => true,
                 ))
                
-           ->add('dept', 'entity', array(
-		'class' => 'Aeag\EdlBundle\Entity\AdminDepartement',
-		'property' => 'DeptLibelle',
-		'expanded' => false,
-		'multiple' => true,
-		'required' => false,
-                'empty_value' => '     ',
-                'query_builder' => function(\Doctrine\ORM\EntityRepository $er)
-                                    {
-                                    $qb = $er->createQueryBuilder('d');
-                                    return $qb->orderBy('d.inseeDepartement', 'ASC');
-                                    },
-		))
+//           ->add('dept', 'entity', array(
+//		'class' => 'Aeag\EdlBundle\Entity\AdminDepartement',
+//		'property' => 'DeptLibelle',
+//		'expanded' => false,
+//		'multiple' => true,
+//		'required' => false,
+//                'empty_value' => '     ',
+//                'query_builder' => function(\Doctrine\ORM\EntityRepository $er)
+//                                    {
+//                                    $qb = $er->createQueryBuilder('d');
+//                                    return $qb->orderBy('d.inseeDepartement', 'ASC');
+//                                    },
+//		))
                 
             ->add('current_password', 'password', array(
             'label' => 'form.current_password',

@@ -166,6 +166,7 @@ class UserController extends Controller {
         $factory = $this->get('security.encoder_factory');
         $em = $this->getDoctrine()->getManager();
         $emEdl = $this->getDoctrine()->getManager('edl');
+        $repoUser = $em->getRepository('AeagUserBundle:User');
         $user = $this->getUser();
 
         $role = 'ROLE_AEAG';
@@ -214,6 +215,12 @@ class UserController extends Controller {
         if (is_null($entity->getRoles())) {
             $message = 'Le role est obligatoire ';
         }
+        
+         $newUser = $repoUser->getUserByUsername($entity->getUsername());
+         if ($newUser){
+             $message = 'Le login est déjà utilisé ';
+         }
+        
 
         if ($message) {
             return $this->render('AeagUserBundle:User:new.html.twig', array(

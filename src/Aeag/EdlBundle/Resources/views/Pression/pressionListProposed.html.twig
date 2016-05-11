@@ -1,5 +1,4 @@
     {% if pression.proposed|length > 0 %} 
-            <div class="row " id="rowProposed-titre-{{ cdGroupe}}-{{ pression.euCd }}-{{ pression.cdPression }}">
                 <table class="table table-hover" id='idtableProposed-{{ cdGroupe}}-{{ pression.euCd }}-{{ pression.cdPression }}'>
                     <tr class="active">
                 {% if  is_granted("ROLE_COMMENTATEUREDL") %}
@@ -69,12 +68,17 @@
                                idTr = '#rowProposed-ligne-{{ cdGroupe}}-{{ pression.euCd }}-{{ pression.cdPression }}-{{ i }}';
                                {% if  i > 1 %}
                                   libPrec = $('#LibProposed-ligne-{{ cdGroupe}}-{{ pression.euCd }}-{{ pression.cdPression }}-{{ i - 1}}').html();
+                                  $(idTr).remove();
                                {% else %}
                                    libPrec = '';
+                                   $('#idtableProposed-{{ cdGroupe}}-{{ pression.euCd }}-{{ pression.cdPression }}').remove();
                                {% endif %}
-                                // lancer la requête ajax  
+                                var $div = "#tdProposition-{{ cdGroupe}}-{{ pression.euCd }}-{{ pression.cdPression }}";
+                                 $($div).empty().append('Proposition : ' + libPrec);
+                         // lancer la requête ajax  
                                $.post($url,
                                        {
+                                           cdGroupe: "{{ cdGroupe }}",
                                            euCd: "{{ pression.euCd }}",
                                            cdPression: "{{ pression.cdPression }}",
                                            login: $(this).attr('login'),
@@ -82,16 +86,8 @@
                                        },
                                function (data) {
                                    // placer le formulaire sous le div
-                                   $(idTr).remove();
-                                  {% if  i == 1 %}
-                                           idTr = '#rowProposed-titre-{{ cdGroupe}}-{{ pression.euCd }}-{{ pression.cdPression }}';
-                                           $(idTr).remove();
-                                   {% endif %}
                                     idTr = '#divPression-{{ cdGroupe}}-{{ pression.euCd }}-{{ pression.cdPression }}';
-                                   $(idTr).html(data);
-                                    var $div = "#tdProposition-{{ cdGroupe}}-{{ pression.euCd }}-{{ pression.cdPression }}";
-                                   $($div).empty().append('Proposition : ' + libPrec);
-
+                                
                                     }
                                ).error(function () {
                                    // rétablir curseur

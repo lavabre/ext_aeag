@@ -15,13 +15,12 @@ class DateTimePression extends \DateTime {
 
 }
 
-
 class PressionController extends Controller {
 
     public function pressionFormAction(Request $request) {
         $user = $this->getUser();
         $session = $this->get('session');
-         $session->set('controller', 'Pression');
+        $session->set('controller', 'Pression');
         $session->set('fonction', 'pressionListProposed');
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
@@ -49,7 +48,7 @@ class PressionController extends Controller {
         if (!$derniereProp) {
             $derniereProp = $repo->getLastProposition($euCd, $cdPression);
         }
-          if (!$derniereProp) {
+        if (!$derniereProp) {
             $derniereProposition = null;
         } else {
             $derniereProposition = $derniereProp[0];
@@ -57,7 +56,7 @@ class PressionController extends Controller {
 
         return $this->render('AeagEdlBundle:Pression:pressionForm.html.twig', array(
                     'form' => $form->createView(),
-                   'cdGroupe' => $cdGroupe,
+                    'cdGroupe' => $cdGroupe,
                     'euCd' => $euCd,
                     'cdPression' => $cdPression,
                     'derniereProposition' => $derniereProposition ? $derniereProposition->getValeur() : $pressionInitiale->getValeur()
@@ -65,11 +64,11 @@ class PressionController extends Controller {
         //}    
     }
 
-    /**
-     * Réception du formulaire, retour vers le navigateur au format json
-     */
     public function pressionSubmitAction(Request $request) {
         $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagEdlBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('controller', 'Pression');
         $session->set('fonction', 'pressionListProposed');
@@ -94,10 +93,6 @@ class PressionController extends Controller {
             $proposed->setPropositionDate(new DateTimePression("now"));
             $proposed->setCdPression($cdPression);
 
-            // Et pour vérifier que l'utilisateur est authentifié (et non un anonyme)
-            if (!is_object($user)) {
-                throw new AccessDeniedException('Vous n\'êtes pas authentifié.');
-            }
 
 
             $proposed->setUtilisateur($utilisateur);
@@ -113,26 +108,10 @@ class PressionController extends Controller {
             $repo = $emEdl->getRepository('AeagEdlBundle:PressionMe');
             $pressionInitiale = $repo->findOneBy(array('euCd' => $euCd, 'cdPression' => $cdPression));
             $proposed->setPressionOriginale($pressionInitiale);
-
-            $validator = $this->container->get('validator');
-            $errorList = $validator->validate($proposed);
-            // var_dump($errorList);            
-            $msg = "";
-            if (count($errorList) > 0) {
-                foreach ($errorList as $err) {
-                    $msg .= $err->getMessage() . "\n";
-                }
-            } else {
-                $emEdl->persist($proposed);
-                $emEdl->flush();
-                $msg = "Pression enregistrée... $commentaire";
-            }
+            $emEdl->persist($proposed);
+            $emEdl->flush();
             
             $msg = "Proposition :<span class=dce_pression_" . $proposed->getValeur() . ">" . $proposed->getValueLib() . "</span>";
-
-            // retour vers le navigateur
-            $response = new Response(json_encode(array('message' => $msg)));
-            $response->headers->set('Content-Type', 'application/json');
             return new Response(json_encode($msg));
         } catch (Exception $e) {
             $response = new Response(json_encode(array('message' => $e->getMessage())));
@@ -141,11 +120,6 @@ class PressionController extends Controller {
         }
     }
 
-    /**
-     * Retourne le code HTML correspondant à une liste de pression proposées (pour un type donné)
-     * 
-     * mode Ajax
-     */
     public function pressionListProposedAction(Request $request) {
         $user = $this->getUser();
         $session = $this->get('session');
@@ -154,7 +128,7 @@ class PressionController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
 
-        $cdGroupe= $request->get('cdGroupe');
+        $cdGroupe = $request->get('cdGroupe');
         $euCd = $request->get('euCd');
         $cdPression = $request->get('cdPression');
 
@@ -185,15 +159,16 @@ class PressionController extends Controller {
         $user = $this->getUser();
         $session = $this->get('session');
         $session->set('controller', 'Pression');
-        $session->set('fonction', 'pressionListProposed');
+        $session->set('fonction', 'removePression');
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
 
+        $cdGroupe = $request->get('cdGroupe');
         $euCd = $request->get('euCd');
         $cdPression = $request->get('cdPression');
         $login = $request->get('login');
         $propositionDate = $request->get('propositionDate');
-        
+
         //return new Response ('eucd : ' . $euCd . '  cdPression : ' . $cdPression . '  login : ' . $login . ' date : ' . $propositionDate);
 
         $repo = $emEdl->getRepository('AeagEdlBundle:PressionMeProposed');
@@ -202,31 +177,9 @@ class PressionController extends Controller {
 
         $emEdl->remove($proposition);
         $emEdl->flush();
+        
+        return new Response (json_encode('eucd : ' . $euCd . '  cdPression : ' . $cdPression . '  login : ' . $login . ' date : ' . $propositionDate . ' supprimer'));
 
-        return $this->forward('AeagEdlBundle:Pression:pressionListProposed', array(
-                    'euCd' => $euCd,
-                    'cdPression' => $cdPression
-        ));
     }
 
-    /* Exemple de gestion ajax    
-      public function validateEmailAction(){
-      # Is the request an ajax one?
-      if ($this->get('request')->isXmlHttpRequest())
-      {
-      # Lets get the email parameter's value
-      $email = $this->get('request')->request->get('email');
-      #if the email is correct
-      if(....){
-      return new Response("<b>The email is valid</b>");
-      }#endif
-      #else if the email is incorrect
-      else
-      {
-      return new Response("<b>We are sorry, the email is already
-      taken</b>");
-      }#endelse
-      }# endif this is an ajax request
-      } #end of the controller.
-     */
 }

@@ -237,7 +237,7 @@
                                     <td>
                                         {{ station.reseau.nomRsx }}
                                     </td>
-                                    {%if cmdPrelev.suiviPrels | length == 0 %}
+                                    {%if not cmdPrelev.suiviPrels.0.suiviPrel | length %}
                                         <td></td>
                                         <td></td>
                                         <td></td>
@@ -273,9 +273,9 @@
                                             {% else%}
                                             <td class="warning">
                                             {% endif %}
-                                            {% if cmdPrelev.suiviPrels.0.suiviPrel.statutPrel == 'A' %}
+                                            {% if cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'A' %}
                                                 Accepté
-                                            {% elseif cmdPrelev.suiviPrels.0.suiviPrel.statutPrel == 'R' %}
+                                            {% elseif cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'R' %}
                                                Refusé
                                             {% else %}
                                                En attente
