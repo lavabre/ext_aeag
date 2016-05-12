@@ -1,4 +1,4 @@
-    {% if pression.proposed|length > 0 %} 
+    {% if proposeds | length > 0 %} 
                 <table class="table table-hover" id='idtableProposed-{{ cdGroupe}}-{{ pression.euCd }}-{{ pression.cdPression }}'>
                     <tr class="active">
                 {% if  is_granted("ROLE_COMMENTATEUREDL") %}
@@ -12,7 +12,7 @@
                     <td width="19%">Pression  proposée</td>  
                   </tr>
            {% set i = 1 %}
-           {% for pp in pression.proposed %}
+           {% for pp in proposeds %}
                      <tr id="rowProposed-ligne-{{ cdGroupe}}-{{ pression.euCd }}-{{ pression.cdPression }}-{{ i }}">
                          {% if  is_granted("ROLE_COMMENTATEUREDL") %}
                              <td>
@@ -60,7 +60,7 @@
             
         {% set i = 1 %}
              
-           {% for pp in pression.proposed %}
+           {% for pp in proposeds %}
                               $('#removePression-{{ cdGroupe}}-{{ pression.euCd }}-{{ pression.cdPression }}-{{ i }}').click(function (e) {
                                e.preventDefault();
                                // obtenir l'url

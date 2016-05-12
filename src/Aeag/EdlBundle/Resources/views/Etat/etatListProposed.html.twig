@@ -1,4 +1,4 @@
-  {% if etat.proposed|length > 0 %} 
+  {% if proposeds | length > 0 %} 
         <table class="table table-hover" id='idtableProposed-{{ cdGroupe }}-{{ etat.euCd }}-{{ etat.cdEtat }}'>
             <tr class="active">
                 {% if  is_granted("ROLE_COMMENTATEUREDL") %}
@@ -12,7 +12,7 @@
                 <td width="19%">Etat  proposée</td>  
             </tr>
             {% set i = 1 %}
-            {% for pp in etat.proposed %}
+            {% for pp in proposeds %}
                 <tr id="rowProposed-ligne-{{ cdGroupe }}-{{ etat.euCd }}-{{ etat.cdEtat }}-{{ i }}">
                     {% if  is_granted("ROLE_COMMENTATEUREDL") %}
                         <td>
@@ -59,14 +59,18 @@
             
         {% set i = 1 %}
              
-           {% for pp in etat.proposed %}
+           {% for pp in proposeds %}
                               $('#removeEtat-{{ cdGroupe}}-{{ etat.euCd }}-{{ etat.cdEtat }}-{{ i }}').click(function (e) {
                                e.preventDefault();
                                // obtenir l'url
                                var $url = "{{ path('AeagEdlBundle_removeEtat') }}";
                                idTr = '#rowProposed-ligne-{{ cdGroupe}}-{{ etat.euCd }}-{{ etat.cdEtat }}-{{ i }}';
                                {% if  i > 1 %}
-                                  libPrec = $('#LibProposed-ligne-{{ cdGroupe}}-{{ etat.euCd }}-{{ etat.cdEtat }}-{{ i - 1}}').html();
+                                    {% if i == proposeds | length %}
+                                         libPrec = $('#LibProposed-ligne-{{ cdGroupe}}-{{ etat.euCd }}-{{ etat.cdEtat }}-{{ i - 1}}').html();
+                                      {% else %}
+                                        libPrec = $('#LibProposed-ligne-{{ cdGroupe}}-{{ etat.euCd }}-{{ etat.cdEtat }}-{{ i + 1}}').html();  
+                                     {% endif %}
                                    $(idTr).remove();
                                {% else %}
                                    libPrec = '';

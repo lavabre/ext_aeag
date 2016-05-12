@@ -144,8 +144,8 @@
                                                                     <button type="button" class="btn btn-primary"><i class="fa fa-commenting"></i></button> 
                                                                 </a>
                                                             {% else %}
-                                                                  &nbps;
-                                                             {% endif %}
+                                                           &nbps;
+                                                            {% endif %}
                                                         </td>
                                                         <td  width="45%">
                                                             <input type='hidden' id='UrlActuel' value="{{ path('AeagEdlBundle_etat', { 'code': tabEtat.etat.euCd }) }}" /> 
@@ -167,7 +167,7 @@
                                                         <td></td>
                                                         <td colspan='3' id="tdEtat-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}">
                                                             {#{{ render(controller('AeagEdlBundle:Etat:etatListProposed', {'euCd':tabEtat.etat.euCd, 'cdEtat':tabEtat.etat.cdEtat, 'cdGroupe': etatGroupe.etatGroupe.cdGroupe})) }}#}
-                                                            {% if tabEtat.etat.proposed  | length > 0 %} 
+                                                            {% if tabEtat.proposeds  | length > 0 %} 
                                                               {#  <div class="row " id="rowProposed-titre-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}">#}
                                                                     <table class="table table-hover" id='idtableProposed-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}'>
                                                                         <tr id="rowProposed-titre-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}" class="active">
@@ -182,7 +182,7 @@
                                                                             <td width="19%">Etat  proposée</td>  
                                                                         </tr>
                                                                         {% set i = 1 %}
-                                                                        {% for pp in tabEtat.etat.proposed %}
+                                                                        {% for pp in tabEtat.proposeds %}
                                                                             <tr id="rowProposed-ligne-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}-{{ i }}">
                                                                                 {% if  is_granted("ROLE_COMMENTATEUREDL") %}
                                                                                     <td>
@@ -257,7 +257,7 @@
            $('#expandAll').on('click',function(){
                    {% for etatGroupe   in  etatGroupes %}
                            $('#collapse{{ etatGroupe.etatGroupe.cdGroupe }}').collapse('show');
-                      {% endfor %}
+                  {% endfor %}
                       $('#expandAll').hide();
                       $('#collapseAll').show();
                       $('#collapseAll').focus();
@@ -275,7 +275,7 @@
      {% for etatGroupe   in  etatGroupes %}
         {% for tabEtat in etatGroupe.etats %}
             
-               
+                
             // Sur clic "Proposer un nouvel etat"
             $('#newEtat-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}').click(function(e){
                     e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
@@ -305,7 +305,7 @@
             });
 
             {% set i = 1 %}
-            {% for pp in tabEtat.etat.proposed %}
+            {% for pp in tabEtat.proposeds %}
                 $('#removeEtat-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}-{{ i }}').click(function (e) {
                  e.preventDefault();
                 // obtenir l'url

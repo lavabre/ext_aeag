@@ -338,6 +338,21 @@ class DefaultController extends Controller {
             $j = 0;
             foreach ($etats as $etat) {
                 $tabEtats[$j]['etat'] = $etat;
+                
+                $proposeds = $etat->getProposed();
+                $tabProposeds = array();
+                $k = 0;
+                foreach($proposeds as $proposed){
+                    $tabProposeds[$k] = $proposed;
+                    $k++;
+                }
+                if (count($tabProposeds) > 0){
+                usort($tabProposeds, create_function('$a,$b', 'return strcasecmp($a->getPropositionDate(),$b->getPropositionDate());'));
+                $tabEtats[$j]['proposeds'] = $tabProposeds;
+                }else{
+                  $tabEtats[$j]['proposeds'] = null;  
+                }
+                
                 $derniereProp = $repoEtatMe->getLastPropositionSuperviseur($etat->getEuCd(), $etat->getCdEtat());
 
                 if (!$derniereProp) {
@@ -356,7 +371,8 @@ class DefaultController extends Controller {
             $i++;
         }
 
-
+//            \Symfony\Component\VarDumper\VarDumper::dump($tabEtatGroupes);
+//            return new Response ('');   
 
 
         return $this->render('AeagEdlBundle:Etat:etatGroupe.html.twig', array(
@@ -436,6 +452,7 @@ class DefaultController extends Controller {
         $i = 0;
         foreach ($pressionGroupes as $pressionGroupe) {
             $tabPressionGroupes[$i]['pressionGroupe'] = $pressionGroupe;
+       
             $pressions = $repoPressionMe->getPressionMe($code, $pressionGroupe->getCdGroupe());
             $nbPressions = $repoPressionMe->getNbPressionMe($code, $pressionGroupe->getCdGroupe());
             $tabPressionGroupes[$i]['nbPressions'] = $nbPressions;
@@ -443,6 +460,21 @@ class DefaultController extends Controller {
             $j = 0;
             foreach ($pressions as $pression) {
                 $tabPressions[$j]['pression'] = $pression;
+                
+                $proposeds = $pression->getProposed();
+                $tabProposeds = array();
+                $k = 0;
+                foreach($proposeds as $proposed){
+                    $tabProposeds[$k] = $proposed;
+                    $k++;
+                }
+                if (count($tabProposeds) > 0){
+                usort($tabProposeds, create_function('$a,$b', 'return strcasecmp($a->getPropositionDate(),$b->getPropositionDate());'));
+                $tabPressions[$j]['proposeds'] = $tabProposeds;
+                }else{
+                  $tabPressions[$j]['proposeds'] = null;  
+                }
+                
                 $derniereProp = $repoPressionMe->getLastPropositionSuperviseur($pression->getEuCd(), $pression->getCdPression());
 
                 if (!$derniereProp) {

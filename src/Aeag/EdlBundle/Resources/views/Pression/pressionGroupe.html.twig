@@ -162,7 +162,7 @@
                                                         <td></td>
                                                         <td colspan='3' id="tdPression-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}">
                                                             {#{{ render(controller('AeagEdlBundle:Pression:pressionListProposed', {'euCd':tabPression.pression.euCd, 'cdPression':tabPression.pression.cdPression, 'cdGroupe': pressionGroupe.pressionGroupe.cdGroupe})) }}#}
-                                                            {% if tabPression.pression.proposed|length > 0 %} 
+                                                            {% if tabPression.proposeds |length > 0 %} 
                                                                 <div class="row " id="rowProposed-titre-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}">
                                                                     <table class="table table-hover" id='idtableProposed-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}'>
                                                                         <tr class="active">
@@ -177,7 +177,7 @@
                                                                             <td width="19%">Pression  proposée</td>  
                                                                         </tr>
                                                                         {% set i = 1 %}
-                                                                        {% for pp in tabPression.pression.proposed %}
+                                                                        {% for pp in tabPression.proposeds %}
                                                                             <tr id="rowProposed-ligne-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}-{{ i }}">
                                                                                 {% if  is_granted("ROLE_COMMENTATEUREDL") %}
                                                                                     <td>
@@ -301,7 +301,7 @@
                 
 
             {% set i = 1 %}
-            {% for pp in tabPression.pression.proposed %}
+            {% for pp in tabPression.proposeds %}
                 $('#removePression-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}-{{ i }}').click(function (e) {
                 e.preventDefault();
                 // obtenir l'url

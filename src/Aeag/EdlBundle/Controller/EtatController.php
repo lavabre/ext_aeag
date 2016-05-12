@@ -148,6 +148,17 @@ class EtatController extends Controller {
 
         $repo = $emEdl->getRepository('AeagEdlBundle:EtatMe');
         $etatInitiale = $repo->findOneBy(array('euCd' => $euCd, 'cdEtat' => $cdEtat));
+        
+          $proposeds = $etatInitiale->getProposed();
+                $tabProposeds = array();
+                $k = 0;
+                foreach($proposeds as $proposed){
+                    $tabProposeds[$k] = $proposed;
+                    $k++;
+                }
+                if (count($tabProposeds) > 0){
+                usort($tabProposeds, create_function('$a,$b', 'return strcasecmp($a->getPropositionDate(),$b->getPropositionDate());'));
+                }
 
         // return new Response ('$masseEau : ' . $euCd. '  $etatType : ' . $cdEtat);
         $derniereProp = $repo->getLastPropositionSuperviseur($euCd, $cdEtat);
@@ -165,6 +176,7 @@ class EtatController extends Controller {
         return $this->render('AeagEdlBundle:Etat:etatListProposed.html.twig', array(
                     'cdGroupe' => $cdGroupe,
                     'etat' => $etatInitiale,
+                    'proposeds' => $tabProposeds,
                     'derniereProp' => $derniereProposition,
                     'user' => $user,
         ));
@@ -192,8 +204,8 @@ class EtatController extends Controller {
         $emEdl->remove($proposition);
         $emEdl->flush();
         
-          return new Response (json_encode('eucd : ' . $euCd . '  cdEtat : ' . $cdEtat . '  login : ' . $login . ' date : ' . $propositionDate . ' supprimer'));
-
+         return new Response (json_encode('eucd : ' . $euCd . '  cdEtat : ' . $cdEtat . '  login : ' . $login . ' date : ' . $propositionDate . ' supprimer'));
+        
     }
 
 }

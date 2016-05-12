@@ -110,7 +110,7 @@ class PressionController extends Controller {
             $proposed->setPressionOriginale($pressionInitiale);
             $emEdl->persist($proposed);
             $emEdl->flush();
-            
+
             $msg = "Proposition :<span class=dce_pression_" . $proposed->getValeur() . ">" . $proposed->getValueLib() . "</span>";
             return new Response(json_encode($msg));
         } catch (Exception $e) {
@@ -135,6 +135,17 @@ class PressionController extends Controller {
         $repo = $emEdl->getRepository('AeagEdlBundle:PressionMe');
         $pressionInitiale = $repo->findOneBy(array('euCd' => $euCd, 'cdPression' => $cdPression));
 
+        $proposeds = $pressionInitiale->getProposed();
+        $tabProposeds = array();
+        $k = 0;
+        foreach ($proposeds as $proposed) {
+            $tabProposeds[$k] = $proposed;
+            $k++;
+        }
+        if (count($tabProposeds) > 0) {
+            usort($tabProposeds, create_function('$a,$b', 'return strcasecmp($a->getPropositionDate(),$b->getPropositionDate());'));
+        }
+
         $derniereProp = $repo->getLastPropositionSuperviseur($euCd, $cdPression);
 
         if (!$derniereProp) {
@@ -150,6 +161,7 @@ class PressionController extends Controller {
         return $this->render('AeagEdlBundle:Pression:pressionListProposed.html.twig', array(
                     'cdGroupe' => $cdGroupe,
                     'pression' => $pressionInitiale,
+                    'proposeds' => $tabProposeds,
                     'derniereProp' => $derniereProposition,
                     'user' => $user
         ));
@@ -177,9 +189,8 @@ class PressionController extends Controller {
 
         $emEdl->remove($proposition);
         $emEdl->flush();
-        
-        return new Response (json_encode('eucd : ' . $euCd . '  cdPression : ' . $cdPression . '  login : ' . $login . ' date : ' . $propositionDate . ' supprimer'));
 
+        return new Response(json_encode('eucd : ' . $euCd . '  cdPression : ' . $cdPression . '  login : ' . $login . ' date : ' . $propositionDate . ' supprimer'));
     }
 
 }

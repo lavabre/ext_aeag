@@ -29,7 +29,7 @@ twig:
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
     globals:
-          webmaster:  Joël LAVABRE  (05.61.36.36.37)
+          webmaster:  Joël LAVABRE
           symfony:  2.7.5
           version : 1.0.0
 
