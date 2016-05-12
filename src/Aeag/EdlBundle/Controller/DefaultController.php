@@ -78,7 +78,7 @@ class DefaultController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
         $repoUtilisateur = $emEdl->getRepository('AeagEdlBundle:Utilisateur');
-        $utilisateur = $repoUtilisateur->getUtilisateurByExtid($user->getId());
+
 
         $critere = new Criteres();
         $form = $this->createForm(new MasseEauRechercheForm(), $critere);
@@ -194,7 +194,7 @@ class DefaultController extends Controller {
                 return $this->render('AeagEdlBundle:Default:interdit.html.twig');
             }
 
-
+            $utilisateur = $repoUtilisateur->getUtilisateurByExtid($user->getId());
 
             //return new Response('role : ' . isset(in_array("ROLE_SUPERVISEUR", $user->getRoles())));
 
