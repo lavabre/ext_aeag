@@ -212,6 +212,20 @@ class SuiviHydrobioController extends Controller {
                         } else {
                             $tabCmdPrelevs[$nbCmdPrelevs]['suiviPrels'] = null;
                         }
+                         $tabAutrePrelevs = $repoPgCmdPrelev->getAutrePrelevs($pgCmdPrelev);
+                          if (count($tabAutrePrelevs) > 0) {
+                            $tabCmdPrelevs[$nbCmdPrelevs]['autrePrelevs'] = $tabAutrePrelevs;
+                        } else {
+                            $tabCmdPrelevs[$nbCmdPrelevs]['autrePrelevs'] = null;
+                        }
+//                         if ($pgCmdPrelev->getStation()->getOuvFoncId() == 557655){
+//                             for($j = 0 ; $j < count($tabCmdPrelevs[$nbCmdPrelevs]['autrePrelevs']); $j++){
+//                                 echo('j : ' . $j . ' date : ' . $tabCmdPrelevs[$nbCmdPrelevs]['autrePrelevs'][$j]['datePrel'] . ' support : ' . $tabCmdPrelevs[$nbCmdPrelevs]['autrePrelevs'][$j]['support'] . '</br>');
+//                             }
+//                             echo('nb: ' . count($tabCmdPrelevs[$nbCmdPrelevs]['autrePrelevs']));
+//                           \Symfony\Component\VarDumper\VarDumper::dump($tabCmdPrelevs[$nbCmdPrelevs]['autrePrelevs']);
+//                            return new Response ('');   
+//                        }
                         $nbCmdPrelevs++;
                     }
                     $tabStations[$i]['cmdPrelevs'] = $tabCmdPrelevs;
