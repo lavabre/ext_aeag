@@ -70,7 +70,7 @@ class EtatController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagEdlBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('controller', 'Etat');

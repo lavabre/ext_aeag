@@ -215,12 +215,12 @@ class UserController extends Controller {
         if (is_null($entity->getRoles())) {
             $message = 'Le role est obligatoire ';
         }
-        
-         $newUser = $repoUser->getUserByUsername($entity->getUsername());
-         if ($newUser){
-             $message = 'Le login est déjà utilisé ';
-         }
-        
+
+        $newUser = $repoUser->getUserByUsername($entity->getUsername());
+        if ($newUser) {
+            $message = 'Le login est déjà utilisé ';
+        }
+
 
         if ($message) {
             return $this->render('AeagUserBundle:User:new.html.twig', array(
@@ -360,8 +360,8 @@ class UserController extends Controller {
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find User entity.');
         }
-        
-       
+
+
         $role = 'ROLE_AEAG';
 
         if ($security->isGranted('ROLE_ADMIN')) {
@@ -388,9 +388,9 @@ class UserController extends Controller {
             $utilisateur = null;
             $deptUtilisateurs = null;
         }
-        
-         $message = null;
-         $editForm = $this->createForm(new UsersUpdateType(), $entity);
+
+        $message = null;
+        $editForm = $this->createForm(new UsersUpdateType($entity), $entity);
         $maj = 'ko';
         return $this->render('AeagUserBundle:User:edit.html.twig', array(
                     'entity' => $entity,
@@ -399,7 +399,7 @@ class UserController extends Controller {
                     'depUtilisateurs' => $deptUtilisateurs,
                     'message' => $message,
                     'form' => $editForm->createView(),
-                     'maj' => $maj
+                    'maj' => $maj
         ));
     }
 
@@ -424,9 +424,9 @@ class UserController extends Controller {
         if (!$entity) {
             throw $this->createNotFoundException('Impossible de retrouver l\' entity.' . $id);
         }
-        
+
         $message = null;
-      
+
         $role = 'ROLE_AEAG';
 
         if ($security->isGranted('ROLE_ADMIN')) {
@@ -459,7 +459,7 @@ class UserController extends Controller {
 
 
         $maj = 'ko';
-        $form = $this->createForm(new UsersUpdateType(), $entity);
+        $form = $this->createForm(new UsersUpdateType($entity), $entity);
 
         $form->handleRequest($request);
 
@@ -468,15 +468,15 @@ class UserController extends Controller {
         if ($entity->getRoles() == null) {
             $message = 'Le role est obligatoire ';
         }
-        
-       if ($entity->getPassword() == null) {
+
+        if ($entity->getPassword() == null) {
             if ($message) {
                 $message = 'Le login et le mot de passe sont obligatoire';
             } else {
                 $message = 'Le mot de passe est obligatoire';
             }
         }
-        
+
         if ($message) {
             return $this->render('AeagUserBundle:User:edit.html.twig', array(
                         'entity' => $entity,
@@ -490,7 +490,9 @@ class UserController extends Controller {
 
 
         if ($form->isValid()) {
-            // return new Response('username : ' . $entity->getUsername() );
+//            \Symfony\Component\VarDumper\VarDumper::dump($entity->getRoles());
+//            \Symfony\Component\VarDumper\VarDumper::dump($entity->getDepts());
+//             return new Response('username : ' . $entity->getUsername() );
             $encoder = $factory->getEncoder($entity);
             $entity->setSalt('');
             $password = $encoder->encodePassword($entity->getPassword(), $entity->getSalt());
@@ -502,9 +504,9 @@ class UserController extends Controller {
             } else {
                 $entity->setEnabled(TRUE);
             }
-            
+
             $entityHold = clone($entity);
-            
+
             if ($entity->hasRole('ROLE_ADMINEDL')) {
                 $entity->removeRole('ROLE_COMMENTATEUREDL');
                 $entity->removeRole('ROLE_SUPERVISEUREDL');
@@ -541,15 +543,8 @@ class UserController extends Controller {
                     $utilisateur->addRole('ROLE_ADMIN');
                 }
 
-//                $roles = $utilisateur->getRoles();
-//                for ($i = 0; $i < count($roles); $i++) {
-//                    print_r('role ' . $i . ' :  ' . $roles[$i]);
-//                }
-                //return new Response('  ici : ');
-
-
                 $emEdl->persist($utilisateur);
-                 $depUtilisateurs = $repoDeptUtilisateur->getDepartementByUtilisateur($utilisateur);
+                $depUtilisateurs = $repoDeptUtilisateur->getDepartementByUtilisateur($utilisateur);
                 foreach ($depUtilisateurs as $depUtilisateur) {
                     $emEdl->remove($depUtilisateur);
                 }
@@ -605,7 +600,7 @@ class UserController extends Controller {
                     'role' => $role,
                     'message' => $message,
                     'form' => $form->createView(),
-                     'maj' => $maj
+                    'maj' => $maj
         ));
     }
 

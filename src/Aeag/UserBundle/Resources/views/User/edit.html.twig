@@ -13,7 +13,7 @@
  {%block content %}
      
       <div class="col-xs-offset-3 col-xs-8">
-          <form role="form"  class="form-horizontal" action="{{ path('AeagUserBundle_User_update', { 'id': entity.id }) }}" id="idForm" method="post" {{ form_enctype(form) }}>
+          <form role="form"  class="form-horizontal" action="{{ path('AeagUserBundle_User_update', { 'id': entity.id }) }}" id="idForm" method="post" {{ form_start(form) }}>
 
                 {% spaceless %}
                      {% if not form.vars.valid %}
@@ -115,7 +115,7 @@
                               <div class="input-group">
                           {% endif %}
                               <span class="input-group-addon"><i class="fa fa-graduation-cap"></i></span>
-                                     <select id="aeag_userbundle_userrtype_roles" class="form-control valid" multiple="multiple" placeholder="Rôle" size="7" required="required" name="aeag_userbundle_userrtype[roles][]" aria-required="true" aria-invalid="false">
+                 {#                    <select id="aeag_userbundle_userrtype_roles" class="form-control" multiple="multiple" placeholder="Rôles" required="required" name="aeag_userbundle_userrtype[roles][]" aria-required="true" aria-invalid="false">
                                             {% if role == 'ROLE_AEAG' %}
                                                       <option value="ROLE_ADMIN">Administrateur </option>
                                                       <option value="ROLE_ADMINDEC">Administrateur Déchet</option>
@@ -150,7 +150,8 @@
                                                      <option value="ROLE_SUPERVISEUREDL">Superviseur Edl</option>
                                                      <option  value="ROLE_COMMENTATEUREDL">Commentateur Edl</option>
                                               {% endif %}
-                                    </select>
+                                    </select>#}
+                               {{ form_widget(form.roles, { 'attr': {'class': 'form-control', 'placeholder': 'Rôles'} }) }}
                             </div>
                     </div>
                                     

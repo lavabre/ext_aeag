@@ -21,7 +21,6 @@ class MyDateTime extends \DateTime {
 
 }
 
-
 class DefaultController extends Controller {
 
     public function indexAction(Request $request) {
@@ -78,6 +77,8 @@ class DefaultController extends Controller {
         $session->set('fonction', 'index');
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
+        $repoUtilisateur = $emEdl->getRepository('AeagEdlBundle:Utilisateur');
+        $utilisateur = $repoUtilisateur->getUtilisateurByExtid($user->getId());
 
         $critere = new Criteres();
         $form = $this->createForm(new MasseEauRechercheForm(), $critere);
@@ -187,12 +188,13 @@ class DefaultController extends Controller {
 
 
         if ($territoirecle == '1') {
-            $user = $this->container->get('security.context')->getToken()->getUser();
 
             // Et pour vérifier que l'utilisateur est authentifié (et non un anonyme)
-            if (!is_object($user)) {
-                throw new AccessDeniedException('Vous n\'êtes pas authentifié.');
+            if (!$user) {
+                return $this->render('AeagEdlBundle:Default:interdit.html.twig');
             }
+
+
 
             //return new Response('role : ' . isset(in_array("ROLE_SUPERVISEUR", $user->getRoles())));
 
@@ -200,12 +202,12 @@ class DefaultController extends Controller {
                 $where = $where . " and b.euCd = a.euCd";
                 $where = $where . " and b.inseeDepartement = '" . $deptcle . "'";
                 $where = $where . " and b.inseeDepartement = c.inseeDepartement";
-                $where = $where . " and c.utilisateur = " . $user->getId();
+                $where = $where . " and c.utilisateur = " . $utilisateur->getId();
             } else {
 
                 $where = $where . " and b.euCd = a.euCd";
                 $where = $where . " and b.inseeDepartement = c.inseeDepartement";
-                $where = $where . " and c.utilisateur = " . $user->getId();
+                $where = $where . " and c.utilisateur = " . $utilisateur->getId();
             }
 
             $query = "select a from Aeag\EdlBundle\Entity\MasseEau a,";
@@ -226,7 +228,7 @@ class DefaultController extends Controller {
             }
         }
 
-        //return new Response('where  : ' .  $where );
+        // return new Response('where  : ' .  $where );
 
 
         $query = $query . $where . " order by  a.nomMasseEau";
@@ -322,36 +324,36 @@ class DefaultController extends Controller {
         $avisHistorique = $repoAvisHistorique->getAvisHistoriqueByCodeEpr($code, 'Etat');
 
         $session->set('UrlRetour', $this->generateUrl('AeagEdlBundle_listeMasseEau'));
-        
+
         $nbEtats = count($etatGroupes);
 
         $tabEtatGroupes = array();
         $i = 0;
         foreach ($etatGroupes as $etatGroupe) {
-                 $tabEtatGroupes[$i]['etatGroupe'] = $etatGroupe;
-                 $etats = $repoEtatMe->getEtatMe($code, $etatGroupe->getCdGroupe());
-                 $nbEtats = $repoEtatMe->getNbEtatMe($code, $etatGroupe->getCdGroupe());
-                 $tabEtatGroupes[$i]['nbEtats'] = $nbEtats;
-                 $tabEtats = array();
-                $j = 0;
-                foreach ($etats as $etat) {
-                    $tabEtats[$j]['etat'] = $etat;
-                    $derniereProp = $repoEtatMe->getLastPropositionSuperviseur($etat->getEuCd(), $etat->getCdEtat());
+            $tabEtatGroupes[$i]['etatGroupe'] = $etatGroupe;
+            $etats = $repoEtatMe->getEtatMe($code, $etatGroupe->getCdGroupe());
+            $nbEtats = $repoEtatMe->getNbEtatMe($code, $etatGroupe->getCdGroupe());
+            $tabEtatGroupes[$i]['nbEtats'] = $nbEtats;
+            $tabEtats = array();
+            $j = 0;
+            foreach ($etats as $etat) {
+                $tabEtats[$j]['etat'] = $etat;
+                $derniereProp = $repoEtatMe->getLastPropositionSuperviseur($etat->getEuCd(), $etat->getCdEtat());
 
-                    if (!$derniereProp) {
-                        $derniereProp = $repoEtatMe->getLastProposition($etat->getEuCd(), $etat->getCdEtat());
-                    }
-
-                    if (!$derniereProp) {
-                        $derniereProposition = null;
-                    } else {
-                        $derniereProposition = $derniereProp[0];
-                    }
-                    $tabEtats[$j]['derniereProp'] = $derniereProposition;
-                    $j++;
+                if (!$derniereProp) {
+                    $derniereProp = $repoEtatMe->getLastProposition($etat->getEuCd(), $etat->getCdEtat());
                 }
-                $tabEtatGroupes[$i]['etats'] = $tabEtats;
-                $i++;
+
+                if (!$derniereProp) {
+                    $derniereProposition = null;
+                } else {
+                    $derniereProposition = $derniereProp[0];
+                }
+                $tabEtats[$j]['derniereProp'] = $derniereProposition;
+                $j++;
+            }
+            $tabEtatGroupes[$i]['etats'] = $tabEtats;
+            $i++;
         }
 
 
@@ -427,41 +429,41 @@ class DefaultController extends Controller {
         }
 
         $avisHistorique = $repoAvisHistorique->getAvisHistoriqueByCodeEpr($code, 'Pression');
-        
+
         $nbPressions = count($pressionGroupes);
 
         $tabPressionGroupes = array();
         $i = 0;
         foreach ($pressionGroupes as $pressionGroupe) {
-                 $tabPressionGroupes[$i]['pressionGroupe'] = $pressionGroupe;
-                 $pressions = $repoPressionMe->getPressionMe($code, $pressionGroupe->getCdGroupe());
-                 $nbPressions = $repoPressionMe->getNbPressionMe($code, $pressionGroupe->getCdGroupe());
-                 $tabPressionGroupes[$i]['nbPressions'] = $nbPressions;
-                 $tabPressions = array();
-                $j = 0;
-                foreach ($pressions as $pression) {
-                    $tabPressions[$j]['pression'] = $pression;
-                    $derniereProp = $repoPressionMe->getLastPropositionSuperviseur($pression->getEuCd(), $pression->getCdPression());
+            $tabPressionGroupes[$i]['pressionGroupe'] = $pressionGroupe;
+            $pressions = $repoPressionMe->getPressionMe($code, $pressionGroupe->getCdGroupe());
+            $nbPressions = $repoPressionMe->getNbPressionMe($code, $pressionGroupe->getCdGroupe());
+            $tabPressionGroupes[$i]['nbPressions'] = $nbPressions;
+            $tabPressions = array();
+            $j = 0;
+            foreach ($pressions as $pression) {
+                $tabPressions[$j]['pression'] = $pression;
+                $derniereProp = $repoPressionMe->getLastPropositionSuperviseur($pression->getEuCd(), $pression->getCdPression());
 
-                    if (!$derniereProp) {
-                        $derniereProp = $repoPressionMe->getLastProposition($pression->getEuCd(), $pression->getCdPression());
-                    }
-
-                    if (!$derniereProp) {
-                        $derniereProposition = null;
-                    } else {
-                        $derniereProposition = $derniereProp[0];
-                    }
-                    $tabPressions[$j]['derniereProp'] = $derniereProposition;
-                    $j++;
+                if (!$derniereProp) {
+                    $derniereProp = $repoPressionMe->getLastProposition($pression->getEuCd(), $pression->getCdPression());
                 }
-                $tabPressionGroupes[$i]['pressions'] = $tabPressions;
-                $i++;
+
+                if (!$derniereProp) {
+                    $derniereProposition = null;
+                } else {
+                    $derniereProposition = $derniereProp[0];
+                }
+                $tabPressions[$j]['derniereProp'] = $derniereProposition;
+                $j++;
+            }
+            $tabPressionGroupes[$i]['pressions'] = $tabPressions;
+            $i++;
         }
 
         return $this->render('AeagEdlBundle:Pression:pressionGroupe.html.twig', array(
                     'pressionGroupes' => $tabPressionGroupes,
-                   'avisHistorique' => $avisHistorique,
+                    'avisHistorique' => $avisHistorique,
                     'me' => $me,
                     'user' => $user,
                     'url' => $session->get('UrlRetour')
@@ -507,7 +509,7 @@ class DefaultController extends Controller {
         if ($session->get('UrlRetour') == '') {
             $session->set('UrlRetour', $this->generateUrl('AeagEdlBundle_listeMasseEau', array('page' => 1)));
         }
-        
+
 //        return new Response(  \Symfony\Component\VarDumper\VarDumper::dump($tabPressions));
 //        return new Response ('');
 
@@ -695,7 +697,7 @@ class DefaultController extends Controller {
         $emEdl = $this->get('doctrine')->getManager('edl');
 
         $repoUsers = $em->getRepository('AeagUserBundle:User');
-        $repo = $emEdl->getRepository('AeagSqeBundle:Utilisateur');
+        $repo = $emEdl->getRepository('AeagEdlBundle:Utilisateur');
 
         $utilisateurs = $repo->findAll();
         $utilisateursNbModifies = 0;
