@@ -140,15 +140,12 @@
                                                     <tr class="info">
                                                         <td width="1%" nowrap>
                                                             {% if  is_granted("ROLE_COMMENTATEUREDL") %}
-                                                               <a id="expand-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}" href="#" class="btn btn-primary" role="button"><i class="fa fa-expand"></i></a>
-                                                               <a id="collapse-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}" href="#" class="btn btn-primary" role="button"><i class="fa fa-compress"></i></a>
-                                                               <a id="newEtat-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}" title="Proposer une nouvelle évaluation" cdEtat="{{ tabEtat.etat.cdEtat }}">
+                                                                <a id="newEtat-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}" title="Proposer une nouvelle évaluation" cdEtat="{{ tabEtat.etat.cdEtat }}">
                                                                     <button type="button" class="btn btn-primary"><i class="fa fa-commenting"></i></button> 
                                                                 </a>
                                                             {% else %}
-                                                                <a id="expand-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}" href="#" class="btn btn-primary" role="button"><i class="fa fa-expand"></i></a>
-                                                                <a id="collapse-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}" href="#" class="btn btn-primary" role="button"><i class="fa fa-compress"></i></a>
-                                                            {% endif %}
+                                                                  &nbps;
+                                                             {% endif %}
                                                         </td>
                                                         <td  width="45%">
                                                             <input type='hidden' id='UrlActuel' value="{{ path('AeagEdlBundle_etat', { 'code': tabEtat.etat.euCd }) }}" /> 
@@ -260,13 +257,7 @@
            $('#expandAll').on('click',function(){
                    {% for etatGroupe   in  etatGroupes %}
                            $('#collapse{{ etatGroupe.etatGroupe.cdGroupe }}').collapse('show');
-                           {% for tabEtat in etatGroupe.etats %}
-                                    $('#idtableProposed-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}').show();
-                                    $('#expand-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}').hide();
-                                    $('#collapse-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}').show();
-                                    $('#collapse-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}').focus();
-                           {% endfor %}
-                     {% endfor %}
+                      {% endfor %}
                       $('#expandAll').hide();
                       $('#collapseAll').show();
                       $('#collapseAll').focus();
@@ -275,13 +266,7 @@
            $('#collapseAll').on('click',function(){
                     {% for etatGroupe   in  etatGroupes %}
                            $('#collapse{{ etatGroupe.etatGroupe.cdGroupe }}').collapse('hide');
-                           {% for tabEtat in etatGroupe.etats %}
-                                $('#idtableProposed-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}').hide();
-                                $('#expand-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}').show();
-                                $('#expand-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}').focus();
-                                $('#collapse-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}').hide();
-                           {% endfor %}
-                       {% endfor %}
+                      {% endfor %}
                       $('#expandAll').show();
                       $('#expandAll').focus();
                       $('#collapseAll').hide();
@@ -290,24 +275,7 @@
      {% for etatGroupe   in  etatGroupes %}
         {% for tabEtat in etatGroupe.etats %}
             
-            $('#expand-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}').hide();
-            $('#collapse-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}').show();          
-
-           $('#expand-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}').on('click',function(){
-                       $('#idtableProposed-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}').show();
-                      $('#expand-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}').hide();
-                      $('#collapse-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}').show();
-                      $('#collapse-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}').focus();
-               });
-
-           $('#collapse-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}').on('click',function(){
-                     $('#idtableProposed-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}').hide();
-                     $('#expand-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}').show();
-                     $('#expand-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}').focus();
-                     $('#collapse-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}').hide();
-           });
-            
-            
+               
             // Sur clic "Proposer un nouvel etat"
             $('#newEtat-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}').click(function(e){
                     e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire

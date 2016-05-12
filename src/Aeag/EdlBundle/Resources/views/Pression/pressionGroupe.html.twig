@@ -135,15 +135,12 @@
                                                     <tr class="info">
                                                         <td width="1%" nowrap>
                                                             {% if  is_granted("ROLE_COMMENTATEUREDL") %}
-                                                                 <a id="expand-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}" href="#" class="btn btn-primary" role="button"><i class="fa fa-expand"></i></a>
-                                                               <a id="collapse-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}" href="#" class="btn btn-primary" role="button"><i class="fa fa-compress"></i></a>
-                                                                <a id="newPression-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}" title="Proposer une nouvelle évaluation" cdPression="{{ tabPression.pression.cdPression }}">
+                                                             <a id="newPression-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}" title="Proposer une nouvelle évaluation" cdPression="{{ tabPression.pression.cdPression }}">
                                                                     <button type="button" class="btn btn-primary"><i class="fa fa-commenting"></i></button> 
                                                                 </a>
                                                             {% else %}
-                                                               <a id="expand-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}" href="#" class="btn btn-primary" role="button"><i class="fa fa-expand"></i></a>
-                                                               <a id="collapse-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}" href="#" class="btn btn-primary" role="button"><i class="fa fa-compress"></i></a>
-                                                              {% endif %}
+                                                                 &nbps;
+                                                            {% endif %}
                                                         </td>
                                                         <td  width="45%">
                                                             <input type='hidden' id='UrlActuel' value="{{ path('AeagEdlBundle_pression', { 'code': tabPression.pression.euCd }) }}" /> 
@@ -254,13 +251,7 @@
     $('#expandAll').on('click',function(){
     {% for pressionGroupe   in  pressionGroupes %}
         $('#collapse{{ pressionGroupe.pressionGroupe.cdGroupe }}').collapse('show');
-        {% for tabPression in pressionGroupe.pressions %}
-               $('#idtableProposed-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}').show();
-                $('#expand-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}').hide();
-                $('#collapse-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}').show();
-                $('#collapse-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}').focus();
-        {% endfor %}
-    {% endfor %}
+      {% endfor %}
     $('#expandAll').hide();
     $('#collapseAll').show();
     $('#collapseAll').focus();
@@ -269,12 +260,6 @@
     $('#collapseAll').on('click',function(){
     {% for pressionGroupe   in  pressionGroupes %}
         $('#collapse{{ pressionGroupe.pressionGroupe.cdGroupe }}').collapse('hide');
-        {% for tabPression in pressionGroupe.pressions %}
-                $('#idtableProposed-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}').hide();
-                $('#expand-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}').show();
-                $('#expand-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}').focus();
-                $('#collapse-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}').hide();
-        {% endfor %}
     {% endfor %}
     $('#expandAll').show();
     $('#expandAll').focus();
@@ -284,24 +269,7 @@
     {% for pressionGroupe   in  pressionGroupes %}
         {% for tabPression in pressionGroupe.pressions %}
             
-             $('#expand-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}').hide();
-            $('#collapse-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}').show();          
-
-           $('#expand-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}').on('click',function(){
-                       $('#idtableProposed-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}').show();
-                      $('#expand-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}').hide();
-                      $('#collapse-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}').show();
-                      $('#collapse-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}').focus();
-               });
-
-           $('#collapse-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}').on('click',function(){
-                     $('#idtableProposed-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}').hide();
-                     $('#expand-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}').show();
-                     $('#expand-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}').focus();
-                     $('#collapse-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}').hide();
-           });
-            
-            
+                   
             // Sur clic "Proposer un nouvel pression"
                 $('#newPression-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}').click(function(e){
                         e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
