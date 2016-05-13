@@ -44,15 +44,17 @@
                     {% for periodeAn in periodeAns %}
                           <tr>
                             <td align="center" nowrap> 
-                                {% if typeMilieu.codeMilieu != 'LPC' %}
-                                 <a id="id_{{ periodeAn.pgProgLotPeriodeAn.id }}" class="btn btn-primary" href="{{path('AeagSqeBundle_saisieDonnees_lot_periode_stations',{ 'periodeAnId': periodeAn.pgProgLotPeriodeAn.id })}}" title="Stations">
-                                    <i class="fa fa-eye"></i> 
-                                </a>
-                                {% else %}
-                                     <a id="id_{{ periodeAn.pgProgLotPeriodeAn.id }}" class="btn btn-primary" href="{{path('AeagSqeBundle_saisieDonnees_lot_periode_lacs',{ 'periodeAnId': periodeAn.pgProgLotPeriodeAn.id })}}" title="Stations">
-                                    <i class="fa fa-eye"></i> 
-                                </a>
-                                 {% endif %}
+                                {%  if periodeAn.nbStations > 0 %}
+                                    {% if typeMilieu.codeMilieu != 'LPC' %}
+                                     <a id="id_{{ periodeAn.pgProgLotPeriodeAn.id }}" class="btn btn-primary" href="{{path('AeagSqeBundle_saisieDonnees_lot_periode_stations',{ 'periodeAnId': periodeAn.pgProgLotPeriodeAn.id })}}" title="Stations">
+                                        <i class="fa fa-eye"></i> 
+                                    </a>
+                                    {% else %}
+                                         <a id="id_{{ periodeAn.pgProgLotPeriodeAn.id }}" class="btn btn-primary" href="{{path('AeagSqeBundle_saisieDonnees_lot_periode_lacs',{ 'periodeAnId': periodeAn.pgProgLotPeriodeAn.id })}}" title="Stations">
+                                        <i class="fa fa-eye"></i> 
+                                    </a>
+                                     {% endif %}
+                              {% endif %}
                             </td>
                                <td>{{ periodeAn.pgProgLotPeriodeAn.periode.labelPeriode }} (du {{ periodeAn.pgProgLotPeriodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;au&nbsp;&nbsp; {{ periodeAn.pgProgLotPeriodeAn.periode.dateFin | date("d/m/Y") }})</td>
                                <td class="text-center">{{ periodeAn.nbStations }}{#</br>

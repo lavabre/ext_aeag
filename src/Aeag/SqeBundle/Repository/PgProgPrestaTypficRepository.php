@@ -9,6 +9,15 @@ use Doctrine\ORM\EntityRepository;
  * @package Aeag\SqeBundle\Repository
  */
 class PgProgPrestaTypficRepository extends EntityRepository {
+    
+    public function getPgProgPrestaTypficByPrestataire($prestataire) {
+        $query = "select p";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgProgPrestaTypfic p";
+        $query = $query . " where p.prestataire = " . $prestataire->getAdrCorId() ;
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+        return $qb->getResult();
+    }
 
     public function getPgProgPrestaTypficByCodeMilieu($pgProgTypeMilieu, $prestataire) {
         $query = "select p";

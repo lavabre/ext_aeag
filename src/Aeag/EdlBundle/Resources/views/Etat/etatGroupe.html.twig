@@ -3,7 +3,7 @@
 {% block breadcrumb %}
     <li>
         <i class="icon-home"></i>
-        <a href="{{ path('Aeag_edl') }}">Accueil</a> 
+        <a href="{{ path('aeag_edl') }}">Accueil</a> 
     </li>
     <li>
         <a href="{{ path('AeagEdlBundle_listeMasseEau') }}">Résultat</a> 
@@ -32,13 +32,34 @@
             </div>
         </div>
     </div>  
+                  
+      {% for etatGroupe   in  etatGroupes %}
+        {% for tabEtat in etatGroupe.etats %}
+                    <div class="modal fade" id="modalEtatEdit-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}" tabindex="-1" role="dialog">
+                   <div class="modal-dialog">
+                     <div class="modal-content">
+                       <div class="modal-header">
+                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                         <h4 class="modal-title"><div class="label label-primary">Proposer une nouvelle évaluation</div></h4>
+                       </div>
+                       <div id="idEtatEdit-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}" class="modal-body"></div>
+                       <div class="modal-footer">
+                         <button id="annuler-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}" type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                         <button  id="valider-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}" type="button" class="btn btn-primary">valider</button>
+                       </div>
+                     </div><!-- /.modal-content -->
+                   </div><!-- /.modal-dialog -->
+                 </div><!-- /.modal -->   
+       {% endfor %}
+    {% endfor %}
+    
 {% endblock modal %}
 
 {%block panel_heading %}
     <div class="row">
         <div class="col-md-offset-3 col-md-7">
             <h3 class="page-title">
-                Masse d'eau {{ me.euCd }}
+                Masse d'eau {{ me.euCd }} {{ me.nomMasseEau }}
             </h3>
         </div>
     </div>
@@ -50,38 +71,31 @@
 
 
     <div class="row">
-        <h2 class="text-center">{{ me.nomMasseEau }}</h2>
-        <div class="col-sm-offset-5  col-sm-2">
-            <img class="img-responsive" alt="Responsive image" width="100px" height="100px" src="http://adour-garonne.eaufrance.fr/porteau/index.php/carto/vignetteMasdo?id={{ me.euCd }}"/>
-        </div>
-        <div class="col-sm-4">
-            </br>
+         <div class="col-sm-offset-4 col-sm-4">
             <a  TARGET="_blanck" href="http://adour-garonne.eaufrance.fr/massedeau/{{me.euCd}}">
-                <button type="button" class="btn btn-primary">
+                <img class="img-responsive" alt="Responsive image" width="250px" height="250px" src="http://adour-garonne.eaufrance.fr/porteau/index.php/carto/vignetteMasdo?id={{ me.euCd }}"/>
+               <button type="button" class="btn btn-primary">
                     <i class="fa fa-eye"> Voir la fiche sur le portail de bassin</i>
                 </button>
             </a>
-            </br></br>
-            <a class="btn btn-warning" data-toggle="modal" href="#modal-historique" title="Historique">
-                <i class="fa fa-archive"> Historique</i>
-             </a>
            </div> 
     </div>
-                
-    </br>
-    
+      
     <div class="row">
-     <div class="col-sm-2 col-sm-push-10">
+     <div class="col-sm-4 col-sm-push-8">
             <a href="#">
                 <button type="button" class="btn btn-success">
-                    Etats
+                    <i class="fa fa-comment"> Etats</i>
                 </button>
             </a>
             <a  href="{{ path('AeagEdlBundle_pressionGroupe', {'code':me.euCd}) }}">
                 <button type="button" class="btn btn-default">
-                    Pressions
+                    <i class="fa fa-comment-o"> Pressions</i>
                 </button>
             </a>
+            <a class="btn btn-warning" data-toggle="modal" href="#modal-historique" title="Historique">
+                   <i class="fa fa-file-archive-o"> Historique</i>
+              </a>
         </div>
     </div>
                 
@@ -90,13 +104,14 @@
     <div class="panel panel-primary">
            <div class="panel-heading">
                  <div class="row">
-                     <div class="col-sm-10">
-                                <h3 class="panel-title">Etats de la masse d'eau  {{ me.euCd }}</h3>
-                     </div>
-                    <div class="col-sm-2  pull-left">
+                     <div class="col-sm-1">
                             <a id="expandAll" href="#" class="btn btn-primary" role="button"><i class="fa fa-expand"></i></a>
                             <a id="collapseAll" href="#" class="btn btn-primary" role="button"><i class="fa fa-compress"></i></a>
                     </div>
+                     <div class="col-sm-11">
+                                <h3 class="panel-title">Etats de la masse d'eau  {{ me.euCd }} {{ me.nomMasseEau }}</h3>
+                     </div>
+                  
                  </div>
             </div>
         <div class="panel-body">
@@ -106,7 +121,119 @@
                 <br>
                 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
                     {% for etatGroupe in etatGroupes %}
-                        {{ render(controller('AeagEdlBundle:Default:etat', {'code': me.euCd, 'cdGroupe': etatGroupe.cdGroupe})) }}
+                       {# {{ render(controller('AeagEdlBundle:Default:etat', {'code': me.euCd, 'cdGroupe': etatGroupe.cdGroupe})) }}#}
+                        {% if etatGroupe.nbEtats > 0 %} 
+                            <div class="panel panel-primary">
+                                <div class="panel-heading" role="tab" id="heading{{etatGroupe.etatGroupe.cdGroupe }}">
+                                    <h4 class="panel-title">
+                                        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ etatGroupe.etatGroupe.cdGroupe }}" aria-expanded="true" aria-controls="collapse{{ etatGroupe.etatGroupe.cdGroupe }}">
+                                            {{etatGroupe.etatGroupe.libelle}}  
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div id="collapse{{ etatGroupe.etatGroupe.cdGroupe }}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading{{ etatGroupe.etatGroupe.cdGroupe }}">
+                                    <div class="panel-body">
+
+                                        {% for tabEtat in etatGroupe.etats %} 
+                                            <div class="row" id="row-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}">
+                                                <table class="table table-hover" id='idtable-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}'>
+                                                    <tr class="info">
+                                                        <td width="1%" nowrap>
+                                                            {% if  is_granted("ROLE_COMMENTATEUREDL") %}
+                                                                <a id="newEtat-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}" title="Proposer une nouvelle évaluation" cdEtat="{{ tabEtat.etat.cdEtat }}">
+                                                                    <button type="button" class="btn btn-primary"><i class="fa fa-commenting"></i></button> 
+                                                                </a>
+                                                            {% else %}
+                                                           &nbps;
+                                                            {% endif %}
+                                                        </td>
+                                                        <td  width="45%">
+                                                            <input type='hidden' id='UrlActuel' value="{{ path('AeagEdlBundle_etat', { 'code': tabEtat.etat.euCd }) }}" /> 
+                                                            <input type='hidden' id='newEtatRoute' value="{{ path('AeagEdlBundle_etatForm') }}" /> 
+                                                            {{ tabEtat.etat.type.libelle }} 
+                                                        </td>
+                                                        <td  width="27%">
+                                                            SDAGE 2016 : <span class="dce_etat_{{ tabEtat.etat.valeur }}">{{ tabEtat.etat.getValueLib() }}</span>
+                                                        </td>
+                                                        <td width="27%" id="tdProposition-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}">
+                                                            {% if tabEtat.derniereProp %}
+                                                                Proposition :<span class="dce_etat_{{ tabEtat.derniereProp.valeur }}"> {{ tabEtat.derniereProp.getValueLib() }}</span>
+                                                            {% else %}
+                                                                Proposition :
+                                                            {% endif %}
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td></td>
+                                                        <td colspan='3' id="tdEtat-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}">
+                                                            {#{{ render(controller('AeagEdlBundle:Etat:etatListProposed', {'euCd':tabEtat.etat.euCd, 'cdEtat':tabEtat.etat.cdEtat, 'cdGroupe': etatGroupe.etatGroupe.cdGroupe})) }}#}
+                                                            {% if tabEtat.proposeds  | length > 0 %} 
+                                                              {#  <div class="row " id="rowProposed-titre-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}">#}
+                                                                    <table class="table table-hover" id='idtableProposed-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}'>
+                                                                        <tr id="rowProposed-titre-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}" class="active">
+                                                                            {% if  is_granted("ROLE_COMMENTATEUREDL") %}
+                                                                                <td width="1%">Action</td>
+                                                                                <td width="10%">Date</td>
+                                                                            {% else %}
+                                                                                <td width="10%">Date</td>   
+                                                                            {% endif %}
+                                                                            <td width="20%">Auteur</td>   
+                                                                            <td width="40%">Commentaire</td>
+                                                                            <td width="19%">Etat  proposée</td>  
+                                                                        </tr>
+                                                                        {% set i = 1 %}
+                                                                        {% for pp in tabEtat.proposeds %}
+                                                                            <tr id="rowProposed-ligne-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}-{{ i }}">
+                                                                                {% if  is_granted("ROLE_COMMENTATEUREDL") %}
+                                                                                    <td>
+                                                                                        {% if  is_granted("ROLE_COMMENTATEUREDL") and  pp.role ==  'local' and pp.utilisateur.id == user.id %} 
+                                                                                            <a id="removeEtat-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}-{{ i }}"  title="Supprimer cette proposition" login="{{ pp.utilisateur.id }}" propositionDate="{{ pp.propositionDate }}">
+                                                                                                <button type="button" class="btn btn-danger"><i class="fa fa-remove"></i> </button>
+                                                                                            </a>
+                                                                                        {% elseif  is_granted("ROLE_SUPERVISEUREDL") %}
+                                                                                            <a id="removeEtat-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}-{{ i }}" title="Supprimer cette proposition" login="{{ pp.utilisateur.id }}" propositionDate="{{ pp.propositionDate }}">
+                                                                                                <button type="button" class="btn btn-danger"><i class="fa fa-remove"></i> </button>
+                                                                                            </a>
+                                                                                        {% endif %}
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        {{ pp.propositionDate }}
+                                                                                    </td>
+                                                                                {% else %}
+                                                                                    <td>
+                                                                                        {{ pp.propositionDate }}
+                                                                                    </td> 
+                                                                                {% endif %}
+
+                                                                                <td>
+                                                                                    {% if pp.role == 'local' %}
+                                                                                        Acteur local : {{ pp.utilisateur.username }}
+                                                                                    {% else %}
+                                                                                        Expert : {{ pp.utilisateur.username }}
+                                                                                    {% endif %}
+                                                                                </td>   
+                                                                                <td>
+                                                                                    {{ pp.commentaire }}
+                                                                                </td>
+                                                                                <td id="LibProposed-ligne-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}-{{ i }}">
+                                                                                    <span class="dce_etat_{{ pp.valeur }}">{{ pp.getValueLib() }}</span>
+                                                                                </td>  
+                                                                                </tr>
+
+                                                                                {% set i = i + 1 %}
+                                                                            {% endfor %}
+                                                                    </table>
+                                                                {% endif %}
+
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>    
+                        {% endif %} 
                     {% endfor %}
                 </div>
                 <br><br>
@@ -129,18 +256,91 @@
 
            $('#expandAll').on('click',function(){
                    {% for etatGroupe   in  etatGroupes %}
-                           $('#collapse{{ etatGroupe.cdGroupe }}').collapse('show');
-                     {% endfor %}
+                           $('#collapse{{ etatGroupe.etatGroupe.cdGroupe }}').collapse('show');
+                  {% endfor %}
                       $('#expandAll').hide();
                       $('#collapseAll').show();
+                      $('#collapseAll').focus();
                });
 
            $('#collapseAll').on('click',function(){
                     {% for etatGroupe   in  etatGroupes %}
-                           $('#collapse{{ etatGroupe.cdGroupe }}').collapse('hide');
-                       {% endfor %}
+                           $('#collapse{{ etatGroupe.etatGroupe.cdGroupe }}').collapse('hide');
+                      {% endfor %}
                       $('#expandAll').show();
+                      $('#expandAll').focus();
                       $('#collapseAll').hide();
            });
+           
+     {% for etatGroupe   in  etatGroupes %}
+        {% for tabEtat in etatGroupe.etats %}
+            
+                
+            // Sur clic "Proposer un nouvel etat"
+            $('#newEtat-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}').click(function(e){
+                    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                    $('#modalTraitementEncours').modal('toggle');
+                    //conserver l'url actuel
+                    var $urlActuel = $('input#UrlActuel').val();
+                    // obtenir l'url
+                    var $url = $('input#newEtatRoute').val();
+                    // conserver l'id du div qui hébergera le formulaire de saisie
+                    idTr = '#row-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}';
+                    $('#form-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}').remove();
+                    $.post($url,
+                    {
+                    euCd: "{{ tabEtat.etat.euCd }}",
+                    cdEtat: "{{ tabEtat.etat.cdEtat }}",
+                    cdGroupe: "{{ etatGroupe.etatGroupe.cdGroupe }}"
+                    },
+                    function (data) {
+                    $('#idEtatEdit-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}').empty().append(data);
+                    $('#modalTraitementEncours').modal('hide');
+                    $('#modalEtatEdit-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}').modal();
+                    }
+                    ).error(function () {
+                    alert("Erreur non déterminée");
+                    });
+
+            });
+
+            {% set i = 1 %}
+            {% for pp in tabEtat.proposeds %}
+                $('#removeEtat-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}-{{ i }}').click(function (e) {
+                 e.preventDefault();
+                // obtenir l'url
+                var $url = "{{ path('AeagEdlBundle_removeEtat') }}";
+                idTr = '#rowProposed-ligne-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}-{{ i }}';
+                {% if  i > 0 %}
+                    libPrec = $('#LibProposed-ligne-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}-{{ i - 1}}').html();
+                    $(idTr).remove();
+                {% else %}
+                    libPrec = '';
+                    $('#idtableProposed-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}').remove();
+                {% endif %}
+                 var $div = "#tdProposition-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}";
+                $($div).empty().append('Proposition : ' + libPrec);
+
+                // lancer la requête ajax  
+                $.post($url,
+                {
+                cdGroupe: "{{ etatGroupe.etatGroupe.cdGroupe }}",
+                euCd: "{{ tabEtat.etat.euCd }}",
+                cdEtat: "{{ tabEtat.etat.cdEtat }}",
+                login: $(this).attr('login'),
+                propositionDate: $(this).attr('propositionDate')
+                },
+                function (data) {
+                // placer le formulaire sous le div
+                idTr = '#divEtat-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}';
+              }
+                ).error(function () {
+                  alert("Erreur non déterminée");
+                });
+                });
+                {% set i = i + 1 %}
+            {% endfor %}
+        {% endfor %}
+    {% endfor %}
     
 {%endblock scripts %}    

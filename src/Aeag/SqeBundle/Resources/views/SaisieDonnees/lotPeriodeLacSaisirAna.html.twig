@@ -48,11 +48,12 @@
          <div class="form-group form-inline">
                      <label class=" col-md-offset-3 col-xs-2 control-label">Date prélèvement :</label>
                      <div class="col-xs-2  input-group">
-                            <input type="text" id="datePrel" name="datePrel" required="required" class="form-control text-center" placeholder="Date prélèvement" value="{{ cmdPrelev.datePrelev | date("d/m/Y H:i") }}">
+                            <input type="text" id="datePrel" name="datePrel" required="required" class="form-control text-center" placeholder="Date prélèvement" value="{%if cmdPrelev.datePrelev %}{{ cmdPrelev.datePrelev | date("d/m/Y H:i") }}{% endif %}">
                      </div>
         </div>
     
-        
+          {% set nbTr = 0 %}
+        {% set nbTd = 0 %}
         {% for groupe   in  groupes %}
              <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
                     <div class="panel panel-default">
@@ -116,21 +117,25 @@
                                                                              <tbody>
                                                                                          {% for paramAn in groupe.paramAns %}
                                                                                                      {% if  paramAn.paramAn %}
+                                                                                                         {% set nbTr = nbTr + 1 %}
                                                                                                           {% if is_granted('ROLE_ADMINSQE') or  (user.prestataire.adrCorId == paramAn.paramAn.prestataire.adrCorId)  %}
                                                                                                                    {% if paramAn.pgCmdAnalyse %}
                                                                                                                         {% if paramAn.pgCmdAnalyse.codeStatut == '0' %}
-                                                                                                                             <tr class="success">
+                                                                                                                             <tr id='tr_{{ nbTr }}' class="success">
                                                                                                                         {% elseif paramAn.pgCmdAnalyse.codeStatut == '1' %}
-                                                                                                                             <tr class="warning" data-toggle="tooltip" data-placement="bottom" title="{{ paramAn.pgCmdAnalyse.libelleStatut}}">
+                                                                                                                             <tr id='tr_{{ nbTr }}' class="warning" data-toggle="tooltip" data-placement="bottom" title="{{ paramAn.pgCmdAnalyse.libelleStatut}}">
                                                                                                                         {% else %}
                                                                                                                              <tr class="danger" data-toggle="tooltip" data-placement="bottom" title="{{ paramAn.pgCmdAnalyse.libelleStatut}}">
                                                                                                                         {% endif %}
                                                                                                                     {% else %}
-                                                                                                                       <tr>
+                                                                                                                       <tr id='tr_{{ nbTr }}' >
                                                                                                                    {% endif %}  
-                                                                                                                       <td nowrap>{{ paramAn.paramAn.codeParametre.codeParametre }} </td>
-                                                                                                                        <td align="left">{{ paramAn.paramAn.codeParametre.nomParametre }}</td>
-                                                                                                                           <td nowrap align="left">
+                                                                                                                    {% set nbTd = nbTd + 1 %}
+                                                                                                                       <td id='td_{{ nbTd }}' nowrap>{{ paramAn.paramAn.codeParametre.codeParametre }} </td>
+                                                                                                                       {% set nbTd = nbTd + 1 %}
+                                                                                                                        <td id='td_{{ nbTd }}' align="left">{{ paramAn.paramAn.codeParametre.nomParametre }}</td>
+                                                                                                                        {% set nbTd = nbTd + 1 %}
+                                                                                                                           <td id='td_{{ nbTd }}' nowrap align="left">
                                                                                                                                 <div class="form-group">
                                                                                                                                      <div class="input-group text-left">
                                                                                                                                                <select class="form-control" id="idRemarque{{ paramAn.paramAn.id}}" name="remarque{{ paramAn.paramAn.id}}"   >   
@@ -154,7 +159,8 @@
                                                                                                                                         </div>
                                                                                                                                   </div> 
                                                                                                                       </td>
-                                                                                                                        <td align="right">
+                                                                                                                      {% set nbTd = nbTd + 1 %}
+                                                                                                                        <td id='td_{{ nbTd }}' align="right">
                                                                                                                               <div class="form-group text-right">
                                                                                                                                    <div class="input-group">
                                                                                                                                        {% if paramAn.valeurs  %}
@@ -174,7 +180,7 @@
                                                                                                                                                 </select>
                                                                                                                                          {% else %}
                                                                                                                                              {% if paramAn.pgCmdAnalyse %}
-                                                                                                                                                   <input id="idValeur{{ paramAn.paramAn.id}}" class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdAnalyse.resultat | replace({".0000000000" : ""})  }}">
+                                                                                                                                                   <input id="idValeur{{ paramAn.paramAn.id}}" class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdAnalyse.resultat | replace({".0000000000" : "", "000000000" : "", "00000000" : "", "0000000" : "", "000000" : "", "00000000" : "", "0000000" : "", "000000" : ""})  }}">
                                                                                                                                                {% else %}
                                                                                                                                                      <input id="idValeur{{ paramAn.paramAn.id}}" class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}" value="">
                                                                                                                                              {% endif %}
@@ -182,7 +188,8 @@
                                                                                                                                     </div>
                                                                                                                                 </div> 
                                                                                                                             </td>
-                                                                                                                          <td nowrap align="left">
+                                                                                                                            {% set nbTd = nbTd + 1 %}
+                                                                                                                          <td id='td_{{ nbTd }}' nowrap align="left">
                                                                                                                               <div class="form-group text-left">
                                                                                                                                    <div  class="input-group">
                                                                                                                                        {% if paramAn.unites  %}
@@ -207,6 +214,7 @@
                                                                                                                                     </div>
                                                                                                                                 </div> 
                                                                                                                             </td>
+                                                                                                                            {% set nbTd = nbTd + 1 %}
                                                                                                                             <td align="left">
                                                                                                                             {% if paramAn.fraction %}
                                                                                                                                   {{ paramAn.fraction.nomFraction }}
@@ -216,31 +224,37 @@
                                                                                                           {% else %}
                                                                                                               {% if paramAn.pgCmdAnalyse %}
                                                                                                                         {% if paramAn.pgCmdAnalyse.codeStatut == '0' %}
-                                                                                                                             <tr class="success">
+                                                                                                                             <tr id='tr_{{ nbTr }}' class="success">
                                                                                                                         {% elseif paramAn.pgCmdAnalyse.codeStatut == '1' %}
-                                                                                                                             <tr class="warning" data-toggle="tooltip" data-placement="bottom" title="{{ paramAn.pgCmdAnalyse.libelleStatut}}">
+                                                                                                                             <tr id='tr_{{ nbTr }}' class="warning" data-toggle="tooltip" data-placement="bottom" title="{{ paramAn.pgCmdAnalyse.libelleStatut}}">
                                                                                                                         {% else %}
-                                                                                                                             <tr class="danger" data-toggle="tooltip" data-placement="bottom" title="{{ paramAn.pgCmdAnalyse.libelleStatut}}">
+                                                                                                                             <tr id='tr_{{ nbTr }}' class="danger" data-toggle="tooltip" data-placement="bottom" title="{{ paramAn.pgCmdAnalyse.libelleStatut}}">
                                                                                                                         {% endif %}
                                                                                                                     {% else %}
-                                                                                                                       <tr>
+                                                                                                                       <tr id='tr_{{ nbTr }}'>
                                                                                                                    {% endif %}  
-                                                                                                                        <td nowrap>{{ paramAn.paramAn.codeParametre.codeParametre }}</td>
-                                                                                                                        <td>{{ paramAn.paramAn.codeParametre.nomParametre }}</td>
-                                                                                                                         <td align="left"></td>
-                                                                                                                        <td align="right">
+                                                                                                                   {% set nbTd = nbTd + 1 %}
+                                                                                                                        <td id='td_{{ nbTd }}' nowrap>{{ paramAn.paramAn.codeParametre.codeParametre }}</td>
+                                                                                                                        {% set nbTd = nbTd + 1 %}
+                                                                                                                        <td id='td_{{ nbTd }}'>{{ paramAn.paramAn.codeParametre.nomParametre }}</td>
+                                                                                                                        {% set nbTd = nbTd + 1 %}
+                                                                                                                         <td id='td_{{ nbTd }}' align="left"></td>
+                                                                                                                         {% set nbTd = nbTd + 1 %}
+                                                                                                                        <td  id='td_{{ nbTd }}' align="right">
                                                                                                                              {% if paramAn.pgCmdAnalyse %}
-                                                                                                                                 <span class="text-right">{{ paramAn.pgCmdAnalyse.resultat | replace({".0000000000" : ""})  }}</span>
+                                                                                                                                 <span class="text-right">{{ paramAn.pgCmdAnalyse.resultat | replace({".0000000000" : "", "000000000" : "", "00000000" : "", "0000000" : "", "000000" : "", "00000000" : "", "0000000" : "", "000000" : ""}) }}</span>
                                                                                                                              {% endif %}
                                                                                                                           </td>
-                                                                                                                          <td align="left">
+                                                                                                                          {% set nbTd = nbTd + 1 %}
+                                                                                                                          <td id='td_{{ nbTd }}' align="left">
                                                                                                                             {% if paramAn.pgCmdAnalyse %}
                                                                                                                                 <span class="text-left">{{ paramAn.pgCmdAnalyse.codeUnite.nomUnite }}</span>
                                                                                                                                 {% else %}
                                                                                                                                     <span class="text-left"> {{ paramAn.unite.nomUnite }}</span>
                                                                                                                               {% endif %}
                                                                                                                            </td>
-                                                                                                                         <td>
+                                                                                                                           {% set nbTd = nbTd + 1 %}
+                                                                                                                         <td id='td_{{ nbTd }}'>
                                                                                                                             {% if paramAn.fraction %}
                                                                                                                                 <span class="text-left">{{ paramAn.fraction.nomFraction }}</span>
                                                                                                                             {% endif %}
@@ -284,7 +298,10 @@
                 </button>
         {%elseif maj == 'V' %}
                   <div class="col-md-offset-5 col-md-8">
-                      <a class="btn btn-success" href="{{ path("AeagSqeBundle_saisieDonnees_lot_periode_lac_ana_valider",{"prelevId":  cmdPrelev.id}) }}">
+                     <button id="idEnregistrer" type="submit" class="btn btn-success"> 
+                        <i class="fa fa-check"> Enregister</i>
+                    </button>
+                      <a class="btn btn-success" href="{{ path("AeagSqeBundle_saisieDonnees_lot_periode_lac_valider",{"prelevId":  cmdPrelev.id}) }}">
                           <i class="fa fa-undo"> Valider</i>
                       </a>  
      {% else %}
@@ -344,14 +361,27 @@
                 
             
                 {% for paramAn in groupe.paramAns %}
+                    
+                        $(document).on('keydown','#idValeur{{ paramAn.paramAn.id}}',function(e){
+                                        var code = e.keyCode || e.which;
+                                     if (code == 9) {
+                                          e.preventDefault();
+                                          var tdEnCours =$(this).parent().parent().parent().attr('id');
+                                         nbEncours = tdEnCours.substring(3);
+                                          nbSuivant = parseInt(nbEncours) + 6;
+                                            $('#td_' + nbSuivant + '> div> div>:nth-child(1)').focus();
+                                     };
+                                  });
+                    
                         {% if paramAn.pgCmdAnalyse %}
+                            
                                  nbParamSaisis{{groupe.grparAn.id }} = nbParamSaisis{{groupe.grparAn.id }} + 1;
                                 $('#paramSaisis{{ groupe.grparAn.id}}').empty().html(nbParamSaisis{{groupe.grparAn.id }});
                                 var valeur =   {{  paramAn.pgCmdAnalyse.codeRemarque }}
                                 $("#idRemarque{{ paramAn.paramAn.id}} option[value='" + valeur + "']").attr('selected','selected');
                                 $("#idRemarque{{ paramAn.paramAn.id}}").val(valeur);
                                 {% for valeur in paramAn.valeurs %}
-                                              {% if paramAn.pgCmdAnalyse.resultat | replace({".0000000000" : ""})  == valeur.valeur  | replace({".00" : ""}) %}
+                                              {% if paramAn.pgCmdAnalyse.resultat | replace({".0000000000" : "", "000000000" : "", "00000000" : "", "0000000" : "", "000000" : "", "00000000" : "", "0000000" : "", "000000" : ""})  == valeur.valeur  | replace({".00" : ""}) %}
                                                         $('#idValeur{{ paramAn.paramAn.id}} option:selected').removeAttr('selected');
                                                         var valeur =   {{ valeur.valeur |  replace({".00" : ""})}}
                                                         $("#idValeur{{ paramAn.paramAn.id}} option[value='" + valeur + "']").attr('selected','selected');

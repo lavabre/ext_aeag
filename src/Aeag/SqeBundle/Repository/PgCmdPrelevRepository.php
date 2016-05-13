@@ -75,9 +75,9 @@ class PgCmdPrelevRepository extends EntityRepository {
         $query = $query . " and p.periode = " . $pgProgPeriodes->getId();
         $qb = $this->_em->createQuery($query);
         //print_r($query);
-         return $qb->getResult();
-     }
-    
+        return $qb->getResult();
+    }
+
     public function getPgCmdPrelevByCodePrelevCodeDmdAndPhase($pgCmdPrelev, $pgCmdDemande, $pgProgPhase) {
         $query = "select p";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdPrelev p";
@@ -92,7 +92,7 @@ class PgCmdPrelevRepository extends EntityRepository {
         //print_r($query);
         return $qb->getResult();
     }
-    
+
     public function getCountPgCmdPrelevByPhase($pgCmdDemande, $pgProgPhase) {
         $query = "select count(p)";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdPrelev p";
@@ -101,24 +101,24 @@ class PgCmdPrelevRepository extends EntityRepository {
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('demande', $pgCmdDemande);
         $qb->setParameter('phase', $pgProgPhase);
-        
+
         return $qb->getResult();
     }
-    
+
     public function getCountAllPgCmdPrelev($pgCmdDemande) {
         $query = "select count(p)";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdPrelev p";
         $query .= " where p.demande = :demande";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('demande', $pgCmdDemande);
-        
+
         return $qb->getResult();
     }
-    
+
     public function getDonneesBrutes($pgCmdFichierRps) {
         return array_merge($this->getDonneesBrutesAnalyse($pgCmdFichierRps), $this->getDonneesBrutesMesureEnv($pgCmdFichierRps));
     }
-    
+
     public function getDonneesBrutesAnalyse($pgCmdFichierRps) {
         
         $query = '(select dmd.annee_prog as "Année", msr.code as "Code Station", msr.libelle as "Nom Station", msr.code_masdo as "Code masse d\'eau", 
@@ -154,7 +154,7 @@ class PgCmdPrelevRepository extends EntityRepository {
         $stmt->execute();
         return $stmt->fetchAll();
     }
-    
+
     public function getDonneesBrutesMesureEnv($pgCmdFichierRps) {
         $query = '(select dmd.annee_prog as "Année", msr.code as "Code Station", msr.libelle as "Nom Station", msr.code_masdo as "Code masse d\'eau", 
                     prlv.code_prelev_cmd as "Code du prelevement", presta.code_siret as "Siret Préleveur", presta.nom_corres as "Nom Préleveur", 
@@ -188,4 +188,28 @@ class PgCmdPrelevRepository extends EntityRepository {
         $stmt->execute();
         return $stmt->fetchAll();
     }
+
+    /**
+     * @return array
+     */
+    public function getAutrePrelevs($pgCmdPrelev) {
+        $query = "select max(sp.datePrel) as datePrel, sup.nomSupport as support";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelev prl";
+        $query = $query . " , Aeag\SqeBundle\Entity\PgCmdSuiviPrel sp ";
+        $query = $query . " ,Aeag\SqeBundle\Entity\PgSandreSupports sup";
+        $query = $query . " where prl.station = " . $pgCmdPrelev->getStation()->getOuvFoncId();
+        $query = $query . " and prl.codeSupport in ('4','10','11','13','27')";
+        $query = $query . " and prl.codeSupport <> '" . $pgCmdPrelev->getCodeSupport()->getCodeSupport() . "'";
+        $query = $query . " and sup.codeSupport = prl.codeSupport";
+        $query = $query . " and prl.id = sp.prelev";
+        $query = $query . " and sp.statutPrel = 'P'";
+        $query = $query . " and sp.validation <> 'R'";
+        $query = $query . " group by sup.nomSupport";
+        $qb = $this->_em->createQuery($query);
+//        if ($pgCmdPrelev->getStation()->getOuvFoncId() == 557655){
+//        print_r($query);
+//        }
+        return $qb->getResult();
+    }
+
 }

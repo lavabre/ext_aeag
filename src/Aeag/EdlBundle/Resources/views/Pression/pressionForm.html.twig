@@ -1,4 +1,4 @@
-<form id="form{{ cdPression }}" action="#" method="post" {{ form_enctype(form) }}>
+<form id="form-{{ cdGroupe }}-{{ euCd }}-{{ cdPression }}" action="#" method="post" {{ form_enctype(form) }}>
     {{ form_errors(form) }}
 
     {{ form_widget(form.euCd) }}
@@ -55,91 +55,88 @@
         $("span[id='{{ cdPression }}_" + $newPression + "']").removeClass('unselected');
 
         // affecter valeur 
-        $("#form{{ cdPression }} > #form_valeur").val($newPression);
+        $("#form-{{ cdGroupe }}-{{ euCd }}-{{ cdPression }} > #form_valeur").val($newPression);
     });
 
     // validation de la saisie
-    $("#valider").click(function (e) {
+     var nb = 0;
+     $("#valider-{{ cdGroupe }}-{{ euCd }}-{{ cdPression }}").click(function (e) {
 
-        if ($("#form{{ cdPression }} > #form_commentaire").val() == '' || $("#form{{ cdPression }} > #form_valeur").val() == '')
+        if ($("#form-{{ cdGroupe }}-{{ euCd }}-{{ cdPression }} > #form_commentaire").val() == '' || $("#form-{{ cdGroupe }}-{{ euCd }}-{{ cdPression }} > #form_valeur").val() == '')
         {
             alert("Choisissez un état et saisissez un commentaire svp");
 
         } else
         {
             // lancer la requête ajax qui valide la saisie
-            $('#modalPressionEdit').modal('hide');
+            $('#modalPressionEdit-{{ cdGroupe }}-{{ euCd }}-{{ cdPression }}').modal('hide');
             $('#modalTraitementEncours').modal('toggle');
-                     e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
 
-            //alert($("#form{{ cdPression }} > #form_valeur").val());
+            nb = nb + 1;
+           if (nb == 1 ){
 
-                     // obtenir l'url
-            var $url = "{{ path('AeagEdlBundle_pressionSubmit') }}";
+                            // obtenir l'url
+                   var $url = "{{ path('AeagEdlBundle_pressionSubmit') }}";
 
-            $.getJSON($url,
-                        {
-                                 euCd: $("#form{{ cdPression }} > #form_euCd").val(),
-                                 cdPression: $("#form{{ cdPression }} > #form_cdPression").val(),
-                                 commentaire: $("#form{{ cdPression }} > #form_commentaire").val(),
-                        valeur: $("#form{{ cdPression }} > #form_valeur").val()
-                   },
-            function (json) {
-                //alert(json.message);
+                   $.getJSON($url,
+                               {
+                                        cdGroupe: {{ cdGroupe }},
+                                        euCd: $("#form-{{ cdGroupe }}-{{ euCd }}-{{ cdPression }} > #form_euCd").val(),
+                                        cdPression: $("#form-{{ cdGroupe }}-{{ euCd }}-{{ cdPression }} > #form_cdPression").val(),
+                                        commentaire: $("#form-{{ cdGroupe }}-{{ euCd }}-{{ cdPression }} > #form_commentaire").val(),
+                                        valeur: $("#form-{{ cdGroupe }}-{{ euCd }}-{{ cdPression }} > #form_valeur").val()
+                          },
+                   function (json) {
+                       //alert(json.message);
 
-                         // rétablir le style du bouton crayon
-                $('a[name="newPression{{ cdPression }}"]').removeClass("inEdit");
+                       $.post("{{ path('AeagEdlBundle_pressionListProposed') }}",
+                               {
+                                   cdGroupe: {{ cdGroupe }},
+                                   euCd: "{{ euCd }}",
+                                   cdPression: "{{ cdPression }}"
+                               },
+                       function (data) {
+                           //alert(data);
+                           var $div = "#tdPression-{{ cdGroupe}}-{{ euCd }}-{{ cdPression }}";
+                           // placer le formulaire sous le div
+                           $($div).html(data);
+                           $('#modalTraitementEncours').modal('hide');
 
+                       }
+                       ).error(function () {
+                             alert("Erreur non déterminée");
+                       });
 
-                // charger et afficher les propositions pour cette etat
-                //alert(json.message);
+                       var $div = "#tdProposition-{{ cdGroupe }}-{{ euCd }}-{{ cdPression }}";
+                       $($div).empty().append(json);
 
-                $.post("{{ path('AeagEdlBundle_pressionListProposed') }}",
-                        {
-                            euCd: "{{ euCd }}",
-                            cdPression: "{{ cdPression }}"
-                        },
-                function (data) {
-                    //alert(data);
-                    var $div = "#divPression-{{ euCd }}-{{ cdPression }}";
-                    // placer le formulaire sous le div
-                    $($div).empty().html(data);
-                    $('#modalTraitementEncours').modal('hide');
-
-                }
-                ).error(function () {
-                    // rétablir curseur
-                    $("body").css("cursor", "auto");
-                    alert("Erreur non déterminée");
-                });
-
-
-            }
-            );
-        }
+                   }
+                   );
+               }
+         }
     });
 
     // annulation de la saisie
-             $("#annuler").click(function (e) {
-        $.post("{{ path('AeagEdlBundle_pressionListProposed') }}",
-                {
-                    euCd: "{{ euCd }}",
-                    cdPression: "{{ cdPression }}"
-                },
-        function (data) {
-            //alert(data);
-            var $div = "#divPression{{ cdPression }}";
-            // placer le formulaire sous le div
-            $($div).html(data);
-            // rétablir curseur
-            $("body").css("cursor", "auto");
-
-        }
-        ).error(function () {
-            // rétablir curseur
-            $("body").css("cursor", "auto");
-            alert("Erreur non déterminée");
-        });
+        $("#annuler-{{ cdGroupe }}-{{ euCd }}-{{ cdPression }}").click(function (e) {
+           nb = nb + 1;
+           if (nb == 1 ){
+                    $.post("{{ path('AeagEdlBundle_pressionListProposed') }}",
+                            {
+                                cdGroupe: {{ cdGroupe }},
+                                euCd: "{{ euCd }}",
+                                cdPression: "{{ cdPression }}"
+                            },
+                    function (data) {
+                        //alert(data);
+                        var $div = "#tdPression-{{ cdGroupe }}-{{ euCd }}-{{ cdPression }}";
+                        // placer le formulaire sous le div
+                        $($div).html(data);
+                       }
+                    ).error(function () {
+                        alert("Erreur non déterminée");
+                    });
+             }
 
     });
 

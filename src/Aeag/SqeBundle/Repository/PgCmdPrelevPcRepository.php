@@ -60,5 +60,5 @@ class PgCmdPrelevPcRepository extends EntityRepository {
         return $qb->getSingleScalarResult();
     }
     
-    
+   
 }

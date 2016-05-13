@@ -92,7 +92,7 @@ class EtatMeProposed {
                 case 'U' : return 'Inconnu';
             }
         } else {
-            return 'manque valeur';
+            return 'non renseigner';
         }
     }
 

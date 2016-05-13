@@ -93,7 +93,7 @@ class PressionMeProposed {
                 case 'U' : return 'Inconnu';
             }
            }else{
-               return 'manque valeur';
+               return 'non renseigné';
            }
         } else {
             if ($this->valeur) {
@@ -104,7 +104,7 @@ class PressionMeProposed {
                     case 'U' : return 'Inconnu';
                 }
             } else {
-                return 'manque valeur';
+                return 'non renseigné';
             }
         }
     }

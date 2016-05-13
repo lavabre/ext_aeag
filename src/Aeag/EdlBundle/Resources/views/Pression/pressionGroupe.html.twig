@@ -3,13 +3,13 @@
 {% block breadcrumb %}
     <li>
         <i class="icon-home"></i>
-        <a href="{{ path('Aeag_edl') }}">Accueil</a> 
+        <a href="{{ path('aeag_edl') }}">Accueil</a> 
     </li>
     <li>
-       <a href="{{ path('AeagEdlBundle_listeMasseEau') }}">Résultat</a> 
+        <a href="{{ path('AeagEdlBundle_listeMasseEau') }}">Résultat</a> 
     </li>
-     <li class="active">
-         {{ me.euCd }}
+    <li class="active">
+        {{ me.euCd }}
     </li>
 {% endblock breadcrumb %}
 
@@ -32,114 +32,313 @@
             </div>
         </div>
     </div>  
+
+   {% for pressionGroupe   in  pressionGroupes %}
+        {% for tabPression in pressionGroupe.pressions %}
+                <div class="modal fade" id="modalPressionEdit-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}" tabindex="-1" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title"><div class="label label-primary">Proposer une nouvelle évaluation</div></h4>
+                            </div>
+                            <div id="idPressionEdit-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}" class="modal-body"></div>
+                            <div class="modal-footer">
+                                <button id="annuler-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}" type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                                <button  id="valider-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}" type="button" class="btn btn-primary">valider</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                </div><!-- /.modal -->
+         {% endfor %}
+    {% endfor %}
+
 {% endblock modal %}
 
 {%block panel_heading %}
-     <div class="row">
-            <div class="col-md-offset-3 col-md-7">
-                    <h3 class="page-title">
-                        Masse d'eau {{ me.euCd }}
-                    </h3>
-            </div>
-    </div>
-   
+    <h3 class="text-center text-info">
+        Masse d'eau {{ me.euCd }} {{ me.nomMasseEau }}
+    </h3>
+
 {%endblock panel_heading %}
 
 
 {% block content %}
-  
-    <div class="row">
-        <h2 class="text-center">{{ me.nomMasseEau }}</h2>
-        <div class="col-sm-offset-5  col-sm-2">
-            <img class="img-responsive" alt="Responsive image" width="100px" height="100px" src="http://adour-garonne.eaufrance.fr/porteau/index.php/carto/vignetteMasdo?id={{ me.euCd }}"/>
-        </div>
-        <div class="col-sm-4">
-            </br>
+    
+  <div class="row">
+         <div class="col-sm-offset-4 col-sm-4">
             <a  TARGET="_blanck" href="http://adour-garonne.eaufrance.fr/massedeau/{{me.euCd}}">
-                <button type="button" class="btn btn-primary">
+                <img class="img-responsive" alt="Responsive image" width="250px" height="250px" src="http://adour-garonne.eaufrance.fr/porteau/index.php/carto/vignetteMasdo?id={{ me.euCd }}"/>
+               <button type="button" class="btn btn-primary">
                     <i class="fa fa-eye"> Voir la fiche sur le portail de bassin</i>
                 </button>
             </a>
-            </br></br>
-            <a class="btn btn-warning" data-toggle="modal" href="#modal-historique" title="Historique">
-                <i class="fa fa-archive"> Historique</i>
-             </a>
            </div> 
     </div>
-                     
-      </br>
-      
-      <div class="row">
-     <div class="col-sm-2 col-sm-push-10">
+
+    <div class="row">
+        <div class="col-sm-4 col-sm-push-8">
              <a  href="{{ path('AeagEdlBundle_etatGroupe', {'code':me.euCd}) }}">
                 <button type="button" class="btn btn-default">
-                    Etats
+                    <i class="fa fa-comment-o"> Etats</i>
                 </button>
             </a>
-            <a  href=#">
+            <a  href="#">
                 <button type="button" class="btn btn-success">
-                    Pressions
+                    <i class="fa fa-comment"> Pressions</i>
                 </button>
             </a>
+            <a class="btn btn-warning" data-toggle="modal" href="#modal-historique" title="Historique">
+                   <i class="fa fa-file-archive-o"> Historique</i>
+              </a>
         </div>
     </div>
-    
-                  
-     </br>
 
-          <div class="panel panel-primary">
-            <div class="panel-heading">
-                 <div class="row">
-                     <div class="col-sm-10">
-                                <h3 class="panel-title">Pressions sur la masse d'eau  {{ me.euCd }}</h3>
-                     </div>
-                    <div class="col-sm-2  pull-left">
-                            <a id="expandAll" href="#" class="btn btn-primary" role="button"><i class="fa fa-expand"></i></a>
-                            <a id="collapseAll" href="#" class="btn btn-primary" role="button"><i class="fa fa-compress"></i></a>
-                    </div>
-                 </div>
-            </div>
-            <div class="panel-body">
-                    <!-- --------------------------------- ETATS ----------------------------------------- -->        
-                    <div id="tabPressions">
-                        <input type='hidden' id='euCd' value="{{ me.euCd }}" />
-                        <br>
-                        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-                          {% for pressionGroupe in pressionGroupes %}
-                             {{ render(controller('AeagEdlBundle:Default:pression', {'code': me.euCd, 'cdGroupe': pressionGroupe.cdGroupe})) }}
-                            {% endfor %}
-                        </div>
-                        <br><br>
-                        <div align="center">
-                            <a  href="{{ path('AeagEdlBundle_listeMasseEau') }}">
-                               <button type="button" class="btn btn-primary"><i class="fa fa-undo"></i> retour</button>
-                             </a>
-                        </div>
-                </div>    
-            </div>
-          </div>
+
+    </br>
+
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-1">
+                    <a id="expandAll" href="#" class="btn btn-primary" role="button"><i class="fa fa-expand"></i></a>
+                    <a id="collapseAll" href="#" class="btn btn-primary" role="button"><i class="fa fa-compress"></i></a>
+                </div>
+                <div class="col-sm-11">
+                    <h3 class="panel-title">Pressions sur la masse d'eau  {{ me.euCd }} {{ me.nomMasseEau }}</h3>
+                </div>
+           </div>
+        </div>
+        <div class="panel-body">
+            <!-- --------------------------------- PRESSIONS ----------------------------------------- -->        
+            <div id="tabPressions">
+                <input type='hidden' id='euCd' value="{{ me.euCd }}" />
+                <br>
+                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                    {% for pressionGroupe in pressionGroupes %}
+                        {#{{ render(controller('AeagEdlBundle:Default:pression', {'code': me.euCd, 'cdGroupe': pressionGroupe.cdGroupe})) }}#}
+                        {% if pressionGroupe.nbPressions > 0 %} 
+                            <div class="panel panel-primary">
+                                <div class="panel-heading" role="tab" id="heading{{pressionGroupe.pressionGroupe.cdGroupe }}">
+                                    <h4 class="panel-title">
+                                        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ pressionGroupe.pressionGroupe.cdGroupe }}" aria-expanded="true" aria-controls="collapse{{ pressionGroupe.pressionGroupe.cdGroupe }}">
+                                            {{pressionGroupe.pressionGroupe.libelle}}  
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div id="collapse{{ pressionGroupe.pressionGroupe.cdGroupe }}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading{{ pressionGroupe.pressionGroupe.cdGroupe }}">
+                                    <div class="panel-body">
+
+                                        {% for tabPression in pressionGroupe.pressions %} 
+                                            <div class="row" id="row-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}">
+                                                <table class="table table-hover" id='idtable-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}'>
+                                                    <tr class="info">
+                                                        <td width="1%" nowrap>
+                                                            {% if  is_granted("ROLE_COMMENTATEUREDL") %}
+                                                             <a id="newPression-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}" title="Proposer une nouvelle évaluation" cdPression="{{ tabPression.pression.cdPression }}">
+                                                                    <button type="button" class="btn btn-primary"><i class="fa fa-commenting"></i></button> 
+                                                                </a>
+                                                            {% else %}
+                                                                 &nbps;
+                                                            {% endif %}
+                                                        </td>
+                                                        <td  width="45%">
+                                                            <input type='hidden' id='UrlActuel' value="{{ path('AeagEdlBundle_pression', { 'code': tabPression.pression.euCd }) }}" /> 
+                                                            <input type='hidden' id='newPressionRoute' value="{{ path('AeagEdlBundle_pressionForm') }}" /> 
+                                                            {{ tabPression.pression.type.libelle }} 
+                                                        </td>
+                                                        <td  width="27%">
+                                                            SDAGE 2016 : <span class="dce_pression_{{ tabPression.pression.valeur }}">{{ tabPression.pression.getValueLib() }}</span>
+                                                        </td>
+                                                        <td width="27%" id="tdProposition-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}">
+                                                            {% if tabPression.derniereProp %}
+                                                                Proposition :<span class="dce_pression_{{ tabPression.derniereProp.valeur }}"> {{ tabPression.derniereProp.getValueLib() }}</span>
+                                                            {% else %}
+                                                                Proposition :
+                                                            {% endif %}
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td></td>
+                                                        <td colspan='3' id="tdPression-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}">
+                                                            {#{{ render(controller('AeagEdlBundle:Pression:pressionListProposed', {'euCd':tabPression.pression.euCd, 'cdPression':tabPression.pression.cdPression, 'cdGroupe': pressionGroupe.pressionGroupe.cdGroupe})) }}#}
+                                                            {% if tabPression.proposeds |length > 0 %} 
+                                                                <div class="row " id="rowProposed-titre-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}">
+                                                                    <table class="table table-hover" id='idtableProposed-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}'>
+                                                                        <tr class="active">
+                                                                            {% if  is_granted("ROLE_COMMENTATEUREDL") %}
+                                                                                <td width="1%">Action</td>
+                                                                                <td width="10%">Date</td>
+                                                                            {% else %}
+                                                                                <td width="10%">Date</td>   
+                                                                            {% endif %}
+                                                                            <td width="20%">Auteur</td>   
+                                                                            <td width="40%">Commentaire</td>
+                                                                            <td width="19%">Pression  proposée</td>  
+                                                                        </tr>
+                                                                        {% set i = 1 %}
+                                                                        {% for pp in tabPression.proposeds %}
+                                                                            <tr id="rowProposed-ligne-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}-{{ i }}">
+                                                                                {% if  is_granted("ROLE_COMMENTATEUREDL") %}
+                                                                                    <td>
+                                                                                        {% if  is_granted("ROLE_COMMENTATEUREDL") and  pp.role ==  'local' and pp.utilisateur.id == user.id %} 
+                                                                                            <a id="removePression-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}-{{ i }}"  title="Supprimer cette proposition" login="{{ pp.utilisateur.id }}" propositionDate="{{ pp.propositionDate }}">
+                                                                                                <button type="button" class="btn btn-danger"><i class="fa fa-remove"></i> </button>
+                                                                                            </a>
+                                                                                        {% elseif  is_granted("ROLE_SUPERVISEUREDL") %}
+                                                                                            <a id="removePression-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}-{{ i }}" title="Supprimer cette proposition" login="{{ pp.utilisateur.id }}" propositionDate="{{ pp.propositionDate }}">
+                                                                                                <button type="button" class="btn btn-danger"><i class="fa fa-remove"></i> </button>
+                                                                                            </a>
+                                                                                        {% endif %}
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        {{ pp.propositionDate }}
+                                                                                    </td>
+                                                                                {% else %}
+                                                                                    <td>
+                                                                                        {{ pp.propositionDate }}
+                                                                                    </td> 
+                                                                                {% endif %}
+
+                                                                                <td>
+                                                                                    {% if pp.role == 'local' %}
+                                                                                        Acteur local : {{ pp.utilisateur.username }}
+                                                                                    {% else %}
+                                                                                        Expert : {{ pp.utilisateur.username }}
+                                                                                    {% endif %}
+                                                                                </td>   
+                                                                                <td>
+                                                                                    {{ pp.commentaire }}
+                                                                                </td>
+                                                                                <td id="LibProposed-ligne-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}-{{ i }}">
+                                                                                    <span class="dce_pression_{{ pp.valeur }}">{{ pp.getValueLib() }}</span>
+                                                                                </td>  
+                                                                                </tr>
+
+                                                                                {% set i = i + 1 %}
+                                                                            {% endfor %}
+                                                                    </table>
+                                                                {% endif %}
+
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>    
+                        {% endif %} 
+                    {% endfor %}
+                </div>
+                <br><br>
+                <div align="center">
+                    <a  href="{{ path('AeagEdlBundle_listeMasseEau') }}">
+                        <button type="button" class="btn btn-primary"><i class="fa fa-undo"></i> retour</button>
+                    </a>
+                </div>
+            </div>    
+        </div>
+    </div>
 
 {% endblock %}
 
 {% block scripts %}
-    
-           $('#expandAll').hide();
-            $('#collapseAll').show();          
 
-           $('#expandAll').on('click',function(){
-                   {% for pressionGroupe   in  pressionGroupes %}
-                           $('#collapse{{ pressionGroupe.cdGroupe }}').collapse('show');
-                     {% endfor %}
-                      $('#expandAll').hide();
-                      $('#collapseAll').show();
-               });
+    $('#expandAll').hide();
+    $('#collapseAll').show();          
 
-           $('#collapseAll').on('click',function(){
-                    {% for pressionGroupe   in  pressionGroupes %}
-                           $('#collapse{{ pressionGroupe.cdGroupe }}').collapse('hide');
-                       {% endfor %}
-                      $('#expandAll').show();
-                      $('#collapseAll').hide();
-           });
-    
+    $('#expandAll').on('click',function(){
+    {% for pressionGroupe   in  pressionGroupes %}
+        $('#collapse{{ pressionGroupe.pressionGroupe.cdGroupe }}').collapse('show');
+      {% endfor %}
+    $('#expandAll').hide();
+    $('#collapseAll').show();
+    $('#collapseAll').focus();
+    });
+
+    $('#collapseAll').on('click',function(){
+    {% for pressionGroupe   in  pressionGroupes %}
+        $('#collapse{{ pressionGroupe.pressionGroupe.cdGroupe }}').collapse('hide');
+    {% endfor %}
+    $('#expandAll').show();
+    $('#expandAll').focus();
+    $('#collapseAll').hide();
+    });
+
+    {% for pressionGroupe   in  pressionGroupes %}
+        {% for tabPression in pressionGroupe.pressions %}
+            
+                   
+            // Sur clic "Proposer un nouvel pression"
+                $('#newPression-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}').click(function(e){
+                        e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                        $('#modalTraitementEncours').modal('toggle');
+                        //conserver l'url actuel
+                        var $urlActuel = $('input#UrlActuel').val();
+                        // obtenir l'url
+                        var $url = $('input#newPressionRoute').val();
+                        // conserver l'id du div qui hébergera le formulaire de saisie
+                        idTr = '#row-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}';
+                        $('#form-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}').remove();
+                        $.post($url,
+                                {
+                                euCd: "{{ tabPression.pression.euCd }}",
+                                cdPression: "{{ tabPression.pression.cdPression }}",
+                                cdGroupe: "{{ pressionGroupe.pressionGroupe.cdGroupe }}"
+                                },
+                                function (data) {
+                                $('#idPressionEdit-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}').empty().append(data);
+                                $('#modalTraitementEncours').modal('hide');
+                                $('#modalPressionEdit-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}').modal();
+                                }
+                                ).error(function () {
+                                alert("Erreur non déterminée");
+                                });
+
+                });
+                
+                
+
+            {% set i = 1 %}
+            {% for pp in tabPression.proposeds %}
+                $('#removePression-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}-{{ i }}').click(function (e) {
+                e.preventDefault();
+                // obtenir l'url
+                var $url = "{{ path('AeagEdlBundle_removePression') }}";
+                idTr = '#rowProposed-ligne-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}-{{ i }}';
+                {% if  i > 0 %}
+                    libPrec = $('#LibProposed-ligne-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}-{{ i - 1}}').html();
+                   $(idTr).remove();
+                {% else %}
+                    libPrec = null;
+                    $('#idtableProposed-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}').remove();
+                {% endif %}
+                var $div = "#tdProposition-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}";
+                $($div).empty().append('Proposition : ' + libPrec);
+
+                // lancer la requête ajax  
+                $.post($url,
+                {
+                cdGroupe: "{{ pressionGroupe.pressionGroupe.cdGroupe }}",
+                euCd: "{{ tabPression.pression.euCd }}",
+                cdPression: "{{ tabPression.pression.cdPression }}",
+                login: $(this).attr('login'),
+                propositionDate: $(this).attr('propositionDate')
+                },
+                function (data) {
+                // placer le formulaire sous le div
+                idTr = '#divPression-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}';
+                }
+                ).error(function () {
+                // rétablir curseur
+                alert("Erreur non déterminée");
+                });
+                });
+                {% set i = i + 1 %}
+            {% endfor %}
+        {% endfor %}
+    {% endfor %}
+
+
 {%endblock scripts %}    

@@ -92,11 +92,22 @@
                         });
                         
                          $(document).on('click','#btvalider',function(e){
-                             if ( ($('#statutPrel').val() == 'N' && $('#commentaire').val() == '')  || ($('#validation').val() == 'R' && $('#commentaire').val() == '') )
+                             var erreur = false;
+                             if ( $('#datePrel').val() ==  '') 
+                            {
+                                alert("Veuillez saisir une date  svp");
+                                erreur = true;
+
+                            }
+                            
+                            if ( ($('#statutPrel').val() == 'N' && $('#commentaire').val() == '')  || ($('#validation').val() == 'R' && $('#commentaire').val() == '') )
                             {
                                 alert("Veuillez saisir un commentaire svp");
+                                erreur = true;
 
-                            }else{
+                            }
+                            
+                            if (!erreur){
                                 e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
                                 $('#modalTraitementEncours').modal('toggle');
                                 $('#idFormNewSuivi').submit();
