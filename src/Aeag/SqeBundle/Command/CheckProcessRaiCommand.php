@@ -100,6 +100,25 @@ class CheckProcessRaiCommand extends AeagCommand {
                 $chemin = $this->getContainer()->getParameter('repertoire_echange');
                 $donneesBrutes = $this->repoPgCmdPrelev->getDonneesBrutes($pgCmdFichierRps);
                 $this->getContainer()->get('aeag_sqe.process_rai')->exportCsvDonneesBrutes($this->emSqe, $chemin, $pgCmdFichierRps, $donneesBrutes);
+                
+                // Envoi de mail au producteur et au titulaire
+                // TODO A Modifier
+                // TODO FAire un distinct sur le tableau de destinataires
+                $destinataires = array();
+                $destinataires[] = $this->repoPgProgWebUsers->findOneByPrestataire($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getTitulaire());
+                $destinataires[] = $this->repoPgProgWebUsers->findOneByProducteur($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getRespAdrCor());
+                
+                $objetMessage = "SQE - RAI : Fichier csv des données brutes disponible pour le lot ".$pgCmdFichierRps->getDemande()->getLotan()->getLot()->getNomLot();
+                $url = $this->getContainer()->get('router')->generate('AeagSqeBundle_echangefichiers_reponses_telecharger', array("reponseId" => $pgCmdFichierRps->getId(), "typeFichier" => "DB"), UrlGeneratorInterface::ABSOLUTE_URL);
+                $txtMessage = "Lot : " . $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getNomLot() . "<br/>";
+                $txtMessage .= "Période : " . $pgCmdFichierRps->getDemande()->getPeriode()->getLabelPeriode() . "<br/>";
+                $txtMessage .= 'Vous pouvez récupérer le fichier csv à l\'adresse suivante : <a href="' . $url . '">' . $pgCmdFichierRps->getNomFichierDonneesBrutes() . '</a>';
+                foreach($destinataires as $destinataire) {
+                    $mailer = $this->getContainer()->get('mailer');
+                    if (!$this->getContainer()->get('aeag_sqe.message')->createMail($this->em, $mailer, $txtMessage, $destinataire, $objetMessage)) {
+                        $this->_addLog('warning', $pgCmdFichierRps->getDemande()->getId(), $pgCmdFichierRps->getId(), "Erreur lors de l\'envoi de mail dans le process de verification des RAIs", null, $destinataire);
+                    }    
+                }
 
                 $cptRaisTraitesOk++;
             } else {

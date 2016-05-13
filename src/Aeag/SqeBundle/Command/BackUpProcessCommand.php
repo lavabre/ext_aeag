@@ -66,15 +66,30 @@ class BackUpProcessCommand extends AeagCommand {
         
         $cptPhaseR26Fait = 0;
         foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
-            $pgProgSuiviPhases = $this->repoPgProgSuiviPhases->findOneBy(array('objId'=> $pgCmdFichierRps->getId(), 'typeObjet' => 'RPS', 'phase' => $pgProgPhase),array('datePhase' => 'DESC'));
+            // Vérifier le nombre de phase R26 déjà présente dans PgProgSuiviPhases
+            $pgProgSuiviPhases = $this->repoPgProgSuiviPhases->findBy(array('objId'=> $pgCmdFichierRps->getId(), 'typeObjet' => 'RPS', 'phase' => $pgProgPhase));
+            if (count($pgProgSuiviPhases) <= 4) {
+                $pgProgSuiviPhases = $this->repoPgProgSuiviPhases->findOneBy(array('objId'=> $pgCmdFichierRps->getId(), 'typeObjet' => 'RPS', 'phase' => $pgProgPhase),array('datePhase' => 'DESC'));
             
-            $datePhase = $pgProgSuiviPhases->getDatePhase();
-            $datePhase->add(new \DateInterval('P1D'));
-            $dateDuJour = new \DateTime();
-            // Date de la phase (suivi phase) + 24h < date du jour
-            if ($datePhase < $dateDuJour) {
-                $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R25');
-                $cptPhaseR26Fait++;
+                $datePhase = $pgProgSuiviPhases->getDatePhase();
+                $datePhase->add(new \DateInterval('P1D'));
+                $dateDuJour = new \DateTime();
+                // Date de la phase (suivi phase) + 24h < date du jour
+                if ($datePhase < $dateDuJour) {
+                    $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R25');
+                    $cptPhaseR26Fait++;
+                }
+            } else {
+                // Envoi d'un mail aux admins
+                $objetMessage = "RAI " . $pgCmdFichierRps->getId() . " est bloquée dans le process de validation";
+                $txtMessage = "La RAI (id " . $pgCmdFichierRps->getId() . ") concernant la DAI " . $pgCmdFichierRps->getDemande()->getCodeDemandeCmd() . " est actuellement bloquée.";
+                $txtMessage .= " Celle-ci est passée à la phase \"".$pgProgPhase->getLibellePhase()."\" au moins 4 fois sans réussir à terminer le traitement de cette RAI.";
+                
+                $destinataire = $this->repoPgProgWebUsers->findByTypeUser('ADMIN');
+                $mailer = $this->getContainer()->get('mailer');
+                if (!$this->getContainer()->get('aeag_sqe.message')->createMail($this->em, $mailer, $txtMessage, $destinataire, $objetMessage)) {
+                    $this->_addLog('warning', $pgCmdFichierRps->getDemande()->getId(), $pgCmdFichierRps->getId(), "Erreur lors de l\'envoi de mail dans le process de verification des RAIs", null, $destinataire);
+                }
             }
         }
         
@@ -88,15 +103,30 @@ class BackUpProcessCommand extends AeagCommand {
         $pgCmdFichiersRps = $this->repoPgCmdFichiersRps->findBy(array('typeFichier' => 'RPS', 'phaseFichier' => $pgProgPhase));
         $cptPhaseR36Fait = 0;
         foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
-            $pgProgSuiviPhases = $this->repoPgProgSuiviPhases->findOneBy(array('objId'=> $pgCmdFichierRps->getId(), 'typeObjet' => 'RPS', 'phase' => $pgProgPhase),array('datePhase' => 'DESC'));
-            
-            $datePhase = $pgProgSuiviPhases->getDatePhase();
-            $datePhase->add(new \DateInterval('P1D'));
-            $dateDuJour = new \DateTime();
-            // Date de la phase (suivi phase) + 24h < date du jour
-            if ($datePhase < $dateDuJour) {
-                $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R25');
-                $cptPhaseR36Fait++;
+            // Vérifier le nombre de phase R26 déjà présente dans PgProgSuiviPhases
+            $pgProgSuiviPhases = $this->repoPgProgSuiviPhases->findBy(array('objId'=> $pgCmdFichierRps->getId(), 'typeObjet' => 'RPS', 'phase' => $pgProgPhase));
+            if (count($pgProgSuiviPhases) <= 4) {
+                $pgProgSuiviPhases = $this->repoPgProgSuiviPhases->findOneBy(array('objId'=> $pgCmdFichierRps->getId(), 'typeObjet' => 'RPS', 'phase' => $pgProgPhase),array('datePhase' => 'DESC'));
+
+                $datePhase = $pgProgSuiviPhases->getDatePhase();
+                $datePhase->add(new \DateInterval('P1D'));
+                $dateDuJour = new \DateTime();
+                // Date de la phase (suivi phase) + 24h < date du jour
+                if ($datePhase < $dateDuJour) {
+                    $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R25');
+                    $cptPhaseR36Fait++;
+                }
+            } else {
+                // Envoi d'un mail aux admins
+                $objetMessage = "RAI " . $pgCmdFichierRps->getId() . " est bloquée dans le process de validation";
+                $txtMessage = "La RAI (id " . $pgCmdFichierRps->getId() . ") concernant la DAI " . $pgCmdFichierRps->getDemande()->getCodeDemandeCmd() . " est actuellement bloquée.";
+                $txtMessage .= " Celle-ci est passée à la phase \"".$pgProgPhase->getLibellePhase()."\" au moins 4 fois sans réussir à terminer le traitement de cette RAI.";
+                
+                $destinataire = $this->repoPgProgWebUsers->findByTypeUser('ADMIN');
+                $mailer = $this->getContainer()->get('mailer');
+                if (!$this->getContainer()->get('aeag_sqe.message')->createMail($this->em, $mailer, $txtMessage, $destinataire, $objetMessage)) {
+                    $this->_addLog('warning', $pgCmdFichierRps->getDemande()->getId(), $pgCmdFichierRps->getId(), "Erreur lors de l\'envoi de mail dans le process de verification des RAIs", null, $destinataire);
+                }
             }
         }
         

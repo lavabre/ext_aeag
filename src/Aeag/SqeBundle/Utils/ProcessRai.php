@@ -149,6 +149,10 @@ class ProcessRai {
         $pathBase = $this->getCheminEchange($chemin, $pgCmdFichierRps->getDemande(), $pgCmdFichierRps->getId());
         $fullFileName = $pathBase . '/' . $nomFichierRps;
         
+        // Creation du repertoire s'il n'existe pas
+        if (!file_exists($pathBase)) {
+            mkdir($pathBase);
+        }
         $fichier_csv = fopen($fullFileName, 'w+');
         
         // Chaque ligne du tableau correspond a une ligne du fichier csv
@@ -162,7 +166,6 @@ class ProcessRai {
                         'Nom labo', 'Code réseau', 'Nom réseau', 'Siret prod', 'Nom prod', 'Commentaire');
         
         // Requete de récupération des différents champs
-        //$donneesBrutes = $this->repoPgCmdPrelev->getDonneesBrutes($pgCmdFichierRps);
         $lignes = array_merge($lignes, $donneesBrutes);
         foreach ($lignes as $ligne) {
             fputcsv($fichier_csv, $ligne, ';');

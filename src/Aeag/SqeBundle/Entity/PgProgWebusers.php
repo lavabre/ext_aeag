@@ -119,6 +119,16 @@ class PgProgWebusers {
      * })
      */
     private $prestataire;
+    
+    /**
+     * @var \PgRefCorresProducteur
+     *
+     * @ORM\ManyToOne(targetEntity="PgRefCorresProducteur")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="prod_id", referencedColumnName="adr_cor_id")
+     * })
+     */
+    private $producteur;
 
     /**
      * Constructor
@@ -363,5 +373,15 @@ class PgProgWebusers {
     {
         return $this->prestataire;
     }
+    
+    public function getProducteur() {
+        return $this->producteur;
+    }
+
+    public function setProducteur(\Aeag\SqeBundle\Entity\PgRefCorresProducteur $producteur) {
+        $this->producteur = $producteur;
+    }
+
+
 
 }
