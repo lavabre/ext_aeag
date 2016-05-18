@@ -27,7 +27,7 @@
                      <h3 class="page-title ">
                          <table>
                              <tr><td>Station {{ station.code }} {{ station.libelle }}</td></tr>
-                             <tr><td>prévu entre le  {{ periodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;et&nbsp;&nbsp; {{periodeAn.periode.dateFin | date("d/m/Y") }}</td></tr>
+                             <tr><td>prévu entre le  {{ periodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;et&nbsp;&nbsp; {{ dateFin | date("d/m/Y") }}</td></tr>
                              <tr><td nowrap>pour le Lot :  {{ lotan.lot.nomLot }} - {{ lotan.anneeProg }}  - version :  {{ lotan.version }}</td></tr>
                          </table>
                     </h3>
@@ -305,10 +305,13 @@
 {% block scripts %}
     
             $('#datePrel').datetimepicker(
-             {language:  'fr',
-              format: 'dd/mm/yyyy hh:ii'
-              }
-            );
+                    {
+                     language:  'fr',
+                    format: 'dd/mm/yyyy hh:ii',
+                    startDate: "{{ periodeAn.periode.dateDeb | date("d/m/Y hh:ii") }}",
+                    endDate: "{{  dateFin | date("d/m/Y hh:ii") }}",
+                    }
+                    );
     
           {% for groupe   in  groupes %}
               

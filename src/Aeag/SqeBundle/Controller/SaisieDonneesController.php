@@ -93,6 +93,14 @@ class SaisieDonneesController extends Controller {
                 $nbStationCorrectes = 0;
                 $j = 0;
                 foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
+                     if ($pgProgLot->getDelaiPrel()) {
+                            $dateFin = clone($pgProgLotPeriodeProg->getPeriodan()->getPeriode()->getDateDeb());
+                            $delai = $pgProgLot->getDelaiPrel();
+                            $dateFin->add(new \DateInterval('P' . $delai . 'D'));
+                        } else {
+                            $dateFin = $pgProglotPeriodeProg->getPeriodan()->getPeriode()->getDateFin();
+                        }
+                    $tabPeriodeAns[$i]['dateFin'] = $dateFin;
                     $trouve = false;
                     for ($k = 0; $k < count($tabStations); $k++) {
                         if ($tabStations[$k]->getOuvFoncid() == $pgProgLotPeriodeProg->getStationAn()->getStation()->getOuvFoncid()) {
@@ -310,8 +318,8 @@ class SaisieDonneesController extends Controller {
         $userPrestataire = null;
         if ($pgProgWebUser->getPrestataire()) {
             $userPrestataire = $pgProgWebUser->getPrestataire();
-        } elseif ($pgProgLot->getTitulaire()) {
-            $userPrestataire = $pgProgLot->getTitulaire();
+//        } elseif ($pgProgLot->getTitulaire()) {
+//            $userPrestataire = $pgProgLot->getTitulaire();
         } else {
             $pgProgLotGrparAns = $repoPgProgLotGrparAn->getPgProgLotGrparAnByPrestataire($pgProgLotAn);
             foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
@@ -321,6 +329,7 @@ class SaisieDonneesController extends Controller {
                 }
             }
         }
+
 
 
         $tabStations = array();
@@ -341,13 +350,14 @@ class SaisieDonneesController extends Controller {
                 $pgProgLotStationAn = $pgProgLotPeriodeProg->getStationAn();
                 $tabStations[$i]['stationAn'] = $pgProgLotStationAn;
                 $tabStations[$i]['station'] = $pgProgLotStationAn->getStation();
+                $tabStations[$i]['prestataire'] = $pgProgLotPeriodeProg->getGrparAn()->getPrestaDft();
                 $tabStations[$i]['lien'] = '/sqe_fiches_stations/' . str_replace('/', '-', $pgProgLotPeriodeProg->getStationAn()->getStation()->getCode()) . '.pdf';
-                $pgCmdDemande = $repoPgCmdDemande->getPgCmdDemandeByLotanPrestatairePeriode($pgProgLotAn, $userPrestataire, $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
+                $pgCmdDemande = $repoPgCmdDemande->getPgCmdDemandeByLotanPrestatairePeriode($pgProgLotAn, $pgProgLotPeriodeProg->getGrparAn()->getPrestaDft(), $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
                 if ($pgCmdDemande) {
                     $tabStations[$i]['cmdDemande'] = $pgCmdDemande;
                 }
                 $tabStations[$i]['cmdPrelev'] = null;
-
+                //echo('station : ' . $pgProgLotStationAn->getStation()->getOuvFoncId() . ' ' . $pgProgLotStationAn->getStation()->getCode()    . ' prestataire : ' . $pgProgLotPeriodeProg->getGrparAn()->getPrestaDft()->getAdrCorId() . ' ' . $pgProgLotPeriodeProg->getGrparAn()->getPrestaDft()->getAncnum() . '</br>' );
                 $i++;
             }
         }
@@ -601,7 +611,15 @@ class SaisieDonneesController extends Controller {
         $tabGroupes = array();
         $nbGroupes = 0;
         foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
+            if ($pgProgLot->getDelaiPrel()) {
+                $dateFin = clone($pgProgLotPeriodeProg->getPeriodan()->getPeriode()->getDateDeb());
+                $delai = $pgProgLot->getDelaiPrel();
+                $dateFin->add(new \DateInterval('P' . $delai . 'D'));
+            } else {
+                $dateFin = $pgProglotPeriodeProg->getPeriodan()->getPeriode()->getDateFin();
+            }
             $pgProgLotGrparAn = $pgProgLotPeriodeProg->getGrparAn();
+            $prestataire = $pgProgLotGrparAn->getPrestaDft();
             if ($pgProgLotGrparAn->getvalide() == 'O' and ( $pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'ENV' or $pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'SIT')) {
                 $pgProgGrpParamRef = $pgProgLotGrparAn->getGrparRef();
 // if ($pgProgGrpParamRef->getCodeMilieu()->getCodeMilieu() == $pgProgTypeMilieu->getCodeMilieu()) {
@@ -738,6 +756,7 @@ class SaisieDonneesController extends Controller {
                         'lotan' => $pgProgLotAn,
                         'station' => $pgRefStationMesure,
                         'periodeAn' => $pgProgLotPeriodeAn,
+                        'dateFin' => $dateFin,
                         'demande' => $pgCmdPrelev->getDemande(),
                         'cmdPrelev' => $pgCmdPrelev,
                         'groupes' => $tabGroupes,
@@ -749,6 +768,7 @@ class SaisieDonneesController extends Controller {
                         'lotan' => $pgProgLotAn,
                         'station' => $pgRefStationMesure,
                         'periodeAn' => $pgProgLotPeriodeAn,
+                        'dateFin' => $dateFin,
                         'demande' => $pgCmdPrelev->getDemande(),
                         'cmdPrelev' => $pgCmdPrelev,
                         'groupes' => $tabGroupes,
@@ -825,6 +845,7 @@ class SaisieDonneesController extends Controller {
         }
         foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
             $pgProgLotGrparAn = $pgProgLotPeriodeProg->getGrparAn();
+            $prestataire = $pgProgLotGrparAn->getPrestaDft();
             if ($pgProgLotGrparAn->getvalide() == 'O') {
                 $pgProgGrpParamRef = $pgProgLotGrparAn->getGrparRef();
 
@@ -832,7 +853,7 @@ class SaisieDonneesController extends Controller {
                 $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
 
                 foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
-                    if ($user->hasRole('ROLE_ADMINSQE') or ( $userPrestataire == $pgProgLotParamAn->getPrestataire())) {
+                    if ($user->hasRole('ROLE_ADMINSQE') or ( $prestataire == $pgProgLotParamAn->getPrestataire())) {
 
                         if ($pgProgGrpParamRef->getTypeGrp() == 'SIT') {
 
@@ -1078,18 +1099,19 @@ class SaisieDonneesController extends Controller {
             $nbParametresAna = 0;
             foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
                 $pgProgLotGrparAn = $pgProgLotPeriodeProg->getGrparAn();
+                $prestataire = $pgProgLotGrparAn->getPrestaDft();
                 $pgProgGrpParamRef = $pgProgLotGrparAn->getGrparRef();
                 $pgProgPeriodes = $pgProgLotPeriodeProg->getPeriodAn()->getPeriode();
                 if ($pgProgLotGrparAn->getvalide() == 'O') {
                     $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
                     foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
-                        if ($user->hasRole('ROLE_ADMINSQE') or ( $userPrestataire == $pgProgLotParamAn->getPrestataire())) {
+                        if ($user->hasRole('ROLE_ADMINSQE') or ( $prestataire == $pgProgLotParamAn->getPrestataire())) {
 
                             if ($pgProgGrpParamRef->getTypeGrp() == 'ENV') {
                                 if ($userPrestataire == $pgProgLotParamAn->getPrestataire()) {
                                     //echo ('groupe: ' . $pgProgLotGrparAn->getId() . ' type : ' . $pgProgGrpParamRef->getTypeGrp() . '  pgCmdPrelev : ' . $pgCmdPrelev->getId() . ' parametre : ' . $pgProgLotParamAn->getId() . ' </br>');
                                     $nbParametresEnvSit++;
-                                    $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($userPrestataire, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
+                                    $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($prestataire, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
                                     foreach ($pgCmdPrelevs as $pgCmdPrelev) {
                                         $pgCmdMesureEnv = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParamProg($pgCmdPrelev, $pgProgLotParamAn);
                                         if ($pgCmdMesureEnv) {
@@ -1100,10 +1122,10 @@ class SaisieDonneesController extends Controller {
                             }
 
                             if ($pgProgGrpParamRef->getTypeGrp() == 'SIT') {
-                                if ($userPrestataire == $pgProgLotParamAn->getPrestataire()) {
+                                if ($prestataire == $pgProgLotParamAn->getPrestataire()) {
                                     //echo ('groupe: ' . $pgProgLotGrparAn->getId() . ' type : ' . $pgProgGrpParamRef->getTypeGrp() . '  pgCmdPrelev : ' . $pgCmdPrelev->getId() . ' parametre : ' . $pgProgLotParamAn->getId() . ' </br>');
                                     $nbParametresEnvSit++;
-                                    $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($userPrestataire, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
+                                    $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($prestataire, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
                                     foreach ($pgCmdPrelevs as $pgCmdPrelev) {
                                         $pgCmdAnalyses = $repoPgCmdAnalyse->getPgCmdAnalysesByPrelevParamProg($pgCmdPrelev, $pgProgLotParamAn);
                                         if (count($pgCmdAnalyses) > 0) {
@@ -1116,10 +1138,10 @@ class SaisieDonneesController extends Controller {
 
 
                             if ($pgProgGrpParamRef->getTypeGrp() == 'ANA') {
-                                if ($userPrestataire == $pgProgLotParamAn->getPrestataire()) {
+                                if ($prestataire == $pgProgLotParamAn->getPrestataire()) {
                                     //echo ('groupe: ' . $pgProgLotGrparAn->getId() . ' type : ' . $pgProgGrpParamRef->getTypeGrp() . '  pgCmdPrelev : ' . $pgCmdPrelev->getId() . ' parametre : ' . $pgProgLotParamAn->getId() . ' </br>');
                                     $nbParametresAna++;
-                                    $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($userPrestataire, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
+                                    $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($prestataire, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
                                     $trouve = false;
                                     foreach ($pgCmdPrelevs as $pgCmdPrelev) {
                                         //echo ('groupe: ' . $pgProgLotGrparAn . ' type : ' . $pgProgGrpParamRef->getTypeGrp() . '  pgCmdPrelev : ' . $pgCmdPrelev->getId()  . ' parametre : ' . $pgProgLotParamAn->getId() . ' </br>');
@@ -1259,7 +1281,15 @@ class SaisieDonneesController extends Controller {
         $tabGroupes = array();
         $nbGroupes = 0;
         foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
+             if ($pgProgLot->getDelaiPrel()) {
+                $dateFin = clone($pgProgLotPeriodeProg->getPeriodan()->getPeriode()->getDateDeb());
+                $delai = $pgProgLot->getDelaiPrel();
+                $dateFin->add(new \DateInterval('P' . $delai . 'D'));
+            } else {
+                $dateFin = $pgProglotPeriodeProg->getPeriodan()->getPeriode()->getDateFin();
+            }
             $pgProgLotGrparAn = $pgProgLotPeriodeProg->getGrparAn();
+            $prestataire = $pgProgLotGrparAn->getPrestaDft();
             if ($pgProgLotGrparAn->getvalide() == 'O' and $pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'ANA') {
                 $pgProgGrpParamRef = $pgProgLotGrparAn->getGrparRef();
 // if ($pgProgGrpParamRef->getCodeMilieu()->getCodeMilieu() == $pgProgTypeMilieu->getCodeMilieu()) {
@@ -1348,26 +1378,28 @@ class SaisieDonneesController extends Controller {
 //return new Response(  \Symfony\Component\VarDumper\VarDumper::dump($tabParamAns));
 //return new Response ('');
 
-        if ($maj == 'C'){
-             return $this->render('AeagSqeBundle:SaisieDonnees:lotPeriodeStationVoirAna.html.twig', array(
-                    'user' => $pgProgWebUser,
-                    'lotan' => $pgProgLotAn,
-                    'station' => $pgRefStationMesure,
-                    'periodeAn' => $pgProgLotPeriodeAn,
-                    'demande' => $pgCmdPrelev->getDemande(),
-                    'cmdPrelev' => $pgCmdPrelev,
-                    'groupes' => $tabGroupes,
-                    'maj' => $maj,));
-        }else{
-        return $this->render('AeagSqeBundle:SaisieDonnees:lotPeriodeStationSaisirAna.html.twig', array(
-                    'user' => $pgProgWebUser,
-                    'lotan' => $pgProgLotAn,
-                    'station' => $pgRefStationMesure,
-                    'periodeAn' => $pgProgLotPeriodeAn,
-                    'demande' => $pgCmdPrelev->getDemande(),
-                    'cmdPrelev' => $pgCmdPrelev,
-                    'groupes' => $tabGroupes,
-                    'maj' => $maj,));
+        if ($maj == 'C') {
+            return $this->render('AeagSqeBundle:SaisieDonnees:lotPeriodeStationVoirAna.html.twig', array(
+                        'user' => $pgProgWebUser,
+                        'lotan' => $pgProgLotAn,
+                        'station' => $pgRefStationMesure,
+                        'periodeAn' => $pgProgLotPeriodeAn,
+                 'dateFin' => $dateFin,
+                        'demande' => $pgCmdPrelev->getDemande(),
+                        'cmdPrelev' => $pgCmdPrelev,
+                        'groupes' => $tabGroupes,
+                        'maj' => $maj,));
+        } else {
+            return $this->render('AeagSqeBundle:SaisieDonnees:lotPeriodeStationSaisirAna.html.twig', array(
+                        'user' => $pgProgWebUser,
+                        'lotan' => $pgProgLotAn,
+                        'station' => $pgRefStationMesure,
+                        'periodeAn' => $pgProgLotPeriodeAn,
+                 'dateFin' => $dateFin,
+                        'demande' => $pgCmdPrelev->getDemande(),
+                        'cmdPrelev' => $pgCmdPrelev,
+                        'groupes' => $tabGroupes,
+                        'maj' => $maj,));
         }
     }
 
@@ -1433,13 +1465,14 @@ class SaisieDonneesController extends Controller {
 
         foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
             $pgProgLotGrparAn = $pgProgLotPeriodeProg->getGrparAn();
+            $prestataire = $pgProgLotGrparAn->getPrestaDft();
             if ($pgProgLotGrparAn->getvalide() == 'O' and $pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'ANA') {
                 $pgProgGrpParamRef = $pgProgLotGrparAn->getGrparRef();
 // if ($pgProgGrpParamRef->getCodeMilieu()->getCodeMilieu() == $pgProgTypeMilieu->getCodeMilieu()) {
                 $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
 
                 foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
-                    if ($user->hasRole('ROLE_ADMINSQE') or ( $userPrestataire == $pgProgLotParamAn->getPrestataire())) {
+                    if ($user->hasRole('ROLE_ADMINSQE') or ( $prestataire == $pgProgLotParamAn->getPrestataire())) {
                         $nbParametresAna++;
                         if (isset($_POST['valeur' . $pgProgLotParamAn->getId()])) {
                             $valeur = $_POST['valeur' . $pgProgLotParamAn->getId()];
@@ -1524,7 +1557,7 @@ class SaisieDonneesController extends Controller {
             } else {
                 $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
                 foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
-                    if ($user->hasRole('ROLE_ADMINSQE') or ( $userPrestataire == $pgProgLotParamAn->getPrestataire())) {
+                    if ($user->hasRole('ROLE_ADMINSQE') or ( $prestataire == $pgProgLotParamAn->getPrestataire())) {
                         $nbParametresEnvSit++;
                     }
                 }
@@ -1553,18 +1586,19 @@ class SaisieDonneesController extends Controller {
             $nbParametresAna = 0;
             foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
                 $pgProgLotGrparAn = $pgProgLotPeriodeProg->getGrparAn();
+                $prestataire = $pgProgLotGrparAn->getPrestaDft();
                 $pgProgGrpParamRef = $pgProgLotGrparAn->getGrparRef();
                 $pgProgPeriodes = $pgProgLotPeriodeProg->getPeriodAn()->getPeriode();
                 if ($pgProgLotGrparAn->getvalide() == 'O') {
                     $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
                     foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
-                        if ($user->hasRole('ROLE_ADMINSQE') or ( $userPrestataire == $pgProgLotParamAn->getPrestataire())) {
+                        if ($user->hasRole('ROLE_ADMINSQE') or ( $prestataire == $pgProgLotParamAn->getPrestataire())) {
 
                             if ($pgProgGrpParamRef->getTypeGrp() == 'ENV') {
-                                if ($userPrestataire == $pgProgLotParamAn->getPrestataire()) {
+                                if ($prestataire == $pgProgLotParamAn->getPrestataire()) {
                                     //echo ('groupe: ' . $pgProgLotGrparAn->getId() . ' type : ' . $pgProgGrpParamRef->getTypeGrp() . '  pgCmdPrelev : ' . $pgCmdPrelev->getId() . ' parametre : ' . $pgProgLotParamAn->getId() . ' </br>');
                                     $nbParametresEnvSit++;
-                                    $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($userPrestataire, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
+                                    $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($prestataire, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
                                     foreach ($pgCmdPrelevs as $pgCmdPrelev) {
                                         $pgCmdMesureEnv = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParamProg($pgCmdPrelev, $pgProgLotParamAn);
                                         if ($pgCmdMesureEnv) {
@@ -1575,10 +1609,10 @@ class SaisieDonneesController extends Controller {
                             }
 
                             if ($pgProgGrpParamRef->getTypeGrp() == 'SIT') {
-                                if ($userPrestataire == $pgProgLotParamAn->getPrestataire()) {
+                                if ($prestataire == $pgProgLotParamAn->getPrestataire()) {
                                     //echo ('groupe: ' . $pgProgLotGrparAn->getId() . ' type : ' . $pgProgGrpParamRef->getTypeGrp() . '  pgCmdPrelev : ' . $pgCmdPrelev->getId() . ' parametre : ' . $pgProgLotParamAn->getId() . ' </br>');
                                     $nbParametresEnvSit++;
-                                    $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($userPrestataire, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
+                                    $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($prestataire, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
                                     foreach ($pgCmdPrelevs as $pgCmdPrelev) {
                                         $pgCmdAnalyses = $repoPgCmdAnalyse->getPgCmdAnalysesByPrelevParamProg($pgCmdPrelev, $pgProgLotParamAn);
                                         if (count($pgCmdAnalyses) > 0) {
@@ -1591,10 +1625,10 @@ class SaisieDonneesController extends Controller {
 
 
                             if ($pgProgGrpParamRef->getTypeGrp() == 'ANA') {
-                                if ($userPrestataire == $pgProgLotParamAn->getPrestataire()) {
+                                if ($prestataire == $pgProgLotParamAn->getPrestataire()) {
                                     //echo ('groupe: ' . $pgProgLotGrparAn->getId() . ' type : ' . $pgProgGrpParamRef->getTypeGrp() . '  pgCmdPrelev : ' . $pgCmdPrelev->getId() . ' parametre : ' . $pgProgLotParamAn->getId() . ' </br>');
                                     $nbParametresAna++;
-                                    $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($userPrestataire, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
+                                    $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($prestataire, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
                                     $trouve = false;
                                     foreach ($pgCmdPrelevs as $pgCmdPrelev) {
                                         //echo ('groupe: ' . $pgProgLotGrparAn . ' type : ' . $pgProgGrpParamRef->getTypeGrp() . '  pgCmdPrelev : ' . $pgCmdPrelev->getId()  . ' parametre : ' . $pgProgLotParamAn->getId() . ' </br>');
@@ -1957,6 +1991,7 @@ class SaisieDonneesController extends Controller {
         $j = 0;
         $k = 0;
         foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
+            $prestataire = $pgProgLotPeriodeProg->getGrparAn()->getPrestaDft();
             $trouve = false;
             if (count($tabStations) > 0) {
                 for ($k = 0; $k < count($tabStations); $k++) {
@@ -1971,7 +2006,7 @@ class SaisieDonneesController extends Controller {
                 $tabStations[$i]['stationAn'] = $pgProgLotStationAn;
                 $tabStations[$i]['station'] = $pgProgLotStationAn->getStation();
                 $tabStations[$i]['lien'] = '/sqe_fiches_stations/' . str_replace('/', '-', $pgProgLotPeriodeProg->getStationAn()->getStation()->getCode()) . '.pdf';
-                $pgCmdDemande = $repoPgCmdDemande->getPgCmdDemandeByLotanPrestatairePeriode($pgProgLotAn, $userPrestataire, $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
+                $pgCmdDemande = $repoPgCmdDemande->getPgCmdDemandeByLotanPrestatairePeriode($pgProgLotAn, $prestataire, $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
                 if ($pgCmdDemande) {
                     $tabStations[$i]['cmdDemande'] = $pgCmdDemande;
                 }
@@ -2124,6 +2159,7 @@ class SaisieDonneesController extends Controller {
                             foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
                                 if ($tabStations[$i]['station']->getOuvFoncId() == $pgProgLotPeriodeProg->getStationAn()->getStation()->getOuvFoncId()) {
                                     $pgProgLotGrparAn = $pgProgLotPeriodeProg->getGrparAn();
+                                    $prestataire = $pgProgLotGrparAn->getPrestaDft();
                                     if ($pgProgLotGrparAn->getvalide() == 'O' and $pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'ANA') {
                                         if ($pgPrelevPc) {
                                             $nbgProgGrparRefZoneVert = $repoPgProgGrparRefZoneVert->getNbPgProgGrparRefZoneVertByGrparRefPgSandreZoneVerticaleProspectee($pgProgLotGrparAn->getGrparRef(), $pgPrelevPc->getZoneVerticale());
@@ -2148,6 +2184,7 @@ class SaisieDonneesController extends Controller {
                             foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
                                 if ($tabStations[$i]['station']->getOuvFoncId() == $pgProgLotPeriodeProg->getStationAn()->getStation()->getOuvFoncId()) {
                                     $pgProgLotGrparAn = $pgProgLotPeriodeProg->getGrparAn();
+                                    $prestataire = $pgProgLotGrparAn->getPrestaDft();
                                     if ($pgProgLotGrparAn->getvalide() == 'O' and $pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'ANA') {
                                         if ($pgPrelevPc) {
                                             $nbgProgGrparRefZoneVert = $repoPgProgGrparRefZoneVert->getNbPgProgGrparRefZoneVertByGrparRefPgSandreZoneVerticaleProspectee($pgProgLotGrparAn->getGrparRef(), $pgPrelevPc->getZoneVerticale());
@@ -2270,9 +2307,17 @@ class SaisieDonneesController extends Controller {
         $tabGroupes = array();
         $nbGroupes = 0;
         foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
+             if ($pgProgLot->getDelaiPrel()) {
+                $dateFin = clone($pgProgLotPeriodeProg->getPeriodan()->getPeriode()->getDateDeb());
+                $delai = $pgProgLot->getDelaiPrel();
+                $dateFin->add(new \DateInterval('P' . $delai . 'D'));
+            } else {
+                $dateFin = $pgProglotPeriodeProg->getPeriodan()->getPeriode()->getDateFin();
+            }
             $pgProgPeriodes = $pgProgLotPeriodeProg->getPeriodAn()->getPeriode();
 
             $pgProgLotGrparAn = $pgProgLotPeriodeProg->getGrparAn();
+            $prestataire = $pgProgLotGrparAn->getPrestaDft();
             $pgProgGrpParamRef = $pgProgLotGrparAn->getGrparRef();
             if ($pgProgLotGrparAn->getvalide() == 'O' and $pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'ENV') {
 
@@ -2285,7 +2330,7 @@ class SaisieDonneesController extends Controller {
                 $tabParamAns = array();
                 $nbParamAns = 0;
 
-                $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($userPrestataire, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
+                $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($prestataire, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
                 $trouve = false;
                 foreach ($pgCmdPrelevs as $pgCmdPrelev) {
                     $pgCmdPrelevPcs = $repoPgCmdPrelevPc->getPgCmdPrelevPcByPrelev($pgCmdPrelev);
@@ -2358,7 +2403,7 @@ class SaisieDonneesController extends Controller {
                 $tabParamAns = array();
                 $nbParamAns = 0;
 
-                $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($userPrestataire, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
+                $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($prestataire, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
                 $trouve = false;
                 foreach ($pgCmdPrelevs as $pgCmdPrelev) {
                     $pgCmdPrelevPcs = $repoPgCmdPrelevPc->getPgCmdPrelevPcByPrelev($pgCmdPrelev);
@@ -2514,28 +2559,30 @@ class SaisieDonneesController extends Controller {
 //\Symfony\Component\VarDumper\VarDumper::dump($tabParamAns);
 //return new Response ('');
 
-        if ($maj = 'C'){
+        if ($maj = 'C') {
             return $this->render('AeagSqeBundle:SaisieDonnees:lotPeriodeLacVoirEnvSitu.html.twig', array(
-                    'user' => $pgProgWebUser,
-                    'typeMilieu' => $pgProgTypeMilieu,
-                    'lotan' => $pgProgLotAn,
-                    'station' => $pgRefStationMesure,
-                    'periodeAn' => $pgProgLotPeriodeAn,
-                    'demande' => $pgCmdPrelev->getDemande(),
-                    'cmdPrelev' => $pgCmdPrelev,
-                    'groupes' => $tabGroupes,
-                    'maj' => $maj));
-        }else{
-        return $this->render('AeagSqeBundle:SaisieDonnees:lotPeriodeLacSaisirEnvSitu.html.twig', array(
-                    'user' => $pgProgWebUser,
-                    'typeMilieu' => $pgProgTypeMilieu,
-                    'lotan' => $pgProgLotAn,
-                    'station' => $pgRefStationMesure,
-                    'periodeAn' => $pgProgLotPeriodeAn,
-                    'demande' => $pgCmdPrelev->getDemande(),
-                    'cmdPrelev' => $pgCmdPrelev,
-                    'groupes' => $tabGroupes,
-                    'maj' => $maj));
+                        'user' => $pgProgWebUser,
+                        'typeMilieu' => $pgProgTypeMilieu,
+                        'lotan' => $pgProgLotAn,
+                        'station' => $pgRefStationMesure,
+                        'periodeAn' => $pgProgLotPeriodeAn,
+                 'dateFin' => $dateFin,
+                        'demande' => $pgCmdPrelev->getDemande(),
+                        'cmdPrelev' => $pgCmdPrelev,
+                        'groupes' => $tabGroupes,
+                        'maj' => $maj));
+        } else {
+            return $this->render('AeagSqeBundle:SaisieDonnees:lotPeriodeLacSaisirEnvSitu.html.twig', array(
+                        'user' => $pgProgWebUser,
+                        'typeMilieu' => $pgProgTypeMilieu,
+                        'lotan' => $pgProgLotAn,
+                        'station' => $pgRefStationMesure,
+                        'periodeAn' => $pgProgLotPeriodeAn,
+                 'dateFin' => $dateFin,
+                        'demande' => $pgCmdPrelev->getDemande(),
+                        'cmdPrelev' => $pgCmdPrelev,
+                        'groupes' => $tabGroupes,
+                        'maj' => $maj));
         }
     }
 
@@ -2608,6 +2655,7 @@ class SaisieDonneesController extends Controller {
         }
         foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
             $pgProgLotGrparAn = $pgProgLotPeriodeProg->getGrparAn();
+            $prestataire = $pgProgLotGrparAn->getPrestaDft();
             $pgProgPeriodes = $pgProgLotPeriodeProg->getPeriodAn()->getPeriode();
             if ($pgProgLotGrparAn->getvalide() == 'O') {
                 $pgProgGrpParamRef = $pgProgLotGrparAn->getGrparRef();
@@ -2616,11 +2664,11 @@ class SaisieDonneesController extends Controller {
                 $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
 
                 foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
-                    if ($user->hasRole('ROLE_ADMINSQE') or ( $userPrestataire == $pgProgLotParamAn->getPrestataire())) {
+                    if ($user->hasRole('ROLE_ADMINSQE') or ( $prestataire == $pgProgLotParamAn->getPrestataire())) {
 
                         if ($pgProgGrpParamRef->getTypeGrp() == 'SIT') {
 
-                            $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($userPrestataire, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
+                            $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($prestataire, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
                             $trouve = false;
                             foreach ($pgCmdPrelevs as $pgCmdPrelev) {
                                 $pgCmdPrelevPcs = $repoPgCmdPrelevPc->getPgCmdPrelevPcByPrelev($pgCmdPrelev);
@@ -2753,7 +2801,7 @@ class SaisieDonneesController extends Controller {
 
                         if ($pgProgGrpParamRef->getTypeGrp() == 'ENV') {
 
-                            $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($userPrestataire, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
+                            $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($prestataire, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
                             $trouve = false;
                             foreach ($pgCmdPrelevs as $pgCmdPrelev) {
                                 $pgCmdPrelevPcs = $repoPgCmdPrelevPc->getPgCmdPrelevPcByPrelev($pgCmdPrelev);
@@ -2892,18 +2940,19 @@ class SaisieDonneesController extends Controller {
             $nbParametresAna = 0;
             foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
                 $pgProgLotGrparAn = $pgProgLotPeriodeProg->getGrparAn();
+                $prestataire = $pgProgLotGrparAn->getPrestaDft();
                 $pgProgGrpParamRef = $pgProgLotGrparAn->getGrparRef();
                 $pgProgPeriodes = $pgProgLotPeriodeProg->getPeriodAn()->getPeriode();
                 if ($pgProgLotGrparAn->getvalide() == 'O') {
                     $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
                     foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
-                        if ($user->hasRole('ROLE_ADMINSQE') or ( $userPrestataire == $pgProgLotParamAn->getPrestataire())) {
+                        if ($user->hasRole('ROLE_ADMINSQE') or ( $prestataire == $pgProgLotParamAn->getPrestataire())) {
 
                             if ($pgProgGrpParamRef->getTypeGrp() == 'ENV') {
-                                if ($userPrestataire == $pgProgLotParamAn->getPrestataire()) {
+                                if ($prestataire == $pgProgLotParamAn->getPrestataire()) {
                                     //echo ('groupe: ' . $pgProgLotGrparAn->getId() . ' type : ' . $pgProgGrpParamRef->getTypeGrp() . '  pgCmdPrelev : ' . $pgCmdPrelev->getId() . ' parametre : ' . $pgProgLotParamAn->getId() . ' </br>');
                                     $nbParametresEnvSit++;
-                                    $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($userPrestataire, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
+                                    $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($prestataire, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
                                     foreach ($pgCmdPrelevs as $pgCmdPrelev) {
                                         $pgCmdMesureEnv = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParamProg($pgCmdPrelev, $pgProgLotParamAn);
                                         if ($pgCmdMesureEnv) {
@@ -2914,10 +2963,10 @@ class SaisieDonneesController extends Controller {
                             }
 
                             if ($pgProgGrpParamRef->getTypeGrp() == 'SIT') {
-                                if ($userPrestataire == $pgProgLotParamAn->getPrestataire()) {
+                                if ($prestataire == $pgProgLotParamAn->getPrestataire()) {
                                     //echo ('groupe: ' . $pgProgLotGrparAn->getId() . ' type : ' . $pgProgGrpParamRef->getTypeGrp() . '  pgCmdPrelev : ' . $pgCmdPrelev->getId() . ' parametre : ' . $pgProgLotParamAn->getId() . ' </br>');
                                     $nbParametresEnvSit++;
-                                    $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($userPrestataire, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
+                                    $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($prestataire, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
                                     foreach ($pgCmdPrelevs as $pgCmdPrelev) {
                                         $pgCmdAnalyses = $repoPgCmdAnalyse->getPgCmdAnalysesByPrelevParamProg($pgCmdPrelev, $pgProgLotParamAn);
                                         if (count($pgCmdAnalyses) > 0) {
@@ -2930,10 +2979,10 @@ class SaisieDonneesController extends Controller {
 
 
                             if ($pgProgGrpParamRef->getTypeGrp() == 'ANA') {
-                                if ($userPrestataire == $pgProgLotParamAn->getPrestataire()) {
+                                if ($prestataire == $pgProgLotParamAn->getPrestataire()) {
                                     //echo ('groupe: ' . $pgProgLotGrparAn->getId() . ' type : ' . $pgProgGrpParamRef->getTypeGrp() . '  pgCmdPrelev : ' . $pgCmdPrelev->getId() . ' parametre : ' . $pgProgLotParamAn->getId() . ' </br>');
                                     $nbParametresAna++;
-                                    $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($userPrestataire, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
+                                    $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($prestataire, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
                                     $trouve = false;
                                     foreach ($pgCmdPrelevs as $pgCmdPrelev) {
                                         //echo ('groupe: ' . $pgProgLotGrparAn . ' type : ' . $pgProgGrpParamRef->getTypeGrp() . '  pgCmdPrelev : ' . $pgCmdPrelev->getId()  . ' parametre : ' . $pgProgLotParamAn->getId() . ' </br>');
@@ -3161,7 +3210,15 @@ class SaisieDonneesController extends Controller {
         $tabGroupes = array();
         $nbGroupes = 0;
         foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
+             if ($pgProgLot->getDelaiPrel()) {
+                $dateFin = clone($pgProgLotPeriodeProg->getPeriodan()->getPeriode()->getDateDeb());
+                $delai = $pgProgLot->getDelaiPrel();
+                $dateFin->add(new \DateInterval('P' . $delai . 'D'));
+            } else {
+                $dateFin = $pgProglotPeriodeProg->getPeriodan()->getPeriode()->getDateFin();
+            }
             $pgProgLotGrparAn = $pgProgLotPeriodeProg->getGrparAn();
+            $prestataire = $pgProgLotGrparAn->getPrestaDft();
             if ($pgProgLotGrparAn->getvalide() == 'O' and $pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'ANA') {
                 if ($pgPrelevPc) {
                     $nbgProgGrparRefZoneVert = $repoPgProgGrparRefZoneVert->getNbPgProgGrparRefZoneVertByGrparRefPgSandreZoneVerticaleProspectee($pgProgLotGrparAn->getGrparRef(), $pgPrelevPc->getZoneVerticale());
@@ -3258,26 +3315,28 @@ class SaisieDonneesController extends Controller {
 //return new Response(  \Symfony\Component\VarDumper\VarDumper::dump($tabParamAns));
 //return new Response ('');
 
-        if ($maj == 'C'){
+        if ($maj == 'C') {
             return $this->render('AeagSqeBundle:SaisieDonnees:lotPeriodeLacVoirAna.html.twig', array(
-                    'user' => $pgProgWebUser,
-                    'lotan' => $pgProgLotAn,
-                    'station' => $pgRefStationMesure,
-                    'periodeAn' => $pgProgLotPeriodeAn,
-                    'demande' => $pgCmdPrelev->getDemande(),
-                    'cmdPrelev' => $pgCmdPrelev,
-                    'groupes' => $tabGroupes,
-                    'maj' => $maj));
-        }else{
-        return $this->render('AeagSqeBundle:SaisieDonnees:lotPeriodeLacSaisirAna.html.twig', array(
-                    'user' => $pgProgWebUser,
-                    'lotan' => $pgProgLotAn,
-                    'station' => $pgRefStationMesure,
-                    'periodeAn' => $pgProgLotPeriodeAn,
-                    'demande' => $pgCmdPrelev->getDemande(),
-                    'cmdPrelev' => $pgCmdPrelev,
-                    'groupes' => $tabGroupes,
-                    'maj' => $maj));
+                        'user' => $pgProgWebUser,
+                        'lotan' => $pgProgLotAn,
+                        'station' => $pgRefStationMesure,
+                        'periodeAn' => $pgProgLotPeriodeAn,
+                 'dateFin' => $dateFin,
+                        'demande' => $pgCmdPrelev->getDemande(),
+                        'cmdPrelev' => $pgCmdPrelev,
+                        'groupes' => $tabGroupes,
+                        'maj' => $maj));
+        } else {
+            return $this->render('AeagSqeBundle:SaisieDonnees:lotPeriodeLacSaisirAna.html.twig', array(
+                        'user' => $pgProgWebUser,
+                        'lotan' => $pgProgLotAn,
+                        'station' => $pgRefStationMesure,
+                        'periodeAn' => $pgProgLotPeriodeAn,
+                 'dateFin' => $dateFin,
+                        'demande' => $pgCmdPrelev->getDemande(),
+                        'cmdPrelev' => $pgCmdPrelev,
+                        'groupes' => $tabGroupes,
+                        'maj' => $maj));
         }
     }
 
@@ -3343,13 +3402,14 @@ class SaisieDonneesController extends Controller {
 
         foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
             $pgProgLotGrparAn = $pgProgLotPeriodeProg->getGrparAn();
+            $prestataire = $pgProgLotGrparAn->getPrestaDft();
             if ($pgProgLotGrparAn->getvalide() == 'O' and $pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'ANA') {
                 $pgProgGrpParamRef = $pgProgLotGrparAn->getGrparRef();
 // if ($pgProgGrpParamRef->getCodeMilieu()->getCodeMilieu() == $pgProgTypeMilieu->getCodeMilieu()) {
                 $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
 
                 foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
-                    if ($user->hasRole('ROLE_ADMINSQE') or ( $userPrestataire == $pgProgLotParamAn->getPrestataire())) {
+                    if ($user->hasRole('ROLE_ADMINSQE') or ( $prestataire == $pgProgLotParamAn->getPrestataire())) {
                         $nbParametresAna++;
                         if (isset($_POST['valeur' . $pgProgLotParamAn->getId()])) {
                             $valeur = $_POST['valeur' . $pgProgLotParamAn->getId()];
@@ -3434,7 +3494,7 @@ class SaisieDonneesController extends Controller {
             } else {
                 $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
                 foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
-                    if ($user->hasRole('ROLE_ADMINSQE') or ( $userPrestataire == $pgProgLotParamAn->getPrestataire())) {
+                    if ($user->hasRole('ROLE_ADMINSQE') or ( $prestataire == $pgProgLotParamAn->getPrestataire())) {
                         $nbParametresEnvSit++;
                     }
                 }
@@ -3463,18 +3523,19 @@ class SaisieDonneesController extends Controller {
             $nbParametresAna = 0;
             foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
                 $pgProgLotGrparAn = $pgProgLotPeriodeProg->getGrparAn();
+                $prestataire = $pgProgLotGrparAn->getPrestaDft();
                 $pgProgGrpParamRef = $pgProgLotGrparAn->getGrparRef();
                 $pgProgPeriodes = $pgProgLotPeriodeProg->getPeriodAn()->getPeriode();
                 if ($pgProgLotGrparAn->getvalide() == 'O') {
                     $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
                     foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
-                        if ($user->hasRole('ROLE_ADMINSQE') or ( $userPrestataire == $pgProgLotParamAn->getPrestataire())) {
+                        if ($user->hasRole('ROLE_ADMINSQE') or ( $prestataire == $pgProgLotParamAn->getPrestataire())) {
 
                             if ($pgProgGrpParamRef->getTypeGrp() == 'ENV') {
-                                if ($userPrestataire == $pgProgLotParamAn->getPrestataire()) {
+                                if ($prestataire == $pgProgLotParamAn->getPrestataire()) {
                                     //echo ('groupe: ' . $pgProgLotGrparAn->getId() . ' type : ' . $pgProgGrpParamRef->getTypeGrp() . '  pgCmdPrelev : ' . $pgCmdPrelev->getId() . ' parametre : ' . $pgProgLotParamAn->getId() . ' </br>');
                                     $nbParametresEnvSit++;
-                                    $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($userPrestataire, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
+                                    $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($prestataire, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
                                     foreach ($pgCmdPrelevs as $pgCmdPrelev) {
                                         $pgCmdMesureEnv = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParamProg($pgCmdPrelev, $pgProgLotParamAn);
                                         if ($pgCmdMesureEnv) {
@@ -3485,10 +3546,10 @@ class SaisieDonneesController extends Controller {
                             }
 
                             if ($pgProgGrpParamRef->getTypeGrp() == 'SIT') {
-                                if ($userPrestataire == $pgProgLotParamAn->getPrestataire()) {
+                                if ($prestataire == $pgProgLotParamAn->getPrestataire()) {
                                     //echo ('groupe: ' . $pgProgLotGrparAn->getId() . ' type : ' . $pgProgGrpParamRef->getTypeGrp() . '  pgCmdPrelev : ' . $pgCmdPrelev->getId() . ' parametre : ' . $pgProgLotParamAn->getId() . ' </br>');
                                     $nbParametresEnvSit++;
-                                    $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($userPrestataire, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
+                                    $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($prestataire, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
                                     foreach ($pgCmdPrelevs as $pgCmdPrelev) {
                                         $pgCmdAnalyses = $repoPgCmdAnalyse->getPgCmdAnalysesByPrelevParamProg($pgCmdPrelev, $pgProgLotParamAn);
                                         if (count($pgCmdAnalyses) > 0) {
@@ -3501,10 +3562,10 @@ class SaisieDonneesController extends Controller {
 
 
                             if ($pgProgGrpParamRef->getTypeGrp() == 'ANA') {
-                                if ($userPrestataire == $pgProgLotParamAn->getPrestataire()) {
+                                if ($prestataire == $pgProgLotParamAn->getPrestataire()) {
                                     //echo ('groupe: ' . $pgProgLotGrparAn->getId() . ' type : ' . $pgProgGrpParamRef->getTypeGrp() . '  pgCmdPrelev : ' . $pgCmdPrelev->getId() . ' parametre : ' . $pgProgLotParamAn->getId() . ' </br>');
                                     $nbParametresAna++;
-                                    $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($userPrestataire, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
+                                    $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($prestataire, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
                                     $trouve = false;
                                     foreach ($pgCmdPrelevs as $pgCmdPrelev) {
                                         //echo ('groupe: ' . $pgProgLotGrparAn . ' type : ' . $pgProgGrpParamRef->getTypeGrp() . '  pgCmdPrelev : ' . $pgCmdPrelev->getId()  . ' parametre : ' . $pgProgLotParamAn->getId() . ' </br>');
@@ -3623,6 +3684,7 @@ class SaisieDonneesController extends Controller {
 
         $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($periodeAnId);
         $pgProgLotAn = $pgProgLotPeriodeAn->getLotAn();
+        $prestataire = $pgProgLotGrparAn->getPrestaDft();
         $pgProgLot = $pgProgLotAn->getLot();
         $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
 
@@ -3655,8 +3717,9 @@ class SaisieDonneesController extends Controller {
 
         foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
             $pgProgLotGrparAn = $pgProgLotPeriodeProg->getGrparAn();
+            $prestataire = $pgProgLotGrparAn->getPrestaDft();
             $pgProgPeriodes = $pgProgLotPeriodeProg->getPeriodAn()->getPeriode();
-            $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($userPrestataire, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
+            $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($prestataire, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
 
             $tabDonneesBrutes = array();
             $i = 0;
@@ -3780,8 +3843,9 @@ class SaisieDonneesController extends Controller {
 
         foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
             $pgProgLotGrparAn = $pgProgLotPeriodeProg->getGrparAn();
+            $prestataire = $pgProgLotGrparAn->getPrestaDft();
             $pgProgPeriodes = $pgProgLotPeriodeProg->getPeriodAn()->getPeriode();
-            $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($userPrestataire, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
+            $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($prestataire, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
 
             foreach ($pgCmdPrelevs as $pgCmdPrelev) {
                 $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R10');

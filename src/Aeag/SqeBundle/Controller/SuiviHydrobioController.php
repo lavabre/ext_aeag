@@ -75,6 +75,7 @@ class SuiviHydrobioController extends Controller {
 
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgProgLotAn = $repoPgProgLotAn->getPgProgLotAnById($lotanId);
+        $pgProgLot = $pgProgLotAn->getLot();
         $pgProgLotPeriodeAns = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnByLotan($pgProgLotAn);
         $tabPeriodeAns = array();
         $i = 0;
@@ -86,6 +87,14 @@ class SuiviHydrobioController extends Controller {
                 $nbStations = 0;
                 $j = 0;
                 foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
+                    if ($pgProgLot->getDelaiPrel()) {
+                        $dateFin = clone($pgProgLotPeriodeProg->getPeriodan()->getPeriode()->getDateDeb());
+                        $delai = $pgProgLot->getDelaiPrel();
+                        $dateFin->add(new \DateInterval('P' . $delai . 'D'));
+                    } else {
+                        $dateFin = $pgProglotPeriodeProg->getPeriodan()->getPeriode()->getDateFin();
+                    }
+                    $tabPeriodeAns[$i]['dateFin'] = $dateFin;
                     $trouve = false;
                     for ($k = 0; $k < count($tabStations); $k++) {
                         if ($tabStations[$k]->getOuvFoncid() == $pgProgLotPeriodeProg->getStationAn()->getStation()->getOuvFoncid()) {
@@ -149,6 +158,13 @@ class SuiviHydrobioController extends Controller {
         $j = 0;
         $k = 0;
         foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
+            if ($pgProgLot->getDelaiPrel()) {
+                $dateFin = clone($pgProgLotPeriodeProg->getPeriodan()->getPeriode()->getDateDeb());
+                $delai = $pgProgLot->getDelaiPrel();
+                $dateFin->add(new \DateInterval('P' . $delai . 'D'));
+            } else {
+                $dateFin = $pgProglotPeriodeProg->getPeriodan()->getPeriode()->getDateFin();
+            }
             $trouve = false;
             if (count($tabStations) > 0) {
                 for ($k = 0; $k < count($tabStations); $k++) {
@@ -212,8 +228,8 @@ class SuiviHydrobioController extends Controller {
                         } else {
                             $tabCmdPrelevs[$nbCmdPrelevs]['suiviPrels'] = null;
                         }
-                         $tabAutrePrelevs = $repoPgCmdPrelev->getAutrePrelevs($pgCmdPrelev);
-                          if (count($tabAutrePrelevs) > 0) {
+                        $tabAutrePrelevs = $repoPgCmdPrelev->getAutrePrelevs($pgCmdPrelev);
+                        if (count($tabAutrePrelevs) > 0) {
                             $tabCmdPrelevs[$nbCmdPrelevs]['autrePrelevs'] = $tabAutrePrelevs;
                         } else {
                             $tabCmdPrelevs[$nbCmdPrelevs]['autrePrelevs'] = null;
@@ -243,6 +259,7 @@ class SuiviHydrobioController extends Controller {
                     'user' => $pgProgWebUser,
                     'lotan' => $pgProgLotAn,
                     'periodeAn' => $pgProgLotPeriodeAn,
+                    'dateFin' => $dateFin,
                     'stations' => $tabStations));
     }
 
@@ -278,6 +295,14 @@ class SuiviHydrobioController extends Controller {
         $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
         $pgProgPeriode = $pgProgLotPeriodeAn->getPeriode();
         $pgProgLotStationAn = $repoPgProgLotStationAn->getPgProgLotStationAnByLotAnStation($pgProgLotAn, $pgRefStationMesure);
+
+        if ($pgProgLot->getDelaiPrel()) {
+            $dateFin = clone($pgProgLotPeriodeAn->getPeriode()->getDateDeb());
+            $delai = $pgProgLot->getDelaiPrel();
+            $dateFin->add(new \DateInterval('P' . $delai . 'D'));
+        } else {
+            $dateFin = $pgProgLotPeriodeAn->getPeriode()->getDateFin();
+        }
 
         $tabDemande = array();
 
@@ -337,6 +362,7 @@ class SuiviHydrobioController extends Controller {
                     'lotan' => $pgProgLotAn,
                     'station' => $pgRefStationMesure,
                     'periodeAn' => $pgProgLotPeriodeAn,
+                    'dateFin' => $dateFin,
                     'demande' => $tabDemande));
     }
 
@@ -355,6 +381,18 @@ class SuiviHydrobioController extends Controller {
         $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
         $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
+        $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
+
+        $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($periodeAnId);
+        $pgProgLotAn = $pgProgLotPeriodeAn->getLotAn();
+        $pgProgLot = $pgProgLotAn->getLot();
+        if ($pgProgLot->getDelaiPrel()) {
+            $dateFin = clone($pgProgLotPeriodeAn->getPeriode()->getDateDeb());
+            $delai = $pgProgLot->getDelaiPrel();
+            $dateFin->add(new \DateInterval('P' . $delai . 'D'));
+        } else {
+            $dateFin = $pgProgLotPeriodeAn->getPeriode()->getDateFin();
+        }
 
         $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevById($prelevId);
         if ($user->hasRole('ROLE_ADMINSQE')) {
@@ -379,7 +417,7 @@ class SuiviHydrobioController extends Controller {
             if (!$pgCmdSuiviPrel->getValidation()) {
                 $pgCmdSuiviPrel->setValidation('E');
             }
-            if (!$pgCmdSuiviPrel->getDatePrel()){
+            if (!$pgCmdSuiviPrel->getDatePrel()) {
                 $erreur = true;
                 $message = 'veuillez renseigner la date svp';
             }
@@ -395,12 +433,12 @@ class SuiviHydrobioController extends Controller {
                 $pgCmdPrelev->setDatePrelev($pgCmdPrelev->getDemande()->getDateDemande());
                 $pgCmdPrelev->setRealise(null);
             }
-            if (!$erreur){
-            $emSqe->persist($pgCmdPrelev);
-            $emSqe->flush();
-            $session->getFlashBag()->add('notice-success', 'le suivi du ' . $datePrel->format('d/m/Y') . ' a été créé !');
-            }else{
-               $session->getFlashBag()->add('notice-error', $message); 
+            if (!$erreur) {
+                $emSqe->persist($pgCmdPrelev);
+                $emSqe->flush();
+                $session->getFlashBag()->add('notice-success', 'le suivi du ' . $datePrel->format('d/m/Y') . ' a été créé !');
+            } else {
+                $session->getFlashBag()->add('notice-error', $message);
             }
 
             return $this->redirect($this->generateUrl('AeagSqeBundle_suiviHydrobio_lot_periode_stations', array('stationId' => $pgCmdPrelev->getStation()->getOuvFoncId(),
@@ -410,6 +448,8 @@ class SuiviHydrobioController extends Controller {
         return $this->render('AeagSqeBundle:SuiviHydrobio:lotPeriodeStationDemandeSuiviNew.html.twig', array(
                     'prelev' => $pgCmdPrelev,
                     'periodeAnId' => $periodeAnId,
+                    'periodeAn' => $pgProgLotPeriodeAn,
+                    'dateFin' => $dateFin,
                     'form' => $form->createView(),
         ));
 
@@ -434,6 +474,18 @@ class SuiviHydrobioController extends Controller {
         $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
         $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
+        $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
+
+        $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($periodeAnId);
+        $pgProgLotAn = $pgProgLotPeriodeAn->getLotAn();
+        $pgProgLot = $pgProgLotAn->getLot();
+        if ($pgProgLot->getDelaiPrel()) {
+            $dateFin = clone($pgProgLotPeriodeAn->getPeriode()->getDateDeb());
+            $delai = $pgProgLot->getDelaiPrel();
+            $dateFin->add(new \DateInterval('P' . $delai . 'D'));
+        } else {
+            $dateFin = $pgProgLotPeriodeAn->getPeriode()->getDateFin();
+        }
 
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgCmdSuiviPrel = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelById($suiviPrelId);
@@ -471,6 +523,8 @@ class SuiviHydrobioController extends Controller {
         return $this->render('AeagSqeBundle:SuiviHydrobio:lotPeriodeStationDemandeSuiviMaj.html.twig', array(
                     'prelev' => $pgCmdPrelev,
                     'periodeAnId' => $periodeAnId,
+                    'periodeAn' => $pgProgLotPeriodeAn,
+                    'dateFin' => $dateFin,
                     'suiviPrel' => $pgCmdSuiviPrel,
                     'form' => $form->createView(),
         ));
