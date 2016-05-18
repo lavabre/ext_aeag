@@ -78,7 +78,7 @@
                                             {#<a id="idTelechargerSuivi{{ cmdPrelev.cmdPrelev.id }}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_saisieDonnees_lot_periode_station_telecharger',{'prelevId': cmdPrelev.cmdPrelev.id })}}" title="Télécharger les resultats">
                                                         <i class="fa fa-upload"></i> 
                                            </a>#}
-                                           <a id="idTelechargerSuivi{{ cmdPrelev.cmdPrelev.id }}" class="btn btn-success btn-telecharger" href="/sqe_csv/SAISIE_{{ cmdPrelev.cmdPrelev.id  }}.csv" title="Télécharger les resultats">
+                                           <a id="idTelechargerSuivi{{ cmdPrelev.cmdPrelev.id }}" class="btn btn-success btn-telecharger" href="{{ path('AeagSqeBundle_saisieDonnees_lot_periode_station_telecharger',{ 'prelevId': cmdPrelev.cmdPrelev.id })}}" title="Télécharger les resultats">
                                                         <i class="fa fa-upload"></i> 
                                            </a>
                                       </li>
@@ -238,7 +238,7 @@
     
         var table = $('#idTable_demandes').DataTable(
             {"stateSave": true,
-             "order": [[ 1, "desc" ]],
+             "order": [[ 1, "asc" ]],
             "language": {
                                  "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
                              },
