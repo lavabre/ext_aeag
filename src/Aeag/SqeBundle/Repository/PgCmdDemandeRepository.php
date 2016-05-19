@@ -102,19 +102,29 @@ class PgCmdDemandeRepository extends EntityRepository {
         return $qb->getOneOrNullResult();
     }
 
+    public function getPgCmdDemandesByLotanPeriode($pgProgLotAn, $pgProgPeriodes) {
+        $query = "select p";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdDemande p";
+        $query = $query . " where p.lotan = " . $pgProgLotAn->getId();
+        $query = $query . " and p.periode= " . $pgProgPeriodes->getid();
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+        return $qb->getResult();
+    }
+
     public function getPgCmdDemandeByLotanPrestatairePeriode($pgProgLotAn, $pgRefCorresPresta, $pgProgPeriodes) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdDemande p";
         $query = $query . " where p.lotan = " . $pgProgLotAn->getId();
-        if ($pgRefCorresPresta){
-        $query = $query . " and p.prestataire = " . $pgRefCorresPresta->getAdrCorid();
+        if ($pgRefCorresPresta) {
+            $query = $query . " and p.prestataire = " . $pgRefCorresPresta->getAdrCorid();
         }
         $query = $query . " and p.periode= " . $pgProgPeriodes->getid();
         $qb = $this->_em->createQuery($query);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-    
+
     public function isPgCmdDemandesMarcheAeag($demandeId) {
         $query = "select dmd";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdDemande dmd, Aeag\SqeBundle\Entity\PgProgLotAn lotan, Aeag\SqeBundle\Entity\PgProgLot lot, Aeag\SqeBundle\Entity\PgProgMarche m";
@@ -128,7 +138,7 @@ class PgCmdDemandeRepository extends EntityRepository {
         //print_r($query);
         return $qb->getResult();
     }
-    
+
     public function getPgCmdDemandeByLotan($pgProgLotAn) {
         $query = "select dmd";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdDemande dmd, Aeag\SqeBundle\Entity\PgProgLotAn lotan, Aeag\SqeBundle\Entity\PgProgLotPeriodeAn pean";
@@ -142,6 +152,5 @@ class PgCmdDemandeRepository extends EntityRepository {
         //print_r($query);
         return $qb->getResult();
     }
-
 
 }

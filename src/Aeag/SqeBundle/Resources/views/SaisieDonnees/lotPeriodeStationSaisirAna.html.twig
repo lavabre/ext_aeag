@@ -253,7 +253,9 @@
                                                             {% if paramAn.pgCmdAnalyse %}
                                                                 <span class="text-left">{{ paramAn.pgCmdAnalyse.codeUnite.nomUnite }}</span>
                                                             {% else %}
+                                                               {% if paramAn.unite %}
                                                                 <span class="text-left"> {{ paramAn.unite.nomUnite }}</span>
+                                                                {% endif %}
                                                             {% endif %}
                                                         </td>
                                                          {% set nbTd = nbTd + 1 %}
@@ -305,7 +307,7 @@
                         <i class="fa fa-check"> Enregister</i>
                     </button>
                         <a class="btn btn-success" href="{{path('AeagSqeBundle_saisieDonnees_lot_periode_station_valider',{"prelevId":  cmdPrelev.id, 'periodeAnId': periodeAn.id })}}">
-                            <i class="fa fa-undo"> Valider</i>
+                            <i class="fa fa-lock"> Valider</i>
                         </a>
                     {% else %}
                         <div class="col-md-offset-5 col-md-8">

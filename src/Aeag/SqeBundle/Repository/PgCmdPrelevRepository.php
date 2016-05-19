@@ -66,6 +66,17 @@ class PgCmdPrelevRepository extends EntityRepository {
         return $qb->getResult();
     }
 
+      public function getPgCmdPrelevByDemandeStationPeriode($pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes) {
+        $query = "select p";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelev p";
+        $query = $query . " where p.demande = " . $pgCmdDemande->getId();
+        $query = $query . " and p.station = " . $pgRefStationMesure->getOuvFoncId();
+        $query = $query . " and p.periode = " . $pgProgPeriodes->getId();
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+        return $qb->getResult();
+    }
+    
     public function getPgCmdPrelevByPrestaPrelDemandeStationPeriode($pgRefCorresPresta, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelev p";

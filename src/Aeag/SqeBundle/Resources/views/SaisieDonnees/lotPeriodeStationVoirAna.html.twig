@@ -252,7 +252,9 @@
                                                             {% if paramAn.pgCmdAnalyse %}
                                                                 <span class="text-left">{{ paramAn.pgCmdAnalyse.codeUnite.nomUnite }}</span>
                                                             {% else %}
+                                                                {% if paramAn.unite %}
                                                                 <span class="text-left"> {{ paramAn.unite.nomUnite }}</span>
+                                                                {% endif %}
                                                             {% endif %}
                                                         </td>
                                                          {% set nbTd = nbTd + 1 %}
