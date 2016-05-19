@@ -50,6 +50,14 @@
                 <label class=" col-md-offset-3 col-xs-2 control-label">Date prélèvement :</label>
                 <div class="col-xs-2  input-group">
                     <input type="text" id="datePrel" name="datePrel" required="required" class="form-control text-center" placeholder="Date prélèvement" value="{%if cmdPrelev.datePrelev %}{{ cmdPrelev.datePrelev | date("d/m/Y H:i") }}{% endif %}">
+                  </div>
+                 <div class="col-xs-2  input-group">
+                     <a id="idForcerDatePrel" class="btn btn-danger" href="#">
+                            <i class="fa fa-calendar"> Hors période</i>
+                     </a>
+                      <a id="idInitDatePrel" class="btn btn-success" href="#">
+                            <i class="fa fa-calendar"> Dans période</i>
+                     </a>
                 </div>
             </div>
 
@@ -60,7 +68,7 @@
                 <div id="idGenerer{{ groupe.grparAn.id}}"
                      <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            {% if user.prestataire and (user.prestataire.adrCorId == groupe.grparAn.prestaDft.adrCorId)  %}
+                            {% if is_granted('ROLE_ADMINSQE') or (user.prestataire.adrCorId == groupe.grparAn.prestaDft.adrCorId)  %}
                                 <div class="panel-heading" role="tab" id="heading{{groupe.grparAn.id}}">
                                     <h4 class="panel-title h4-default">
                                         <div class="row">
@@ -383,11 +391,27 @@
      language:  'fr',
     format: 'dd/mm/yyyy hh:ii',
     startDate: "{{ periodeAn.periode.dateDeb | date("d/m/Y hh:ii") }}",
-    endDate: "{{  dateFin | date("d/m/Y hh:ii") }}"
+    endDate: "{{  dateFin | date("d/m/Y hh:ii") }}",
+    clearBtn: true
      }
     );
+    
+     $('#idInitDatePrel').hide();
+     $('#idForcerDatePrel').show();
 
-
+     $('#idForcerDatePrel').on('click',function(){
+            $('#datePrel').datetimepicker('setStartDate', null);
+            $('#datePrel').datetimepicker('setEndDate', null);
+            $('#idForcerDatePrel').hide()
+            $('#idInitDatePrel').show()
+     });
+     
+     $('#idInitDatePrel').on('click',function(){
+            $('#datePrel').datetimepicker('setStartDate', '{{ periodeAn.periode.dateDeb | date("d/m/Y hh:ii") }}');
+            $('#datePrel').datetimepicker('setEndDate', '{{  dateFin | date("d/m/Y hh:ii") }}');
+            $('#idInitDatePrel').hide()
+            $('#idForcerDatePrel').show()
+     });
 
     {% for groupe   in  groupes %}
 

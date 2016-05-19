@@ -133,7 +133,7 @@
                                                          </ul> 
                                                 {% endif %}
                                               {% else %}
-                                                   {% if  cmdPrelev.nbParametresTerrain > 0 %}
+                                                   {% if  cmdPrelev.nbParametresTerrain > 0 or is_granted('ROLE_ADMINSQE') %}
                                                         <ul class="list-inline">
                                                                   <li>
                                                                     <a class="btn btn-success" id="idConsulterDonneesTerrain{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Consulter les données terrains">
@@ -156,7 +156,7 @@
                                                                      <i class="fa fa-eye"> Consulter </i>
                                                                    </a>
                                                                 </li>
-                                                                <li><span  class="label label-default">{{ cmdPrelev.autreNbParametresTerrain }}</li>
+                                                                <li><span  class="label label-default">{{ cmdPrelev.autreNbSaisisParametresTerrain  }}/{{ cmdPrelev.autreNbParametresTerrain }}</li>
                                                          </ul> 
                                                 {% endif %}
                                             {% endif %}
@@ -186,7 +186,7 @@
                                                                      <i class="fa fa-eye"> Consulter </i>
                                                                    </a>
                                                                 </li>
-                                                                <li><span  class="label label-default">{{ cmdPrelev.autreNbParametresAnalyse }}</li>
+                                                                <li><span  class="label label-default">{{ cmdPrelev.autreNbSaisisParametresAnalyse }}/{{ cmdPrelev.autreNbParametresAnalyse }}</li>
                                                          </ul> 
                                                 {% endif %}
                                             {% else %}
@@ -213,7 +213,7 @@
                                                                      <i class="fa fa-eye"> Consulter </i>
                                                                    </a>
                                                                 </li>
-                                                                <li><span  class="label label-default">{{ cmdPrelev.autreNbParametresAnalyse }}</li>
+                                                                <li><span  class="label label-default">{{ cmdPrelev.autreNbSaisisParametresAnalyse }}/{{ cmdPrelev.autreNbParametresAnalyse }}</li>
                                                          </ul> 
                                                  {% endif %}
                                            {% endif %}

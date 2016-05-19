@@ -240,7 +240,41 @@
                                                          {% set nbTd = nbTd + 1 %}
                                                         <td id='td_{{ nbTd }}' >{{ paramAn.paramAn.codeParametre.nomParametre }}</td>
                                                          {% set nbTd = nbTd + 1 %}
-                                                        <td id='td_{{ nbTd }}' align="left"></td>
+                                                        <td id='td_{{ nbTd }}' align="left">
+                                                            {% if paramAn.pgCmdAnalyse %}
+                                                                  {% if paramAn.paramAn.codeParametre.typeParametre == 'MICROBIOLOGIQUE' %}
+                                                                      {% if paramAn.pgCmdAnalyse.codeRemarque == "0" %}
+                                                                           Analyse non faite
+                                                                     {% elseif paramAn.pgCmdAnalyse.codeRemarque == "1" %}
+                                                                            Analyse valide (> LQ) 
+                                                                     {% elseif paramAn.pgCmdAnalyse.codeRemarque == "3" %}
+                                                                            Résultat > LS
+                                                                     {% elseif paramAn.pgCmdAnalyse.codeRemarque == "4" %}
+                                                                            Présence ou absence
+                                                                     {% elseif paramAn.pgCmdAnalyse.codeRemarque == "5" %}
+                                                                           Incomptable 
+                                                                     {% elseif paramAn.pgCmdAnalyse.codeRemarque == "6" %}
+                                                                            Taxons non individualisables
+                                                                      {% elseif paramAn.pgCmdAnalyse.codeRemarque == "7" %}
+                                                                            Traces
+                                                                     {% elseif paramAn.pgCmdAnalyse.codeRemarque == "8" %}
+                                                                            Dénombrement > valeur
+                                                                     {% elseif paramAn.pgCmdAnalyse.codeRemarque == "9" %}
+                                                                             Dénombrement < valeur
+                                                                     {% elseif paramAn.pgCmdAnalyse.codeRemarque == "10" %}
+                                                                             Résultat < LQ
+                                                                     {% endif %}
+                                                                {% else %}
+                                                                     {% if paramAn.pgCmdAnalyse.codeRemarque == "0" %}
+                                                                            Analyse non faite
+                                                                     {% elseif paramAn.pgCmdAnalyse.codeRemarque == "1" %}
+                                                                            Analyse valide (> LQ)
+                                                                     {% elseif paramAn.pgCmdAnalyse.codeRemarque == "10" %}
+                                                                           Résultat < LQ 
+                                                                     {% endif %}
+                                                               {% endif %}
+                                                          {% endif %}
+                                                        </td>
                                                          {% set nbTd = nbTd + 1 %}
                                                         <td id='td_{{ nbTd }}' align="right">
                                                             {% if paramAn.pgCmdAnalyse %}
