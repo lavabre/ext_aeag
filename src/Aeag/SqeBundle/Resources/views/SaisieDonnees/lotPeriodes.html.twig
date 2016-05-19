@@ -35,29 +35,55 @@
             <thead>
                 <tr>
                     <th width="1%">Actions</th>
-                    <th width="90%">Périodes</th>
-                    <th>Nombre de stations</th>
+                    <th width="80%">Périodes</th>
+                    <th width="19%">Nombre de stations</th>
                   </tr>
             </thead>
             <tbody>
                  {%if periodeAns | length%} 
                     {% for periodeAn in periodeAns %}
-                          <tr>
+                        {% if  periodeAn.nbStationCorrectes == periodeAn.nbStations %}
+                           <tr class="success">
+                        {% else %}
+                            <tr> 
+                        {% endif %}
                             <td align="center" nowrap> 
                                 {%  if periodeAn.nbStations > 0 %}
                                     {% if typeMilieu.codeMilieu != 'LPC' %}
-                                     <a id="id_{{ periodeAn.pgProgLotPeriodeAn.id }}" class="btn btn-primary" href="{{path('AeagSqeBundle_saisieDonnees_lot_periode_stations',{ 'periodeAnId': periodeAn.pgProgLotPeriodeAn.id })}}" title="Stations">
-                                        <i class="fa fa-eye"></i> 
-                                    </a>
+                                        <ul class="list-inline">
+                                            <li>
+                                                <a id="id_{{ periodeAn.pgProgLotPeriodeAn.id }}" class="btn btn-primary" href="{{path('AeagSqeBundle_saisieDonnees_lot_periode_stations',{ 'periodeAnId': periodeAn.pgProgLotPeriodeAn.id })}}" title="Stations">
+                                                   <i class="fa fa-eye"></i> 
+                                               </a>
+                                            </li>
+                                             {% if  periodeAn.nbStationCorrectes == periodeAn.nbStations %}
+                                                <li>
+                                                    <a id="idTelechargerSuivi{{ periodeAn.pgProgLotPeriodeAn.id }}" class="btn btn-success btn-telecharger" href="{{ path('AeagSqeBundle_saisieDonnees_lot_periode_telecharger',{ 'periodeAnId': periodeAn.pgProgLotPeriodeAn.id })}}" title="Télécharger les resultats">
+                                                                  <i class="fa fa-upload"></i> 
+                                                     </a>
+                                                </li>
+                                            {% endif %}
+                                        </ul>
                                     {% else %}
-                                         <a id="id_{{ periodeAn.pgProgLotPeriodeAn.id }}" class="btn btn-primary" href="{{path('AeagSqeBundle_saisieDonnees_lot_periode_lacs',{ 'periodeAnId': periodeAn.pgProgLotPeriodeAn.id })}}" title="Stations">
-                                        <i class="fa fa-eye"></i> 
-                                    </a>
+                                         <ul class="list-inline">
+                                             <li>
+                                                <a id="id_{{ periodeAn.pgProgLotPeriodeAn.id }}" class="btn btn-primary" href="{{path('AeagSqeBundle_saisieDonnees_lot_periode_lacs',{ 'periodeAnId': periodeAn.pgProgLotPeriodeAn.id })}}" title="Stations">
+                                                   <i class="fa fa-eye"></i> 
+                                               </a>
+                                             </li>
+                                              {% if  periodeAn.nbStationCorrectes == periodeAn.nbStations %}
+                                                <li>
+                                                    <a id="idTelechargerSuivi{{ periodeAn.pgProgLotPeriodeAn.id }}" class="btn btn-success btn-telecharger" href="{{ path('AeagSqeBundle_saisieDonnees_lot_periode_telecharger',{ 'periodeAnId': periodeAn.pgProgLotPeriodeAn.id })}}" title="Télécharger les resultats">
+                                                                  <i class="fa fa-upload"></i> 
+                                                     </a>
+                                                </li>
+                                            {% endif %}
+                                         </ul>
                                      {% endif %}
                               {% endif %}
                             </td>
-                               <td>{{ periodeAn.pgProgLotPeriodeAn.periode.labelPeriode }} (du {{ periodeAn.pgProgLotPeriodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;au&nbsp;&nbsp; {{ periodeAn.pgProgLotPeriodeAn.periode.dateFin | date("d/m/Y") }})</td>
-                               <td class="text-center">{{ periodeAn.nbStations }}{#</br>
+                               <td>{{ periodeAn.pgProgLotPeriodeAn.periode.labelPeriode }} (du {{ periodeAn.pgProgLotPeriodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;au&nbsp;&nbsp; {{ periodeAn.dateFin | date("d/m/Y") }})</td>
+                               <td class="text-center">{{ periodeAn.nbStationCorrectes }}/{{ periodeAn.nbStations }}{#</br>
                                       {% for station in periodeAn.stations %}
                                           {{ station.code }} {{ station.libelle }}</br>
                                       {% endfor %}#}
@@ -67,7 +93,13 @@
                 {% endif %}
             </tbody>
         </table>
-
+        <div class="row">
+           <div class="col-md-12 pull-right text-info">
+             <ul class="list-inline">
+                 <li><span class="label label-success">Correct</span></li>
+              </ul>  
+           </div>
+       </div>      
     </div>
 {%endblock content %}    
 

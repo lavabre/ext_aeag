@@ -45,6 +45,9 @@
                     <th>Libellé</th>
                     <th>Support</th>
                      <th> Zone verticale </th>
+                    {% if is_granted('ROLE_ADMINSQE') %}
+                        <th>Prestataire</th>
+                    {% endif %}
                     <th>Données terrains</th>
                     <th>Analyses</th>
                   </tr>
@@ -90,22 +93,27 @@
                                                </ul>
                                             </td>
                                    {% endif %}
-                                    <td>
+                                    <td nowrap>
                                          <a  href="{{ station.lien }}" target="_blank" title="Localisation">{{ station.station.code }}</a>
                                     </td>
-                                   <td>
+                                   <td nowrap>
                                           {{ station.station.libelle }}
                                    </td>
-                                    <td>
+                                    <td nowrap>
                                        {% if cmdPrelev.cmdPrelev.codeSupport %}
                                           {{ cmdPrelev.cmdPrelev.codeSupport.nomSupport }}
                                        {% endif %}
                                    </td>
-                                  <td> 
+                                  <td nowrap> 
                                         {% if cmdPrelev.prelevPc %}
                                             {{ cmdPrelev.prelevPc.zoneVerticale.nomZone }}
                                         {% endif %}
                                     </td>
+                                     {% if is_granted('ROLE_ADMINSQE') %}
+                                     <td nowrap>
+                                          {{ cmdPrelev.cmdPrelev.prestaPrel.nomCorres }}
+                                     </td>
+                                      {% endif %}
                                     {% if nbPrelev == 1 %}
                                      <td   nowrap rowspan={{station.nbPrelev }}>
                                                {% if station.saisieTerrain == 'O' %}
@@ -125,14 +133,14 @@
                                                                                       <li><span  class="label label-default">{{ station.nbSaisisParametresTerrain  }}/{{ station.nbParametresTerrain}}</li>
                                                                               {% endif %}
                                                                      </ul> 
-                                                                {% elseif station.nbAutresParametresTerrain > 0 %}
+                                                                {% elseif station.autreNbParametresTerrain > 0 %}
                                                                          <ul class="list-inline">
                                                                               <li>
                                                                                  <a class="btn btn-success" id="idConsulterDonneesTerrain{{ station.station.ouvFoncId  }}" href="#" title="Consulter les données terrains">
                                                                                     <i class="fa fa-eye"> Consulter </i>
                                                                                   </a>
                                                                                </li>
-                                                                               <li><span  class="label label-default">{{ station.nbAutresParametresTerrain }}</li>
+                                                                               <li><span  class="label label-default">{{ station.autreNbParametresTerrain }}</li>
                                                                         </ul> 
                                                                {% endif %}
                                                       {% else %}
@@ -152,14 +160,14 @@
                                                                                       <li><span  class="label label-default">{{ station.nbSaisisParametresTerrain  }}/{{ station.nbParametresTerrain}}</li>
                                                                               {% endif %}
                                                                        </ul>  
-                                                                {% elseif station.nbAutresParametresTerrain > 0 %}
+                                                                {% elseif station.autreNbParametresTerrain > 0 %}
                                                                        <ul class="list-inline">
                                                                             <li>
                                                                                <a class="btn btn-success" id="idConsulterDonneesTerrain{{ station.station.ouvFoncId  }}" href="#" title="Consulter les données terrains">
                                                                                   <i class="fa fa-eye"> Consulter </i>
                                                                                 </a>
                                                                              </li>
-                                                                             <li><span  class="label label-default">{{station.nbAutresParametresTerrain }}</li>
+                                                                             <li><span  class="label label-default">{{station.autreNbParametresTerrain }}</li>
                                                                       </ul> 
                                                              {% endif %}
                                                 {% endif %}
@@ -184,14 +192,14 @@
                                                                  <li><span  class="label label-default">{{ cmdPrelev.nbSaisisParametresAnalyse }}/{{ cmdPrelev.nbParametresAnalyse }}</li>
                                                           {% endif %}
                                                      </ul> 
-                                                {% elseif cmdPrelev.nbAutresParametresAnalyse > 0 %}
+                                                {% elseif cmdPrelev.autreNbParametresAnalyse > 0 %}
                                                           <ul class="list-inline">
                                                                <li>
-                                                                  <a class="btn btn-success" id="idConsulterAnalyses{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Consulter les analyses">
+                                                                  <a class="btn btn-success" id="idConsulterAnalyses{{ cmdPrelev.autreCmdPrelev.id  }}" href="#" title="Consulter les analyses">
                                                                      <i class="fa fa-eye"> Consulter </i>
                                                                    </a>
                                                                 </li>
-                                                                <li><span  class="label label-default">{{ cmdPrelev.nbAutresParametresAnalyse }}</li>
+                                                                <li><span  class="label label-default">{{ cmdPrelev.autreNbParametresAnalyse }}</li>
                                                          </ul> 
                                                 {% endif %}
                                             {% else %}
@@ -211,14 +219,14 @@
                                                                      <li><span  class="label label-default">{{ cmdPrelev.nbSaisisParametresAnalyse }}/{{ cmdPrelev.nbParametresAnalyse }}</li>
                                                               {% endif %}
                                                          </ul> 
-                                                 {% elseif cmdPrelev.nbAutresParametresAnalyse > 0 %}
+                                                 {% elseif cmdPrelev.autreNbParametresAnalyse > 0 %}
                                                            <ul class="list-inline">
                                                                <li>
-                                                                  <a class="btn btn-success" id="idConsulterAnalyses{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Consulter les analyses">
+                                                                  <a class="btn btn-success" id="idConsulterAnalyses{{ cmdPrelev.autreCmdPrelev.id  }}" href="#" title="Consulter les analyses">
                                                                      <i class="fa fa-eye"> Consulter </i>
                                                                    </a>
                                                                 </li>
-                                                                <li><span  class="label label-default">{{ cmdPrelev.nbAutresParametresAnalyse }}</li>
+                                                                <li><span  class="label label-default">{{ cmdPrelev.autreNbParametresAnalyse }}</li>
                                                          </ul> 
                                                  {% endif %}
                                            {% endif %}
@@ -335,11 +343,11 @@
                                     window.location.replace(url);
                               });
                               
-                              $(document).on('click','#idConsulterAnalyses{{ cmdPrelev.cmdPrelev.id }}',function(e){
+                              $(document).on('click','#idConsulterAnalyses{{ cmdPrelev.autreCmdPrelev.id }}',function(e){
                                     e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
                                     $('#modalTraitementEncours').modal('toggle');
                                    var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_lac_saisir_ana",{"prelevId":  "par1", "periodeAnId": "par2", "stationId": "par3", "maj" : "C"}) }}', // Le nom du fichier indiqué dans le formulaire
-                                    url = url.replace("par1", {{ cmdPrelev.cmdPrelev.id }});
+                                    url = url.replace("par1", {{ cmdPrelev.autreCmdPrelev.id }});
                                     url = url.replace("par2", {{ periodeAn.id }});
                                     url = url.replace("par3", {{ station.station.ouvFoncId }});
                                     url = url.replace("amp;","");

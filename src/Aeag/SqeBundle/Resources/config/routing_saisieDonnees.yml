@@ -51,6 +51,12 @@ AeagSqeBundle_saisieDonnees_lot_periode_station_telecharger:
     defaults: { _controller: AeagSqeBundle:SaisieDonnees:lotPeriodeStationTelecharger, prelevId : null}
     requirements:
          methods:  GET|POST
+         
+AeagSqeBundle_saisieDonnees_lot_periode_telecharger:
+    path:  /periode/telecharger/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SaisieDonnees:lotPeriodeTelecharger, periodeAnId : null}
+    requirements:
+         methods:  GET|POST
         
         
     

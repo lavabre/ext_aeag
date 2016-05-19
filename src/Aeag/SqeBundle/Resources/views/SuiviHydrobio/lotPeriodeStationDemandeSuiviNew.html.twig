@@ -62,59 +62,63 @@
                     </form>      
 
                     <script type="text/javascript" language="javascript">
-                        
-                        jQuery(document).ready(function() {
 
-                        $('#datePrel').datetimepicker(
-                            {language:  'fr',
-                             format: 'dd/mm/yyyy hh:ii'
-                             }
-                           );
+                        jQuery(document).ready(function () {
 
-                        $(document).on('change', '#statutPrel', function (e) {
-                            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                            if ($('#statutPrel').val() != 'N') {
-                                $('#commentaire').removeAttr('required');
-                            } else {
-                                $('#commentaire').prop('required',true);
-                            }
-                            ;
-                        });
-                        
-                        $(document).on('change', '#validation', function (e) {
-                            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                            if ($('#validation').val() != 'R') {
-                                $('#commentaire').removeAttr('required');
-                            } else {
-                                $('#commentaire').prop('required', true);
-                            }
-                            ;
-                        });
-                        
-                         $(document).on('click','#btvalider',function(e){
-                             var erreur = false;
-                             if ( $('#datePrel').val() ==  '') 
-                            {
-                                alert("Veuillez saisir une date  svp");
-                                erreur = true;
+                            $('#datePrel').datetimepicker(
+                                    {
+                                        language: 'fr',
+                                        format: 'dd/mm/yyyy hh:ii',
+                                        startDate: "{{ periodeAn.periode.dateDeb | date("d/m/Y hh:ii") }}",
+                                        endDate: "{{  dateFin | date("d/m/Y hh:ii") }}",
+                                        minView: 1
+                                    }
+                            );
 
-                            }
-                            
-                            if ( ($('#statutPrel').val() == 'N' && $('#commentaire').val() == '')  || ($('#validation').val() == 'R' && $('#commentaire').val() == '') )
-                            {
-                                alert("Veuillez saisir un commentaire svp");
-                                erreur = true;
-
-                            }
-                            
-                            if (!erreur){
+                            $(document).on('change', '#statutPrel', function (e) {
                                 e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                                $('#modalTraitementEncours').modal('toggle');
-                                $('#idFormNewSuivi').submit();
-                                $('#modalTraitementEncours').modal('hide');
-                            }
-                          });
-                  
+                                if ($('#statutPrel').val() != 'N') {
+                                    $('#commentaire').removeAttr('required');
+                                } else {
+                                    $('#commentaire').prop('required', true);
+                                }
+                                ;
+                            });
+
+                            $(document).on('change', '#validation', function (e) {
+                                e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                                if ($('#validation').val() != 'R') {
+                                    $('#commentaire').removeAttr('required');
+                                } else {
+                                    $('#commentaire').prop('required', true);
+                                }
+                                ;
+                            });
+
+                            $(document).on('click', '#btvalider', function (e) {
+                                var erreur = false;
+                                if ($('#datePrel').val() == '')
+                                {
+                                    alert("Veuillez saisir une date  svp");
+                                    erreur = true;
+
+                                }
+
+                                if (($('#statutPrel').val() == 'N' && $('#commentaire').val() == '') || ($('#validation').val() == 'R' && $('#commentaire').val() == ''))
+                                {
+                                    alert("Veuillez saisir un commentaire svp");
+                                    erreur = true;
+
+                                }
+
+                                if (!erreur) {
+                                    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                                    $('#modalTraitementEncours').modal('toggle');
+                                    $('#idFormNewSuivi').submit();
+                                    $('#modalTraitementEncours').modal('hide');
+                                }
+                            });
+
                         });
 
                     </script>

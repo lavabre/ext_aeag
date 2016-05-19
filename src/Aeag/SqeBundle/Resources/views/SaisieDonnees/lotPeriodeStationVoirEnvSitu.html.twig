@@ -42,22 +42,12 @@
 
 {%block content %}
 
-    <form class="form" id="idForm" role="form" action="{{ path("AeagSqeBundle_saisieDonnees_lot_periode_station_env_situ_resultat",{"prelevId":  cmdPrelev.id, "periodeAnId":  periodeAn.id, "stationId": station.ouvFoncId}) }}" method="post">
-
-        <div class="form-body">  
+           <div class="form-body">  
 
             <div class="form-group form-inline">
                 <label class=" col-md-offset-3 col-xs-2 control-label">Date prélèvement :</label>
                 <div class="col-xs-2  input-group">
-                    <input type="text" id="datePrel" name="datePrel" required="required" class="form-control text-center" placeholder="Date prélèvement" value="{%if cmdPrelev.datePrelev %}{{ cmdPrelev.datePrelev | date("d/m/Y H:i") }}{% endif %}">
-                  </div>
-                 <div class="col-xs-2  input-group">
-                     <a id="idForcerDatePrel" class="btn btn-danger" href="#">
-                            <i class="fa fa-calendar"> Hors période</i>
-                     </a>
-                      <a id="idInitDatePrel" class="btn btn-success" href="#">
-                            <i class="fa fa-calendar"> Dans période</i>
-                     </a>
+                    <input type="text" id="datePrel" name="datePrel" required="required" readonly  disabled="disabled" class="form-control text-center" placeholder="Date prélèvement" value="{%if cmdPrelev.datePrelev %}{{ cmdPrelev.datePrelev | date("d/m/Y H:i") }}{% endif %}">
                 </div>
             </div>
 
@@ -68,7 +58,7 @@
                 <div id="idGenerer{{ groupe.grparAn.id}}"
                      <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            {% if is_granted('ROLE_ADMINSQE') or (user.prestataire.adrCorId == groupe.grparAn.prestaDft.adrCorId)  %}
+                            {% if user.prestataire and (user.prestataire.adrCorId == groupe.grparAn.prestaDft.adrCorId)  %}
                                 <div class="panel-heading" role="tab" id="heading{{groupe.grparAn.id}}">
                                     <h4 class="panel-title h4-default">
                                         <div class="row">
@@ -152,7 +142,7 @@
                                                                 <td id='td_{{ nbTd }}' align="right">
                                                                     <div class="form-group">
                                                                         <div class="input-group text-left">
-                                                                            <select class="form-control" id="idRemarque{{ paramAn.paramAn.id}}" name="remarque{{ paramAn.paramAn.id}}"   >    
+                                                                            <select class="form-control" id="idRemarque{{ paramAn.paramAn.id}}" name="remarque{{ paramAn.paramAn.id}}" readonly  disabled="disabled"  >    
                                                                                 <option value="0">0 : Donnée absente</option> 
                                                                                 <option value="1"  selected>1 : Donnée renseignée</option> 
                                                                             </select>
@@ -164,7 +154,7 @@
                                                                     <div class="form-group">
                                                                         <div class="input-group text-right">
                                                                             {% if paramAn.valeurs  %}
-                                                                                <select class="form-control" id="idValeur{{ paramAn.paramAn.id}}" name="valeur{{ paramAn.paramAn.id}}"   >    
+                                                                                <select class="form-control" id="idValeur{{ paramAn.paramAn.id}}" name="valeur{{ paramAn.paramAn.id}}"  readonly  disabled="disabled" >    
                                                                                     <option value=""></option> 
                                                                                     {% for valeur in paramAn.valeurs %}
                                                                                         {% if paramAn.pgCmdMesureEnv %}
@@ -180,9 +170,9 @@
                                                                                 </select>
                                                                             {% else %}
                                                                                 {% if paramAn.pgCmdMesureEnv %}
-                                                                                    <input id="idValeur{{ paramAn.paramAn.id}}"  class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdMesureEnv.resultat | replace({".0000000000" : "", "000000000" : "", "00000000" : "", "0000000" : "", "000000" : "", "00000000" : "", "0000000" : "", "000000" : ""}) }}">
+                                                                                    <input id="idValeur{{ paramAn.paramAn.id}}"  class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdMesureEnv.resultat | replace({".0000000000" : "", "000000000" : "", "00000000" : "", "0000000" : "", "000000" : "", "00000000" : "", "0000000" : "", "000000" : ""}) }}" readonly  disabled="disabled">
                                                                                 {% else %}
-                                                                                    <input id="idValeur{{ paramAn.paramAn.id}}" class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}" value="">
+                                                                                    <input id="idValeur{{ paramAn.paramAn.id}}" class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}" value="" readonly  disabled="disabled">
                                                                                 {% endif %}
                                                                             {% endif %}
                                                                         </div>
@@ -194,22 +184,22 @@
                                                                         <div  class="input-group text-left">
                                                                             {% if paramAn.unites  %}
                                                                                 {% if paramAn.unites | length > 1 %}
-                                                                                    <select class="form-control" id="idUniteCode{{ paramAn.paramAn.id}}" name="uniteCode{{ paramAn.paramAn.id}}"   >    
+                                                                                    <select class="form-control" id="idUniteCode{{ paramAn.paramAn.id}}" name="uniteCode{{ paramAn.paramAn.id}}" readonly  disabled="disabled" >    
                                                                                         {% for unite in paramAn.unites %}
                                                                                             <option value="{{unite.codeUnite.codeUnite}}">{{unite.codeUnite.codeUnite}} : {{ unite.codeUnite.nomUnite}}</option> 
                                                                                         {% endfor %}
                                                                                     </select>
                                                                                 {% else %}
                                                                                     <input id="idUniteCode{{ paramAn.paramAn.id}}" type="hidden" class="form-control" placeholder="unite" name ="uniteCode{{ paramAn.paramAn.id}}" value="{{paramAn.unites.0.codeUnite.codeUnite}}" readonly="readonly">
-                                                                                    <input id="idUnite{{ paramAn.paramAn.id}}" type="text" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{paramAn.unites.0.codeUnite.codeUnite}} : {{paramAn.unites.0.codeUnite.nomUnite}}" readonly="readonly">
+                                                                                    <input id="idUnite{{ paramAn.paramAn.id}}" type="text" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{paramAn.unites.0.codeUnite.codeUnite}} : {{paramAn.unites.0.codeUnite.nomUnite}}" readonly  disabled="disabled">
                                                                                 {% endif %}
                                                                             {% else %}
                                                                                 {% if paramAn.pgCmdMesureEnv %}
                                                                                     <input id="idUniteCode{{ paramAn.paramAn.id}}" type="hidden" class="form-control" placeholder="unite" name ="uniteCode{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdMesureEnv.codeUnite.codeUnite }}">
-                                                                                    <input id="idUnite{{ paramAn.paramAn.id}}" type="text" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdMesureEnv.codeUnite.codeUnite }} : {{ paramAn.pgCmdMesureEnv.codeUnite.nomUnite }}" readonly="readonly">
+                                                                                    <input id="idUnite{{ paramAn.paramAn.id}}" type="text" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdMesureEnv.codeUnite.codeUnite }} : {{ paramAn.pgCmdMesureEnv.codeUnite.nomUnite }}" readonly  disabled="disabled">
                                                                                 {% else %}
                                                                                     <input id="idUniteCode{{ paramAn.paramAn.id}}" type="hidden" class="form-control" placeholder="unite" name ="uniteCode{{ paramAn.paramAn.id}}" value="{{ paramAn.unite.codeUnite }}">
-                                                                                    <input id="idUnite{{ paramAn.paramAn.id}}" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{ paramAn.unite.codeUnite }} : {{ paramAn.unite.nomUnite }}" readonly="readonly">
+                                                                                    <input id="idUnite{{ paramAn.paramAn.id}}" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{ paramAn.unite.codeUnite }} : {{ paramAn.unite.nomUnite }}" readonly  disabled="disabled">
                                                                                 {% endif %}
                                                                             {% endif %}
                                                                         </div>
@@ -248,7 +238,7 @@
                                                                 <td id='td_{{ nbTd }}'align="right">
                                                                     <div class="form-group">
                                                                         <div class="input-group text-left">
-                                                                            <select class="form-control" id="idRemarque{{ paramAn.paramAn.id}}" name="remarque{{ paramAn.paramAn.id}}"   >    
+                                                                            <select class="form-control" id="idRemarque{{ paramAn.paramAn.id}}" name="remarque{{ paramAn.paramAn.id}}" readonly  disabled="disabled">    
                                                                                 <option value="1"  selected>1 : Donnée renseignée</option> 
                                                                                 <option value="0">0 : Donnée absente</option> 
                                                                             </select>
@@ -260,7 +250,7 @@
                                                                     <div class="form-group">
                                                                         <div class="input-group text-right">
                                                                             {% if paramAn.valeurs  %}
-                                                                                <select class="form-control" id="idValeur{{ paramAn.paramAn.id}}" name="valeur{{ paramAn.paramAn.id}}"   >   
+                                                                                <select class="form-control" id="idValeur{{ paramAn.paramAn.id}}" name="valeur{{ paramAn.paramAn.id}}" readonly  disabled="disabled" >   
                                                                                     <option value=""></option> 
                                                                                     {% for valeur in paramAn.valeurs %}
                                                                                         {% if paramAn.pgCmdAnalyse %}
@@ -276,9 +266,9 @@
                                                                                 </select>
                                                                             {% else %}
                                                                                 {% if paramAn.pgCmdAnalyse %}
-                                                                                    <input id="idValeur{{ paramAn.paramAn.id}}" class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdAnalyse.resultat | replace({".0000000000" : "", "000000000" : "", "00000000" : "", "0000000" : "", "000000" : "", "00000000" : "", "0000000" : "", "000000" : ""}) }}">
+                                                                                    <input id="idValeur{{ paramAn.paramAn.id}}" class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdAnalyse.resultat | replace({".0000000000" : "", "000000000" : "", "00000000" : "", "0000000" : "", "000000" : "", "00000000" : "", "0000000" : "", "000000" : ""}) }}" readonly  disabled="disabled">
                                                                                 {% else %}
-                                                                                    <input id="idValeur{{ paramAn.paramAn.id}}" class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}" value="">
+                                                                                    <input id="idValeur{{ paramAn.paramAn.id}}" class="form-control number text-right" placeholder="valeur" name ="valeur{{ paramAn.paramAn.id}}" value="" readonly  disabled="disabled">
                                                                                 {% endif %}
                                                                             {% endif %}
                                                                         </div>
@@ -290,22 +280,22 @@
                                                                         <div  class="input-group text-left">
                                                                             {% if paramAn.unites  %}
                                                                                 {% if paramAn.unites | length > 1 %}
-                                                                                    <select class="form-control" id="idUniteCode{{ paramAn.paramAn.id}}" name="uniteCode{{ paramAn.paramAn.id}}"   >   
+                                                                                    <select class="form-control" id="idUniteCode{{ paramAn.paramAn.id}}" name="uniteCode{{ paramAn.paramAn.id}}" readonly  disabled="disabled">   
                                                                                         {% for unite in paramAn.unites %}
                                                                                             <option value="{{unite.codeUnite.codeUnite}}">{{unite.codeUnite.codeUnite}} : {{ unite.codeUnite.nomUnite}}</option> 
                                                                                         {% endfor %}
                                                                                     </select>
                                                                                 {% else %}
                                                                                     <input id="idUniteCode{{ paramAn.paramAn.id}}" type="hidden" class="form-control" placeholder="unite" name ="uniteCode{{ paramAn.paramAn.id}}" value="{{paramAn.unites.0.codeUnite.codeUnite}}" readonly="readonly">
-                                                                                    <input id="idUnite{{ paramAn.paramAn.id}}" type="text" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{paramAn.unites.0.codeUnite.codeUnite}} : {{paramAn.unites.0.codeUnite.nomUnite}}" readonly="readonly">
+                                                                                    <input id="idUnite{{ paramAn.paramAn.id}}" type="text" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{paramAn.unites.0.codeUnite.codeUnite}} : {{paramAn.unites.0.codeUnite.nomUnite}}" readonly  disabled="disabled">
                                                                                 {% endif %}
                                                                             {% else %}
                                                                                 {% if paramAn.pgCmdAnalyse %}
                                                                                     <input id="idUniteCode{{ paramAn.paramAn.id}}" type="hidden" class="form-control" placeholder="unite" name ="uniteCode{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdAnalyse.codeUnite.codeUnite }}">
-                                                                                    <input id="idUnite{{ paramAn.paramAn.id}}" type="text" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdAnalyse.codeUnite.codeUnite }} : {{ paramAn.pgCmdAnalyse.codeUnite.nomUnite }}">
+                                                                                    <input id="idUnite{{ paramAn.paramAn.id}}" type="text" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{ paramAn.pgCmdAnalyse.codeUnite.codeUnite }} : {{ paramAn.pgCmdAnalyse.codeUnite.nomUnite }}" readonly  disabled="disabled">
                                                                                 {% else %}
                                                                                     <input id="idUniteCode{{ paramAn.paramAn.id}}" type="hidden" class="form-control" placeholder="unite" name ="uniteCode{{ paramAn.paramAn.id}}" value="{{ paramAn.unite.codeUnite }}">
-                                                                                    <input id="idUnite{{ paramAn.paramAn.id}}" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{ paramAn.unite.codeUnite }} : {{ paramAn.unite.nomUnite }}" readonly="readonly">
+                                                                                    <input id="idUnite{{ paramAn.paramAn.id}}" class="form-control" placeholder="unite" name ="unite{{ paramAn.paramAn.id}}" value="{{ paramAn.unite.codeUnite }} : {{ paramAn.unite.nomUnite }}" readonly  disabled="disabled">
                                                                                 {% endif %}
                                                                             {% endif %}
                                                                         </div>
@@ -325,7 +315,7 @@
                                             {% endfor %}
                                         </tbody>
                                     </table>
-                                   {# <div class="row">
+                                 {#   <div class="row">
                                         <div class="col-md-12 pull-right text-info">
                                             <ul class="list-inline">
                                                 <li><span class="label label-success">Correct</span></li>
@@ -351,32 +341,16 @@
                 </div>
             </div>            
 
-            {% if maj == 'M' %}
-                <div class="col-md-offset-5 col-md-8">
-                    <button id="idEnregistrer" type="submit" class="btn btn-success"> 
-                        <i class="fa fa-check"> Enregister</i>
-                    </button>
-                {%elseif maj == 'V' %}
-                    <div class="col-md-offset-5 col-md-8">
-                    <button id="idEnregistrer" type="submit" class="btn btn-success"> 
-                        <i class="fa fa-check"> Enregister</i>
-                    </button>
-                        <a class="btn btn-success" href="{{path('AeagSqeBundle_saisieDonnees_lot_periode_station_valider',{"prelevId":  cmdPrelev.id, 'periodeAnId': periodeAn.id })}}">
-                            <i class="fa fa-lock"> Valider</i>
-                        </a>
-                {% else %}
-                    <div class="col-md-offset-5 col-md-8">
-                    {% endif %}
-                    <a class="btn btn-danger" href="{{path('AeagSqeBundle_saisieDonnees_lot_periode_stations',{'stationId': station.ouvFoncId, 'periodeAnId': periodeAn.id, 'cmdDemandeId': demande.id })}}">
-                        <i class="fa fa-undo"> Annuler</i>
+              <div class="col-md-offset-5 col-md-8">
+                     <a class="btn btn-danger" href="{{path('AeagSqeBundle_saisieDonnees_lot_periode_stations',{'stationId': station.ouvFoncId, 'periodeAnId': periodeAn.id, 'cmdDemandeId': demande.id })}}">
+                        <i class="fa fa-undo"> Retour</i>
                     </a>
                 </div>
 
                 <div id="idCache"></div>
 
             </div>
-    </form>
-
+   
 {%endblock content %}    
 
 
@@ -386,32 +360,16 @@
 
 
 
-    $('#datePrel').datetimepicker(
-    {
-     language:  'fr',
-    format: 'dd/mm/yyyy hh:ii',
-    startDate: "{{ periodeAn.periode.dateDeb | date("d/m/Y hh:ii") }}",
-    endDate: "{{  dateFin | date("d/m/Y hh:ii") }}",
-    clearBtn: true
-     }
-    );
-    
-     $('#idInitDatePrel').hide();
-     $('#idForcerDatePrel').show();
+     $('#datePrel').datetimepicker(
+                    {
+                     language:  'fr',
+                    format: 'dd/mm/yyyy hh:ii',
+                    startDate: "{{ periodeAn.periode.dateDeb | date("d/m/Y hh:ii") }}",
+                    endDate: "{{  dateFin | date("d/m/Y hh:ii") }}",
+                    }
+                    );
 
-     $('#idForcerDatePrel').on('click',function(){
-            $('#datePrel').datetimepicker('setStartDate', null);
-            $('#datePrel').datetimepicker('setEndDate', null);
-            $('#idForcerDatePrel').hide()
-            $('#idInitDatePrel').show()
-     });
-     
-     $('#idInitDatePrel').on('click',function(){
-            $('#datePrel').datetimepicker('setStartDate', '{{ periodeAn.periode.dateDeb | date("d/m/Y hh:ii") }}');
-            $('#datePrel').datetimepicker('setEndDate', '{{  dateFin | date("d/m/Y hh:ii") }}');
-            $('#idInitDatePrel').hide()
-            $('#idForcerDatePrel').show()
-     });
+
 
     {% for groupe   in  groupes %}
 
