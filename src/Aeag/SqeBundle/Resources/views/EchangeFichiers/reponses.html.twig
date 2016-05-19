@@ -37,7 +37,11 @@
                 <td>{{reponse.dateDepot | date("d/m/Y H:i")}}</td>
                 <td>{{reponse.nomFichier}}</td>
                 <td>{{reponse.phaseFichier.libellePhase}}</td>
-                <td><a href='{{path("AeagSqeBundle_echangefichiers_reponses_telecharger",{"reponseId":  reponse.id, "typeFichier" : "CR"})}}'>{{reponse.nomFichierCompteRendu}}</a></td>
+                <td>
+                {% if reponse.phaseFichier.codePhase == 'R80' or reponse.phaseFichier.codePhase == 'R82' or reponse.phaseFichier.codePhase == 'R84' or reponse.phaseFichier.codePhase == 'R40' or reponse.phaseFichier.codePhase == 'R41' or reponse.phaseFichier.codePhase == 'R45'%}
+                    <a href='{{path("AeagSqeBundle_echangefichiers_reponses_telecharger",{"reponseId":  reponse.id, "typeFichier" : "CR"})}}'>{{reponse.nomFichierCompteRendu}}</a>
+                {% endif %}
+                </td>
                 <td><a href='{{path("AeagSqeBundle_echangefichiers_reponses_telecharger",{"reponseId":  reponse.id, "typeFichier" : "DB"})}}'>{{reponse.nomFichierDonneesBrutes}}</a></td>
             </tr>
             {% endfor %}

@@ -337,6 +337,7 @@ class ControleVraisemblance {
         // Test de validité
         $valid = true;
         $i = 0;
+        $tabRetour = array();
         while ($i < count($sommeParams) && $valid) {
             $j = 0;
             $keys = array_keys($sommeParams[$i]);
@@ -348,19 +349,19 @@ class ControleVraisemblance {
             }
             $i++;
         }
-
+        
+        
         if ($valid) {
-            $i = 0;
-            while ($i < count($resultParams) && $valid) {
-                $j = 0;
-                $keys = array_keys($sommeParams[$i]);
-                while ($j < count($keys) && $valid) {
-                    if (is_null($resultParams[$i][$keys[$j]])) {
+            if (count($resultParams) == count($sommeParams)) {
+                $i = 0;
+                while ($i < count($resultParams) && $valid) {
+                    if (is_null($resultParams[$i])) {
                         $valid = false;
                     }
-                    $j++;
+                    $i++;
                 }
-                $i++;
+            } else {
+                $valid = false;
             }
         }
         
