@@ -156,6 +156,22 @@
             {% endif%}
         {% endfor %}
     {% endif %}
+    
+      {#modal integrer fichier #}
+                        <div class="modal fade" id="integrerFichier" >
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content" >
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                        <h4 class="modal-title" id="myModalLabel">Integration d'un fichier terrain </h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div id="idModalContentIntegrerFichier"></div>
+                                    </div>  
+                                    <div class="modal-footer"></div>
+                                </div>
+                            </div>
+                        </div>
 
 {% endblock modal %}
 
@@ -175,7 +191,13 @@
 {%endblock panel_heading %}
 
 {%block content %}
-
+    <div class="row">
+        <div class="col-md-offset-3 col-md-7">
+               <a id="idIntegrerFichier" class="btn btn-success btn-deposer-reponse"  title="Integrer un fichier terrain">
+                 <i class="fa fa-download"> Integrer un fichier terrain</i> 
+              </a>
+        </div>
+    </div>
 
     <div class="form-body">        
         <table class="table table-bordered t table-advance" id="idTable_demandes">
@@ -415,6 +437,23 @@
             {% endif %}
         {% endfor %}              
     {% endif %}   
+    
+    $(document).on('click','#idIntegrerFichier',function(e){
+                        e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                        $('#modalTraitementEncours').modal('toggle');
+                        var url = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_stations_integrer",{"periodeAnId": "par1"}) }}', // Le nom du fichier indiqué dans le formulaire
+                        url = url.replace("par1", {{ periodeAn.id }});
+                        url = url.replace("amp;","");
+                        $.ajax({
+                        url: url,
+                        type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+                        success: function(html) { // Je récupère la réponse du fichier PHP
+                        $('#idModalContentIntegrerFichier').empty().append(html);
+                        $('#integrerFichier').modal('show');
+                        $('#modalTraitementEncours').modal('hide');
+                        }
+                        });
+                        });
     
 
     });
