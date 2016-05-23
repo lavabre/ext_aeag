@@ -38,13 +38,20 @@ class DefaultController extends Controller {
         $session->set('fonction', 'index');
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
+        $repoUtilisateur = $emEdl->getRepository('AeagEdlBundle:Utilisateur');
+        $repoExportAvisEtat = $emEdl->getRepository('AeagEdlBundle:ExportAvisEtat');
+        $repoExportAvisPression = $emEdl->getRepository('AeagEdlBundle:ExportAvisPression');
+
+        if ($user) {
+            $utilisateur = $repoUtilisateur->getUtilisateurByExtid($user->getId());
+        }
 
         if (is_object($user) && ($this->get('security.authorization_checker')->isGranted('ROLE_ADMINEDL'))) {
-            // insertion des users
-            // $message = $this->majUtilisateurs();
+// insertion des users
+// $message = $this->majUtilisateurs();
             $message = $this->initUtilisateurs();
-            //return new Response($message);
-            //$session->getFlashBag()->add('notice-success', $message);
+//return new Response($message);
+//$session->getFlashBag()->add('notice-success', $message);
         }
 
 //        $session->set('codecle', null);
@@ -57,8 +64,88 @@ class DefaultController extends Controller {
         $critere = new Criteres();
         $form = $this->createForm(new MasseEauRechercheForm(), $critere);
 
+        $exportAvistEtats = $repoExportAvisEtat->getExportAvisEtats();
+        $exportAvistPressions = $repoExportAvisPression->getExportAvisPressions();
+        $repertoire = "fichiers";
+        $date_import = date('Ymd_His');
+        if ($utilisateur) {
+            $nom_fichier_etat = "ExportAvisEtat_" . $utilisateur->getUserName() . ".csv";
+            $nom_fichier_pression = "ExportAvisPression_" . $utilisateur->getUserName() . ".csv";
+        } else {
+            $nom_fichier_etat = "ExportAvisEtat_" . $date_import . ".csv";
+            $nom_fichier_pression = "ExportAvisPression_" . $date_import . ".csv";
+        }
+        if (count($exportAvistEtats) > 0) {
+            $fic_import_etat = $repertoire . "/" . $nom_fichier_etat;
+//ouverture fichier
+            $fic = fopen($fic_import_etat, "w");
+            $contenu = "eu_cd; type_me; nom_masse_eau; ct; ct_lib; uhr; uhr_lib; depts; cd_etat; proposition_date; groupe; libelle; e_sdage2016; e_sdage2016_lib; e_propose; e_propose_lib; commentaire\n";
+            fputs($fic, utf8_decode($contenu));
+            foreach ($exportAvistEtats as $exportAvistEtat) {
+                $contenu = $exportAvistEtat->getEuCd() . ";";
+                $contenu = $contenu . $exportAvistEtat->getTypeMe() . ";";
+                $contenu = $contenu . $exportAvistEtat->getNomMasseEau() . ";";
+                $contenu = $contenu . $exportAvistEtat->getCt() . ";";
+                $contenu = $contenu . $exportAvistEtat->getCtLib() . ";";
+                $contenu = $contenu . $exportAvistEtat->getUhr() . ";";
+                $contenu = $contenu . $exportAvistEtat->getUhrLib() . ";";
+                $contenu = $contenu . $exportAvistEtat->getDepts() . ";";
+                $contenu = $contenu . $exportAvistEtat->getCdEtat() . ";";
+                $contenu = $contenu . $exportAvistEtat->getPropositionDate() . ";";
+                $contenu = $contenu . $exportAvistEtat->getGroupe() . ";";
+                $contenu = $contenu . $exportAvistEtat->getLibelle() . ";";
+                $contenu = $contenu . $exportAvistEtat->getESdage2016() . ";";
+                $contenu = $contenu . $exportAvistEtat->getESdage2016Lib() . ";";
+                $contenu = $contenu . $exportAvistEtat->getEpropose() . ";";
+                $contenu = $contenu . $exportAvistEtat->getEproposeLib() . ";";
+                $contenu = $contenu . $exportAvistEtat->getCommentaire() . ";\n";
+                $contenu = str_replace(CHR(13) . CHR(10), "", $contenu);
+                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                fputs($fic, $contenu);
+            }
+            fclose($fic);
+        } else {
+            $nom_fichier_etat = null;
+        }
+
+        if (count($exportAvistPressions) > 0) {
+            $fic_import_pression = $repertoire . "/" . $nom_fichier_pression;
+//ouverture fichier
+            $fic = fopen($fic_import_pression, "w");
+            $contenu = "eu_cd; type_me; nom_masse_eau; ct; ct_lib; uhr; uhr_lib; depts; cd_pression; proposition_date; groupe; libelle; e_sdage2016; e_sdage2016_lib; e_propose; e_propose_lib; commentaire\n";
+            fputs($fic, utf8_decode($contenu));
+            foreach ($exportAvistPressions as $exportAvisPression) {
+                $contenu = $exportAvisPression->getEuCd() . ";";
+                $contenu = $contenu . $exportAvisPression->getTypeMe() . ";";
+                $contenu = $contenu . $exportAvisPression->getNomMasseEau() . ";";
+                $contenu = $contenu . $exportAvisPression->getCt() . ";";
+                $contenu = $contenu . $exportAvisPression->getCtLib() . ";";
+                $contenu = $contenu . $exportAvisPression->getUhr() . ";";
+                $contenu = $contenu . $exportAvisPression->getUhrLib() . ";";
+                $contenu = $contenu . $exportAvisPression->getDepts() . ";";
+                $contenu = $contenu . $exportAvisPression->getCdPression() . ";";
+                $contenu = $contenu . $exportAvisPression->getPropositionDate() . ";";
+                $contenu = $contenu . $exportAvisPression->getGroupe() . ";";
+                $contenu = $contenu . $exportAvisPression->getLibelle() . ";";
+                $contenu = $contenu . $exportAvisPression->getPSdage2016() . ";";
+                $contenu = $contenu . $exportAvisPression->getPSdage2016Lib() . ";";
+                $contenu = $contenu . $exportAvisPression->getPpropose() . ";";
+                $contenu = $contenu . $exportAvisPression->getPproposeLib() . ";";
+                $contenu = $contenu . $exportAvisPression->getCommentaire() . ";\n";
+                $contenu = str_replace(CHR(13) . CHR(10), "", $contenu);
+                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                fputs($fic, $contenu);
+            }
+            fclose($fic);
+        } else {
+            $nom_fichier_pression = null;
+        }
+
+
         return $this->render('AeagEdlBundle:Default:index.html.twig', array(
-                    'form' => $form->createView()
+                    'form' => $form->createView(),
+                    'fichierEtat' => $nom_fichier_etat,
+                    'fichierPression' => $nom_fichier_pression
         ));
     }
 
@@ -78,6 +165,12 @@ class DefaultController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
         $repoUtilisateur = $emEdl->getRepository('AeagEdlBundle:Utilisateur');
+        $repoExportAvisEtat = $emEdl->getRepository('AeagEdlBundle:ExportAvisEtat');
+        $repoExportAvisPression = $emEdl->getRepository('AeagEdlBundle:ExportAvisPression');
+
+        if ($user) {
+            $utilisateur = $repoUtilisateur->getUtilisateurByExtid($user->getId());
+        }
 
 
         $critere = new Criteres();
@@ -165,38 +258,42 @@ class DefaultController extends Controller {
 
 
 
-        //return new Response('codecle : ' . $codecle . ' massecle : ' . $masseEaucle . ' dept : ' . $deptcle . ' typecle : ' . $typecle . ' territoire : ' . $territoirecle);
+//return new Response('codecle : ' . $codecle . ' massecle : ' . $masseEaucle . ' dept : ' . $deptcle . ' typecle : ' . $typecle . ' territoire : ' . $territoirecle);
 
 
         $where = "a.euCd = a.euCd";
+        $whereCsv = "a.euCd = a.euCd";
 
 
         if (!empty($typecle)) {
             $where = $where . " and upper(a.typeMe) = '" . $typecle . "'";
+            $whereCsv = $whereCsv . " and upper(a.typeMe) = '" . $typecle . "'";
         }
 
         if (!empty($codecle)) {
             $where = $where . " and upper(a.euCd) LIKE '%" . strtoupper($codecle) . "%'";
+            $whereCsv = $whereCsv . " and upper(a.euCd) LIKE '%" . strtoupper($codecle) . "%'";
             if (!empty($masseEaucle)) {
                 $where = $where . " and upper(a.nomMasseEau) LIKE '%" . strtoupper($masseEaucle) . "%'";
+                $whereCsv = $whereCsv . " and upper(a.nomMasseEau) LIKE '%" . strtoupper($masseEaucle) . "%'";
             };
         } else {
             if (!empty($masseEaucle)) {
                 $where = $where . " and upper(a.nomMasseEau) LIKE '%" . strtoupper($masseEaucle) . "%'";
+                $whereCsv = $wherecsv . " and upper(a.nomMasseEau) LIKE '%" . strtoupper($masseEaucle) . "%'";
             };
         };
 
 
         if ($territoirecle == '1') {
 
-            // Et pour vérifier que l'utilisateur est authentifié (et non un anonyme)
+// Et pour vérifier que l'utilisateur est authentifié (et non un anonyme)
             if (!$user) {
                 return $this->render('AeagEdlBundle:Default:interdit.html.twig');
             }
 
-            $utilisateur = $repoUtilisateur->getUtilisateurByExtid($user->getId());
 
-            //return new Response('role : ' . isset(in_array("ROLE_SUPERVISEUR", $user->getRoles())));
+//return new Response('role : ' . isset(in_array("ROLE_SUPERVISEUR", $user->getRoles())));
 
             if (!empty($deptcle)) {
                 $where = $where . " and b.euCd = a.euCd";
@@ -217,6 +314,7 @@ class DefaultController extends Controller {
             if (!empty($deptcle)) {
                 $where = $where . " and b.euCd = a.euCd";
                 $where = $where . " and b.inseeDepartement = '" . $deptcle . "'";
+                $whereCsv = $whereCsv . " and a.depts in ('" . $deptcle . "')";
 
                 $query = "select a from Aeag\EdlBundle\Entity\MasseEau a,";
                 $query = $query . " Aeag\EdlBundle\Entity\DepartementMe b where ";
@@ -228,15 +326,94 @@ class DefaultController extends Controller {
             }
         }
 
-        // return new Response('where  : ' .  $where );
+        //return new Response('where  : ' .  $whereCsv );
 
 
         $query = $query . $where . " order by  a.nomMasseEau";
 
-        //return new Response('query  : ' . $query);
+//return new Response('query  : ' . $query);
 
         $MasseEaux = $emEdl->createQuery($query)
                 ->getResult();
+
+        $exportAvistEtats = $repoExportAvisEtat->getExportAvisEtatByWhere($whereCsv);
+        $exportAvistPressions = $repoExportAvisPression->getExportAvisPressionByWhere($whereCsv);
+        $repertoire = "fichiers";
+        $date_import = date('Ymd_His');
+         if ($utilisateur) {
+            $nom_fichier_etat = "ExportAvisEtat_" . $utilisateur->getUserName() . ".csv";
+            $nom_fichier_pression = "ExportAvisPression_" . $utilisateur->getUserName() . ".csv";
+        } else {
+            $nom_fichier_etat = "ExportAvisEtat_" . $date_import . ".csv";
+            $nom_fichier_pression = "ExportAvisPression_" . $date_import . ".csv";
+        }
+        if (count($exportAvistEtats) > 0) {
+            $fic_import_etat = $repertoire . "/" . $nom_fichier_etat;
+//ouverture fichier
+            $fic = fopen($fic_import_etat, "w");
+            $contenu = "eu_cd; type_me; nom_masse_eau; ct; ct_lib; uhr; uhr_lib; depts; cd_etat; proposition_date; groupe; libelle; e_sdage2016; e_sdage2016_lib; e_propose; e_propose_lib; commentaire\n";
+            fputs($fic, utf8_decode($contenu));
+            foreach ($exportAvistEtats as $exportAvistEtat) {
+                $contenu = $exportAvistEtat->getEuCd() . ";";
+                $contenu = $contenu . $exportAvistEtat->getTypeMe() . ";";
+                $contenu = $contenu . $exportAvistEtat->getNomMasseEau() . ";";
+                $contenu = $contenu . $exportAvistEtat->getCt() . ";";
+                $contenu = $contenu . $exportAvistEtat->getCtLib() . ";";
+                $contenu = $contenu . $exportAvistEtat->getUhr() . ";";
+                $contenu = $contenu . $exportAvistEtat->getUhrLib() . ";";
+                $contenu = $contenu . $exportAvistEtat->getDepts() . ";";
+                $contenu = $contenu . $exportAvistEtat->getCdEtat() . ";";
+                $contenu = $contenu . $exportAvistEtat->getPropositionDate() . ";";
+                $contenu = $contenu . $exportAvistEtat->getGroupe() . ";";
+                $contenu = $contenu . $exportAvistEtat->getLibelle() . ";";
+                $contenu = $contenu . $exportAvistEtat->getESdage2016() . ";";
+                $contenu = $contenu . $exportAvistEtat->getESdage2016Lib() . ";";
+                $contenu = $contenu . $exportAvistEtat->getEpropose() . ";";
+                $contenu = $contenu . $exportAvistEtat->getEproposeLib() . ";";
+                $contenu = $contenu . $exportAvistEtat->getCommentaire() . ";\n";
+                $contenu = str_replace(CHR(13) . CHR(10), "", $contenu);
+                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                fputs($fic, $contenu);
+            }
+            fclose($fic);
+            $tabSelection['FichierEtat'] = $nom_fichier_etat;
+        } else {
+            $tabSelection['FichierEtat'] = null;
+        }
+
+        if (count($exportAvistPressions) > 0) {
+            $fic_import_pression = $repertoire . "/" . $nom_fichier_pression;
+//ouverture fichier
+            $fic = fopen($fic_import_pression, "w");
+            $contenu = "eu_cd; type_me; nom_masse_eau; ct; ct_lib; uhr; uhr_lib; depts; cd_pression; proposition_date; groupe; libelle; e_sdage2016; e_sdage2016_lib; e_propose; e_propose_lib; commentaire\n";
+            fputs($fic, utf8_decode($contenu));
+            foreach ($exportAvistPressions as $exportAvisPression) {
+                $contenu = $exportAvisPression->getEuCd() . ";";
+                $contenu = $contenu . $exportAvisPression->getTypeMe() . ";";
+                $contenu = $contenu . $exportAvisPression->getNomMasseEau() . ";";
+                $contenu = $contenu . $exportAvisPression->getCt() . ";";
+                $contenu = $contenu . $exportAvisPression->getCtLib() . ";";
+                $contenu = $contenu . $exportAvisPression->getUhr() . ";";
+                $contenu = $contenu . $exportAvisPression->getUhrLib() . ";";
+                $contenu = $contenu . $exportAvisPression->getDepts() . ";";
+                $contenu = $contenu . $exportAvisPression->getCdPression() . ";";
+                $contenu = $contenu . $exportAvisPression->getPropositionDate() . ";";
+                $contenu = $contenu . $exportAvisPression->getGroupe() . ";";
+                $contenu = $contenu . $exportAvisPression->getLibelle() . ";";
+                $contenu = $contenu . $exportAvisPression->getPSdage2016() . ";";
+                $contenu = $contenu . $exportAvisPression->getPSdage2016Lib() . ";";
+                $contenu = $contenu . $exportAvisPression->getPpropose() . ";";
+                $contenu = $contenu . $exportAvisPression->getPproposeLib() . ";";
+                $contenu = $contenu . $exportAvisPression->getCommentaire() . ";\n";
+                $contenu = str_replace(CHR(13) . CHR(10), "", $contenu);
+                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                fputs($fic, $contenu);
+            }
+            fclose($fic);
+            $tabSelection['FichierPression'] = $nom_fichier_pression;
+        } else {
+            $tabSelection['FichierPression'] = null;
+        }
 
         $res = array();
         $i = 0;
@@ -275,7 +452,7 @@ class DefaultController extends Controller {
             };
 
 
-            //return new Response('etatMe : ' .  $etatMe->getEuCd() . ' user : ' . $etatMe->getUtilisateur());
+//return new Response('etatMe : ' .  $etatMe->getEuCd() . ' user : ' . $etatMe->getUtilisateur());
 
 
             $res[$i] = array('euCd' => $MasseEau->getEuCd(),
@@ -338,21 +515,21 @@ class DefaultController extends Controller {
             $j = 0;
             foreach ($etats as $etat) {
                 $tabEtats[$j]['etat'] = $etat;
-                
+
                 $proposeds = $etat->getProposed();
                 $tabProposeds = array();
                 $k = 0;
-                foreach($proposeds as $proposed){
+                foreach ($proposeds as $proposed) {
                     $tabProposeds[$k] = $proposed;
                     $k++;
                 }
-                if (count($tabProposeds) > 0){
-                usort($tabProposeds, create_function('$a,$b', 'return strcasecmp($a->getPropositionDate(),$b->getPropositionDate());'));
-                $tabEtats[$j]['proposeds'] = $tabProposeds;
-                }else{
-                  $tabEtats[$j]['proposeds'] = null;  
+                if (count($tabProposeds) > 0) {
+                    usort($tabProposeds, create_function('$a,$b', 'return strcasecmp($a->getPropositionDate(),$b->getPropositionDate());'));
+                    $tabEtats[$j]['proposeds'] = $tabProposeds;
+                } else {
+                    $tabEtats[$j]['proposeds'] = null;
                 }
-                
+
                 $derniereProp = $repoEtatMe->getLastPropositionSuperviseur($etat->getEuCd(), $etat->getCdEtat());
 
                 if (!$derniereProp) {
@@ -452,7 +629,7 @@ class DefaultController extends Controller {
         $i = 0;
         foreach ($pressionGroupes as $pressionGroupe) {
             $tabPressionGroupes[$i]['pressionGroupe'] = $pressionGroupe;
-       
+
             $pressions = $repoPressionMe->getPressionMe($code, $pressionGroupe->getCdGroupe());
             $nbPressions = $repoPressionMe->getNbPressionMe($code, $pressionGroupe->getCdGroupe());
             $tabPressionGroupes[$i]['nbPressions'] = $nbPressions;
@@ -460,21 +637,21 @@ class DefaultController extends Controller {
             $j = 0;
             foreach ($pressions as $pression) {
                 $tabPressions[$j]['pression'] = $pression;
-                
+
                 $proposeds = $pression->getProposed();
                 $tabProposeds = array();
                 $k = 0;
-                foreach($proposeds as $proposed){
+                foreach ($proposeds as $proposed) {
                     $tabProposeds[$k] = $proposed;
                     $k++;
                 }
-                if (count($tabProposeds) > 0){
-                usort($tabProposeds, create_function('$a,$b', 'return strcasecmp($a->getPropositionDate(),$b->getPropositionDate());'));
-                $tabPressions[$j]['proposeds'] = $tabProposeds;
-                }else{
-                  $tabPressions[$j]['proposeds'] = null;  
+                if (count($tabProposeds) > 0) {
+                    usort($tabProposeds, create_function('$a,$b', 'return strcasecmp($a->getPropositionDate(),$b->getPropositionDate());'));
+                    $tabPressions[$j]['proposeds'] = $tabProposeds;
+                } else {
+                    $tabPressions[$j]['proposeds'] = null;
                 }
-                
+
                 $derniereProp = $repoPressionMe->getLastPropositionSuperviseur($pression->getEuCd(), $pression->getCdPression());
 
                 if (!$derniereProp) {
@@ -712,8 +889,8 @@ class DefaultController extends Controller {
 
                 $this->get('session')->setFlash('aeag-notice', 'Votre message à été envoyé avec succés. Merci!');
 
-                // Redirect - This is important to prevent users re-posting
-                // the form if they refresh the page
+// Redirect - This is important to prevent users re-posting
+// the form if they refresh the page
                 return $this->redirect($this->generateUrl('AeagEdlBundle_contact'));
             }
         }
@@ -811,7 +988,7 @@ class DefaultController extends Controller {
             }
             $em->persist($entityUser);
 
-            //print_r('user : ' . $entityUser->getid() . ' ' . $entityUser->getUsername() . ' ' . $entityUser->getEmail() . ' ' . $entityUser->getPassword() . '  edluser : ' . $utilisateur->getid() . ' ' . $utilisateur->getUserName() . '\n  ');
+//print_r('user : ' . $entityUser->getid() . ' ' . $entityUser->getUsername() . ' ' . $entityUser->getEmail() . ' ' . $entityUser->getPassword() . '  edluser : ' . $utilisateur->getid() . ' ' . $utilisateur->getUserName() . '\n  ');
 
             $utilisateur->setExtId($entityUser->getId());
             $utilisateur->setEmail($entityUser->getEmail());
