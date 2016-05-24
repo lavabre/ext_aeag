@@ -69,7 +69,6 @@ class BackUpProcessCommand extends AeagCommand {
     protected function _phaseRX($phase) {
         $pgProgPhase = $this->repoPgProgPhases->findOneByCodePhase($phase);
         $pgCmdFichiersRps = $this->repoPgCmdFichiersRps->findBy(array('typeFichier' => 'RPS', 'phaseFichier' => $pgProgPhase));
-        $this->output->writeln(count($pgCmdFichiersRps));
         $cptPhaseR26Fait = 0;
         foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
             // Vérifier le nombre de phase R26 déjà présente dans PgProgSuiviPhases
