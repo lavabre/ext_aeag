@@ -77,9 +77,7 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
         $pgTmpValidEdilabos = $this->repoPgTmpValidEdilabo->findBy(array('fichierRpsId' => $reponseId, 'demandeId' => $demandeId));
         $dejaFait = false;
         foreach ($pgTmpValidEdilabos as $pgTmpValidEdilabo) {
-            $this->output->writeln('trace 1');
             $pgCmdPrelev = $this->repoPgCmdPrelev->findOneBy(array('demande' => $pgTmpValidEdilabo->getDemandeId(), 'codePrelevCmd' => $pgTmpValidEdilabo->getCodePrelevement()));
-            $this->output->writeln('trace 1');
             if (!is_null($pgCmdPrelev)) {
                 if ($this->isAlreadyAdded($pgCmdFichierRps, $pgCmdPrelev)) {
                     $this->_addLog('warning', $pgCmdFichierRps->getDemande()->getId(), $pgCmdFichierRps->getId(), "Cette RAI a déjà été intégrée dans SQE");
@@ -102,9 +100,7 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
                     // Ne faire qu'une fois le traitement $pgCmdPrelevPc
                     if (!$dejaFait) {
                         if ($pgTmpValidEdilabo->getNumOrdre() == 1) {
-                            $this->output->writeln('trace 2');
                             $pgCmdPrelevPc = $this->repoPgCmdPrelevPc->findOneBy(array('prelev' => $pgCmdPrelev, 'numOrdre' => $pgTmpValidEdilabo->getNumOrdre()));
-                            $this->output->writeln('trace 2');
                         } else {
                             $pgCmdPrelevPc = new \Aeag\SqeBundle\Entity\PgCmdPrelevPc();
                             $pgCmdPrelevPc->setPrelev($pgCmdPrelev);
@@ -119,9 +115,7 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
                         $pgCmdPrelevPc->setXPrel($pgTmpValidEdilabo->getXPrel());
                         $pgCmdPrelevPc->setYPrel($pgTmpValidEdilabo->getYPrel());
                         $pgCmdPrelevPc->setLocalisation($pgTmpValidEdilabo->getLocalisation());
-                        $this->output->writeln('trace 3');
                         $pgSandreZoneVerticaleProspectee = $this->repoPgSandreZoneVerticaleProspectee->findOneByCodeZone($pgTmpValidEdilabo->getZoneVert());
-                        $this->output->writeln('trace 3');
                         if (!is_null($pgSandreZoneVerticaleProspectee)) {
                             $pgCmdPrelevPc->setZoneVerticale($pgSandreZoneVerticaleProspectee);
                         }
@@ -142,9 +136,7 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
                     if ($pgTmpValidEdilabo->getInSitu() == 0) {
                         $pgCmdMesureEnv = new \Aeag\SqeBundle\Entity\PgCmdMesureEnv();
                         $pgCmdMesureEnv->setPrelev($pgCmdPrelev);
-                        $this->output->writeln('trace 4');
                         $pgSandreParametres = $this->repoPgSandreParametres->findOneByCodeParametre($pgTmpValidEdilabo->getCodeParametre());
-                        $this->output->writeln('trace 4');
                         if (!is_null($pgSandreParametres)) {
                             $pgCmdMesureEnv->setCodeParametre($pgSandreParametres);
                         }
@@ -159,18 +151,14 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
                         }
 
                         $pgCmdMesureEnv->setResultat($pgTmpValidEdilabo->getResM());
-                        $this->output->writeln('trace 5');
                         $pgSandreUnites = $this->repoPgSandreUnites->findOneByCodeUnite($pgTmpValidEdilabo->getCodeUnite());
-                        $this->output->writeln('trace 5');
                         if (!is_null($pgSandreUnites)) {
                             $pgCmdMesureEnv->setCodeUnite($pgSandreUnites);
                         }
                         $pgCmdMesureEnv->setCodeRemarque($pgTmpValidEdilabo->getCodeRqM());
                         $pgCmdMesureEnv->setCodeMethode($pgTmpValidEdilabo->getMethPrel());
                         $pgCmdMesureEnv->setCodeStatut($pgTmpValidEdilabo->getCodeStatut());
-                        $this->output->writeln('trace 6');
                         $pgProgLotParamAn = $this->repoPgProgLotParamAn->findOneById($pgTmpValidEdilabo->getParamProgId());
-                        $this->output->writeln('trace 6');
                         if (!is_null($pgProgLotParamAn)) {
                             $pgCmdMesureEnv->setParamProg($pgProgLotParamAn);
                         }
@@ -179,15 +167,11 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
                         $pgCmdAnalyse = new \Aeag\SqeBundle\Entity\PgCmdAnalyse();
                         $pgCmdAnalyse->setPrelevId($pgCmdPrelev->getId());
                         $pgCmdAnalyse->setNumOrdre($pgTmpValidEdilabo->getNumOrdre());
-                        $this->output->writeln('trace 7');
                         $pgSandreParametres = $this->repoPgSandreParametres->findOneByCodeParametre($pgTmpValidEdilabo->getCodeParametre());
-                        $this->output->writeln('trace 7');
                         if (!is_null($pgSandreParametres)) {
                             $pgCmdAnalyse->setCodeParametre($pgSandreParametres);
                         }
-                        $this->output->writeln('trace 8');
                         $pgSandreFractions = $this->repoPgSandreFractions->findOneByCodeFraction($pgTmpValidEdilabo->getCodeFraction());
-                        $this->output->writeln('trace 8');
                         if (!is_null($pgSandreFractions)) {
                             $pgCmdAnalyse->setCodeFraction($pgSandreFractions);
                         }
@@ -204,9 +188,7 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
                         }
 
                         $pgCmdAnalyse->setResultat($pgTmpValidEdilabo->getResM());
-                        $this->output->writeln('trace 9');
                         $pgSandreUnites = $this->repoPgSandreUnites->findOneByCodeUnite($pgTmpValidEdilabo->getCodeUnite());
-                        $this->output->writeln('trace 9');
                         if (!is_null($pgSandreUnites)) {
                             $pgCmdAnalyse->setCodeUnite($pgSandreUnites);
                         }
@@ -218,9 +200,7 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
                         $pgCmdAnalyse->setConfirmation($pgTmpValidEdilabo->getConfirmAna());
                         $pgCmdAnalyse->setReserve($pgTmpValidEdilabo->getReservAna());
                         $pgCmdAnalyse->setCodeStatut($pgTmpValidEdilabo->getCodeStatut());
-                        $this->output->writeln('trace 10');
                         $pgProgLotParamAn = $this->repoPgProgLotParamAn->findOneById($pgTmpValidEdilabo->getParamProgId());
-                        $this->output->writeln('trace 10');
                         if (!is_null($pgProgLotParamAn)) {
                             $pgCmdAnalyse->setParamProg($pgProgLotParamAn);
                         }
@@ -229,9 +209,7 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
                     $this->emSqe->flush();
                 }
                 // Evolution de la phase du prelevement
-                $this->output->writeln('trace 11');
                 $this->_updatePhasePrelevement($pgCmdPrelev, 'M40');
-                $this->output->writeln('trace 11');
             }
         }
     }
