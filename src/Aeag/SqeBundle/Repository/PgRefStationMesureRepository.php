@@ -71,6 +71,15 @@ class PgRefStationMesureRepository extends EntityRepository {
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
+    
+     public function getPgRefStationMesureByCode($code) {
+        $query = "select p";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgRefStationMesure p";
+        $query = $query . " where p.code = '" . $code . "'";
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+        return $qb->getOneOrNullResult();
+    }
 
     
 
