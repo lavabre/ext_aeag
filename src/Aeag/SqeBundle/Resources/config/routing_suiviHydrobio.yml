@@ -27,8 +27,8 @@ AeagSqeBundle_suiviHydrobio_lot_periode_stations_supprimer_fichier:
         methods:  GET|POST
         
 AeagSqeBundle_suiviHydrobio_lot_periode_stations_telecharger_rapport:
-    path:  /rapport/telecharger/{fichier}
-    defaults: { _controller: AeagSqeBundle:SuiviHydrobio:lotPeriodeStationsTelechargerRapport, fichier : null}
+    path:  /rapport/telecharger/{periodeAnId}/{fichier}
+    defaults: { _controller: AeagSqeBundle:SuiviHydrobio:lotPeriodeStationsTelechargerRapport, periodeAnId : null, fichier : null}
     requirements:
          methods:  GET|POST
     
