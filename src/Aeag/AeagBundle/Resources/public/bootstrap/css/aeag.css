@@ -5,17 +5,20 @@ body {
 .page-header {
     padding-bottom: 9px;
     margin: 20px 0px 0px;
-    border-bottom: 1px solid #241aa2;
-    background-color: #1a32a2;
-    color : #ffffff;
+    border-bottom: 1px solid #36648b;
+    background-image : url('../../images/banniereEau.jpg'); 
+    background-repeat:no-repeat;
+    background-size: 1400px 70px;
+    background-color: #36648b;
+    color : #fcfcfc;
     min-height: 70px;
 }
 
 .page-header-ie8 {
     padding-bottom: 9px;
     margin: 20px 0px 0px;
-    border-bottom: 1px solid #241aa2;
-    background-color: #1a32a2;
+    border-bottom: 1px solid #36648b;
+    background-color: #36648b;
     color : #ffffff;
     min-height: 70px;
 }
@@ -47,22 +50,22 @@ img#logo
     width: 14%;
 }
 
-.navbar {
+/*.navbar {
     position: relative;
-    min-height: 30px;
+    min-height: 50px;
     margin-bottom: 0px;
     padding-bottom: 0px;
     border: 1px solid transparent;
-}
-
+}*/
+/*
 .navbar-nav {
-    height: 30px;
-}
+    height: 50px;
+}*/
 
 .navbar-default {
-    background-color: #1A32A2;
-    border-color: #1A32A2;
-    height: 50px;
+    background-color: #36648b;
+    border-color: #36648b;
+/*    height: 50px;*/
 }
 
 .navbar-default .navbar-nav > li > a {
@@ -83,8 +86,8 @@ img#logo
 }
 
 .navbar-collapse {
-    background-color: #1A32A2;
-    max-height: 50px;
+    background-color: #36648b;
+/*    max-height: 50px;*/
     overflow-x: visible;
     overflow-y: visible;
     padding-right: 15px;
@@ -337,8 +340,8 @@ img#logo
     clear:both;
     margin-top: 150px;
     text-align: center;
-    background-color: #1a32a2;
-    border-color: #241aa2;
+    background-color: #36648b;
+    border-color: #36648b;
     color: #ffffff;
 
 }
@@ -348,8 +351,8 @@ img#logo
     clear:both;
     margin-top: 150px;
     text-align: center;
-    background-color: #1a32a2;
-    border-color: #241aa2;
+    background-color: #36648b;
+    border-color: #36648b;
     color: #ffffff;
 
 }
@@ -851,4 +854,19 @@ fieldset[disabled] .btn-turquoise.active {
     background: -ms-linear-gradient(left, rgba(255,255,255,0) 0%, rgba(255,255,255,0.9) 25%, rgba(255,255,255,0.9) 75%, rgba(255,255,255,0) 100%);
     background: -o-linear-gradient(left, rgba(255,255,255,0) 0%, rgba(255,255,255,0.9) 25%, rgba(255,255,255,0.9) 75%, rgba(255,255,255,0) 100%);
     background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.9) 25%, rgba(255,255,255,0.9) 75%, rgba(255,255,255,0) 100%);
+}
+
+@media (min-width: 1200px) {
+  .container {
+    width: 1190px;
+  }
+}
+
+@media (min-width: 1800px) {
+  .container {
+    width: 1690px;
+  }
+  .page-header {
+   background-size: 2000px 100px;
+  }
 }

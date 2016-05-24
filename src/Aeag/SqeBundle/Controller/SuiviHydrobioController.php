@@ -268,6 +268,7 @@ class SuiviHydrobioController extends Controller {
                     'user' => $pgProgWebUser,
                     'lotan' => $pgProgLotAn,
                     'periodeAn' => $pgProgLotPeriodeAn,
+                    'demande' => $pgCmdDemande,
                     'dateFin' => $dateFin,
                     'stations' => $tabStations,
                     'rapport' => $rapport));

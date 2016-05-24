@@ -44,13 +44,12 @@
                         <img class=img-responsive" id="logo" src="{{ asset('bundles/aeagaeag/images/logoAEAG2010.jpg') }}" alt="Site Aeag">
                      </a> 
                  </div>
-                 <div class="col-xs-7 hidden-xs text-center">
-                     <h2>{% block titre %}Sites extranet de l'agence de l'eau 'Adour-Garonne'{% endblock titre %}</h2>
+                 <div class="col-xs-9 hidden-xs text-center">
+                     <h2>Sites extranet de l'agence de l'eau 'Adour-Garonne</br>{% block titre %}'{% endblock titre %}</h2>
                  </div>
-                 <div class="col-xs-2 hidden-xs text-center">
-                     {% block message_admin %}{% endblock message_admin %}
-                 </div>
-                  <div class="col-xs-2  text-right">
+                 <div class="col-xs-2  text-right">
+                      </br>
+                       {% block message_admin %}{% endblock message_admin %}
                       {% block inbox_notificaton %}
                      <ul class="nav navbar-nav navbar-right">
                                       <!-- BEGIN INBOX DROPDOWN -->

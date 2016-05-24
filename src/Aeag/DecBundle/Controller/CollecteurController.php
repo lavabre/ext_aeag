@@ -417,7 +417,7 @@ class CollecteurController extends Controller {
         $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
         $repoCollecteurProducteur = $emDec->getRepository('AeagDecBundle:CollecteurProducteur');
         $repoProducteurTauxSpecial = $emDec->getRepository('AeagDecBundle:ProducteurTauxSpecial');
-      
+
         $collecteur = $repoOuvrage->getOuvrageByUserIdType($user->getId(), 'ODEC');
 
         $collecteurProducteurs = $repoCollecteurProducteur->getCollecteurProducteurByCollecteur($collecteur->getId());
@@ -428,7 +428,7 @@ class CollecteurController extends Controller {
             $producteur = $repoOuvrage->getOuvrageById($collecteurProducteur->getProducteur());
             if ($producteur) {
                 $nbCollecteurs = $repoCollecteurProducteur->getNbCollecteurProducteurByProducteur($producteur->getId());
-               $producteurTauxSpecial = $repoProducteurTauxSpecial->getProducteurTauxSpecialBySiret($producteur->getSiret());
+                $producteurTauxSpecial = $repoProducteurTauxSpecial->getProducteurTauxSpecialBySiret($producteur->getSiret());
                 if ($producteurTauxSpecial) {
                     $tauxAide = $producteurTauxSpecial->getTaux() / 100;
                     $bonnifier = true;
@@ -467,7 +467,7 @@ class CollecteurController extends Controller {
         $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
         $repoCollecteurProducteur = $emDec->getRepository('AeagDecBundle:CollecteurProducteur');
         $repoProducteurTauxSpecial = $emDec->getRepository('AeagDecBundle:ProducteurTauxSpecial');
-    
+
         $collecteur = $repoOuvrage->getOuvrageById($collecteur_id);
         $collecteurProducteurs = $repoCollecteurProducteur->getCollecteurProducteurByCollecteur($collecteur->getId());
         $producteurs = array();
@@ -1112,14 +1112,13 @@ class CollecteurController extends Controller {
             $mes = AeagController::notificationAction($user, $em, $session);
             $mes1 = AeagController::messageAction($user, $em, $session);
             $tabMail = split("@", $user->getEmail());
-           if ($tabMail[1] == "a-renseigner-merci.svp"){
+            if ($tabMail[1] == "a-renseigner-merci.svp") {
                 $valider = 'N';
-            }else{
+            } else {
                 $valider = 'O';
             }
-           //\Symfony\Component\VarDumper\VarDumper::dump($tabMail);
-          // return new Response ('');
-   
+            //\Symfony\Component\VarDumper\VarDumper::dump($tabMail);
+            // return new Response ('');
         }
 
         $repoDeclarationCollecteur = $emDec->getRepository('AeagDecBundle:DeclarationCollecteur');
@@ -1142,7 +1141,7 @@ class CollecteurController extends Controller {
             $i++;
         }
 
-          return $this->render('AeagDecBundle:Collecteur:listeSousDeclarations.html.twig', array(
+        return $this->render('AeagDecBundle:Collecteur:listeSousDeclarations.html.twig', array(
                     'annee' => $declarationCollecteur->getAnnee(),
                     'collecteur' => $collecteur,
                     'declarationCollecteur' => $declarationCollecteur,
@@ -1579,16 +1578,24 @@ class CollecteurController extends Controller {
                 $tab[$i]['statutLibelle'] = $declaration->getStatut()->getLibelle();
                 $tab[$i]['declarationProducteurId'] = $declaration->getDeclarationproducteur()->getId();
                 $producteur = $repoOuvrage->getOuvrageById($declaration->getDeclarationproducteur()->getProducteur());
-                $tab[$i]['producteurSiret'] = $producteur->getSiret();
-                $tab[$i]['producteurLibelle'] = $producteur->getLibelle();
+                if ($producteur) {
+                    $tab[$i]['producteurSiret'] = $producteur->getSiret();
+                    $tab[$i]['producteurLibelle'] = $producteur->getLibelle();
+                    if (!$producteur->getCommune()) {
+                        $tab[$i]['producteurCodePostal'] = $producteur->getCp();
+                    } else {
+                        $tab[$i]['producteurCodePostal'] = $producteur->getCommune()->getCommune();
+                    }
+                } else {
+                    $tab[$i]['producteurSiret'] = null;
+                    $tab[$i]['producteurLibelle'] = null;
+                    $tab[$i]['producteurCodePostal'] = null;
+                }
+
                 $tab[$i]['declarationProducteurQuantiteReel'] = $declaration->getDeclarationProducteur()->getQuantiteReel();
                 $tab[$i]['declarationProducteurQuantiteRet'] = $declaration->getDeclarationProducteur()->getQuantiteRet();
                 $tab[$i]['declarationProducteurMontAide'] = $declaration->getDeclarationProducteur()->getMontAide();
-                if (!$producteur->getCommune()) {
-                    $tab[$i]['producteurCodePostal'] = $producteur->getCp();
-                } else {
-                    $tab[$i]['producteurCodePostal'] = $producteur->getCommune()->getCommune();
-                }
+
                 if ($declaration->getCentreTraitement()) {
                     $centreTraitement = $repoOuvrage->getOuvrageById($declaration->getCentreTraitement());
                     $tab[$i]['centreTraitement'] = $centreTraitement->getNumero();
@@ -1907,9 +1914,9 @@ class CollecteurController extends Controller {
                             $producteur = null;
                             if (count($producteurs) > 0) {
                                 $producteur = $producteurs[0];
-                             }
+                            }
                             if (!$producteur) {
-                                  $producteur = new Ouvrage();
+                                $producteur = new Ouvrage();
                                 $producteur->setLibelle($this->wd_remove_accents($tab[1]));
                                 if ($tab[2]) {
                                     $tab[2] = str_replace(' ', '', $tab[2]);
@@ -1952,8 +1959,8 @@ class CollecteurController extends Controller {
                                 $em->persist($producteur);
                                 $em->flush();
                             }
-                            
-                          
+
+
                             $naf = null;
                             if ($tab[3] != "") {
                                 $tab[3] = str_replace(' ', '', $tab[3]);
@@ -2357,7 +2364,7 @@ class CollecteurController extends Controller {
         }
 
         $ok = $this->majStatutDeclarationCollecteursAction($declarationCollecteur->getid(), $user, $emDec, $session);
-        
+
 
 
         if ($erreur == 0) {
@@ -2920,7 +2927,7 @@ class CollecteurController extends Controller {
         $emDec->persist($declaration);
         $emDec->flush();
         //return 'ok';
-       return  $declaration->getMontantApDispo();
+        return $declaration->getMontantApDispo();
     }
 
     public static function majStatutDeclarationProducteursAction($declarationProducteur_id = null, $user, $emDec, $session) {

@@ -30,7 +30,7 @@
                             <div class="modal-content" >
                                 <div class="modal-header">
                                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                    <h4 class="modal-title" id="myModalLabel">Suivi Hydrobio de la demande du {{ station.cmdDemande.dateDemande | date("d/m/Y") }}</h4>
+                                    <h4 class="modal-title" id="myModalLabel">Suivi Hydrobio de la station  {{ station.station.code }}  sur le support : {{ cmdPrelev.cmdPrelev.codeSupport.nomSupport }}</h4>
                                 </div>
                                 <div class="modal-body">
                                     <div id="idModalContentNouveauSuivi{{ cmdPrelev.cmdPrelev.id }}"></div>
@@ -47,7 +47,7 @@
                                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                                     <div class="row">
                                         <div class="col-md-10">
-                                            <h4 class="modal-title" id="myModalLabel">Historique des suivis de la demande du {{ station.cmdDemande.dateDemande | date("d/m/Y") }}</h4>
+                                            <h4 class="modal-title" id="myModalLabel">Historique des suivis de la station  {{ station.station.code }}  sur le support : {{ cmdPrelev.cmdPrelev.codeSupport.nomSupport }}</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -117,7 +117,7 @@
                                 <div class="modal-content" >
                                     <div class="modal-header">
                                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                        <h4 class="modal-title" id="myModalLabel">Suivi Hydrobio de la demande du {{ station.cmdDemande.dateDemande | date("d/m/Y") }}</h4>
+                                        <h4 class="modal-title" id="myModalLabel">Suivi Hydrobio de la station  {{ station.station.code }}  sur le support : {{ cmdPrelev.cmdPrelev.codeSupport.nomSupport }}</h4>
                                     </div>
                                     <div class="modal-body">
                                         <div id="idModalContentMajSuivi{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}"></div>
@@ -131,11 +131,11 @@
 
                         {#modal suppression suivi #}                          
                         <div class="modal fade" id="sup-{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}">
-                            <div class="modal-dialog modal-sm">
+                            <div class="modal-dialog modal-lg">
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                        <h4 class="modal-title" id="supLabel-{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}">Prélèvement  du {{ cmdPrelev.cmdPrelev.datePrelev | date("d/m/Y") }}</h4>
+                                        <h4 class="modal-title" id="supLabel-{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}">Suppression du suivi Hydrobio de la station  {{ station.station.code }}  sur le support : {{ cmdPrelev.cmdPrelev.codeSupport.nomSupport }} </h4>
                                     </div>
                                     <div class="modal-body">
                                         <h4>Cliquer sur la corbeille pour valider la suppression du suivi {{ cmdPrelev.suiviPrels.0.suiviPrel.datePrel | date("d/m/Y") }}</h4>
@@ -163,7 +163,7 @@
                                 <div class="modal-content" >
                                     <div class="modal-header">
                                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                        <h4 class="modal-title" id="myModalLabel">Integration d'un fichier terrain </h4>
+                                        <h4 class="modal-title" id="integrerFichierHeader">Integration d'un fichier de suivi de la demande du {{ demande.dateDemande | date("d/m/Y") }}</h4>
                                     </div>
                                     <div class="modal-body">
                                         <div id="idModalContentIntegrerFichier"></div>
