@@ -24,6 +24,11 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
         
         // On récupère les RAIs dont les phases sont en R40 et R41
         $pgCmdFichiersRps = $this->repoPgCmdFichiersRps->getReponsesValides();
+        
+        foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
+            $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R42');
+        }
+        
         foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
             $date = new \DateTime();
             $this->output->writeln($date->format('d/m/Y H:i:s') . '- Integration Données Brutes : Le traitement de la RAI '.$pgCmdFichierRps->getId().' commence');
