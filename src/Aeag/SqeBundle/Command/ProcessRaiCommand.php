@@ -9,7 +9,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class CheckProcessRaiCommand extends AeagCommand {
+class ProcessRaiCommand extends AeagCommand {
 
     private $phase82atteinte = false;
 

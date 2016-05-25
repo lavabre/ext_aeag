@@ -1,3 +1,3 @@
 #!/bin/bash
-jour=$(date +"%d/%m/%Y")
+jour=$(date +"%Y%m%d")
 php /base/extranet/preprod/ext_aeag/app/console_process_rai rai:process >> /base/extranet/preprod/ext_aeag/app/logs/rai/process_$jour.log
