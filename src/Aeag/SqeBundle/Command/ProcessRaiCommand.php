@@ -516,7 +516,7 @@ class ProcessRaiCommand extends AeagCommand {
             $mesure = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre($pgProgUnitesPossiblesParam->getCodeParametre(), $demandeId, $reponseId, $codePrelevement);
             if (!is_null($mesure)) {
                 if ($mesure > $pgProgUnitesPossiblesParam->getValMax()) {
-                    $this->_addLog('warning', $demandeId, $reponseId, "Controle Vraisemblance Macro Polluants : Le résultat est supérieur à la valeur attendue pour le paramètre " . $codeSandreMacroPolluant[0], $codePrelevement, $mesure);
+                    $this->_addLog('warning', $demandeId, $reponseId, "Controle Vraisemblance Macro Polluants : Le résultat est supérieur à la valeur attendue pour le paramètre " . $pgProgUnitesPossiblesParam->getCodeParametre()->getCodeParametre(), $codePrelevement, $mesure);
                     //return array("warning", "Controle Vraisemblance Macro Polluants : Le résultat est supérieur à la valeur attendue pour le paramètre");
                 }
             }
