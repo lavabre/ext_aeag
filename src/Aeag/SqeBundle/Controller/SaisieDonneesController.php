@@ -367,10 +367,11 @@ class SaisieDonneesController extends Controller {
                             $tabStations[$i]['cmdPrelev'] = null;
                             $autrePgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandesByLotanPeriode($pgProgLotAn, $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
                             foreach ($autrePgCmdDemandes as $autrePgCmdDemande) {
+                                $tabStations[$i]['autreCmdDemande'] = null;
+                                $tabStations[$i]['autreCmdPrelev'] = null;
                                 if ($autrePgCmdDemande != $pgCmdDemande) {
                                     $tabStations[$i]['autreCmdDemande'] = $autrePgCmdDemande;
-                                    $tabStations[$i]['autreCmdPrelev'] = null;
-                                }
+                                 }
                             }
                             //echo('station : ' . $pgProgLotStationAn->getStation()->getOuvFoncId() . ' ' . $pgProgLotStationAn->getStation()->getCode()    . ' prestataire : ' . $pgProgLotPeriodeProg->getGrparAn()->getPrestaDft()->getAdrCorId() . ' ' . $pgProgLotPeriodeProg->getGrparAn()->getPrestaDft()->getAncnum() . '</br>' );
                             $i++;

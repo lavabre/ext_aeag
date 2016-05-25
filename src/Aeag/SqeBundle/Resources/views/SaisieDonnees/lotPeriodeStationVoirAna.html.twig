@@ -22,21 +22,11 @@
 {% endblock breadcrumb %} 
 
 {%block panel_heading %}
-    <div class="row">
-        <div class="col-md-offset-3 col-md-7">
-            <h3 class="page-title ">
-                <table>
-                    <tr><td>Station {{ station.code }} {{ station.libelle }}</td></tr>
-                    <tr><td>prévu entre le  {{ periodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;et&nbsp;&nbsp; {{ dateFin | date("d/m/Y") }}</td></tr>
-                    <tr><td nowrap>pour le Lot :  {{ lotan.lot.nomLot }} - {{ lotan.anneeProg }}  - version :  {{ lotan.version }}</td></tr>
-                </table>
-            </h3>
-        </div>
-        <div class="col-md-1  pull-left">
-            <a id="expandAll" href="#" class="btn btn-primary" role="button"><i class="fa fa-expand"></i></a>
-            <a id="collapseAll" href="#" class="btn btn-primary" role="button"><i class="fa fa-compress"></i></a>
-        </div>
-    </div>
+         <h3 class="page-title text-center">
+                    Station {{ station.code }} {{ station.libelle }}</br>
+                    prélèvement prévu entre le  {{ periodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;et&nbsp;&nbsp; {{ dateFin | date("d/m/Y") }}</br>
+                    pour le Lot :  {{ lotan.lot.nomLot }} - {{ lotan.anneeProg }}  - version :  {{ lotan.version }}
+         </h3>
 {%endblock panel_heading %}
 
 {%block content %}
@@ -45,6 +35,10 @@
         <div class="form-body">  
 
             <div class="form-group form-inline">
+                <div class="col-md-1  pull-right">
+                    <a id="expandAll" href="#" class="btn btn-primary" role="button"><i class="fa fa-expand"></i></a>
+                    <a id="collapseAll" href="#" class="btn btn-primary" role="button"><i class="fa fa-compress"></i></a>
+                </div>
                 <label class=" col-md-offset-3 col-xs-2 control-label">Date prélèvement :</label>
                 <div class="col-xs-2  input-group">
                     <input type="text" id="datePrel" name="datePrel" required="required" class="form-control text-center" placeholder="Date prélèvement" value="{%if cmdPrelev.datePrelev %}{{ cmdPrelev.datePrelev | date("d/m/Y H:i") }}{% endif %}" readonly  disabled="disabled">
@@ -57,7 +51,7 @@
             {% for groupe   in  groupes %}
                 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
                     <div class="panel panel-default">
-                        {% if is_granted('ROLE_ADMINSQE') or  (user.prestataire.adrCorId == groupe.grparAn.prestaDft.adrCorId)  %}
+                        {% if user.prestataire and (user.prestataire.adrCorId == groupe.grparAn.prestaDft.adrCorId)  %}
                             <div class="panel-heading" role="tab" id="heading{{groupe.grparAn.id}}">
                                 <h4 class="panel-title h4-default">
                                     <div class="row">
