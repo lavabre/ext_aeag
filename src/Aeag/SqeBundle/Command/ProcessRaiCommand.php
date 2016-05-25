@@ -15,7 +15,7 @@ class CheckProcessRaiCommand extends AeagCommand {
 
     protected function configure() {
         $this
-                ->setName('rai:check_process')
+                ->setName('rai:process')
                 ->setDescription('Controle des RAI')
         ;
     }
