@@ -76,9 +76,14 @@
                                         format: 'dd/mm/yyyy hh:ii',
                                         startDate: "{{ periodeAn.periode.dateDeb | date("d/m/Y hh:ii") }}",
                                         endDate: "{{  dateFin | date("d/m/Y hh:ii") }}",
-                                        minView: 1
+                                        minView: 1,
+                                        autoclose: true   
                                     }
-                            );
+                            ).on('changeDate', function(ev){
+                                var str = $('#datePrel').val();
+                                var str1 = str.substr(1,13) + '00';
+                                $('#datePrel').datetimepicker('update', str1);
+                             });
 
                             $(document).on('change', '#statutPrel', function (e) {
                                 e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire

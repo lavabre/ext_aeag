@@ -62,7 +62,7 @@
                 <div id="idGenerer{{ groupe.grparAn.id}}"
                      <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            {% if is_granted('ROLE_ADMINSQE') or (user.prestataire.adrCorId == groupe.grparAn.prestaDft.adrCorId)  %}
+                            {% if user.prestataire and (user.prestataire.adrCorId == groupe.grparAn.prestaDft.adrCorId)  %}
                                 <div class="panel-heading" role="tab" id="heading{{groupe.grparAn.id}}">
                                     <h4 class="panel-title h4-default">
                                         <div class="row">
@@ -386,7 +386,8 @@
     format: 'dd/mm/yyyy hh:ii',
     startDate: "{{ periodeAn.periode.dateDeb | date("d/m/Y hh:ii") }}",
     endDate: "{{  dateFin | date("d/m/Y hh:ii") }}",
-    clearBtn: true
+    clearBtn: true,
+    autoclose: true   
      }
     );
     

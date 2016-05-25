@@ -834,6 +834,9 @@ class SuiviHydrobioController extends Controller {
         $dateActuel = new \DateTime();
         $dateActuel->add(new \DateInterval('P15D'));
         $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevById($prelevId);
+
+        $autrePgCmdPrelevs = $repoPgCmdPrelev->getAutrePrelevs($pgCmdPrelev);
+
         if ($user->hasRole('ROLE_ADMINSQE')) {
             $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByPrestataire($pgCmdPrelev->getPrestaPrel());
         } else {
@@ -879,6 +882,26 @@ class SuiviHydrobioController extends Controller {
                     $nbMessages++;
                 }
             }
+
+            for ($i = 0; $i < count($autrePgCmdPrelevs); $i++) {
+                $autreSuport = $autrePgCmdPrelevs[$i]['codeSupport'];
+                if ($autreSuport != '10') {
+                    $autreDateDebut = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
+                    $autreDateDebut->sub(new \DateInterval('P7D'));
+                    $autreDateFin = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
+                    $autreDateFin->add(new \DateInterval('P7D'));
+                    if ($pgCmdSuiviPrel->getDatePrel() >= $autreDateDebut or $pgCmdSuiviPrel->getDatePrel() <= $autreDateFin) {
+                        $err = true;
+                        $contenu = 'Date  (' . $pgCmdSuiviPrel->getDatePrel()->format('d/m/Y H:i') . ') doit être inférieure à ' . $autreDateDebut->format('d/m/Y H:i') . ' ou supérieure à  ' . $autreDateFin->format('d/m/Y H:i');
+                        $tabMessage[$nbMessages][0] = 'ko';
+                        $tabMessage[$nbMessages][1] = $contenu;
+                        $nbMessages++;
+                    }
+                }
+            }
+
+
+
             if ($pgCmdSuiviPrel->getStatutPrel() == 'P') {
                 if (!$pgCmdSuiviPrel->getCommentaire() or $pgCmdSuiviPrel->getCommentaire() == '') {
                     $contenu = 'Avertissement renseigner l’équipe et le contact (portable)  ';
