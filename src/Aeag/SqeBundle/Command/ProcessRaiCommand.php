@@ -9,13 +9,13 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class CheckProcessRaiCommand extends AeagCommand {
+class ProcessRaiCommand extends AeagCommand {
 
     private $phase82atteinte = false;
 
     protected function configure() {
         $this
-                ->setName('rai:check_process')
+                ->setName('rai:process')
                 ->setDescription('Controle des RAI')
         ;
     }
@@ -516,7 +516,7 @@ class CheckProcessRaiCommand extends AeagCommand {
             $mesure = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre($pgProgUnitesPossiblesParam->getCodeParametre(), $demandeId, $reponseId, $codePrelevement);
             if (!is_null($mesure)) {
                 if ($mesure > $pgProgUnitesPossiblesParam->getValMax()) {
-                    $this->_addLog('warning', $demandeId, $reponseId, "Controle Vraisemblance Macro Polluants : Le résultat est supérieur à la valeur attendue pour le paramètre " . $codeSandreMacroPolluant[0], $codePrelevement, $mesure);
+                    $this->_addLog('warning', $demandeId, $reponseId, "Controle Vraisemblance Macro Polluants : Le résultat est supérieur à la valeur attendue pour le paramètre " . $pgProgUnitesPossiblesParam->getCodeParametre()->getCodeParametre(), $codePrelevement, $mesure);
                     //return array("warning", "Controle Vraisemblance Macro Polluants : Le résultat est supérieur à la valeur attendue pour le paramètre");
                 }
             }

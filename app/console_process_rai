@@ -10,7 +10,7 @@ set_time_limit(0);
 require_once __DIR__.'/bootstrap.php.cache';
 require_once __DIR__.'/AppKernel.php';
 
-use Aeag\SqeBundle\Command\CheckProcessRaiCommand;
+use Aeag\SqeBundle\Command\ProcessRaiCommand;
 use Aeag\SqeBundle\Command\CheckSandreFormatCommand;
 use Aeag\SqeBundle\Command\BackUpProcessCommand;
 use Aeag\SqeBundle\Command\IntegrationDonneesBrutesCommand;
@@ -28,7 +28,7 @@ if ($debug) {
 
 $kernel = new AppKernel($env, $debug);
 $application = new Application($kernel);
-$application->add(new CheckProcessRaiCommand);
+$application->add(new ProcessRaiCommand);
 $application->add(new CheckSandreFormatCommand);
 $application->add(new BackUpProcessCommand);
 $application->add(new IntegrationDonneesBrutesCommand);

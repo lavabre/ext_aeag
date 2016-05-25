@@ -1,0 +1,5 @@
+#!/bin/bash
+jour=$(date +"%Y%m%d")
+php /base/extranet/preprod/ext_aeag/app/console_process_rai rai:check_sandre >> /base/extranet/preprod/ext_aeag/app/logs/rai/process_$jour.log
+
+find /base/extranet/preprod/ext_aeag/app/logs/rai/process_* -mtime +14 -exec rm {} \;
