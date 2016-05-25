@@ -33,6 +33,9 @@ class SuiviHydrobioController extends Controller {
 
 // Récupération des programmations
         $repoPgProgLotAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotAn');
+        $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
+        $repoPgProgLotPeriodeProg = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeProg');
+
         if ($user->hasRole('ROLE_ADMINSQE')) {
             $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByAdmin();
         } else if ($user->hasRole('ROLE_PRESTASQE')) {
@@ -47,8 +50,21 @@ class SuiviHydrobioController extends Controller {
             $pgProgLot = $pgProgLotAn->getLot();
             $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
             if (substr($pgProgTypeMilieu->getCodeMilieu(), 1, 2) === 'HB') {
-                $tabProglotAns[$i] = $pgProgLotAn;
-                $i++;
+                $pgProgLotPeriodeAns = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnByLotan($pgProgLotAn);
+                if (count($pgProgLotPeriodeAns) > 0) {
+                    $trouve = false;
+                    foreach ($pgProgLotPeriodeAns as $pgProgLotPeriodeAn) {
+                        $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByPeriodeAn($pgProgLotPeriodeAn);
+                        if (count($pgProgLotPeriodeProgs) > 0) {
+                            $trouve = true;
+                            break;
+                        }
+                    }
+                    if ($trouve) {
+                        $tabProglotAns[$i] = $pgProgLotAn;
+                        $i++;
+                    }
+                }
             }
         }
 
@@ -154,6 +170,8 @@ class SuiviHydrobioController extends Controller {
         $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
         $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByPeriodeAn($pgProgLotPeriodeAn);
         $tabStations = array();
+        $pgCmdDemande = null;
+        $dateFin = null;
         $i = 0;
         $j = 0;
         $k = 0;
@@ -357,10 +375,9 @@ class SuiviHydrobioController extends Controller {
                 }
             }
         }
-        
+
 //        \Symfony\Component\VarDumper\VarDumper::dump($tabStations);
 //        return new Response ('');   
-
 // Récupération des valeurs du fichier
 
         $name = $_FILES['file']['name'];
@@ -444,7 +461,7 @@ class SuiviHydrobioController extends Controller {
                 $ligne++;
 
                 $codeStation = $tab[0];
-                 $prelevs = array();
+                $prelevs = array();
                 $pgRefStationMesure = $repoPgRefStationMesure->getPgRefStationMesureByCode($codeStation);
                 if (!$pgRefStationMesure) {
                     $err = true;
@@ -453,7 +470,7 @@ class SuiviHydrobioController extends Controller {
                     fputs($rapport, $contenu);
                 } else {
                     $trouve = false;
-                     for ($i = 0; $i < count($tabStations); $i++) {
+                    for ($i = 0; $i < count($tabStations); $i++) {
                         if ($tabStations[$i]['station'] == $pgRefStationMesure) {
                             $trouve = true;
                             $prelevs = $tabStations[$i]['prelevs'];
@@ -544,7 +561,7 @@ class SuiviHydrobioController extends Controller {
                 $prelev = null;
                 for ($j = 0; $j < count($prelevs); $j++) {
                     $prelev = $prelevs[$j]['cmdPrelev'];
-                   if ($prelev->getCodeSupport()->getCodeSupport() == $codeSupport) {
+                    if ($prelev->getCodeSupport()->getCodeSupport() == $codeSupport) {
                         $trouve = true;
                         $suiviPrels = $prelevs[$j]['cmdSuiviPrelevs'];
                         $suiviPrelActuel = null;
@@ -814,7 +831,8 @@ class SuiviHydrobioController extends Controller {
         } else {
             $dateFin = $pgProgLotPeriodeAn->getPeriode()->getDateFin();
         }
-
+        $dateActuel = new \DateTime();
+        $dateActuel->add(new \DateInterval('P15D'));
         $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevById($prelevId);
         if ($user->hasRole('ROLE_ADMINSQE')) {
             $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByPrestataire($pgCmdPrelev->getPrestaPrel());
@@ -832,38 +850,119 @@ class SuiviHydrobioController extends Controller {
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            $erreur = false;
-            $pgCmdSuiviPrel->setPrelev($pgCmdPrelev);
-            $pgCmdSuiviPrel->setUser($pgProgWebUser);
-            if (!$pgCmdSuiviPrel->getValidation()) {
-                $pgCmdSuiviPrel->setValidation('E');
-            }
+            $tabMessage = array();
+            $nbMessages = 0;
+            $err = false;
             if (!$pgCmdSuiviPrel->getDatePrel()) {
-                $erreur = true;
-                $message = 'veuillez renseigner la date svp';
+                $err = true;
+                $contenu = 'veuillez renseigner la date svp';
+                $tabMessage[$nbMessages][0] = 'ko';
+                $tabMessage[$nbMessages][1] = $contenu;
+                $nbMessages++;
             }
-            $datePrel = $pgCmdSuiviPrel->getDatePrel();
-            $emSqe->persist($pgCmdSuiviPrel);
-            if ($pgCmdSuiviPrel->getStatutPrel() == 'F' and $pgCmdSuiviPrel->getValidation() == 'A') {
-                $pgCmdPrelev->setDatePrelev($datePrel);
-                $pgCmdPrelev->setRealise('O');
-            } elseif ($pgCmdSuiviPrel->getStatutPrel() == 'N') {
-                $pgCmdPrelev->setDatePrelev($datePrel);
-                $pgCmdPrelev->setRealise('N');
-            } else {
-                $pgCmdPrelev->setDatePrelev($pgCmdPrelev->getDemande()->getDateDemande());
-                $pgCmdPrelev->setRealise(null);
+            if ($pgCmdSuiviPrel->getStatutPrel() == 'P') {
+                if ($pgCmdSuiviPrel->getDatePrel() < $dateActuel or $pgCmdSuiviPrel->getDatePrel() > $dateFin) {
+                    $contenu = 'Avertissement date  (' . $pgCmdSuiviPrel->getDatePrel()->format('d/m/Y H:i') . ') non comprise entre ' . $dateActuel->format('d/m/Y H:i') . ' et ' . $dateFin->format('d/m/Y H:i');
+                    $tabMessage[$nbMessages][0] = 'ok';
+                    $tabMessage[$nbMessages][1] = $contenu;
+                    $nbMessages++;
+                }
             }
-            if (!$erreur) {
+            $dateDebut = clone($pgProgLotPeriodeAn->getPeriode()->getDateDeb());
+            $dateActuel = new \DateTime();
+            if ($pgCmdSuiviPrel->getStatutPrel() != 'P') {
+                if ($pgCmdSuiviPrel->getDatePrel() < $dateDebut or $pgCmdSuiviPrel->getDatePrel() > $dateActuel) {
+                    $err = true;
+                    $contenu = 'Date  (' . $pgCmdSuiviPrel->getDatePrel()->format('d/m/Y H:i') . ') non comprise entre ' . $dateDebut->format('d/m/Y H:i') . ' et ' . $dateActuel->format('d/m/Y H:i');
+                    $tabMessage[$nbMessages][0] = 'ko';
+                    $tabMessage[$nbMessages][1] = $contenu;
+                    $nbMessages++;
+                }
+            }
+            if ($pgCmdSuiviPrel->getStatutPrel() == 'P') {
+                if (!$pgCmdSuiviPrel->getCommentaire() or $pgCmdSuiviPrel->getCommentaire() == '') {
+                    $contenu = 'Avertissement renseigner l’équipe et le contact (portable)  ';
+                    $tabMessage[$nbMessages][0] = 'ok';
+                    $tabMessage[$nbMessages][1] = $contenu;
+                    $nbMessages++;
+                }
+            }
+            if ($pgCmdSuiviPrel->getStatutPrel() == 'N') {
+                if (!$pgCmdSuiviPrel->getCommentaire() or $pgCmdSuiviPrel->getCommentaire() == '') {
+                    $err = true;
+                    $contenu = ' Commentaire obligatoire indiquer pourquoi   ';
+                    $tabMessage[$nbMessages][0] = 'ko';
+                    $tabMessage[$nbMessages][1] = $contenu;
+                    $nbMessages++;
+                }
+            }
+            foreach ($pgCmdSuiviPrels as $suiviPrel) {
+                if ($suiviPrel->getDatePrel() == $pgCmdSuiviPrel->getDatePrel() and
+                        $suiviPrel->getStatutPrel() == $pgCmdSuiviPrel->getStatutPrel() and
+                        $suiviPrel->getCommentaire() == $pgCmdSuiviPrel->getCommentaire() and
+                        $suiviPrel->getValidation() == $pgCmdSuiviPrel->getValidation()) {
+                    $err = true;
+                    $contenu = 'Suivi déja intégré ';
+                    $tabMessage[$nbMessages][0] = 'ko';
+                    $tabMessage[$nbMessages][1] = $contenu;
+                    $nbMessages++;
+                }
+            }
+            if ($pgCmdSuiviPrelActuel) {
+                if ($pgCmdSuiviPrelActuel->getStatutPrel() == 'E' and $pgCmdSuiviPrel->getStatutPrel() == 'P') {
+                    $err = true;
+                    $contenu = 'Le statut ne peut être à \'Prévisionnel\' ' . CHR(13) . CHR(10);
+                    $tabMessage[$nbMessages][0] = 'ko';
+                    $tabMessage[$nbMessages][1] = $contenu;
+                    $nbMessages++;
+                }
+                if ($pgCmdSuiviPrelActuel->getStatutPrel() == 'P' and $pgCmdSuiviPrel->getStatutPrel() == 'P') {
+                    if ($pgCmdSuiviPrelActuel->getdatePrel() != $pgCmdSuiviPrel->getDatePrel()) {
+                        $contenu = ' Avertissement  modification de la date de prélevement ';
+                        $tabMessage[$nbMessages][0] = 'ok';
+                        $tabMessage[$nbMessages][1] = $contenu;
+                        $nbMessages++;
+                    }
+                }
+                if ($pgCmdSuiviPrelActuel->getStatutPrel() == 'P' and $pgCmdSuiviPrel->getStatutPrel() == 'E') {
+                    if ($pgCmdSuiviPrelActuel->getdatePrel() != $pgCmdSuiviPrel->getDatePrel() and ( !$pgCmdSuiviPrel->getCommentaire() or $pgCmdSuiviPrel->getCommentaire() == '')) {
+                        $err = true;
+                        $contenu = 'Commentaire obligatoire  ';
+                        $tabMessage[$nbMessages][0] = 'ko';
+                        $tabMessage[$nbMessages][1] = $contenu;
+                        $nbMessages++;
+                    }
+                }
+            }
+
+            if (!$err) {
+                $pgCmdSuiviPrel->setPrelev($pgCmdPrelev);
+                $pgCmdSuiviPrel->setUser($pgProgWebUser);
+                if (!$pgCmdSuiviPrel->getValidation()) {
+                    $pgCmdSuiviPrel->setValidation('E');
+                }
+
+                $datePrel = $pgCmdSuiviPrel->getDatePrel();
+                $emSqe->persist($pgCmdSuiviPrel);
+                if ($pgCmdSuiviPrel->getStatutPrel() == 'F' and $pgCmdSuiviPrel->getValidation() == 'A') {
+                    $pgCmdPrelev->setDatePrelev($datePrel);
+                    $pgCmdPrelev->setRealise('O');
+                } elseif ($pgCmdSuiviPrel->getStatutPrel() == 'N') {
+                    $pgCmdPrelev->setDatePrelev($datePrel);
+                    $pgCmdPrelev->setRealise('N');
+                } else {
+                    $pgCmdPrelev->setDatePrelev($pgCmdPrelev->getDemande()->getDateDemande());
+                    $pgCmdPrelev->setRealise(null);
+                }
                 $emSqe->persist($pgCmdPrelev);
                 $emSqe->flush();
                 $session->getFlashBag()->add('notice-success', 'le suivi du ' . $datePrel->format('d/m/Y') . ' a été créé !');
+                $contenu = 'ok ';
+                $tabMessage[0][0] = $contenu;
+                return new Response(json_encode($tabMessage));
             } else {
-                $session->getFlashBag()->add('notice-error', $message);
+                return new Response(json_encode($tabMessage));
             }
-
-            return $this->redirect($this->generateUrl('AeagSqeBundle_suiviHydrobio_lot_periode_stations', array('stationId' => $pgCmdPrelev->getStation()->getOuvFoncId(),
-                                'periodeAnId' => $periodeAnId)));
         }
 
         return $this->render('AeagSqeBundle:SuiviHydrobio:lotPeriodeStationDemandeSuiviNew.html.twig', array(

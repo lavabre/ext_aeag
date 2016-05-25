@@ -19,19 +19,11 @@
 {% endblock breadcrumb %} 
 
 {%block panel_heading %}
-     <div class="row">
-            <div class="col-md-offset-3 col-md-7">
-                 <h3 class="page-title ">
-                     <table>
-                         <tr><td>Saisie des données</td></tr>
-                         <tr><td>Liste des stations</td></tr>
-                         <tr><td>entre le  {{ periodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;et&nbsp;&nbsp; {{periodeAn.periode.dateFin | date("d/m/Y") }}</td></tr>
-                         <tr><td>Lot  {{ lotan.lot.nomLot }} - {{ lotan.anneeProg }}  - version :  {{ lotan.version }}</td></tr>
-                     </table>
+               <h3 class="page-title text-center">
+                    Liste des stations entre le  {{ periodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;et&nbsp;&nbsp; {{periodeAn.periode.dateFin | date("d/m/Y") }}</br>
+                    du lot  {{ lotan.lot.nomLot }} - {{ lotan.anneeProg }}  - version :  {{ lotan.version }}</td></tr>
                 </h3>
-            </div>
-     </div>
-{%endblock panel_heading %}
+  {%endblock panel_heading %}
 
 {%block content %}
     
@@ -40,15 +32,15 @@
         <table class="table table-bordered t table-advance" id="idTable_demandes">
             <thead>
                 <tr>
-                    <th>Action</th>
-                    <th>Code</th>
-                    <th>Libellé</th>
-                    <th>Support</th>
+                    <th width="5%">Action</th>
+                    <th width="5%">Code</th>
+                    <th width="25%">Libellé</th>
+                    <th width="5%">Support</th>
                     {% if is_granted('ROLE_ADMINSQE') %}
-                        <th>Prestataire</th>
+                        <th width="25%">Prestataire</th>
                     {% endif %}
-                    <th>Données terrains</th>
-                    <th>Analyses</th>
+                    <th width="5%">Données terrains</th>
+                    <th width="5%">Analyses</th>
                   </tr>
             </thead>
             <tbody>
@@ -60,7 +52,7 @@
                               {% else %}
                               <tr>
                            {% endif %}
-                           <td nowrap>
+                           <td nowrap width="5%">
                                 <ul class="list-inline">
                                   {% if cmdPrelev.valider == 'O' %}
                                       <li>
@@ -88,23 +80,23 @@
                                   {% endif %}
                                 </ul>
                            </td>
-                              <td nowrap>
+                              <td nowrap width="1%">
                                   <a  href="{{ station.lien }}" target="_blank" title="Localisation">{{ station.station.code }}</a>
                                </td>
-                             <td nowrap>
+                               <td width="25%">
                                     {{ station.station.libelle }}
                              </td>
-                                  <td>
+                             <td width="5%">
                                      {% if cmdPrelev.cmdPrelev.codeSupport %}
                                         {{ cmdPrelev.cmdPrelev.codeSupport.nomSupport }}
                                      {% endif %}
                                  </td>
                                  {% if is_granted('ROLE_ADMINSQE') %}
-                                     <td nowrap>
+                                     <td width="25%">
                                           {{ cmdPrelev.cmdPrelev.prestaPrel.nomCorres }}
                                      </td>
                                  {% endif %}
-                                    <td  class="text-nowrap text-center">
+                                    <td nowrap class="text-left" width="5%">
                                         {% if cmdPrelev.saisieTerrain == 'O' %}
                                                  {% if  cmdPrelev.nbParametresTerrain > 0 %}
                                                       <ul class="list-inline">
@@ -165,7 +157,7 @@
                                                 {% endif %}
                                             {% endif %}
                                    </td>
-                                   <td  class="text-nowrap text-center">
+                                   <td nowrap class="text-left" width="5%">
                                          {% if cmdPrelev.saisieAnalyse == 'O' %}
                                              {% if  cmdPrelev.nbParametresAnalyse > 0 or is_granted('ROLE_ADMINSQE')%}
                                                       <ul class="list-inline">

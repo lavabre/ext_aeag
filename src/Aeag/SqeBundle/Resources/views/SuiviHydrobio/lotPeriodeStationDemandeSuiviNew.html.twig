@@ -1,4 +1,4 @@
-<form class="form-horizontal" id="idFormNewSuivi" role="form" action="{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_new",{"prelevId":  prelev.id, "periodeAnId": periodeAnId}) }}" class="form-horizontal" method="post" {{ form_enctype(form) }}>
+<form class="form-horizontal" id="idFormNewSuivi" role="form" action="#" class="form-horizontal" method="post" {{ form_enctype(form) }}>
 
     <div class="form-group">
         <label class="col-xs-3 control-label">Date :</label>
@@ -45,7 +45,9 @@
                             {{ form_widget(form.commentaire, { 'attr': {'class': 'form-control ', 'placeholder': 'Commentaire'} }) }}
                         </div>
                     </div> 
-
+                     
+                    <div id="idMessage" class="col-xs-offset-3 col-xs-5 alert alert-warning text-danger text-left" role="alert"></div>
+                     <div id="idProgress" class="col-xs-offset-3 col-xs-5 alert alert-info"><progress></progress></div>
 
                     <div class="form-group">
                         <div class="col-xs-offset-4 col-xs-8">
@@ -64,7 +66,10 @@
                     <script type="text/javascript" language="javascript">
 
                         jQuery(document).ready(function () {
-
+                            
+                            $('#idProgress').hide();
+                           $('#idMessage').hide();
+                    
                             $('#datePrel').datetimepicker(
                                     {
                                         language: 'fr',
@@ -111,12 +116,57 @@
 
                                 }
 
-                                if (!erreur) {
+                                 if (!erreur){
                                     e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                                    $('#modalTraitementEncours').modal('toggle');
-                                    $('#idFormNewSuivi').submit();
-                                    $('#modalTraitementEncours').modal('hide');
-                                }
+                                    $('#idProgress').show();
+                                    var $this = $('#idFormNewSuivi');
+                                   var url = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_new",{"prelevId":  "par1", "periodeAnId": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                   url = url.replace("par1", {{ prelev.id }});
+                                    url = url.replace("par2", {{ periodeAnId }});
+                                    url = url.replace("amp;","");
+                                    $.ajax({
+                                                 url: url,
+                                                 type: 'post',
+                                                 data: $this.serialize(),
+                                                  //Traitements AJAX
+                                                 success: function(messages) { // Je récupère la réponse du fichier PHP
+                                                        tabMessages = JSON.parse(messages);
+                                                        var erreur =false;
+                                                        var  html = "<ul>";
+                                                        for(var ii = 0; ii <tabMessages.length; ii++ ){
+                                                            var typeMessage = tabMessages[ii][0];
+                                                            if (typeMessage == 'ko'){
+                                                                erreur = true;
+                                                            }
+                                                            var  message  = tabMessages[ii][1];
+                                                            html = html + '<li>' + message + '</li>';
+                                                         }
+                                                         html = html + '<ul>';
+                                                         if (message == 'ok'){
+                                                              var url1 = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_stations",{"periodeAnId": "par1"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                                                url1 = url1.replace("par1", {{ periodeAnId }}); 
+                                                                url1 = url1.replace("amp;","");
+                                                                window.location.replace(url1);
+                                                         }else{
+                                                          $('#idMessage').show();
+                                                          $('#idMessage').empty().append(html).show();
+                                                          $('#idProgress').hide();
+                                                          if (!erreur){
+                                                                var url1 = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_stations",{"periodeAnId": "par1"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                                                url1 = url1.replace("par1", {{ periodeAnId }}); 
+                                                                url1 = url1.replace("amp;","");
+                                                                window.location.replace(url1);
+                                                             }
+                                                        }
+                                                  },
+                                                  error: function(messages) { // Je récupère la réponse du fichier PHP
+                                                          {# $('#idResultat').empty().append('erreur lors du dépot');#}
+                                                            $('#idMessage').empty().append('erreur ajax').show();
+                                                            $('#idProgress').hide();
+                                                 },
+                                            });
+                                 }
+                                
                             });
 
                         });

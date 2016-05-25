@@ -163,7 +163,11 @@
                                 <div class="modal-content" >
                                     <div class="modal-header">
                                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                        <h4 class="modal-title" id="integrerFichierHeader">Integration d'un fichier de suivi de la demande du {{ demande.dateDemande | date("d/m/Y") }}</h4>
+                                        {% if demande %}
+                                             <h4 class="modal-title" id="integrerFichierHeader">Integration d'un fichier de suivi de la demande du {{ demande.dateDemande | date("d/m/Y") }}</h4>
+                                        {% else %}
+                                             <h4 class="modal-title" id="integrerFichierHeader">Integration d'un fichier de suivi </h4>
+                                         {% endif %}
                                     </div>
                                     <div class="modal-body">
                                         <div id="idModalContentIntegrerFichier"></div>
@@ -176,19 +180,11 @@
 {% endblock modal %}
 
 {%block panel_heading %}
-    <div class="row">
-        <div class="col-md-offset-3 col-md-7">
-            <h3 class="page-title ">
-                <table>
-                    <tr><td>Suivi Hydrobio</td></tr>
-                    <tr><td>Liste des stations</td></tr>
-                    <tr><td>entre le  {{ periodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;et&nbsp;&nbsp; {{ dateFin | date("d/m/Y") }}</td></tr>
-                    <tr><td>Lot  {{ lotan.lot.nomLot }} - {{ lotan.anneeProg }}  - version :  {{ lotan.version }}</td></tr>
-                </table>
-            </h3>
-        </div>
-    </div>
-{%endblock panel_heading %}
+             <h3 class="page-title text-center">
+                Liste des stations entre le  {{ periodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;et&nbsp;&nbsp; {{ dateFin | date("d/m/Y") }}</br>
+                 {{ lotan.lot.nomLot }} - {{ lotan.anneeProg }}  - version :  {{ lotan.version }}
+             </h3>
+  {%endblock panel_heading %}
 
 {%block content %}
     <div class="row">
@@ -259,13 +255,13 @@
                                     <td>
                                         <a  href="{{ station.lien }}" target="_blank" title="Localisation">{{ station.station.code }}</a>
                                     </td>
-                                    <td nowrap>
+                                    <td>
                                         {{ station.station.libelle }}
                                     </td>
-                                    <td nowrap >
+                                    <td>
                                         {{ station.reseau.nomRsx }}
                                     </td>
-                                    <td nowrap>
+                                    <td>
                                         {%if  cmdPrelev.autrePrelevs %}
                                              {% for autrePrelev in cmdPrelev.autrePrelevs  %}
                                                  {{ autrePrelev.datePrel | date("d/m/Y H:i") }} : {{ autrePrelev.support }} </br>

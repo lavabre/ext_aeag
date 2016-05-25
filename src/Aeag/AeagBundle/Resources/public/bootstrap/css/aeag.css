@@ -50,13 +50,13 @@ img#logo
     width: 14%;
 }
 
-/*.navbar {
+.navbar {
     position: relative;
     min-height: 50px;
     margin-bottom: 0px;
     padding-bottom: 0px;
     border: 1px solid transparent;
-}*/
+}
 /*
 .navbar-nav {
     height: 50px;
@@ -326,7 +326,9 @@ img#logo
 }
 
 .panel {
-    margin-bottom: 20px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding: 0px 1px 2px 1px;
     background-color: transparent;
     border: 1px solid transparent;
     border-radius: 4px 4px 4px 4px;
@@ -380,6 +382,7 @@ img#logo
 
 .panel-heading {
     background-color: #aac3f1;
+    padding: 0px 1px 2px 1px;
 }
 
 
@@ -869,4 +872,8 @@ fieldset[disabled] .btn-turquoise.active {
   .page-header {
    background-size: 2000px 100px;
   }
+}
+
+h3 {
+    margin: 0px 0px 0px;
 }
