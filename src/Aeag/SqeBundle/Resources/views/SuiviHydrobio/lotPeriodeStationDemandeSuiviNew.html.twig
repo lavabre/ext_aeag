@@ -76,9 +76,14 @@
                                         format: 'dd/mm/yyyy hh:ii',
                                         startDate: "{{ periodeAn.periode.dateDeb | date("d/m/Y hh:ii") }}",
                                         endDate: "{{  dateFin | date("d/m/Y hh:ii") }}",
-                                        minView: 1
+                                        minView: 1,
+                                        autoclose: true   
                                     }
-                            );
+                            ).on('changeDate', function(ev){
+                                var str = $('#datePrel').val();
+                                var str1 = str.substr(1,13) + '00';
+                                $('#datePrel').datetimepicker('update', str1);
+                             });
 
                             $(document).on('change', '#statutPrel', function (e) {
                                 e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
@@ -132,6 +137,7 @@
                                                  success: function(messages) { // Je récupère la réponse du fichier PHP
                                                         tabMessages = JSON.parse(messages);
                                                         var erreur =false;
+                                                        var nbMessage = 0;
                                                         var  html = "<ul>";
                                                         for(var ii = 0; ii <tabMessages.length; ii++ ){
                                                             var typeMessage = tabMessages[ii][0];
@@ -139,25 +145,23 @@
                                                                 erreur = true;
                                                             }
                                                             var  message  = tabMessages[ii][1];
-                                                            html = html + '<li>' + message + '</li>';
+                                                            if(message){
+                                                                nbMessage = nbMessage + 1;
+                                                                html = html + '<li>' + message + '</li>';
+                                                            }
                                                          }
                                                          html = html + '<ul>';
-                                                         if (message == 'ok'){
+                                                         if (nbMessage > 0){
+                                                          $('#idMessage').show();
+                                                          $('#idMessage').empty().append(html).show();
+                                                         }  
+                                                          $('#idProgress').hide();
+                                                         if (!erreur){
                                                               var url1 = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_stations",{"periodeAnId": "par1"}) }}', // Le nom du fichier indiqué dans le formulaire
                                                                 url1 = url1.replace("par1", {{ periodeAnId }}); 
                                                                 url1 = url1.replace("amp;","");
                                                                 window.location.replace(url1);
-                                                         }else{
-                                                          $('#idMessage').show();
-                                                          $('#idMessage').empty().append(html).show();
-                                                          $('#idProgress').hide();
-                                                          if (!erreur){
-                                                                var url1 = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_stations",{"periodeAnId": "par1"}) }}', // Le nom du fichier indiqué dans le formulaire
-                                                                url1 = url1.replace("par1", {{ periodeAnId }}); 
-                                                                url1 = url1.replace("amp;","");
-                                                                window.location.replace(url1);
-                                                             }
-                                                        }
+                                                         }
                                                   },
                                                   error: function(messages) { // Je récupère la réponse du fichier PHP
                                                           {# $('#idResultat').empty().append('erreur lors du dépot');#}

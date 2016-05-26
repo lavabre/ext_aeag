@@ -5,7 +5,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="icon" type="image/x-icon" href="{{ asset('bundles/aeagaeag/images/favicon.ico') }}" />
-        <title>{% block title %}Sites Extranet de l'agence de l'eau 'Adour-garonne'{% endblock %}</title>
+        <title>{% block title %}Agence de l'eau Adour-garonne{% endblock %}</title>
         <!--<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.0/css/jquery.dataTables.css">-->
         <link href="{{ asset('bundles/aeagaeag/bootstrap/js/jquery-ui/jquery-ui.css') }}" rel="stylesheet">
         <link href="{{ asset('bundles/aeagaeag/DataTables/media/css/jquery.dataTables.min.css') }}" rel="stylesheet">
@@ -45,7 +45,7 @@
                      </a> 
                  </div>
                  <div class="col-xs-9 hidden-xs text-center">
-                     <h2>Sites extranet de l'agence de l'eau 'Adour-Garonne</br>{% block titre %}'{% endblock titre %}</h2>
+                     <h2>Agence de l'eau Adour-Garonne</br>{% block titre %}'{% endblock titre %}</h2>
                  </div>
                  <div class="col-xs-2  text-right">
                       </br>
@@ -337,16 +337,16 @@
                                  
                  </div>
            
-              <footer class="page-footer hidden-xs hidden-sm">
+              <footer class="page-footer hidden-xs hidden-sm medium text-cente">
                 <!--[if lt IE 9]>
                  <div class="page-footer-ie8 hidden-xs hidden-sm">
                  <![endif]-->
-                <h4 class="small text-center">
-                        Agence de l'eau Adour-Garonne - 90, rue du f&eacute;r&eacute;tra - CS 87801 - 31078 Toulouse Cedex 4 - T&eacute;l. : 05 61 36 37 38
-                        &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;   Webmaster : {{ webmaster }}
-                        &nbsp; &nbsp; &nbsp; &nbsp; Symfony : {{ symfony }}
-                        &nbsp; &nbsp; &nbsp; &nbsp; version : {{ version }}
-                </h4>
+                {#<h6 class="medium text-center">#}
+                        Agence de l'eau Adour-Garonne - 90, rue du f&eacute;r&eacute;tra - CS 87801 - 31078 Toulouse Cedex 4 - T&eacute;l. : 05 61 36 37 38 - fax : 05 61 36 37 28
+                       {# &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;   Webmaster : {{ webmaster }}#}
+                       {# &nbsp; &nbsp; &nbsp; &nbsp; Symfony : {{ symfony }}#}
+                       {# &nbsp; &nbsp; &nbsp; &nbsp; version : {{ version }}#}
+                {#</h6>#}
                <!--[if lt IE 9]>
                 </div>
                 <![endif]-->

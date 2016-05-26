@@ -66,8 +66,7 @@
             {% endif %}
         {% endif %}  
         
-        {% if  not app.session.get('evolution')%}
-            {% if app.session.get('suiviHb') %}
+             {% if app.session.get('suiviHb') %}
                     {%if app.session.get('menu') == 'suiviHydrobio'%}
                         <li class="active">
                     {% else %}
@@ -76,8 +75,7 @@
                     <a href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}">Suivi Hydrobio</a>
                     </li>
             {% endif  %}
-        {% endif %}  
-  
+       
             {#<li>
                 <a href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur.pdf') }}" target="_blank">Aide</a>
             </li>#}
