@@ -51,7 +51,7 @@
 
                     <div class="form-group">
                         <div class="col-xs-offset-4 col-xs-8">
-                            <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
+                            <button id="btAnnuler" type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
                             <button id="btvalider" type="button" class="btn btn-success"><i class="fa fa-check"></i>Valider</button>
                         </div>
                     </div>   
@@ -62,8 +62,7 @@
                         {{ form_rest(form) }}
                     </div>  
                     </form>      
-
-                    <script type="text/javascript" language="javascript">
+                       <script type="text/javascript" language="javascript">
 
                         jQuery(document).ready(function () {
                             
@@ -172,7 +171,8 @@
                                  }
                                 
                             });
-
+                            
+                   
                         });
 
                     </script>

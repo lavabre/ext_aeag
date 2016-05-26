@@ -632,8 +632,9 @@ class SuiviHydrobioController extends Controller {
                     $erreur++;
                 } else {
                     if ($user->hasRole('ROLE_ADMINSQE')) {
-                        $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByPrestataire($pgCmdPrelev->getPrestaPrel());
-                    } else {
+                        $pgProgWebUsers = $repoPgProgWebUsers->getPgProgWebusersByPrestataire($pgCmdPrelev->getPrestaPrel());
+                        $pgProgWebUser = $pgProgWebUsers[0]; 
+                     } else {
                         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
                     }
                     $pgCmdSuiviPrel = new PgCmdSuiviPrel();
@@ -854,6 +855,7 @@ class SuiviHydrobioController extends Controller {
 
         if ($user->hasRole('ROLE_ADMINSQE')) {
             $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByPrestataire($pgCmdPrelev->getPrestaPrel());
+            $pgProgWebUser = $pgProgWebUsers[0]; 
         } else {
             $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         }
