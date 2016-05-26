@@ -87,7 +87,7 @@ class BackUpProcessCommand extends AeagCommand {
                 }
             } else {
                 // Envoi d'un mail aux admins
-                $objetMessage = "RAI " . $pgCmdFichierRps->getId() . " est bloquée dans le process de validation";
+                /*$objetMessage = "RAI " . $pgCmdFichierRps->getId() . " est bloquée dans le process de validation";
                 $txtMessage = "La RAI (id " . $pgCmdFichierRps->getId() . ") concernant la DAI " . $pgCmdFichierRps->getDemande()->getCodeDemandeCmd() . " est actuellement bloquée.";
                 $txtMessage .= " Celle-ci est passée à la phase \"".$pgProgPhase->getLibellePhase()."\" au moins 4 fois sans réussir à terminer le traitement de cette RAI.";
                 
@@ -98,7 +98,7 @@ class BackUpProcessCommand extends AeagCommand {
                     if (!$this->getContainer()->get('aeag_sqe.message')->createMail($this->em, $mailer, $txtMessage, $destinataire, $objetMessage)) {
                         $this->_addLog('warning', $pgCmdFichierRps->getDemande()->getId(), $pgCmdFichierRps->getId(), "Erreur lors de l\'envoi de mail dans le process de verification des RAIs", null, $destinataire);
                     }
-                }
+                }*/
             }
         }
         

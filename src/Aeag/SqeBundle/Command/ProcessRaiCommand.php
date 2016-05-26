@@ -26,22 +26,25 @@ class ProcessRaiCommand extends AeagCommand {
 
         // On récupère les RAIs dont les phases sont en R25
         $pgProgPhases = $this->repoPgProgPhases->findOneByCodePhase('R25');
-        $pgCmdFichiersRps = $this->repoPgCmdFichiersRps->findBy(array('phaseFichier' => $pgProgPhases, 'typeFichier' => 'RPS', 'suppr' => 'N'), array('id' => 'ASC'));
+        //$pgCmdFichiersRps = $this->repoPgCmdFichiersRps->findBy(array('phaseFichier' => $pgProgPhases, 'typeFichier' => 'RPS', 'suppr' => 'N'), array('id' => 'ASC'));
+        $pgCmdFichierRps = $this->repoPgCmdFichiersRps->findOneBy(array('phaseFichier' => $pgProgPhases, 'typeFichier' => 'RPS', 'suppr' => 'N'), array('id' => 'ASC'));
         $cptRaisTraitesOk = 0;
         $cptRaisTraitesNok = 0;
         
-        // On les passe tous en phase R26
-        foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
-            $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R26');
-        }
+        if (!is_null($pgCmdFichierRps)) {
         
-        if (count($pgCmdFichiersRps) > 0) {
+        // On les passe tous en phase R26
+        //foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
+            $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R26');
+        //}
+        
+        /*if (count($pgCmdFichiersRps) > 0) {
             $date = new \DateTime();
             $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : ' . count($pgCmdFichiersRps) . " RAI(s) vont être traitées ");
-        }
+        }*/
         
         
-        foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
+        //foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
             $date = new \DateTime();
             $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : Le traitement de la RAI '.$pgCmdFichierRps->getId().' commence');
             
@@ -110,8 +113,8 @@ class ProcessRaiCommand extends AeagCommand {
             
             $date = new \DateTime();
             $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : Le traitement de la RAI '.$pgCmdFichierRps->getId().' est terminé');
-        }
-
+        //}
+        }    
         $date = new \DateTime();
         $cptRaisTraitesTot = $cptRaisTraitesOk + $cptRaisTraitesNok;
         $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : ' . $cptRaisTraitesTot . " RAI(s) traitée(s), " . $cptRaisTraitesOk . " OK, " . $cptRaisTraitesNok . " NOK");

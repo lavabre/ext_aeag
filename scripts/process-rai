@@ -4,4 +4,7 @@ dir="/base/extranet/preprod/ext_aeag/app/logs"
 if [ ! -d "$dir" ]; then
   mkdir $dir
 fi
-php /base/extranet/preprod/ext_aeag/app/console_process_rai rai:process >> $dir/process_$jour.log
+
+if [ $(ps -ax | grep -v grep | grep 'rai:process' | wc -l) -lt 4 ]; then
+    php /base/extranet/preprod/ext_aeag/app/console_process_rai rai:process >> $dir/process_$jour.log
+fi
