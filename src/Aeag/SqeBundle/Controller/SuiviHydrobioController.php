@@ -560,11 +560,11 @@ class SuiviHydrobioController extends Controller {
                 $prelev = null;
                 for ($j = 0; $j < count($prelevs); $j++) {
                     $prelev = $prelevs[$j]['cmdPrelev'];
-                    if ($prelev->getCodeSupport()->getCodeSupport() != '10') {
+                    if ($prelev->getCodeSupport()->getCodeSupport() != '10' and $prelev->getCodeSupport()->getCodeSupport() != '11') {
                         $autrePgCmdPrelevs = $repoPgCmdPrelev->getAutrePrelevs($prelev);
                         for ($i = 0; $i < count($autrePgCmdPrelevs); $i++) {
                             $autreSuport = $autrePgCmdPrelevs[$i]['codeSupport'];
-                            if ($autreSuport != '10') {
+                            if ($autreSuport != '10' and $autreSuport != '11') {
                                 $autreDateDebut = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
                                 $autreDateDebut->sub(new \DateInterval('P7D'));
                                 $autreDateFin = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
