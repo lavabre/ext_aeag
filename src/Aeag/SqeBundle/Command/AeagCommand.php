@@ -77,17 +77,17 @@ class AeagCommand extends ContainerAwareCommand {
         $this->detectionCodeRemarqueMoitie = $this->_csvToArray($cheminCourant . "/web/tablesCorrespondancesRai/detectionCodeRemarqueMoitie.csv");
     }
 
-    protected function _updatePhaseFichierRps(\Aeag\SqeBundle\Entity\PgCmdFichiersRps $pgCmdFichierRps, $phase, $phaseExclu = false) {
+    protected function _updatePhaseFichierRps(\Aeag\SqeBundle\Entity\PgCmdFichiersRps $pgCmdFichierRps, $phase, $phase82atteinte = false) {
         $pgProgPhases = $this->repoPgProgPhases->findOneByCodePhase($phase);
-        if (!$phaseExclu) {
-            $pgCmdFichierRps->setPhaseFichier($pgProgPhases);
-            $this->emSqe->persist($pgCmdFichierRps);
-            $this->emSqe->flush();
-        }
-
-
-
         $this->_addSuiviPhase('RPS', $pgCmdFichierRps->getId(), $pgProgPhases);
+        
+        if ($phase82atteinte) {
+            $pgProgPhases = $this->repoPgProgPhases->findOneByCodePhase('R82');       
+        }
+        
+        $pgCmdFichierRps->setPhaseFichier($pgProgPhases);
+        $this->emSqe->persist($pgCmdFichierRps);
+        $this->emSqe->flush();
     }
 
     protected function _updatePhasePrelevement(\Aeag\SqeBundle\Entity\PgCmdPrelev $pgCmdPrelev, $phase) {
