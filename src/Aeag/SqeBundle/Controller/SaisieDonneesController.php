@@ -366,9 +366,9 @@ class SaisieDonneesController extends Controller {
                             $tabStations[$i]['cmdDemande'] = $pgCmdDemande;
                             $tabStations[$i]['cmdPrelev'] = null;
                             $autrePgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandesByLotanPeriode($pgProgLotAn, $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
+                            $tabStations[$i]['autreCmdDemande'] = null;
+                            $tabStations[$i]['autreCmdPrelev'] = null;
                             foreach ($autrePgCmdDemandes as $autrePgCmdDemande) {
-                                $tabStations[$i]['autreCmdDemande'] = null;
-                                $tabStations[$i]['autreCmdPrelev'] = null;
                                 if ($autrePgCmdDemande != $pgCmdDemande) {
                                     $tabStations[$i]['autreCmdDemande'] = $autrePgCmdDemande;
                                 }
