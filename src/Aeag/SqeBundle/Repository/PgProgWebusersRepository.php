@@ -77,7 +77,7 @@ class PgProgWebusersRepository extends EntityRepository {
         $query = $query . " where p.prestataire = " . $prestataire->getAdrCorId();
         $qb = $this->_em->createQuery($query);
         //print_r($query);
-        return $qb->getOneOrNullResult();
+         return $qb->getResult();
     }
 
 }
