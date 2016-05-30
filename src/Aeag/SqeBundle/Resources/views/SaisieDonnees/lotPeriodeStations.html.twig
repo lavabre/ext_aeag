@@ -109,6 +109,7 @@
                                         </td>
                                     {% endif %}
                                     <td nowrap class="text-left" width="5%">
+                                        {% if cmdPrelev.nbParametresTerrain > 0 %}
                                         {% if cmdPrelev.saisieTerrain == 'O' %}
                                                   <ul class="list-inline">
                                                     <li>
@@ -134,8 +135,10 @@
                                                     <li><span  class="label label-default"> {{ cmdPrelev.nbSaisisParametresTerrain  }}/{{ cmdPrelev.nbParametresTerrain}}</li>
                                                 </ul>  
                                          {% endif %}
+                                      {% endif %}
                                     </td>
                                     <td nowrap class="text-left" width="5%">
+                                        {% if cmdPrelev.nbParametresAnalyse > 0 %}
                                         {% if cmdPrelev.saisieAnalyse == 'O' %}
                                                 <ul class="list-inline">
                                                     <li>
@@ -161,6 +164,7 @@
                                                     <li><span  class="label label-default">{{ cmdPrelev.nbSaisisParametresAnalyse }}/{{ cmdPrelev.nbParametresAnalyse }}</li>
                                                 </ul> 
                                          {% endif %}
+                                       {% endif %}
                                     </td>
                                 </tr>
                                 {% endif %}
