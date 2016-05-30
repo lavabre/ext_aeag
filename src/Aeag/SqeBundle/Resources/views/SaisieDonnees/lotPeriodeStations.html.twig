@@ -36,9 +36,9 @@
                     <th width="5%">Code</th>
                     <th width="25%">Libellé</th>
                     <th width="5%">Support</th>
-                        {% if is_granted('ROLE_ADMINSQE') %}
+                 {#       {% if is_granted('ROLE_ADMINSQE') %}#}
                         <th width="25%">Prestataire</th>
-                        {% endif %}
+                 {#       {% endif %}#}
                     <th width="5%">Données terrains</th>
                     <th width="5%">Analyses</th>
                 </tr>
@@ -48,21 +48,14 @@
                     {% for station in stations %}
                         {% for demande in station.pgCmdDemandes %}
                             {% for cmdPrelev in demande.pgCmdPrelevs %}
-                                {% if is_granted('ROLE_ADMINSQE')  or ( pgProgWebUser.prestataire == demande.prestataire )%}
-                                   {% if is_granted('ROLE_ADMINSQE')%}
+                                {% if cmdPrelev.nbParametresTerrain != 'O' or   cmdPrelev.nbParametresAnalyse != 'O'%}
+                               {# {% if is_granted('ROLE_ADMINSQE')  or ( pgProgWebUser.prestataire == demande.prestataire )%}#}
                                     {% if cmdPrelev.devalider == 'O'%}
                                         <tr class="success">
                                         {% else %}
                                         <tr>
                                         {% endif %}
-                                    {% else %}
-                                        {% if cmdPrelev.devalider == 'O' %}
-                                        <tr class="success">
-                                        {% else %}
-                                        <tr>
-                                        {% endif %}
-                                    {% endif %}
-                                    <td nowrap width="5%">
+                                         <td nowrap width="5%">
                                         <ul class="list-inline">
                                             {% if cmdPrelev.valider == 'O' %}
                                                 <li>
@@ -103,11 +96,11 @@
                                             {{ cmdPrelev.cmdPrelev.codeSupport.nomSupport }}
                                         {% endif %}
                                     </td>
-                                    {% if is_granted('ROLE_ADMINSQE') %}
+                                   {# {% if is_granted('ROLE_ADMINSQE') %}#}
                                         <td width="25%">
                                             {{ cmdPrelev.cmdPrelev.prestaPrel.nomCorres }}
                                         </td>
-                                    {% endif %}
+                                   {# {% endif %}#}
                                     <td nowrap class="text-left" width="5%">
                                         {% if cmdPrelev.nbParametresTerrain > 0 %}
                                         {% if cmdPrelev.saisieTerrain == 'O' %}

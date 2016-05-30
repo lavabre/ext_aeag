@@ -1,0 +1,364 @@
+{% extends "AeagSqeBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+    <li>
+        <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+    </li>
+    <li>
+           <a href="{{ path('AeagSqeBundle_saisieDonnees_index') }}">Saisie des données</a> 
+    </li>
+    <li>
+           <a href="{{ path('AeagSqeBundle_saisieDonnees_index') }}">Lots</a> 
+    </li>
+    <li>
+           <a href="{{path('AeagSqeBundle_saisieDonnees_lot_periodes',{ 'lotanId': lotan.id })}}">Périodes</a> 
+    </li>
+     <li class="active">
+         Lacs
+    </li>
+{% endblock breadcrumb %} 
+
+{%block panel_heading %}
+     <div class="row">
+            <div class="col-md-offset-3 col-md-7">
+                 <h3 class="page-title ">
+                     <table>
+                         <tr><td>Saisie des données</td></tr>
+                         <tr><td>Liste des stations</td></tr>
+                         <tr><td>entre le  {{ periodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;et&nbsp;&nbsp; {{periodeAn.periode.dateFin | date("d/m/Y") }}</td></tr>
+                         <tr><td>Lot  {{ lotan.lot.nomLot }} - {{ lotan.anneeProg }}  - version :  {{ lotan.version }}</td></tr>
+                     </table>
+                </h3>
+            </div>
+     </div>
+{%endblock panel_heading %}
+
+{%block content %}
+    
+   
+    <div class="form-body">        
+        <table class="table table-bordered t table-advance" id="idTable_demandes">
+            <thead>
+                <tr>
+                    <th>Action</th>
+                    <th>Code</th>
+                    <th>Libellé</th>
+                    <th>Support</th>
+                     <th> Zone verticale </th>
+                    {% if is_granted('ROLE_ADMINSQE') %}
+                        <th>Prestataire</th>
+                    {% endif %}
+                    <th>Données terrains</th>
+                    <th>Analyses</th>
+                  </tr>
+            </thead>
+            <tbody>
+                 {%if stations | length%} 
+                    {% for station in stations %}
+                            {%set nbPrelev = 0 %}
+                         {% for cmdPrelev in station.cmdPrelev %}
+                             {% set nbPrelev = nbPrelev + 1 %}
+                            {% if cmdPrelev.devalider == 'O' %}
+                                  <tr class="success">
+                                 {% else %}
+                                 <tr>
+                              {% endif %}
+                                     {% if nbPrelev == 1 %}
+                                         <td   nowrap  rowspan={{station.nbPrelev }}>
+                                               <ul class="list-inline">
+                                                    {% if station.valider == 'O' %}
+                                                           <li>
+                                                                  <a class="btn btn-success" id="idValider{{ station.station.ouvFoncId   }}" href="#" title="Valider la saisie des données terrains et des analyses">
+                                                                     <i class="fa fa-check"> Valider</i>
+                                                                  </a>
+                                                           </li>
+                                                       {% endif %}
+                                                       {% if station.devalider == 'O' %}
+                                                           {% if is_granted('ROLE_ADMINSQE') %}
+                                                           <li>
+                                                                  <a class="btn btn-danger" id="idDevalider{{ station.station.ouvFoncId   }}" href="#" title="Dévalider la saisie des données terrainse et des analyses">
+                                                                     <i class="fa fa-close"> Dévalider</i>
+                                                                  </a>
+                                                           </li>
+                                                           {% endif %}
+                                                           <li>
+                                                                {#<a id="idTelechargerSuivi{{ cmdPrelev.cmdPrelev.id }}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_saisieDonnees_lot_periode_station_telecharger',{'prelevId': cmdPrelev.cmdPrelev.id })}}" title="Télécharger les resultats">
+                                                                            <i class="fa fa-upload"></i> 
+                                                               </a>#}
+                                                               <a id="idTelechargerSuivi{{ station.stationAn.id }}" class="btn btn-success btn-telecharger" href="/sqe_csv/SAISIE_LAC_{{ station.stationAn.id  }}.csv" title="Télécharger les resultats">
+                                                                            <i class="fa fa-upload"></i> 
+                                                               </a>
+                                                          </li>
+                                                        {% endif %}
+                                               </ul>
+                                            </td>
+                                   {% endif %}
+                                    <td nowrap>
+                                         <a  href="{{ station.lien }}" target="_blank" title="Localisation">{{ station.station.code }}</a>
+                                    </td>
+                                   <td nowrap>
+                                          {{ station.station.libelle }}
+                                   </td>
+                                    <td nowrap>
+                                       {% if cmdPrelev.cmdPrelev.codeSupport %}
+                                          {{ cmdPrelev.cmdPrelev.codeSupport.nomSupport }}
+                                       {% endif %}
+                                   </td>
+                                  <td nowrap> 
+                                        {% if cmdPrelev.prelevPc %}
+                                            {{ cmdPrelev.prelevPc.zoneVerticale.nomZone }}
+                                        {% endif %}
+                                    </td>
+                                     {% if is_granted('ROLE_ADMINSQE') %}
+                                     <td nowrap>
+                                          {{ cmdPrelev.cmdPrelev.prestaPrel.nomCorres }}
+                                     </td>
+                                      {% endif %}
+                                    {% if nbPrelev == 1 %}
+                                     <td   nowrap rowspan={{station.nbPrelev }}>
+                                               {% if station.saisieTerrain == 'O' %}
+                                                                {% if  station.nbParametresTerrain > 0 or is_granted('ROLE_ADMINSQE') %}
+                                                                     <ul class="list-inline">
+                                                                              <li>
+                                                                                  <a class="btn btn-warning" id="idSaisirDonneesTerrain{{ station.station.ouvFoncId  }}" href="#" title="Saisie des données terrains">
+                                                                                     <i class="fa fa-pencil"> Saisir </i>
+                                                                                  </a>
+                                                                               </li>
+                                                                               <li><span  class="label label-success">{{ station.nbSaisisParametresTerrainCorrect}}</li>
+                                                                               <li><span  class="label label-warning">{{ station.nbSaisisParametresTerrainIncorrect}}</li>
+                                                                               <li><span  class="label label-danger">{{station.nbSaisisParametresTerrainErreur}}</li>
+                                                                                {% if is_granted('ROLE_ADMINSQE') and station.nbParametresTerrain == 0 and station.nbAutresParametresTerrain > 0 %}
+                                                                                     <li><span  class="label label-default">{{ station.nbAutresParametresTerrain }}</li>
+                                                                              {% else %}
+                                                                                      <li><span  class="label label-default">{{ station.nbSaisisParametresTerrain  }}/{{ station.nbParametresTerrain}}</li>
+                                                                              {% endif %}
+                                                                     </ul> 
+                                                                {% elseif station.autreNbParametresTerrain > 0 %}
+                                                                         <ul class="list-inline">
+                                                                              <li>
+                                                                                 <a class="btn btn-success" id="idConsulterDonneesTerrain{{ station.station.ouvFoncId  }}" href="#" title="Consulter les données terrains">
+                                                                                    <i class="fa fa-eye"> Consulter </i>
+                                                                                  </a>
+                                                                               </li>
+                                                                               <li><span  class="label label-default">{{ station.autreNbParametresTerrain }}</li>
+                                                                        </ul> 
+                                                               {% endif %}
+                                                      {% else %}
+                                                                {% if  station.nbParametresTerrain > 0 %}
+                                                                     <ul class="list-inline">
+                                                                               <li>
+                                                                                 <a class="btn btn-success" id="idConsulterDonneesTerrain{{ station.station.ouvFoncId  }}" href="#" title="Consulter les données terrains">
+                                                                                    <i class="fa fa-eye"> consulter</i>
+                                                                                 </a>
+                                                                               </li>
+                                                                               <li><span  class="label label-success">{{ station.nbSaisisParametresTerrainCorrect}}</li>
+                                                                              <li><span  class="label label-warning">{{ station.nbSaisisParametresTerrainIncorrect}}</li>
+                                                                              <li><span  class="label label-danger">{{station.nbSaisisParametresTerrainErreur}}</li>
+                                                                               {% if is_granted('ROLE_ADMINSQE') and station.nbParametresTerrain == 0 and station.nbAutresParametresterrain > 0 %}
+                                                                                     <li><span  class="label label-default">{{ station.nbAutresParametresTerrain }}</li>
+                                                                              {% else %}
+                                                                                      <li><span  class="label label-default">{{ station.nbSaisisParametresTerrain  }}/{{ station.nbParametresTerrain}}</li>
+                                                                              {% endif %}
+                                                                       </ul>  
+                                                                {% elseif station.autreNbParametresTerrain > 0 %}
+                                                                       <ul class="list-inline">
+                                                                            <li>
+                                                                               <a class="btn btn-success" id="idConsulterDonneesTerrain{{ station.station.ouvFoncId  }}" href="#" title="Consulter les données terrains">
+                                                                                  <i class="fa fa-eye"> Consulter </i>
+                                                                                </a>
+                                                                             </li>
+                                                                             <li><span  class="label label-default">{{station.autreNbParametresTerrain }}</li>
+                                                                      </ul> 
+                                                             {% endif %}
+                                                {% endif %}
+                                    </td>
+                                    {% endif %}
+                                   
+                                   <td  nowrap class="text-nowrap text-center">
+                                         {% if cmdPrelev.saisieAnalyse == 'O' %}
+                                             {% if  cmdPrelev.nbParametresAnalyse > 0 or is_granted('ROLE_ADMINSQE')%}
+                                                      <ul class="list-inline">
+                                                           <li>
+                                                               <a class="btn btn-warning" id="idSaisirAnalyses{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Saisie des analyses">
+                                                                  <i class="fa fa-pencil"> Saisir</i>
+                                                                 </a>
+                                                            </li>
+                                                            <li><span  class="label label-success">{{ cmdPrelev.nbSaisisParametresAnalyseCorrect}}</li>
+                                                           <li><span  class="label label-warning">{{ cmdPrelev.nbSaisisParametresAnalyseIncorrect}}</li>
+                                                           <li><span  class="label label-danger">{{ cmdPrelev.nbSaisisParametresAnalyseErreur}}</li>
+                                                           {% if is_granted('ROLE_ADMINSQE') and cmdPrelev.nbParametresAnalyse == 0 and cmdPrelev.nbAutresParametresAnalyse > 0 %}
+                                                                <li><span  class="label label-default">{{ cmdPrelev.nbAutresParametresAnalyse }}</li>
+                                                           {% else %}
+                                                                 <li><span  class="label label-default">{{ cmdPrelev.nbSaisisParametresAnalyse }}/{{ cmdPrelev.nbParametresAnalyse }}</li>
+                                                          {% endif %}
+                                                     </ul> 
+                                                {% elseif cmdPrelev.autreNbParametresAnalyse > 0 %}
+                                                          <ul class="list-inline">
+                                                               <li>
+                                                                  <a class="btn btn-success" id="idConsulterAnalyses{{ cmdPrelev.autreCmdPrelev.id  }}" href="#" title="Consulter les analyses">
+                                                                     <i class="fa fa-eye"> Consulter </i>
+                                                                   </a>
+                                                                </li>
+                                                                <li><span  class="label label-default">{{ cmdPrelev.autreNbParametresAnalyse }}</li>
+                                                         </ul> 
+                                                {% endif %}
+                                            {% else %}
+                                                 {% if  cmdPrelev.nbParametresAnalyse > 0 %}
+                                                      <ul class="list-inline">
+                                                               <li>
+                                                                  <a class="btn btn-success" id="idConsulterAnalyses{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Consulter les analyses">
+                                                                     <i class="fa fa-eye"> Consulter </i>
+                                                                   </a>
+                                                                </li>
+                                                                <li><span  class="label label-success">{{ cmdPrelev.nbSaisisParametresAnalyseCorrect}}</li>
+                                                               <li><span  class="label label-warning">{{ cmdPrelev.nbSaisisParametresAnalyseIncorrect}}</li>
+                                                               <li><span  class="label label-danger">{{ cmdPrelev.nbSaisisParametresAnalyseErreur}}</li>
+                                                               {% if is_granted('ROLE_ADMINSQE') and cmdPrelev.nbParametresAnalyse == 0 and cmdPrelev.nbAutresParametresAnalyse > 0 %}
+                                                                    <li><span  class="label label-default">{{ cmdPrelev.nbAutresParametresAnalyse }}</li>
+                                                               {% else %}
+                                                                     <li><span  class="label label-default">{{ cmdPrelev.nbSaisisParametresAnalyse }}/{{ cmdPrelev.nbParametresAnalyse }}</li>
+                                                              {% endif %}
+                                                         </ul> 
+                                                 {% elseif cmdPrelev.autreNbParametresAnalyse > 0 %}
+                                                           <ul class="list-inline">
+                                                               <li>
+                                                                  <a class="btn btn-success" id="idConsulterAnalyses{{ cmdPrelev.autreCmdPrelev.id  }}" href="#" title="Consulter les analyses">
+                                                                     <i class="fa fa-eye"> Consulter </i>
+                                                                   </a>
+                                                                </li>
+                                                                <li><span  class="label label-default">{{ cmdPrelev.autreNbParametresAnalyse }}</li>
+                                                         </ul> 
+                                                 {% endif %}
+                                           {% endif %}
+                                   </td>
+                           </tr>
+                        {% endfor %}
+                    {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+         <div class="row">
+                <div class="col-md-12 pull-right text-info">
+                  <ul class="list-inline">
+                      <li><span class="label label-success">Correct</span></li>
+                      <li><span class="label label-warning">Avertissement</span></li>
+                       <li><span class="label label-danger">Erreur</span></li>
+                  </ul>  
+                </div>
+            </div>      
+    </div>
+{%endblock content %}    
+
+{% block modal %}
+   
+{%endblock modal %}
+
+{% block scripts %}
+    
+    jQuery(document).ready(function() {
+    
+       {# var table = $('#idTable_demandes').DataTable(
+            {"stateSave": true,
+             "order": [[ 0, "desc" ]],
+            "language": {
+                                 "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
+                             },
+            "aLengthMenu": [
+                                        [10, 25, 50, 100, -1],
+                                        [10, 25, 50, 100, "Tous"]
+                                    ],
+              "iDisplayLength": 10
+            }
+            );#}
+
+     {%if stations | length%} 
+                    {% for station in stations %}
+                        
+                           $(document).on('click','#idSaisirDonneesTerrain{{ station.station.ouvFoncId }}',function(e){
+                                    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                                    $('#modalTraitementEncours').modal('toggle');
+                                   var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_lac_saisir_env_situ",{"demandeId":  "par1", "periodeAnId": "par2", "stationId": "par3","maj" : "par4"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                    url = url.replace("par1", {{ station.cmdDemande.id }});
+                                    url = url.replace("par2", {{ periodeAn.id }});
+                                    url = url.replace("par3", {{ station.station.ouvFoncId }});
+                                    {% if station.valider == 'O' %}
+                                         url = url.replace("par4", "V");
+                                    {% else %}
+                                         url = url.replace("par4", "M");
+                                    {% endif %}
+                                    url = url.replace("amp;","");
+                                    window.location.replace(url);
+                              });
+                             
+                              $(document).on('click','#idConsulterDonneesTerrain{{ station.station.ouvFoncId }}',function(e){
+                                    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                                    $('#modalTraitementEncours').modal('toggle');
+                                   var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_lac_saisir_env_situ",{"demandeId":  "par1", "periodeAnId": "par2", "stationId": "par3","maj" : "C"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                    url = url.replace("par1", {{ station.cmdDemande.id }});
+                                    url = url.replace("par2", {{ periodeAn.id }});
+                                    url = url.replace("par3", {{ station.station.ouvFoncId }});
+                                    url = url.replace("amp;","");
+                                    window.location.replace(url);
+                              });
+                              
+                                  $(document).on('click','#idValider{{ station.station.ouvFoncId }}',function(e){
+                                    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                                    $('#modalTraitementEncours').modal('toggle');
+                                   var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_lac_valider",{"demandeId":  "par1", "periodeAnId": "par2", "stationId": "par3"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                     url = url.replace("par1", {{ station.cmdDemande.id }});
+                                    url = url.replace("par2", {{ periodeAn.id }});
+                                    url = url.replace("par3", {{ station.station.ouvFoncId }});
+                                     url = url.replace("amp;","");
+                                    window.location.replace(url);
+                              });
+                              
+                                   $(document).on('click','#idDevalider{{ station.station.ouvFoncId }}',function(e){
+                                    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                                    $('#modalTraitementEncours').modal('toggle');
+                                   var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_lac_devalider",{"demandeId":  "par1", "periodeAnId": "par2", "stationId": "par3"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                   url = url.replace("par1", {{ station.cmdDemande.id }});
+                                    url = url.replace("par2", {{ periodeAn.id }});
+                                    url = url.replace("par3", {{ station.station.ouvFoncId }});
+                                     url = url.replace("amp;","");
+                                    window.location.replace(url);
+                              });
+                              
+                     
+                        
+                        {% for cmdPrelev in station.cmdPrelev %}
+                          
+                            $(document).on('click','#idSaisirAnalyses{{ cmdPrelev.cmdPrelev.id }}',function(e){
+                                    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                                    $('#modalTraitementEncours').modal('toggle');
+                                   var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_lac_saisir_ana",{"prelevId":  "par1", "periodeAnId": "par2", "stationId": "par3", "maj" : "par4"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                    url = url.replace("par1", {{ cmdPrelev.cmdPrelev.id }});
+                                    url = url.replace("par2", {{ periodeAn.id }});
+                                    url = url.replace("par3", {{ station.station.ouvFoncId }});
+                                    {% if station.valider == 'O' %}
+                                         url = url.replace("par4", "V");
+                                    {% else %}
+                                         url = url.replace("par4", "M");
+                                    {% endif %}
+                                    url = url.replace("amp;","");
+                                    window.location.replace(url);
+                              });
+                              
+                              $(document).on('click','#idConsulterAnalyses{{ cmdPrelev.autreCmdPrelev.id }}',function(e){
+                                    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                                    $('#modalTraitementEncours').modal('toggle');
+                                   var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_lac_saisir_ana",{"prelevId":  "par1", "periodeAnId": "par2", "stationId": "par3", "maj" : "C"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                    url = url.replace("par1", {{ cmdPrelev.autreCmdPrelev.id }});
+                                    url = url.replace("par2", {{ periodeAn.id }});
+                                    url = url.replace("par3", {{ station.station.ouvFoncId }});
+                                    url = url.replace("amp;","");
+                                    window.location.replace(url);
+                              });
+                              
+                            
+                              
+                         {% endfor %}    
+                   {% endfor %}
+          {% endif %}
+                    
+    });
+{%endblock scripts %}    

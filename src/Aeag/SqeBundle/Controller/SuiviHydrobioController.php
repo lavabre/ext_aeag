@@ -458,6 +458,7 @@ class SuiviHydrobioController extends Controller {
             $tab = fgetcsv($fichier, 1024, ';');
             while (!feof($fichier)) {
                 $tab = fgetcsv($fichier, 1024, ';');
+                if (count($tab) > 1){
                 $err = false;
                 $ligne++;
                 $codeStation = $tab[0];
@@ -652,6 +653,7 @@ class SuiviHydrobioController extends Controller {
                     $emSqe->persist($pgCmdPrelev);
                     $emSqe->flush();
                 }
+            }
             }
             $contenu = CHR(13) . CHR(10) . 'nombre de lignes traitées  : ' . $ligne . CHR(13) . CHR(10);
             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
