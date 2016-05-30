@@ -58,12 +58,13 @@
                                         </ul>
                                     {% else %}
                                          <ul class="list-inline">
-                                              <li>
+                                             {#
+                                            { <li>
                                                 <a  class="btn btn-danger" href="#" title="En cours de développement">
                                                    <i class="fa fa-exclamation-triangle"></i> 
                                                </a>
-                                             </li>
-                                            {# <li>
+                                             </li>#}
+                                              <li>
                                                 <a id="id_{{ periodeAn.pgProgLotPeriodeAn.id }}" class="btn btn-primary" href="{{path('AeagSqeBundle_saisieDonnees_lot_periode_lacs',{ 'periodeAnId': periodeAn.pgProgLotPeriodeAn.id })}}" title="Stations">
                                                    <i class="fa fa-eye"></i> 
                                                </a>
@@ -74,7 +75,7 @@
                                                                   <i class="fa fa-upload"></i> 
                                                      </a>
                                                 </li>
-                                            {% endif %}#}
+                                            {% endif %}
                                          </ul>
                                      {% endif %}
                               {% endif %}

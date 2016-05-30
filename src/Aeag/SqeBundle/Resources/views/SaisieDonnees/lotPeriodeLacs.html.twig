@@ -63,12 +63,13 @@
                                                     {% else %}
                                                     <tr>
                                                     {% endif %}
-                                                    {% if nbPrelev == 1 %}
-                                                        <td   nowrap  rowspan={{ demande.pgCmdPrelevs | length }}>
+                                                   {# {% if nbPrelev == 1 %}#}
+                                                       {# <td   nowrap  rowspan={{ demande.pgCmdPrelevs | length }}>#}
+                                                        <td   nowrap>
                                                               <ul class="list-inline">
                                                                    {% if cmdPrelev.valider == 'O' %}
                                                                           <li>
-                                                                                 <a class="btn btn-success" id="idValider{{ station.station.ouvFoncId   }}" href="#" title="Valider la saisie des données terrains et des analyses">
+                                                                                 <a class="btn btn-success" id="idValider{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Valider la saisie des données terrains et des analyses">
                                                                                     <i class="fa fa-check"> Valider</i>
                                                                                  </a>
                                                                           </li>
@@ -76,7 +77,7 @@
                                                                       {% if cmdPrelev.devalider == 'O' %}
                                                                           {% if is_granted('ROLE_ADMINSQE') %}
                                                                           <li>
-                                                                                 <a class="btn btn-danger" id="idDevalider{{ station.station.ouvFoncId   }}" href="#" title="Dévalider la saisie des données terrainse et des analyses">
+                                                                                 <a class="btn btn-danger" id="idDevalider{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Dévalider la saisie des données terrainse et des analyses">
                                                                                     <i class="fa fa-close"> Dévalider</i>
                                                                                  </a>
                                                                           </li>
@@ -92,7 +93,7 @@
                                                                        {% endif %}
                                                               </ul>
                                                            </td>
-                                                  {% endif %}
+                                               {#     {% endif %}#}
                                                  <td nowrap>
                                                         <a  href="{{ station.lien }}" target="_blank" title="Localisation">{{ station.station.code }}</a>
                                                    </td>
@@ -112,13 +113,12 @@
                                                      <td nowrap>
                                                          {{ cmdPrelev.cmdPrelev.prestaPrel.nomCorres }}
                                                     </td>
-                                                     {% if nbPrelev == 1 %}
-                                                        <td   nowrap rowspan={{ demande.pgCmdPrelevs | length }}>
+                                                     <td   nowrap class="text-left">
                                                                      {% if cmdPrelev.nbParametresTerrain > 0 %}
                                                                             {% if cmdPrelev.saisieTerrain == 'O' %}
                                                                                   <ul class="list-inline">
                                                                                            <li>
-                                                                                               <a class="btn btn-warning" id="idSaisirDonneesTerrain{{ station.station.ouvFoncId  }}" href="#" title="Saisie des données terrains">
+                                                                                               <a class="btn btn-warning" id="idSaisirDonneesTerrain{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Saisie des données terrains">
                                                                                                   <i class="fa fa-pencil"> Saisir </i>
                                                                                                </a>
                                                                                             </li>
@@ -130,7 +130,7 @@
                                                                             {% else %}
                                                                                   <ul class="list-inline">
                                                                                             <li>
-                                                                                              <a class="btn btn-success" id="idConsulterDonneesTerrain{{ station.station.ouvFoncId  }}" href="#" title="Consulter les données terrains">
+                                                                                              <a class="btn btn-success" id="idConsulterDonneesTerrain{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Consulter les données terrains">
                                                                                                  <i class="fa fa-eye"> consulter</i>
                                                                                               </a>
                                                                                             </li>
@@ -142,8 +142,7 @@
                                                                             {% endif %}  
                                                                   {% endif %}
                                                        </td>
-                                                       {% endif %}
-                                                        <td  nowrap class="text-nowrap text-center">
+                                                       <td  nowrap class="text-left">
                                                                  {% if cmdPrelev.nbParametresAnalyse > 0 %}
                                                                              {% if cmdPrelev.saisieAnalyse == 'O' %}
                                                                                     <ul class="list-inline">
@@ -218,12 +217,14 @@
      {%if stations | length%} 
                     {% for station in stations %}
                          {% for demande in station.pgCmdDemandes %}
-                               
-                           $(document).on('click','#idSaisirDonneesTerrain{{ station.station.ouvFoncId }}',function(e){
+                      
+                         {% for cmdPrelev in demande.pgCmdPrelevs %}
+                             
+                              $(document).on('click','#idSaisirDonneesTerrain{{ cmdPrelev.cmdPrelev.id }}',function(e){
                                     e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                                    $('#modalTraitementEncours').modal('toggle');
-                                   var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_lac_saisir_env_situ",{"demandeId":  "par1", "periodeAnId": "par2", "stationId": "par3","maj" : "par4"}) }}', // Le nom du fichier indiqué dans le formulaire
-                                    url = url.replace("par1", {{ demande.pgCmdDemande.id }});
+                                   $('#modalTraitementEncours').modal('toggle');
+                                   var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_lac_saisir_env_situ",{"prelevId":  "par1", "periodeAnId": "par2", "stationId": "par3","maj" : "par4"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                    url = url.replace("par1", {{ cmdPrelev.cmdPrelev.id }});
                                     url = url.replace("par2", {{ periodeAn.id }});
                                     url = url.replace("par3", {{ station.station.ouvFoncId }});
                                     {% if station.valider == 'O' %}
@@ -235,42 +236,16 @@
                                     window.location.replace(url);
                               });
                              
-                              $(document).on('click','#idConsulterDonneesTerrain{{ station.station.ouvFoncId }}',function(e){
+                              $(document).on('click','#idConsulterDonneesTerrain{{ cmdPrelev.cmdPrelev.id }}',function(e){
                                     e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
                                     $('#modalTraitementEncours').modal('toggle');
-                                   var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_lac_saisir_env_situ",{"demandeId":  "par1", "periodeAnId": "par2", "stationId": "par3","maj" : "C"}) }}', // Le nom du fichier indiqué dans le formulaire
-                                    url = url.replace("par1", {{ demande.pgCmdDemande.id }});
+                                   var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_lac_saisir_env_situ",{"prelevId":  "par1", "periodeAnId": "par2", "stationId": "par3","maj" : "C"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                    url = url.replace("par1", {{ cmdPrelev.cmdPrelev.id }});
                                     url = url.replace("par2", {{ periodeAn.id }});
                                     url = url.replace("par3", {{ station.station.ouvFoncId }});
                                     url = url.replace("amp;","");
                                     window.location.replace(url);
                               });
-                              
-                                  $(document).on('click','#idValider{{ station.station.ouvFoncId }}',function(e){
-                                    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                                    $('#modalTraitementEncours').modal('toggle');
-                                   var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_lac_valider",{"demandeId":  "par1", "periodeAnId": "par2", "stationId": "par3"}) }}', // Le nom du fichier indiqué dans le formulaire
-                                     url = url.replace("par1", {{ demande.pgCmdDemande.id }});
-                                    url = url.replace("par2", {{ periodeAn.id }});
-                                    url = url.replace("par3", {{ station.station.ouvFoncId }});
-                                     url = url.replace("amp;","");
-                                    window.location.replace(url);
-                              });
-                              
-                                   $(document).on('click','#idDevalider{{ station.station.ouvFoncId }}',function(e){
-                                    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                                    $('#modalTraitementEncours').modal('toggle');
-                                   var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_lac_devalider",{"demandeId":  "par1", "periodeAnId": "par2", "stationId": "par3"}) }}', // Le nom du fichier indiqué dans le formulaire
-                                   url = url.replace("par1", {{ demande.pgCmdDemande.id }});
-                                    url = url.replace("par2", {{ periodeAn.id }});
-                                    url = url.replace("par3", {{ station.station.ouvFoncId }});
-                                     url = url.replace("amp;","");
-                                    window.location.replace(url);
-                              });
-                              
-                     
-                        
-                         {% for cmdPrelev in demande.pgCmdPrelevs %}
                           
                             $(document).on('click','#idSaisirAnalyses{{ cmdPrelev.cmdPrelev.id }}',function(e){
                                     e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
@@ -287,6 +262,30 @@
                                     url = url.replace("amp;","");
                                     window.location.replace(url);
                               });
+                              
+                                      $(document).on('click','#idValider{{ cmdPrelev.cmdPrelev.id }}',function(e){
+                                    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                                    $('#modalTraitementEncours').modal('toggle');
+                                   var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_lac_valider",{"prelevId":  "par1", "periodeAnId": "par2", "stationId": "par3"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                     url = url.replace("par1", {{ demande.pgCmdDemande.id }});
+                                    url = url.replace("par2", {{ periodeAn.id }});
+                                    url = url.replace("par3", {{ station.station.ouvFoncId }});
+                                     url = url.replace("amp;","");
+                                    window.location.replace(url);
+                              });
+                              
+                                   $(document).on('click','#idDevalider{{ cmdPrelev.cmdPrelev.id }}',function(e){
+                                    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                                    $('#modalTraitementEncours').modal('toggle');
+                                   var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_lac_devalider",{"prelevId":  "par1", "periodeAnId": "par2", "stationId": "par3"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                   url = url.replace("par1", {{ cmdPrelev.cmdPrelev.id }});
+                                    url = url.replace("par2", {{ periodeAn.id }});
+                                    url = url.replace("par3", {{ station.station.ouvFoncId }});
+                                     url = url.replace("amp;","");
+                                    window.location.replace(url);
+                              });
+                              
+                     
                                                          
                             
                              {% endfor %}     
