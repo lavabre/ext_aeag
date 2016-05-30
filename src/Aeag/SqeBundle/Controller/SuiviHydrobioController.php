@@ -454,7 +454,7 @@ class SuiviHydrobioController extends Controller {
             fputs($rapport, $contenu);
             $erreur = 0;
             $ligne = 0;
-            $tabStations = array();
+        
             $tab = fgetcsv($fichier, 1024, ';');
             while (!feof($fichier)) {
                 $tab = fgetcsv($fichier, 1024, ';');
