@@ -18,8 +18,8 @@ class MessageMaker {
 
     public function createMessage($em, $destinataire, $txtMessage) {
         $message = new Message();
-        $message->setRecepteur($destinataire->getId());
-        $message->setEmetteur($destinataire->getId());
+        $message->setRecepteur($destinataire->getPrestataire());
+        $message->setEmetteur($destinataire->getPrestataire());
         $message->setNouveau(true);
         $message->setIteration(2);
         $texte = "Bonjour ," . PHP_EOL;
@@ -35,8 +35,8 @@ class MessageMaker {
 
     public function createNotification($em, $destinataire, $txtMessage) {
         $notification = new Notification();
-        $notification->setRecepteur($destinataire->getId());
-        $notification->setEmetteur($destinataire->getId());
+        $notification->setRecepteur($destinataire->getPrestataire());
+        $notification->setEmetteur($destinataire->getPrestataire());
         $notification->setNouveau(true);
         $notification->setIteration(2);
         $notification->setMessage($txtMessage);
