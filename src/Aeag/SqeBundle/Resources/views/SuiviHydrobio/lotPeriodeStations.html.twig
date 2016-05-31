@@ -402,7 +402,7 @@
                         $(document).on('click','#idMaj-{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}',function(e){
                         e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
                         $('#modalTraitementEncours').modal('toggle');
-                        {# var url = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_new",{"suiviPrelId":  "par1", "periodeAnId": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
+                     {#    var url = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_maj",{"suiviPrelId":  "par1", "periodeAnId": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
                          url = url.replace("par1", {{ cmdPrelev.suiviPrels.0.suiviPrel.id }});#}
                         var url = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_new",{"prelevId":  "par1", "periodeAnId": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
                         url = url.replace("par1", {{ cmdPrelev.cmdPrelev.id }});
@@ -412,8 +412,10 @@
                         url: url,
                         type: 'get', // La méthode indiquée dans le formulaire (get ou post)
                         success: function(html) { // Je récupère la réponse du fichier PHP
-                        $('#idModalContentMajSuivi{{ cmdPrelev.suiviPrels.0.suiviPrel.id}}').empty().append(html);
-                        $('#maj-{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}').modal('show');
+                         $('#idModalContentNouveauSuivi').empty().append(html);
+                        var html = 'Validation du suivi Hydrobio de la station  {{ station.station.code }} sur le support :  {{ cmdPrelev.cmdPrelev.codeSupport.nomSupport }}';
+                        $('#labelModalNouveauSuivi').html(html);
+                        $('#modalNouveauSuivi').modal('show');
                         $('#modalTraitementEncours').modal('hide');
                         }
                         });

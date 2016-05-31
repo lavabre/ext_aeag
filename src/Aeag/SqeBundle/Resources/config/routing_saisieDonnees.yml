@@ -47,8 +47,8 @@ AeagSqeBundle_saisieDonnees_lot_periode_station_devalider:
         methods:  GET|POST
         
 AeagSqeBundle_saisieDonnees_lot_periode_station_telecharger:
-    path:  /fichier/telecharger/{prelevId}
-    defaults: { _controller: AeagSqeBundle:SaisieDonnees:lotPeriodeStationTelecharger, prelevId : null}
+    path:  /fichier/telecharger/{prelevId}/{type}
+    defaults: { _controller: AeagSqeBundle:SaisieDonnees:lotPeriodeStationTelecharger, prelevId : null, type: null}
     requirements:
          methods:  GET|POST
          
@@ -65,8 +65,8 @@ AeagSqeBundle_saisieDonnees_lot_periode_lacs:
     defaults: { _controller: AeagSqeBundle:SaisieDonnees:lotPeriodeLacs, periodeAnId : null}
     
 AeagSqeBundle_saisieDonnees_lot_periode_lac_saisir_env_situ:
-    path:  /saisir_lac/env/{demandeId}/{periodeAnId}/{stationId}/{maj}
-    defaults: { _controller: AeagSqeBundle:SaisieDonnees:lotPeriodeLacSaisirEnvSitu,demandeId : null, periodeAnId : null, stationId : null, maj : null}
+    path:  /saisir_lac/env/{prelevId}/{periodeAnId}/{stationId}/{maj}
+    defaults: { _controller: AeagSqeBundle:SaisieDonnees:lotPeriodeLacSaisirEnvSitu,prelevId : null, periodeAnId : null, stationId : null, maj : null}
     requirements:
         methods:  GET|POST
         
@@ -77,8 +77,8 @@ AeagSqeBundle_saisieDonnees_lot_periode_lac_saisir_ana:
         methods:  GET|POST
         
 AeagSqeBundle_saisieDonnees_lot_periode_lac_env_situ_resultat:
-    path:  /resultat_lac/env/{demandeId}/{periodeAnId}/{stationId}
-    defaults: { _controller: AeagSqeBundle:SaisieDonnees:lotPeriodeLacResultatEnvSitu, demandeId : null, periodeAnId : null, stationId : null}
+    path:  /resultat_lac/env/{prelevId}/{periodeAnId}/{stationId}
+    defaults: { _controller: AeagSqeBundle:SaisieDonnees:lotPeriodeLacResultatEnvSitu, prelevId : null, periodeAnId : null, stationId : null}
     requirements:
         methods:  GET|POST
         
@@ -95,14 +95,14 @@ AeagSqeBundle_saisieDonnees_lot_periode_lac_ana_resultat:
         methods:  GET|POST
         
 AeagSqeBundle_saisieDonnees_lot_periode_lac_valider:
-    path:  /valider_lac/ana/{demandeId}/{periodeAnId}/{stationId}
-    defaults: { _controller: AeagSqeBundle:SaisieDonnees:lotPeriodeLacValider, demandeId : null, periodeAnId : null, stationId : null}
+    path:  /valider_lac/ana/{prelevId}/{periodeAnId}/{stationId}
+    defaults: { _controller: AeagSqeBundle:SaisieDonnees:lotPeriodeLacValider, prelevId : null, periodeAnId : null, stationId : null}
     requirements:
         methods:  GET|POST
         
 AeagSqeBundle_saisieDonnees_lot_periode_lac_devalider:
-    path:  /devalider_lac/ana//{demandeId}/{periodeAnId}/{stationId}
-    defaults: { _controller: AeagSqeBundle:SaisieDonnees:lotPeriodeLacDevalider, demandeId : null, periodeAnId : null, stationId : null}
+    path:  /devalider_lac/ana//{prelevId}/{periodeAnId}/{stationId}
+    defaults: { _controller: AeagSqeBundle:SaisieDonnees:lotPeriodeLacDevalider, prelevId : null, periodeAnId : null, stationId : null}
     requirements:
         methods:  GET|POST
         

@@ -65,7 +65,7 @@
 
 {%block content %}
  
-    <form class="form" id="idForm" role="form" action="{{ path("AeagSqeBundle_saisieDonnees_lot_periode_lac_env_situ_resultat",{"demandeId":  demande.id, "periodeAnId":  periodeAn.id, "stationId": station.ouvFoncId}) }}" method="post">
+    <form class="form" id="idForm" role="form" action="{{ path("AeagSqeBundle_saisieDonnees_lot_periode_lac_env_situ_resultat",{"prelevId":  cmdPrelev.id, "periodeAnId":  periodeAn.id, "stationId": station.ouvFoncId}) }}" method="post">
     
     <div class="form-body">  
         

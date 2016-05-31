@@ -5,29 +5,29 @@
         <a href="{{ path('aeag_homepage') }}">Accueil</a> 
     </li>
     <li>
-           <a href="{{ path('AeagSqeBundle_saisieDonnees_index') }}">Saisie des données</a> 
+        <a href="{{ path('AeagSqeBundle_saisieDonnees_index') }}">Saisie des données</a> 
     </li>
     <li>
-           <a href="{{ path('AeagSqeBundle_saisieDonnees_index') }}">Lots</a> 
+        <a href="{{ path('AeagSqeBundle_saisieDonnees_index') }}">Lots</a> 
     </li>
     <li>
-           <a href="{{path('AeagSqeBundle_saisieDonnees_lot_periodes',{ 'lotanId': lotan.id })}}">Périodes</a> 
+        <a href="{{path('AeagSqeBundle_saisieDonnees_lot_periodes',{ 'lotanId': lotan.id })}}">Périodes</a> 
     </li>
-     <li class="active">
-          Stations
+    <li class="active">
+        Stations
     </li>
 {% endblock breadcrumb %} 
 
 {%block panel_heading %}
-               <h3 class="page-title text-center">
-                    Liste des stations entre le  {{ periodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;et&nbsp;&nbsp; {{periodeAn.periode.dateFin | date("d/m/Y") }}</br>
-                    du lot  {{ lotan.lot.nomLot }} - {{ lotan.anneeProg }}  - version :  {{ lotan.version }}</td></tr>
-                </h3>
-  {%endblock panel_heading %}
+    <h3 class="page-title text-center">
+        Liste des stations entre le  {{ periodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;et&nbsp;&nbsp; {{periodeAn.periode.dateFin | date("d/m/Y") }}</br>
+        du lot  {{ lotan.lot.nomLot }} - {{ lotan.anneeProg }}  - version :  {{ lotan.version }}</td></tr>
+</h3>
+{%endblock panel_heading %}
 
 {%block content %}
-    
-   
+
+
     <div class="form-body">        
         <table class="table table-bordered t table-advance" id="idTable_demandes">
             <thead>
@@ -36,381 +36,267 @@
                     <th width="5%">Code</th>
                     <th width="25%">Libellé</th>
                     <th width="5%">Support</th>
-                    {% if is_granted('ROLE_ADMINSQE1') %}
-                        <th width="25%">Prestataire</th>
-                    {% endif %}
+                    <th width="25%">Prestataire</th>
+                    <th width="5%">Date prélèvement</th>
                     <th width="5%">Données terrains</th>
                     <th width="5%">Analyses</th>
-                  </tr>
+                </tr>
             </thead>
             <tbody>
-                 {%if stations | length%} 
+                {%if stations | length%} 
                     {% for station in stations %}
-                         {% for cmdPrelev in station.cmdPrelev %}
-                             {% if is_granted('ROLE_ADMINSQE') %}
-                                    {% if cmdPrelev.devalider == 'O'  and cmdPrelev.autreDevalider == 'O'%}
-                                      <tr class="success">
-                                     {% else %}
-                                     <tr>
-                                  {% endif %}
-                             {% else %}
-                                    {% if cmdPrelev.devalider == 'O' %}
-                                      <tr class="success">
-                                     {% else %}
-                                     <tr>
-                                  {% endif %}
-                             {% endif %}
-                           <td nowrap width="5%">
-                                <ul class="list-inline">
-                                  {% if cmdPrelev.valider == 'O'  and cmdPrelev.autreValider == 'O'%}
-                                      <li>
-                                             <a class="btn btn-success" id="idValider{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Valider la saisie des données terrains et des analyses">
-                                                <i class="fa fa-check"> Valider</i>
-                                             </a>
-                                      </li>
-                                  {% endif %}
-                                  {% if cmdPrelev.devalider == 'O' and cmdPrelev.autreDevalider == 'O' %}
-                                      {% if is_granted('ROLE_ADMINSQE') %}
-                                      <li>
-                                             <a class="btn btn-danger" id="idDevalider{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Dévalider la saisie des données terrains et des analyses">
-                                                <i class="fa fa-close"> Dévalider</i>
-                                             </a>
-                                      </li>
-                                      {% endif %}
-                                   {% endif %}
-                                   {% if cmdPrelev.devalider == 'O' and not is_granted('ROLE_ADMINSQE') %}
-                                      <li>
-                                            {#<a id="idTelechargerSuivi{{ cmdPrelev.cmdPrelev.id }}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_saisieDonnees_lot_periode_station_telecharger',{'prelevId': cmdPrelev.cmdPrelev.id })}}" title="Télécharger les resultats">
-                                                        <i class="fa fa-upload"></i> 
-                                           </a>#}
-                                           <a id="idTelechargerSuivi{{ cmdPrelev.cmdPrelev.id }}" class="btn btn-success btn-telecharger" href="{{ path('AeagSqeBundle_saisieDonnees_lot_periode_station_telecharger',{ 'prelevId': cmdPrelev.cmdPrelev.id })}}" title="Télécharger les resultats">
-                                                        <i class="fa fa-upload"></i> 
-                                           </a>
-                                      </li>
-                                  {% endif %}
-                                </ul>
-                           </td>
-                              <td nowrap width="1%">
-                                  <a  href="{{ station.lien }}" target="_blank" title="Localisation">{{ station.station.code }}</a>
-                               </td>
-                               <td width="25%">
-                                    {{ station.station.libelle }}
-                             </td>
-                             <td width="5%">
-                                     {% if cmdPrelev.cmdPrelev.codeSupport %}
-                                        {{ cmdPrelev.cmdPrelev.codeSupport.nomSupport }}
-                                     {% endif %}
-                                   </td>
-                                 {% if is_granted('ROLE_ADMINSQE1') %}
-                                     <td width="25%">
-                                          {{ cmdPrelev.cmdPrelev.prestaPrel.nomCorres }}
-                                     </td>
-                                 {% endif %}
-                                    <td nowrap class="text-left" width="5%">
-                                        {% if cmdPrelev.saisieTerrain == 'O' %}
-                                                 {% if  cmdPrelev.nbParametresTerrain > 0 %}
-                                                      <ul class="list-inline">
-                                                                <li>
-                                                                   <a class="btn btn-warning" id="idSaisirDonneesTerrain{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Saisir les données terrains">
-                                                                      <i class="fa fa-pencil"> Saisir </i>
-                                                                   </a>
-                                                                </li>
-                                                                <li><span  class="label label-success">{{ cmdPrelev.nbSaisisParametresTerrainCorrect}}</li>
-                                                                <li><span  class="label label-warning">{{ cmdPrelev.nbSaisisParametresTerrainIncorrect}}</li>
-                                                                <li><span  class="label label-danger">{{ cmdPrelev.nbSaisisParametresTerrainErreur}}</li>
-                                                            {% if is_granted('ROLE_ADMINSQE1') and cmdPrelev.nbParametresTerrain == 0 and cmdPrelev.nbAutresParametresTerrain > 0 %}
-                                                                    <li><span  class="label label-default">{{ cmdPrelev.nbAutresParametresTerrain }}</li>
-                                                             {% else %}
-                                                                     <li><span  class="label label-default">{{ cmdPrelev.nbSaisisParametresTerrain  }}/{{ cmdPrelev.nbParametresTerrain}}</li>
-                                                             {% endif %}
-                                                      </ul> 
-                                                {% elseif station.autreCmdDemande  and not is_granted('ROLE_ADMINSQE1') %}
-                                                    {% if cmdPrelev.nbAutresParametresTerrain > 0 %}
-                                                                <ul class="list-inline">
-                                                                        <li>
-                                                                            {% if cmdPrelev.autreSaisieTerrain == 'O' %}
-                                                                                    <a class="btn btn-warning" id="idSaisirAutreDonneesTerrain{{ cmdPrelev.autreCmdPrelev.id  }}" href="#" title="Saisir les données terrains">
-                                                                                       <i class="fa fa-pencil"> Saisir </i>
-                                                                                    </a>
-                                                                             {% else %}
-                                                                                  <a class="btn btn-success" id="idConsulterAutreDonneesTerrain{{ cmdPrelev.autreCmdPrelev.id  }}" href="#" title="Consulter les données terrains">
-                                                                                    <i class="fa fa-eye"> consulter</i>
-                                                                                  </a>
-                                                                             {% endif %}
-                                                                        </li>
-                                                                        <li><span  class="label label-success">{{ cmdPrelev.autreNbSaisisParametresTerrainCorrect}}</li>
-                                                                        <li><span  class="label label-warning">{{ cmdPrelev.autreNbSaisisParametresTerrainIncorrect}}</li>
-                                                                        <li><span  class="label label-danger">{{ cmdPrelev.autreNbSaisisParametresTerrainErreur}}</li>
-                                                                        <li><span  class="label label-default">{{ cmdPrelev.autreNbSaisisParametresTerrain  }}/{{ cmdPrelev.autreNbParametresTerrain}}</li>
-                                                                 </ul> 
-                                                         
-                                                   {% endif %}
-                                                {% endif %}
-                                              {% else %}
-                                                   {% if  cmdPrelev.nbParametresTerrain > 0 %}
-                                                        <ul class="list-inline">
-                                                                  <li>
-                                                                    <a class="btn btn-success" id="idConsulterDonneesTerrain{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Consulter les données terrains">
-                                                                       <i class="fa fa-eye"> consulter</i>
-                                                                    </a>
-                                                                  </li>
-                                                                  <li><span  class="label label-success">{{ cmdPrelev.nbSaisisParametresTerrainCorrect}}</li>
-                                                                 <li><span  class="label label-warning">{{ cmdPrelev.nbSaisisParametresTerrainIncorrect}}</li>
-                                                                 <li><span  class="label label-danger">{{ cmdPrelev.nbSaisisParametresTerrainErreur}}</li>
-                                                                 {% if is_granted('ROLE_ADMINSQE1') and cmdPrelev.nbParametresTerrain == 0 and cmdPrelev.nbAutresParametresTerrain > 0 %}
-                                                                    <li><span  class="label label-default"> {{ cmdPrelev.nbAutresParametresTerrain }}</li>
-                                                             {% else %}
-                                                                     <li><span  class="label label-default"> {{ cmdPrelev.nbSaisisParametresTerrain  }}/{{ cmdPrelev.nbParametresTerrain}}</li>
-                                                             {% endif %}
-                                                          </ul>  
-                                                  {% elseif station.autreCmdDemande  and not is_granted('ROLE_ADMINSQE1') %}
-                                                        {% if cmdPrelev.nbAutresParametresTerrain > 0 %}
-                                                            <ul class="list-inline">
-                                                                        <li>
-                                                                           <a class="btn btn-success" id="idConsulterAutreDonneesTerrain{{ cmdPrelev.autreCmdPrelev.id  }}" href="#" title="Consulter les données terrains">
-                                                                             <i class="fa fa-eye"> consulter</i>
-                                                                           </a>
-                                                                        </li>
-                                                                        <li><span  class="label label-success">{{ cmdPrelev.autreNbSaisisParametresTerrainCorrect}}</li>
-                                                                        <li><span  class="label label-warning">{{ cmdPrelev.autreNbSaisisParametresTerrainIncorrect}}</li>
-                                                                        <li><span  class="label label-danger">{{ cmdPrelev.autreNbSaisisParametresTerrainErreur}}</li>
-                                                                        <li><span  class="label label-default">{{ cmdPrelev.autreNbSaisisParametresTerrain  }}/{{ cmdPrelev.autreNbParametresTerrain}}</li>
-                                                               </ul> 
-                                                     {% endif %}
+                        {% for demande in station.pgCmdDemandes %}
+                            {% for cmdPrelev in demande.pgCmdPrelevs %}
+                              {#  {% if cmdPrelev.nbParametresTerrain != 'O' or   cmdPrelev.nbParametresAnalyse != 'O'%}#}
+                               {# {% if is_granted('ROLE_ADMINSQE')  or ( pgProgWebUser.prestataire == demande.prestataire )%}#}
+                                    {% if cmdPrelev.devalider == 'O'%}
+                                        <tr class="success">
+                                        {% else %}
+                                        <tr>
+                                        {% endif %}
+                                         <td nowrap width="5%">
+                                        <ul class="list-inline">
+                                            {% if cmdPrelev.valider == 'O' %}
+                                                <li>
+                                                    <a class="btn btn-success" id="idValider{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Valider la saisie des données terrains et des analyses">
+                                                        <i class="fa fa-check"> Valider</i>
+                                                    </a>
+                                                </li>
+                                            {% endif %}
+                                            {% if cmdPrelev.devalider == 'O' %}
+                                                {% if is_granted('ROLE_ADMINSQE') %}
+                                                    <li>
+                                                        <a class="btn btn-danger" id="idDevalider{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Dévalider la saisie des données terrains et des analyses">
+                                                            <i class="fa fa-close"> Dévalider</i>
+                                                        </a>
+                                                    </li>
                                                 {% endif %}
                                             {% endif %}
-                                   </td>
-                                   <td nowrap class="text-left" width="5%">
-                                         {% if cmdPrelev.saisieAnalyse == 'O' %}
-                                             {% if  cmdPrelev.nbParametresAnalyse > 0%}
-                                                      <ul class="list-inline">
-                                                           <li>
-                                                               <a class="btn btn-warning" id="idSaisirAnalyses{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Saisir les analyses">
-                                                                  <i class="fa fa-pencil"> Saisir</i>
-                                                                 </a>
-                                                            </li>
-                                                            <li><span  class="label label-success">{{ cmdPrelev.nbSaisisParametresAnalyseCorrect}}</li>
-                                                           <li><span  class="label label-warning">{{ cmdPrelev.nbSaisisParametresAnalyseIncorrect}}</li>
-                                                           <li><span  class="label label-danger">{{ cmdPrelev.nbSaisisParametresAnalyseErreur}}</li>
-                                                            {% if is_granted('ROLE_ADMINSQE1') and cmdPrelev.nbParametresAnalyse == 0 and cmdPrelev.nbAutresParametresAnalyse > 0 %}
-                                                                <li><span  class="label label-default">{{ cmdPrelev.nbAutresParametresAnalyse }}</li>
-                                                           {% else %}
-                                                                 <li><span  class="label label-default">{{ cmdPrelev.nbSaisisParametresAnalyse }}/{{ cmdPrelev.nbParametresAnalyse }}</li>
-                                                          {% endif %}
-                                                     </ul> 
-                                                {% elseif station.autreCmdDemande  and not is_granted('ROLE_ADMINSQE1') %}
-                                                        {% if cmdPrelev.autreNbParametresAnalyse > 0 %}
-                                                             <ul class="list-inline">
-                                                                        <li>
-                                                                            <a class="btn btn-success" id="idConsulterAutreAnalyses{{ cmdPrelev.autreCmdPrelev.id  }}" href="#" title="Consulter les analyses">
-                                                                              <i class="fa fa-eye"> Consulter </i>
-                                                                            </a>
-                                                                          </li>
-                                                                         <li><span  class="label label-success">{{ cmdPrelev.autreNbSaisisParametresAnalyseCorrect}}</li>
-                                                                        <li><span  class="label label-warning">{{ cmdPrelev.autreNbSaisisParametresAnalyseIncorrect}}</li>
-                                                                        <li><span  class="label label-danger">{{ cmdPrelev.autreNbSaisisParametresAnalyseErreur}}</li>
-                                                                         {% if is_granted('ROLE_ADMINSQE1') and cmdPrelev.autreNbSaisisParametresAnalyse == 0 and cmdPrelev.autreNbParametresAnalyse > 0 %}
-                                                                             <li><span  class="label label-default">{{ cmdPrelev.autreNbAutresParametresAnalyse }}</li>
-                                                                        {% else %}
-                                                                              <li><span  class="label label-default">{{ cmdPrelev.autreNbSaisisParametresAnalyse }}/{{ cmdPrelev.autreNbParametresAnalyse }}</li>
-                                                                       {% endif %}
-                                                                  </ul> 
-                                                        {% endif %}
-                                                {% endif %}
-                                            {% else %}
-                                                 {% if  cmdPrelev.nbParametresAnalyse > 0 %}
-                                                      <ul class="list-inline">
-                                                               <li>
-                                                                  <a class="btn btn-success" id="idConsulterAnalyses{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Consulter les analyses">
-                                                                     <i class="fa fa-eye"> Consulter </i>
-                                                                   </a>
-                                                                </li>
-                                                                <li><span  class="label label-success">{{ cmdPrelev.nbSaisisParametresAnalyseCorrect}}</li>
-                                                               <li><span  class="label label-warning">{{ cmdPrelev.nbSaisisParametresAnalyseIncorrect}}</li>
-                                                               <li><span  class="label label-danger">{{ cmdPrelev.nbSaisisParametresAnalyseErreur}}</li>
-                                                              {% if is_granted('ROLE_ADMINSQE1') and cmdPrelev.nbParametresAnalyse == 0 and cmdPrelev.nbAutresParametresAnalyse > 0 %}
-                                                                <li><span  class="label label-default">{{ cmdPrelev.nbAutresParametresAnalyse }}</li>
-                                                           {% else %}
-                                                                 <li><span  class="label label-default">{{ cmdPrelev.nbSaisisParametresAnalyse }}/{{ cmdPrelev.nbParametresAnalyse }}</li>
-                                                          {% endif %}
-                                                         </ul> 
-                                                 {% elseif station.autreCmdDemande  and not is_granted('ROLE_ADMINSQE1') %}
-                                                        {% if cmdPrelev.autreNbParametresAnalyse > 0 %}
-                                                              <ul class="list-inline">
-                                                                        <li>
-                                                                          {% if cmdPrelev.autreSaisieAnalyse == 'O' %}
-                                                                                <a class="btn btn-warning" id="idSaisirAnalyses{{ cmdPrelev.autreCmdPrelev.id  }}" href="#" title="Saisir les analyses">
-                                                                                     <i class="fa fa-pencil"> Saisir</i>
-                                                                                  </a>
-                                                                            {% else %}
-                                                                                    <a class="btn btn-success" id="idConsulterAutreAnalyses{{ cmdPrelev.autreCmdPrelev.id  }}" href="#" title="Consulter les analyses">
-                                                                                    <i class="fa fa-eye"> Consulter </i>
-                                                                                  </a>
-                                                                            {% endif %}
-                                                                         </li>
-                                                                         <li><span  class="label label-success">{{ cmdPrelev.autreNbSaisisParametresAnalyseCorrect}}</li>
-                                                                        <li><span  class="label label-warning">{{ cmdPrelev.autreNbSaisisParametresAnalyseIncorrect}}</li>
-                                                                        <li><span  class="label label-danger">{{ cmdPrelev.autreNbSaisisParametresAnalyseErreur}}</li>
-                                                                         {% if is_granted('ROLE_ADMINSQE1') and cmdPrelev.autreNbSaisisParametresAnalyse == 0 and cmdPrelev.autreNbParametresAnalyse > 0 %}
-                                                                             <li><span  class="label label-default">{{ cmdPrelev.autreNbAutresParametresAnalyse }}</li>
-                                                                        {% else %}
-                                                                              <li><span  class="label label-default">{{ cmdPrelev.autreNbSaisisParametresAnalyse }}/{{ cmdPrelev.autreNbParametresAnalyse }}</li>
-                                                                       {% endif %}
-                                                                  </ul> 
-                                                        {% endif %}
-                                                {% endif %}
-                                           {% endif %}
-                                   </td>
-                           </tr>
+                                            {% if cmdPrelev.devalider == 'O' and not is_granted('ROLE_ADMINSQE') %}
+                                                <li>
+                                                    {#<a id="idTelechargerSuivi{{ cmdPrelev.cmdPrelev.id }}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_saisieDonnees_lot_periode_station_telecharger',{'prelevId': cmdPrelev.cmdPrelev.id })}}" title="Télécharger les resultats">
+                                                                <i class="fa fa-upload"></i> 
+                                                   </a>#}
+                                                    {% if cmdPrelev.nbParametresTerrain > 0  and cmdPrelev.nbParametresAnalyse > 0  %}
+                                                            <a id="idTelechargerSuivi{{ cmdPrelev.cmdPrelev.id }}" class="btn btn-success btn-telecharger" href="{{ path('AeagSqeBundle_saisieDonnees_lot_periode_station_telecharger',{ 'prelevId': cmdPrelev.cmdPrelev.id , 'type':'TA'})}}" title="Télécharger les resultats">
+                                                                <i class="fa fa-upload"></i> 
+                                                            </a>
+                                                    {% elseif cmdPrelev.nbParametresTerrain > 0 %}
+                                                            <a id="idTelechargerSuivi{{ cmdPrelev.cmdPrelev.id }}" class="btn btn-success btn-telecharger" href="{{ path('AeagSqeBundle_saisieDonnees_lot_periode_station_telecharger',{ 'prelevId': cmdPrelev.cmdPrelev.id , 'type':'T'})}}" title="Télécharger les resultats">
+                                                                <i class="fa fa-upload"></i> 
+                                                            </a>
+                                                    {%elseif cmdPrelev.nbParametresAnalyse > 0 %}
+                                                            <a id="idTelechargerSuivi{{ cmdPrelev.cmdPrelev.id }}" class="btn btn-success btn-telecharger" href="{{ path('AeagSqeBundle_saisieDonnees_lot_periode_station_telecharger',{ 'prelevId': cmdPrelev.cmdPrelev.id , 'type':'A'})}}" title="Télécharger les resultats">
+                                                                <i class="fa fa-upload"></i> 
+                                                            </a>
+                                                  {% endif %}
+                                                </li>
+                                            {% endif %}
+                                        </ul>
+                                    </td>
+                                    <td nowrap width="1%">
+                                        <a  href="{{ station.lien }}" target="_blank" title="Localisation">{{ station.station.code }}</a>
+                                    </td>
+                                    <td width="25%">
+                                        {{ station.station.libelle }}
+                                    </td>
+                                    <td width="5%">
+                                        {% if cmdPrelev.cmdPrelev.codeSupport %}
+                                            {{ cmdPrelev.cmdPrelev.codeSupport.nomSupport }}
+                                        {% endif %}
+                                    </td>
+                                       <td width="25%">
+                                            {{ cmdPrelev.cmdPrelev.prestaPrel.nomCorres }}
+                                    </td>
+                                     <td>
+                                        {%if cmdPrelev.cmdPrelev.datePrelev %}{{ cmdPrelev.cmdPrelev.datePrelev | date("d/m/Y H:i") }}{% endif %}
+                                    </td>
+                                    <td nowrap class="text-left" width="5%">
+                                        {% if cmdPrelev.nbParametresTerrain > 0 %}
+                                        {% if cmdPrelev.saisieTerrain == 'O' %}
+                                                  <ul class="list-inline">
+                                                    <li>
+                                                        <a class="btn btn-warning" id="idSaisirDonneesTerrain{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Saisir les données terrains">
+                                                            <i class="fa fa-pencil"> Saisir </i>
+                                                        </a>
+                                                    </li>
+                                                    <li><span  class="label label-success">{{ cmdPrelev.nbSaisisParametresTerrainCorrect}}</li>
+                                                    <li><span  class="label label-warning">{{ cmdPrelev.nbSaisisParametresTerrainIncorrect}}</li>
+                                                    <li><span  class="label label-danger">{{ cmdPrelev.nbSaisisParametresTerrainErreur}}</li>
+                                                     <li><span  class="label label-default">{{ cmdPrelev.nbSaisisParametresTerrain  }}/{{ cmdPrelev.nbParametresTerrain}}</li>
+                                               </ul> 
+                                        {% else %}
+                                                <ul class="list-inline">
+                                                    <li>
+                                                        <a class="btn btn-success" id="idConsulterDonneesTerrain{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Consulter les données terrains">
+                                                            <i class="fa fa-eye"> consulter</i>
+                                                        </a>
+                                                    </li>
+                                                    <li><span  class="label label-success">{{ cmdPrelev.nbSaisisParametresTerrainCorrect}}</li>
+                                                    <li><span  class="label label-warning">{{ cmdPrelev.nbSaisisParametresTerrainIncorrect}}</li>
+                                                    <li><span  class="label label-danger">{{ cmdPrelev.nbSaisisParametresTerrainErreur}}</li>
+                                                    <li><span  class="label label-default"> {{ cmdPrelev.nbSaisisParametresTerrain  }}/{{ cmdPrelev.nbParametresTerrain}}</li>
+                                                </ul>  
+                                         {% endif %}
+                                      {% endif %}
+                                    </td>
+                                    <td nowrap class="text-left" width="5%">
+                                        {% if cmdPrelev.nbParametresAnalyse > 0 %}
+                                        {% if cmdPrelev.saisieAnalyse == 'O' %}
+                                                <ul class="list-inline">
+                                                    <li>
+                                                        <a class="btn btn-warning" id="idSaisirAnalyses{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Saisir les analyses">
+                                                            <i class="fa fa-pencil"> Saisir</i>
+                                                        </a>
+                                                    </li>
+                                                    <li><span  class="label label-success">{{ cmdPrelev.nbSaisisParametresAnalyseCorrect}}</li>
+                                                    <li><span  class="label label-warning">{{ cmdPrelev.nbSaisisParametresAnalyseIncorrect}}</li>
+                                                    <li><span  class="label label-danger">{{ cmdPrelev.nbSaisisParametresAnalyseErreur}}</li>
+                                                    <li><span  class="label label-default">{{ cmdPrelev.nbSaisisParametresAnalyse }}/{{ cmdPrelev.nbParametresAnalyse }}</li>
+                                                </ul> 
+                                        {% else %}
+                                                 <ul class="list-inline">
+                                                    <li>
+                                                        <a class="btn btn-success" id="idConsulterAnalyses{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Consulter les analyses">
+                                                            <i class="fa fa-eye"> Consulter </i>
+                                                        </a>
+                                                    </li>
+                                                    <li><span  class="label label-success">{{ cmdPrelev.nbSaisisParametresAnalyseCorrect}}</li>
+                                                    <li><span  class="label label-warning">{{ cmdPrelev.nbSaisisParametresAnalyseIncorrect}}</li>
+                                                    <li><span  class="label label-danger">{{ cmdPrelev.nbSaisisParametresAnalyseErreur}}</li>
+                                                    <li><span  class="label label-default">{{ cmdPrelev.nbSaisisParametresAnalyse }}/{{ cmdPrelev.nbParametresAnalyse }}</li>
+                                                </ul> 
+                                         {% endif %}
+                                       {% endif %}
+                                    </td>
+                                </tr>
+                               {# {% endif %}#}
+                            {% endfor %}
                         {% endfor %}
                     {% endfor %}
                 {% endif %}
             </tbody>
         </table>
-         <div class="row">
-                <div class="col-md-12 pull-right text-info">
-                  <ul class="list-inline">
-                      <li><span class="label label-success">Correct</span></li>
-                      <li><span class="label label-warning">Avertissement</span></li>
-                       <li><span class="label label-danger">Erreur</span></li>
-                  </ul>  
-                </div>
-            </div>      
+        <div class="row">
+            <div class="col-md-12 pull-right text-info">
+                <ul class="list-inline">
+                    <li><span class="label label-success">Correct</span></li>
+                    <li><span class="label label-warning">Avertissement</span></li>
+                    <li><span class="label label-danger">Erreur</span></li>
+                </ul>  
+            </div>
+        </div>      
     </div>
 {%endblock content %}    
 
 {% block modal %}
-   
+
 {%endblock modal %}
 
 {% block scripts %}
-    
-    jQuery(document).ready(function() {
-    
-        var table = $('#idTable_demandes').DataTable(
-            {"stateSave": true,
-             "order": [[ 1, "asc" ]],
-            "language": {
-                                 "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
-                             },
-            "aLengthMenu": [
-                                        [10, 25, 50, 100, -1],
-                                        [10, 25, 50, 100, "Tous"]
-                                    ],
-              "iDisplayLength": 10
-            }
-            );
 
-     {%if stations | length%} 
-                    {% for station in stations %}
-                        {% for cmdPrelev in station.cmdPrelev %}
-                             $(document).on('click','#idSaisirDonneesTerrain{{ cmdPrelev.cmdPrelev.id }}',function(e){
-                                    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                                    $('#modalTraitementEncours').modal('toggle');
-                                   var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_station_saisir_env_situ",{"prelevId":  "par1", "periodeAnId": "par2", "stationId": "par3","maj" : "par4"}) }}', // Le nom du fichier indiqué dans le formulaire
-                                    url = url.replace("par1", {{ cmdPrelev.cmdPrelev.id }});
-                                    url = url.replace("par2", {{ periodeAn.id }});
-                                    url = url.replace("par3", {{ station.station.ouvFoncId }});
-                                    {% if cmdPrelev.valider == 'O' %}
-                                         url = url.replace("par4", "V");
-                                    {% else %}
-                                         url = url.replace("par4", "M");
-                                    {% endif %}
-                                    url = url.replace("amp;","");
-                                    window.location.replace(url);
-                              });
-                              
-                               $(document).on('click','#idConsulterDonneesTerrain{{ cmdPrelev.cmdPrelev.id }}',function(e){
-                                    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                                    $('#modalTraitementEncours').modal('toggle');
-                                   var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_station_saisir_env_situ",{"prelevId":  "par1", "periodeAnId": "par2", "stationId": "par3","maj" : "C"}) }}', // Le nom du fichier indiqué dans le formulaire
-                                    url = url.replace("par1", {{ cmdPrelev.cmdPrelev.id }});
-                                    url = url.replace("par2", {{ periodeAn.id }});
-                                    url = url.replace("par3", {{ station.station.ouvFoncId }});
-                                    url = url.replace("amp;","");
-                                    window.location.replace(url);
-                              });
-                             
-                              {% if station.autreCmdDemande %}
-                              {% if cmdPrelev.autreNbParametresTerrain > 0 %}
-                              $(document).on('click','#idConsulterAutreDonneesTerrain{{ cmdPrelev.autreCmdPrelev.id }}',function(e){
-                                    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                                    $('#modalTraitementEncours').modal('toggle');
-                                   var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_station_saisir_env_situ",{"prelevId":  "par1", "periodeAnId": "par2", "stationId": "par3","maj" : "C"}) }}', // Le nom du fichier indiqué dans le formulaire
-                                    url = url.replace("par1", {{ cmdPrelev.autreCmdPrelev.id }});
-                                    url = url.replace("par2", {{ periodeAn.id }});
-                                    url = url.replace("par3", {{ station.station.ouvFoncId }});
-                                    url = url.replace("amp;","");
-                                    window.location.replace(url);
-                              });
-                              {% endif %}
-                              {% endif %}
-                     
-                            $(document).on('click','#idSaisirAnalyses{{ cmdPrelev.cmdPrelev.id }}',function(e){
-                                    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                                    $('#modalTraitementEncours').modal('toggle');
-                                   var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_station_saisir_ana",{"prelevId":  "par1", "periodeAnId": "par2", "stationId": "par3", "maj" : "par4"}) }}', // Le nom du fichier indiqué dans le formulaire
-                                    url = url.replace("par1", {{ cmdPrelev.cmdPrelev.id }});
-                                    url = url.replace("par2", {{ periodeAn.id }});
-                                    url = url.replace("par3", {{ station.station.ouvFoncId }});
-                                    {% if cmdPrelev.valider == 'O' %}
-                                         url = url.replace("par4", "V");
-                                    {% else %}
-                                         url = url.replace("par4", "M");
-                                    {% endif %}
-                                    url = url.replace("amp;","");
-                                    window.location.replace(url);
-                              });
-                              
-                               $(document).on('click','#idConsulterAnalyses{{ cmdPrelev.cmdPrelev.id }}',function(e){
-                                    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                                    $('#modalTraitementEncours').modal('toggle');
-                                   var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_station_saisir_ana",{"prelevId":  "par1", "periodeAnId": "par2", "stationId": "par3", "maj" : "C"}) }}', // Le nom du fichier indiqué dans le formulaire
-                                    url = url.replace("par1", {{ cmdPrelev.cmdPrelev.id }});
-                                    url = url.replace("par2", {{ periodeAn.id }});
-                                    url = url.replace("par3", {{ station.station.ouvFoncId }});
-                                    url = url.replace("amp;","");
-                                    window.location.replace(url);
-                              });
-                              
-                              {% if station.autreCmdDemande %}
-                              {% if cmdPrelev.autreNbParametresAnalyse > 0 %}
-                              $(document).on('click','#idConsulterAutreAnalyses{{ cmdPrelev.autreCmdPrelev.id }}',function(e){
-                                    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                                    $('#modalTraitementEncours').modal('toggle');
-                                   var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_station_saisir_ana",{"prelevId":  "par1", "periodeAnId": "par2", "stationId": "par3", "maj" : "C"}) }}', // Le nom du fichier indiqué dans le formulaire
-                                    url = url.replace("par1", {{ cmdPrelev.autreCmdPrelev.id }});
-                                    url = url.replace("par2", {{ periodeAn.id }});
-                                    url = url.replace("par3", {{ station.station.ouvFoncId }});
-                                    url = url.replace("amp;","");
-                                    window.location.replace(url);
-                              });
-                              {% endif %}
-                              {% endif %}
-                              
-                                $(document).on('click','#idValider{{ cmdPrelev.cmdPrelev.id }}',function(e){
-                                    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                                    $('#modalTraitementEncours').modal('toggle');
-                                   var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_station_valider",{"prelevId":  "par1","periodeAnId": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
-                                    url = url.replace("par1", {{ cmdPrelev.cmdPrelev.id }});
-                                    url = url.replace("par2", {{ periodeAn.id }});
-                                     url = url.replace("amp;","");
-                                    window.location.replace(url);
-                              });
-                              
-                                   $(document).on('click','#idDevalider{{ cmdPrelev.cmdPrelev.id }}',function(e){
-                                    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                                    $('#modalTraitementEncours').modal('toggle');
-                                   var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_station_devalider",{"prelevId":  "par1", "periodeAnId": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
-                                    url = url.replace("par1", {{ cmdPrelev.cmdPrelev.id }});
-                                    url = url.replace("par2", {{ periodeAn.id }});
-                                     url = url.replace("amp;","");
-                                    window.location.replace(url);
-                              });
-                              
-                         {% endfor %}    
-                   {% endfor %}
-          {% endif %}
-                    
+    jQuery(document).ready(function() {
+
+    var table = $('#idTable_demandes').DataTable(
+    {"stateSave": true,
+    "order": [[ 1, "asc" ]],
+    "language": {
+    "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
+    },
+    "aLengthMenu": [
+    [10, 25, 50, 100, -1],
+    [10, 25, 50, 100, "Tous"]
+    ],
+    "iDisplayLength": 10
+    }
+    );
+
+    {%if stations | length%} 
+        {% for station in stations %}
+            {% for demande in station.pgCmdDemandes %}
+                {% for cmdPrelev in demande.pgCmdPrelevs %}
+                    $(document).on('click','#idSaisirDonneesTerrain{{ cmdPrelev.cmdPrelev.id }}',function(e){
+                    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                    $('#modalTraitementEncours').modal('toggle');
+                    var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_station_saisir_env_situ",{"prelevId":  "par1", "periodeAnId": "par2", "stationId": "par3","maj" : "par4"}) }}', // Le nom du fichier indiqué dans le formulaire
+                    url = url.replace("par1", {{ cmdPrelev.cmdPrelev.id }});
+                    url = url.replace("par2", {{ periodeAn.id }});
+                    url = url.replace("par3", {{ station.station.ouvFoncId }});
+                    {% if cmdPrelev.valider == 'O' %}
+                        url = url.replace("par4", "V");
+                    {% else %}
+                        url = url.replace("par4", "M");
+                    {% endif %}
+                    url = url.replace("amp;","");
+                    window.location.replace(url);
+                    });
+
+                    $(document).on('click','#idConsulterDonneesTerrain{{ cmdPrelev.cmdPrelev.id }}',function(e){
+                    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                    $('#modalTraitementEncours').modal('toggle');
+                    var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_station_saisir_env_situ",{"prelevId":  "par1", "periodeAnId": "par2", "stationId": "par3","maj" : "C"}) }}', // Le nom du fichier indiqué dans le formulaire
+                    url = url.replace("par1", {{ cmdPrelev.cmdPrelev.id }});
+                    url = url.replace("par2", {{ periodeAn.id }});
+                    url = url.replace("par3", {{ station.station.ouvFoncId }});
+                    url = url.replace("amp;","");
+                    window.location.replace(url);
+                    });
+
+
+
+                    $(document).on('click','#idSaisirAnalyses{{ cmdPrelev.cmdPrelev.id }}',function(e){
+                    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                    $('#modalTraitementEncours').modal('toggle');
+                    var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_station_saisir_ana",{"prelevId":  "par1", "periodeAnId": "par2", "stationId": "par3", "maj" : "par4"}) }}', // Le nom du fichier indiqué dans le formulaire
+                    url = url.replace("par1", {{ cmdPrelev.cmdPrelev.id }});
+                    url = url.replace("par2", {{ periodeAn.id }});
+                    url = url.replace("par3", {{ station.station.ouvFoncId }});
+                    {% if cmdPrelev.valider == 'O' %}
+                        url = url.replace("par4", "V");
+                    {% else %}
+                        url = url.replace("par4", "M");
+                    {% endif %}
+                    url = url.replace("amp;","");
+                    window.location.replace(url);
+                    });
+
+                    $(document).on('click','#idConsulterAnalyses{{ cmdPrelev.cmdPrelev.id }}',function(e){
+                    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                    $('#modalTraitementEncours').modal('toggle');
+                    var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_station_saisir_ana",{"prelevId":  "par1", "periodeAnId": "par2", "stationId": "par3", "maj" : "C"}) }}', // Le nom du fichier indiqué dans le formulaire
+                    url = url.replace("par1", {{ cmdPrelev.cmdPrelev.id }});
+                    url = url.replace("par2", {{ periodeAn.id }});
+                    url = url.replace("par3", {{ station.station.ouvFoncId }});
+                    url = url.replace("amp;","");
+                    window.location.replace(url);
+                    });
+
+
+
+                    $(document).on('click','#idValider{{ cmdPrelev.cmdPrelev.id }}',function(e){
+                    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                    $('#modalTraitementEncours').modal('toggle');
+                    var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_station_valider",{"prelevId":  "par1","periodeAnId": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
+                    url = url.replace("par1", {{ cmdPrelev.cmdPrelev.id }});
+                    url = url.replace("par2", {{ periodeAn.id }});
+                    url = url.replace("amp;","");
+                    window.location.replace(url);
+                    });
+
+                    $(document).on('click','#idDevalider{{ cmdPrelev.cmdPrelev.id }}',function(e){
+                    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                    $('#modalTraitementEncours').modal('toggle');
+                    var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_station_devalider",{"prelevId":  "par1", "periodeAnId": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
+                    url = url.replace("par1", {{ cmdPrelev.cmdPrelev.id }});
+                    url = url.replace("par2", {{ periodeAn.id }});
+                    url = url.replace("amp;","");
+                    window.location.replace(url);
+                    });
+
+                {% endfor %}    
+            {% endfor %}
+        {% endfor %}
+    {% endif %}
+
     });
 {%endblock scripts %}    
