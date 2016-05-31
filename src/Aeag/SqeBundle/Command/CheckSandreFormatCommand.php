@@ -25,9 +25,13 @@ class CheckSandreFormatCommand extends AeagCommand {
 
         $pgProgPhases = $this->repoPgProgPhases->findOneByCodePhase('R15');
         $pgCmdFichiersRps = $this->repoPgCmdFichiersRps->findBy(array('phaseFichier' => $pgProgPhases, 'typeFichier' => 'RPS', 'suppr' => 'N'));
-
+        
         foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
             $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R16');
+        }
+
+        foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
+            
             // recuperation du lien d'acquittement
             $lienAcquit = $pgCmdFichierRps->getLienAcquitSandre();
             // Récupération du fichier xml correspondant
@@ -81,8 +85,11 @@ class CheckSandreFormatCommand extends AeagCommand {
                             }
                         }
                     }
+                } else {
+                    $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R15');
                 }
-                
+            } else {
+                $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R15');
             }
         }
         $date = new \DateTime();
