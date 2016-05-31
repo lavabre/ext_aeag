@@ -892,7 +892,7 @@ class SuiviHydrobioController extends Controller {
             }
             $dateDebut = clone($pgProgLotPeriodeAn->getPeriode()->getDateDeb());
             $dateActuel = new \DateTime();
-            if ($pgCmdSuiviPrel->getStatutPrel() != 'P') {
+           if ($pgCmdSuiviPrel->getStatutPrel() != 'P') {
                 if ($pgCmdSuiviPrel->getDatePrel() < $dateDebut or $pgCmdSuiviPrel->getDatePrel() > $dateActuel) {
                     $err = true;
                     $contenu = 'Date  (' . $pgCmdSuiviPrel->getDatePrel()->format('d/m/Y H:i') . ') non comprise entre ' . $dateDebut->format('d/m/Y H:i') . ' et ' . $dateActuel->format('d/m/Y H:i');
