@@ -40,14 +40,15 @@
         <table class="table table-bordered t table-advance" id="idTable_demandes">
             <thead>
                 <tr>
-                    <th>Action</th>
-                    <th>Code</th>
-                    <th>Libellé</th>
-                    <th>Support</th>
-                     <th> Zone verticale </th>
-                     <th>Prestataire</th>
-                     <th>Données terrains</th>
-                    <th>Analyses</th>
+                    <th width="5%">Action</th>
+                    <th width="5%">Code</th>
+                    <th width="25%">Libellé</th>
+                    <th width="5%">Support</th>
+                     <th width="5%"> Zone verticale </th>
+                     <th width="5%">Prestataire</th>
+                     <th width="5%">Date prélèvement</th>
+                     <th width="5%">Données terrains</th>
+                    <th width="5%">Analyses</th>
                   </tr>
             </thead>
             <tbody>
@@ -112,6 +113,9 @@
                                                    </td>
                                                      <td nowrap>
                                                          {{ cmdPrelev.cmdPrelev.prestaPrel.nomCorres }}
+                                                    </td>
+                                                    <td>
+                                                        {%if cmdPrelev.cmdPrelev.datePrelev %}{{ cmdPrelev.cmdPrelev.datePrelev | date("d/m/Y H:i") }}{% endif %}
                                                     </td>
                                                      <td   nowrap class="text-left">
                                                                      {% if cmdPrelev.nbParametresTerrain > 0 %}
@@ -259,6 +263,17 @@
                                     {% else %}
                                          url = url.replace("par4", "M");
                                     {% endif %}
+                                    url = url.replace("amp;","");
+                                    window.location.replace(url);
+                              });
+                              
+                               $(document).on('click','#idConsulterAnalyses{{ cmdPrelev.cmdPrelev.id }}',function(e){
+                                    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                                    $('#modalTraitementEncours').modal('toggle');
+                                   var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_lac_saisir_ana",{"prelevId":  "par1", "periodeAnId": "par2", "stationId": "par3", "maj" : "C"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                    url = url.replace("par1", {{ cmdPrelev.cmdPrelev.id }});
+                                    url = url.replace("par2", {{ periodeAn.id }});
+                                    url = url.replace("par3", {{ station.station.ouvFoncId }});
                                     url = url.replace("amp;","");
                                     window.location.replace(url);
                               });

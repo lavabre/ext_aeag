@@ -36,9 +36,8 @@
                     <th width="5%">Code</th>
                     <th width="25%">Libellé</th>
                     <th width="5%">Support</th>
-                 {#       {% if is_granted('ROLE_ADMINSQE') %}#}
-                        <th width="25%">Prestataire</th>
-                 {#       {% endif %}#}
+                    <th width="25%">Prestataire</th>
+                    <th width="5%">Date prélèvement</th>
                     <th width="5%">Données terrains</th>
                     <th width="5%">Analyses</th>
                 </tr>
@@ -48,7 +47,7 @@
                     {% for station in stations %}
                         {% for demande in station.pgCmdDemandes %}
                             {% for cmdPrelev in demande.pgCmdPrelevs %}
-                                {% if cmdPrelev.nbParametresTerrain != 'O' or   cmdPrelev.nbParametresAnalyse != 'O'%}
+                              {#  {% if cmdPrelev.nbParametresTerrain != 'O' or   cmdPrelev.nbParametresAnalyse != 'O'%}#}
                                {# {% if is_granted('ROLE_ADMINSQE')  or ( pgProgWebUser.prestataire == demande.prestataire )%}#}
                                     {% if cmdPrelev.devalider == 'O'%}
                                         <tr class="success">
@@ -106,11 +105,12 @@
                                             {{ cmdPrelev.cmdPrelev.codeSupport.nomSupport }}
                                         {% endif %}
                                     </td>
-                                   {# {% if is_granted('ROLE_ADMINSQE') %}#}
-                                        <td width="25%">
+                                       <td width="25%">
                                             {{ cmdPrelev.cmdPrelev.prestaPrel.nomCorres }}
-                                        </td>
-                                   {# {% endif %}#}
+                                    </td>
+                                     <td>
+                                        {%if cmdPrelev.cmdPrelev.datePrelev %}{{ cmdPrelev.cmdPrelev.datePrelev | date("d/m/Y H:i") }}{% endif %}
+                                    </td>
                                     <td nowrap class="text-left" width="5%">
                                         {% if cmdPrelev.nbParametresTerrain > 0 %}
                                         {% if cmdPrelev.saisieTerrain == 'O' %}
@@ -170,7 +170,7 @@
                                        {% endif %}
                                     </td>
                                 </tr>
-                                {% endif %}
+                               {# {% endif %}#}
                             {% endfor %}
                         {% endfor %}
                     {% endfor %}
