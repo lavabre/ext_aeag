@@ -20,6 +20,10 @@ class BackUpProcessCommand extends AeagCommand {
         // Phase 210
         // Sandre
         $this->_phaseR10();
+        
+        // Phase 216
+        // Cohérence RAI/DAI
+        //$this->_phaseR16();
 
         // Phase 226
         // Cohérence RAI/DAI
@@ -66,6 +70,18 @@ class BackUpProcessCommand extends AeagCommand {
         $this->output->writeln($date->format('d/m/Y H:i:s').'- BackUp Process : '.$cptPhaseR10Fait." RAI(s) en phase R10 traitée(s)");
     }
     
+    /*protected function _phaseR16() {
+        // Si bloqué en R16 passé en R15
+        $pgProgPhase = $this->repoPgProgPhases->findOneByCodePhase('R16');
+        $pgCmdFichiersRps = $this->repoPgCmdFichiersRps->findBy(array('typeFichier' => 'RPS', 'phaseFichier' => $pgProgPhase));
+        foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
+            $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R15');
+            // Si trop de fois bloqué en R16, passé en R10
+        }
+        
+    }*/
+
+
     protected function _phaseRX($phase) {
         $pgProgPhase = $this->repoPgProgPhases->findOneByCodePhase($phase);
         $pgCmdFichiersRps = $this->repoPgCmdFichiersRps->findBy(array('typeFichier' => 'RPS', 'phaseFichier' => $pgProgPhase));
