@@ -568,9 +568,11 @@ class ProgrammationLotController extends Controller {
             $tabLots = array();
             $i = 0;
             foreach ($tabLotBis as $lot) {
+                if ($lot->getTitulaire()){
                 if ($lot->getTitulaire()->getAdrCorId() == $critTitulaire) {
                     $tabLots[$i] = $lot;
                     $i++;
+                }
                 }
             }
         }
@@ -1665,7 +1667,11 @@ class ProgrammationLotController extends Controller {
         if (count($tabLots) == 1) {
             $session->set('critMarche', $tabLots[0]['lot']->getMarche()->getId());
             $session->set('critMarche', $tabLots[0]['lot']->getMarche()->getId());
-            $session->set('critTitulaire', $tabLots[0]['lot']->getTitulaire()->getAdrCorId());
+            if ($tabLots[0]['lot']->getTitulaire()){
+             $session->set('critTitulaire', $tabLots[0]['lot']->getTitulaire()->getAdrCorId());
+            }else{
+              $session->set('critTitulaire', null);  
+            }
             $session->set('critZoneGeoRef', $tabLots[0]['lot']->getZGeoRef()->getId());
             $session->set('critTypeMilieu', $tabLots[0]['lot']->getCodeMilieu()->getCodeMilieu());
             $session->set('critLot', $tabLots[0]['lot']->getId());

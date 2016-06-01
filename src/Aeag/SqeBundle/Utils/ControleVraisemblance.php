@@ -49,9 +49,11 @@ class ControleVraisemblance {
     // III.3 Valeurs =0 (hors TH (1345), TA (1346), TAC (1347), Temp(1301)) hors codes observations environnementales / résultat = 0 possible pour les paramètres de cette liste (et pour 1345, 1346, 1347 et 1301) => Erreur
     public function valeursEgalZero($mesure, $codeParametre, $inSitu) {
         if (!is_null($mesure) && $mesure == 0) {
-            if ($codeParametre !== 1345 && $codeParametre !== 1346 && $codeParametre !== 1347 && $codeParametre !== 1301 && $codeParametre !== 1328 && $codeParametre !== 1295 && $inSitu != 0) {
+            if ($inSitu != 0){
+            if  ($codeParametre != 1345 && $codeParametre != 1346 && $codeParametre != 1347 && $codeParametre != 1301 && $codeParametre != 1328 && $codeParametre != 1295)  {
                 //$this->_addLog('error', $demandeId, $reponseId, "Valeur = 0 impossible pour ce paramètre", $codePrelevement, $codeParametre);
                 return array("error", "Valeur = 0 impossible pour ce paramètre");
+            }
             }
         }
         return true;

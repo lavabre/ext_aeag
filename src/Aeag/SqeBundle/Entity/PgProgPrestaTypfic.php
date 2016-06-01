@@ -39,7 +39,7 @@ class PgProgPrestaTypfic {
     
     /**
      * @var string
-     *
+     * @ORM\Id
      * @ORM\Column(name="info_format_fic", type="string", length=50, nullable=true)
      */
     private $formatFic;

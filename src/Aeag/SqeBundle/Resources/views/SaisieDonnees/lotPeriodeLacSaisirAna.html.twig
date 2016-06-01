@@ -108,6 +108,7 @@
                                                                                       <tr>
                                                                                         <th>Code</th> 
                                                                                         <th>Libelle</th> 
+                                                                                        <th>prestataire</th>
                                                                                         <th>Remarque</th>
                                                                                         <th>valeur</th> 
                                                                                         <th>Unité</th> 
@@ -118,7 +119,7 @@
                                                                                          {% for paramAn in groupe.paramAns %}
                                                                                                      {% if  paramAn.paramAn %}
                                                                                                          {% set nbTr = nbTr + 1 %}
-                                                                                                          {% if is_granted('ROLE_ADMINSQE') or  (user.prestataire.adrCorId == paramAn.paramAn.prestataire.adrCorId)  %}
+                                                                                                          {% if cmdPrelev.prestaPrel.adrCorId == paramAn.paramAn.prestataire.adrCorId  %}
                                                                                                                    {% if paramAn.pgCmdAnalyse %}
                                                                                                                         {% if paramAn.pgCmdAnalyse.codeStatut == '0' %}
                                                                                                                              <tr id='tr_{{ nbTr }}' class="success">
@@ -135,6 +136,8 @@
                                                                                                                        {% set nbTd = nbTd + 1 %}
                                                                                                                         <td id='td_{{ nbTd }}' align="left">{{ paramAn.paramAn.codeParametre.nomParametre }}</td>
                                                                                                                         {% set nbTd = nbTd + 1 %}
+                                                                                                                        <td id='td_{{ nbTd }}' align="left">{{ paramAn.paramAn.prestataire.nomCorres }}</td>
+                                                                                                                         {% set nbTd = nbTd + 1 %}
                                                                                                                            <td id='td_{{ nbTd }}' nowrap align="left">
                                                                                                                                 <div class="form-group">
                                                                                                                                      <div class="input-group text-left">
@@ -221,7 +224,7 @@
                                                                                                                             {% endif %}
                                                                                                                         </td>
                                                                                                                     </tr>
-                                                                                                          {% else %}
+                                                                                                       {#   {% else %}
                                                                                                               {% if paramAn.pgCmdAnalyse %}
                                                                                                                         {% if paramAn.pgCmdAnalyse.codeStatut == '0' %}
                                                                                                                              <tr id='tr_{{ nbTr }}' class="success">
@@ -238,28 +241,30 @@
                                                                                                                         {% set nbTd = nbTd + 1 %}
                                                                                                                         <td id='td_{{ nbTd }}'>{{ paramAn.paramAn.codeParametre.nomParametre }}</td>
                                                                                                                         {% set nbTd = nbTd + 1 %}
-                                                                                                                         <td id='td_{{ nbTd }}' align="left"></td>
-                                                                                                                         {% set nbTd = nbTd + 1 %}
-                                                                                                                        <td  id='td_{{ nbTd }}' align="right">
-                                                                                                                             {% if paramAn.pgCmdAnalyse %}
-                                                                                                                                 <span class="text-right">{{ paramAn.pgCmdAnalyse.resultat | replace({".0000000000" : "", "000000000" : "", "00000000" : "", "0000000" : "", "000000" : "", "00000000" : "", "0000000" : "", "000000" : ""}) }}</span>
-                                                                                                                             {% endif %}
-                                                                                                                          </td>
+                                                                                                                        <td id='td_{{ nbTd }}'>{{ paramAn.paramAn.prestataire.nomCorres }}</td>
+                                                                                                                        {% set nbTd = nbTd + 1 %}
+                                                                                                                        <td id='td_{{ nbTd }}' align="left"></td>
                                                                                                                           {% set nbTd = nbTd + 1 %}
-                                                                                                                          <td id='td_{{ nbTd }}' align="left">
-                                                                                                                            {% if paramAn.pgCmdAnalyse %}
-                                                                                                                                <span class="text-left">{{ paramAn.pgCmdAnalyse.codeUnite.nomUnite }}</span>
-                                                                                                                                {% else %}
-                                                                                                                                    <span class="text-left"> {{ paramAn.unite.nomUnite }}</span>
+                                                                                                                         <td  id='td_{{ nbTd }}' align="right">
+                                                                                                                              {% if paramAn.pgCmdAnalyse %}
+                                                                                                                                  <span class="text-right">{{ paramAn.pgCmdAnalyse.resultat | replace({".0000000000" : "", "000000000" : "", "00000000" : "", "0000000" : "", "000000" : "", "00000000" : "", "0000000" : "", "000000" : ""}) }}</span>
                                                                                                                               {% endif %}
                                                                                                                            </td>
                                                                                                                            {% set nbTd = nbTd + 1 %}
-                                                                                                                         <td id='td_{{ nbTd }}'>
+                                                                                                                           <td id='td_{{ nbTd }}' align="left">
+                                                                                                                             {% if paramAn.pgCmdAnalyse %}
+                                                                                                                                 <span class="text-left">{{ paramAn.pgCmdAnalyse.codeUnite.nomUnite }}</span>
+                                                                                                                                 {% else %}
+                                                                                                                                     <span class="text-left"> {{ paramAn.unite.nomUnite }}</span>
+                                                                                                                               {% endif %}
+                                                                                                                            </td>
+                                                                                                                            {% set nbTd = nbTd + 1 %}
+                                                                                                                           <td id='td_{{ nbTd }}'>
                                                                                                                             {% if paramAn.fraction %}
                                                                                                                                 <span class="text-left">{{ paramAn.fraction.nomFraction }}</span>
                                                                                                                             {% endif %}
                                                                                                                         </td>
-                                                                                                                    </tr>
+                                                                                                                    </tr>#}
                                                                                                             {% endif %}
                                                                                                       {% endif %}
                                                                                             {% endfor %}
@@ -301,9 +306,9 @@
                      <button id="idEnregistrer" type="submit" class="btn btn-success"> 
                         <i class="fa fa-check"> Enregister</i>
                     </button>
-                      <a class="btn btn-success" href="{{ path("AeagSqeBundle_saisieDonnees_lot_periode_lac_valider",{"prelevId":  cmdPrelev.id}) }}">
+                        <a class="btn btn-success" href="{{ path("AeagSqeBundle_saisieDonnees_lot_periode_lac_valider",{"prelevId":  cmdPrelev.id, "periodeAnId": periodeAn.id, "stationId": station.ouvFoncId}) }}">
                           <i class="fa fa-lock"> Valider</i>
-                      </a>  
+                </a>  
      {% else %}
            <div class="col-md-offset-5 col-md-8">
      {% endif %}
@@ -372,7 +377,7 @@
                                           e.preventDefault();
                                           var tdEnCours =$(this).parent().parent().parent().attr('id');
                                          nbEncours = tdEnCours.substring(3);
-                                          nbSuivant = parseInt(nbEncours) + 6;
+                                          nbSuivant = parseInt(nbEncours) + 7;
                                             $('#td_' + nbSuivant + '> div> div>:nth-child(1)').focus();
                                      };
                                   });

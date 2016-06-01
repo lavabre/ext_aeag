@@ -90,7 +90,7 @@ class DefaultController extends Controller {
             if ($pgProgWebUser->getPrestataire()) {
                 $pgProgPrestaTypfics = $repoPgProgPrestaTypfic->getPgProgPrestaTypficByPrestataire($pgProgWebUser->getPrestataire());
                 foreach ($pgProgPrestaTypfics as $pgProgPrestaTypfic) {
-                    if ($pgProgPrestaTypfic->getFormatFic() == 'Suivi_HB') {
+                   if ($pgProgPrestaTypfic->getFormatFic() == 'Suivi_HB') {
                         $suiviHb = true;
                     }
                     if (substr($pgProgPrestaTypfic->getFormatFic(), 0, 7) == 'Saisie_') {

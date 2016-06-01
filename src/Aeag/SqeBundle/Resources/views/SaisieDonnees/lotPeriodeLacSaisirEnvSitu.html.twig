@@ -92,6 +92,31 @@
                              <i class="fa fa-cogs"> Générer</i>
                     </a>
            </div>
+                     
+           {% if autreDemandes | length %}
+                 <div class="form-group form-inline">
+                     <label class="col-md-offset-3 col-xs-2 control-label">Analyse</label>
+                    <label class="col-xs-2 control-label">Support</label>
+                     <label class="col-xs-2 control-label">Profondeur (m)</label>
+                 </div>
+                 {% for autreDemande in autreDemandes %}
+                         {% for autrePrelev  in  autreDemande.prelevs %}
+                            <div class="form-group form-inline">
+                                    <div class="col-md-offset-3 col-xs-2  input-group">
+                                             {{ autrePrelev.prelevPc.zoneVerticale.nomZone }}
+                                     </div>
+                                     <div class="col-xs-2  input-group">
+                                            {% if autrePrelev.prelev.codeSupport %}
+                                                {{ autrePrelev.prelev.codeSupport.nomSupport }}
+                                           {% endif %}
+                                     </div>
+                                      <div class="col-xs-2  input-group">
+                                             <input type="text" id="profAna_{{ autrePrelev.prelevPc.zoneVerticale.codeZone }}_{{ autrePrelev.prelev.codeSupport.codeSupport }}" name="profAna_{{ autrePrelev.prelevPc.zoneVerticale.codeZone }}_{{ autrePrelev.prelev.codeSupport.codeSupport }}" required="false" class="form-control number text-right" placeholder="Profondeur de l'analyse" value="{{ autrePrelev.prelevPc.profondeur  }}">
+                                     </div>
+                            </div>
+                            {% endfor %}
+                   {% endfor %}
+            {% endif %}
        
          {% set groupeSelectionne = null %}
          {% set nbTr = 0 %}
@@ -155,6 +180,7 @@
                                                                                           {% endif %}
                                                                                          <th>Code</th> 
                                                                                          <th>Libelle</th> 
+                                                                                         <th>prestataire</th>
                                                                                          <th>Remarque</th> 
                                                                                          <th>valeur</th> 
                                                                                          <th>Unité</th> 
@@ -191,6 +217,8 @@
                                                                                                                    <td id='td_{{ nbTd }}' nowrap>{{ paramAn.paramAn.codeParametre.codeParametre }}</td>
                                                                                                                    {% set nbTd = nbTd + 1 %}
                                                                                                                    <td id='td_{{ nbTd }}' align="left">{{ paramAn.paramAn.codeParametre.nomParametre }}</td>
+                                                                                                                   {% set nbTd = nbTd + 1 %}
+                                                                                                                    <td id='td_{{ nbTd }}' align="left">{{ paramAn.paramAn.prestataire.nomCorres }}</td>
                                                                                                                    {% set nbTd = nbTd + 1 %}
                                                                                                                    <td id='td_{{ nbTd }}' align="right">
                                                                                                                       <div class="form-group">
@@ -300,6 +328,8 @@
                                                                                                                                        {% set nbTd = nbTd + 1 %}
                                                                                                                                       <td id='td_{{ nbTd }}' align="left">{{ paramAn.paramAn.codeParametre.nomParametre }}</td>
                                                                                                                                       {% set nbTd = nbTd + 1 %}
+                                                                                                                                       <td id='td_{{ nbTd }}' align="left">{{ paramAn.paramAn.prestataire.nomCorres }}</td>
+                                                                                                                                      {% set nbTd = nbTd + 1 %}
                                                                                                                                        <td id='td_{{ nbTd }}' align="right">
                                                                                                                                             <div class="form-group">
                                                                                                                                                  <div class="input-group text-left">
@@ -397,6 +427,8 @@
                                                                                                                                        {% set nbTd = nbTd + 1 %}
                                                                                                                                       <td id='td_{{ nbTd }}' align="left">{{ paramAn.paramAn.codeParametre.nomParametre }}</td>
                                                                                                                                       {% set nbTd = nbTd + 1 %}
+                                                                                                                                       <td id='td_{{ nbTd }}' align="left">{{ paramAn.paramAn.prestataire.nomCorres }}</td>
+                                                                                                                                       {% set nbTd = nbTd + 1 %}
                                                                                                                                        <td id='td_{{ nbTd }}'align="right">
                                                                                                                                             <div class="form-group">
                                                                                                                                                  <div class="input-group text-left">
@@ -516,9 +548,9 @@
                     <i class="fa fa-check"> Enregister</i>
                 </button>
        
-                <a class="btn btn-success" href="{{ path("AeagSqeBundle_saisieDonnees_lot_periode_lac_valider",{"demandeId":  demande.id, "periodeAnId":  periodeAn.id, "stationId": station.ouvFoncId}) }}">
-                    <i class="fa fa-lock"> Valider</i>
-                </a>
+                <a class="btn btn-success" href="{{ path("AeagSqeBundle_saisieDonnees_lot_periode_lac_valider",{"prelevId":  cmdPrelev.id, "periodeAnId": periodeAn.id, "stationId": station.ouvFoncId}) }}">
+                          <i class="fa fa-lock"> Valider</i>
+                </a>  
       {% else %}
            <div class="col-md-offset-5 col-md-8">
      {% endif %}
@@ -607,7 +639,7 @@
                                            e.preventDefault();
                                            var tdEnCours =$(this).parent().parent().parent().attr('id');
                                           nbEncours = tdEnCours.substring(3);
-                                          nbSuivant = parseInt(nbEncours) + 6;
+                                          nbSuivant = parseInt(nbEncours) + 7;
                                            $('#td_' + nbSuivant + '> div> div>:nth-child(1)').focus();
                                       };
                                    });
@@ -703,7 +735,7 @@
                                                                               e.preventDefault();
                                                                               var tdEnCours =$(this).parent().parent().parent().attr('id');
                                                                              nbEncours = tdEnCours.substring(3);
-                                                                              nbSuivant = parseInt(nbEncours) + 7;
+                                                                              nbSuivant = parseInt(nbEncours) + 8;
                                                                                 $('#td_' + nbSuivant + '> div> div>:nth-child(1)').focus();
                                                                          };
                                                                       });
@@ -776,7 +808,7 @@
                                                                   e.preventDefault();
                                                                   var tdEnCours =$(this).parent().parent().parent().attr('id');
                                                                  nbEncours = tdEnCours.substring(3);
-                                                                 nbSuivant = parseInt(nbEncours) + 7;
+                                                                 nbSuivant = parseInt(nbEncours) + 8;
                                                                  $('#td_' + nbSuivant + '> div> div>:nth-child(1)').focus();
                                                              };
                                                           });
@@ -833,7 +865,7 @@
                                                           e.preventDefault();
                                                           var tdEnCours =$(this).parent().parent().parent().attr('id');
                                                          nbEncours = tdEnCours.substring(3);
-                                                          nbSuivant = parseInt(nbEncours) + 7;
+                                                          nbSuivant = parseInt(nbEncours) + 8;
                                                           $('#td_' + nbSuivant + '> div> div>:nth-child(1)').focus();
                                                      };
                                                   });
