@@ -8,9 +8,9 @@ class MessageMaker {
 
     public function envoiMessage($em, $mailer, $txtMessage, $destinataire, $objet, $expediteur = 'automate@eau-adour-garonne.fr') {
         
-        $this->createMessage($em, $destinataire, $txtMessage);
+        //$this->createMessage($em, $destinataire, $txtMessage);
         
-        $this->createNotification($em, $destinataire, $txtMessage);
+        //$this->createNotification($em, $destinataire, $txtMessage);
         
         return $this->createMail($em, $mailer, $txtMessage, $destinataire, $objet, $expediteur);
         
@@ -18,8 +18,8 @@ class MessageMaker {
 
     public function createMessage($em, $destinataire, $txtMessage) {
         $message = new Message();
-        $message->setRecepteur($destinataire->getPrestataire());
-        $message->setEmetteur($destinataire->getPrestataire());
+        $message->setRecepteur($destinataire->getPrestataire()->getAdrCorId());
+        $message->setEmetteur($destinataire->getPrestataire()->getAdrCorId());
         $message->setNouveau(true);
         $message->setIteration(2);
         $texte = "Bonjour ," . PHP_EOL;
@@ -35,8 +35,8 @@ class MessageMaker {
 
     public function createNotification($em, $destinataire, $txtMessage) {
         $notification = new Notification();
-        $notification->setRecepteur($destinataire->getPrestataire());
-        $notification->setEmetteur($destinataire->getPrestataire());
+        $notification->setRecepteur($destinataire->getPrestataire()->getAdrCorId());
+        $notification->setEmetteur($destinataire->getPrestataire()->getAdrCorId());
         $notification->setNouveau(true);
         $notification->setIteration(2);
         $notification->setMessage($txtMessage);
