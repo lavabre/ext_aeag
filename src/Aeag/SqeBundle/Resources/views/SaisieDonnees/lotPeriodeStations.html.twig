@@ -49,11 +49,19 @@
                             {% for cmdPrelev in demande.pgCmdPrelevs %}
                               {#  {% if cmdPrelev.nbParametresTerrain != 'O' or   cmdPrelev.nbParametresAnalyse != 'O'%}#}
                                {# {% if is_granted('ROLE_ADMINSQE')  or ( pgProgWebUser.prestataire == demande.prestataire )%}#}
-                                    {% if cmdPrelev.devalider == 'O'%}
-                                        <tr class="success">
-                                        {% else %}
-                                        <tr>
-                                        {% endif %}
+                                   {% if station.passage == 0 %}
+                                            {% if cmdPrelev.devalider == 'O'%}
+                                               <tr class="success">
+                                               {% else %}
+                                               <tr class="pair">
+                                               {% endif %}
+                                     {% else %}
+                                            {% if cmdPrelev.devalider == 'O'%}
+                                               <tr class="success">
+                                               {% else %}
+                                               <tr class="impair">
+                                               {% endif %}
+                                     {% endif  %}
                                          <td nowrap width="5%">
                                         <ul class="list-inline">
                                             {% if cmdPrelev.valider == 'O' %}

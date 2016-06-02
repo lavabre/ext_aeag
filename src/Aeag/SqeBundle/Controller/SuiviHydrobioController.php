@@ -1027,6 +1027,80 @@ class SuiviHydrobioController extends Controller {
 //        return new Response ('');
     }
 
+    public function lotPeriodeStationDemandeSuiviMajAction($suiviPrelId = null, $periodeAnId = null, Request $request) {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'suiviHydrobio');
+        $session->set('controller', 'SuiviHydrobio');
+        $session->set('fonction', 'lotPeriodeStationDemandeSuiviMaj');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
+        $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
+        $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
+
+        $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($periodeAnId);
+        $pgProgLotAn = $pgProgLotPeriodeAn->getLotAn();
+        $pgProgLot = $pgProgLotAn->getLot();
+        if ($pgProgLot->getDelaiPrel()) {
+            $dateFin = clone($pgProgLotPeriodeAn->getPeriode()->getDateDeb());
+            $delai = $pgProgLot->getDelaiPrel();
+            $dateFin->add(new \DateInterval('P' . $delai . 'D'));
+        } else {
+            $dateFin = $pgProgLotPeriodeAn->getPeriode()->getDateFin();
+        }
+
+        $pgCmdSuiviPrel = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelById($suiviPrelId);
+        $pgCmdPrelev = $pgCmdSuiviPrel->getPrelev();
+        $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelevOrderDate($pgCmdPrelev);
+        if ($pgCmdSuiviPrels) {
+            $pgCmdSuiviPrelActuel = $pgCmdSuiviPrels[0];
+        } else {
+            $pgCmdSuiviPrelActuel = null;
+        }
+        $form = $this->createForm(new PgCmdSuiviPrelMajType($user, $pgCmdSuiviPrelActuel), $pgCmdSuiviPrel);
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            $datePrel = $pgCmdSuiviPrel->getDatePrel();
+            $emSqe->persist($pgCmdSuiviPrel);
+            if ($pgCmdSuiviPrel->getStatutPrel() == 'F' and $pgCmdSuiviPrel->getValidation() == 'A') {
+                $pgCmdPrelev->setDatePrelev($datePrel);
+                $pgCmdPrelev->setRealise('O');
+            } elseif ($pgCmdSuiviPrel->getStatutPrel() == 'N') {
+                $pgCmdPrelev->setDatePrelev($datePrel);
+                $pgCmdPrelev->setRealise('N');
+            } else {
+                //$pgCmdPrelev->setDatePrelev(null);
+                $pgCmdPrelev->setRealise(null);
+            }
+            $emSqe->persist($pgCmdPrelev);
+            $emSqe->flush();
+            $session->getFlashBag()->add('notice-success', 'le suivi du ' . $datePrel->format('d/m/Y') . ' a été modifié !');
+
+            return $this->redirect($this->generateUrl('AeagSqeBundle_suiviHydrobio_lot_periode_stations', array('stationId' => $pgCmdPrelev->getStation()->getOuvFoncId(),
+                                'periodeAnId' => $periodeAnId)));
+        }
+
+        return $this->render('AeagSqeBundle:SuiviHydrobio:lotPeriodeStationDemandeSuiviMaj.html.twig', array(
+                    'prelev' => $pgCmdPrelev,
+                    'periodeAnId' => $periodeAnId,
+                    'periodeAn' => $pgProgLotPeriodeAn,
+                    'dateFin' => $dateFin,
+                    'suiviPrel' => $pgCmdSuiviPrel,
+                    'form' => $form->createView(),
+        ));
+
+
+
+//          \Symfony\Component\VarDumper\VarDumper::dump($tabDemande);
+//        return new Response ('');
+    }
+
     public function lotPeriodeStationDemandeSuiviVoirAction($suiviPrelId = null, $periodeAnId = null) {
 
         $user = $this->getUser();

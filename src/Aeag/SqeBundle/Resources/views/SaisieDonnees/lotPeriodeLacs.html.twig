@@ -59,11 +59,20 @@
                                     {% for cmdPrelev in demande.pgCmdPrelevs %}
                                             {% if cmdPrelev.nbParametresTerrain != 'O' or   cmdPrelev.nbParametresAnalyse != 'O'%}
                                                  {% set nbPrelev = nbPrelev + 1 %}
-                                                 {% if cmdPrelev.devalider == 'O'%}
-                                                    <tr class="success">
-                                                    {% else %}
-                                                    <tr>
-                                                    {% endif %}
+                                                 
+                                                 {% if station.passage == 0 %}
+                                                        {% if cmdPrelev.devalider == 'O'%}
+                                                           <tr class="success">
+                                                           {% else %}
+                                                           <tr class="pair">
+                                                           {% endif %}
+                                                 {% else %}
+                                                        {% if cmdPrelev.devalider == 'O'%}
+                                                           <tr class="success">
+                                                           {% else %}
+                                                           <tr class="impair">
+                                                           {% endif %}
+                                                 {% endif  %}
                                                    {# {% if nbPrelev == 1 %}#}
                                                        {# <td   nowrap  rowspan={{ demande.pgCmdPrelevs | length }}>#}
                                                         <td   nowrap>
@@ -215,9 +224,8 @@
     jQuery(document).ready(function() {
     
         var table = $('#idTable_demandes').DataTable(
-            {"stateSave": true,
-             "order": [[ 1, "desc" ]],
-            "language": {
+            {"stateSave": false,
+             "language": {
                                  "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
                              },
             "aLengthMenu": [
@@ -229,8 +237,9 @@
             );
 
      {%if stations | length%} 
-                    {% for station in stations %}
-                         {% for demande in station.pgCmdDemandes %}
+                  {% for station in stations %}
+             
+                      {% for demande in station.pgCmdDemandes %}
                       
                          {% for cmdPrelev in demande.pgCmdPrelevs %}
                              

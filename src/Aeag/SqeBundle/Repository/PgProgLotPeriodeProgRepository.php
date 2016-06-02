@@ -147,6 +147,20 @@ class PgProgLotPeriodeProgRepository extends EntityRepository {
         return $qb->getSingleScalarResult();
     }
     
+     public function getPgProgLotPeriodeProgByPeriodeAnOrderByStation($PgProglotPeriodeAn) {
+        $query = "select p";
+        $query .=  " from Aeag\SqeBundle\Entity\PgProgLotPeriodeProg p";
+        $query .= " , Aeag\SqeBundle\Entity\PgProgLotStationAn sa";
+        $query .= " , Aeag\SqeBundle\Entity\PgRefStationMesure s";
+        $query .=  " where p.periodan = " . $PgProglotPeriodeAn->getId();
+        $query .=  " and p.stationAn =  sa.id";
+        $query .=  " and sa.station =  s.ouvFoncId";
+        $query .=  " order by s.code";
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+        return $qb->getResult();
+    }
+    
     public function countStationAnByGrparAn($PgProglotGrparAn) {
         $query = "select count( distinct p.stationAn)";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotPeriodeProg p";

@@ -43,6 +43,11 @@ AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_new:
     requirements:
         methods:  GET|POST
         
+AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_maj:
+    path:  /maj/{suiviPrelId}/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SuiviHydrobio:lotPeriodeStationDemandeSuiviMaj, suiviPrelId : null, periodeAnId : null}
+    requirements:
+         methods:  GET|POST
          
 AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_voir:
     path:  /voir/{suiviPrelId}/{periodeAnId}

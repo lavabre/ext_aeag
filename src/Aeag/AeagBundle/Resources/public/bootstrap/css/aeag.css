@@ -739,6 +739,14 @@ Custom tabs
     background-color: #A9D0F5;
 }
 
+.table > tbody > tr.pair > td, .table > tbody > tr.pair > th, .table > tbody > tr > td.pair, .table > tbody > tr > th.pair, .table > tfoot > tr.pair > td, .table > tfoot > tr.pair > th, .table > tfoot > tr > td.pair, .table > tfoot > tr > th.pair, .table > thead > tr.pair > td, .table > thead > tr.pair > th, .table > thead > tr > td.pair, .table > thead > tr > th.pair {
+    background-color: #f7f7f7;
+}
+
+.table > tbody > tr.impair > td, .table > tbody > tr.impair > th, .table > tbody > tr > td.impair, .table > tbody > tr > th.impair, .table > tfoot > tr.impair > td, .table > tfoot > tr.impair > th, .table > tfoot > tr > td.impair, .table > tfoot > tr > th.impair, .table > thead > tr.impair > td, .table > thead > tr.impair > th, .table > thead > tr > td.impair, .table > thead > tr > th.impair {
+    background-color: #f1f1f1;
+}
+
 /*th, td { white-space: nowrap; }
 div.dataTables_wrapper {
         width: 1000px;
@@ -877,3 +885,4 @@ fieldset[disabled] .btn-turquoise.active {
 h3 {
     margin: 0px 0px 0px;
 }
+

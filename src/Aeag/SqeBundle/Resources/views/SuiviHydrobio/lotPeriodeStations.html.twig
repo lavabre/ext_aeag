@@ -402,11 +402,9 @@
                         $(document).on('click','#idMaj-{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}',function(e){
                         e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
                         $('#modalTraitementEncours').modal('toggle');
-                     {#    var url = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_maj",{"suiviPrelId":  "par1", "periodeAnId": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
-                         url = url.replace("par1", {{ cmdPrelev.suiviPrels.0.suiviPrel.id }});#}
-                        var url = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_new",{"prelevId":  "par1", "periodeAnId": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
-                        url = url.replace("par1", {{ cmdPrelev.cmdPrelev.id }});
-                        url = url.replace("par2", {{ periodeAn.id }});
+                        var url = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_maj",{"suiviPrelId":  "par1", "periodeAnId": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
+                         url = url.replace("par1", {{ cmdPrelev.suiviPrels.0.suiviPrel.id }});
+                         url = url.replace("par2", {{ periodeAn.id }});
                         url = url.replace("amp;","");
                         $.ajax({
                         url: url,
