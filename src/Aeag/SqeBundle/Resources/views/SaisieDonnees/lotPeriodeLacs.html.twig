@@ -241,7 +241,7 @@
                                     url = url.replace("par1", {{ cmdPrelev.cmdPrelev.id }});
                                     url = url.replace("par2", {{ periodeAn.id }});
                                     url = url.replace("par3", {{ station.station.ouvFoncId }});
-                                    {% if station.valider == 'O' %}
+                                    {% if cmdPrelev.valider == 'O' %}
                                          url = url.replace("par4", "V");
                                     {% else %}
                                          url = url.replace("par4", "M");
