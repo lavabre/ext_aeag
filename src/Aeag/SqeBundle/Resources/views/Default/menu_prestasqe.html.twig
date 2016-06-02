@@ -1,91 +1,100 @@
-  <li><a href="{{ path('aeag_homepage') }}"><i class="fa fa-home"></i>&nbsp; Accueil</a></li>
-  
-    {%if app.session.get('menu') == 'referentiel'%}
-       <li  class="active">
+<li><a href="{{ path('aeag_homepage') }}"><i class="fa fa-home"></i>&nbsp; Accueil</a></li>
+
+{%if app.session.get('menu') == 'referentiel'%}
+    <li  class="active">
     {% else %}
-       <li>
-   {%endif%}
-            <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
-                {%if app.session.get('menu') == 'referentiel'%}<span class="selected"></span>{%endif%}
-                Référentiel
-                <i class="fa fa-angle-down"></i>     
+    <li>
+    {%endif%}
+    <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+        {%if app.session.get('menu') == 'referentiel'%}<span class="selected"></span>{%endif%}
+        Référentiel
+        <i class="fa fa-angle-down"></i>     
+    </a>
+    <ul class="dropdown-menu">
+        <li class="dropdown-submenu">
+            <a href="javascript:;">
+                Sandre
             </a>
-           <ul class="dropdown-menu">
-               <li class="dropdown-submenu">
-                   <a href="javascript:;">
-                        Sandre
-                   </a>
-                   <ul class="dropdown-menu">
-                       <li><a href="{{ path('AeagSqeBundle_referentiel_sandre_parametres') }}">Paramètres</a></li>
-                       <li><a href="{{ path('AeagSqeBundle_referentiel_sandre_supports') }}">Supports</a></li>
-{#                           <li><a href="{{ path('AeagSqeBundle_referentiel_sandre_fractions') }}">Fractions</a></li>#}
-                       <li><a href="{{ path('AeagSqeBundle_referentiel_sandre_unites') }}">Unités de mesure</a></li>
-                       <li><a href="{{ path('AeagSqeBundle_referentiel_sandre_methodes') }}">Méthodes</a></li>
-                       <li><a href="{{ path('AeagSqeBundle_referentiel_sandre_zone_verticale_prospectees') }}">Zones verticales prospectées</a></li>
-                    </ul>
-               </li>
-               <li class="dropdown-submenu">
-                   <a  href="javascript:;">
-                        Aeag
-                   </a>
-                   <ul class="dropdown-menu">
-                       <li><a href="{{ path('AeagSqeBundle_referentiel_pg_ref_station_mesures') }}">Stations de mesure</a></li>
-                       <li><a href="{{ path('AeagSqeBundle_referentiel_pg_ref_reseau_mesures') }}">Réseaux de mesure</a></li>
-{#                           <li><a href="{{ path('AeagSqeBundle_referentiel_pg_ref_site_prelevement') }}">Sites de prélèvement</a></li>#}
-                   </ul>
-                </li>
-                <li class="dropdown-submenu">
-                     <a  href="javascript:;">
-                        Programmation
-                     </a>
-                    <ul class="dropdown-menu">
-                      <li><a href="{{ path('AeagSqeBundle_referentiel_groupes') }}">Groupes de paramètres</a></li>
-{#                            <li><a href="{{ path('AeagSqeBundle_referentiel_lots') }}">Lots</a></li>#}
-                    </ul>
-                </li>
+            <ul class="dropdown-menu">
+                <li><a href="{{ path('AeagSqeBundle_referentiel_sandre_parametres') }}">Paramètres</a></li>
+                <li><a href="{{ path('AeagSqeBundle_referentiel_sandre_supports') }}">Supports</a></li>
+                    {#                           <li><a href="{{ path('AeagSqeBundle_referentiel_sandre_fractions') }}">Fractions</a></li>#}
+                <li><a href="{{ path('AeagSqeBundle_referentiel_sandre_unites') }}">Unités de mesure</a></li>
+                <li><a href="{{ path('AeagSqeBundle_referentiel_sandre_methodes') }}">Méthodes</a></li>
+                <li><a href="{{ path('AeagSqeBundle_referentiel_sandre_zone_verticale_prospectees') }}">Zones verticales prospectées</a></li>
             </ul>
-        </li>   
-                
-         {%if app.session.get('menu') == 'echangeFichier'%}
-            <li class="active">
-         {% else %}
-            <li> 
-        {%endif%}
-              <a href="{{ path('AeagSqeBundle_echangefichiers_index')}}">Echange de fichiers</a>
-          </li>
-          
-           {% if  not app.session.get('evolution')%}
-           {% if app.session.get('suiviDonnees') %}
-                    {%if app.session.get('menu') == 'saisieDonnees' %}
-                        <li class="active">
-                    {% else %}
-                        <li> 
-                    {%endif%}
-                    <a href="{{ path('AeagSqeBundle_saisieDonnees_index')}}">Saisie des données</a>
-                    </li>
-            {% endif %}
-        {% endif %}  
-        
-             {% if app.session.get('suiviHb') %}
-                    {%if app.session.get('menu') == 'suiviHydrobio'%}
-                        <li class="active">
-                    {% else %}
-                        <li> 
-                    {%endif%}
-                    <a href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}">Suivi Hydrobio</a>
-                    </li>
-            {% endif  %}
-       
-            {#<li>
-                <a href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur.pdf') }}" target="_blank">Aide</a>
-            </li>#}
-   
-          {%if app.session.get('menu') == 'contact'%}
-              <li  class="active">
-           {% else %}
-              <li>
-          {% endif %}
-                  <a href="{{ path('aeag_sqe_envoyerMessage') }}">
-                  Contact
-                  </a>
-            </li>
+        </li>
+        <li class="dropdown-submenu">
+            <a  href="javascript:;">
+                Aeag
+            </a>
+            <ul class="dropdown-menu">
+                <li><a href="{{ path('AeagSqeBundle_referentiel_pg_ref_station_mesures') }}">Stations de mesure</a></li>
+                <li><a href="{{ path('AeagSqeBundle_referentiel_pg_ref_reseau_mesures') }}">Réseaux de mesure</a></li>
+                    {#                           <li><a href="{{ path('AeagSqeBundle_referentiel_pg_ref_site_prelevement') }}">Sites de prélèvement</a></li>#}
+            </ul>
+        </li>
+        <li class="dropdown-submenu">
+            <a  href="javascript:;">
+                Programmation
+            </a>
+            <ul class="dropdown-menu">
+                <li><a href="{{ path('AeagSqeBundle_referentiel_groupes') }}">Groupes de paramètres</a></li>
+                    {#                            <li><a href="{{ path('AeagSqeBundle_referentiel_lots') }}">Lots</a></li>#}
+            </ul>
+        </li>
+    </ul>
+</li>   
+
+{%if app.session.get('menu') == 'echangeFichier'%}
+    <li class="active">
+    {% else %}
+    <li> 
+    {%endif%}
+    <a href="{{ path('AeagSqeBundle_echangefichiers_index')}}">Echange de fichiers</a>
+</li>
+
+{% if app.session.get('suiviDonnees')  or app.session.get('suiviHb') or app.session.get('suiviSe') %}
+    {%if app.session.get('menu') == 'saisieDonnees' or app.session.get('menu') == 'suiviHydrobio' or app.session.get('menu') == 'suiviSediment'%}
+        <li  class="active">
+        {% else %}
+        <li>
+        {% endif %}   
+        <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+            {%if app.session.get('menu') == 'programmation'%}<span class="selected"></span>{%endif%}
+            Saisie
+            <i class="fa fa-angle-down"></i>     
+        </a>
+
+        <ul class="dropdown-menu">
+            {% if app.session.get('suiviDonnees') %}
+                <li><a href="{{ path('AeagSqeBundle_saisieDonnees_index')}}">Terrain</a></li>
+                {% endif %}
+                {% if app.session.get('suiviHb') %}
+                <li><a href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}">Suivi Hydrobio</a></li>
+                {% endif  %}
+                {% if  not app.session.get('evolution')%}
+                    {% if app.session.get('suiviSe') %}
+                    <li><a href="#">Suivi Sédiment</a></li>
+                    {% endif  %}
+                {% endif %}
+        </ul>
+    </li>
+{% endif %}
+
+
+
+
+{#<li>
+    <a href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur.pdf') }}" target="_blank">Aide</a>
+</li>#}
+
+{%if app.session.get('menu') == 'contact'%}
+    <li  class="active">
+    {% else %}
+    <li>
+    {% endif %}
+    <a href="{{ path('aeag_sqe_envoyerMessage') }}">
+        Contact
+    </a>
+</li>

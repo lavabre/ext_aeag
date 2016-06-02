@@ -480,10 +480,10 @@ class SaisieDonneesController extends Controller {
                 }
                 sort($tabPgCmdDemandes);
                 $tabStations[$is]['pgCmdDemandes'] = $tabPgCmdDemandes;
-                if ( $station->getCode() == '08752X0055/F'){
-                     \Symfony\Component\VarDumper\VarDumper::dump($tabStations);
-                     return new Response('');
-                }
+//                if ( $station->getCode() == '08752X0055/F'){
+//                     \Symfony\Component\VarDumper\VarDumper::dump($tabStations);
+//                     return new Response('');
+//                }
                 $is++;
             }
         }

@@ -62,6 +62,7 @@
                                                     <th>Statut</th>
                                                     <th>validation</th>
                                                     <th>Commentaire</th>
+                                                    <th>Fichier joint</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -98,6 +99,15 @@
                                                                 </td>
                                                                 <td>
                                                                     {{ suiviPrel.suiviPrel.commentaire | nl2br }}
+                                                                </td>
+                                                                <td>
+                                                                    {% if suiviPrel.suiviPrel.fichierRps %}
+                                                                        {% if suiviPrel.suiviPrel.fichierRps.nomFichier %}
+                                                                            <a id="idTelechargerSuivi{{ suiviPrel.suiviPrel.id }}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_fichier_telecharger',{'suiviPrelId': suiviPrel.suiviPrel.id })}}" title="Télécharger le fichier terrain">
+                                                                               <i class="fa fa-upload"></i> 
+                                                                           </a>
+                                                                         {% endif %}
+                                                                     {% endif %}
                                                                 </td>
                                                             </tr>
                                                         {% endif %}
@@ -178,6 +188,32 @@
                                 </div>
                             </div>
                         </div>
+                                    
+            {#modal integrer plusieurs fichiers #}
+                        <div class="modal fade" id="importerFichier" >
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content" >
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                        {% if demande %}
+                                             <h4 class="modal-title" id="importerFichierHeader">Importation de plusieurs fichiers de suivi de la demande du {{ demande.dateDemande | date("d/m/Y") }}</h4>
+                                        {% else %}
+                                             <h4 class="modal-title" id="importerFichierHeader">mportation de plusieurs fichiers de suivi  </h4>
+                                         {% endif %}
+                                    </div>
+                                    <div class="modal-body">
+                                        <div id="idModalContentImporterFichier"></div>
+                                    </div>  
+                                    <div class="modal-footer">
+                                        <div class="form-group">
+                                                <div class="col-xs-offset-4 col-xs-8">
+                                                         <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
+                                                 </div>
+                                           </div>        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
 {% endblock modal %}
 
@@ -191,6 +227,10 @@
 {%block content %}
     <div class="row">
         <div class="col-md-offset-3 col-md-7">
+             <a id="idImporterFichier" class="btn btn-success btn-deposer-reponse"  title="Intégrer plusieurs fichiers de suivi">
+                 <i class="fa fa-download"> Intégrer plusieurs fichier de suivi</i> 
+              </a>
+               ou
                <a id="idIntegrerFichier" class="btn btn-success btn-deposer-reponse"  title="Intégrer un fichier de suivi">
                  <i class="fa fa-download"> Intégrer un fichier de suivi</i> 
               </a>
@@ -455,6 +495,23 @@
                         success: function(html) { // Je récupère la réponse du fichier PHP
                         $('#idModalContentIntegrerFichier').empty().append(html);
                         $('#integrerFichier').modal('show');
+                        $('#modalTraitementEncours').modal('hide');
+                        }
+                        });
+                        });
+                        
+       $(document).on('click','#idImporterFichier',function(e){
+                        e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                        $('#modalTraitementEncours').modal('toggle');
+                        var url = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_stations_importer",{"periodeAnId": "par1"}) }}', // Le nom du fichier indiqué dans le formulaire
+                        url = url.replace("par1", {{ periodeAn.id }});
+                        url = url.replace("amp;","");
+                        $.ajax({
+                        url: url,
+                        type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+                        success: function(html) { // Je récupère la réponse du fichier PHP
+                        $('#idModalContentImporterFichier').empty().append(html);
+                        $('#importerFichier').modal('show');
                         $('#modalTraitementEncours').modal('hide');
                         }
                         });
