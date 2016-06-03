@@ -76,24 +76,19 @@ class BackUpProcessCommand extends AeagCommand {
         $pgCmdFichiersRps = $this->repoPgCmdFichiersRps->findBy(array('typeFichier' => 'RPS', 'phaseFichier' => $pgProgPhase));
         $cptPhaseR15Fait = 0;
         foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
-            $pgProgSuiviPhases = $this->repoPgProgSuiviPhases->findBy(array('objId' => $pgCmdFichierRps->getId(), 'typeObjet' => 'RPS', 'phase' => $pgProgPhase));
-            if (count($pgProgSuiviPhases) >= 5) {
-                // TODO Vérifier la derniere date de phase
-                $pgProgSuiviPhases = $this->repoPgProgSuiviPhases->findOneBy(array('objId' => $pgCmdFichierRps->getId(), 'typeObjet' => 'RPS', 'phase' => $pgProgPhase), array('datePhase' => 'DESC'));
-                if (!is_null($pgProgSuiviPhases)) {
-                    $datePhase = $pgProgSuiviPhases->getDatePhase();
-                    $datePhase->add(new \DateInterval('P1D'));
-                    $dateDuJour = new \DateTime();
-                    // Date de la phase (suivi phase) + 24h < date du jour
-                    if ($datePhase < $dateDuJour) {
-                        // Si trop de fois bloqué en R16, passé en R15
-                        $chemin = $this->getContainer()->getParameter('repertoire_echange');
-                        $pathBase = $this->getContainer()->get('aeag_sqe.process_rai')->getCheminEchange($chemin, $pgCmdFichierRps->getDemande(), $pgCmdFichierRps->getId());
-                        if ($this->getContainer()->get('aeag_sqe.process_rai')->envoiFichierValidationFormat($this->emSqe, $pgCmdFichierRps, $pathBase . '/' . $pgCmdFichierRps->getNomFichier())) {
-                            // Changement de la phase de la réponse 
-                            $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R15');
-                            $cptPhaseR15Fait++;
-                        }
+            $pgProgSuiviPhases = $this->repoPgProgSuiviPhases->findOneBy(array('objId' => $pgCmdFichierRps->getId(), 'typeObjet' => 'RPS', 'phase' => $pgProgPhase), array('datePhase' => 'DESC'));
+            if (!is_null($pgProgSuiviPhases)) {
+                $dateDepot = $pgCmdFichierRps->getDateDepot();
+                $dateDepot->add(new \DateInterval('P1D'));
+                
+                $datePhase = $pgProgSuiviPhases->getDatePhase();
+                if ($datePhase >= $dateDepot) {
+                    $chemin = $this->getContainer()->getParameter('repertoire_echange');
+                    $pathBase = $this->getContainer()->get('aeag_sqe.process_rai')->getCheminEchange($chemin, $pgCmdFichierRps->getDemande(), $pgCmdFichierRps->getId());
+                    if ($this->getContainer()->get('aeag_sqe.process_rai')->envoiFichierValidationFormat($this->emSqe, $pgCmdFichierRps, $pathBase . '/' . $pgCmdFichierRps->getNomFichier())) {
+                        // Changement de la phase de la réponse 
+                        $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R15');
+                        $cptPhaseR15Fait++;
                     }
                 }
             }
