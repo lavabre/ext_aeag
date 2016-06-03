@@ -67,6 +67,7 @@
     var table1 = $('#idTable_reponses').DataTable(
             {"stateSave": true,
                 "order": [[1, "desc"]],
+                "bLengthChange": false,
                 "oLanguage": {
                     "sSearch": "Filtre",
                     "sFirst": "1ere page",
@@ -79,14 +80,15 @@
                     "sZeroRecords": "Pas d'enregistrement à afficher",
                     "sInfoEmpty": "Pas d'enregistrement à afficher",
                     "sInfoThousands": " ",
-                    "sLengthMenu": 'Afficher <select>' +
-                            '<option value="10">10</option>' +
+                    "iDisplayLength": 5,
+                    /*"sLengthMenu": 'Afficher <select>' +
+                            '<option value="5">5</option>' +
                             '<option value="20">20</option>' +
                             '<option value="30">30</option>' +
                             '<option value="40">40</option>' +
                             '<option value="50">50</option>' +
                             '<option value="-1">Tous</option>' +
-                            '</select> enregistrements',
+                            '</select> enregistrements',*/
                     "sPaginationType": "full_numbers"
                 }
             }
