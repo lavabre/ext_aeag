@@ -292,6 +292,309 @@ class SuiviHydrobioController extends Controller {
                     'rapport' => $rapport));
     }
 
+    public function lotPeriodeStationsImporterAction($periodeAnId = null, Request $request) {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'suiviHydrobio');
+        $session->set('controller', 'SuiviHydrobio');
+        $session->set('fonction', 'lotPeriodeStationsIntegrer');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+
+        return $this->render('AeagSqeBundle:SuiviHydrobio:lotPeriodeStationsImporter.html.twig', array(
+                    'periodeAnId' => $periodeAnId
+        ));
+
+
+
+//          \Symfony\Component\VarDumper\VarDumper::dump($tabDemande);
+//        return new Response ('');
+    }
+
+    public function lotPeriodeStationsImporterFichierAction($periodeAnId = null) {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'suiviHydrobio');
+        $session->set('controller', 'SuiviHydrobio');
+        $session->set('fonction', 'lotPeriodeStationsIntegrerFichier');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
+        $repoPgRefStationMesure = $emSqe->getRepository('AeagSqeBundle:PgRefStationMesure');
+        $repoPgSandreSupports = $emSqe->getRepository('AeagSqeBundle:PgSandreSupports');
+        $repoPgProgLotPeriodeProg = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeProg');
+        $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
+        $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
+        $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
+        $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
+        $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
+
+        $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
+        $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R10');
+
+        $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($periodeAnId);
+        $pgProgLotAn = $pgProgLotPeriodeAn->getLotAn();
+        $pgProgLot = $pgProgLotAn->getLot();
+        $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
+        $pgProgPeriode = $pgProgLotPeriodeAn->getPeriode();
+        if ($pgProgLotPeriodeAn->getCodeStatut()->getCodeStatut() != 'DEL' and $pgProgLotPeriodeAn->getCodeStatut()->getCodeStatut() != 'INV') {
+            $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByPeriodeAn($pgProgLotPeriodeAn);
+            $tabStations = array();
+            $nbStations = 0;
+            $j = 0;
+            foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
+                $trouve = false;
+                for ($k = 0; $k < count($tabStations); $k++) {
+                    if ($tabStations[$k]['station']->getOuvFoncid() == $pgProgLotPeriodeProg->getStationAn()->getStation()->getOuvFoncid()) {
+                        $trouve = true;
+                        break;
+                    }
+                }
+                if (!$trouve) {
+                    $tabStations[$j]['station'] = $pgProgLotPeriodeProg->getStationAn()->getStation();
+                    $pgCmdDemande = $repoPgCmdDemande->getPgCmdDemandeByLotanPrestatairePeriode($pgProgLotAn, $pgProgLotPeriodeProg->getGrparAn()->getPrestaDft(), $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
+                    if ($pgCmdDemande) {
+                        $tabStations[$j]['demande'] = $pgCmdDemande;
+                        $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($pgProgLotPeriodeProg->getGrparAn()->getPrestaDft(), $pgCmdDemande, $pgProgLotPeriodeProg->getStationAn()->getStation(), $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
+                        $tabCmdPrelevs = array();
+                        $nbCmdPrelevs = 0;
+                        foreach ($pgCmdPrelevs as $pgCmdPrelev) {
+                            $tabCmdPrelevs[$nbCmdPrelevs]['cmdPrelev'] = $pgCmdPrelev;
+                            $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelevOrderDate($pgCmdPrelev);
+                            $tabCmdPrelevs[$nbCmdPrelevs]['cmdSuiviPrelevs'] = $pgCmdSuiviPrels;
+                            $nbCmdPrelevs++;
+                        }
+                        $tabStations[$j]['prelevs'] = $tabCmdPrelevs;
+                        $tabStations[$j]['fichiers'] = array();
+                    }
+                    $nbStations++;
+                    $j++;
+                }
+            }
+        }
+
+//        \Symfony\Component\VarDumper\VarDumper::dump($tabStations);
+//        return new Response ('');   
+// Récupération des valeurs du fichier
+
+        $name = $_FILES['file']['name'];
+        $tmpName = $_FILES['file']['tmp_name'];
+        $error = $_FILES['file']['error'];
+        $size = $_FILES['file']['size'];
+        $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+        $response = null;
+        $tabMessage = array();
+        $nbMessages = 0;
+
+        switch ($error) {
+            case UPLOAD_ERR_OK:
+                $valid = true;
+                if (!in_array($ext, array('zip'))) {
+                    $valid = false;
+                    $response = 'extension du fichier incorrecte.';
+                    $tabMessage[$nbMessages][0] = 'ko';
+                    $tabMessage[$nbMessages][1] = $response;
+                    $nbMessages++;
+                }
+//validate file size
+                if ($size > 10485760) {
+                    $valid = false;
+                    $response = 'La taille du fichier (' . $size / 1024 . ') est plus grande que la taille autorisée.';
+                    $tabMessage[$nbMessages][0] = 'ko';
+                    $tabMessage[$nbMessages][1] = $response;
+                    $nbMessages++;
+                }
+//upload file
+                if ($valid) {
+// Enregistrement du fichier sur le serveur
+                    $pathBase = '/base/extranet/Transfert/Sqe/csv';
+                    if (!is_dir($pathBase)) {
+                        if (!mkdir($pathBase, 0777, true)) {
+                            $session->getFlashBag()->add('notice-error', 'Le répertoire : ' . $pathBase . ' n\'a pas pu être créé');
+                            ;
+                        }
+                    }
+                    move_uploaded_file($_FILES['file']['tmp_name'], $pathBase . '/' . $name);
+
+                    $dateDepot = new \DateTime();
+                    $response = $name . ' déposé le ' . $dateDepot->format('d/m/Y');
+                }
+                break;
+            case UPLOAD_ERR_INI_SIZE:
+                $response = 'La taille (' . $size . ' octets' . ') du fichier téléchargé excède la taille de upload_max_filesize dans php.ini.';
+                $tabMessage[$nbMessages][0] = 'ko';
+                $tabMessage[$nbMessages][1] = $response;
+                $nbMessages++;
+                $valid = false;
+                break;
+            case UPLOAD_ERR_FORM_SIZE:
+                $response = 'La taille (' . $size . ') du fichier téléchargé excède la taille de MAX_FILE_SIZE qui a été spécifié dans le formulaire HTML.';
+                $tabMessage[$nbMessages][0] = 'ko';
+                $tabMessage[$nbMessages][1] = $response;
+                $nbMessages++;
+                $valid = false;
+                break;
+            case UPLOAD_ERR_PARTIAL:
+                $response = 'Le fichier n\'a été que partiellement téléchargé.';
+                $tabMessage[$nbMessages][0] = 'ko';
+                $tabMessage[$nbMessages][1] = $response;
+                $nbMessages++;
+                $valid = false;
+                break;
+            case UPLOAD_ERR_NO_FILE:
+                $response = 'Aucun fichier sélectionné.';
+                $tabMessage[$nbMessages][0] = 'ko';
+                $tabMessage[$nbMessages][1] = $response;
+                $nbMessages++;
+                $valid = false;
+                break;
+            case UPLOAD_ERR_NO_TMP_DIR:
+                $response = 'Manquantes dans un dossier temporaire. Introduit en PHP 4.3.10 et PHP 5.0.3.';
+                $tabMessage[$nbMessages][0] = 'ko';
+                $tabMessage[$nbMessages][1] = $response;
+                $nbMessages++;
+                $valid = false;
+                break;
+            case UPLOAD_ERR_CANT_WRITE:
+                $response = 'Impossible d\'écrire le fichier sur le disque. Introduit en PHP 5.1.0.';
+                $tabMessage[$nbMessages][0] = 'ko';
+                $tabMessage[$nbMessages][1] = $response;
+                $nbMessages++;
+                $valid = false;
+                break;
+            case UPLOAD_ERR_EXTENSION:
+                $response = 'Le téléchargement du fichier arrêté par extension. Introduit en PHP 5.2.0.';
+                $tabMessage[$nbMessages][0] = 'ko';
+                $tabMessage[$nbMessages][1] = $response;
+                $nbMessages++;
+                $valid = false;
+                break;
+            default:
+                $response = 'erreur inconnue';
+                $tabMessage[$nbMessages][0] = 'ko';
+                $tabMessage[$nbMessages][1] = $response;
+                $nbMessages++;
+                $valid = false;
+                break;
+        }
+
+        if ($valid) {
+            $liste = array();
+            $liste = $this->unzip($pathBase . '/' . $name, $pathBase . '/');
+            $rapport = fopen($pathBase . '/' . $user->getId() . '_' . $dateDepot->format('Y-m-d-H') . '_rapport.csv', "w+");
+            $contenu = 'rapport d\'intégration du fichier : ' . $name . ' déposé le ' . $dateDepot->format('d/m/Y') . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+            fputs($rapport, $contenu);
+            $contenu = 'Le fichier zip contient  ' . count($liste) . ' fichier(s)' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+            fputs($rapport, $contenu);
+
+            $erreur = 0;
+            foreach ($liste as $nomFichier) {
+                $tabNomFichier = explode('-', $nomFichier);
+                $trouve = false;
+                for ($k = 0; $k < count($tabStations); $k++) {
+                    if ($tabStations[$k]['station']->getCode() == $tabNomFichier[0]) {
+                        $trouve = true;
+                        break;
+                    }
+                }
+                if (!$trouve) {
+                    $contenu = 'pas de station à raccorder au fichier ' . $nomFichier . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                    $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                    fputs($rapport, $contenu);
+                    $erreur = 1;
+                } else {
+                    $st = count($tabStations[$k]['fichiers']);
+                    $tabStations[$k]['fichiers'][$st] = $nomFichier;
+                }
+            }
+
+            if ($erreur == 0) {
+                for ($k = 0; $k < count($tabStations); $k++) {
+                    if (count($tabStations[$k]['fichiers'])) {
+                        $tabFichiers = $tabStations[$k]['fichiers'];
+                        if (count($tabFichiers) == 1) {
+                            $name = $tabFichiers[0];
+                            $pgCmdSuiviPrel = $tabStations[$k]['prelevs'][0]['cmdSuiviPrelevs'][0];
+                            if ($pgCmdSuiviPrel->getFichierRps()) {
+                                $pgCmdFichiersRps = $pgCmdSuiviPrel->getFichierRps();
+                                $emSqe->remove($pgCmdFichiersRps);
+                            }
+                            $pgCmdFichiersRps = new PgCmdFichiersRps();
+                            $pgCmdFichiersRps->setDemande($pgCmdPrelev->getDemande());
+                            $pgCmdFichiersRps->setNomFichier($name);
+                            $pgCmdFichiersRps->setDateDepot(new \DateTime());
+                            $pgCmdFichiersRps->setTypeFichier('SUI');
+                            $pgCmdFichiersRps->setPhaseFichier($pgProgPhases);
+                            $pgCmdFichiersRps->setUser($pgProgWebUser);
+                            $pgCmdFichiersRps->setSuppr('N');
+
+                            $emSqe->persist($pgCmdFichiersRps);
+                            $pgCmdSuiviPrel->setFichierRps($pgCmdFichiersRps);
+                            $emSqe->persist($pgCmdSuiviPrel);
+                            $emSqe->flush();
+                            $pathBaseFic = $this->getCheminEchange($pgCmdSuiviPrel, $pgCmdFichiersRps->getId());
+                            if (!is_dir($pathBaseFic)) {
+                                if (!mkdir($pathBaseFic, 0777, true)) {
+                                    $session->getFlashBag()->add('notice-error', 'Le répertoire : ' . $pathBaseFic . ' n\'a pas pu être créé');
+                                    ;
+                                }
+                            }
+                            copy($pathBase . '/' . $name, $pathBaseFic . '/' . $name);
+                            unlink($pathBase . '/' . $name);
+                            $contenu = 'Le fichier ' . $name . ' a été déposé sur la station ' . $tabStations[$k]['station']->getCode() . ' ' . $tabStations[$k]['station']->getLibelle() . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                            fputs($rapport, $contenu);
+                        }
+                    }
+                }
+            }
+            fclose($rapport);
+        }
+
+        $tabReponse = array();
+        $tabReponse[0] = $name;
+        $tabReponse[1] = 'rapport_' . $name;
+        $tabReponse[2] = $tabMessage;
+
+        //$session->getFlashBag()->add('notice-warning', $response);
+
+        return new Response(json_encode($tabReponse));
+    }
+
+    public function lotPeriodeStationsSupprimerImportAction($periodeAnId = null, $fichier = null) {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'suiviHydrobio');
+        $session->set('controller', 'SuiviHydrobio');
+        $session->set('fonction', 'lotPeriodeStationsSupprimerFichier');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        $pathBase = '/base/extranet/Transfert/Sqe/csv';
+
+        $fic = $pathBase . '/' . $fichier;
+
+        unlink($fic);
+
+        $dateDepot = new \DateTime();
+        $response = $fichier . ' supprimé le ' . $dateDepot->format('d/m/Y');
+
+        return new Response($response);
+    }
+
     public function lotPeriodeStationsIntegrerAction($periodeAnId = null, Request $request) {
 
         $user = $this->getUser();
@@ -892,7 +1195,7 @@ class SuiviHydrobioController extends Controller {
             }
             $dateDebut = clone($pgProgLotPeriodeAn->getPeriode()->getDateDeb());
             $dateActuel = new \DateTime();
-           if ($pgCmdSuiviPrel->getStatutPrel() != 'P') {
+            if ($pgCmdSuiviPrel->getStatutPrel() != 'P') {
                 if ($pgCmdSuiviPrel->getDatePrel() < $dateDebut or $pgCmdSuiviPrel->getDatePrel() > $dateActuel) {
                     $err = true;
                     $contenu = 'Date  (' . $pgCmdSuiviPrel->getDatePrel()->format('d/m/Y H:i') . ') non comprise entre ' . $dateDebut->format('d/m/Y H:i') . ' et ' . $dateActuel->format('d/m/Y H:i');
@@ -1018,6 +1321,80 @@ class SuiviHydrobioController extends Controller {
                     'periodeAnId' => $periodeAnId,
                     'periodeAn' => $pgProgLotPeriodeAn,
                     'dateFin' => $dateFin,
+                    'form' => $form->createView(),
+        ));
+
+
+
+//          \Symfony\Component\VarDumper\VarDumper::dump($tabDemande);
+//        return new Response ('');
+    }
+
+    public function lotPeriodeStationDemandeSuiviMajAction($suiviPrelId = null, $periodeAnId = null, Request $request) {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'suiviHydrobio');
+        $session->set('controller', 'SuiviHydrobio');
+        $session->set('fonction', 'lotPeriodeStationDemandeSuiviMaj');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
+        $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
+        $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
+
+        $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($periodeAnId);
+        $pgProgLotAn = $pgProgLotPeriodeAn->getLotAn();
+        $pgProgLot = $pgProgLotAn->getLot();
+        if ($pgProgLot->getDelaiPrel()) {
+            $dateFin = clone($pgProgLotPeriodeAn->getPeriode()->getDateDeb());
+            $delai = $pgProgLot->getDelaiPrel();
+            $dateFin->add(new \DateInterval('P' . $delai . 'D'));
+        } else {
+            $dateFin = $pgProgLotPeriodeAn->getPeriode()->getDateFin();
+        }
+
+        $pgCmdSuiviPrel = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelById($suiviPrelId);
+        $pgCmdPrelev = $pgCmdSuiviPrel->getPrelev();
+        $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelevOrderDate($pgCmdPrelev);
+        if ($pgCmdSuiviPrels) {
+            $pgCmdSuiviPrelActuel = $pgCmdSuiviPrels[0];
+        } else {
+            $pgCmdSuiviPrelActuel = null;
+        }
+        $form = $this->createForm(new PgCmdSuiviPrelMajType($user, $pgCmdSuiviPrelActuel), $pgCmdSuiviPrel);
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            $datePrel = $pgCmdSuiviPrel->getDatePrel();
+            $emSqe->persist($pgCmdSuiviPrel);
+            if ($pgCmdSuiviPrel->getStatutPrel() == 'F' and $pgCmdSuiviPrel->getValidation() == 'A') {
+                $pgCmdPrelev->setDatePrelev($datePrel);
+                $pgCmdPrelev->setRealise('O');
+            } elseif ($pgCmdSuiviPrel->getStatutPrel() == 'N') {
+                $pgCmdPrelev->setDatePrelev($datePrel);
+                $pgCmdPrelev->setRealise('N');
+            } else {
+                //$pgCmdPrelev->setDatePrelev(null);
+                $pgCmdPrelev->setRealise(null);
+            }
+            $emSqe->persist($pgCmdPrelev);
+            $emSqe->flush();
+            $session->getFlashBag()->add('notice-success', 'le suivi du ' . $datePrel->format('d/m/Y') . ' a été modifié !');
+
+            return $this->redirect($this->generateUrl('AeagSqeBundle_suiviHydrobio_lot_periode_stations', array('stationId' => $pgCmdPrelev->getStation()->getOuvFoncId(),
+                                'periodeAnId' => $periodeAnId)));
+        }
+
+        return $this->render('AeagSqeBundle:SuiviHydrobio:lotPeriodeStationDemandeSuiviMaj.html.twig', array(
+                    'prelev' => $pgCmdPrelev,
+                    'periodeAnId' => $periodeAnId,
+                    'periodeAn' => $pgProgLotPeriodeAn,
+                    'dateFin' => $dateFin,
+                    'suiviPrel' => $pgCmdSuiviPrel,
                     'form' => $form->createView(),
         ));
 
@@ -1176,7 +1553,7 @@ class SuiviHydrobioController extends Controller {
         $name = $_FILES['file']['name'];
         $tmpName = $_FILES['file']['tmp_name'];
         $error = $_FILES['file']['error'];
-        $size = $_FILES['file']['size'] / 1024;
+        $size = $_FILES['file']['size'];
         $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
         $response = null;
 
@@ -1184,9 +1561,9 @@ class SuiviHydrobioController extends Controller {
             case UPLOAD_ERR_OK:
                 $valid = true;
 //validate file size
-                if ($size / 1024 / 1024 > 2) {
+                if ($size > 10485760) {
                     $valid = false;
-                    $response = 'La taille du fichier est plus grande que la taille autorisée.';
+                    $response = 'La taille du fichier (' . $size / 1024 . ') est plus grande que la taille autorisée.';
                 }
 //upload file
                 if ($valid) {
@@ -1342,6 +1719,63 @@ class SuiviHydrobioController extends Controller {
         $chemin .= '/SUIVI/' . $pgCmdSuiviPrel->getPrelev()->getId() . '/' . $pgCmdSuiviPrel->getId();
 
         return $chemin;
+    }
+
+    protected function unzip($file, $path = '', $effacer_zip = false) {/* Méthode qui permet de décompresser un fichier zip $file dans un répertoire de destination $path 
+      et qui retourne un tableau contenant la liste des fichiers extraits
+      Si $effacer_zip est égal à true, on efface le fichier zip d'origine $file */
+
+        $tab_liste_fichiers = array(); //Initialisation 
+
+        $zip = zip_open($file);
+
+        if ($zip) {
+            while ($zip_entry = zip_read($zip)) { //Pour chaque fichier contenu dans le fichier zip 
+                if (zip_entry_filesize($zip_entry) >= 0) {
+                    $complete_path = $path . dirname(zip_entry_name($zip_entry));
+
+                    /* On supprime les éventuels caractères spéciaux et majuscules */
+                    $nom_fichier = zip_entry_name($zip_entry);
+                    $nom_fichier = strtr($nom_fichier, "ÀÁÂÃÄÅàáâãäåÒÓÔÕÖØòóôõöøÈÉÊËèéêëÇçÌÍÎÏìíîïÙÚÛÜùúûüÿÑñ", "AAAAAAaaaaaaOOOOOOooooooEEEEeeeeCcIIIIiiiiUUUUuuuuyNn");
+                    $nom_fichier = strtolower($nom_fichier);
+                    $nom_fichier = ereg_replace('[^a-zA-Z0-9.]', '-', $nom_fichier);
+
+                    /* On ajoute le nom du fichier dans le tableau */
+                    array_push($tab_liste_fichiers, $nom_fichier);
+
+                    $complete_name = $path . $nom_fichier; //Nom et chemin de destination 
+
+                    if (!file_exists($complete_path)) {
+                        $tmp = '';
+                        foreach (explode('/', $complete_path) AS $k) {
+                            $tmp .= $k . '/';
+
+                            if (!file_exists($tmp)) {
+                                mkdir($tmp, 0755);
+                            }
+                        }
+                    }
+
+                    /* On extrait le fichier */
+                    if (zip_entry_open($zip, $zip_entry, "r")) {
+                        $fd = fopen($complete_name, 'w');
+
+                        fwrite($fd, zip_entry_read($zip_entry, zip_entry_filesize($zip_entry)));
+
+                        fclose($fd);
+                        zip_entry_close($zip_entry);
+                    }
+                }
+            }
+
+            zip_close($zip);
+
+            /* On efface éventuellement le fichier zip d'origine */
+            if ($effacer_zip === true)
+                unlink($file);
+        }
+
+        return $tab_liste_fichiers;
     }
 
 }

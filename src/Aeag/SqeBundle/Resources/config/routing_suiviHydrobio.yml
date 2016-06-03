@@ -15,13 +15,13 @@ AeagSqeBundle_suiviHydrobio_lot_periode_stations_integrer:
     defaults: { _controller: AeagSqeBundle:SuiviHydrobio:lotPeriodeStationsIntegrer, periodeAnId : null}
     
 AeagSqeBundle_suiviHydrobio_lot_periode_stations_integrer_fichier:
-    path:  /fichier/integrer/{periodeAnId}
+    path:  /integrer/fichier/{periodeAnId}
     defaults: { _controller: AeagSqeBundle:SuiviHydrobio:lotPeriodeStationsIntegrerFichier, periodeAnId : null }
     requirements:
         methods:  GET|POST
         
 AeagSqeBundle_suiviHydrobio_lot_periode_stations_supprimer_fichier:
-    path:  /fichier/supprimer/{periodeAnId}/{fichier}
+    path:  /integrer/supprimer/fichier/{periodeAnId}/{fichier}
     defaults: { _controller: AeagSqeBundle:SuiviHydrobio:lotPeriodeStationsSupprimerFichier, periodeAnId : null, fichier : null }
     requirements:
         methods:  GET|POST
@@ -31,7 +31,22 @@ AeagSqeBundle_suiviHydrobio_lot_periode_stations_telecharger_rapport:
     defaults: { _controller: AeagSqeBundle:SuiviHydrobio:lotPeriodeStationsTelechargerRapport, periodeAnId : null, fichier : null}
     requirements:
          methods:  GET|POST
+         
+AeagSqeBundle_suiviHydrobio_lot_periode_stations_importer:
+    path: /importer/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SuiviHydrobio:lotPeriodeStationsImporter, periodeAnId : null}
     
+AeagSqeBundle_suiviHydrobio_lot_periode_stations_importer_fichier:
+    path:  /importer/fichier/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SuiviHydrobio:lotPeriodeStationsImporterFichier, periodeAnId : null }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_suiviHydrobio_lot_periode_stations_supprimer_import:
+    path:  /importer/supprimet/fichier/{periodeAnId}/{fichier}
+    defaults: { _controller: AeagSqeBundle:SuiviHydrobio:lotPeriodeStationsSupprimerImport, periodeAnId : null, fichier : null }
+    requirements:
+        methods:  GET|POST   
     
 AeagSqeBundle_suiviHydrobio_lot_periode_station_demande:
     path:  /demande/{stationId}/{periodeAnId}/{cmdDemandeId}
@@ -43,6 +58,11 @@ AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_new:
     requirements:
         methods:  GET|POST
         
+AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_maj:
+    path:  /maj/{suiviPrelId}/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SuiviHydrobio:lotPeriodeStationDemandeSuiviMaj, suiviPrelId : null, periodeAnId : null}
+    requirements:
+         methods:  GET|POST
          
 AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_voir:
     path:  /voir/{suiviPrelId}/{periodeAnId}
