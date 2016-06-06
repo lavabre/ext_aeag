@@ -17,7 +17,7 @@ class AdminController extends Controller {
         $session = $this->get('session');
         $session->set('menu', 'admin');
         $user = $this->getUser();
-        return $this->redirect($this->generateUrl('AeagFrdBundle_admin_consulterFraisDeplacements'));
+        return $this->redirect($this->generateUrl('AeagFrdBundle_admin_consulterFraisDeplacementsParAnnee', array('anneeSelect' => date_format($session->get('annee'),'Y'))));
     }
 
     public function validerFraisDeplacementAction() {

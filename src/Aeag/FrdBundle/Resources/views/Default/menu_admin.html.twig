@@ -1,0 +1,116 @@
+<li><a href="{{ path('aeag_homepage') }}"><i class="fa fa-home"></i>&nbsp; Acceuil</a></li>
+
+{%if app.session.get('menu') == 'Frais'%}
+    <li  id="idDeclarations" class="active">
+{% else %}
+     <li>
+{% endif %}
+        <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+            <span class="selected"></span>
+            Frais de déplacements
+            <i class="fa fa-angle-down"></i>     
+        </a>
+     <ul class="dropdown-menu">
+        <li class="dropdown-submenu">
+            <a href="javascript:;">
+                Consulter
+            </a>
+            <ul class="dropdown-menu">
+               {% for annee in app.session.get('annees') %}
+                    <li>
+                        <a href="{{ path('AeagFrdBundle_admin_consulterFraisDeplacementsParAnnee', { 'anneeSelect': annee }) }}">
+                                          {{ annee }}
+                        </a>
+                    </li>
+                 {% endfor %}
+            </ul>
+        </li>
+        <li>
+            <a href="{{ path('AeagFrdBundle_admin_exporterListeFraisDeplacements') }}">
+                Exporter
+            </a>
+        </li> 
+    </ul> 
+</li>
+
+
+{%if app.session.get('menu') == 'parametres'%}
+    <li class="active">
+        <a href="{{ path('AeagFrdBundle_admin_parametres') }}">
+            <span class="selected"></span>
+            Paramètres
+        </a>
+    </li>
+{%else%}
+    <li>
+        <a href="{{ path('AeagFrdBundle_admin_parametres') }}">
+            Paramètres
+        </a>
+    </li>
+{%endif%}
+
+{%if app.session.get('menu') == 'referentiel'%}   
+    <li class="active">
+        <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+            <span class="selected"></span>
+            Référentiel
+            <i class="fa fa-angle-down"></i>     
+        </a>
+    {%else%}
+    <li>
+        <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+            Référentiel
+            <i class="fa fa-angle-down"></i>     
+        </a>
+    {%endif%}
+    <ul class="dropdown-menu">
+        <li>
+            <a href="{{ path('AeagFrdBundle_admin_chargeReferentiel') }}">
+                Importer
+            </a>
+        </li> 
+        <li class="dropdown-submenu">
+            <a href="javascript:;">
+                Consulter
+            </a>
+            <ul class="dropdown-menu">
+                <li><a href="{{ path('AeagFrdBundle_admin_consulterPhases') }}">Phases</a></li>
+                <li><a href="{{ path('AeagFrdBundle_admin_consulterFinalites') }}">Finalités</a></li>
+                <li><a href="{{ path('AeagFrdBundle_admin_consulterSousThemes') }}">Sous thèmes</a></li>
+                <li><a href="{{ path('Aeag_listeDepartement') }}">Départements</a></li>
+            </ul>
+        </li>
+    </ul>
+</li>
+{%if is_granted('ROLE_ADMINFRD')%}
+    {%if app.session.get('menu') == 'acteurs'%}  
+        <li class="active">
+            <a href="{{ path('AeagUserBundle_User', { 'role': 'ROLE_FRD' }) }}">
+                <span class="selected"></span>
+                Membres
+                <i class="fa fa-angle-down"></i>     
+            </a>
+        {%else%}
+        <li>
+            <a href="{{ path('AeagUserBundle_User', { 'role': 'ROLE_FRD' }) }}">
+                Membres
+                <i class="fa fa-angle-down"></i>     
+            </a>   
+        {%endif%}
+    </li>
+{% endif %}
+
+{%if app.session.get('menu') == 'aide'%}
+    <li class="active">
+        <a href="{{ asset('bundles/aeagfrd/doc/manuel-utilisateur.doc') }}" target="_blank">
+            Aide
+            <span class="selected"></span>
+        </a>
+    </li>
+{%else%}
+    <li>
+        <a href="{{ asset('bundles/aeagfrd/doc/manuel-utilisateur.doc') }}" target="_blank">
+            Aide
+        </a>
+    </li>
+{%endif%}

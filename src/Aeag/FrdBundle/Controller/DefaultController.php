@@ -16,33 +16,61 @@ class DefaultController extends Controller {
 
         $user = $this->getUser();
         $session = $this->get('session');
-        
-        $session->set('retourErreur',$this->generateUrl('aeag_frd'));
-        
+
+        $session->set('retourErreur', $this->generateUrl('aeag_frd'));
+
         $emFrd = $this->getDoctrine()->getManager('frd');
+        $repoParametre = $emFrd->getRepository('AeagFrdBundle:Parametre');
+        $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
 
         $session->set('appli', 'frd');
         $session->set('default', 'acceuil');
         $session->set('menu', '');
 
 
-        $annee = $emFrd->getRepository('AeagFrdBundle:Parametre')->findOneBy(array('code' => 'ANNEE'));
-        
+        $annee = $repoParametre->getParametreByCode('ANNEE');
+
         if (!$annee) {
             $message = $this->forward('AeagFrdBundle:Referentiel:chargeAppli');
-            $annee = $emFrd->getRepository('AeagFrdBundle:Parametre')->findOneBy(array('code' => 'ANNEE'));
+            $annee = $repoParametre->getParametreByCode('ANNEE');
         }
-       
+
         $annee = new \DateTime($annee->getLibelle());
-     
         $session->set('annee', $annee);
+
+
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMINFRD')) {
+            $annees = $repoFraisDeplacement->getAnnees();
+        } else {
+            $annees = $repoFraisDeplacement->getUserAnnees($user->getId());
+        }
+        $tabAnnees = array();
+        $nb = 0;
+        $nbAnnees = 0;
+        foreach ($annees as $annee) {
+            $dateString = date_format($annee['dateDepart'], 'Y');
+            $trouve = false;
+            for ($i = 0; $i < count($tabAnnees); $i++) {
+                if ($tabAnnees[$i] == $dateString) {
+                    $trouve = true;
+                    break;
+                }
+            }
+            if (!$trouve) {
+                $tabAnnees[$nbAnnees] = $dateString;
+                $nbAnnees++;
+            }
+        }
+//                                    \Symfony\Component\VarDumper\VarDumper::dump($tabAnnees);
+//                                    return new Response ('');   
+        $session->set('annees', $tabAnnees);
 
         $message = $emFrd->getRepository('AeagFrdBundle:Parametre')->findOneBy(array('code' => 'LIB_MESSAGE'));
         if (strlen($message->getLibelle()) > 0) {
             $session->set('messageAdmin', $message->getLibelle());
         }
-        
-              
+
+
         if (is_object($user) && !($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN'))) {
             $parametre = $emFrd->getRepository('AeagFrdBundle:Parametre')->findOneBy(array('code' => 'MAINTENANCE'));
             if ($parametre->getLibelle() == 'O') {
@@ -58,24 +86,24 @@ class DefaultController extends Controller {
             return $this->redirect($this->generateUrl('AeagFrdBundle_admin', array(
                                 'user' => $user)));
         }
-        
+
         return $this->redirect($this->generateUrl('AeagFrdBundle_membre'));
 
-        /*$browser = new Browser();
+        /* $browser = new Browser();
 
-        if ($browser->showInfo('browser') == 'Internet Explorer' && $browser->showInfo('version') < 8) {
-            return $this->render('AeagFrdBundle:Default:version.html.twig', array(
-                        'user' => $user,
-                        'navigateur' => $browser->showInfo('browser'),
-                        'version' => $browser->showInfo('version')
-            ));
-        } else {
-            return $this->redirect($this->generateUrl('AeagFrdBundle_membre'));
-        }*/
+          if ($browser->showInfo('browser') == 'Internet Explorer' && $browser->showInfo('version') < 8) {
+          return $this->render('AeagFrdBundle:Default:version.html.twig', array(
+          'user' => $user,
+          'navigateur' => $browser->showInfo('browser'),
+          'version' => $browser->showInfo('version')
+          ));
+          } else {
+          return $this->redirect($this->generateUrl('AeagFrdBundle_membre'));
+          } */
     }
 
     public function getBrowser() {
-        if (isset($_SERVER["HTTP_USER_AGENT"]) OR ($_SERVER["HTTP_USER_AGENT"] != "")) {
+        if (isset($_SERVER["HTTP_USER_AGENT"]) OR ( $_SERVER["HTTP_USER_AGENT"] != "")) {
             $visitor_user_agent = $_SERVER["HTTP_USER_AGENT"];
         } else {
             $visitor_user_agent = "Unknown";

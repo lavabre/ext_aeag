@@ -56,6 +56,12 @@ AeagFrdBundle_admin_consulterFraisDeplacements:
     requirements:
         methods:  GET|POST
         
+AeagFrdBundle_admin_consulterFraisDeplacementsParAnnee:
+    path:  /consulterFraisDeplacementsParAnnee/{anneeSelect}
+    defaults: { _controller: AeagFrdBundle:Referentiel:consulterFraisDeplacementsParAnnee, anneeSelect:null }
+    requirements:
+        methods:  GET|POST
+        
 AeagFrdBundle_admin_consulterFraisDeplacement:
     path:  /consulterFraisDeplacement/{id}
     defaults: { _controller: AeagFrdBundle:Referentiel:consulterFraisDeplacement }

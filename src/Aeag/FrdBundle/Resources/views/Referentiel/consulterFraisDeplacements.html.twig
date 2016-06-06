@@ -13,7 +13,7 @@
 
 {% block panel_heading %}
     <h3>
-        Frais de déplacements
+       {{ entities | length }}  Frais de déplacements {% if annee != 9999 %} pour l'année {{ annee }} {% endif %}
     </h3>
 {% endblock panel_heading %}
 
@@ -146,17 +146,7 @@
                             <th>Objet</th>
                             <th>Couurier</th>
                         </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                    </thead>
+                      </thead>
                     <tbody id="idTbody">
                         {%if entities | length > 0 %}
                             {% for entity in entities %}
@@ -250,37 +240,19 @@
     var table = $('#idTable').DataTable(
     {"stateSave": true,
      "order": [[ 1, "desc" ]],
-    "oLanguage": {
-    "sProcessing":     "Traitement en cours...",
-    "sLoadingRecords": "Chargement en cours...",
-    "sSearch": "Rechercher&nbsp;:",
-    "sEmptyTable": "Aucune donn&eacute;e disponible dans le tableau",
-    "sInfo": "Affichage de l'&eacute;lement _START_ &agrave; _END_ sur _TOTAL_ &eacute;l&eacute;ments",
-    "sInfoFiltered": "(filtr&eacute; de _MAX_ &eacute;l&eacute;ments au total)",
-    "sZeroRecords":    "Aucun &eacute;l&eacute;ment &agrave; afficher",
-    "sInfoEmpty":      "Affichage de l'&eacute;lement 0 &agrave; 0 sur 0 &eacute;l&eacute;ments",
-    "sInfoThousands": " ",
-    "sLengthMenu": 'Afficher <select>' +
-        '<option value="10">10</option>' +
-        '<option value="20">20</option>' +
-        '<option value="30">30</option>' +
-        '<option value="40">40</option>' +
-        '<option value="50">50</option>' +
-        '<option value="-1">Tous</option>' +
-        '</select> enregistrements',
-    "sPaginationType": "full_numbers",
-    "oPaginate": {
-    "sFirst":      "Premier",
-    "sPrevious":   "Pr&eacute;c&eacute;dent",
-    "sNext":       "Suivant",
-    "sLast":       "Dernier"
-    },
-    }
-    }
-    );
+     "language": {
+                                 "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
+                             },
+             "aLengthMenu": [
+                                        [10, 25, 50, 100, -1],
+                                        [10, 25, 50, 100, "Tous"]
+                                    ],
+              "iDisplayLength": 10
+            }
+            );
 
 
-    $("#idTable thead td").each( function ( i ) {
+    {#$("#idTable thead td").each( function ( i ) {
 
     if (i != 0 && i != 1 && i != 3 && i != 4 && i != 6){
     var select = $('<select><option value=""></option></select>')
@@ -295,7 +267,7 @@
     select.append( '<option value="'+d+'">'+d+'</option>' )
     } );
     };
-    } );
+    } );#}
 
 
 

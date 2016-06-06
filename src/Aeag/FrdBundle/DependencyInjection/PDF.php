@@ -48,7 +48,7 @@ class PDF extends PageGroup {
         $this->SetFont('Arial', 'B', 10);
         $this->Cell(100);
         if ($entity[0]->getPhase()->getCode() == '60') {
-            $this->Cell(1, 12, $entity[0]->getPhase()->getLibelle() . ' le ' . $entity[0]->getDatePaiement()->format('d/m/Y'), 0, 1, 'C');
+            $this->Cell(1, 12, $entity[0]->getPhase()->getLibelle() . ' le ' . $entity[0]->getDatePaiement()->format('d/m/Y') . ' : ' . number_format($entity[0]->getMontRemtb(), 2, ',', ' ') . ' €', 0, 1, 'C');
         } else {
             $this->Cell(1, 12, $entity[0]->getPhase()->getLibelle(), 0, 1, 'C');
         }
@@ -60,7 +60,7 @@ class PDF extends PageGroup {
         $this->SetDrawColor(0, 0, 0);
         $this->SetY(-20);
         //$this->Cell(0, 4, 'Page ' . $this->GroupPageNo() . '/' . $this->PageGroupAlias(), 0, 0, 'C');
-        $this->Cell(0, 4, 'Agence de l\'eau Adour-Garonne - 90, rue du férétra - 31078 Toulouse Cedex 4 - Tél. : 05 61 36 37 38', 0, 0, 'C');
+        $this->Cell(0, 4, 'Agence de l\'eau Adour-Garonne - 90, rue du férétra - CS 87801  - 31078 Toulouse Cedex 4 - Tél. : 05 61 36 37 38 - fax :  05 61 36 37 28', 0, 0, 'C');
     }
 
     // Chargement des données
