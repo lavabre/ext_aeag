@@ -176,9 +176,9 @@
                                     <div class="modal-header">
                                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                                         {% if demande %}
-                                             <h4 class="modal-title" id="integrerFichierHeader">Integration d'un fichier de suivi de la demande du {{ demande.dateDemande | date("d/m/Y") }}</h4>
+                                             <h4 class="modal-title" id="integrerFichierHeader">Integration d'un fichier de terrain de la demande du {{ demande.dateDemande | date("d/m/Y") }}</h4>
                                         {% else %}
-                                             <h4 class="modal-title" id="integrerFichierHeader">Integration d'un fichier de suivi </h4>
+                                             <h4 class="modal-title" id="integrerFichierHeader">Integration d'un fichier de terrain </h4>
                                          {% endif %}
                                     </div>
                                     <div class="modal-body">
@@ -196,9 +196,9 @@
                                     <div class="modal-header">
                                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                                         {% if demande %}
-                                             <h4 class="modal-title" id="importerFichierHeader">Importation de plusieurs fichiers de suivi de la demande du {{ demande.dateDemande | date("d/m/Y") }}</h4>
+                                             <h4 class="modal-title" id="importerFichierHeader">Importation de plusieurs fichiers de terrain de la demande du {{ demande.dateDemande | date("d/m/Y") }}</h4>
                                         {% else %}
-                                             <h4 class="modal-title" id="importerFichierHeader">mportation de plusieurs fichiers de suivi  </h4>
+                                             <h4 class="modal-title" id="importerFichierHeader">mportation de plusieurs fichiers de terrain  </h4>
                                          {% endif %}
                                     </div>
                                     <div class="modal-body">
@@ -225,22 +225,24 @@
   {%endblock panel_heading %}
 
 {%block content %}
-    <div class="row">
-        <div class="col-md-offset-3 col-md-7">
-             <a id="idImporterFichier" class="btn btn-success btn-deposer-reponse"  title="Intégrer plusieurs fichiers de suivi">
-                 <i class="fa fa-download"> Intégrer plusieurs fichier de suivi</i> 
-              </a>
-               ou
-               <a id="idIntegrerFichier" class="btn btn-success btn-deposer-reponse"  title="Intégrer un fichier de suivi">
-                 <i class="fa fa-download"> Intégrer un fichier de suivi</i> 
-              </a>
-            {% if rapport %}
-                 <a  class="btn btn-default"  href="{{path("AeagSqeBundle_suiviHydrobio_lot_periode_stations_telecharger_rapport",{"periodeAnId": periodeAn.id ,"fichier": rapport})}}" title="Rapport d'integration du fichier de suivi">
-                    <i class="fa fa-book"> Rapport d'integration</i> 
-                 </a>
-           {% endif %}
-          </div>
-    </div>
+     {% if is_granted('ROLE_PRESTASQE') %}
+            <div class="row">
+                <div class="col-md-offset-3 col-md-7">
+                     <a id="idImporterFichier" class="btn btn-success btn-deposer-reponse"  title="Intégrer plusieurs fichiers de suivi">
+                         <i class="fa fa-download"> Intégrer plusieurs fichiers de terrain</i> 
+                      </a>
+                       ou
+                       <a id="idIntegrerFichier" class="btn btn-success btn-deposer-reponse"  title="Intégrer un fichier de suivi">
+                         <i class="fa fa-download"> Intégrer un fichier de terrain</i> 
+                      </a>
+                    {% if rapport %}
+                         <a  class="btn btn-default"  href="{{path("AeagSqeBundle_suiviHydrobio_lot_periode_stations_telecharger_rapport",{"periodeAnId": periodeAn.id ,"fichier": rapport})}}" title="Rapport d'integration du fichier de suivi">
+                            <i class="fa fa-book"> Rapport d'integration</i> 
+                         </a>
+                   {% endif %}
+                  </div>
+            </div>
+          {% endif %}
 
     <div class="form-body">        
         <table class="table table-bordered t table-advance" id="idTable_demandes">
@@ -263,25 +265,30 @@
                             {% for cmdPrelev in station.cmdPrelevs %}
                                 <tr>
                                     <td width="10%" nowrap>
-                                        {% if  cmdPrelev.suiviPrels.0.maj == 'O' %}
-                                            <a class="btn btn-success" id="idNouveauSuivi{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Nouveau suivi">
-                                                <i class="fa fa-plus"></i>
-                                            </a>
+                                        {% if is_granted('ROLE_PRESTASQE') %}
+                                            {% if  cmdPrelev.suiviPrels.0.maj == 'O' %}
+                                                <a class="btn btn-success" id="idNouveauSuivi{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Nouveau suivi">
+                                                    <i class="fa fa-plus"></i>
+                                                </a>
+                                            {% endif %}
                                         {% endif %}
                                         {%if cmdPrelev.suiviPrels.0.suiviPrel | length%}
                                             <a id="idVoirSuivi{{ cmdPrelev.cmdPrelev.id }}" class="btn btn-primary" href="#" title="consulter l'historique">
                                                 <i class="fa fa-archive"></i> 
                                             </a>
+                                            
                                             {% if cmdPrelev.suiviPrels.0.suiviPrel.statutPrel  == 'F' %}
                                                 {% if  not cmdPrelev.suiviPrels.0.suiviPrel.fichierRps %}
+                                                    {% if is_granted('ROLE_PRESTASQE') %}
                                                     <a id="idDeposerSuivi{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}" class="btn btn-primary btn-deposer-reponse"  title="Déposer un fichier terrain">
                                                         <i class="fa fa-download"></i> 
                                                     </a>
+                                                    {% endif %}
                                                 {% else %}
-                                                    <a id="idTelechargerSuivi{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_fichier_telecharger',{'suiviPrelId': cmdPrelev.suiviPrels.0.suiviPrel.id })}}" title="Télécharger le fichier terrain">
-                                                        <i class="fa fa-upload"></i> 
-                                                    </a>
-                                                {% endif %}
+                                                        <a id="idTelechargerSuivi{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_fichier_telecharger',{'suiviPrelId': cmdPrelev.suiviPrels.0.suiviPrel.id })}}" title="Télécharger le fichier terrain">
+                                                            <i class="fa fa-upload"></i> 
+                                                        </a>
+                                                 {% endif %}
                                             {% endif %}
                                             {% if is_granted('ROLE_ADMINSQE') %}
                                                 <a  id="idMaj-{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}" class="btn btn-warning"  title="valider le suivi">

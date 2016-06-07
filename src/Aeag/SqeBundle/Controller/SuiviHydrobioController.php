@@ -42,6 +42,8 @@ class SuiviHydrobioController extends Controller {
             $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByPresta($user);
         } else if ($user->hasRole('ROLE_PROGSQE')) {
             $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByProg($user);
+        }else if ($user->hasRole('ROLE_SQE')) {
+            $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByAdmin();
         }
 
         $tabProglotAns = array();
@@ -212,7 +214,7 @@ class SuiviHydrobioController extends Controller {
                     foreach ($pgCmdPrelevs as $pgCmdPrelev) {
                         $tabCmdPrelevs[$nbCmdPrelevs]['cmdPrelev'] = $pgCmdPrelev;
                         $tabCmdPrelevs[$nbCmdPrelevs]['maj'] = 'N';
-                        $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelevOrderDate($pgCmdPrelev);
+                        $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelevOrderId($pgCmdPrelev);
                         $tabSuiviPrels = array();
                         $nbSuiviPrels = 0;
                         if (count($pgCmdSuiviPrels) == 0) {

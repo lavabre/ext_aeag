@@ -43,6 +43,28 @@
                     </div>
                 </div>
             </div>  
+    
+    <div class="modal fade" id="modal-commentaire">
+                <div class="modal-dialog modal-scroll modal-lg">
+                    <div class="modal-content">
+                         <form class="form" id="idFormCommentaire" role="form" action="#" method="post">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <h4 class="modal-title" id="idHeaderCommentaire">Station :  {{ station.code }} {{ station.libelle }}</h4>
+                                </div>
+                                <div id="idBodyCommentaire" class="modal-body">
+                                     <h4>Commentaire</h4>
+                                    <br/><br/>
+                                    <textarea name="textareaCommentaire" rows="10" cols="110" readonly  disabled="disabled">{{ cmdPrelevPcs.0.commentaire }}</textarea>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
+                                 </div>
+                         </form>
+                    </div>
+                </div>
+            </div>
+    
 {% endblock modal %}
 
 {%block panel_heading %}
@@ -56,11 +78,7 @@
                          </table>
                     </h3>
                 </div>
-                <div class="col-md-1  pull-left">
-                        <a id="expandAll" href="#" class="btn btn-primary" role="button"><i class="fa fa-expand"></i></a>
-                        <a id="collapseAll" href="#" class="btn btn-primary" role="button"><i class="fa fa-compress"></i></a>
-                </div>
-        </div>
+           </div>
  {%endblock panel_heading %}
 
 {%block content %}
@@ -68,27 +86,41 @@
       
     <div class="form-body">  
         
-             <div class="form-group form-inline">
-                     <label class="col-md-offset-3 col-xs-2 control-label">Date prélèvement</label>
-                    <label class="col-xs-2 control-label">Profondeur du lac (m)</label>
-                     <label class="col-xs-2 control-label">Mesure tous les</label>
-             </div>
             <div class="form-group form-inline">
-                    <div class="col-md-offset-3 col-xs-2  input-group">
-                            <input type="text" id="datePrel" name="datePrel" required="required" class="form-control text-center" placeholder="Date prélèvement" value="{%if cmdPrelev.datePrelev %}{{ cmdPrelev.datePrelev | date("d/m/Y H:i") }}{% endif %}" readonly  disabled="disabled">
-                     </div>
-                     <div class="col-xs-2  input-group">
-                            <input type="text" id="profMax" name="profMax" required="false" class="form-control number text-right" placeholder="Profondeur du lac" value="{{ cmdPrelev.profMax }}" readonly  disabled="disabled">
-                     </div>
-                      <div class="col-xs-2  input-group">
-                               <select class="form-control number text-right" id="ecart" name="ecart" readonly  disabled="disabled">   
-                                        <option value="0.5">0.5 m</option> 
-                                         <option value="1" selected>1 m</option> 
-                               </select>
-                     </div>
-                   
-        
-           </div>
+            <div class="col-md-1  pull-right">
+            <a id="expandAll" href="#" class="btn btn-primary" role="button"><i class="fa fa-expand"></i></a>
+            <a id="collapseAll" href="#" class="btn btn-primary" role="button"><i class="fa fa-compress"></i></a>
+            </div>
+          </div>
+
+            <div class="form-group form-inline">
+                <label class="col-md-offset-2 col-xs-1  control-label text-center">Commentaire</label>
+                <label class="col-xs-2 control-label text-center">Date prélèvement</label>
+                <label class="col-xs-2 control-label text-center">Profondeur du lac (m)</label>
+                <label class="col-xs-2 control-label text-center">Mesure tous les</label>
+            </div>
+            <div class="form-group form-inline">
+                 <div class="col-md-offset-2 col-xs-1 input-group text-center">
+                    <a id="idCommentaire{{ cmdPrelev.id }}" href="#" class="btn btn-primary" value="{{ cmdPrelevPcs.0.commentaire }} "> 
+                        <i class="fa fa-commenting"></i>
+                    </a>
+                </div>
+                <div class="col-xs-2  input-group">
+                    <input type="text" id="datePrel" name="datePrel" readonly  disabled="disabled" class="form-control text-center" placeholder="Date prélèvement" value="{%if cmdPrelev.datePrelev %}{{ cmdPrelev.datePrelev | date("d/m/Y H:i") }}{% endif %}">
+                </div>
+                <div class="col-xs-2  input-group">
+                    <input type="text" id="profMax" name="profMax" readonly  disabled="disabled" class="form-control number text-right" placeholder="Profondeur du lac" value="{{ cmdPrelev.profMax }}">
+                </div>
+                <div class="col-xs-2  input-group">
+                    <select class="form-control number text-right" id="ecart" name="ecart" readonly  disabled="disabled">   
+                        <option value="0.5">0.5 m</option> 
+                        <option value="1" selected>1 m</option> 
+                    </select>
+                </div>
+
+            </div>
+
+     
        
          {% set groupeSelectionne = null %}
          {% set nbTr = 0 %}
@@ -519,6 +551,10 @@
     
     jQuery(document).ready(function() {
     
+           $(document).on('click','#idCommentaire{{ cmdPrelev.id }}',function(e){
+            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+            $('#modal-commentaire').modal('toggle');
+            });
       
     
             $('#datePrel').datetimepicker(

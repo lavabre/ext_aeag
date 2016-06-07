@@ -35,8 +35,11 @@
                         {% if app.session.get('suiviHb') %}
                          <li><a class="btn btn-primary btn-lg" href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}" title="Suivi hydrobio"><i class="fa fa-calendar fa-2x"></i> Suivi Hydrobio</a></li>
                          </br>
-                         {% endif %}
-                    {% endif %}
+                       {% endif %}
+                    {%elseif   is_granted('ROLE_SQE') %}
+                          <li><a class="btn btn-primary btn-lg" href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}" title="Suivi hydrobio"><i class="fa fa-calendar fa-2x"></i> Suivi Hydrobio</a></li>
+                         </br>
+                     {% endif %}
                    </ul>  
             </div>
          </div>   
