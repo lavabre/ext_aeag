@@ -82,10 +82,7 @@
                 </table>
             </h3>
         </div>
-        <div class="col-md-1  pull-left">
-            <a id="expandAll" href="#" class="btn btn-primary" role="button"><i class="fa fa-expand"></i></a>
-            <a id="collapseAll" href="#" class="btn btn-primary" role="button"><i class="fa fa-compress"></i></a>
-        </div>
+        
     </div>
 {%endblock panel_heading %}
 
@@ -94,15 +91,22 @@
     <form class="form" id="idForm" role="form" action="{{ path("AeagSqeBundle_saisieDonnees_lot_periode_lac_env_situ_resultat",{"prelevId":  cmdPrelev.id, "periodeAnId":  periodeAn.id, "stationId": station.ouvFoncId}) }}" method="post">
 
         <div class="form-body">  
+            
+          <div class="form-group form-inline">
+            <div class="col-md-1  pull-right">
+            <a id="expandAll" href="#" class="btn btn-primary" role="button"><i class="fa fa-expand"></i></a>
+            <a id="collapseAll" href="#" class="btn btn-primary" role="button"><i class="fa fa-compress"></i></a>
+            </div>
+          </div>
 
             <div class="form-group form-inline">
-                <label class="col-md-offset-2 col-xs-2  control-label text-center">Commentaire</label>
+                <label class="col-md-offset-2 col-xs-1  control-label text-center">Commentaire</label>
                 <label class="col-xs-2 control-label text-center">Date prélèvement</label>
                 <label class="col-xs-2 control-label text-center">Profondeur du lac (m)</label>
                 <label class="col-xs-2 control-label text-center">Mesure tous les</label>
             </div>
             <div class="form-group form-inline">
-                 <div class="col-md-offset-2 col-xs-2 input-group text-center">
+                 <div class="col-md-offset-2 col-xs-1 input-group text-center">
                     <a id="idCommentaire{{ cmdPrelev.id }}" href="#" class="btn btn-primary" value="{{ cmdPrelevPcs.0.commentaire }} "> 
                         <i class="fa fa-commenting"></i>
                     </a>

@@ -2199,8 +2199,8 @@ class SaisieDonneesController extends Controller {
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevById($prelevId);
         $pgCmdDemande = $pgCmdPrelev->getDemande();
-        $pgCmdPrelevPcs = $repoPgCmdPrelevPc->getPgCmdPrelevPcByPrelev($pgCmdPrelev);
-        $pgCmdPrelevPc = $pgCmdPrelevPcs[0];
+        $pgCmdPrelevPcAll = $repoPgCmdPrelevPc->getPgCmdPrelevPcByPrelev($pgCmdPrelev);
+        $pgCmdPrelevPc = $pgCmdPrelevPcAll[0];
 
         $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($periodeAnId);
         $pgProgLotAn = $pgProgLotPeriodeAn->getLotAn();
@@ -2458,7 +2458,7 @@ class SaisieDonneesController extends Controller {
             }
         }
 
-//\Symfony\Component\VarDumper\VarDumper::dump($tabAutreDemandes);
+//\Symfony\Component\VarDumper\VarDumper::dump($pgCmdPrelevPcAll);
 //return new Response ('');
 
         if ($maj == 'C') {
@@ -2471,7 +2471,7 @@ class SaisieDonneesController extends Controller {
                         'dateFin' => $dateFin,
                         'demande' => $pgCmdPrelev->getDemande(),
                         'cmdPrelev' => $pgCmdPrelev,
-                        'cmdPrelevPcs' => $pgCmdPrelevPcs,
+                        'cmdPrelevPcs' => $pgCmdPrelevPcAll,
                         'autreDemandes' => $tabAutreDemandes,
                         'groupes' => $tabGroupes,
                         'maj' => $maj));
@@ -2485,7 +2485,7 @@ class SaisieDonneesController extends Controller {
                         'dateFin' => $dateFin,
                         'demande' => $pgCmdPrelev->getDemande(),
                         'cmdPrelev' => $pgCmdPrelev,
-                        'cmdPrelevPcs' => $pgCmdPrelevPcs,
+                        'cmdPrelevPcs' => $pgCmdPrelevPcAll,
                         'autreDemandes' => $tabAutreDemandes,
                         'groupes' => $tabGroupes,
                         'maj' => $maj));

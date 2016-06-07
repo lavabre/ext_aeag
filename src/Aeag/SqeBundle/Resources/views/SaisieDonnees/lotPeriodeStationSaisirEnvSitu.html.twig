@@ -57,10 +57,7 @@
                 prélèvement prévu entre le  {{ periodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;et&nbsp;&nbsp; {{ dateFin | date("d/m/Y") }}</br>
                 pour le lot :  {{ lotan.lot.nomLot }} - {{ lotan.anneeProg }}  - version :  {{ lotan.version }}
             </h3>
-               <div class="col-md-1  pull-right">
-                    <a id="expandAll" href="#" class="btn btn-primary" role="button"><i class="fa fa-expand"></i></a>
-                    <a id="collapseAll" href="#" class="btn btn-primary" role="button"><i class="fa fa-compress"></i></a>
-                </div>
+               
        {%endblock panel_heading %}
 
 {%block content %}
@@ -69,9 +66,16 @@
 
         <div class="form-body"> 
             
+         <div class="form-group form-inline">   
+            <div class="col-md-1  pull-right">
+                    <a id="expandAll" href="#" class="btn btn-primary" role="button"><i class="fa fa-expand"></i></a>
+                    <a id="collapseAll" href="#" class="btn btn-primary" role="button"><i class="fa fa-compress"></i></a>
+                </div>
+           </div>
+            
            <div class="form-group form-inline">
                 <label class="col-md-offset-2 col-xs-2  control-label text-center">Commentaire</label>
-                <label class="col-xs-8 control-label">Date prélèvement</label>
+                <label class="col-xs-4 control-label">Date prélèvement</label>
             </div>
             <div class="form-group form-inline">
                  <div class="col-md-offset-2 col-xs-2 input-group text-center">

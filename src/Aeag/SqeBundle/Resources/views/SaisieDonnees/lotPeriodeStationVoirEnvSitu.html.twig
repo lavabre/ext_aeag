@@ -21,6 +21,30 @@
     </li>
 {% endblock breadcrumb %} 
 
+{% block modal %}
+       
+            <div class="modal fade" id="modal-commentaire">
+                <div class="modal-dialog modal-scroll modal-lg">
+                    <div class="modal-content">
+                         <form class="form" id="idFormCommentaire" role="form" action="#" method="post">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <h4 class="modal-title" id="idHeaderCommentaire">Station :  {{ station.code }} {{ station.libelle }}</h4>
+                                </div>
+                                <div id="idBodyCommentaire" class="modal-body">
+                                    <h4>Prélèvement n°  {{ cmdPrelev.id }}  prévu le  {{ cmdPrelev.datePrelev | date("d/m/Y H:i") }} </h4>
+                                    <br/><br/>
+                                    <textarea name="textareaCommentaire" rows="10" cols="110" readonly  disabled="disabled">{{ cmdPrelevPcs.0.commentaire }}</textarea>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
+                                </div>
+                         </form>
+                    </div>
+                </div>
+            </div>
+    
+{% endblock modal %}
 
 {%block panel_heading %}
          <h3 class="page-title text-center">
@@ -39,12 +63,25 @@
                     <a id="expandAll" href="#" class="btn btn-primary" role="button"><i class="fa fa-expand"></i></a>
                     <a id="collapseAll" href="#" class="btn btn-primary" role="button"><i class="fa fa-compress"></i></a>
                 </div>
-                <label class=" col-md-offset-3 col-xs-2 control-label">Date prélèvement :</label>
+            </div>
+               
+             <div class="form-group form-inline">
+                <label class="col-md-offset-2 col-xs-2  control-label text-center">Commentaire</label>
+                <label class="col-xs-4 control-label">Date prélèvement</label>
+            </div>   
+               
+            <div class="form-group form-inline">
+                 <div class="col-md-offset-2 col-xs-2 input-group text-center">
+                    <a id="idCommentaire{{ cmdPrelev.id }}" href="#" class="btn btn-primary" value="{{ cmdPrelevPcs.0.commentaire }} "> 
+                        <i class="fa fa-commenting"></i>
+                    </a>
+                </div>
                 <div class="col-xs-2  input-group">
-                    <input type="text" id="datePrel" name="datePrel" required="required" readonly  disabled="disabled" class="form-control text-center" placeholder="Date prélèvement" value="{%if cmdPrelev.datePrelev %}{{ cmdPrelev.datePrelev | date("d/m/Y H:i") }}{% endif %}">
+                    <input type="text" id="datePrel" name="datePrel" readonly  disabled="disabled" class="form-control text-center" placeholder="Date prélèvement" value="{%if cmdPrelev.datePrelev %}{{ cmdPrelev.datePrelev | date("d/m/Y H:i") }}{% endif %}">
                 </div>
             </div>
-
+               
+         
             {% set groupeSelectionne = null %}
             {% set nbTr = 0 %}
             {% set nbTd = 0 %}
@@ -352,7 +389,11 @@
 
     jQuery(document).ready(function() {
 
-
+     $(document).on('click','#idCommentaire{{ cmdPrelev.id }}',function(e){
+                    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                     $('#modal-commentaire').modal('toggle');
+           });
+                  
 
      $('#datePrel').datetimepicker(
                     {
