@@ -163,12 +163,12 @@
  
        $('#idMessage1').hide();
             $('#idMessage2').hide();
-            $('#idAttente').hide();
+            $('#modalTraitementEncours').hide();
             {% for fichier in fichiers %}
                 $('#confirme_{{fichier.indice}}').click(function (e) {
                         e.preventDefault();
                         $('#idMessage1').show();
-                        $('#idAttente').show();
+                        $('#modalTraitementEncours').show();
                         $('#idMessage2').hide();
                         $('#ficent').val('{{fichier.nom}}');
                         $('form').submit();
@@ -178,7 +178,7 @@
 
             {% if message %}
                $('#idMessage1').hide(); 
-               $('#idAttente').hide(); 
+               $('#modalTraitementEncours').hide(); 
                $('#idMessage2').show();
             {%endif%}
   {% endblock scripts %}

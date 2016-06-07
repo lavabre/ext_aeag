@@ -490,7 +490,7 @@ class SuiviHydrobioController extends Controller {
             $liste = array();
             $liste = $this->unzip($pathBase . '/' . $name, $pathBase . '/');
             $rapport = fopen($pathBase . '/' . $user->getId() . '_' . $dateDepot->format('Y-m-d-H') . '_rapport.csv', "w+");
-            $contenu = 'rapport d\'intégration du fichier : ' . $name . ' déposé le ' . $dateDepot->format('d/m/Y') . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+            $contenu = '                          rapport d\'intégration du fichier : ' . $name . ' déposé le ' . $dateDepot->format('d/m/Y') . CHR(13) . CHR(10) . CHR(13) . CHR(10);
             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
             fputs($rapport, $contenu);
             $contenu = 'Le fichier zip contient  ' . count($liste) . ' fichier(s)' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
@@ -522,39 +522,61 @@ class SuiviHydrobioController extends Controller {
                 for ($k = 0; $k < count($tabStations); $k++) {
                     if (count($tabStations[$k]['fichiers'])) {
                         $tabFichiers = $tabStations[$k]['fichiers'];
-                        if (count($tabFichiers) == 1) {
-                            $name = $tabFichiers[0];
-                            $pgCmdSuiviPrel = $tabStations[$k]['prelevs'][0]['cmdSuiviPrelevs'][0];
-                            if ($pgCmdSuiviPrel->getFichierRps()) {
-                                $pgCmdFichiersRps = $pgCmdSuiviPrel->getFichierRps();
-                                $emSqe->remove($pgCmdFichiersRps);
-                            }
-                            $pgCmdFichiersRps = new PgCmdFichiersRps();
-                            $pgCmdFichiersRps->setDemande($pgCmdPrelev->getDemande());
-                            $pgCmdFichiersRps->setNomFichier($name);
-                            $pgCmdFichiersRps->setDateDepot(new \DateTime());
-                            $pgCmdFichiersRps->setTypeFichier('SUI');
-                            $pgCmdFichiersRps->setPhaseFichier($pgProgPhases);
-                            $pgCmdFichiersRps->setUser($pgProgWebUser);
-                            $pgCmdFichiersRps->setSuppr('N');
-
-                            $emSqe->persist($pgCmdFichiersRps);
-                            $pgCmdSuiviPrel->setFichierRps($pgCmdFichiersRps);
-                            $emSqe->persist($pgCmdSuiviPrel);
-                            $emSqe->flush();
-                            $pathBaseFic = $this->getCheminEchange($pgCmdSuiviPrel, $pgCmdFichiersRps->getId());
-                            if (!is_dir($pathBaseFic)) {
-                                if (!mkdir($pathBaseFic, 0777, true)) {
-                                    $session->getFlashBag()->add('notice-error', 'Le répertoire : ' . $pathBaseFic . ' n\'a pas pu être créé');
-                                    ;
-                                }
-                            }
-                            copy($pathBase . '/' . $name, $pathBaseFic . '/' . $name);
-                            unlink($pathBase . '/' . $name);
-                            $contenu = 'Le fichier ' . $name . ' a été déposé sur la station ' . $tabStations[$k]['station']->getCode() . ' ' . $tabStations[$k]['station']->getLibelle() . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                        if (count($tabFichiers) > 1) {
+                            $files = array();
+                            $zip = new \ZipArchive();
+                            $zipName = $tabStations[$k]['station']->getCode() . "-archive.zip";
+                            $contenu = 'le fichier  ' . $zipName .  ' regroupe ' . count($tabFichiers) . ' fichiers : ' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
                             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                             fputs($rapport, $contenu);
+                            for ($nb = 0; $nb < count($tabFichiers); $nb++) {
+                                array_push($files, $pathBase . '/' . $tabFichiers[$nb]);
+                               $contenu = '                  -  ' . $tabFichiers[$nb] . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                               $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                               fputs($rapport, $contenu);
+                            }
+                            $zip->open($pathBase . '/' . $zipName, \ZipArchive::CREATE);
+                            foreach ($files as $f) {
+                                $zip->addFromString(basename($f), file_get_contents($f));
+                            }
+                            $zip->close();
+                            $name = $zipName;
+                        } else {
+                            $name = $tabFichiers[0];
                         }
+                        $pgCmdSuiviPrel = $tabStations[$k]['prelevs'][0]['cmdSuiviPrelevs'][0];
+                        if ($pgCmdSuiviPrel->getFichierRps()) {
+                            $pgCmdFichiersRps = $pgCmdSuiviPrel->getFichierRps();
+                            $emSqe->remove($pgCmdFichiersRps);
+                        }
+                        $pgCmdFichiersRps = new PgCmdFichiersRps();
+                        $pgCmdFichiersRps->setDemande($pgCmdPrelev->getDemande());
+                        $pgCmdFichiersRps->setNomFichier($name);
+                        $pgCmdFichiersRps->setDateDepot(new \DateTime());
+                        $pgCmdFichiersRps->setTypeFichier('SUI');
+                        $pgCmdFichiersRps->setPhaseFichier($pgProgPhases);
+                        $pgCmdFichiersRps->setUser($pgProgWebUser);
+                        $pgCmdFichiersRps->setSuppr('N');
+
+                        $emSqe->persist($pgCmdFichiersRps);
+                        $pgCmdSuiviPrel->setFichierRps($pgCmdFichiersRps);
+                        $emSqe->persist($pgCmdSuiviPrel);
+                        $emSqe->flush();
+                        $pathBaseFic = $this->getCheminEchange($pgCmdSuiviPrel, $pgCmdFichiersRps->getId());
+                        if (!is_dir($pathBaseFic)) {
+                            if (!mkdir($pathBaseFic, 0777, true)) {
+                                $session->getFlashBag()->add('notice-error', 'Le répertoire : ' . $pathBaseFic . ' n\'a pas pu être créé');
+                                ;
+                            }
+                        }
+//                        $contenu = 'Le fichier ' . $pathBase . '/' . $name . ' a été déposé vers  ' . $pathBaseFic . '/' . $name . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+//                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+//                        fputs($rapport, $contenu);
+                        copy($pathBase . '/' . $name, $pathBaseFic . '/' . $name);
+                        unlink($pathBase . '/' . $name);
+                        $contenu = 'Le fichier ' . $name . ' a été déposé sur la station ' . $tabStations[$k]['station']->getCode() . ' ' . $tabStations[$k]['station']->getLibelle() . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                        fputs($rapport, $contenu);
                     }
                 }
             }

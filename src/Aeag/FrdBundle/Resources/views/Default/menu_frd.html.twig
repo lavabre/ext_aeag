@@ -1,0 +1,55 @@
+<li><a href="{{ path('aeag_homepage') }}"><i class="fa fa-home"></i>&nbsp; Acceuil</a></li>
+
+{%if app.session.get('menu') == 'Frais'%}
+    <li  id="idDeclarations" class="active">
+    {% else%}
+    <li>
+    {% endif %}
+    <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+        <span class="selected"></span>
+        Frais de déplacements
+        <i class="fa fa-angle-down"></i>     
+    </a>
+   <ul class="dropdown-menu">
+        <li class="dropdown-submenu">
+            <a href="javascript:;">
+                Consulter
+            </a>
+            <ul class="dropdown-menu">
+               {% for annee in app.session.get('annees') %}
+                    <li>
+                        <a href="{{ path('AeagFrdBundle_membre_consulterFraisDeplacementsParAnnee', { 'anneeSelect': annee }) }}">
+                                          {{ annee }}
+                        </a>
+                    </li>
+                 {% endfor %}
+            </ul>
+        </li>
+        <li>
+            <a href="{{ path('AeagFrdBundle_admin_exporterListeFraisDeplacements') }}">
+                Exporter
+            </a>
+        </li> 
+    </ul> 
+</li>
+
+{%if app.session.get('menu') == 'contact'%}
+    <li class="active">
+    {% else %}
+    <li>
+    {% endif %}
+    <a href="{{ path('AeagFrdBundle_membre_envoyerMessage') }}">
+        Contact
+    </a>
+</li>
+
+{%if app.session.get('menu') == 'aide'%}
+    <li class="active">
+    {% else %}
+    <li>
+    {% endif %}
+    <a href="{{ asset('bundles/aeagfrd/doc/manuel-utilisateur.pdf') }}" target="_blank">
+        Aide
+    </a>
+</li>
+

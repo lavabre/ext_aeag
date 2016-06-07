@@ -47,7 +47,7 @@ class ReferentielController extends Controller {
 
         $parametre = new Parametre();
         $parametre->setCode('LIB_MAINTENANCE');
-        $parametre->setLibelle('Le site sera disponible à partir du 11 février 2013');
+        $parametre->setLibelle('Le site est actuellement indisponible pour cause de maintenance');
         $emFrd->persist($parametre);
 
         $parametre = new Parametre();
@@ -1319,7 +1319,7 @@ class ReferentielController extends Controller {
                 } else {
                     $entities[$i][2] = null;
                 }
-            }else{
+            } else {
                 $entities[$i][1] = null;
                 $entities[$i][2] = null;
             }
@@ -1329,6 +1329,61 @@ class ReferentielController extends Controller {
 
         return $this->render('AeagFrdBundle:Referentiel:consulterFraisDeplacements.html.twig', array(
                     'entities' => $entities
+        ));
+    }
+
+    public function consulterFraisDeplacementsParAnneeAction($anneeSelect = null) {
+
+        $session = $this->get('session');
+        $session->set('referentiel', 'refFraisDeplacement');
+        $em = $this->getDoctrine()->getManager();
+        $emFrd = $this->getDoctrine()->getManager('frd');
+        $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
+        $repoUsers = $em->getRepository('AeagUserBundle:User');
+        $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
+        
+        if ($anneeSelect == '9999') {
+            $anneeSel = $session->get('annee');
+        } else {
+            $annee = $anneeSelect . '-01-01';
+            $anneeSel = new \DateTime($annee);
+         }
+
+        $annee1 = $anneeSel->format('Y');
+        $anneeDeb1 = $annee1 . '-01-01';
+        $anneeFin1 = $annee1 . '-12-31';
+        $anneeDeb = new \DateTime($anneeDeb1);
+        $anneeFin = new \DateTime($anneeFin1);
+
+         $fraisDeplacements = $repoFraisDeplacement->getFraisDeplacementByAnnee($anneeDeb, $anneeFin);
+        $i = 0;
+        $entities = array();
+        foreach ($fraisDeplacements as $fraisDeplacement) {
+            // print_r('frais : '. $fraisDeplacement->getid() );
+            $entities[$i][0] = $fraisDeplacement;
+            $user = $repoUsers->getUserById($fraisDeplacement->getUser());
+            if ($user) {
+                if ($user->getCorrespondant()) {
+                    $correspondant = $repoCorrespondant->getCorrespondantById($user->getCorrespondant());
+                } else {
+                    $correspondant = $repoCorrespondant->getCorrespondant($user->getUsername());
+                }
+                $entities[$i][1] = $user;
+                if ($correspondant) {
+                    $entities[$i][2] = $correspondant;
+                } else {
+                    $entities[$i][2] = null;
+                }
+            } else {
+                $entities[$i][1] = null;
+                $entities[$i][2] = null;
+            }
+            $i++;
+        }
+
+        return $this->render('AeagFrdBundle:Referentiel:consulterFraisDeplacements.html.twig', array(
+                    'entities' => $entities,
+                    'annee' => $anneeSelect
         ));
     }
 

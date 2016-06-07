@@ -3,6 +3,12 @@ AeagFrdBundle_membre:
     defaults: { _controller: AeagFrdBundle:FraisDeplacement:index }
     requirements:
         methods:  GET|POST
+        
+AeagFrdBundle_membre_consulterFraisDeplacementsParAnnee:
+    path:  /consulterFraisDeplacementsParAnnee/{anneeSelect}
+    defaults: { _controller: AeagFrdBundle:FraisDeplacement:consulterFraisDeplacementsParAnnee, anneeSelect:null }
+    requirements:
+        methods:  GET|POST
  
        
 AeagFrdBundle_membre_newFraisDeplacement:
