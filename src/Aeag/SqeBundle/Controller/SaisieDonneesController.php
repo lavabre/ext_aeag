@@ -2328,8 +2328,8 @@ class SaisieDonneesController extends Controller {
                             $pgProgLotParamAn->getCodeParametre()->getCodeParametre() == '1303' or
                             $pgProgLotParamAn->getCodeParametre()->getCodeParametre() == '1311' or
                             $pgProgLotParamAn->getCodeParametre()->getCodeParametre() == '1312') {
-                        if ($pgCmdPrelevPcs) {
-                            foreach ($pgCmdPrelevPcs as $pgCmdPrelevPc) {
+                        if ($pgCmdPrelevPcAll) {
+                            foreach ($pgCmdPrelevPcAll as $pgCmdPrelevPc) {
                                 $pgCmdAnalyse = $repoPgCmdAnalyse->getPgCmdAnalyseByPrelevParametreNumOrdre($pgCmdPrelev, $pgProgLotParamAn->getCodeParametre()->getCodeParametre(), $pgCmdPrelevPc->getNumOrdre());
                                 if ($pgCmdAnalyse) {
                                     if ($pgCmdAnalyse->getCodeStatut() == '0') {
