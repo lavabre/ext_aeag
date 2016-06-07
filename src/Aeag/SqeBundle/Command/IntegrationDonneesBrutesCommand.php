@@ -66,7 +66,7 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
             }
 
             // Vider la table tempo des lignes correspondant à la RAI
-            $this->_cleanTmpTable($pgCmdFichierRps);
+            //$this->_cleanTmpTable($pgCmdFichierRps);
         }
 
         $date = new \DateTime();
@@ -81,7 +81,6 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
         $reponseId = $pgCmdFichierRps->getId();
 
         $codesPrelevement = $this->repoPgTmpValidEdilabo->getCodePrelevement($demandeId, $reponseId);
-
         foreach ($codesPrelevement as $codePrelevement) {
             $pgCmdPrelev = $this->repoPgCmdPrelev->findOneBy(array('demande' => $demandeId, 'codePrelevCmd' => $codePrelevement));
             if (!is_null($pgCmdPrelev)) {
@@ -102,7 +101,6 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
                     $pgCmdPrelev->setCodeMethode($pgTmpValidEdilabo->getMethPrel());
                     $pgCmdPrelev->setRealise("1");
                     $this->emSqe->persist($pgCmdPrelev);
-
                     // Cas particulier selon num_ordre => creer une nouvelle ligne
                     if ($pgTmpValidEdilabo->getNumOrdre() == 1) {
                         $pgCmdPrelevPc = $this->repoPgCmdPrelevPc->findOneBy(array('prelev' => $pgCmdPrelev, 'numOrdre' => $pgTmpValidEdilabo->getNumOrdre()));

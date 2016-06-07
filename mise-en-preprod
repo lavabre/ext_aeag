@@ -9,4 +9,6 @@ cp -Rf /base/extranet/preprod/ext_aeag/app/config/config_preprod.yml /base/extra
 cp -Rf /base/extranet/preprod/ext_aeag/app/config/parameters_preprod.yml /base/extranet/preprod/ext_aeag/app/config/parameters_dev.yml
 cp -Rf /base/extranet/preprod/ext_aeag/app/config/parameters_preprod.yml /base/extranet/preprod/ext_aeag/app/config/parameters.yml
 
+chmod u+x /base/extranet/preprod/ext_aeag/scripts/*
+
 /base/extranet/preprod/ext_aeag/cc-vg
