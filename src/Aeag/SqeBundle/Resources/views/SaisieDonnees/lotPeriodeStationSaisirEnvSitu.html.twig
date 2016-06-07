@@ -21,6 +21,35 @@
     </li>
 {% endblock breadcrumb %} 
 
+{% block modal %}
+       
+            <div class="modal fade" id="modal-commentaire">
+                <div class="modal-dialog modal-scroll modal-lg">
+                    <div class="modal-content">
+                         <form class="form" id="idFormCommentaire" role="form" action="{{ path("AeagSqeBundle_saisieDonnees_lot_periode_station_saisir_commentaire",{"prelevId":  cmdPrelev.id}) }}" method="post">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <h4 class="modal-title" id="idHeaderCommentaire">Commentaire</h4>
+                                </div>
+                                <div id="idBodyCommentaire" class="modal-body">
+                                    <h4>Saisir un commentaire</h4>
+                                    <br/><br/>
+                                    <textarea name="textarea" rows="10" cols="110"></textarea>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
+                                    <button id="idenregisterCommentaire" class="btn btn-success"> 
+                                        <i class="fa fa-cogs"> Enregistrer</i>
+                                       </button>
+                                </div>
+                         </form>
+                    </div>
+                </div>
+            </div>
+    
+{% endblock modal %}
+
+
 
 {%block panel_heading %}
           <h3 class="page-title text-center">
@@ -41,7 +70,12 @@
                     <a id="expandAll" href="#" class="btn btn-primary" role="button"><i class="fa fa-expand"></i></a>
                     <a id="collapseAll" href="#" class="btn btn-primary" role="button"><i class="fa fa-compress"></i></a>
                 </div>
-                <label class=" col-md-offset-3 col-xs-2 control-label">Date prélèvement :</label>
+                <label class="col-md-offset-2 col-xs-1  control-label">
+                            <a id="idCommentaire{{ cmdPrelev.id }}" href="#" class="btn btn-primary" value="{{ cmdPrelevPcs.0.commentaire }} "> 
+                                    <i class="fa fa-commenting"></i>
+                             </a>
+                </label>
+                <label class="col-xs-2 control-label">Date prélèvement :</label>
                 <div class="col-xs-2  input-group">
                     <input type="text" id="datePrel" name="datePrel" required="required" class="form-control text-center" placeholder="Date prélèvement" value="{%if cmdPrelev.datePrelev %}{{ cmdPrelev.datePrelev | date("d/m/Y H:i") }}{% endif %}">
                   </div>
@@ -378,6 +412,23 @@
 
     jQuery(document).ready(function() {
 
+       $(document).on('click','#idCommentaire{{ cmdPrelev.id }}',function(e){
+                    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                    html = 'Station : ' + {{ station.code }} + ' ' + '{{ station.libelle }}'
+                    $('#idHeaderCommentaire').html(html);
+                    {%if cmdPrelev.datePrelev %}
+                    html = '<h4>Prélèvement ' + {{ cmdPrelev.id }} + ' prévu le  ' + '{{ cmdPrelev.datePrelev | date("d/m/Y H:i") }}' + '</h4>';
+                    {% endif %}
+                    html += '</br></br>';
+                    html += '<textarea id="idTextareaCommenataire"  name="textareaCommentaire" rows="10" cols="110"></textarea>'
+                    $('#idBodyCommentaire').html(html);
+                    $('#modal-commentaire').modal('toggle');
+                     });
+                     
+      $(document).on('click', '#idEnregistrer',function(e){
+        $('#modal-commentaire').hide();
+        $('#idFormCommentaire').submit();
+        });
 
 
     $('#datePrel').datetimepicker(

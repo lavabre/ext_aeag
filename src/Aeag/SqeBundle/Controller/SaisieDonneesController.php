@@ -500,6 +500,41 @@ class SaisieDonneesController extends Controller {
                     'periodeAn' => $pgProgLotPeriodeAn,
                     'stations' => $tabStations));
     }
+    
+    public function lotPeriodeStationSaisirCommentaireAction($prelevId = null, Request $request) {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'saisieDonnees');
+        $session->set('controller', 'SaisieDonnees');
+        $session->set('fonction', 'lotPeriodeStationSaisirCommentaire');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
+        $repoPgCmdPrelevPc = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelevPc');
+      
+        $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevById($prelevId);
+        $pgCmdPrelevPcs = $repoPgCmdPrelevPc->getPgCmdPrelevPcByPrelev($pgCmdPrelev);
+        $pgCmdPrelevPc = $pgCmdPrelevPcs[0];
+        
+        if (isset($_POST['textareaCommentaire'])) {
+            $commentaire =  $_POST['textareaCommentaire'];
+        } else {
+            $commentaire = null;
+        }
+
+        $pgCmdPrelevPc->setCommenatire($commentaire);
+        
+        $emSqe->persist($pgCmdPrelevc);
+
+        $emSqe->flush();
+
+        return new response ('');
+
+    }
 
     public function lotPeriodeStationSaisirEnvSituAction($prelevId = null, $periodeAnId = null, $stationId = null, $maj = null, Request $request) {
 
@@ -530,7 +565,7 @@ class SaisieDonneesController extends Controller {
 
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevById($prelevId);
-
+        $pgCmdPrelevPcs = $repoPgCmdPrelevPc->getPgCmdPrelevPcByPrelev($pgCmdPrelev);
         $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($periodeAnId);
         $pgProgLotAn = $pgProgLotPeriodeAn->getLotAn();
         $pgProgLot = $pgProgLotAn->getLot();
@@ -701,6 +736,7 @@ class SaisieDonneesController extends Controller {
                         'dateFin' => $dateFin,
                         'demande' => $pgCmdPrelev->getDemande(),
                         'cmdPrelev' => $pgCmdPrelev,
+                        'cmdPrelevPcs' => $pgCmdPrelevPcs,
                         'groupes' => $tabGroupes,
                         'maj' => $maj,));
         } else {
@@ -713,6 +749,7 @@ class SaisieDonneesController extends Controller {
                         'dateFin' => $dateFin,
                         'demande' => $pgCmdPrelev->getDemande(),
                         'cmdPrelev' => $pgCmdPrelev,
+                        'cmdPrelevPcs' => $pgCmdPrelevPcs,
                         'groupes' => $tabGroupes,
                         'maj' => $maj,));
         }
