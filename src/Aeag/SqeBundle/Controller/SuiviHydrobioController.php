@@ -214,7 +214,7 @@ class SuiviHydrobioController extends Controller {
                     foreach ($pgCmdPrelevs as $pgCmdPrelev) {
                         $tabCmdPrelevs[$nbCmdPrelevs]['cmdPrelev'] = $pgCmdPrelev;
                         $tabCmdPrelevs[$nbCmdPrelevs]['maj'] = 'N';
-                        $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelevOrderDate($pgCmdPrelev);
+                        $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelevOrderId($pgCmdPrelev);
                         $tabSuiviPrels = array();
                         $nbSuiviPrels = 0;
                         if (count($pgCmdSuiviPrels) == 0) {
