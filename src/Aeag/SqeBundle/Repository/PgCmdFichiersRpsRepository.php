@@ -35,4 +35,21 @@ class PgCmdFichiersRpsRepository extends EntityRepository {
         $qb->setParameter('phase', array('R40','R41'));
         return $qb->getResult();
     }
+    
+    public function getReponsesHorsLac($phase) {
+        $query = "select rps";
+        $query .= " from Aeag\SqeBundle\Entity\PgCmdFichiersRps rps";
+        $query .= " join rps.phaseFichier phase";
+        $query .= " join rps.demande dmd";
+        $query .= " join dmd.lotan lotan";
+        $query .= " join lotan.lot lot";
+        $query .= " where phase = :phase";
+        $query .= " and rps.typeFichier = 'RPS'";
+        $query .= " and rps.suppr = 'N'";
+        $query .= " and lot.codeMilieu <> 'LPC'";
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('phase', $phase);
+        return $qb->getResult();
+        
+    }
 }

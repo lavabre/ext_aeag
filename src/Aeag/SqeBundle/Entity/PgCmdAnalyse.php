@@ -157,8 +157,12 @@ class PgCmdAnalyse {
      */
     private $paramProg;
     
-    
-       
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="commentaire", type="string", length=20000, nullable=true)
+     */
+    private $commentaire;   
 
     public function getPrelevId() {
         return $this->prelevId;
@@ -304,6 +308,11 @@ class PgCmdAnalyse {
         $this->paramProg = $paramProg;
     }
     
-   
+    public function getCommentaire() {
+        return $this->commentaire;
+    }
 
+    public function setCommentaire($commentaire) {
+        $this->commentaire = $commentaire;
+    }
 }

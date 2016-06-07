@@ -88,6 +88,13 @@ class PgCmdMesureEnv {
      * @ORM\Column(name="libelle_statut", type="string", length=255, nullable=true)
      */
     private $libelleStatut;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="commentaire", type="string", length=20000, nullable=true)
+     */
+    private $commentaire;
 
     /**
      * @var \PgProgLotParamAn
@@ -177,6 +184,14 @@ class PgCmdMesureEnv {
 
     public function setParamProg(\Aeag\SqeBundle\Entity\PgProgLotParamAn $paramProg) {
         $this->paramProg = $paramProg;
+    }
+    
+    public function getCommentaire() {
+        return $this->commentaire;
+    }
+
+    public function setCommentaire($commentaire) {
+        $this->commentaire = $commentaire;
     }
 
 }

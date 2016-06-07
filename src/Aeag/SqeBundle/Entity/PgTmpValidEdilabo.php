@@ -331,6 +331,13 @@ class PgTmpValidEdilabo {
      * @ORM\Column(name="param_prog_id", type="decimal", precision=38, scale=0, nullable=true)
      */
     private $paramProgId;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="comment_prel", type="string", length=20000, nullable=true)
+     */
+    private $commentPrel;
 
     /**
      * Get id
@@ -999,6 +1006,14 @@ class PgTmpValidEdilabo {
 
     public function setLocalisation($localisation) {
         $this->localisation = $localisation;
+    }
+    
+    public function getCommentPrel() {
+        return $this->commentPrel;
+    }
+
+    public function setCommentPrel($commentPrel) {
+        $this->commentPrel = $commentPrel;
     }
 
 }

@@ -116,7 +116,7 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
                     $pgCmdPrelevPc->setAccreditation($pgTmpValidEdilabo->getAccredPrel());
                     $pgCmdPrelevPc->setAgrement($pgTmpValidEdilabo->getAgrePrel());
                     $pgCmdPrelevPc->setReserves($pgTmpValidEdilabo->getReservPrel());
-                    $pgCmdPrelevPc->setCommentaire($pgTmpValidEdilabo->getCommentaire());
+                    $pgCmdPrelevPc->setCommentaire($pgTmpValidEdilabo->getCommentPrel());
                     $pgCmdPrelevPc->setXPrel($pgTmpValidEdilabo->getXPrel());
                     $pgCmdPrelevPc->setYPrel($pgTmpValidEdilabo->getYPrel());
                     $pgCmdPrelevPc->setLocalisation($pgTmpValidEdilabo->getLocalisation());
@@ -163,6 +163,7 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
                             $pgCmdMesureEnv->setCodeRemarque($pgTmpValidEdilabo->getCodeRqM());
                             $pgCmdMesureEnv->setCodeMethode($pgTmpValidEdilabo->getMethPrel());
                             $pgCmdMesureEnv->setCodeStatut($pgTmpValidEdilabo->getCodeStatut());
+                            $pgCmdMesureEnv->setCommentaire($pgTmpValidEdilabo->getCommentaire());
                             $pgProgLotParamAn = $this->repoPgProgLotParamAn->findOneById($pgTmpValidEdilabo->getParamProgId());
                             if (!is_null($pgProgLotParamAn)) {
                                 $pgCmdMesureEnv->setParamProg($pgProgLotParamAn);
@@ -205,6 +206,7 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
                             $pgCmdAnalyse->setConfirmation($pgTmpValidEdilabo->getConfirmAna());
                             $pgCmdAnalyse->setReserve($pgTmpValidEdilabo->getReservAna());
                             $pgCmdAnalyse->setCodeStatut($pgTmpValidEdilabo->getCodeStatut());
+                            $pgCmdAnalyse->setCommentaire($pgTmpValidEdilabo->getCommentaire());
                             $pgProgLotParamAn = $this->repoPgProgLotParamAn->findOneById($pgTmpValidEdilabo->getParamProgId());
                             if (!is_null($pgProgLotParamAn)) {
                                 $pgCmdAnalyse->setParamProg($pgProgLotParamAn);
