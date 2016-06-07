@@ -42,6 +42,8 @@ class SuiviHydrobioController extends Controller {
             $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByPresta($user);
         } else if ($user->hasRole('ROLE_PROGSQE')) {
             $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByProg($user);
+        }else if ($user->hasRole('ROLE_SQE')) {
+            $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByAdmin();
         }
 
         $tabProglotAns = array();

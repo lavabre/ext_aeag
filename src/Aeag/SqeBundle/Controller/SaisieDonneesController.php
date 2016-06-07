@@ -501,7 +501,7 @@ class SaisieDonneesController extends Controller {
                     'stations' => $tabStations));
     }
     
-    public function lotPeriodeStationSaisirCommentaireAction($prelevId = null, Request $request) {
+    public function lotPeriodeStationSaisirCommentaireAction($periodeAnId = null, $prelevId = null, Request $request) {
 
         $user = $this->getUser();
         if (!$user) {
@@ -513,9 +513,11 @@ class SaisieDonneesController extends Controller {
         $session->set('fonction', 'lotPeriodeStationSaisirCommentaire');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
+        $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
         $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
         $repoPgCmdPrelevPc = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelevPc');
       
+         $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($periodeAnId);
         $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevById($prelevId);
         $pgCmdPrelevPcs = $repoPgCmdPrelevPc->getPgCmdPrelevPcByPrelev($pgCmdPrelev);
         $pgCmdPrelevPc = $pgCmdPrelevPcs[0];
@@ -526,13 +528,14 @@ class SaisieDonneesController extends Controller {
             $commentaire = null;
         }
 
-        $pgCmdPrelevPc->setCommenatire($commentaire);
+        $pgCmdPrelevPc->setCommentaire($commentaire);
         
-        $emSqe->persist($pgCmdPrelevc);
+        $emSqe->persist($pgCmdPrelevPc);
 
         $emSqe->flush();
+        
+        return new Response (json_encode(''));
 
-        return new response ('');
 
     }
 
@@ -2468,6 +2471,7 @@ class SaisieDonneesController extends Controller {
                         'dateFin' => $dateFin,
                         'demande' => $pgCmdPrelev->getDemande(),
                         'cmdPrelev' => $pgCmdPrelev,
+                        'cmdPrelevPcs' => $pgCmdPrelevPcs,
                         'autreDemandes' => $tabAutreDemandes,
                         'groupes' => $tabGroupes,
                         'maj' => $maj));
@@ -2481,6 +2485,7 @@ class SaisieDonneesController extends Controller {
                         'dateFin' => $dateFin,
                         'demande' => $pgCmdPrelev->getDemande(),
                         'cmdPrelev' => $pgCmdPrelev,
+                        'cmdPrelevPcs' => $pgCmdPrelevPcs,
                         'autreDemandes' => $tabAutreDemandes,
                         'groupes' => $tabGroupes,
                         'maj' => $maj));

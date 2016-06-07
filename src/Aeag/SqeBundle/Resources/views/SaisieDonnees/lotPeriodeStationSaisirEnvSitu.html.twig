@@ -26,15 +26,15 @@
             <div class="modal fade" id="modal-commentaire">
                 <div class="modal-dialog modal-scroll modal-lg">
                     <div class="modal-content">
-                         <form class="form" id="idFormCommentaire" role="form" action="{{ path("AeagSqeBundle_saisieDonnees_lot_periode_station_saisir_commentaire",{"prelevId":  cmdPrelev.id}) }}" method="post">
+                         <form class="form" id="idFormCommentaire" role="form" action="#" method="post">
                                 <div class="modal-header">
                                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                    <h4 class="modal-title" id="idHeaderCommentaire">Commentaire</h4>
+                                    <h4 class="modal-title" id="idHeaderCommentaire">Station :  {{ station.code }} {{ station.libelle }}</h4>
                                 </div>
                                 <div id="idBodyCommentaire" class="modal-body">
-                                    <h4>Saisir un commentaire</h4>
+                                    <h4>Prélèvement n°  {{ cmdPrelev.id }}  prévu le  {{ cmdPrelev.datePrelev | date("d/m/Y H:i") }} </h4>
                                     <br/><br/>
-                                    <textarea name="textarea" rows="10" cols="110"></textarea>
+                                    <textarea name="textareaCommentaire" rows="10" cols="110">{{ cmdPrelevPcs.0.commentaire }}</textarea>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
@@ -57,29 +57,32 @@
                 prélèvement prévu entre le  {{ periodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;et&nbsp;&nbsp; {{ dateFin | date("d/m/Y") }}</br>
                 pour le lot :  {{ lotan.lot.nomLot }} - {{ lotan.anneeProg }}  - version :  {{ lotan.version }}
             </h3>
+               <div class="col-md-1  pull-right">
+                    <a id="expandAll" href="#" class="btn btn-primary" role="button"><i class="fa fa-expand"></i></a>
+                    <a id="collapseAll" href="#" class="btn btn-primary" role="button"><i class="fa fa-compress"></i></a>
+                </div>
        {%endblock panel_heading %}
 
 {%block content %}
 
     <form class="form" id="idForm" role="form" action="{{ path("AeagSqeBundle_saisieDonnees_lot_periode_station_env_situ_resultat",{"prelevId":  cmdPrelev.id, "periodeAnId":  periodeAn.id, "stationId": station.ouvFoncId}) }}" method="post">
 
-        <div class="form-body">  
-
+        <div class="form-body"> 
+            
+           <div class="form-group form-inline">
+                <label class="col-md-offset-2 col-xs-2  control-label text-center">Commentaire</label>
+                <label class="col-xs-8 control-label">Date prélèvement</label>
+            </div>
             <div class="form-group form-inline">
-                 <div class="col-md-1  pull-right">
-                    <a id="expandAll" href="#" class="btn btn-primary" role="button"><i class="fa fa-expand"></i></a>
-                    <a id="collapseAll" href="#" class="btn btn-primary" role="button"><i class="fa fa-compress"></i></a>
+                 <div class="col-md-offset-2 col-xs-2 input-group text-center">
+                    <a id="idCommentaire{{ cmdPrelev.id }}" href="#" class="btn btn-primary" value="{{ cmdPrelevPcs.0.commentaire }} "> 
+                        <i class="fa fa-commenting"></i>
+                    </a>
                 </div>
-                <label class="col-md-offset-2 col-xs-1  control-label">
-                            <a id="idCommentaire{{ cmdPrelev.id }}" href="#" class="btn btn-primary" value="{{ cmdPrelevPcs.0.commentaire }} "> 
-                                    <i class="fa fa-commenting"></i>
-                             </a>
-                </label>
-                <label class="col-xs-2 control-label">Date prélèvement :</label>
                 <div class="col-xs-2  input-group">
                     <input type="text" id="datePrel" name="datePrel" required="required" class="form-control text-center" placeholder="Date prélèvement" value="{%if cmdPrelev.datePrelev %}{{ cmdPrelev.datePrelev | date("d/m/Y H:i") }}{% endif %}">
-                  </div>
-                 <div class="col-xs-2  input-group">
+                </div>
+                 <div class="col-xs-2 input-group">
                      <a id="idForcerDatePrel" class="btn btn-danger" href="#">
                             <i class="fa fa-calendar"> Hors période</i>
                      </a>
@@ -88,6 +91,8 @@
                      </a>
                 </div>
             </div>
+
+        
 
             {% set groupeSelectionne = null %}
             {% set nbTr = 0 %}
@@ -414,21 +419,29 @@
 
        $(document).on('click','#idCommentaire{{ cmdPrelev.id }}',function(e){
                     e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                    html = 'Station : ' + {{ station.code }} + ' ' + '{{ station.libelle }}'
-                    $('#idHeaderCommentaire').html(html);
-                    {%if cmdPrelev.datePrelev %}
-                    html = '<h4>Prélèvement ' + {{ cmdPrelev.id }} + ' prévu le  ' + '{{ cmdPrelev.datePrelev | date("d/m/Y H:i") }}' + '</h4>';
-                    {% endif %}
-                    html += '</br></br>';
-                    html += '<textarea id="idTextareaCommenataire"  name="textareaCommentaire" rows="10" cols="110"></textarea>'
-                    $('#idBodyCommentaire').html(html);
-                    $('#modal-commentaire').modal('toggle');
-                     });
+                     $('#modal-commentaire').modal('toggle');
+           });
                      
-      $(document).on('click', '#idEnregistrer',function(e){
-        $('#modal-commentaire').hide();
-        $('#idFormCommentaire').submit();
-        });
+  
+        
+         $(document).on('click','#idenregisterCommentaire',function(e){
+                    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                   $('#modalTraitementEncours').modal('toggle');
+                   var $this = $('#idFormCommentaire');
+                    var url = '{{ path("AeagSqeBundle_saisieDonnees_lot_periode_station_saisir_commentaire",{"periodeAnId": "par1", "prelevId":  "par2", }) }}', // Le nom du fichier indiqué dans le formulaire
+                   url = url.replace("par1", {{ periodeAn.id }});
+                    url = url.replace("par2", {{ cmdPrelev.id }});
+                    url = url.replace("amp;","");
+                    $.ajax({
+                    url: url,
+                    type: 'post', 
+                    data: $this.serialize(),
+                    success: function(html) { // Je récupère la réponse du fichier PHP
+                    $('#modal-commentaire').hide();
+                    $('#modalTraitementEncours').modal('hide');
+                    }
+                    });
+                    });
 
 
     $('#datePrel').datetimepicker(

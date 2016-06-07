@@ -11,8 +11,8 @@ AeagSqeBundle_saisieDonnees_lot_periode_stations:
     defaults: { _controller: AeagSqeBundle:SaisieDonnees:lotPeriodeStations, periodeAnId : null}
     
 AeagSqeBundle_saisieDonnees_lot_periode_station_saisir_commentaire:
-    path:  /saisir/commentaire/{prelevId}
-    defaults: { _controller: AeagSqeBundle:SaisieDonnees:lotPeriodeStationSaisirCommentaire, prelevId : null}
+    path:  /saisir/commentaire/{periodeAnId}/{prelevId}
+    defaults: { _controller: AeagSqeBundle:SaisieDonnees:lotPeriodeStationSaisirCommentaire, periodeAnId : null, prelevId : null}
     requirements:
         methods:  GET|POST
     
