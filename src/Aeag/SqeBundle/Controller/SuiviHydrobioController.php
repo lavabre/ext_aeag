@@ -1733,6 +1733,26 @@ class SuiviHydrobioController extends Controller {
         readfile($chemin . '/' . $fichier);
         exit();
     }
+    
+    public function planningAction() {
+        return $this->render('AeagSqeBundle:SuiviHydrobio:planning.html.twig', array());
+    }
+    
+    public function planningTableAction() {
+        $request = $this->get('request');
+        
+        $semaine = $request->get('semaine');
+        $annee = $request->get('annee');
+        $jourSemaine = array();
+        for($day=1; $day<=7; $day++)
+        {
+            $jourSemaine[] = date('d F', strtotime($annee."W".$semaine.$day));
+            
+        }
+        
+        
+        return $this->render('AeagSqeBundle:SuiviHydrobio:planningTable.html.twig', array("joursemaine" => $jourSemaine));
+    }
 
     protected function getCheminEchange($pgCmdSuiviPrel) {
         $chemin = $this->container->getParameter('repertoire_echange');

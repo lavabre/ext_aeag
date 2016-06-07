@@ -1,0 +1,102 @@
+{% extends "AeagSqeBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+    <li>
+        <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+    </li>
+    <li>
+        <a href="{{ path('AeagSqeBundle_suiviHydrobio_index') }}">Suivi Hydrobio</a>
+    </li>
+    <li class="active">
+        Planning
+    </li>
+{% endblock breadcrumb %} 
+
+{%block panel_heading %}
+    <h3 class="page-title text-center">
+        Planning
+    </h3>
+{%endblock panel_heading %}
+
+{%block content %}
+    <div id="planning-frame">
+        <div id="planning-title">
+            Semaine <span id="num-semaine"></span> - Année <span id="num-annee"></span>
+        </div>
+        <div id="planning-action">
+            <!-- Semaine precedente, semaine suivante -->
+            <a id="previous-week" class="btn btn-default" href="#" role="button"><i class="fa fa-angle-left"></i> Précédent</a>
+            <!-- Filtre en fonction de la station, du support, du prestataire -->
+            <span><form>
+                <select id="station-select" name="station-select">
+                    <option value=""></option>
+                    <option value="station1">station 1</option>
+                    <option value="station2">station 2</option>
+                    <option value="station3">station 3</option>
+                </select>
+                <select id="support-select" name="support-select">
+                    <option value=""></option>
+                    <option value="support1">support 1</option>
+                    <option value="support2">support 2</option>
+                </select>
+                <select id="presta-select" name="presta-select">
+                    <option value=""></option>
+                    <option value="presta1">presta 1</option>
+                    <option value="presta2">presta 2</option>
+                </select>
+            </form>
+                </span>
+            <a id="next-week" class="btn btn-default" href="#" role="button">Suivant <i class="fa fa-angle-right"></i></a>
+        </div>
+        <div id="planning-grid">
+        </div>
+    </div>
+
+{%endblock content %}    
+
+{% block scripts %}
+
+    var semaine = {{ "now"|date("W") }};
+    var annee = {{ "now"|date("Y") }};
+    getPlanning(semaine, annee);
+    
+    /*function getPlanning(semaine, station, support, presta) {*/
+    function getPlanning(semaine, annee) {
+        $.ajax({url: "{{ path('AeagSqeBundle_suiviHydrobio_planning_table') }}", 
+                method: "GET",
+                data: { semaine: semaine, annee: annee},
+                success: function (result) {
+                    $("#planning-grid").html(result);
+                    $("#num-semaine").html(semaine);
+                    $("#num-annee").html(annee);
+                }
+        });
+    }
+    
+    $('#previous-week').click(function (){
+        var semaine = $("#num-semaine").html();
+        semaine = parseInt(semaine)-1;
+        var annee = $("#num-annee").html();
+        getPlanning(semaine, annee);
+    });
+
+    $('#next-week').click(function (){
+        var semaine = $("#num-semaine").html();
+        semaine = parseInt(semaine)+1;
+        var annee = $("#num-annee").html();
+        getPlanning(semaine, annee);
+    });
+
+    $('#station-select').change(function (){
+    alert('changement');
+    });
+
+    $('#support-select').change(function (){
+    alert('changement');
+    });
+
+    $('#presta-select').change(function (){
+    alert('changement');
+    });
+
+{%endblock scripts %}    
