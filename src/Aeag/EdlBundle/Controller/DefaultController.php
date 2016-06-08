@@ -44,6 +44,8 @@ class DefaultController extends Controller {
 
         if ($user) {
             $utilisateur = $repoUtilisateur->getUtilisateurByExtid($user->getId());
+        }else{
+           $utilisateur = null;
         }
 
         if (is_object($user) && ($this->get('security.authorization_checker')->isGranted('ROLE_ADMINEDL'))) {
@@ -168,8 +170,10 @@ class DefaultController extends Controller {
         $repoExportAvisEtat = $emEdl->getRepository('AeagEdlBundle:ExportAvisEtat');
         $repoExportAvisPression = $emEdl->getRepository('AeagEdlBundle:ExportAvisPression');
 
-        if ($user) {
+         if ($user) {
             $utilisateur = $repoUtilisateur->getUtilisateurByExtid($user->getId());
+        }else{
+           $utilisateur = null;
         }
 
 
