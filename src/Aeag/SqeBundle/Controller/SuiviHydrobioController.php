@@ -772,19 +772,28 @@ class SuiviHydrobioController extends Controller {
                 break;
         }
 
-
         if ($valid) {
-            $fichier = fopen($pathBase . '/' . $name, "r");
+            $fichierIn = fopen($pathBase . '/' . $name, "r");
+            $fichierOut = fopen($pathBase . '/' . 'trans.csv', "w+");
             $rapport = fopen($pathBase . '/' . $user->getId() . '_' . $dateDepot->format('Y-m-d-H') . '_rapport.csv', "w+");
             $contenu = 'rapport d\'intégration du fichier : ' . $name . ' déposé le ' . $dateDepot->format('d/m/Y') . CHR(13) . CHR(10) . CHR(13) . CHR(10);
             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
             fputs($rapport, $contenu);
             $erreur = 0;
             $ligne = 0;
-
-            $tab = fgetcsv($fichier, 1024, ';');
-            while (!feof($fichier)) {
-                $tab = fgetcsv($fichier, 1024, ';');
+            while ( ($n = fgets($fichierIn,1024)) !== false ) {
+                $n = str_replace(CHR(10),"",$n);  
+                $n = str_replace(CHR(13),"\r\n",$n); 
+               fputs($fichierOut, $n );
+            }
+            fclose($fichierIn);
+            fclose($fichierOut);
+            $ligne = 0;
+            $fichier = fopen($pathBase . '/' . 'trans.csv', "r");
+            $tab = fgetcsv($fichier,1024,';','\'');
+            while ( ($tab = fgetcsv($fichier,1024,';','\'')) !== false ) {
+//            while (!feof($fichier)) {
+//                $tab = fgetcsv($fichier, 1024, ';');
                 if (count($tab) > 1) {
                     $err = false;
                     $ligne++;
@@ -793,7 +802,7 @@ class SuiviHydrobioController extends Controller {
                     $pgRefStationMesure = $repoPgRefStationMesure->getPgRefStationMesureByCode($codeStation);
                     if (!$pgRefStationMesure) {
                         $err = true;
-                        $contenu = 'ligne  ' . $ligne . '  :  code station inconnu (' . $codeStation . ')' . CHR(13) . CHR(10);
+                        $contenu = 'ligne  ' . $ligne . '  :  code station inconnu (' . $tab[0] . ')' . CHR(13) . CHR(10);
                         $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                         fputs($rapport, $contenu);
                     } else {
@@ -833,6 +842,13 @@ class SuiviHydrobioController extends Controller {
                     $dateActuel = new \DateTime();
                     $dateActuel->add(new \DateInterval('P15D'));
                     $date = $tab[3];
+                   $tabDate = explode(' ',$date);
+                   if (count($tabDate) != 2){
+                        $err = true;
+                        $contenu = 'ligne  ' . $ligne . '  :  date heure incorrecte (' . $date . ')' . CHR(13) . CHR(10);
+                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                        fputs($rapport, $contenu);
+                   }else{
                     list( $jour, $mois, $annee, $heure, $min ) = sscanf($date, "%d/%d/%d %d:%d");
                     $datePrel = new \DateTime($annee . '-' . $mois . '-' . $jour . ' ' . $heure . ':' . $min . ':00');
 
@@ -866,6 +882,7 @@ class SuiviHydrobioController extends Controller {
                             fputs($rapport, $contenu);
                         }
                     }
+                }
 
                     $commentaire = $tab[4];
                     if ($statutPrel == 'P') {
@@ -982,7 +999,7 @@ class SuiviHydrobioController extends Controller {
                     }
                 }
             }
-            $contenu = CHR(13) . CHR(10) . 'nombre de lignes traitées  : ' . $ligne . CHR(13) . CHR(10);
+             $contenu = CHR(13) . CHR(10) . 'nombre de lignes traitées  : ' . $ligne . CHR(13) . CHR(10);
             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
             fputs($rapport, $contenu);
             $contenu = 'nombre de lignes en erreur  : ' . $erreur . CHR(13) . CHR(10);
@@ -990,6 +1007,8 @@ class SuiviHydrobioController extends Controller {
             fputs($rapport, $contenu);
             fclose($rapport);
             fclose($fichier);
+            unlink($pathBase . '/' . $name);
+            unlink($pathBase . '/trans.csv');
         }
 
         $tabMessage = array();

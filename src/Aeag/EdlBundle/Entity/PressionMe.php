@@ -47,7 +47,7 @@ class PressionMe {
     /**
      * @var MasseEau
      *
-     * @ORM\ManyToOne(targetEntity="MasseEau", inversedBy="pressions")
+     * @ORM\ManyToOne(targetEntity="MasseEau")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="eu_cd", referencedColumnName="eu_cd")
      * })
