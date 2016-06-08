@@ -1007,6 +1007,8 @@ class SuiviHydrobioController extends Controller {
             fputs($rapport, $contenu);
             fclose($rapport);
             fclose($fichier);
+            unlink($pathBase . '/' . $name);
+            unlink($pathBase . '/trans.csv');
         }
 
         $tabMessage = array();
