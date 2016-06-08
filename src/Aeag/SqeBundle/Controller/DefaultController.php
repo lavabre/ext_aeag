@@ -96,16 +96,21 @@ class DefaultController extends Controller {
                     if (substr($pgProgPrestaTypfic->getFormatFic(), 0, 7) == 'Saisie_') {
                         $suiviDonnees = true;
                     }
+                    if ($pgProgPrestaTypfic->getFormatFic() == 'Suivi_SED') {
+                        $suiviSED = true;
+                    }
                 }
             }
         }
         if (is_object($user) && ($this->get('security.authorization_checker')->isGranted('ROLE_ADMINSQE'))) {
             $suiviHb = true;
             $suiviDonnees = true;
+            $suiviSED = true;
         }
 
         $session->set('suiviHb', $suiviHb);
         $session->set('suiviDonnees', $suiviDonnees);
+        $session->set('suiviSED', $suiviHb);
 
         return $this->render('AeagSqeBundle:Default:index.html.twig', array('suiviHb' => $suiviHb, 'suiviDonnees' => $suiviDonnees));
     }

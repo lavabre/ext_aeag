@@ -31,4 +31,8 @@ aeag_sqe_suiviHydrobio:
 aeag_sqe_SaisieDonnees:
     resource: "@AeagSqeBundle/Resources/config/routing_saisieDonnees.yml"
     prefix:   /saisieDonnees
+    
+aeag_sqe_suiviSediment:
+    resource: "@AeagSqeBundle/Resources/config/routing_suiviSediment.yml"
+    prefix:   /suiviSediment 
  
