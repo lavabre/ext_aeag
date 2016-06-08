@@ -47,7 +47,7 @@ class EtatMe {
     /**
      * @var MasseEau
      *
-     * @ORM\ManyToOne(targetEntity="MasseEau", inversedBy="etats")
+     * @ORM\ManyToOne(targetEntity="MasseEau")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="eu_cd", referencedColumnName="eu_cd")
      * })

@@ -186,7 +186,7 @@ class DefaultController extends Controller {
 
         if ($session->get('recherche') == 'N') {
 
-            $request = $this->getRequest();
+//            $request = $this->getRequest();
 
             $codecle = $critere->getCodecle();
             $masseEaucle = $critere->getMassecle();
