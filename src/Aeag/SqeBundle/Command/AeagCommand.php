@@ -208,15 +208,20 @@ class AeagCommand extends ContainerAwareCommand {
         $pgProgPhase = $this->repoPgProgPhases->findOneByCodePhase('M30');
         $pgCmdPrelevExisting = $this->repoPgCmdPrelev->getPgCmdPrelevByCodePrelevCodeDmdAndPhase($pgCmdPrelev, $pgCmdFichierRps->getDemande(), $pgProgPhase);
         if (count($pgCmdPrelevExisting) > 0) {
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 
     protected function _cleanTmpTable($pgCmdFichierRps) {
         $demandeId = $pgCmdFichierRps->getDemande()->getId();
         $reponseId = $pgCmdFichierRps->getId();
-        $pgTmpValidEdilabos = $this->repoPgTmpValidEdilabo->findBy(array('demandeId' => $demandeId, 'fichierRpsId' => $reponseId));
+        /*$pgTmpValidEdilabos = $this->repoPgTmpValidEdilabo->findBy(array('demandeId' => $demandeId, 'fichierRpsId' => $reponseId));
+        foreach ($pgTmpValidEdilabos as $pgTmpValidEdilabo) {
+            $this->emSqe->remove($pgTmpValidEdilabo);
+        }*/
+        
+        $pgTmpValidEdilabos = $this->repoPgTmpValidEdilabo->findBy(array('demandeId' => $demandeId));
         foreach ($pgTmpValidEdilabos as $pgTmpValidEdilabo) {
             $this->emSqe->remove($pgTmpValidEdilabo);
         }

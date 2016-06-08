@@ -79,11 +79,11 @@ class BackUpProcessCommand extends AeagCommand {
         foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
             $pgProgSuiviPhases = $this->repoPgProgSuiviPhases->findOneBy(array('objId' => $pgCmdFichierRps->getId(), 'typeObjet' => 'RPS', 'phase' => $pgProgPhase), array('datePhase' => 'DESC'));
             if (!is_null($pgProgSuiviPhases)) {
-                $dateDepot = $pgCmdFichierRps->getDateDepot();
-                $dateDepot->add(new \DateInterval('P1D'));
-                
+                $dateDuJour = new \DateTime();
+
                 $datePhase = $pgProgSuiviPhases->getDatePhase();
-                if ($datePhase >= $dateDepot) {
+                $datePhase->add(new \DateInterval('P1D'));
+                if ($datePhase >= $dateDuJour) {
                     $chemin = $this->getContainer()->getParameter('repertoire_echange');
                     $pathBase = $this->getContainer()->get('aeag_sqe.process_rai')->getCheminEchange($chemin, $pgCmdFichierRps->getDemande(), $pgCmdFichierRps->getId());
                     if ($this->getContainer()->get('aeag_sqe.process_rai')->envoiFichierValidationFormat($this->emSqe, $pgCmdFichierRps, $pathBase . '/' . $pgCmdFichierRps->getNomFichier())) {

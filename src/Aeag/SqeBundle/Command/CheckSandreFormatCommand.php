@@ -30,7 +30,8 @@ class CheckSandreFormatCommand extends AeagCommand {
         foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
             $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R16');
         }
-
+        
+        $cptRaiOk = 0;
         foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
             
             // recuperation du lien d'acquittement
@@ -47,10 +48,12 @@ class CheckSandreFormatCommand extends AeagCommand {
                     if ($etatTraitement == 1 && !isset($reponseTab['AccuseReception']['Erreur'])) { // Le traitement est terminé et le fichier est conforme sans erreur
                         $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R20');
                         $validMessage = " conforme";
+                        $cptRaiOk++;
                     } else if (($etatTraitement == 1 && isset($reponseTab['AccuseReception']['Erreur'])) || $etatTraitement == 2) {
                         if ($etatTraitement == 1) {
                             $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R21');
                             $validMessage = " conforme avec erreurs";
+                            $cptRaiOk++;
                         } else {
                             $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R80');
                             $validMessage = " non conforme";
@@ -94,7 +97,8 @@ class CheckSandreFormatCommand extends AeagCommand {
             }
         }
         $date = new \DateTime();
-        $this->output->writeln($date->format('d/m/Y H:i:s').'- Check Sandre : '.count($pgCmdFichiersRps)." RAI(s) traitée(s)");
+        $cptRaiNok = count($pgCmdFichiersRps) - $cptRaiOk;
+        $this->output->writeln($date->format('d/m/Y H:i:s').'- Check Sandre : '.count($pgCmdFichiersRps)." RAI(s) traitée(s), ".$cptRaiOk." OK, ".$cptRaiNok." NOK");
     }
 
     protected function _creationFichierCr($pgCmdFichierRps, $erreurs) {
