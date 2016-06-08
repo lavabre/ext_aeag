@@ -49,6 +49,7 @@ class PgCmdFichiersRpsRepository extends EntityRepository {
         $query .= " and lot.codeMilieu <> 'LPC'";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('phase', $phase);
+        $qb->setMaxResults(5);
         return $qb->getResult();
         
     }
