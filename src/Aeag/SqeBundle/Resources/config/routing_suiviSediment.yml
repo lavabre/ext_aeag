@@ -1,0 +1,110 @@
+AeagSqeBundle_suiviSediment_index:
+    path:  /lots
+    defaults: { _controller: AeagSqeBundle:SuiviSediment:index }
+    
+AeagSqeBundle_suiviSediment_lot_periodes:
+    path:  /periodes/{lotanId}
+    defaults: { _controller: AeagSqeBundle:SuiviSediment:lotPeriodes, lotanId : null}    
+
+AeagSqeBundle_suiviSediment_lot_periode_stations:
+    path: /stations/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SuiviSediment:lotPeriodeStations, periodeAnId : null}
+    
+AeagSqeBundle_suiviSediment_lot_periode_stations_integrer:
+    path: /integrer/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SuiviSediment:lotPeriodeStationsIntegrer, periodeAnId : null}
+    
+AeagSqeBundle_suiviSediment_lot_periode_stations_integrer_fichier:
+    path:  /integrer/fichier/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SuiviSediment:lotPeriodeStationsIntegrerFichier, periodeAnId : null }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_suiviSediment_lot_periode_stations_supprimer_fichier:
+    path:  /integrer/supprimer/fichier/{periodeAnId}/{fichier}
+    defaults: { _controller: AeagSqeBundle:SuiviSediment:lotPeriodeStationsSupprimerFichier, periodeAnId : null, fichier : null }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_suiviSediment_lot_periode_stations_telecharger_rapport:
+    path:  /rapport/telecharger/{periodeAnId}/{fichier}
+    defaults: { _controller: AeagSqeBundle:SuiviSediment:lotPeriodeStationsTelechargerRapport, periodeAnId : null, fichier : null}
+    requirements:
+         methods:  GET|POST
+         
+AeagSqeBundle_suiviSediment_lot_periode_stations_importer:
+    path: /importer/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SuiviSediment:lotPeriodeStationsImporter, periodeAnId : null}
+    
+AeagSqeBundle_suiviSediment_lot_periode_stations_importer_fichier:
+    path:  /importer/fichier/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SuiviSediment:lotPeriodeStationsImporterFichier, periodeAnId : null }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_suiviSediment_lot_periode_stations_supprimer_import:
+    path:  /importer/supprimet/fichier/{periodeAnId}/{fichier}
+    defaults: { _controller: AeagSqeBundle:SuiviSediment:lotPeriodeStationsSupprimerImport, periodeAnId : null, fichier : null }
+    requirements:
+        methods:  GET|POST   
+    
+AeagSqeBundle_suiviSediment_lot_periode_station_demande:
+    path:  /demande/{stationId}/{periodeAnId}/{cmdDemandeId}
+    defaults: { _controller: AeagSqeBundle:SuiviSediment:lotPeriodeStationDemande, stationId : null, periodeAnId : null, cmdDemandeId : null}
+
+AeagSqeBundle_suiviSediment_lot_periode_station_demande_suivi_new:
+    path:  /new/{prelevId}/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SuiviSediment:lotPeriodeStationDemandeSuiviNew, prelevId : null, periodeAnId : null}
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_suiviSediment_lot_periode_station_demande_suivi_maj:
+    path:  /maj/{suiviPrelId}/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SuiviSediment:lotPeriodeStationDemandeSuiviMaj, suiviPrelId : null, periodeAnId : null}
+    requirements:
+         methods:  GET|POST
+         
+AeagSqeBundle_suiviSediment_lot_periode_station_demande_suivi_voir:
+    path:  /voir/{suiviPrelId}/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SuiviSediment:lotPeriodeStationDemandeSuiviVoir, suiviPrelId : null, periodeAnId : null}
+    requirements:
+         methods:  GET|POST
+         
+AeagSqeBundle_suiviSediment_lot_periode_station_demande_suivi_deposer:
+    path:  /deposer/{suiviPrelId}/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SuiviSediment:lotPeriodeStationDemandeSuiviDeposer, suiviPrelId : null, periodeAnId : null}
+    requirements:
+         methods:  GET|POST
+   
+AeagSqeBundle_suiviSediment_lot_periode_station_demande_suivi_supprimer:
+    path:  /supprimer/{suiviPrelId}/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SuiviSediment:lotPeriodeStationDemandeSuiviSupprimer, suiviPrelId : null, periodeAnId : null}
+    requirements:
+        methods:  GET|POST
+  
+AeagSqeBundle_suiviSediment_lot_periode_station_demande_suivi_fichier_deposer:
+    path:  /fichier/deposer/{suiviPrelId}/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SuiviSediment:lotPeriodeStationDemandeSuiviFichierDeposer, suiviPrelId : null, periodeAnId : null }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_suiviSediment_lot_periode_station_demande_suivi_fichier_supprimer:
+    path:  /fichier/supprimer/{suiviPrelId}/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SuiviSediment:lotPeriodeStationDemandeSuiviFichierSupprimer, suiviPrelId : null, periodeAnId : null }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_suiviSediment_lot_periode_station_demande_suivi_fichier_telecharger:
+    path:  /fichier/telecharger/{suiviPrelId}
+    defaults: { _controller: AeagSqeBundle:SuiviSediment:lotPeriodeStationDemandeSuiviFichierTelecharger, suiviPrelId : null}
+    requirements:
+         methods:  GET|POST
+         
+         
+AeagSqeBundle_suiviSediment_planning:
+    path:  /planning
+    defaults: { _controller: AeagSqeBundle:SuiviSediment:planning }
+    
+AeagSqeBundle_suiviSediment_planning_table:
+    path:  /planning/table
+    defaults: { _controller: AeagSqeBundle:SuiviSediment:planningTable }

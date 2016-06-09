@@ -1,0 +1,74 @@
+ <div class="form-group">
+        <label class="col-xs-3 control-label">Date :</label>
+        {%if form_errors(form.datePrel) %}
+            <div class="col-xs-8 input-group has-error has-feedback">
+        {% else %}
+             <div class="col-xs-8 input-group">
+         {% endif %}
+           {{ form_widget(form.datePrel, { 'attr': {'class': 'form-control ', 'placeholder': 'Date'} }) }}
+         </div>
+ </div> 
+         
+<div class="form-group">
+        <label class="col-xs-3 control-label">Statut :</label>
+        {%if form_errors(form.statutPrel) %}
+            <div class="col-xs-8 input-group has-error has-feedback">
+        {% else %}
+             <div class="col-xs-8 input-group">
+         {% endif %}
+           {{ form_widget(form.statutPrel, { 'attr': {'class': 'form-control ', 'placeholder': 'Statut'} }) }}
+         </div>
+ </div> 
+         
+<div class="form-group">
+        <label class="col-xs-3 control-label">Commentaire : </label>
+        {%if form_errors(form.commentaire) %}
+            <div class="col-xs-8 input-group has-error has-feedback">
+        {% else %}
+             <div class="col-xs-8 input-group">
+         {% endif %}
+           {{ form_widget(form.commentaire, { 'attr': {'class': 'form-control ', 'placeholder': 'Commentaire'} }) }}
+         </div>
+ </div> 
+         
+      {% if   suiviPrel.fichierRps %}
+            <div class="form-group">
+                   <label class="col-xs-3 control-label">Fichier terrain : </label>
+                   <div class="col-xs-7">
+                            <input class="form-control" type="text" name="file"  readonly= true value="{{ suiviPrel.fichierRps.nomFichier}} déposé le {{ suiviPrel.fichierRps.dateDepot | date('d/m/Y')}}">
+                   </div>
+                   <div class="col-xs-1">
+                             <a id="id{{ suiviPrel.fichierRps.id}}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_suiviSediment_lot_periode_station_demande_suivi_fichier_telecharger',{'suiviPrelId' : suiviPrel.id})}}" title="Télécharger le fichier">
+                               <i class="fa fa-upload"></i> 
+                             </a>
+                   </div>
+          </div>
+       {% endif %}
+        
+      </br></br></br>
+
+       
+     <div class="form-group">
+          <div class="col-xs-offset-4 col-xs-8">
+           <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
+        </div>
+     </div>        
+ 
+        <script type="text/javascript" language="javascript">
+            
+             jQuery(document).ready(function() {
+            
+              $('#datePrel').datepicker();
+            
+                    $(document).on('change','#statutPrel',function(e){
+                       e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                       if ($('#statutPrel').val() == 'F'){
+                           $('#commentaire').removeAttr('required');
+                      }else{
+                          $('#commentaire').attr('required', ''); 
+                      };
+                  });
+         
+       });
+            
+        </script>

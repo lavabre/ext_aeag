@@ -1,0 +1,187 @@
+<form class="form-horizontal" id="idFormNewSuivi" role="form" action="#" class="form-horizontal" method="post" {{ form_enctype(form) }}>
+
+    <div class="form-group">
+        <label class="col-xs-3 control-label">Date :</label>
+        {%if form_errors(form.datePrel) %}
+            <div class="col-xs-8 input-group has-error has-feedback">
+            {% else %}
+                <div class="col-xs-8 input-group">
+                {% endif %}
+                {{ form_widget(form.datePrel, { 'attr': {'class': 'form-control ', 'placeholder': 'Date'} }) }}
+            </div>
+        </div> 
+
+        <div class="form-group">
+            <label class="col-xs-3 control-label">Statut :</label>
+            {%if form_errors(form.statutPrel) %}
+                <div class="col-xs-8 input-group has-error has-feedback">
+                {% else %}
+                    <div class="col-xs-8 input-group">
+                    {% endif %}
+                    {{ form_widget(form.statutPrel, { 'attr': {'class': 'form-control ', 'placeholder': 'Statut'} }) }}
+                </div>
+            </div> 
+
+            {% if is_granted("ROLE_ADMINSQE") %}
+                <div class="form-group">
+                    <label class="col-xs-3 control-label">Validation :</label>
+                    {%if form_errors(form.validation) %}
+                        <div class="col-xs-8 input-group has-error has-feedback">
+                        {% else %}
+                            <div class="col-xs-8 input-group">
+                            {% endif %}
+                            {{ form_widget(form.validation, { 'attr': {'class': 'form-control ', 'placeholder': 'validation'} }) }}
+                        </div>
+                    </div> 
+                {% endif %}
+
+                <div class="form-group">
+                    <label class="col-xs-3 control-label">Commentaire : </label>
+                    {%if form_errors(form.commentaire) %}
+                        <div class="col-xs-8 input-group has-error has-feedback">
+                        {% else %}
+                            <div class="col-xs-8 input-group">
+                            {% endif %}
+                            {{ form_widget(form.commentaire, { 'attr': {'class': 'form-control ', 'placeholder': 'Commentaire'} }) }}
+                        </div>
+                    </div> 
+
+                    <div id="idMessage" class="col-xs-offset-3 col-xs-5 alert alert-warning text-danger text-left" role="alert"></div>
+                    <div id="idProgress" class="col-xs-offset-3 col-xs-5 alert alert-info"><progress></progress></div>
+
+                    <div class="form-group">
+                        <div class="col-xs-offset-4 col-xs-8">
+                            <button id="btAnnuler" type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
+                            <button id="btValider" type="button" class="btn btn-success"><i class="fa fa-check"></i>Valider</button>
+                            <button id="btFermer" type="button" class="btn btn-danger"><i class="fa fa-close"></i>Fermer</button>
+                        </div>
+                    </div>   
+
+
+
+                    <div class="hide">
+                        {{ form_rest(form) }}
+                    </div>  
+                    </form>      
+                    <script type="text/javascript" language="javascript">
+
+                        jQuery(document).ready(function () {
+
+                        $('#idProgress').hide();
+                                $('#idMessage').hide();
+                                $('#btFermer').hide();
+                                $('#datePrel').datetimepicker(
+                        {
+                        language: 'fr',
+                                format: 'dd/mm/yyyy hh:ii',
+                                startDate: "{{ periodeAn.periode.dateDeb | date("d/m/Y hh:ii") }}",
+                                endDate: "{{  dateFin | date("d/m/Y hh:ii") }}",
+                                minView: 1,
+                                autoclose: true
+                        }
+                        ).on('changeDate', function(ev){
+                        var str = $('#datePrel').val();
+                                var str1 = str.substr(0, 14) + '00';
+                                $('#datePrel').datetimepicker('update', str1);
+                        });
+                                $(document).on('change', '#statutPrel', function (e) {
+                        e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                                if ($('#statutPrel').val() != 'N') {
+                        $('#commentaire').removeAttr('required');
+                        } else {
+                        $('#commentaire').prop('required', true);
+                        }
+                        ;
+                        });
+                                $(document).on('change', '#validation', function (e) {
+                        e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                                if ($('#validation').val() != 'R') {
+                        $('#commentaire').removeAttr('required');
+                        } else {
+                        $('#commentaire').prop('required', true);
+                        }
+                        ;
+                        });
+                                $(document).on('click', '#btValider', function (e) {
+                        var erreur = false;
+                                if ($('#datePrel').val() == '')
+                        {
+                        alert("Veuillez saisir une date  svp");
+                                erreur = true;
+                        }
+
+                        if (($('#statutPrel').val() == 'N' && $('#commentaire').val() == '') || ($('#validation').val() == 'R' && $('#commentaire').val() == ''))
+                        {
+                        alert("Veuillez saisir un commentaire svp");
+                                erreur = true;
+                        }
+
+                        if (!erreur){
+                        e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                                $('#idProgress').show();
+                                var $this = $('#idFormNewSuivi');
+                                var url = '{{ path("AeagSqeBundle_suiviSediment_lot_periode_station_demande_suivi_new",{"prelevId":  "par1", "periodeAnId": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                url = url.replace("par1", {{ prelev.id }});
+                                url = url.replace("par2", {{ periodeAnId }});
+                                url = url.replace("amp;", "");
+                                $.ajax({
+                                url: url,
+                                        type: 'post',
+                                        data: $this.serialize(),
+                                        //Traitements AJAX
+                                        success: function(messages) { // Je récupère la réponse du fichier PHP
+                                        tabMessages = JSON.parse(messages);
+                                                var erreur = false;
+                                                var avertissement = false;
+                                                var nbMessage = 0;
+                                                var html = "<ul>";
+                                                for (var ii = 0; ii < tabMessages.length; ii++){
+                                        var typeMessage = tabMessages[ii][0];
+                                                if (typeMessage == 'ko'){
+                                        erreur = true;
+                                        }
+                                        if (typeMessage == 'av'){
+                                        avertissement = true;
+                                        }
+                                        var message = tabMessages[ii][1];
+                                                if (message){
+                                        nbMessage = nbMessage + 1;
+                                                html = html + '<li>' + message + '</li>';
+                                        }
+                                        }
+                                        html = html + '<ul>';
+                                                if (nbMessage > 0){
+                                        $('#idMessage').show();
+                                                $('#idMessage').empty().append(html).show();
+                                        }
+                                        $('#idProgress').hide();
+                                                if (!erreur && avertissement){
+                                        $('#btValider').hide();
+                                                $('#btAnnuler').hide();
+                                                $('#btFermer').show();
+                                        };
+                                                if (!erreur && !avertissement){
+                                        var url1 = '{{ path("AeagSqeBundle_suiviSediment_lot_periode_stations",{"periodeAnId": "par1"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                                url1 = url1.replace("par1", {{ periodeAnId }});
+                                                url1 = url1.replace("amp;", "");
+                                                window.location.replace(url1);
+                                        }
+                                        },
+                                        error: function(messages) { // Je récupère la réponse du fichier PHP
+                        {# $('#idResultat').empty().append('erreur lors du dépot');#}
+                                            $('#idMessage').empty().append('erreur ajax').show();
+                                                    $('#idProgress').hide();
+                                            },
+                                    });
+                            }
+
+                            });
+                                    $(document).on('click', '#btFermer', function (e) {
+                            var url1 = '{{ path("AeagSqeBundle_suiviSediment_lot_periode_stations",{"periodeAnId": "par1"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                    url1 = url1.replace("par1", {{ periodeAnId }});
+                                    url1 = url1.replace("amp;", "");
+                                    window.location.replace(url1);
+                            });
+                            });
+
+                    </script>
