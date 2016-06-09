@@ -24,7 +24,10 @@ class BackUpProcessCommand extends AeagCommand {
         
         // Phase 215
         // Cohérence RAI/DAI
-        //$this->_phaseR15();
+        $this->_phaseR15();
+        
+        // TODO Phase 242
+        //$this->_phaseR42();
 
         // Phase 226
         // Cohérence RAI/DAI

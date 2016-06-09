@@ -1,7 +1,21 @@
 #!/bin/bash
 jour=$(date +"%Y%m%d")
-dir="/base/extranet/preprod/ext_aeag/app/logs"
-if [ ! -d "$dir" ]; then
-  mkdir $dir
+if [ "$1" = "-env" ]; then
+    if [ "$2" = "prod" ]; then
+        dirbase="/base/extranet/ext_aeag/"
+    elif [ "$2" = "preprod" ]; then
+        dirbase="/base/extranet/preprod/ext_aeag/"
+    else
+        dirbase="/base/extranet/dev/Vincent/ext_aeag/"
+    fi
+else
+    dirbase="/base/extranet/dev/Vincent/ext_aeag/"
 fi
-php /base/extranet/preprod/ext_aeag/app/console_process_rai rai:integration_db >> $dir/process_$jour.log
+dirlog=$dirbase"app/logs"
+dircmd=$dirbase"app/console_process_rai"
+if [ ! -d "$dirlog" ]; then
+  mkdir $dirlog
+fi
+if [ $(ps -ax | grep -v grep | grep 'rai:integration_db' | wc -l) -lt 4 ]; then
+    php $dircmd rai:integration_db >> $dirlog/process_$jour.log
+fi

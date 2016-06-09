@@ -66,7 +66,7 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
             }
 
             // Vider la table tempo des lignes correspondant à la RAI
-            //$this->_cleanTmpTable($pgCmdFichierRps);
+            $this->_cleanTmpTable($pgCmdFichierRps);
         }
 
         $date = new \DateTime();
@@ -190,14 +190,22 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
                                 }
                                 $pgCmdAnalyse->setDateAna($dateM);
                             }
-
-                            $pgCmdAnalyse->setResultat($pgTmpValidEdilabo->getResM());
+                            if ($pgTmpValidEdilabo->getResM() == "") {
+                                $pgCmdAnalyse->setResultat(null);
+                            } else {
+                                $pgCmdAnalyse->setResultat($pgTmpValidEdilabo->getResM());
+                            }
+                            
                             $pgSandreUnites = $this->repoPgSandreUnites->findOneByCodeUnite($pgTmpValidEdilabo->getCodeUnite());
                             if (!is_null($pgSandreUnites)) {
                                 $pgCmdAnalyse->setCodeUnite($pgSandreUnites);
                             }
                             $pgCmdAnalyse->setCodeRemarque($pgTmpValidEdilabo->getCodeRqM());
-                            $pgCmdAnalyse->setLqAna($pgTmpValidEdilabo->getLqM());
+                            if ($pgTmpValidEdilabo->getResM() == "") {
+                                $pgCmdAnalyse->setLqAna(null);
+                            } else {
+                                $pgCmdAnalyse->setLqAna($pgTmpValidEdilabo->getLqM());
+                            }
                             $pgCmdAnalyse->setRefAnaLabo($pgTmpValidEdilabo->getRefAnaLabo());
                             $pgCmdAnalyse->setCodeMethode($pgTmpValidEdilabo->getMethAna());
                             $pgCmdAnalyse->setAccreditation($pgTmpValidEdilabo->getAccredAna());

@@ -1,7 +1,18 @@
 #!/bin/bash
 jour=$(date +"%Y%m%d")
-dir="/base/extranet/preprod/ext_aeag/app/logs"
-if [ ! -d "$dir" ]; then
-  mkdir $dir
+if [ "$1" = "-env" ]; then
+    if [ "$2" = "prod" ]; then
+        dirbase="/base/extranet/ext_aeag/"
+    elif [ "$2" = "preprod" ]; then
+        dirbase="/base/extranet/preprod/ext_aeag/"
+    else
+        dirbase="/base/extranet/dev/Vincent/ext_aeag/"
+    fi
+else
+    dirbase="/base/extranet/dev/Vincent/ext_aeag/"
 fi
-/usr/local/bin/sqe/preprod/Validation_RAI_tmp/Validation_RAI_tmp/Validation_RAI_tmp_run.sh >> $dir/process_$jour.log
+dirlog=$dirbase"app/logs"
+if [ ! -d "$dirlog" ]; then
+  mkdir $dirlog
+fi
+/usr/local/bin/sqe/preprod/Validation_RAI_tmp/Validation_RAI_tmp/Validation_RAI_tmp_run.sh >> $dirlog/process_$jour.log

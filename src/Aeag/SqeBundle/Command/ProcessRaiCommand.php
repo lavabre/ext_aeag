@@ -595,7 +595,7 @@ class ProcessRaiCommand extends AeagCommand {
                 if (!is_null($pgTmpValidEdilabo->getLqM())) {
                     $lq = $this->repoPgProgLotLqParam->isValidLq($pgCmdFichierRps->getDemande()->getLotan()->getLot(), $pgTmpValidEdilabo->getCodeParametre(), $pgTmpValidEdilabo->getCodeFraction(), $pgTmpValidEdilabo->getLqM());
                     if (count($lq) == 0) {
-                        $this->_addLog('warning', $demandeId, $reponseId, "Controle Lq AEAG : Lq supérieure à la valeur prévue", $codePrelevement, $pgTmpValidEdilabo->getLqM());
+                        $this->_addLog('warning', $demandeId, $reponseId, "Controle Lq AEAG : Lq supérieure à la valeur prévue: ". $pgTmpValidEdilabo->getLqM(), $codePrelevement, $pgTmpValidEdilabo->getCodeParametre());
                         //return array("warning", "Controle Lq AEAG : Lq supérieure à la valeur prévue");
                     }
                 }

@@ -31,8 +31,10 @@ class PgCmdFichiersRpsRepository extends EntityRepository {
         $query .= " and pha.codePhase IN (:phase)";
         $query .= " and rps.typeFichier = 'RPS'";
         $query .= " and rps.suppr = 'N'";
+        $query .= " order by rps.id asc";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('phase', array('R40','R41'));
+        $qb->setMaxResults(1);
         return $qb->getResult();
     }
     
@@ -47,10 +49,16 @@ class PgCmdFichiersRpsRepository extends EntityRepository {
         $query .= " and rps.typeFichier = 'RPS'";
         $query .= " and rps.suppr = 'N'";
         $query .= " and lot.codeMilieu <> 'LPC'";
+        $query .= " and rps.id NOT IN ";
+        $query .= " (select suivi.objId ";
+        $query .= " from Aeag\SqeBundle\Entity\PgProgSuiviPhases suivi";
+        $query .= " where suivi.phase = :phase";
+        $query .= " group by suivi.objId";
+        $query .= " having count(suivi) >= 5)";
+        $query .= " order by rps.id asc";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('phase', $phase);
         $qb->setMaxResults(5);
         return $qb->getResult();
-        
     }
 }
