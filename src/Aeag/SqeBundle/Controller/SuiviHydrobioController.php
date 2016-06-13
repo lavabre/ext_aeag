@@ -1202,7 +1202,6 @@ class SuiviHydrobioController extends Controller {
         $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevById($prelevId);
 
         if ($user->hasRole('ROLE_ADMINSQE')) {
-            return new Response ('prelev : ' . $pgCmdPrelev->getId());
             $pgProgWebUsers = $repoPgProgWebUsers->getPgProgWebusersByPrestataire($pgCmdPrelev->getPrestaPrel());
             $pgProgWebUser = $pgProgWebUsers[0];
         } else {
