@@ -143,6 +143,20 @@ class ExportAvisEtat {
     private $eProposeLib;
 
     /**
+     * @var string $eRetenu
+     *
+     * @ORM\Column(name="e_retenu", type="string", length=255, nullable=true)
+     */
+    private $eRetenu;
+
+    /**
+     * @var string $eRetenuLib
+     *
+     * @ORM\Column(name="e_retenu_lib", type="text", nullable=true)
+     */
+    private $eRetenuLib;
+
+    /**
      * @var string $commentaire
      *
      * @ORM\Column(name="commentaire", type="text", nullable=true)
@@ -219,6 +233,14 @@ class ExportAvisEtat {
 
     function getEProposeLib() {
         return $this->eProposeLib;
+    }
+
+    function getERetenu() {
+        return $this->eRetenu;
+    }
+
+    function getERetenuLib() {
+        return $this->eRetenuLib;
     }
 
     function getCommentaire() {

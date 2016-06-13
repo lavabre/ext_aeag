@@ -30,6 +30,8 @@ class PressionController extends Controller {
         $cdGroupe = $request->get('cdGroupe');
 
         $repo = $emEdl->getRepository('AeagEdlBundle:PressionMe');
+        $repoPressionDerniereProposition = $emEdl->getRepository('AeagEdlBundle:PressionDerniereProposition');
+        
         $pressionInitiale = $repo->findOneBy(array('euCd' => $euCd, 'cdPression' => $cdPression));
 
         $proposed = new PressionMeProposed();
@@ -43,11 +45,8 @@ class PressionController extends Controller {
                 ->add('commentaire', 'textarea')
                 ->getForm();
 
-        $repo = $emEdl->getRepository('AeagEdlBundle:PressionMe');
-        $derniereProp = $repo->getLastPropositionSuperviseur($euCd, $cdPression);
-        if (!$derniereProp) {
-            $derniereProp = $repo->getLastProposition($euCd, $cdPression);
-        }
+        $derniereProp = $repoPressionDerniereProposition->getDernierePropositionByEucdCdPression($euCd, $cdPression);
+      
         if (!$derniereProp) {
             $derniereProposition = null;
         } else {
@@ -75,6 +74,8 @@ class PressionController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
         $repoUtilisateur = $emEdl->getRepository('AeagEdlBundle:Utilisateur');
+        $repoPressionDerniereProposition = $emEdl->getRepository('AeagEdlBundle:PressionDerniereProposition');
+        
         $utilisateur = $repoUtilisateur->getUtilisateurByExtid($user->getId());
 
         try {
@@ -110,9 +111,17 @@ class PressionController extends Controller {
             $proposed->setPressionOriginale($pressionInitiale);
             $emEdl->persist($proposed);
             $emEdl->flush();
+            
+           $derniereProps = $repoPressionDerniereProposition->getDernierePropositionByEucdCdPression($euCd, $cdPression);
 
-            $msg = "Proposition :<span class=dce_pression_" . $proposed->getValeur() . ">" . $proposed->getValueLib() . "</span>";
-            return new Response(json_encode($msg));
+        if ($derniereProps) {
+            $derniereProp = $derniereProps[0];
+            $msg = "Proposition :<span class='dce_pression_" . $derniereProp->getValeur() . "'>" . $derniereProp->getValueLib() . "</span>";
+        } else {
+            $derniereProp = null;
+             $msg = "Proposition :<span class='dce_pression_" . $proposed->getValeur() . "'>" . $proposed->getValueLib() . "</span>";
+        }
+         return new Response(json_encode($msg));
         } catch (Exception $e) {
             $response = new Response(json_encode(array('message' => $e->getMessage())));
             $response->headers->set('Content-Type', 'application/json');
@@ -133,6 +142,8 @@ class PressionController extends Controller {
         $cdPression = $request->get('cdPression');
 
         $repo = $emEdl->getRepository('AeagEdlBundle:PressionMe');
+        $repoPressionDerniereProposition = $emEdl->getRepository('AeagEdlBundle:PressionDerniereProposition');
+        
         $pressionInitiale = $repo->findOneBy(array('euCd' => $euCd, 'cdPression' => $cdPression));
 
         $proposeds = $pressionInitiale->getProposed();
@@ -146,11 +157,7 @@ class PressionController extends Controller {
             usort($tabProposeds, create_function('$a,$b', 'return strcasecmp($a->getPropositionDate(),$b->getPropositionDate());'));
         }
 
-        $derniereProp = $repo->getLastPropositionSuperviseur($euCd, $cdPression);
-
-        if (!$derniereProp) {
-            $derniereProp = $repo->getLastProposition($euCd, $cdPression);
-        }
+        $derniereProp = $repoPressionDerniereProposition->getDernierePropositionByEucdCdPression($euCd, $cdPression);
 
         if (!$derniereProp) {
             $derniereProposition = null;
@@ -184,13 +191,25 @@ class PressionController extends Controller {
         //return new Response ('eucd : ' . $euCd . '  cdPression : ' . $cdPression . '  login : ' . $login . ' date : ' . $propositionDate);
 
         $repo = $emEdl->getRepository('AeagEdlBundle:PressionMeProposed');
+        $repoPressionDerniereProposition = $emEdl->getRepository('AeagEdlBundle:PressionDerniereProposition');
 
         $proposition = $repo->findOneBy(array('euCd' => $euCd, 'cdPression' => $cdPression, 'utilisateur' => $login, 'propositionDate' => $propositionDate));
 
         $emEdl->remove($proposition);
         $emEdl->flush();
+        
+          $derniereProps = $repoPressionDerniereProposition->getDernierePropositionByEucdCdPression($euCd, $cdPression);
 
-        return new Response(json_encode('eucd : ' . $euCd . '  cdPression : ' . $cdPression . '  login : ' . $login . ' date : ' . $propositionDate . ' supprimer'));
+        if ($derniereProps) {
+            $derniereProp = $derniereProps[0];
+            $msg = "Proposition :<span class='dce_pression_" . $derniereProp->getValeur() . "'>" . $derniereProp->getValueLib() ;
+        } else {
+            $derniereProp = null;
+             $msg = "Proposition :";
+        }
+         return new Response($msg);
+
+     
     }
 
 }

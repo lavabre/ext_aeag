@@ -914,7 +914,7 @@ class SuiviHydrobioController extends Controller {
                                     $autreDateDebut->sub(new \DateInterval('P7D'));
                                     $autreDateFin = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
                                     $autreDateFin->add(new \DateInterval('P7D'));
-                                    if ($datePrel >= $autreDateDebut or $datePrel <= $autreDateFin) {
+                                    if ($datePrel >= $autreDateDebut and $datePrel <= $autreDateFin) {
                                         $err = true;
                                         $contenu = 'ligne  ' . $ligne . '  : Date  (' . $datePrel->format('d/m/Y H:i') . ') doit être inférieure à ' . $autreDateDebut->format('d/m/Y H:i') . ' ou supérieure à  ' . $autreDateFin->format('d/m/Y H:i');
                                         $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
@@ -1202,6 +1202,7 @@ class SuiviHydrobioController extends Controller {
         $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevById($prelevId);
 
         if ($user->hasRole('ROLE_ADMINSQE')) {
+            return new Response ('prelev : ' . $pgCmdPrelev->getId());
             $pgProgWebUsers = $repoPgProgWebUsers->getPgProgWebusersByPrestataire($pgCmdPrelev->getPrestaPrel());
             $pgProgWebUser = $pgProgWebUsers[0];
         } else {
@@ -1257,7 +1258,7 @@ class SuiviHydrobioController extends Controller {
                         $autreDateDebut->sub(new \DateInterval('P7D'));
                         $autreDateFin = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
                         $autreDateFin->add(new \DateInterval('P7D'));
-                        if ($pgCmdSuiviPrel->getDatePrel() >= $autreDateDebut or $pgCmdSuiviPrel->getDatePrel() <= $autreDateFin) {
+                        if ($pgCmdSuiviPrel->getDatePrel() >= $autreDateDebut and $pgCmdSuiviPrel->getDatePrel() <= $autreDateFin) {
                             $err = true;
                             $contenu = 'Date  (' . $pgCmdSuiviPrel->getDatePrel()->format('d/m/Y H:i') . ') doit être inférieure à ' . $autreDateDebut->format('d/m/Y H:i') . ' ou supérieure à  ' . $autreDateFin->format('d/m/Y H:i');
                             $tabMessage[$nbMessages][0] = 'ko';

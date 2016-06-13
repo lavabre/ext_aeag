@@ -29,6 +29,7 @@ class EtatController extends Controller {
         $cdEtat = $request->get('cdEtat');
         $cdGroupe = $request->get('cdGroupe');
 
+        $repoEtatDerniereProposition = $emEdl->getRepository('AeagEdlBundle:EtatDerniereProposition');
         $repo = $emEdl->getRepository('AeagEdlBundle:EtatMe');
         $etatInitiale = $repo->findOneBy(array('euCd' => $euCd, 'cdEtat' => $cdEtat));
 
@@ -43,8 +44,7 @@ class EtatController extends Controller {
                 ->add('commentaire', 'textarea')
                 ->getForm();
 
-        $repo = $emEdl->getRepository('AeagEdlBundle:EtatMe');
-        $derniereProps = $repo->getLastProposition($euCd, $cdEtat);
+        $derniereProps = $repoEtatDerniereProposition->getDernierePropositionByEucdCdEtat($euCd, $cdEtat);
 
         if ($derniereProps) {
             $derniereProp = $derniereProps[0];
@@ -78,6 +78,8 @@ class EtatController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
         $repoUtilisateur = $emEdl->getRepository('AeagEdlBundle:Utilisateur');
+        $repoEtatDerniereProposition = $emEdl->getRepository('AeagEdlBundle:EtatDerniereProposition');
+
         $utilisateur = $repoUtilisateur->getUtilisateurByExtid($user->getId());
 
         // récupération des paramètres
@@ -117,7 +119,15 @@ class EtatController extends Controller {
             $emEdl->persist($proposed);
             $emEdl->flush();
 
-            $msg = "Proposition :<span class=dce_etat_" . $proposed->getValeur() . ">" . $proposed->getValueLib() . "</span>";
+            $derniereProps = $repoEtatDerniereProposition->getDernierePropositionByEucdCdEtat($euCd, $cdEtat);
+
+            if ($derniereProps) {
+                $derniereProp = $derniereProps[0];
+                $msg = "Proposition :<span class=dce_etat_" . $derniereProp->getValeur() . ">" . $derniereProp->getValueLib() . "</span>";
+            } else {
+                $derniereProp = null;
+                $msg = "Proposition :<span class=dce_etat_" . $proposed->getValeur() . ">" . $proposed->getValueLib() . "</span>";
+            }
             return new Response(json_encode($msg));
         } catch (Exception $e) {
 
@@ -145,32 +155,30 @@ class EtatController extends Controller {
         $euCd = $request->get('euCd');
         $cdEtat = $request->get('cdEtat');
 
+        $repoEtatDerniereProposition = $emEdl->getRepository('AeagEdlBundle:EtatDerniereProposition');
 
         $repo = $emEdl->getRepository('AeagEdlBundle:EtatMe');
         $etatInitiale = $repo->findOneBy(array('euCd' => $euCd, 'cdEtat' => $cdEtat));
-        
-          $proposeds = $etatInitiale->getProposed();
-                $tabProposeds = array();
-                $k = 0;
-                foreach($proposeds as $proposed){
-                    $tabProposeds[$k] = $proposed;
-                    $k++;
-                }
-                if (count($tabProposeds) > 0){
-                usort($tabProposeds, create_function('$a,$b', 'return strcasecmp($a->getPropositionDate(),$b->getPropositionDate());'));
-                }
 
-        // return new Response ('$masseEau : ' . $euCd. '  $etatType : ' . $cdEtat);
-        $derniereProp = $repo->getLastPropositionSuperviseur($euCd, $cdEtat);
 
-        if (!$derniereProp) {
-            $derniereProp = $repo->getLastProposition($euCd, $cdEtat);
+        $proposeds = $etatInitiale->getProposed();
+        $tabProposeds = array();
+        $k = 0;
+        foreach ($proposeds as $proposed) {
+            $tabProposeds[$k] = $proposed;
+            $k++;
+        }
+        if (count($tabProposeds) > 0) {
+            usort($tabProposeds, create_function('$a,$b', 'return strcasecmp($a->getPropositionDate(),$b->getPropositionDate());'));
         }
 
-        if (!$derniereProp) {
+        // return new Response ('$masseEau : ' . $euCd. '  $etatType : ' . $cdEtat);
+        $derniereProps = $repoEtatDerniereProposition->getDernierePropositionByEucdCdEtat($euCd, $cdEtat);
+
+        if (!$derniereProps) {
             $derniereProposition = null;
         } else {
-            $derniereProposition = $derniereProp[0];
+            $derniereProposition = $derniereProps[0];
         }
 
         return $this->render('AeagEdlBundle:Etat:etatListProposed.html.twig', array(
@@ -197,15 +205,23 @@ class EtatController extends Controller {
         $login = $request->get('login');
         $propositionDate = $request->get('propositionDate');
 
+        $repoEtatDerniereProposition = $emEdl->getRepository('AeagEdlBundle:EtatDerniereProposition');
         $repo = $emEdl->getRepository('AeagEdlBundle:EtatMeProposed');
-
         $proposition = $repo->findOneBy(array('euCd' => $euCd, 'cdEtat' => $cdEtat, 'utilisateur' => $login, 'propositionDate' => $propositionDate));
 
         $emEdl->remove($proposition);
         $emEdl->flush();
-        
-         return new Response (json_encode('eucd : ' . $euCd . '  cdEtat : ' . $cdEtat . '  login : ' . $login . ' date : ' . $propositionDate . ' supprimer'));
-        
+
+           $derniereProps = $repoEtatDerniereProposition->getDernierePropositionByEucdCdEtat($euCd, $cdEtat);
+
+        if ($derniereProps) {
+            $derniereProp = $derniereProps[0];
+            $msg = "Proposition :<span class='dce_etat_" . $derniereProp->getValeur() . "'>" . $derniereProp->getValueLib() ;
+        } else {
+            $derniereProp = null;
+             $msg = "Proposition :";
+        }
+         return new Response($msg);
     }
 
 }

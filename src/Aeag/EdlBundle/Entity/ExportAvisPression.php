@@ -141,6 +141,20 @@ class ExportAvisPression {
      * @ORM\Column(name="p_propose_lib", type="text", nullable=true)
      */
     private $pProposeLib;
+    
+     /**
+     * @var string $pRetenu
+     *
+     * @ORM\Column(name="e_retenu", type="string", length=255, nullable=true)
+     */
+    private $pRetenu;
+
+    /**
+     * @var string $pretenuLib
+     *
+     * @ORM\Column(name="e_retenu_lib", type="text", nullable=true)
+     */
+    private $pRetenuLib;
 
     /**
      * @var string $commentaire
@@ -220,7 +234,16 @@ class ExportAvisPression {
     function getPProposeLib() {
         return $this->pProposeLib;
     }
+    
+    function getPRetenu() {
+        return $this->pRetenu;
+    }
 
+    function getPRetenuLib() {
+        return $this->pRetenuLib;
+    }
+
+    
     function getCommentaire() {
         return $this->commentaire;
     }

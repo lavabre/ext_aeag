@@ -60,25 +60,11 @@
         {% set i = 1 %}
              
            {% for pp in proposeds %}
-                              $('#removeEtat-{{ cdGroupe}}-{{ etat.euCd }}-{{ etat.cdEtat }}-{{ i }}').click(function (e) {
+                     $('#removeEtat-{{ cdGroupe}}-{{ etat.euCd }}-{{ etat.cdEtat }}-{{ i }}').click(function (e) {
                                e.preventDefault();
                                // obtenir l'url
                                var $url = "{{ path('AeagEdlBundle_removeEtat') }}";
-                               idTr = '#rowProposed-ligne-{{ cdGroupe}}-{{ etat.euCd }}-{{ etat.cdEtat }}-{{ i }}';
-                               {% if  i > 1 %}
-                                    {% if i == proposeds | length %}
-                                         libPrec = $('#LibProposed-ligne-{{ cdGroupe}}-{{ etat.euCd }}-{{ etat.cdEtat }}-{{ i - 1}}').html();
-                                      {% else %}
-                                        libPrec = $('#LibProposed-ligne-{{ cdGroupe}}-{{ etat.euCd }}-{{ etat.cdEtat }}-{{ i + 1}}').html();  
-                                     {% endif %}
-                                   $(idTr).remove();
-                               {% else %}
-                                   libPrec = '';
-                                   $('#idtableProposed-{{ cdGroupe }}-{{ etat.euCd }}-{{ etat.cdEtat }}').remove();
-                               {% endif %}
-                               var $div = "#tdProposition-{{ cdGroupe}}-{{ etat.euCd }}-{{ etat.cdEtat }}";
-                                 $($div).empty().append('Proposition : ' + libPrec);
-                            // lancer la requête ajax  
+                          // lancer la requête ajax  
                                $.post($url,
                                        {
                                            cdGroupe: "{{ cdGroupe }}",
@@ -87,15 +73,29 @@
                                            login: $(this).attr('login'),
                                            propositionDate: $(this).attr('propositionDate')
                                        },
+                               function (json) {
+                               $.post("{{ path('AeagEdlBundle_etatListProposed') }}",
+                                       {
+                                           cdGroupe: {{ cdGroupe }},
+                                           euCd: "{{ etat.euCd }}",
+                                           cdEtat: "{{ etat.cdEtat }}"
+                                       },
                                function (data) {
-                                   // placer le formulaire sous le div
-                                    idTr = '#divEtat-{{ cdGroupe}}-{{ etat.euCd }}-{{ etat.cdEtat }}';
-                                  }
-                               ).error(function () {
-                                   // rétablir curseur
-                                   alert("Erreur non déterminée");
-                               });
-                           });
+                                        //alert(data);
+                                        var $div = "#tdEtat-{{ cdGroupe }}-{{ etat.euCd }}-{{ etat.cdEtat }}";
+                                        // placer le formulaire sous le div
+                                        $($div).empty().append(data);
+                                        $('#modalTraitementEncours').modal('hide');
+
+                                    }
+                                    ).error(function () {
+                                          alert("Erreur non déterminée");
+                                    });
+
+                                    var $div = "#tdProposition-{{ cdGroupe }}-{{ etat.euCd }}-{{ etat.cdEtat }}";
+                                    $($div).empty().append(json);
+                                   });
+                             });
                             {% set i = i + 1 %}
                 {% endfor %}
     
