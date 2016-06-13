@@ -134,7 +134,7 @@
                                                 <table class="table table-hover" id='idtable-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}'>
                                                     <tr class="info">
                                                         <td width="1%" nowrap>
-                                                            {% if  is_granted("ROLE_COMMENTATEUREDL") %}
+                                                            {% if  is_granted("ROLE_COMMENTATEUREDL") and tabPression.pression.cdPression != 'PP_STEP' %}
                                                              <a id="newPression-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}" title="Proposer une nouvelle évaluation" cdPression="{{ tabPression.pression.cdPression }}">
                                                                     <button type="button" class="btn btn-primary"><i class="fa fa-commenting"></i></button> 
                                                                 </a>
@@ -150,12 +150,14 @@
                                                         <td  width="27%">
                                                             SDAGE 2016 : <span class="dce_pression_{{ tabPression.pression.valeur }}">{{ tabPression.pression.getValueLib() }}</span>
                                                         </td>
-                                                        <td width="27%" id="tdProposition-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}">
+                                                        <td width="27%" >
+                                                            <div id ="tdProposition-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}">
                                                             {% if tabPression.derniereProp %}
                                                                 Proposition :<span class="dce_pression_{{ tabPression.derniereProp.valeur }}"> {{ tabPression.derniereProp.getValueLib() }}</span>
                                                             {% else %}
                                                                 Proposition :
                                                             {% endif %}
+                                                            </div>
                                                         </td>
                                                     </tr>
                                                     <tr>
@@ -306,18 +308,7 @@
                 e.preventDefault();
                 // obtenir l'url
                 var $url = "{{ path('AeagEdlBundle_removePression') }}";
-                idTr = '#rowProposed-ligne-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}-{{ i }}';
-                {% if  i > 0 %}
-                    libPrec = $('#LibProposed-ligne-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}-{{ i - 1}}').html();
-                   $(idTr).remove();
-                {% else %}
-                    libPrec = null;
-                    $('#idtableProposed-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}').remove();
-                {% endif %}
-                var $div = "#tdProposition-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}";
-                $($div).empty().append('Proposition : ' + libPrec);
-
-                // lancer la requête ajax  
+             // lancer la requête ajax  
                 $.post($url,
                 {
                 cdGroupe: "{{ pressionGroupe.pressionGroupe.cdGroupe }}",
@@ -326,14 +317,28 @@
                 login: $(this).attr('login'),
                 propositionDate: $(this).attr('propositionDate')
                 },
-                function (data) {
-                // placer le formulaire sous le div
-                idTr = '#divPression-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}';
-                }
-                ).error(function () {
-                // rétablir curseur
-                alert("Erreur non déterminée");
-                });
+                function (json) {
+                        $.post("{{ path('AeagEdlBundle_pressionListProposed') }}",
+                               {
+                                   cdGroupe: {{ pressionGroupe.pressionGroupe.cdGroupe }},
+                                   euCd: "{{ tabPression.pression.euCd }}",
+                                   cdPression: "{{ tabPression.pression.cdPression }}"
+                               },
+                       function (data) {
+                           //alert(data);
+                           var $div = "#tdPression-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}";
+                           // placer le formulaire sous le div
+                           $($div).empty().append(data);
+                           $('#modalTraitementEncours').modal('hide');
+
+                       }
+                       ).error(function () {
+                             alert("Erreur non déterminée");
+                       });
+
+                       var $div = "#tdProposition-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}";
+                       $($div).empty().append(json);
+                    });
                 });
                 {% set i = i + 1 %}
             {% endfor %}

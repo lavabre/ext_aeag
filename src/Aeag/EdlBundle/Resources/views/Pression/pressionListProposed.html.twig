@@ -61,40 +61,43 @@
         {% set i = 1 %}
              
            {% for pp in proposeds %}
-                              $('#removePression-{{ cdGroupe}}-{{ pression.euCd }}-{{ pression.cdPression }}-{{ i }}').click(function (e) {
-                               e.preventDefault();
-                               // obtenir l'url
-                               var $url = "{{ path('AeagEdlBundle_removePression') }}";
-                               idTr = '#rowProposed-ligne-{{ cdGroupe}}-{{ pression.euCd }}-{{ pression.cdPression }}-{{ i }}';
-                               {% if  i > 1 %}
-                                  libPrec = $('#LibProposed-ligne-{{ cdGroupe}}-{{ pression.euCd }}-{{ pression.cdPression }}-{{ i - 1}}').html();
-                                  $(idTr).remove();
-                               {% else %}
-                                   libPrec = '';
-                                   $('#idtableProposed-{{ cdGroupe}}-{{ pression.euCd }}-{{ pression.cdPression }}').remove();
-                               {% endif %}
-                                var $div = "#tdProposition-{{ cdGroupe}}-{{ pression.euCd }}-{{ pression.cdPression }}";
-                                 $($div).empty().append('Proposition : ' + libPrec);
-                         // lancer la requête ajax  
-                               $.post($url,
+                    $('#removePression-{{ cdGroupe }}-{{pression.euCd }}-{{ pression.cdPression }}-{{ i }}').click(function (e) {
+                        e.preventDefault();
+                        // obtenir l'url
+                        var $url = "{{ path('AeagEdlBundle_removePression') }}";
+                    // lancer la requête ajax  
+                        $.post($url,
+                        {
+                        cdGroupe: "{{ cdGroupe }}",
+                        euCd: "{{ pression.euCd }}",
+                        cdPression: "{{ pression.cdPression }}",
+                        login: $(this).attr('login'),
+                        propositionDate: $(this).attr('propositionDate')
+                        },
+                        function (json) {
+                               $.post("{{ path('AeagEdlBundle_pressionListProposed') }}",
                                        {
-                                           cdGroupe: "{{ cdGroupe }}",
+                                           cdGroupe: {{ cdGroupe }},
                                            euCd: "{{ pression.euCd }}",
-                                           cdPression: "{{ pression.cdPression }}",
-                                           login: $(this).attr('login'),
-                                           propositionDate: $(this).attr('propositionDate')
+                                           cdPression: "{{ pression.cdPression }}"
                                        },
                                function (data) {
+                                   //alert(data);
+                                   var $div = "#tdPression-{{ cdGroupe }}-{{ pression.euCd }}-{{ pression.cdPression }}";
                                    // placer le formulaire sous le div
-                                    idTr = '#divPression-{{ cdGroupe}}-{{ pression.euCd }}-{{ pression.cdPression }}';
-                                
-                                    }
+                                   $($div).empty().append(data);
+                                   $('#modalTraitementEncours').modal('hide');
+
+                               }
                                ).error(function () {
-                                   // rétablir curseur
-                                   alert("Erreur non déterminée");
+                                     alert("Erreur non déterminée");
                                });
-                           });
-                            {% set i = i + 1 %}
+
+                               var $div = "#tdProposition-{{ cdGroupe }}-{{ pression.euCd }}-{{pression.cdPression }}";
+                               $($div).empty().append(json);
+                              });
+                        });
+                    {% set i = i + 1 %}
                 {% endfor %}
     
     </script>

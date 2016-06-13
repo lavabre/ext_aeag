@@ -774,7 +774,7 @@ class SuiviHydrobioController extends Controller {
 
         if ($valid) {
             $fichierIn = fopen($pathBase . '/' . $name, "r");
-            $fichierOut = fopen($pathBase . '/' . 'trans.csv', "w+");
+            $fichierOut = fopen($pathBase . '/' . 'trans-' . $user->getId() . '.csv', "w+");
             $rapport = fopen($pathBase . '/' . $user->getId() . '_' . $dateDepot->format('Y-m-d-H') . '_rapport.csv', "w+");
             $contenu = 'rapport d\'intégration du fichier : ' . $name . ' déposé le ' . $dateDepot->format('d/m/Y') . CHR(13) . CHR(10) . CHR(13) . CHR(10);
             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
@@ -789,7 +789,7 @@ class SuiviHydrobioController extends Controller {
             fclose($fichierIn);
             fclose($fichierOut);
             $ligne = 0;
-            $fichier = fopen($pathBase . '/' . 'trans.csv', "r");
+            $fichier = fopen($pathBase . '/' . 'trans-' . $user->getId() . '.csv', "r");
             $tab = fgetcsv($fichier,1024,';','\'');
             while ( ($tab = fgetcsv($fichier,1024,';','\'')) !== false ) {
 //            while (!feof($fichier)) {
@@ -914,7 +914,7 @@ class SuiviHydrobioController extends Controller {
                                     $autreDateDebut->sub(new \DateInterval('P7D'));
                                     $autreDateFin = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
                                     $autreDateFin->add(new \DateInterval('P7D'));
-                                    if ($datePrel >= $autreDateDebut or $datePrel <= $autreDateFin) {
+                                    if ($datePrel >= $autreDateDebut and $datePrel <= $autreDateFin) {
                                         $err = true;
                                         $contenu = 'ligne  ' . $ligne . '  : Date  (' . $datePrel->format('d/m/Y H:i') . ') doit être inférieure à ' . $autreDateDebut->format('d/m/Y H:i') . ' ou supérieure à  ' . $autreDateFin->format('d/m/Y H:i');
                                         $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
@@ -928,7 +928,7 @@ class SuiviHydrobioController extends Controller {
                             $suiviPrels = $prelevs[$j]['cmdSuiviPrelevs'];
                             $suiviPrelActuel = null;
                             for ($k = 0; $k < count($suiviPrels); $k++) {
-                                if ($k = 0) {
+                                if ($k == 0) {
                                     $suiviPrelActuel = $suiviPrels[$k];
                                 }
                                 $suiviPrel = $suiviPrels[$k];
@@ -939,6 +939,7 @@ class SuiviHydrobioController extends Controller {
                                     $contenu = 'ligne  ' . $ligne . '  :  suivi déja intégré ' . CHR(13) . CHR(10);
                                     $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                                     fputs($rapport, $contenu);
+                                    $k = count($suiviPrels) + 1;
                                 }
                             }
                         }
@@ -1008,7 +1009,7 @@ class SuiviHydrobioController extends Controller {
             fclose($rapport);
             fclose($fichier);
             unlink($pathBase . '/' . $name);
-            unlink($pathBase . '/trans.csv');
+            unlink($pathBase . '/trans-' . $user->getId() . '.csv');
         }
 
         $tabMessage = array();
@@ -1248,16 +1249,16 @@ class SuiviHydrobioController extends Controller {
                 }
             }
 
-            if ($pgCmdPrelev->getCodeSupport()->getCodeSupport() != '10') {
+            if ($pgCmdPrelev->getCodeSupport()->getCodeSupport() != '10' && $pgCmdPrelev->getCodeSupport()->getCodeSupport() != '11') {
                 $autrePgCmdPrelevs = $repoPgCmdPrelev->getAutrePrelevs($pgCmdPrelev);
                 for ($i = 0; $i < count($autrePgCmdPrelevs); $i++) {
                     $autreSuport = $autrePgCmdPrelevs[$i]['codeSupport'];
-                    if ($autreSuport != '10') {
+                    if ($autreSuport != '10' && $autreSuport != '11') {
                         $autreDateDebut = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
                         $autreDateDebut->sub(new \DateInterval('P7D'));
                         $autreDateFin = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
                         $autreDateFin->add(new \DateInterval('P7D'));
-                        if ($pgCmdSuiviPrel->getDatePrel() >= $autreDateDebut or $pgCmdSuiviPrel->getDatePrel() <= $autreDateFin) {
+                        if ($pgCmdSuiviPrel->getDatePrel() >= $autreDateDebut and $pgCmdSuiviPrel->getDatePrel() <= $autreDateFin) {
                             $err = true;
                             $contenu = 'Date  (' . $pgCmdSuiviPrel->getDatePrel()->format('d/m/Y H:i') . ') doit être inférieure à ' . $autreDateDebut->format('d/m/Y H:i') . ' ou supérieure à  ' . $autreDateFin->format('d/m/Y H:i');
                             $tabMessage[$nbMessages][0] = 'ko';
@@ -1298,6 +1299,7 @@ class SuiviHydrobioController extends Controller {
                     $tabMessage[$nbMessages][0] = 'ko';
                     $tabMessage[$nbMessages][1] = $contenu;
                     $nbMessages++;
+                    break;
                 }
             }
             if ($pgCmdSuiviPrelActuel) {

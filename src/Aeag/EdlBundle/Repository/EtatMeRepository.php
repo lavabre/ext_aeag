@@ -49,7 +49,10 @@ class EtatMeRepository extends EntityRepository {
 
         $query = "select p ";
         $query = $query . " from Aeag\EdlBundle\Entity\EtatMeProposed p";
-        $query = $query . " where p.euCd = '" . $euCd . "' and p.cdEtat = '" . $cdEtat . "'";
+          $query = $query . " , Aeag\EdlBundle\Entity\Utilisateur u";
+        $query = $query . " where upper(u.username) like 'STL%'";
+        $query = $query . " and u.id = p.utilisateur";
+        $query = $query . " and p.euCd = '" . $euCd . "' and p.cdEtat = '" . $cdEtat . "'";
         $query = $query . " order by p.propositionDate desc";
         $qb = $this->_em->createQuery($query);
         //print_r($query);
@@ -116,7 +119,10 @@ class EtatMeRepository extends EntityRepository {
 
         $query = "select p ";
         $query = $query . " from Aeag\EdlBundle\Entity\EtatMeProposed p";
-        $query = $query . " where p.euCd = '" . $euCd . "'";
+        $query = $query . " , Aeag\EdlBundle\Entity\Utilisateur u";
+        $query = $query . " where upper(u.username) like 'STL%'";
+        $query = $query . " and u.id = p.utilisateur";
+        $query = $query . " and p.euCd = '" . $euCd . "'";
         $query = $query . " order by p.propositionDate desc";
         $qb = $this->_em->createQuery($query);
         //print_r($query);

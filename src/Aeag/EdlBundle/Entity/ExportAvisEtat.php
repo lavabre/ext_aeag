@@ -76,6 +76,7 @@ class ExportAvisEtat {
      * @var string $cdEtat
      *
      * @ORM\Column(name="cd_etat", type="string", length=16, nullable=true)
+     * @ORM\Id
      */
     private $cdEtat;
 
@@ -83,6 +84,7 @@ class ExportAvisEtat {
      * @var string
      *
      * @ORM\Column(name="proposition_date", type="string", length=255, nullable=true)
+     * @ORM\Id
      */
     private $propositionDate;
 
@@ -141,6 +143,20 @@ class ExportAvisEtat {
      * @ORM\Column(name="e_propose_lib", type="text", nullable=true)
      */
     private $eProposeLib;
+
+    /**
+     * @var string $eRetenu
+     *
+     * @ORM\Column(name="e_retenu", type="string", length=255, nullable=true)
+     */
+    private $eRetenu;
+
+    /**
+     * @var string $eRetenuLib
+     *
+     * @ORM\Column(name="e_retenu_lib", type="text", nullable=true)
+     */
+    private $eRetenuLib;
 
     /**
      * @var string $commentaire
@@ -219,6 +235,14 @@ class ExportAvisEtat {
 
     function getEProposeLib() {
         return $this->eProposeLib;
+    }
+
+    function getERetenu() {
+        return $this->eRetenu;
+    }
+
+    function getERetenuLib() {
+        return $this->eRetenuLib;
     }
 
     function getCommentaire() {

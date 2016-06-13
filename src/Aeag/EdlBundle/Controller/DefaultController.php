@@ -44,8 +44,8 @@ class DefaultController extends Controller {
 
         if ($user) {
             $utilisateur = $repoUtilisateur->getUtilisateurByExtid($user->getId());
-        }else{
-           $utilisateur = null;
+        } else {
+            $utilisateur = null;
         }
 
         if (is_object($user) && ($this->get('security.authorization_checker')->isGranted('ROLE_ADMINEDL'))) {
@@ -81,7 +81,7 @@ class DefaultController extends Controller {
             $fic_import_etat = $repertoire . "/" . $nom_fichier_etat;
 //ouverture fichier
             $fic = fopen($fic_import_etat, "w");
-            $contenu = "eu_cd; type_me; nom_masse_eau; ct; ct_lib; uhr; uhr_lib; depts; cd_etat; proposition_date; groupe; libelle; e_sdage2016; e_sdage2016_lib; e_propose; e_propose_lib; commentaire\n";
+            $contenu = "eu_cd; type_me; nom_masse_eau; ct; ct_lib; uhr; uhr_lib; depts; cd_etat; proposition_date; groupe; libelle; e_sdage2016; e_sdage2016_lib; e_propose; e_propose_lib; e_retenu; e_retenu_lib; commentaire\n";
             fputs($fic, utf8_decode($contenu));
             foreach ($exportAvistEtats as $exportAvistEtat) {
                 $contenu = $exportAvistEtat->getEuCd() . ";";
@@ -100,6 +100,8 @@ class DefaultController extends Controller {
                 $contenu = $contenu . $exportAvistEtat->getESdage2016Lib() . ";";
                 $contenu = $contenu . $exportAvistEtat->getEpropose() . ";";
                 $contenu = $contenu . $exportAvistEtat->getEproposeLib() . ";";
+                 $contenu = $contenu . $exportAvistEtat->getERetenu() . ";";
+                $contenu = $contenu . $exportAvistEtat->getERetenuLib() . ";";
                 $contenu = $contenu . $exportAvistEtat->getCommentaire() . ";\n";
                 $contenu = str_replace(CHR(13) . CHR(10), "", $contenu);
                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
@@ -114,7 +116,7 @@ class DefaultController extends Controller {
             $fic_import_pression = $repertoire . "/" . $nom_fichier_pression;
 //ouverture fichier
             $fic = fopen($fic_import_pression, "w");
-            $contenu = "eu_cd; type_me; nom_masse_eau; ct; ct_lib; uhr; uhr_lib; depts; cd_pression; proposition_date; groupe; libelle; e_sdage2016; e_sdage2016_lib; e_propose; e_propose_lib; commentaire\n";
+            $contenu = "eu_cd; type_me; nom_masse_eau; ct; ct_lib; uhr; uhr_lib; depts; cd_pression; proposition_date; groupe; libelle; e_sdage2016; e_sdage2016_lib; e_propose; e_propose_lib; e_retenu; e_retenu_lib; commentaire\n";
             fputs($fic, utf8_decode($contenu));
             foreach ($exportAvistPressions as $exportAvisPression) {
                 $contenu = $exportAvisPression->getEuCd() . ";";
@@ -133,6 +135,8 @@ class DefaultController extends Controller {
                 $contenu = $contenu . $exportAvisPression->getPSdage2016Lib() . ";";
                 $contenu = $contenu . $exportAvisPression->getPpropose() . ";";
                 $contenu = $contenu . $exportAvisPression->getPproposeLib() . ";";
+                $contenu = $contenu . $exportAvisPression->getPRetenu() . ";";
+                $contenu = $contenu . $exportAvisPression->getPRetenuLib() . ";";
                 $contenu = $contenu . $exportAvisPression->getCommentaire() . ";\n";
                 $contenu = str_replace(CHR(13) . CHR(10), "", $contenu);
                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
@@ -169,11 +173,13 @@ class DefaultController extends Controller {
         $repoUtilisateur = $emEdl->getRepository('AeagEdlBundle:Utilisateur');
         $repoExportAvisEtat = $emEdl->getRepository('AeagEdlBundle:ExportAvisEtat');
         $repoExportAvisPression = $emEdl->getRepository('AeagEdlBundle:ExportAvisPression');
+        $repoEtatDerniereProposition = $emEdl->getRepository('AeagEdlBundle:EtatDerniereProposition');
+        $repoPressionDerniereProposition = $emEdl->getRepository('AeagEdlBundle:PressionDerniereProposition');
 
-         if ($user) {
+        if ($user) {
             $utilisateur = $repoUtilisateur->getUtilisateurByExtid($user->getId());
-        }else{
-           $utilisateur = null;
+        } else {
+            $utilisateur = null;
         }
 
 
@@ -284,7 +290,7 @@ class DefaultController extends Controller {
         } else {
             if (!empty($masseEaucle)) {
                 $where = $where . " and upper(a.nomMasseEau) LIKE '%" . strtoupper($masseEaucle) . "%'";
-                $whereCsv = $wherecsv . " and upper(a.nomMasseEau) LIKE '%" . strtoupper($masseEaucle) . "%'";
+                $whereCsv = $whereCsv . " and upper(a.nomMasseEau) LIKE '%" . strtoupper($masseEaucle) . "%'";
             };
         };
 
@@ -344,7 +350,7 @@ class DefaultController extends Controller {
         $exportAvistPressions = $repoExportAvisPression->getExportAvisPressionByWhere($whereCsv);
         $repertoire = "fichiers";
         $date_import = date('Ymd_His');
-         if ($utilisateur) {
+        if ($utilisateur) {
             $nom_fichier_etat = "ExportAvisEtat_" . $utilisateur->getUserName() . ".csv";
             $nom_fichier_pression = "ExportAvisPression_" . $utilisateur->getUserName() . ".csv";
         } else {
@@ -355,7 +361,7 @@ class DefaultController extends Controller {
             $fic_import_etat = $repertoire . "/" . $nom_fichier_etat;
 //ouverture fichier
             $fic = fopen($fic_import_etat, "w");
-            $contenu = "eu_cd; type_me; nom_masse_eau; ct; ct_lib; uhr; uhr_lib; depts; cd_etat; proposition_date; groupe; libelle; e_sdage2016; e_sdage2016_lib; e_propose; e_propose_lib; commentaire\n";
+            $contenu = "eu_cd; type_me; nom_masse_eau; ct; ct_lib; uhr; uhr_lib; depts; cd_etat; proposition_date; groupe; libelle; e_sdage2016; e_sdage2016_lib; e_propose; e_propose_lib; e_retenu; e_retenu_lib; commentaire\n";
             fputs($fic, utf8_decode($contenu));
             foreach ($exportAvistEtats as $exportAvistEtat) {
                 $contenu = $exportAvistEtat->getEuCd() . ";";
@@ -374,6 +380,8 @@ class DefaultController extends Controller {
                 $contenu = $contenu . $exportAvistEtat->getESdage2016Lib() . ";";
                 $contenu = $contenu . $exportAvistEtat->getEpropose() . ";";
                 $contenu = $contenu . $exportAvistEtat->getEproposeLib() . ";";
+                $contenu = $contenu . $exportAvistEtat->getERetenu() . ";";
+                $contenu = $contenu . $exportAvistEtat->getERetenuLib() . ";";
                 $contenu = $contenu . $exportAvistEtat->getCommentaire() . ";\n";
                 $contenu = str_replace(CHR(13) . CHR(10), "", $contenu);
                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
@@ -389,7 +397,7 @@ class DefaultController extends Controller {
             $fic_import_pression = $repertoire . "/" . $nom_fichier_pression;
 //ouverture fichier
             $fic = fopen($fic_import_pression, "w");
-            $contenu = "eu_cd; type_me; nom_masse_eau; ct; ct_lib; uhr; uhr_lib; depts; cd_pression; proposition_date; groupe; libelle; e_sdage2016; e_sdage2016_lib; e_propose; e_propose_lib; commentaire\n";
+            $contenu = "eu_cd; type_me; nom_masse_eau; ct; ct_lib; uhr; uhr_lib; depts; cd_pression; proposition_date; groupe; libelle; e_sdage2016; e_sdage2016_lib; e_propose; e_propose_lib; e_retenu; e_retenu_lib; commentaire\n";
             fputs($fic, utf8_decode($contenu));
             foreach ($exportAvistPressions as $exportAvisPression) {
                 $contenu = $exportAvisPression->getEuCd() . ";";
@@ -408,6 +416,8 @@ class DefaultController extends Controller {
                 $contenu = $contenu . $exportAvisPression->getPSdage2016Lib() . ";";
                 $contenu = $contenu . $exportAvisPression->getPpropose() . ";";
                 $contenu = $contenu . $exportAvisPression->getPproposeLib() . ";";
+                 $contenu = $contenu . $exportAvisPression->getPRetenu() . ";";
+                $contenu = $contenu . $exportAvisPression->getPRetenuLib() . ";";
                 $contenu = $contenu . $exportAvisPression->getCommentaire() . ";\n";
                 $contenu = str_replace(CHR(13) . CHR(10), "", $contenu);
                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
@@ -422,25 +432,33 @@ class DefaultController extends Controller {
         $res = array();
         $i = 0;
         foreach ($MasseEaux as $MasseEau) {
-            $repo = $emEdl->getRepository('AeagEdlBundle:EtatMe');
-            $etatMes = $repo->getDerniereProposition($MasseEau->getEuCd());
+
+            $etatMes = $repoEtatDerniereProposition->getDernierePropositionByEucd($MasseEau->getEuCd());
 
             if ($etatMes) {
                 $etatMe = $etatMes[0];
-                $etat_user = $etatMe->getUtilisateur();
+                $utilisateur = $repoUtilisateur->getUtilisateurByNom($etatMe->getUsername());
+                if ($utilisateur) {
+                    $etat_user = $utilisateur;
+                } else {
+                    $etat_user = null;
+                }
                 $etat_date = $etatMe->getpropositionDate();
             } else {
                 $etat_user = null;
                 $etat_date = null;
             };
 
-
-            $repo = $emEdl->getRepository('AeagEdlBundle:PressionMe');
-            $pressionMes = $repo->getDerniereProposition($MasseEau->getEuCd());
+            $pressionMes = $repoPressionDerniereProposition->getDernierePropositionByEucd($MasseEau->getEuCd());
 
             if ($pressionMes) {
                 $pressionMe = $pressionMes[0];
-                $pression_user = $pressionMe->getUtilisateur();
+                $utilisateur = $repoUtilisateur->getUtilisateurByNom($pressionMe->getUsername());
+                if ($utilisateur) {
+                    $pression_user = $utilisateur;
+                } else {
+                    $pression_user = null;
+                }
                 $pression_date = $pressionMe->getPropositionDate();
             } else {
                 $pression_user = null;
@@ -490,7 +508,8 @@ class DefaultController extends Controller {
         $meRepo = $emEdl->getRepository('AeagEdlBundle:MasseEau');
         $repoAvisHistorique = $emEdl->getRepository('AeagEdlBundle:AvisHistorique');
         $repoEtatMe = $emEdl->getRepository('AeagEdlBundle:EtatMe');
-
+        $repoEtatDerniereProposition = $emEdl->getRepository('AeagEdlBundle:EtatDerniereProposition');
+      
         $etatGroupes = $repo->getEtatGroupe();
 
         if (!$etatGroupes) {
@@ -534,12 +553,8 @@ class DefaultController extends Controller {
                     $tabEtats[$j]['proposeds'] = null;
                 }
 
-                $derniereProp = $repoEtatMe->getLastPropositionSuperviseur($etat->getEuCd(), $etat->getCdEtat());
-
-                if (!$derniereProp) {
-                    $derniereProp = $repoEtatMe->getLastProposition($etat->getEuCd(), $etat->getCdEtat());
-                }
-
+                $derniereProp = $repoEtatDerniereProposition->getDernierePropositionByEucdCdEtat($etat->getEuCd(), $etat->getCdEtat());
+             
                 if (!$derniereProp) {
                     $derniereProposition = null;
                 } else {
@@ -611,6 +626,7 @@ class DefaultController extends Controller {
         $meRepo = $emEdl->getRepository('AeagEdlBundle:MasseEau');
         $repoAvisHistorique = $emEdl->getRepository('AeagEdlBundle:AvisHistorique');
         $repoPressionMe = $emEdl->getRepository('AeagEdlBundle:PressionMe');
+         $repoPressionDerniereProposition = $emEdl->getRepository('AeagEdlBundle:PressionDerniereProposition');
 
 
         $pressionGroupes = $repo->getPressionGroupe();
@@ -656,16 +672,14 @@ class DefaultController extends Controller {
                     $tabPressions[$j]['proposeds'] = null;
                 }
 
-                $derniereProp = $repoPressionMe->getLastPropositionSuperviseur($pression->getEuCd(), $pression->getCdPression());
-
-                if (!$derniereProp) {
-                    $derniereProp = $repoPressionMe->getLastProposition($pression->getEuCd(), $pression->getCdPression());
-                }
-
+               $derniereProp = $repoPressionDerniereProposition->getDernierePropositionByEucdCdPression($pression->getEuCd(), $pression->getCdPression());
+             
+               
+         
                 if (!$derniereProp) {
                     $derniereProposition = null;
                 } else {
-                    $derniereProposition = $derniereProp[0];
+                   $derniereProposition = $derniereProp[0];
                 }
                 $tabPressions[$j]['derniereProp'] = $derniereProposition;
                 $j++;
@@ -673,7 +687,7 @@ class DefaultController extends Controller {
             $tabPressionGroupes[$i]['pressions'] = $tabPressions;
             $i++;
         }
-
+   
         return $this->render('AeagEdlBundle:Pression:pressionGroupe.html.twig', array(
                     'pressionGroupes' => $tabPressionGroupes,
                     'avisHistorique' => $avisHistorique,
@@ -693,6 +707,7 @@ class DefaultController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
 
+        $repoPressionDerniereProposition = $emEdl->getRepository('AeagEdlBundle:PressionDerniereProposition');
         $repo = $emEdl->getRepository('AeagEdlBundle:PressionGroupe');
         $pressionGroupe = $repo->findOneBy(array('cdGroupe' => $cdGroupe));
 
@@ -704,12 +719,9 @@ class DefaultController extends Controller {
         $i = 0;
         foreach ($pressions as $pression) {
             $tabPressions[$i]['pression'] = $pression;
-            $derniereProp = $repo->getLastPropositionSuperviseur($pression->getEuCd(), $pression->getCdPression());
-
-            if (!$derniereProp) {
-                $derniereProp = $repo->getLastProposition($pression->getEuCd(), $pression->getCdPression());
-            }
-
+         
+          $derniereProp = $repoPressionDerniereProposition->getDernierePropositionByEucdCdPression($pression->getEuCd(), $pression->getCdPression());
+           
             if (!$derniereProp) {
                 $derniereProposition = null;
             } else {
@@ -755,124 +767,7 @@ class DefaultController extends Controller {
         );
     }
 
-    public function impactAction($code = null, $cdGroupe = null) {
-
-
-        $request = $this->container->get('request');
-
-        $session = $request->getSession();
-
-        $repo = $this->getDoctrine()->getRepository('AeagEdlBundle:ImpactGroupe');
-        $impactGroupe = $repo->findOneBy(array('cdGroupe' => $cdGroupe));
-
-        $repo = $this->getDoctrine()->getRepository('AeagEdlBundle:ImpactMe');
-        $impacts = $repo->getImpactMe($code, $cdGroupe);
-        $nbImpacts = $repo->getNbImpactMe($code, $cdGroupe);
-
-
-        if ($session->get('UrlRetour') == '') {
-            $session->set('UrlRetour', $this->generateUrl('AeagEdlBundle_listeMasseEau', array('page' => 1)));
-        }
-
-
-        return $this->render('AeagEdlBundle:Impact:impact.html.twig', array(
-                    'impactGroupe' => $impactGroupe,
-                    'impacts' => $impacts,
-                    'nbImpacts' => $nbImpacts,
-                    'url' => $session->get('UrlRetour'),
-                        )
-        );
-    }
-
-    public function impactGroupeAction($code = null) {
-
-        $request = $this->container->get('request');
-
-        $session = $request->getSession();
-
-        $repo = $this->getDoctrine()->getRepository('AeagEdlBundle:ImpactGroupe');
-        $impactGroupes = $repo->getImpactGroupe();
-
-        if (!$impactGroupes) {
-            throw $this->createNotFoundException('Table ImpactGroupe non trouvée : ');
-        }
-
-        $meRepo = $this->getDoctrine()
-                ->getRepository('AeagEdlBundle:MasseEau');
-
-        $me = $meRepo->findOneBy(array('euCd' => $code));
-
-        if (!$me) {
-            throw $this->createNotFoundException('Masse d\'eau non trouvée : ' . $code);
-        }
-
-
-
-        return $this->render('AeagEdlBundle:Impact:impactGroupe.html.twig', array(
-                    'impactGroupes' => $impactGroupes,
-                    'me' => $me,
-                    'url' => $session->get('UrlRetour')
-                        )
-        );
-    }
-
-    public function risqueAction($code = null, $cdGroupe = null) {
-
-        $request = $this->container->get('request');
-
-        $session = $request->getSession();
-
-        $repo = $this->getDoctrine()->getRepository('AeagEdlBundle:RisqueGroupe');
-        $risqueGroupe = $repo->findOneBy(array('cdGroupe' => $cdGroupe));
-
-        $repo = $this->getDoctrine()->getRepository('AeagEdlBundle:RisqueMe');
-        $risques = $repo->getRisqueMe($code, $cdGroupe);
-        $nbRisques = $repo->getNbRisqueMe($code, $cdGroupe);
-
-        if ($session->get('UrlRetour') == '') {
-            $session->set('UrlRetour', $this->generateUrl('AeagEdlBundle_listeMasseEau', array('page' => 1)));
-        }
-
-
-        return $this->render('AeagEdlBundle:Risque:risque.html.twig', array(
-                    'risqueGroupe' => $risqueGroupe,
-                    'risques' => $risques,
-                    'nbRisques' => $nbRisques,
-                    'url' => $session->get('UrlRetour'),
-                        )
-        );
-    }
-
-    public function risqueGroupeAction($code = null) {
-
-        $request = $this->container->get('request');
-
-        $session = $request->getSession();
-
-        $repo = $this->getDoctrine()->getRepository('AeagEdlBundle:RisqueGroupe');
-        $risqueGroupes = $repo->getRisqueGroupe();
-
-        if (!$risqueGroupes) {
-            throw $this->createNotFoundException('Table RisqueGroupe non trouvée : ');
-        }
-
-        $meRepo = $this->getDoctrine()
-                ->getRepository('AeagEdlBundle:MasseEau');
-
-        $me = $meRepo->findOneBy(array('euCd' => $code));
-
-        if (!$me) {
-            throw $this->createNotFoundException('Masse d\'eau non trouvée : ' . $code);
-        }
-
-        return $this->render('AeagEdlBundle:Risque:risqueGroupe.html.twig', array(
-                    'risqueGroupes' => $risqueGroupes,
-                    'me' => $me,
-                    'url' => $session->get('UrlRetour')
-                        )
-        );
-    }
-
+ 
     public function contactAction() {
 
         $enquiry = new Contact();

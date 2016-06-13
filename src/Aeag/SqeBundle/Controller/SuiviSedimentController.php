@@ -43,7 +43,7 @@ class SuiviSedimentController extends Controller {
             $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByPresta($user);
         } else if ($user->hasRole('ROLE_PROGSQE')) {
             $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByProg($user);
-        }else if ($user->hasRole('ROLE_SQE')) {
+        } else if ($user->hasRole('ROLE_SQE')) {
             $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByAdmin();
         }
 
@@ -51,7 +51,7 @@ class SuiviSedimentController extends Controller {
         $i = 0;
         foreach ($pgProgLotAns as $pgProgLotAn) {
             $pgProgLot = $pgProgLotAn->getLot();
-             if ($pgProgLot->getTypeEchange() == 'Edilabo_SED'){
+            if ($pgProgLot->getTypeEchange() == 'Edilabo_SED') {
                 $pgProgLotPeriodeAns = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnByLotan($pgProgLotAn);
                 if (count($pgProgLotPeriodeAns) > 0) {
                     $trouve = false;
@@ -530,14 +530,14 @@ class SuiviSedimentController extends Controller {
                             $files = array();
                             $zip = new \ZipArchive();
                             $zipName = $tabStations[$k]['station']->getCode() . "-archive.zip";
-                            $contenu = 'le fichier  ' . $zipName .  ' regroupe ' . count($tabFichiers) . ' fichiers : ' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                            $contenu = 'le fichier  ' . $zipName . ' regroupe ' . count($tabFichiers) . ' fichiers : ' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
                             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                             fputs($rapport, $contenu);
                             for ($nb = 0; $nb < count($tabFichiers); $nb++) {
                                 array_push($files, $pathBase . '/' . $tabFichiers[$nb]);
-                               $contenu = '                  -  ' . $tabFichiers[$nb] . CHR(13) . CHR(10) . CHR(13) . CHR(10);
-                               $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                               fputs($rapport, $contenu);
+                                $contenu = '                  -  ' . $tabFichiers[$nb] . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                fputs($rapport, $contenu);
                             }
                             $zip->open($pathBase . '/' . $zipName, \ZipArchive::CREATE);
                             foreach ($files as $f) {
@@ -776,24 +776,24 @@ class SuiviSedimentController extends Controller {
 
         if ($valid) {
             $fichierIn = fopen($pathBase . '/' . $name, "r");
-            $fichierOut = fopen($pathBase . '/' . 'trans.csv', "w+");
+            $fichierOut = fopen($pathBase . '/' . 'trans-' . $user->getId() . '.csv', "w+");
             $rapport = fopen($pathBase . '/' . $user->getId() . '_' . $dateDepot->format('Y-m-d-H') . '_rapport.csv', "w+");
             $contenu = 'rapport d\'intégration du fichier : ' . $name . ' déposé le ' . $dateDepot->format('d/m/Y') . CHR(13) . CHR(10) . CHR(13) . CHR(10);
             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
             fputs($rapport, $contenu);
             $erreur = 0;
             $ligne = 0;
-            while ( ($n = fgets($fichierIn,1024)) !== false ) {
-                $n = str_replace(CHR(10),"",$n);  
-                $n = str_replace(CHR(13),"\r\n",$n); 
-               fputs($fichierOut, $n );
+            while (($n = fgets($fichierIn, 1024)) !== false) {
+                $n = str_replace(CHR(10), "", $n);
+                $n = str_replace(CHR(13), "\r\n", $n);
+                fputs($fichierOut, $n);
             }
             fclose($fichierIn);
             fclose($fichierOut);
             $ligne = 0;
-            $fichier = fopen($pathBase . '/' . 'trans.csv', "r");
-            $tab = fgetcsv($fichier,1024,';','\'');
-            while ( ($tab = fgetcsv($fichier,1024,';','\'')) !== false ) {
+            $fichier = fopen($pathBase . '/' . 'trans-' . $user->getId() . '.csv', "r");
+            $tab = fgetcsv($fichier, 1024, ';', '\'');
+            while (($tab = fgetcsv($fichier, 1024, ';', '\'')) !== false) {
 //            while (!feof($fichier)) {
 //                $tab = fgetcsv($fichier, 1024, ';');
                 if (count($tab) > 1) {
@@ -844,47 +844,47 @@ class SuiviSedimentController extends Controller {
                     $dateActuel = new \DateTime();
                     $dateActuel->add(new \DateInterval('P15D'));
                     $date = $tab[3];
-                   $tabDate = explode(' ',$date);
-                   if (count($tabDate) != 2){
+                    $tabDate = explode(' ', $date);
+                    if (count($tabDate) != 2) {
                         $err = true;
                         $contenu = 'ligne  ' . $ligne . '  :  date heure incorrecte (' . $date . ')' . CHR(13) . CHR(10);
                         $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                         fputs($rapport, $contenu);
-                   }else{
-                    list( $jour, $mois, $annee, $heure, $min ) = sscanf($date, "%d/%d/%d %d:%d");
-                    $datePrel = new \DateTime($annee . '-' . $mois . '-' . $jour . ' ' . $heure . ':' . $min . ':00');
-
-                    if (!$datePrel) {
-                        $err = true;
-                        $contenu = 'ligne  ' . $ligne . '  :  date heure incorrecte (' . $date . ')' . CHR(13) . CHR(10);
-                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                        fputs($rapport, $contenu);
-                    }
-                    if ($pgProgLot->getDelaiPrel()) {
-                        $dateFin = clone($pgProgLotPeriodeAn->getPeriode()->getDateDeb());
-                        $delai = $pgProgLot->getDelaiPrel();
-                        $dateFin->add(new \DateInterval('P' . $delai . 'D'));
                     } else {
-                        $dateFin = $pgProgLotPeriodeAn->getPeriode()->getDateFin();
-                    }
-                    if ($statutPrel == 'P') {
-                        if ($datePrel < $dateActuel or $datePrel > $dateFin) {
-                            $contenu = 'ligne  ' . $ligne . '  :  Avertissement date  (' . $datePrel->format('d/m/Y H:i') . ') non comprise entre ' . $dateActuel->format('d/m/Y H:i') . ' et ' . $dateFin->format('d/m/Y H:i') . CHR(13) . CHR(10);
-                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                            fputs($rapport, $contenu);
-                        }
-                    }
-                    $dateDebut = clone($pgProgLotPeriodeAn->getPeriode()->getDateDeb());
-                    $dateActuel = new \DateTime();
-                    if ($statutPrel != 'P') {
-                        if ($datePrel < $dateDebut or $datePrel > $dateActuel) {
+                        list( $jour, $mois, $annee, $heure, $min ) = sscanf($date, "%d/%d/%d %d:%d");
+                        $datePrel = new \DateTime($annee . '-' . $mois . '-' . $jour . ' ' . $heure . ':' . $min . ':00');
+
+                        if (!$datePrel) {
                             $err = true;
-                            $contenu = 'ligne  ' . $ligne . '  :   date  (' . $datePrel->format('d/m/Y H:i') . ') non comprise entre ' . $dateDebut->format('d/m/Y H:i') . ' et ' . $dateActuel->format('d/m/Y H:i') . CHR(13) . CHR(10);
+                            $contenu = 'ligne  ' . $ligne . '  :  date heure incorrecte (' . $date . ')' . CHR(13) . CHR(10);
                             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                             fputs($rapport, $contenu);
                         }
+                        if ($pgProgLot->getDelaiPrel()) {
+                            $dateFin = clone($pgProgLotPeriodeAn->getPeriode()->getDateDeb());
+                            $delai = $pgProgLot->getDelaiPrel();
+                            $dateFin->add(new \DateInterval('P' . $delai . 'D'));
+                        } else {
+                            $dateFin = $pgProgLotPeriodeAn->getPeriode()->getDateFin();
+                        }
+                        if ($statutPrel == 'P') {
+                            if ($datePrel < $dateActuel or $datePrel > $dateFin) {
+                                $contenu = 'ligne  ' . $ligne . '  :  Avertissement date  (' . $datePrel->format('d/m/Y H:i') . ') non comprise entre ' . $dateActuel->format('d/m/Y H:i') . ' et ' . $dateFin->format('d/m/Y H:i') . CHR(13) . CHR(10);
+                                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                fputs($rapport, $contenu);
+                            }
+                        }
+                        $dateDebut = clone($pgProgLotPeriodeAn->getPeriode()->getDateDeb());
+                        $dateActuel = new \DateTime();
+                        if ($statutPrel != 'P') {
+                            if ($datePrel < $dateDebut or $datePrel > $dateActuel) {
+                                $err = true;
+                                $contenu = 'ligne  ' . $ligne . '  :   date  (' . $datePrel->format('d/m/Y H:i') . ') non comprise entre ' . $dateDebut->format('d/m/Y H:i') . ' et ' . $dateActuel->format('d/m/Y H:i') . CHR(13) . CHR(10);
+                                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                fputs($rapport, $contenu);
+                            }
+                        }
                     }
-                }
 
                     $commentaire = $tab[4];
                     if ($statutPrel == 'P') {
@@ -916,7 +916,7 @@ class SuiviSedimentController extends Controller {
                                     $autreDateDebut->sub(new \DateInterval('P7D'));
                                     $autreDateFin = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
                                     $autreDateFin->add(new \DateInterval('P7D'));
-                                    if ($datePrel >= $autreDateDebut or $datePrel <= $autreDateFin) {
+                                    if ($datePrel >= $autreDateDebut and $datePrel <= $autreDateFin) {
                                         $err = true;
                                         $contenu = 'ligne  ' . $ligne . '  : Date  (' . $datePrel->format('d/m/Y H:i') . ') doit être inférieure à ' . $autreDateDebut->format('d/m/Y H:i') . ' ou supérieure à  ' . $autreDateFin->format('d/m/Y H:i');
                                         $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
@@ -930,7 +930,7 @@ class SuiviSedimentController extends Controller {
                             $suiviPrels = $prelevs[$j]['cmdSuiviPrelevs'];
                             $suiviPrelActuel = null;
                             for ($k = 0; $k < count($suiviPrels); $k++) {
-                                if ($k = 0) {
+                                if ($k == 0) {
                                     $suiviPrelActuel = $suiviPrels[$k];
                                 }
                                 $suiviPrel = $suiviPrels[$k];
@@ -941,6 +941,7 @@ class SuiviSedimentController extends Controller {
                                     $contenu = 'ligne  ' . $ligne . '  :  suivi déja intégré ' . CHR(13) . CHR(10);
                                     $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                                     fputs($rapport, $contenu);
+                                    $k = count($suiviPrels) + 1;
                                 }
                             }
                         }
@@ -1001,7 +1002,7 @@ class SuiviSedimentController extends Controller {
                     }
                 }
             }
-             $contenu = CHR(13) . CHR(10) . 'nombre de lignes traitées  : ' . $ligne . CHR(13) . CHR(10);
+            $contenu = CHR(13) . CHR(10) . 'nombre de lignes traitées  : ' . $ligne . CHR(13) . CHR(10);
             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
             fputs($rapport, $contenu);
             $contenu = 'nombre de lignes en erreur  : ' . $erreur . CHR(13) . CHR(10);
@@ -1010,7 +1011,7 @@ class SuiviSedimentController extends Controller {
             fclose($rapport);
             fclose($fichier);
             unlink($pathBase . '/' . $name);
-            unlink($pathBase . '/trans.csv');
+            unlink($pathBase . '/trans-' . $user->getId() . '.csv');
         }
 
         $tabMessage = array();
@@ -1250,16 +1251,16 @@ class SuiviSedimentController extends Controller {
                 }
             }
 
-            if ($pgCmdPrelev->getCodeSupport()->getCodeSupport() != '10') {
+            if ($pgCmdPrelev->getCodeSupport()->getCodeSupport() != '10' && $pgCmdPrelev->getCodeSupport()->getCodeSupport() != '11') {
                 $autrePgCmdPrelevs = $repoPgCmdPrelev->getAutrePrelevs($pgCmdPrelev);
                 for ($i = 0; $i < count($autrePgCmdPrelevs); $i++) {
                     $autreSuport = $autrePgCmdPrelevs[$i]['codeSupport'];
-                    if ($autreSuport != '10') {
+                    if ($autreSuport != '10' & $autreSuport != '11') {
                         $autreDateDebut = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
                         $autreDateDebut->sub(new \DateInterval('P7D'));
                         $autreDateFin = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
                         $autreDateFin->add(new \DateInterval('P7D'));
-                        if ($pgCmdSuiviPrel->getDatePrel() >= $autreDateDebut or $pgCmdSuiviPrel->getDatePrel() <= $autreDateFin) {
+                        if ($pgCmdSuiviPrel->getDatePrel() >= $autreDateDebut and $pgCmdSuiviPrel->getDatePrel() <= $autreDateFin) {
                             $err = true;
                             $contenu = 'Date  (' . $pgCmdSuiviPrel->getDatePrel()->format('d/m/Y H:i') . ') doit être inférieure à ' . $autreDateDebut->format('d/m/Y H:i') . ' ou supérieure à  ' . $autreDateFin->format('d/m/Y H:i');
                             $tabMessage[$nbMessages][0] = 'ko';
@@ -1300,6 +1301,7 @@ class SuiviSedimentController extends Controller {
                     $tabMessage[$nbMessages][0] = 'ko';
                     $tabMessage[$nbMessages][1] = $contenu;
                     $nbMessages++;
+                    break;
                 }
             }
             if ($pgCmdSuiviPrelActuel) {
@@ -1756,24 +1758,22 @@ class SuiviSedimentController extends Controller {
         readfile($chemin . '/' . $fichier);
         exit();
     }
-    
+
     public function planningAction() {
         return $this->render('AeagSqeBundle:SuiviSediment:planning.html.twig', array());
     }
-    
+
     public function planningTableAction() {
         $request = $this->get('request');
-        
+
         $semaine = $request->get('semaine');
         $annee = $request->get('annee');
         $jourSemaine = array();
-        for($day=1; $day<=7; $day++)
-        {
-            $jourSemaine[] = date('d F', strtotime($annee."W".$semaine.$day));
-            
+        for ($day = 1; $day <= 7; $day++) {
+            $jourSemaine[] = date('d F', strtotime($annee . "W" . $semaine . $day));
         }
-        
-        
+
+
         return $this->render('AeagSqeBundle:SuiviSediment:planningTable.html.twig', array("joursemaine" => $jourSemaine));
     }
 
