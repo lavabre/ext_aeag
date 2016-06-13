@@ -75,6 +75,7 @@ class PgCmdFichiersRpsRepository extends EntityRepository {
         $query .= " where suivi.phase = :phase";
         $query .= " and rps.typeFichier = 'RPS'";
         $query .= " and rps.suppr = 'N'";
+        $query .= " and rps.phaseFichier = :phase";
         $query .= " and lot.codeMilieu <> 'LPC'";
         $query .= " group by suivi.objId";
         $query .= " having DATE_ADD(max(suivi.datePhase),1, 'day') < CURRENT_TIMESTAMP()";
