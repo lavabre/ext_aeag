@@ -26,26 +26,27 @@ class BackUpProcessCommand extends AeagCommand {
         // Cohérence RAI/DAI
         $this->_phaseR15();
         
-        // TODO Phase 242
-        //$this->_phaseR42();
+        // Phase 216
+        // Cohérence RAI/DAI
+        $this->_phaseRX('R16', 'R15');
 
         // Phase 226
         // Cohérence RAI/DAI
-        $this->_phaseRX('R26');
+        $this->_phaseRX('R26', 'R25');
         
         // Phase 236
         // Controle Vraisemblance
-        $this->_phaseRX('R36');
+        $this->_phaseRX('R36', 'R25');
         
         // Phase 242
         // Intégration données brutes
-        $this->_phaseRX('R42');
+        $this->_phaseRX('R42', 'R40');
     }
 
     protected function _phaseR10() {
         // Repérer les fichier réponses ayant une phase R10 (210)
         $pgProgPhase = $this->repoPgProgPhases->findOneByCodePhase('R10');
-        $pgCmdFichiersRps = $this->repoPgCmdFichiersRps->findBy(array('typeFichier' => 'RPS', 'phaseFichier' => $pgProgPhase));
+        $pgCmdFichiersRps = $this->repoPgCmdFichiersRps->findBy(array('typeFichier' => 'RPS', 'phaseFichier' => $pgProgPhase, 'suppr' => 'N'));
         $cptPhaseR10Fait = 0;
         foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
             $chemin = $this->getContainer()->getParameter('repertoire_echange');
@@ -76,25 +77,16 @@ class BackUpProcessCommand extends AeagCommand {
 
     protected function _phaseR15() {
         $pgProgPhase = $this->repoPgProgPhases->findOneByCodePhase('R15');
-        //$pgCmdFichiersRps = $this->repoPgCmdFichiersRps->findBy(array('typeFichier' => 'RPS', 'phaseFichier' => $pgProgPhase));
-        $pgCmdFichiersRps = $this->repoPgCmdFichiersRps->getReponsesHorsLac($pgProgPhase);
+        //$pgCmdFichiersRps = $this->repoPgCmdFichiersRps->findBy(array('typeFichier' => 'RPS', 'suppr'=> 'N', 'phaseFichier' => $pgProgPhase), array('id' => 'ASC'));
+        $pgCmdFichiersRps = $this->repoPgCmdFichiersRps->getReponsesHorsLacBackup($pgProgPhase);
         $cptPhaseR15Fait = 0;
         foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
-            $pgProgSuiviPhases = $this->repoPgProgSuiviPhases->findOneBy(array('objId' => $pgCmdFichierRps->getId(), 'typeObjet' => 'RPS', 'phase' => $pgProgPhase), array('datePhase' => 'DESC'));
-            if (!is_null($pgProgSuiviPhases)) {
-                $dateDuJour = new \DateTime();
-
-                $datePhase = $pgProgSuiviPhases->getDatePhase();
-                $datePhase->add(new \DateInterval('P1D'));
-                if ($datePhase >= $dateDuJour) {
-                    $chemin = $this->getContainer()->getParameter('repertoire_echange');
-                    $pathBase = $this->getContainer()->get('aeag_sqe.process_rai')->getCheminEchange($chemin, $pgCmdFichierRps->getDemande(), $pgCmdFichierRps->getId());
-                    if ($this->getContainer()->get('aeag_sqe.process_rai')->envoiFichierValidationFormat($this->emSqe, $pgCmdFichierRps, $pathBase . '/' . $pgCmdFichierRps->getNomFichier())) {
-                        // Changement de la phase de la réponse 
-                        $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R15');
-                        $cptPhaseR15Fait++;
-                    }
-                }
+            $chemin = $this->getContainer()->getParameter('repertoire_echange');
+            $pathBase = $this->getContainer()->get('aeag_sqe.process_rai')->getCheminEchange($chemin, $pgCmdFichierRps->getDemande(), $pgCmdFichierRps->getId());
+            if ($this->getContainer()->get('aeag_sqe.process_rai')->envoiFichierValidationFormat($this->emSqe, $pgCmdFichierRps, $pathBase . '/' . $pgCmdFichierRps->getNomFichier())) {
+                // Changement de la phase de la réponse 
+                $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R15');
+                $cptPhaseR15Fait++;
             }
         }
 
@@ -102,10 +94,10 @@ class BackUpProcessCommand extends AeagCommand {
         $this->output->writeln($date->format('d/m/Y H:i:s') . '- BackUp Process : ' . $cptPhaseR15Fait . " RAI(s) en phase R15 traitée(s)");
     }
 
-    protected function _phaseRX($phase) {
-        $pgProgPhase = $this->repoPgProgPhases->findOneByCodePhase($phase);
-        $pgCmdFichiersRps = $this->repoPgCmdFichiersRps->findBy(array('typeFichier' => 'RPS', 'phaseFichier' => $pgProgPhase));
-        $cptPhaseR26Fait = 0;
+    protected function _phaseRX($phaseOrig, $phaseCible) {
+        $pgProgPhase = $this->repoPgProgPhases->findOneByCodePhase($phaseOrig);
+        $pgCmdFichiersRps = $this->repoPgCmdFichiersRps->findBy(array('typeFichier' => 'RPS', 'phaseFichier' => $pgProgPhase, 'suppr' => 'N'));
+        $cptPhaseRXFait = 0;
         foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
             // Vérifier le nombre de phase R26 déjà présente dans PgProgSuiviPhases
             $pgProgSuiviPhases = $this->repoPgProgSuiviPhases->findBy(array('objId' => $pgCmdFichierRps->getId(), 'typeObjet' => 'RPS', 'phase' => $pgProgPhase));
@@ -117,8 +109,8 @@ class BackUpProcessCommand extends AeagCommand {
                     $dateDuJour = new \DateTime();
                     // Date de la phase (suivi phase) + 24h < date du jour
                     if ($datePhase < $dateDuJour) {
-                        $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R25');
-                        $cptPhaseR26Fait++;
+                        $this->_updatePhaseFichierRps($pgCmdFichierRps, $phaseCible);
+                        $cptPhaseRXFait++;
                     }
                 }
             } else {
@@ -139,7 +131,7 @@ class BackUpProcessCommand extends AeagCommand {
         }
 
         $date = new \DateTime();
-        $this->output->writeln($date->format('d/m/Y H:i:s') . '- BackUp Process : ' . $cptPhaseR26Fait . " RAI(s) en phase " . $phase . " traitée(s)");
+        $this->output->writeln($date->format('d/m/Y H:i:s') . '- BackUp Process : ' . $cptPhaseRXFait . " RAI(s) en phase " . $phaseOrig . " traitée(s)");
     }
 
 }

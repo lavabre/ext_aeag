@@ -3,6 +3,7 @@ git checkout /base/extranet/preprod/ext_aeag/app/config/config_dev.yml
 git checkout /base/extranet/preprod/ext_aeag/app/config/parameters.yml
 git checkout /base/extranet/preprod/ext_aeag/app/config/parameters_dev.yml
 
+
 git pull
 
 cp -Rf /base/extranet/preprod/ext_aeag/app/config/config_preprod.yml /base/extranet/preprod/ext_aeag/app/config/config_dev.yml

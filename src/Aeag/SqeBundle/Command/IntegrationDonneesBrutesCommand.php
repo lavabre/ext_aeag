@@ -23,7 +23,7 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
         $this->output->writeln($date->format('d/m/Y H:i:s') . '- Integration Données Brutes : Début');
 
         // On récupère les RAIs dont les phases sont en R40 et R41
-        $pgCmdFichiersRps = $this->repoPgCmdFichiersRps->getReponsesValides();
+        $pgCmdFichiersRps = $this->repoPgCmdFichiersRps->getReponsesValidesDb();
 
         foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
             $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R42');
@@ -226,6 +226,8 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
                 }
             }
         }
+        
+        return true;
     }
 
 }

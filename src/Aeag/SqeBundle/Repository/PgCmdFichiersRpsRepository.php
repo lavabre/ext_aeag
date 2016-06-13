@@ -20,11 +20,11 @@ class PgCmdFichiersRpsRepository extends EntityRepository {
         $query .= " and rps.suppr = 'N'";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('demande', $demande);
-        $qb->setParameter('phase', array('R40','R41','R50','R51'));
+        $qb->setParameter('phase', array('R40','R41','R42','R45','R50','R51'));
         return $qb->getResult();
     }
     
-    public function getReponsesValides() {
+    public function getReponsesValidesDb() {
         $query = "select rps";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdFichiersRps rps, Aeag\SqeBundle\Entity\PgProgPhases pha";
         $query .= " where rps.phaseFichier = pha.id";
@@ -59,6 +59,28 @@ class PgCmdFichiersRpsRepository extends EntityRepository {
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('phase', $phase);
         $qb->setMaxResults(5);
+        return $qb->getResult();
+    }
+    
+    public function getReponsesHorsLacBackup($phase) {
+        $query = "select rps2";
+        $query .= " from Aeag\SqeBundle\Entity\PgCmdFichiersRps rps2";
+        $query .= " where rps2.id IN ( ";
+        $query .= " select suivi.objId";
+        $query .= " from Aeag\SqeBundle\Entity\PgProgSuiviPhases suivi";
+        $query .= " join Aeag\SqeBundle\Entity\PgCmdFichiersRps rps with rps.id = suivi.objId";
+        $query .= " join rps.demande dmd";
+        $query .= " join dmd.lotan lotan";
+        $query .= " join lotan.lot lot";
+        $query .= " where suivi.phase = :phase";
+        $query .= " and rps.typeFichier = 'RPS'";
+        $query .= " and rps.suppr = 'N'";
+        $query .= " and lot.codeMilieu <> 'LPC'";
+        $query .= " group by suivi.objId";
+        $query .= " having DATE_ADD(max(suivi.datePhase),1, 'day') < CURRENT_TIMESTAMP()";
+        $query .= " order by suivi.objId)";
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('phase', $phase);
         return $qb->getResult();
     }
 }
