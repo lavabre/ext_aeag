@@ -76,6 +76,7 @@ class ExportAvisEtat {
      * @var string $cdEtat
      *
      * @ORM\Column(name="cd_etat", type="string", length=16, nullable=true)
+     * @ORM\Id
      */
     private $cdEtat;
 
@@ -83,6 +84,7 @@ class ExportAvisEtat {
      * @var string
      *
      * @ORM\Column(name="proposition_date", type="string", length=255, nullable=true)
+     * @ORM\Id
      */
     private $propositionDate;
 

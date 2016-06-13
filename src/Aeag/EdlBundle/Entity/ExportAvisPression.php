@@ -76,6 +76,7 @@ class ExportAvisPression {
      * @var string $cdPression
      *
      * @ORM\Column(name="cd_pression", type="string", length=16, nullable=true)
+     * @ORM\Id
      */
     private $cdPression;
 
@@ -83,6 +84,7 @@ class ExportAvisPression {
      * @var string
      *
      * @ORM\Column(name="proposition_date", type="string", length=255, nullable=true)
+     * @ORM\Id
      */
     private $propositionDate;
 
