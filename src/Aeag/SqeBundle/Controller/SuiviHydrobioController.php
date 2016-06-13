@@ -928,7 +928,7 @@ class SuiviHydrobioController extends Controller {
                             $suiviPrels = $prelevs[$j]['cmdSuiviPrelevs'];
                             $suiviPrelActuel = null;
                             for ($k = 0; $k < count($suiviPrels); $k++) {
-                                if ($k = 0) {
+                                if ($k == 0) {
                                     $suiviPrelActuel = $suiviPrels[$k];
                                 }
                                 $suiviPrel = $suiviPrels[$k];
@@ -939,6 +939,7 @@ class SuiviHydrobioController extends Controller {
                                     $contenu = 'ligne  ' . $ligne . '  :  suivi déja intégré ' . CHR(13) . CHR(10);
                                     $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                                     fputs($rapport, $contenu);
+                                    $k = count($suiviPrels) + 1;
                                 }
                             }
                         }
@@ -1298,6 +1299,7 @@ class SuiviHydrobioController extends Controller {
                     $tabMessage[$nbMessages][0] = 'ko';
                     $tabMessage[$nbMessages][1] = $contenu;
                     $nbMessages++;
+                    break;
                 }
             }
             if ($pgCmdSuiviPrelActuel) {
