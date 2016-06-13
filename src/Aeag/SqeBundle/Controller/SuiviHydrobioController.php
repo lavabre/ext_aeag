@@ -774,7 +774,7 @@ class SuiviHydrobioController extends Controller {
 
         if ($valid) {
             $fichierIn = fopen($pathBase . '/' . $name, "r");
-            $fichierOut = fopen($pathBase . '/' . 'trans.csv', "w+");
+            $fichierOut = fopen($pathBase . '/' . 'trans-' . $user->getId() . '.csv', "w+");
             $rapport = fopen($pathBase . '/' . $user->getId() . '_' . $dateDepot->format('Y-m-d-H') . '_rapport.csv', "w+");
             $contenu = 'rapport d\'intégration du fichier : ' . $name . ' déposé le ' . $dateDepot->format('d/m/Y') . CHR(13) . CHR(10) . CHR(13) . CHR(10);
             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
@@ -789,7 +789,7 @@ class SuiviHydrobioController extends Controller {
             fclose($fichierIn);
             fclose($fichierOut);
             $ligne = 0;
-            $fichier = fopen($pathBase . '/' . 'trans.csv', "r");
+            $fichier = fopen($pathBase . '/' . 'trans-' . $user->getId() . '.csv', "r");
             $tab = fgetcsv($fichier,1024,';','\'');
             while ( ($tab = fgetcsv($fichier,1024,';','\'')) !== false ) {
 //            while (!feof($fichier)) {
@@ -1009,7 +1009,7 @@ class SuiviHydrobioController extends Controller {
             fclose($rapport);
             fclose($fichier);
             unlink($pathBase . '/' . $name);
-            unlink($pathBase . '/trans.csv');
+            unlink($pathBase . '/trans-' . $user->getId() . '.csv');
         }
 
         $tabMessage = array();
