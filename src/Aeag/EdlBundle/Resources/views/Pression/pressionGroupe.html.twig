@@ -134,7 +134,7 @@
                                                 <table class="table table-hover" id='idtable-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}'>
                                                     <tr class="info">
                                                         <td width="1%" nowrap>
-                                                            {% if  is_granted("ROLE_COMMENTATEUREDL") %}
+                                                            {% if  is_granted("ROLE_COMMENTATEUREDL") and tabPression.pression.cdPression != 'PP_STEP' %}
                                                              <a id="newPression-{{ pressionGroupe.pressionGroupe.cdGroupe }}-{{ tabPression.pression.euCd }}-{{ tabPression.pression.cdPression }}" title="Proposer une nouvelle évaluation" cdPression="{{ tabPression.pression.cdPression }}">
                                                                     <button type="button" class="btn btn-primary"><i class="fa fa-commenting"></i></button> 
                                                                 </a>

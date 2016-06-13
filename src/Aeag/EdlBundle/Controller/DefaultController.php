@@ -453,7 +453,7 @@ class DefaultController extends Controller {
 
             if ($pressionMes) {
                 $pressionMe = $pressionMes[0];
-                $utilisateur = $repoUtilisateur->getUtilisateurByNom($etatMe->getUsername());
+                $utilisateur = $repoUtilisateur->getUtilisateurByNom($pressionMe->getUsername());
                 if ($utilisateur) {
                     $pression_user = $utilisateur;
                 } else {
