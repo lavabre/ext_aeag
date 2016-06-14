@@ -7,73 +7,73 @@ aeag_edl:
         methods:  GET|POST
         
 AeagEdlBundle_rechercherMasseEau:
-    path: /avis/masseEau/rechercher
+    path: /masseEau/rechercher
     defaults: { _controller: AeagEdlBundle:Default:rechercherMasseEau }
     requirements:
          methods: POST
       
 AeagEdlBundle_listeMasseEau:
-    path: /avis/ListeEtat
+    path: /ListeEtat
     defaults: { _controller: "AeagEdlBundle:Default:listeMasseEau" }
     
     
 
 AeagEdlBundle_etatGroupe:
-    path:  /avis/etatgroupe/{code}
+    path:  /etatgroupe/{code}
     defaults: { _controller: AeagEdlBundle:Default:etatGroupe }
     
 AeagEdlBundle_etat:
-    path:  /avis/etat/{code}
+    path:  /etat/{code}
     defaults: { _controller: AeagEdlBundle:Default:etat }
     
 AeagEdlBundle_etatListProposed:
-    path:  /avis/etatListProposed
+    path:  /etatListProposed
     defaults: { _controller: AeagEdlBundle:Etat:etatListProposed }        
     
 AeagEdlBundle_removeEtat:
-    path:  /avis/removeEtat
+    path:  /removeEtat
     defaults: { _controller: AeagEdlBundle:Etat:removeEtat }
     
 AeagEdlBundle_etatForm:
-    path:  /avis/etatForm
+    path:  /etatForm
     defaults: { _controller: AeagEdlBundle:Etat:etatForm }
 
 AeagEdlBundle_etatSubmit:
-    path:  /avis/etatSubmit
+    path:  /etatSubmit
     defaults: { _controller: AeagEdlBundle:Etat:etatSubmit }    
     
 AeagEdlBundle_ExportEtat:
-    path:  /avis/etatExport
+    path:  /etatExport
     defaults: { _controller: AeagEdlBundle:Default:exportEtat }    
     
     
     
 AeagEdlBundle_pressionGroupe:
-    path:  /avis/pressiongroupe/{code}
+    path:  /pressiongroupe/{code}
     defaults: { _controller: AeagEdlBundle:Default:pressionGroupe }
     
 AeagEdlBundle_pression:
-    path:  /avis/pression/{code}
+    path:  /pression/{code}
     defaults: { _controller: AeagEdlBundle:Default:pression }
     
 AeagEdlBundle_pressionForm:
-    path:  /avis/pressionForm
+    path:  /pressionForm
     defaults: { _controller: AeagEdlBundle:Pression:pressionForm }
     
 AeagEdlBundle_pressionSubmit:
-    path:  /avis/pressionSubmit
+    path:  /pressionSubmit
     defaults: { _controller: AeagEdlBundle:Pression:pressionSubmit }    
     
 AeagEdlBundle_pressionListProposed:
-    path:  /avis/pressionListProposed
+    path:  /pressionListProposed
     defaults: { _controller: AeagEdlBundle:Pression:pressionListProposed }        
     
 AeagEdlBundle_removePression:
-    path:  /avis/removePression
+    path:  /removePression
     defaults: { _controller: AeagEdlBundle:Pression:removePression }
     
 AeagEdlBundle_ExportPression:
-    path:  /avis/pressionExport
+    path:  /pressionExport
     defaults: { _controller: AeagEdlBundle:Default:exportPression }    
      
         
@@ -84,7 +84,7 @@ AeagEdlBundle_contact:
         methods:  GET|POST
 
 AeagEdlBundle_massedeau:
-    path:  /avis/massedeau/{code}
+    path:  /massedeau/{code}
     defaults: { _controller: AeagEdlBundle:Default:massedeau }
     
 
