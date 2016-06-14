@@ -9,26 +9,24 @@
 
 {%block panel_heading %}
     <div class="row">
-        <div class="col-md-offset-3 col-md-6">
-                <h3 class="page-title">
-                    Sélection
-                </h3>
+        <div class="col-sm-offset-2 col-sm-7">
+            <h3 class="page-title">
+                Sélection
+            </h3>
         </div>
-      {% if  fichierEtat %}
-            <div class="col-md-1">
-                    <a class="btn btn-primary" href="{{ asset('fichiers/') }}{{ fichierEtat }}">
-                       <i class="fa fa-file-excel-o "> Export Etat</i>
-                   </a>
-             </div>
-            {% endif %}
-            {% if  fichierPression%}
-            <div class="col-md-1">
-                    <a class="btn btn-primary" href="{{ asset('fichiers/') }}{{ fichierPression }}">
-                       <i class="fa fa-file-excel-o "> Export Pression</i>
-                   </a>
-             </div>
-            {% endif %}
-    </div>
+        <div  class="col-sm-3 input-group">
+                     <div id="idBtExportEtat" class="col-sm-5">
+                       <a class="btn btn-primary" id="idExportEtat" href="#" title="Générer Etat">
+                           <i class="fa fa-file-excel-o "> Générer Etat </i>
+                       </a>
+                   </div>
+                    <div id="idBtExportPression" class="col-sm-3">
+                       <a class="btn btn-primary" id="idExportPression" href="#" title="Générer Pression">
+                           <i class="fa fa-file-excel-o "> Générer Pression</i>
+                       </a>
+                   </div>
+         </div>
+       </div>
 {%endblock panel_heading %}
 
 {% block content %}
@@ -125,10 +123,10 @@
                 <button type="submit" class="btn btn-success"><i class="fa fa-search"></i>&nbsp;Rechercher</button>
             </div>
         </div>     
-        
-         <div class="hide">
-             {{ form_rest(form) }}
-         </div>  
+
+        <div class="hide">
+            {{ form_rest(form) }}
+        </div>  
 
     </form>
 
@@ -170,6 +168,38 @@
     $("#masseeaurecherche_territoirecle").removeAttr('checked');
     }
     ;
+
+    $(document).on('click', '#idExportEtat',function(e){
+    e.preventDefault();
+    $('#modaProgression').modal('show');
+    html = 'Génération du fichier csv en cours';
+    $('#idProgress').empty().append(html);
+    var url = '{{ path('AeagEdlBundle_ExportEtat') }}'; 
+    $.ajax({
+    url: url,
+    type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+    success: function(html) { // Je récupère la réponse du fichier PHP
+    $('#idBtExportEtat').empty().append(html);
+    $('#modaProgression').modal('hide');
+    }
+    });
+    });
+    
+    $(document).on('click', '#idExportPression',function(e){
+    e.preventDefault();
+    $('#modaProgression').modal('show');
+    html = 'Génération du fichier csv en cours';
+    $('#idProgress').empty().append(html);
+    var url = '{{ path('AeagEdlBundle_ExportPression') }}'; 
+    $.ajax({
+    url: url,
+    type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+    success: function(html) { // Je récupère la réponse du fichier PHP
+    $('#idBtExportPression').empty().append(html);
+    $('#modaProgression').modal('hide');
+    }
+    });
+    });
 
 
     });

@@ -6,116 +6,146 @@
         <a href="{{ path('aeag_edl') }}">Recherche</a> 
     </li>
     <li class="active">
-         Résultat
+        Résultat
     </li>
 {% endblock breadcrumb %}
 
 {%block panel_heading %}
-     <div class="row">
-            <div class="col-md-offset-3 col-md-6">
-                    <h3 class="page-title">
-                        <table>
-                            {% if Selection.dept %}
-                              <tr><td>Département :  {{Selection.dept }}</td></tr>
-                             {% endif %}
-                             {% if Selection.type %}
-                              <tr><td>Type :  {{ Selection.type }}</td></tr>
-                             {% endif %}
-                             {% if Selection.code %}
-                              <tr><td>Code :  {{ Selection.code }}</td></tr>
-                             {% endif %}
-                             {% if Selection.masseEau %}
-                              <tr><td>Masse d'eau :  {{ Selection.masseEau }}</td></tr>
-                             {% endif %}
-                              {% if Selection.territoire == 'O' %}
-                              <tr><td>Mes Masses d'eau</td></tr>
-                             {% endif %}
-                        </table>
-                   </h3>
-            </div>
-            {% if  Selection.FichierEtat%}
-            <div class="col-md-1">
-                    <a class="btn btn-primary" href="{{ asset('fichiers/') }}{{ Selection.FichierEtat }}">
-                       <i class="fa fa-file-excel-o "> Export Etat</i>
-                   </a>
-             </div>
-            {% endif %}
-            {% if  Selection.FichierPression%}
-            <div class="col-md-2">
-                    <a class="btn btn-primary" href="{{ asset('fichiers/') }}{{ Selection.FichierPression }}">
-                       <i class="fa fa-file-excel-o "> Export Pression</i>
-                   </a>
-             </div>
-            {% endif %}
+    <div class="row">
+        <div class="col-md-offset-3 col-md-6">
+            <h3 class="page-title">
+                <table>
+                    {% if Selection.dept %}
+                        <tr><td>Département :  {{Selection.dept }}</td></tr>
+                    {% endif %}
+                    {% if Selection.type %}
+                        <tr><td>Type :  {{ Selection.type }}</td></tr>
+                    {% endif %}
+                    {% if Selection.code %}
+                        <tr><td>Code :  {{ Selection.code }}</td></tr>
+                    {% endif %}
+                    {% if Selection.masseEau %}
+                        <tr><td>Masse d'eau :  {{ Selection.masseEau }}</td></tr>
+                    {% endif %}
+                    {% if Selection.territoire == 'O' %}
+                        <tr><td>Mes Masses d'eau</td></tr>
+                    {% endif %}
+                </table>
+            </h3>
+        </div>
+        <div  class="col-sm-3 input-group">
+                     <div id="idBtExportEtat" class="col-sm-5">
+                       <a class="btn btn-primary" id="idExportEtat" href="#" title="Générer Etat">
+                           <i class="fa fa-file-excel-o "> Générer Etat </i>
+                       </a>
+                   </div>
+                    <div id="idBtExportPression" class="col-sm-3">
+                       <a class="btn btn-primary" id="idExportPression" href="#" title="Générer Pression">
+                           <i class="fa fa-file-excel-o "> Générer Pression</i>
+                       </a>
+                   </div>
+         </div>
     </div>
-   
+
 {%endblock panel_heading %}
 
 {% block content %}
 
- <div class="block-border">
+    <div class="block-border">
 
-<div align="center">
+        <div align="center">
 
-<table class="table table-bordered table-condensed table-advance" id="idTable">
+            <table class="table table-bordered table-condensed table-advance" id="idTable">
 
-    <thead>
-        <tr>
-            <th width="1%">Actions</th>
-            <th>Code</th> 
-            <th>Masse d'eau</th>
-            <th> Dernier intervenant</th>
-            <th>Date d'intervention</th>
-         </tr>
-    </thead>
-    <tbody>
-   
-    {% for entity in MasseEau %}
-            <tr>
-                  <td>
-                    <a id="id_{{ entity.euCd }}" class="btn btn-primary btn-demandes" href="{{ path('AeagEdlBundle_etatGroupe', { 'code': entity.euCd}) }}" title="Détail">
-                        <i class="fa fa-eye"></i> 
-                    </a>
-                </td>
-                <td>{{ entity.euCd }}&nbsp;&nbsp;</td>
-                <td nowrap>{{ entity.nomMasseEau }}</td>
-                {% if entity.der_user == "" %}
-                   <td></td>
-                 {% else %}
-                  <td>{{ entity.der_user.username }}</td>
-                {%endif %}
-                {% if entity.der_date == "" %}
-                   <td></td>
-                 {% else %}
-                  <td>{{entity.der_date | date("Y/m/d H:i") }}</td>
-                {%endif %}
-            </tr>
-  
-    {% endfor %}
-        </tbody>
-    </table>
+                <thead>
+                    <tr>
+                        <th width="1%">Actions</th>
+                        <th>Code</th> 
+                        <th>Masse d'eau</th>
+                        <th> Dernier intervenant</th>
+                        <th>Date d'intervention</th>
+                    </tr>
+                </thead>
+                <tbody>
 
-  </div>
-</div>
-    
-       
+                    {% for entity in MasseEau %}
+                        <tr>
+                            <td>
+                                <a id="id_{{ entity.euCd }}" class="btn btn-primary btn-demandes" href="{{ path('AeagEdlBundle_etatGroupe', { 'code': entity.euCd}) }}" title="Détail">
+                                    <i class="fa fa-eye"></i> 
+                                </a>
+                            </td>
+                            <td>{{ entity.euCd }}&nbsp;&nbsp;</td>
+                            <td nowrap>{{ entity.nomMasseEau }}</td>
+                            {% if entity.der_user == "" %}
+                                <td></td>
+                            {% else %}
+                                <td>{{ entity.der_user.username }}</td>
+                            {%endif %}
+                            {% if entity.der_date == "" %}
+                                <td></td>
+                            {% else %}
+                                <td>{{entity.der_date | date("Y/m/d H:i") }}</td>
+                            {%endif %}
+                        </tr>
+
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+
 {% endblock  content%}
 
 
 {% block scripts %}
     jQuery(document).ready(function() {
-        var table = $('#idTable').DataTable(
-            {"stateSave": false,
-             "order": [[ 1, "asc" ]],
-            "language": {
-                                 "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
-                             },
-            "aLengthMenu": [
-                                [10, 25, 50, 100, -1],
-                                [10, 25, 50, 100, "Tous"]
-                            ],
-             "iDisplayLength": 10
-           });
+    var table = $('#idTable').DataTable(
+    {"stateSave": false,
+    "order": [[ 1, "asc" ]],
+    "language": {
+    "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
+    },
+    "aLengthMenu": [
+    [10, 25, 50, 100, -1],
+    [10, 25, 50, 100, "Tous"]
+    ],
+    "iDisplayLength": 10
+    });
+    });
+
+    $(document).on('click', '#idExportEtat',function(e){
+    e.preventDefault();
+    $('#modaProgression').modal('show');
+    html = 'Génération du fichier csv en cours';
+    $('#idProgress').empty().append(html);
+    var url = '{{ path('AeagEdlBundle_ExportEtat') }}'; 
+    $.ajax({
+    url: url,
+    type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+    success: function(html) { // Je récupère la réponse du fichier PHP
+    $('#idBtExportEtat').empty().append(html);
+    $('#modaProgression').modal('hide');
+    }
+    });
     });
     
+     $(document).on('click', '#idExportPression',function(e){
+    e.preventDefault();
+    $('#modaProgression').modal('show');
+    html = 'Génération du fichier csv en cours';
+    $('#idProgress').empty().append(html);
+    var url = '{{ path('AeagEdlBundle_ExportPression') }}'; 
+    $.ajax({
+    url: url,
+    type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+    success: function(html) { // Je récupère la réponse du fichier PHP
+    $('#idBtExportPression').empty().append(html);
+    $('#modaProgression').modal('hide');
+    }
+    });
+    });
+
 {%endblock scripts %}

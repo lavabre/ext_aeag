@@ -42,6 +42,10 @@ AeagEdlBundle_etatSubmit:
     path:  /avis/etatSubmit
     defaults: { _controller: AeagEdlBundle:Etat:etatSubmit }    
     
+AeagEdlBundle_ExportEtat:
+    path:  /avis/etatExport
+    defaults: { _controller: AeagEdlBundle:Default:exportEtat }    
+    
     
     
 AeagEdlBundle_pressionGroupe:
@@ -67,6 +71,10 @@ AeagEdlBundle_pressionListProposed:
 AeagEdlBundle_removePression:
     path:  /avis/removePression
     defaults: { _controller: AeagEdlBundle:Pression:removePression }
+    
+AeagEdlBundle_ExportPression:
+    path:  /avis/pressionExport
+    defaults: { _controller: AeagEdlBundle:Default:exportPression }    
      
         
 AeagEdlBundle_contact:
