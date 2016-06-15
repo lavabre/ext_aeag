@@ -41,7 +41,7 @@ class EtatController extends Controller {
                 ->add('euCd', 'hidden')
                 ->add('cdEtat', 'hidden')
                 ->add('valeur', 'hidden')
-                ->add('commentaire', 'textarea')
+                ->add('commentaire', 'textarea', array('required' => true))
                 ->getForm();
 
         $derniereProps = $repoEtatDerniereProposition->getDernierePropositionByEucdCdEtat($euCd, $cdEtat);

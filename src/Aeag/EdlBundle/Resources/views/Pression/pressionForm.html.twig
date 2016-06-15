@@ -24,8 +24,8 @@
         <span id="{{ cdPression|e }}_3" p="3" class="dce_pression_3 unselected">Pression significative</span>
     {%endif%} 
     </br></br>
-    <h3>{{ form_label(form.commentaire, 'Saisir un commentaire et éventuellement vos coordonnées') }}</h3></p>
-<textarea id="commentaire" cols=60, rows=5 wrap="soft" onkeyup="EnvoyerCommentaire(this)" ></textarea>
+    <h3>{{ form_label(form.commentaire, 'Saisir un commentaire') }}</h3></p>
+<textarea id="commentaire" cols=60, rows=5 wrap="soft"  placeholder="Organisme-Nom : commentaire" onkeyup="EnvoyerCommentaire(this)" ></textarea>
 </form>
 
 <script type="text/javascript">
