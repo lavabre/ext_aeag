@@ -97,6 +97,7 @@ security:
            # PAGES ACCESSIBLES À TOUS
          - { path: ^/aide*, role: IS_AUTHENTICATED_ANONYMOUSLY }
          - { path: ^/die*, role: IS_AUTHENTICATED_ANONYMOUSLY }
+         - { path: ^/avis*, role: IS_AUTHENTICATED_ANONYMOUSLY }
          #- { path: ^/.*, role: IS_AUTHENTICATED_ANONYMOUSLY }
          #- { path: ^/*, role: IS_AUTHENTICATED_ANONYMOUSLY }
      

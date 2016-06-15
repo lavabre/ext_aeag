@@ -116,10 +116,10 @@ class PressionController extends Controller {
 
         if ($derniereProps) {
             $derniereProp = $derniereProps[0];
-            $msg = "Proposition :<span class='dce_pression_" . $derniereProp->getValeur() . "'>" . $derniereProp->getValueLib() . "</span>";
+            $msg = "Proposition :<span class='dce_pression_" . $derniereProp->getValeur() . "'>" . $derniereProp->getValueLib() ;
         } else {
             $derniereProp = null;
-             $msg = "Proposition :<span class='dce_pression_" . $proposed->getValeur() . "'>" . $proposed->getValueLib() . "</span>";
+             $msg = "Proposition :";
         }
          return new Response(json_encode($msg));
         } catch (Exception $e) {

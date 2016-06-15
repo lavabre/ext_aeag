@@ -42,7 +42,7 @@ class SuiviHydrobioController extends Controller {
             $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByPresta($user);
         } else if ($user->hasRole('ROLE_PROGSQE')) {
             $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByProg($user);
-        }else if ($user->hasRole('ROLE_SQE')) {
+        } else if ($user->hasRole('ROLE_SQE')) {
             $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByAdmin();
         }
 
@@ -520,6 +520,28 @@ class SuiviHydrobioController extends Controller {
                 }
             }
 
+            for ($k = 0; $k < count($tabStations); $k++) {
+                if (count($tabStations[$k]['fichiers'])) {
+                    $tabFichiers = $tabStations[$k]['fichiers'];
+                    if (count($tabFichiers) > 3) {
+                        $contenu = 'La station  ' . $tabStations[$k]['station']->getCode() . ' ne doit pas regrouper plus de 3 fichiers ' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                        fputs($rapport, $contenu);
+                        $erreur = 1;
+                    } elseif (count($tabFichiers) > 1) {
+                        for ($nb = 0; $nb < count($tabFichiers); $nb++) {
+                            $tabNomFichier = explode('-', $tabFichiers[$nb]);
+                            if ($tabNomFichier[1] != 'FT' && $tabNomFichier[1] != 'photo1' && $tabNomFichier[1] != 'photo2') {
+                                $contenu = 'La station  ' . $tabStations[$k]['station']->getCode() . ' ne doit pas regrouper  le fichier :  ' . $tabFichiers[$nb] . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                fputs($rapport, $contenu);
+                                $erreur = 1;
+                            };
+                        }
+                    }
+                }
+            }
+
             if ($erreur == 0) {
                 for ($k = 0; $k < count($tabStations); $k++) {
                     if (count($tabStations[$k]['fichiers'])) {
@@ -528,14 +550,14 @@ class SuiviHydrobioController extends Controller {
                             $files = array();
                             $zip = new \ZipArchive();
                             $zipName = $tabStations[$k]['station']->getCode() . "-archive.zip";
-                            $contenu = 'le fichier  ' . $zipName .  ' regroupe ' . count($tabFichiers) . ' fichiers : ' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                            $contenu = 'le fichier  ' . $zipName . ' regroupe ' . count($tabFichiers) . ' fichiers : ' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
                             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                             fputs($rapport, $contenu);
                             for ($nb = 0; $nb < count($tabFichiers); $nb++) {
                                 array_push($files, $pathBase . '/' . $tabFichiers[$nb]);
-                               $contenu = '                  -  ' . $tabFichiers[$nb] . CHR(13) . CHR(10) . CHR(13) . CHR(10);
-                               $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                               fputs($rapport, $contenu);
+                                $contenu = '                  -  ' . $tabFichiers[$nb] . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                fputs($rapport, $contenu);
                             }
                             $zip->open($pathBase . '/' . $zipName, \ZipArchive::CREATE);
                             foreach ($files as $f) {
@@ -781,17 +803,17 @@ class SuiviHydrobioController extends Controller {
             fputs($rapport, $contenu);
             $erreur = 0;
             $ligne = 0;
-            while ( ($n = fgets($fichierIn,1024)) !== false ) {
-                $n = str_replace(CHR(10),"",$n);  
-                $n = str_replace(CHR(13),"\r\n",$n); 
-               fputs($fichierOut, $n );
+            while (($n = fgets($fichierIn, 1024)) !== false) {
+                $n = str_replace(CHR(10), "", $n);
+                $n = str_replace(CHR(13), "\r\n", $n);
+                fputs($fichierOut, $n);
             }
             fclose($fichierIn);
             fclose($fichierOut);
             $ligne = 0;
             $fichier = fopen($pathBase . '/' . 'trans-' . $user->getId() . '.csv', "r");
-            $tab = fgetcsv($fichier,1024,';','\'');
-            while ( ($tab = fgetcsv($fichier,1024,';','\'')) !== false ) {
+            $tab = fgetcsv($fichier, 1024, ';', '\'');
+            while (($tab = fgetcsv($fichier, 1024, ';', '\'')) !== false) {
 //            while (!feof($fichier)) {
 //                $tab = fgetcsv($fichier, 1024, ';');
                 if (count($tab) > 1) {
@@ -842,47 +864,49 @@ class SuiviHydrobioController extends Controller {
                     $dateActuel = new \DateTime();
                     $dateActuel->add(new \DateInterval('P15D'));
                     $date = $tab[3];
-                   $tabDate = explode(' ',$date);
-                   if (count($tabDate) != 2){
+                    $tabDate = explode(' ', $date);
+                    if (count($tabDate) != 2) {
                         $err = true;
                         $contenu = 'ligne  ' . $ligne . '  :  date heure incorrecte (' . $date . ')' . CHR(13) . CHR(10);
                         $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                         fputs($rapport, $contenu);
-                   }else{
-                    list( $jour, $mois, $annee, $heure, $min ) = sscanf($date, "%d/%d/%d %d:%d");
-                    $datePrel = new \DateTime($annee . '-' . $mois . '-' . $jour . ' ' . $heure . ':' . $min . ':00');
-
-                    if (!$datePrel) {
-                        $err = true;
-                        $contenu = 'ligne  ' . $ligne . '  :  date heure incorrecte (' . $date . ')' . CHR(13) . CHR(10);
-                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                        fputs($rapport, $contenu);
-                    }
-                    if ($pgProgLot->getDelaiPrel()) {
-                        $dateFin = clone($pgProgLotPeriodeAn->getPeriode()->getDateDeb());
-                        $delai = $pgProgLot->getDelaiPrel();
-                        $dateFin->add(new \DateInterval('P' . $delai . 'D'));
                     } else {
-                        $dateFin = $pgProgLotPeriodeAn->getPeriode()->getDateFin();
-                    }
-                    if ($statutPrel == 'P') {
-                        if ($datePrel < $dateActuel or $datePrel > $dateFin) {
-                            $contenu = 'ligne  ' . $ligne . '  :  Avertissement date  (' . $datePrel->format('d/m/Y H:i') . ') non comprise entre ' . $dateActuel->format('d/m/Y H:i') . ' et ' . $dateFin->format('d/m/Y H:i') . CHR(13) . CHR(10);
-                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                            fputs($rapport, $contenu);
-                        }
-                    }
-                    $dateDebut = clone($pgProgLotPeriodeAn->getPeriode()->getDateDeb());
-                    $dateActuel = new \DateTime();
-                    if ($statutPrel != 'P') {
-                        if ($datePrel < $dateDebut or $datePrel > $dateActuel) {
+                        list( $jour, $mois, $annee, $heure, $min ) = sscanf($date, "%d/%d/%d %d:%d");
+                        $datePrel = new \DateTime($annee . '-' . $mois . '-' . $jour . ' ' . $heure . ':' . $min . ':00');
+
+                        if (!$datePrel) {
                             $err = true;
-                            $contenu = 'ligne  ' . $ligne . '  :   date  (' . $datePrel->format('d/m/Y H:i') . ') non comprise entre ' . $dateDebut->format('d/m/Y H:i') . ' et ' . $dateActuel->format('d/m/Y H:i') . CHR(13) . CHR(10);
+                            $contenu = 'ligne  ' . $ligne . '  :  date heure incorrecte (' . $date . ')' . CHR(13) . CHR(10);
                             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                             fputs($rapport, $contenu);
                         }
+                        if ($pgProgLot->getDelaiPrel()) {
+                            $dateFin = clone($pgProgLotPeriodeAn->getPeriode()->getDateDeb());
+                            $delai = $pgProgLot->getDelaiPrel();
+                            $dateFin->add(new \DateInterval('P' . $delai . 'D'));
+                        } else {
+                            $dateFin = $pgProgLotPeriodeAn->getPeriode()->getDateFin();
+                        }
+                        if ($statutPrel == 'P') {
+                            if ($datePrel < $dateActuel or $datePrel > $dateFin) {
+                                $contenu = 'ligne  ' . $ligne . '  :  Avertissement date  (' . $datePrel->format('d/m/Y H:i') . ') non comprise entre ' . $dateActuel->format('d/m/Y H:i') . ' et ' . $dateFin->format('d/m/Y H:i') . CHR(13) . CHR(10);
+                                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                fputs($rapport, $contenu);
+                            }
+                        }
+                        $dateDebut = clone($pgProgLotPeriodeAn->getPeriode()->getDateDeb());
+                        $dateActuel = new \DateTime();
+                        if ($statutPrel != 'P') {
+                            if ($datePrel < $dateDebut or $datePrel > $dateActuel) {
+                                if (!$user->hasRole('ROLE_ADMINSQE')) {
+                                    $err = true;
+                                }
+                                $contenu = 'ligne  ' . $ligne . '  :   date  (' . $datePrel->format('d/m/Y H:i') . ') non comprise entre ' . $dateDebut->format('d/m/Y H:i') . ' et ' . $dateActuel->format('d/m/Y H:i') . CHR(13) . CHR(10);
+                                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                fputs($rapport, $contenu);
+                            }
+                        }
                     }
-                }
 
                     $commentaire = $tab[4];
                     if ($statutPrel == 'P') {
@@ -915,7 +939,9 @@ class SuiviHydrobioController extends Controller {
                                     $autreDateFin = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
                                     $autreDateFin->add(new \DateInterval('P7D'));
                                     if ($datePrel >= $autreDateDebut and $datePrel <= $autreDateFin) {
-                                        $err = true;
+                                        if (!$user->hasRole('ROLE_ADMINSQE')) {
+                                            $err = true;
+                                        }
                                         $contenu = 'ligne  ' . $ligne . '  : Date  (' . $datePrel->format('d/m/Y H:i') . ') doit être inférieure à ' . $autreDateDebut->format('d/m/Y H:i') . ' ou supérieure à  ' . $autreDateFin->format('d/m/Y H:i');
                                         $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                                         fputs($rapport, $contenu);
@@ -940,6 +966,30 @@ class SuiviHydrobioController extends Controller {
                                     $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                                     fputs($rapport, $contenu);
                                     $k = count($suiviPrels) + 1;
+                                }
+                            }
+                            $nbStations = 0;
+                            for ($k = 0; $k < count($suiviPrels); $k++) {
+                                $suiviPrel = $suiviPrels[$k];
+                                if ($suiviPrel->getDatePrel() == $datePrel and
+                                        $suiviPrel->getCommentaire() == $commentaire) {
+                                    $nbStations++;
+                                }
+                            }
+                            if ($pgCmdPrelev->getCodeSupport()->getCodeSupport() == '13' || $pgCmdPrelev->getCodeSupport()->getCodeSupport() == '11') {
+                                if ($nbStations > 4) {
+                                    $err = true;
+                                    $contenu = 'ligne  ' . $ligne . '  :  4 stations maxi le même jour pour un même commentaire ' . CHR(13) . CHR(10);
+                                    $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                    fputs($rapport, $contenu);
+                                }
+                            }
+                            if ($pgCmdPrelev->getCodeSupport()->getCodeSupport() == '10') {
+                                if ($nbStations > 6) {
+                                    $err = true;
+                                    $contenu = 'ligne  ' . $ligne . '  :  4 stations maxi le même jour pour un même commentaire ' . CHR(13) . CHR(10);
+                                    $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                    fputs($rapport, $contenu);
                                 }
                             }
                         }
@@ -1000,7 +1050,7 @@ class SuiviHydrobioController extends Controller {
                     }
                 }
             }
-             $contenu = CHR(13) . CHR(10) . 'nombre de lignes traitées  : ' . $ligne . CHR(13) . CHR(10);
+            $contenu = CHR(13) . CHR(10) . 'nombre de lignes traitées  : ' . $ligne . CHR(13) . CHR(10);
             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
             fputs($rapport, $contenu);
             $contenu = 'nombre de lignes en erreur  : ' . $erreur . CHR(13) . CHR(10);
@@ -1241,7 +1291,9 @@ class SuiviHydrobioController extends Controller {
             $dateActuel = new \DateTime();
             if ($pgCmdSuiviPrel->getStatutPrel() != 'P') {
                 if ($pgCmdSuiviPrel->getDatePrel() < $dateDebut or $pgCmdSuiviPrel->getDatePrel() > $dateActuel) {
-                    $err = true;
+                    if (!$user->hasRole('ROLE_ADMINSQE')) {
+                        $err = true;
+                    }
                     $contenu = 'Date  (' . $pgCmdSuiviPrel->getDatePrel()->format('d/m/Y H:i') . ') non comprise entre ' . $dateDebut->format('d/m/Y H:i') . ' et ' . $dateActuel->format('d/m/Y H:i');
                     $tabMessage[$nbMessages][0] = 'ko';
                     $tabMessage[$nbMessages][1] = $contenu;
@@ -1259,7 +1311,9 @@ class SuiviHydrobioController extends Controller {
                         $autreDateFin = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
                         $autreDateFin->add(new \DateInterval('P7D'));
                         if ($pgCmdSuiviPrel->getDatePrel() >= $autreDateDebut and $pgCmdSuiviPrel->getDatePrel() <= $autreDateFin) {
-                            $err = true;
+                            if (!$user->hasRole('ROLE_ADMINSQE')) {
+                                $err = true;
+                            }
                             $contenu = 'Date  (' . $pgCmdSuiviPrel->getDatePrel()->format('d/m/Y H:i') . ') doit être inférieure à ' . $autreDateDebut->format('d/m/Y H:i') . ' ou supérieure à  ' . $autreDateFin->format('d/m/Y H:i');
                             $tabMessage[$nbMessages][0] = 'ko';
                             $tabMessage[$nbMessages][1] = $contenu;
@@ -1289,6 +1343,7 @@ class SuiviHydrobioController extends Controller {
                     $nbMessages++;
                 }
             }
+
             foreach ($pgCmdSuiviPrels as $suiviPrel) {
                 if ($suiviPrel->getDatePrel() == $pgCmdSuiviPrel->getDatePrel() and
                         $suiviPrel->getStatutPrel() == $pgCmdSuiviPrel->getStatutPrel() and
@@ -1302,6 +1357,33 @@ class SuiviHydrobioController extends Controller {
                     break;
                 }
             }
+
+            $nbStations = 0;
+            foreach ($pgCmdSuiviPrels as $suiviPrel) {
+                if ($suiviPrel->getDatePrel() == $pgCmdSuiviPrel->getDatePrel() and
+                        $suiviPrel->getCommentaire() == $pgCmdSuiviPrel->getCommentaire()) {
+                    $nbStations++;
+                }
+            }
+            if ($pgCmdPrelev->getCodeSupport()->getCodeSupport() == '13' || $pgCmdPrelev->getCodeSupport()->getCodeSupport() == '11') {
+                if ($nbStations > 4) {
+                    $err = true;
+                    $contenu = '4 stations maxi le même jour pour un même commentaire' . CHR(13) . CHR(10);
+                    $tabMessage[$nbMessages][0] = 'ko';
+                    $tabMessage[$nbMessages][1] = $contenu;
+                    $nbMessages++;
+                }
+            }
+            if ($pgCmdPrelev->getCodeSupport()->getCodeSupport() == '10') {
+                if ($nbStations > 6) {
+                    $err = true;
+                    $contenu = '6 stations maxi le même jour pour un même commentaire' . CHR(13) . CHR(10);
+                    $tabMessage[$nbMessages][0] = 'ko';
+                    $tabMessage[$nbMessages][1] = $contenu;
+                    $nbMessages++;
+                }
+            }
+
             if ($pgCmdSuiviPrelActuel) {
                 if ($pgCmdSuiviPrelActuel->getStatutPrel() == 'E' and $pgCmdSuiviPrel->getStatutPrel() == 'P') {
                     $err = true;
@@ -1756,24 +1838,22 @@ class SuiviHydrobioController extends Controller {
         readfile($chemin . '/' . $fichier);
         exit();
     }
-    
+
     public function planningAction() {
         return $this->render('AeagSqeBundle:SuiviHydrobio:planning.html.twig', array());
     }
-    
+
     public function planningTableAction() {
         $request = $this->get('request');
-        
+
         $semaine = $request->get('semaine');
         $annee = $request->get('annee');
         $jourSemaine = array();
-        for($day=1; $day<=7; $day++)
-        {
-            $jourSemaine[] = date('d F', strtotime($annee."W".$semaine.$day));
-            
+        for ($day = 1; $day <= 7; $day++) {
+            $jourSemaine[] = date('d F', strtotime($annee . "W" . $semaine . $day));
         }
-        
-        
+
+
         return $this->render('AeagSqeBundle:SuiviHydrobio:planningTable.html.twig', array("joursemaine" => $jourSemaine));
     }
 

@@ -24,7 +24,7 @@ AeagDieBundle:
     
 aeag_edl:
     resource: "@AeagEdlBundle/Resources/config/routing.yml"
-    prefix:   /edl
+    prefix:   /avis
     
 aeag_user:
     resource: "@AeagUserBundle/Resources/config/routing.yml"

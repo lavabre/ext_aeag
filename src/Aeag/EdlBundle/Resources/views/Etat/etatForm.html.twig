@@ -21,11 +21,11 @@
     {{ form_widget(form.valeur) }}
     {{ form_errors(form.valeur) }}
     </br></br>    
-    <h3>{{ form_label(form.commentaire, 'Saisir un commentaire et éventuellement vos coordonnées :') }}</h3>
+    <h3>{{ form_label(form.commentaire, 'Saisir un commentaire') }}</h3>
 
 
     {{ form_errors(form.commentaire) }}
-    {{ form_widget(form.commentaire, {attr : {'cols': '60', 'rows': '5'}}) }}
+    {{ form_widget(form.commentaire, {attr : {'cols': '60', 'rows': '5' ,'placeholder': 'Organisme-Nom : commentaire'}}) }}
     <br><br>
 
 </form>

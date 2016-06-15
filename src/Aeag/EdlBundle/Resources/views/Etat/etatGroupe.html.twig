@@ -85,7 +85,7 @@
      <div class="col-sm-4 col-sm-push-8">
             <a href="#">
                 <button type="button" class="btn btn-success">
-                    <i class="fa fa-comment"> Etats</i>
+                    <i class="fa fa-comment"> Etat</i>
                 </button>
             </a>
             <a  href="{{ path('AeagEdlBundle_pressionGroupe', {'code':me.euCd}) }}">
@@ -109,7 +109,7 @@
                             <a id="collapseAll" href="#" class="btn btn-primary" role="button"><i class="fa fa-compress"></i></a>
                     </div>
                      <div class="col-sm-11">
-                                <h3 class="panel-title">Etats de la masse d'eau  {{ me.euCd }} {{ me.nomMasseEau }}</h3>
+                                <h3 class="panel-title">Etat de la masse d'eau  {{ me.euCd }} {{ me.nomMasseEau }}</h3>
                      </div>
                   
                  </div>
@@ -140,7 +140,7 @@
                                                     <tr class="info">
                                                         <td width="1%" nowrap>
                                                             {% if  is_granted("ROLE_COMMENTATEUREDL") %}
-                                                                <a id="newEtat-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}" title="Proposer une nouvelle évaluation" cdEtat="{{ tabEtat.etat.cdEtat }}">
+                                                                <a id="newEtat-{{ etatGroupe.etatGroupe.cdGroupe }}-{{ tabEtat.etat.euCd }}-{{ tabEtat.etat.cdEtat }}" title="Proposer un nouvel avis" cdEtat="{{ tabEtat.etat.cdEtat }}">
                                                                     <button type="button" class="btn btn-primary"><i class="fa fa-commenting"></i></button> 
                                                                 </a>
                                                             {% else %}

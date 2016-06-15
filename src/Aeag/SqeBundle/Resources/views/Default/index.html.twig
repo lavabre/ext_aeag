@@ -8,115 +8,170 @@
 {% endblock breadcrumb %}
 
 {%block panel_heading %}
-    {#<h3 class="page-title">
+    {#<h4 class="page-title">
         Programmation SQE
-     </h3>#}
+     </h4>#}
 {%endblock panel_heading %}
 
 
 {% block content %}
 
+    {%if   is_granted('ROLE_PROGSQE') %}
     <div class="row">
-        <div class="col-md-offset-3 col-md-3  text-info">
-            <table class="table table-condensed table-advance tabbable-custom noborder" name="tableMenu">
-                {%if   is_granted('ROLE_PROGSQE') %}
-                    <tr class="bg-primary">
-                        <td   class="text-center" nowrap><h3>Programmation</h3></td>
-                        <td>
+        <div class="col-md-offset-3 col-md-3">
+            <div class="panel panel-primary">
+                <div class="panel-heading text-center"><h3>Programmation</h3></div>
+                <div class="panel-body">
                             <ul class="list-group">
-                                    <li class="list-group-item"><a class="btn btn-default btn-lg" href="{{ path('Aeag_sqe_programmation_lots', {'action': 'V'}) }}" title="Consulter"><i class="fa fa-eye fa-2x"></i> Consulter</a></li>
-                                    <li class="list-group-item"><a class="btn btn-default btn-lg" href="{{ path('Aeag_sqe_programmation_lots', {'action': 'P'}) }}" title="Programmer"><i class="fa fa-edit fa-2x"></i> Programmer</a></li>
-                             </ul>
-                       </td> 
-                    </tr>
-                     <tr class="bg-info">
-                        <td class="text-center" nowrap><h3>Echange de fichiers</h3></td>
-                        <td>
-                            <ul class="list-group">
-                                    <li class="list-group-item"><a class="btn btn-default btn-lg" href="{{ path('AeagSqeBundle_echangefichiers_index')}}" title="Echange de fichiers"><i class="fa fa-download fa-2x"></i> Echange de fichiers</a></li>
+                                    <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ path('Aeag_sqe_programmation_lots', {'action': 'V'}) }}" title="Consulter"><i class="fa fa-eye fa-3x"></i> Consulter</a></li>
+                                    <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ path('Aeag_sqe_programmation_lots', {'action': 'P'}) }}" title="Programmer"><i class="fa fa-edit fa-3x"></i> Programmer</a></li>
+                          </ul>
+                </div>
+              </div>
+        </div>
+         
+         <div class="col-md-offset-1 col-md-3">
+            <div class="panel panel-primary">
+                <div class="panel-heading text-center"><h3>Echange de fichiers</h3></div>
+                <div class="panel-body">
+                             <ul class="list-group">
+                                    <li class="list-group-item  list-group-item-info"><a class="btn btn-primary" href="{{ path('AeagSqeBundle_echangefichiers_index')}}" title="Echange de fichiers"><i class="fa fa-download fa-3x"></i> Echange de fichiers</a></li>
                             </ul>
-                       </td> 
-                   </tr>
-                    <tr class="bg-primary">
-                        <td   class="text-center" nowrap><h3>Saisie</h3></td>
-                        <td>
-                            <ul class="list-group">
-                                   {% if app.session.get('suiviDonnees') %}
-                                          <li class="list-group-item"><a class="btn btn-default btn-lg" href="{{ path('AeagSqeBundle_saisieDonnees_index')}}" title="Saisie des données"><i class="fa fa-dashboard fa-2x"></i> Saisie des données</a></li> 
-                                   {% endif %}
-                                   {% if app.session.get('suiviHb') %}
-                                      <li class="list-group-item"><a class="btn btn-default btn-lg" href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}" title="Suivi hydrobio"><i class="fa fa-calendar fa-2x"></i> Suivi Hydrobio</a></li>
-                                   {% endif %}
-                                    {% if  not app.session.get('evolution') %}
-                                        {% if app.session.get('suiviSED') %}
-                                              <li class="list-group-item"><a class="btn btn-default btn-lg" href="{{ path('AeagSqeBundle_suiviSediment_index')}}" title="Suivi hydrobio"><i class="fa fa-calendar fa-2x"></i> Suivi Sédiment</a></li>
-                                         {% endif %}
-                                    {% endif %}
-                               </ul>
-                        </td>
-                    </tr>
-                     <tr class="bg-info">
-                        <td   class="text-center" nowrap><h3>Aide</h3></td>
-                        <td>
-                            <ul class="list-group">
-                                <li class="list-group-item"><a class="btn btn-default  btn-lg" href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur-prog.pdf') }}" target="_blank" title="Aide"><i class="fa fa-book fa-2x"></i> Aide programmation</a></li>
-                                <li class="list-group-item"><a class="btn btn-default  btn-lg" href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur.pdf') }}" target="_blank" title="Aide"><i class="fa fa-book fa-2x"></i> Aide utilisateur</a></li>
-                            </ul>
-                        </td>
-                       </tr>
-                {%elseif   is_granted('ROLE_PRESTASQE') %}
-                    <tr class="bg-info">
-                        <td class="text-center" nowrap><h3>Echange de fichiers</h3></td>
-                        <td>
-                            <ul class="list-group">
-                                <li class="list-group-item"><a class="btn btn-default btn-lg" href="{{ path('AeagSqeBundle_echangefichiers_index')}}" title="Echange de fichiers"><i class="fa fa-download fa-2x"></i> Echange de fichiers</a></li>
-                             </ul>
-                        </td>
-                     </tr>
-                    <tr class="bg-primary">
-                        <td   class="text-center" nowrap><h3>Saisie</h3></td>
-                          <td>
-                            <ul class="list-group">
-                                {% if app.session.get('suiviDonnees') %}
-                                <li class="list-group-item"><a class="btn btn-default btn-lg" href="{{ path('AeagSqeBundle_saisieDonnees_index')}}" title="Saisie des données"><i class="fa fa-dashboard fa-2x"></i> Saisie des données</a></li>
-                                {% endif %}
-                                {% if app.session.get('suiviHb') %}
-                                <li class="list-group-item"><a class="btn btn-default btn-lg" href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}" title="Suivi hydrobio"><i class="fa fa-calendar fa-2x"></i> Suivi Hydrobio</a></li>
-                                {% endif %}
-                                {% if  not app.session.get('evolution') %}
-                                    {% if app.session.get('suiviSED') %}
-                                    <li class="list-group-item"><a class="btn btn-default btn-lg" href="{{ path('AeagSqeBundle_suiviSediment_index')}}" title="Suivi hydrobio"><i class="fa fa-calendar fa-2x"></i> Suivi Sédiment</a></li>
-                                    {% endif %}
-                                {% endif %}
-                            </ul>
-                        </td>
-                   </tr>
-                    <tr class="bg-info">
-                        <td  class="text-center" nowrap><h3>Aide</h3></td>
-                          <td>
-                            <ul class="list-group">
-                                <li class="list-group-item"><a class="btn btn-default  btn-lg" href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur.pdf') }}" target="_blank" title="Aide"><i class="fa fa-book fa-2x"></i> Aide utilisateur</a></li>
-                             </ul>
-                        </td>
-                    </tr>
-                {%elseif   is_granted('ROLE_SQE') %}
-                    <tr class="bg-info">
-                        <td class="text-center" nowrap><h3>Saisie</h3></td>
-                         <td>
-                           <ul class="list-group">
-                                 <li class="list-group-item"><a class="btn btn-default btn-lg" href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}" title="Suivi hydrobio"><i class="fa fa-calendar fa-2x"></i> Suivi Hydrobio</a></li>
-                                  {% if  not app.session.get('evolution') %}
-                                    <li class="list-group-item"><a class="btn btn-default btn-lg" href="{{ path('AeagSqeBundle_suiviSediment_index')}}" title="Suivi hydrobio"><i class="fa fa-calendar fa-2x"></i> Suivi Sédiment</a></li>
-                                 {% endif %}
-                            </ul>
-                        </td>
-                    </tr>
-                 {% endif %}
-            </table>
+                </div>
+              </div>
         </div>
     </div>
+           
+     {% if app.session.get('suiviDonnees')  or app.session.get('suiviHb') or app.session.get('suiviSED') %}
+            <div class="row">
+              <div class="col-md-offset-3 col-md-3">
+                  <div class="panel panel-primary">
+                      <div class="panel-heading text-center"><h3>Saisie</h3></div>
+                      <div class="panel-body">
+                                  <ul class="list-group">
+                                      {% if app.session.get('suiviDonnees') %}
+                                          <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ path('AeagSqeBundle_saisieDonnees_index')}}" title="Saisie des données"><i class="fa fa-dashboard fa-3x"></i> Terrain</a></li>
+                                       {% endif %}
+                                       {% if app.session.get('suiviHb') %}
+                                          <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}" title="Suivi hydrobio"><i class="fa fa-calendar fa-3x"></i> Suivi Hydrobio</a></li>
+                                       {% endif %}
+                                       {% if app.session.get('suiviSED') %}
+                                          <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ path('AeagSqeBundle_suiviSediment_index')}}" title="Suivi hydrobio"><i class="fa fa-calendar fa-3x"></i> Suivi Sédiment</a></li>
+                                       {% endif %}
+                                </ul>
+                      </div>
+                    </div>
+              </div>
 
-    {#  <div class="row">
+               <div class="col-md-offset-1 col-md-3">
+                  <div class="panel panel-primary">
+                      <div class="panel-heading text-center"><h3>Aide</h3></div>
+                      <div class="panel-body">
+                              <ul class="list-group">
+                               <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur-prog.pdf') }}" target="_blank" title="Aide"><i class="fa fa-book fa-3x"></i> Aide programmation</a></li>
+                               <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur.pdf') }}" target="_blank" title="Aide"><i class="fa fa-book fa-3x"></i> Aide utilisateur</a></li>
+                           </ul>
+                        </div>
+                    </div>
+              </div>
+          </div>
+     {% else %}
+           <div class="row">
+              <div class="col-md-offset-3 col-md-3">
+                  <div class="panel panel-primary">
+                      <div class="panel-heading text-center"><h3>Aide</h3></div>
+                      <div class="panel-body">
+                              <ul class="list-group">
+                               <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur-prog.pdf') }}" target="_blank" title="Aide"><i class="fa fa-book fa-3x"></i> Aide programmation</a></li>
+                               <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur.pdf') }}" target="_blank" title="Aide"><i class="fa fa-book fa-3x"></i> Aide utilisateur</a></li>
+                           </ul>
+                        </div>
+                    </div>
+              </div>
+          </div>
+     {% endif %}
+ 
+ 
+ {%elseif   is_granted('ROLE_PRESTASQE') %}
+    <div class="row">
+          <div class="col-md-offset-3 col-md-3">
+            <div class="panel panel-primary">
+                <div class="panel-heading text-center"><h3>Echange de fichiers</h3></div>
+                <div class="panel-body">
+                             <ul class="list-group">
+                                    <li class="list-group-item  list-group-item-info"><a class="btn btn-primary" href="{{ path('AeagSqeBundle_echangefichiers_index')}}" title="Echange de fichiers"><i class="fa fa-download fa-3x"></i> Echange de fichiers</a></li>
+                            </ul>
+                </div>
+              </div>
+        </div>
+    </div>
+           
+     {% if app.session.get('suiviDonnees')  or app.session.get('suiviHb') or app.session.get('suiviSED') %}
+             <div class="col-md-offset-1 col-md-3">
+                  <div class="panel panel-primary">
+                      <div class="panel-heading text-center"><h3>Saisie</h3></div>
+                      <div class="panel-body">
+                                  <ul class="list-group">
+                                      {% if app.session.get('suiviDonnees') %}
+                                          <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ path('AeagSqeBundle_saisieDonnees_index')}}" title="Saisie des données"><i class="fa fa-dashboard fa-3x"></i> Terrain</a></li>
+                                       {% endif %}
+                                       {% if app.session.get('suiviHb') %}
+                                          <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}" title="Suivi hydrobio"><i class="fa fa-calendar fa-3x"></i> Suivi Hydrobio</a></li>
+                                       {% endif %}
+                                       {% if app.session.get('suiviSED') %}
+                                          <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ path('AeagSqeBundle_suiviSediment_index')}}" title="Suivi hydrobio"><i class="fa fa-calendar fa-3x"></i> Suivi Sédiment</a></li>
+                                       {% endif %}
+                                </ul>
+                      </div>
+                    </div>
+              </div>
+
+            <div class="row">
+               <div class="col-md-offset-1 col-md-3">
+                  <div class="panel panel-primary">
+                      <div class="panel-heading text-center"><h3>Aide</h3></div>
+                      <div class="panel-body">
+                              <ul class="list-group">
+                               {#<li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur-prog.pdf') }}" target="_blank" title="Aide"><i class="fa fa-book fa-3x"></i> Aide programmation</a></li>#}
+                               <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur.pdf') }}" target="_blank" title="Aide"><i class="fa fa-book fa-3x"></i> Aide utilisateur</a></li>
+                           </ul>
+                        </div>
+                    </div>
+              </div>
+          </div>
+     {% else %}
+           <div class="row">
+              <div class="col-md-offset-3 col-md-3">
+                  <div class="panel panel-primary">
+                      <div class="panel-heading text-center"><h3>Aide</h3></div>
+                      <div class="panel-body">
+                              <ul class="list-group">
+                               {#<li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur-prog.pdf') }}" target="_blank" title="Aide"><i class="fa fa-book fa-3x"></i> Aide programmation</a></li>#}
+                               <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur.pdf') }}" target="_blank" title="Aide"><i class="fa fa-book fa-3x"></i> Aide utilisateur</a></li>
+                           </ul>
+                        </div>
+                    </div>
+              </div>
+          </div>
+     {% endif %}
+
+ {%elseif   is_granted('ROLE_SQE') %}
+    <div class="row">
+          <div class="col-md-offset-3 col-md-3">
+                <div class="panel panel-primary">
+                      <div class="panel-heading text-center"><h3>Saisie</h3></div>
+                      <div class="panel-body">
+                                  <ul class="list-group">
+                                          <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}" title="Suivi hydrobio"><i class="fa fa-calendar fa-3x"></i> Suivi Hydrobio</a></li>
+                                          <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ path('AeagSqeBundle_suiviSediment_index')}}" title="Suivi hydrobio"><i class="fa fa-calendar fa-3x"></i> Suivi Sédiment</a></li>
+                                 </ul>
+                      </div>
+                    </div>
+              </div>
+
+ {% endif %}
+     
+     {# <div class="row">
               <div class="col-md-8 pull-right text-info">
                  <ul class="list-unstyled btn-group-lg">
                      {%if   is_granted('ROLE_PROGSQE') %}
@@ -146,7 +201,7 @@
                            <li><a class="btn btn-default btn-lg" href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}" title="Suivi hydrobio"><i class="fa fa-calendar fa-2x"></i> Suivi Hydrobio</a></li>
                           </br>
                          {% if  not app.session.get('evolution') %}
-                             <li><a class="btn btn-default btn-lg" href="{{ path('AeagSqeBundle_suiviSediment.index')}}" title="Suivi sédiment"><i class="fa fa-calendar fa-2x"></i> Suivi Sédiment</a></li>
+                             <li><a class="btn btn-default btn-lg" href="{{ path('AeagSqeBundle_suiviSediment_index')}}" title="Suivi sédiment"><i class="fa fa-calendar fa-2x"></i> Suivi Sédiment</a></li>
                              </br>
                         {% endif %}
                       {% endif %}
@@ -165,8 +220,8 @@
                      {% endif %}  
                </ul>  
             </div>
-          </div>       
-            #}
+          </div>    #}   
+       
 
 {% endblock content %}
 

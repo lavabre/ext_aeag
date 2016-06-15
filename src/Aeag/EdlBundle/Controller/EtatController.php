@@ -41,7 +41,7 @@ class EtatController extends Controller {
                 ->add('euCd', 'hidden')
                 ->add('cdEtat', 'hidden')
                 ->add('valeur', 'hidden')
-                ->add('commentaire', 'textarea')
+                ->add('commentaire', 'textarea', array('required' => true))
                 ->getForm();
 
         $derniereProps = $repoEtatDerniereProposition->getDernierePropositionByEucdCdEtat($euCd, $cdEtat);
@@ -123,10 +123,10 @@ class EtatController extends Controller {
 
             if ($derniereProps) {
                 $derniereProp = $derniereProps[0];
-                $msg = "Proposition :<span class=dce_etat_" . $derniereProp->getValeur() . ">" . $derniereProp->getValueLib() . "</span>";
+                $msg = "Proposition :<span class=dce_etat_" . $derniereProp->getValeur() . ">" . $derniereProp->getValueLib() ;
             } else {
                 $derniereProp = null;
-                $msg = "Proposition :<span class=dce_etat_" . $proposed->getValeur() . ">" . $proposed->getValueLib() . "</span>";
+                $msg = "Proposition :";
             }
             return new Response(json_encode($msg));
         } catch (Exception $e) {

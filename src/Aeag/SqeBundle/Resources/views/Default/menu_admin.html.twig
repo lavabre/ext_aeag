@@ -103,11 +103,11 @@
     <ul class="dropdown-menu">
         <li><a href="{{ path('AeagSqeBundle_saisieDonnees_index')}}">Terrain</a></li>
         <li><a href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}">Suivi Hydrobio</a></li>
-            {% if  not app.session.get('evolution')%}
+          {#  {% if  not app.session.get('evolution')%}#}
                 {% if app.session.get('suiviSED') %}
                 <li><a href="{{ path('AeagSqeBundle_suiviSediment_index')}}">Suivi Sédiment</a></li>
                 {% endif  %}
-            {% endif %}
+          {#  {% endif %}#}
     </ul>
 </li>
 
