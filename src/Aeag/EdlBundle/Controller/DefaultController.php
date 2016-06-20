@@ -306,12 +306,16 @@ class DefaultController extends Controller {
                 $where = $where . " and b.euCd = a.euCd";
                 $where = $where . " and b.inseeDepartement = '" . $deptcle . "'";
                 $where = $where . " and b.inseeDepartement = c.inseeDepartement";
-                $where = $where . " and c.utilisateur = " . $utilisateur->getId();
+                if ($utilisateur) {
+                    $where = $where . " and c.utilisateur = " . $utilisateur->getId();
+                }
             } else {
 
                 $where = $where . " and b.euCd = a.euCd";
                 $where = $where . " and b.inseeDepartement = c.inseeDepartement";
-                $where = $where . " and c.utilisateur = " . $utilisateur->getId();
+                if ($utilisateur) {
+                    $where = $where . " and c.utilisateur = " . $utilisateur->getId();
+                }
             }
 
             $query = "select a from Aeag\EdlBundle\Entity\MasseEau a,";
@@ -680,7 +684,13 @@ class DefaultController extends Controller {
         }
         fclose($fic);
 
-        return $this->render('AeagEdlBundle:Etat:csv.html.twig', array('fichier' => $nom_fichier_etat));
+        //return $this->render('AeagEdlBundle:Etat:csv.html.twig', array('fichier' => $nom_fichier_etat));
+        $ext = strtolower(pathinfo($nom_fichier_etat, PATHINFO_EXTENSION));
+        header('Content-Type', 'application/' . $ext);
+        header('Content-disposition: attachment; filename="' . $nom_fichier_etat . '"');
+        header('Content-Length: ' . filesize($repertoire . '/' . $nom_fichier_etat));
+        readfile($repertoire . '/' . $nom_fichier_etat);
+        exit();
     }
 
     public function pressionGroupeAction($code = null, Request $request) {
@@ -881,7 +891,13 @@ class DefaultController extends Controller {
             fputs($fic, $contenu);
         }
         fclose($fic);
-        return $this->render('AeagEdlBundle:Pression:csv.html.twig', array('fichier' => $nom_fichier_pression));
+        //return $this->render('AeagEdlBundle:Pression:csv.html.twig', array('fichier' => $nom_fichier_pression));
+        $ext = strtolower(pathinfo($nom_fichier_pression, PATHINFO_EXTENSION));
+        header('Content-Type', 'application/' . $ext);
+        header('Content-disposition: attachment; filename="' . $nom_fichier_pression . '"');
+        header('Content-Length: ' . filesize($repertoire . '/' . $nom_fichier_pression));
+        readfile($repertoire . '/' . $nom_fichier_pression);
+        exit();
     }
 
     public function massedeauAction($code) {
