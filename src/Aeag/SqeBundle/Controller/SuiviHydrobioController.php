@@ -417,7 +417,9 @@ class SuiviHydrobioController extends Controller {
 //upload file
                 if ($valid) {
 // Enregistrement du fichier sur le serveur
-                    $pathBase = '/base/extranet/Transfert/Sqe/csv';
+                    $dateDepot = new \DateTime();
+                    $pathBase = '/base/extranet/Transfert/Sqe/csv-' . $dateDepot->format('Y-m-d-H-i-s');
+                    $pathRapport = '/base/extranet/Transfert/Sqe/csv';
                     if (!is_dir($pathBase)) {
                         if (!mkdir($pathBase, 0777, true)) {
                             $session->getFlashBag()->add('notice-error', 'Le répertoire : ' . $pathBase . ' n\'a pas pu être créé');
@@ -426,7 +428,6 @@ class SuiviHydrobioController extends Controller {
                     }
                     move_uploaded_file($_FILES['file']['tmp_name'], $pathBase . '/' . $name);
 
-                    $dateDepot = new \DateTime();
                     $response = $name . ' déposé le ' . $dateDepot->format('d/m/Y');
                 }
                 break;
@@ -491,7 +492,7 @@ class SuiviHydrobioController extends Controller {
         if ($valid) {
             $liste = array();
             $liste = $this->unzip($pathBase . '/' . $name, $pathBase . '/');
-            $rapport = fopen($pathBase . '/' . $user->getId() . '_' . $dateDepot->format('Y-m-d-H') . '_rapport.csv', "w+");
+            $rapport = fopen($pathRapport . '/' . $user->getId() . '_' . $dateDepot->format('Y-m-d-H') . '_rapport.csv', "w+");
             $contenu = '                          rapport d\'intégration du fichier : ' . $name . ' déposé le ' . $dateDepot->format('d/m/Y') . CHR(13) . CHR(10) . CHR(13) . CHR(10);
             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
             fputs($rapport, $contenu);
@@ -628,6 +629,8 @@ class SuiviHydrobioController extends Controller {
             }
             fclose($rapport);
         }
+
+        $this->rmAllDir($pathBase);
 
         $tabReponse = array();
         $tabReponse[0] = $name;
@@ -1862,6 +1865,113 @@ class SuiviHydrobioController extends Controller {
         exit();
     }
 
+    public function syntheseAction() {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+
+        $session = $this->get('session');
+        $session->set('menu', 'syntheseHydrobio');
+        $session->set('controller', 'SuiviHydrobio');
+        $session->set('fonction', 'synthese');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        $repoPgSandreSupport = $emSqe->getRepository('AeagSqeBundle:PgSandreSupports');
+
+        $pgSandreSupports = $repoPgSandreSupport->getPgSandreSupports();
+
+        return $this->render('AeagSqeBundle:SuiviHydrobio:synthese.html.twig', array('supports' => $pgSandreSupports));
+    }
+
+    public function syntheseSupportAction($codeSupport = null) {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+
+        $session = $this->get('session');
+        $session->set('menu', 'syntheseHydrobio');
+        $session->set('controller', 'SuiviHydrobio');
+        $session->set('fonction', 'syntheseSupport');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
+        $repoPgSandreSupport = $emSqe->getRepository('AeagSqeBundle:PgSandreSupports');
+        $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
+        $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
+        $repoPgRefReseauMesure = $emSqe->getRepository('AeagSqeBundle:PgRefReseauMesure');
+        $repoPgProgLotStationAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotStationAn');
+
+        $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
+        $pgSandreSupport = $repoPgSandreSupport->getPgSandreSupportsByCodeSupport($codeSupport);
+
+        $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevBySupport($pgSandreSupport);
+        $tabStations = array();
+        $i = 0;
+        foreach ($pgCmdPrelevs as $pgCmdPrelev) {
+            if ($pgCmdPrelev->getDemande()->getLotan()->getPhase()->getCodePhase() != 'P50') {
+                $pgProgLot = $pgCmdPrelev->getDemande()->getLotan()->getLot();
+                $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
+                if (substr($pgProgTypeMilieu->getCodeMilieu(), 1, 2) === 'HB') {
+                    $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelev($pgCmdPrelev);
+                    if ($pgCmdSuiviPrels) {
+                        $tabStations[$i]['station'] = $pgCmdPrelev->getStation();
+                        $tabStations[$i]['lien'] = '/sqe_fiches_stations/' . str_replace('/', '-', $pgCmdPrelev->getStation()->getCode()) . '.pdf';
+                        $pgProgLotStationAn = $repoPgProgLotStationAn->getPgProgLotStationAnByLotAnStation($pgCmdPrelev->getDemande()->getLotan(), $pgCmdPrelev->getStation());
+                        $pgRefReseauMesure = $repoPgRefReseauMesure->getPgRefReseauMesureByGroupementId($pgProgLotStationAn->getRsxId());
+                        if ($pgRefReseauMesure) {
+                            $tabStations[$i]['reseau'] = $pgRefReseauMesure;
+                        } else {
+                            $tabStations[$i]['reseau'] = null;
+                        }
+                        $tabStations[$i]['cmdDemande'] = $pgCmdPrelev->getDemande();
+                        $tabStations[$i]['cmdPrelevs'] = null;
+                        $tabCmdPrelevs = array();
+                        $tabCmdPrelevs['cmdPrelev'] = $pgCmdPrelev;
+                        $tabCmdPrelevs['maj'] = 'N';
+                        $tabSuiviPrels = array();
+                        $nbSuiviPrels = 0;
+                        foreach ($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
+                            $tabSuiviPrels[$nbSuiviPrels]['suiviPrel'] = $pgCmdSuiviPrel;
+                            $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'N';
+                            if ($user->hasRole('ROLE_ADMINSQE') or ( $pgCmdSuiviPrel->getUser()->getPrestataire() == $pgCmdPrelev->getDemande()->getPrestataire())) {
+                                if ($pgCmdSuiviPrel->getStatutPrel() != 'F' or ( $pgCmdSuiviPrel->getStatutPrel() == 'F' and $pgCmdSuiviPrel->getValidation() != 'A')) {
+                                    $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'O';
+                                    $tabCmdPrelevs['maj'] = 'O';
+                                }
+                            } else {
+                                if ($user->hasRole('ROLE_ADMINSQE')) {
+                                    if ($pgCmdSuiviPrel->getStatutPrel() != 'F' or ( $pgCmdSuiviPrel->getStatutPrel() == 'F' and $pgCmdSuiviPrel->getValidation() != 'A')) {
+                                        $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'O';
+                                        $tabCmdPrelevs['maj'] = 'O';
+                                    }
+                                } else {
+                                    $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'N';
+                                }
+                            }
+                            $nbSuiviPrels++;
+                        }
+                        $tabCmdPrelevs['suiviPrels'] = $tabSuiviPrels;
+                        $tabAutrePrelevs = $repoPgCmdPrelev->getAutrePrelevs($pgCmdPrelev);
+                        if (count($tabAutrePrelevs) > 0) {
+                            $tabCmdPrelevs['autrePrelevs'] = $tabAutrePrelevs;
+                        } else {
+                            $tabCmdPrelevs['autrePrelevs'] = null;
+                        }
+                        $tabStations[$i]['cmdPrelevs'] = $tabCmdPrelevs;
+                        $i++;
+                    }
+                }
+            }
+        }
+
+//        \Symfony\Component\VarDumper\VarDumper::dump($tabStations);
+//        return new Response('');
+
+        return $this->render('AeagSqeBundle:SuiviHydrobio:syntheseSupport.html.twig', array('support' => $pgSandreSupport, 'stations' => $tabStations,));
+    }
+
     public function planningAction() {
         return $this->render('AeagSqeBundle:SuiviHydrobio:planning.html.twig', array());
     }
@@ -1944,6 +2054,21 @@ class SuiviHydrobioController extends Controller {
         }
 
         return $tab_liste_fichiers;
+    }
+
+    protected function rmAllDir($strDirectory) {
+        $handle = opendir($strDirectory);
+        while (false !== ($entry = readdir($handle))) {
+            if ($entry != '.' && $entry != '..') {
+                if (is_dir($strDirectory . '/' . $entry)) {
+                    $this->rmAllDir($strDirectory . '/' . $entry);
+                } elseif (is_file($strDirectory . '/' . $entry)) {
+                    unlink($strDirectory . '/' . $entry);
+                }
+            }
+        }
+        rmdir($strDirectory . '/' . $entry);
+        closedir($handle);
     }
 
 }

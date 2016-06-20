@@ -48,7 +48,7 @@
         
  
           
-   {%if  app.session.get('menu') == 'suiviHydrobio' or app.session.get('menu') == 'suiviSediment'%}
+   {%if   app.session.get('menu') == 'syntheseHydrobio'  or app.session.get('menu') == 'suiviHydrobio' or app.session.get('menu') == 'suiviSediment'%}
         <li  class="active">
         {% else %}
         <li>
@@ -60,6 +60,9 @@
         </a>
 
         <ul class="dropdown-menu">
+                {% if  not app.session.get('evolution')%}
+                    <li><a href="{{ path('AeagSqeBundle_suiviHydrobio_synthese')}}">Synthèse suivis Hydrobio</a></li>
+                {% endif %}
                 <li><a href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}">Suivi Hydrobio</a></li>
                 {# {% if  not app.session.get('evolution')%}#}
                     <li><a href="{{ path('AeagSqeBundle_suiviSediment_index')}}">Suivi Sédiment</a></li>

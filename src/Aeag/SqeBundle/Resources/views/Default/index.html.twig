@@ -18,7 +18,7 @@
 
     {%if   is_granted('ROLE_PROGSQE') %}
     <div class="row">
-        <div class="col-md-offset-3 col-md-3">
+        <div class="col-md-offset-2 col-md-4">
             <div class="panel panel-primary">
                 <div class="panel-heading text-center"><h3>Programmation</h3></div>
                 <div class="panel-body">
@@ -30,7 +30,7 @@
               </div>
         </div>
          
-         <div class="col-md-offset-1 col-md-3">
+         <div class="col-md-offset-1 col-md-4">
             <div class="panel panel-primary">
                 <div class="panel-heading text-center"><h3>Echange de fichiers</h3></div>
                 <div class="panel-body">
@@ -44,15 +44,18 @@
            
      {% if app.session.get('suiviDonnees')  or app.session.get('suiviHb') or app.session.get('suiviSED') %}
             <div class="row">
-              <div class="col-md-offset-3 col-md-3">
+              <div class="col-md-offset-2 col-md-4">
                   <div class="panel panel-primary">
                       <div class="panel-heading text-center"><h3>Saisie</h3></div>
-                      <div class="panel-body">
+                      <div class="panel-body text-justify">
                                   <ul class="list-group">
                                       {% if app.session.get('suiviDonnees') %}
                                           <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ path('AeagSqeBundle_saisieDonnees_index')}}" title="Saisie des données"><i class="fa fa-dashboard fa-3x"></i> Terrain</a></li>
                                        {% endif %}
                                        {% if app.session.get('suiviHb') %}
+                                            {% if  not app.session.get('evolution')%}
+                                            <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ path('AeagSqeBundle_suiviHydrobio_synthese')}}" title="Synthèse de l’avancement des suivis Hydrobio"><i class="fa fa-calendar fa-3x"></i> Synthèse suivis Hydrobio</a></li>
+                                            {% endif %}
                                           <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}" title="Suivi hydrobio"><i class="fa fa-calendar fa-3x"></i> Suivi Hydrobio</a></li>
                                        {% endif %}
                                        {% if app.session.get('suiviSED') %}
@@ -63,7 +66,7 @@
                     </div>
               </div>
 
-               <div class="col-md-offset-1 col-md-3">
+               <div class="col-md-offset-1 col-md-4">
                   <div class="panel panel-primary">
                       <div class="panel-heading text-center"><h3>Aide</h3></div>
                       <div class="panel-body">
@@ -77,7 +80,7 @@
           </div>
      {% else %}
            <div class="row">
-              <div class="col-md-offset-3 col-md-3">
+              <div class="col-md-offset-2 col-md-4">
                   <div class="panel panel-primary">
                       <div class="panel-heading text-center"><h3>Aide</h3></div>
                       <div class="panel-body">
@@ -94,7 +97,7 @@
  
  {%elseif   is_granted('ROLE_PRESTASQE') %}
     <div class="row">
-          <div class="col-md-offset-3 col-md-3">
+          <div class="col-md-offset-2 col-md-4">
             <div class="panel panel-primary">
                 <div class="panel-heading text-center"><h3>Echange de fichiers</h3></div>
                 <div class="panel-body">
@@ -107,7 +110,7 @@
     </div>
            
      {% if app.session.get('suiviDonnees')  or app.session.get('suiviHb') or app.session.get('suiviSED') %}
-             <div class="col-md-offset-1 col-md-3">
+             <div class="col-md-offset-1 col-md-4">
                   <div class="panel panel-primary">
                       <div class="panel-heading text-center"><h3>Saisie</h3></div>
                       <div class="panel-body">
@@ -116,6 +119,9 @@
                                           <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ path('AeagSqeBundle_saisieDonnees_index')}}" title="Saisie des données"><i class="fa fa-dashboard fa-3x"></i> Terrain</a></li>
                                        {% endif %}
                                        {% if app.session.get('suiviHb') %}
+                                           {% if  not app.session.get('evolution')%}
+                                                <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ path('AeagSqeBundle_suiviHydrobio_synthese')}}" title="Synthèse de l’avancement des suivis Hydrobio"><i class="fa fa-calendar fa-3x"></i> Synthèse suivis Hydrobio</a></li>
+                                            {% endif %}
                                           <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}" title="Suivi hydrobio"><i class="fa fa-calendar fa-3x"></i> Suivi Hydrobio</a></li>
                                        {% endif %}
                                        {% if app.session.get('suiviSED') %}
@@ -127,7 +133,7 @@
               </div>
 
             <div class="row">
-               <div class="col-md-offset-1 col-md-3">
+               <div class="col-md-offset-1 col-md-4">
                   <div class="panel panel-primary">
                       <div class="panel-heading text-center"><h3>Aide</h3></div>
                       <div class="panel-body">
@@ -141,7 +147,7 @@
           </div>
      {% else %}
            <div class="row">
-              <div class="col-md-offset-3 col-md-3">
+              <div class="col-md-offset-2 col-md-4">
                   <div class="panel panel-primary">
                       <div class="panel-heading text-center"><h3>Aide</h3></div>
                       <div class="panel-body">
@@ -157,11 +163,14 @@
 
  {%elseif   is_granted('ROLE_SQE') %}
     <div class="row">
-          <div class="col-md-offset-3 col-md-3">
+          <div class="col-md-offset-2 col-md-4">
                 <div class="panel panel-primary">
                       <div class="panel-heading text-center"><h3>Saisie</h3></div>
                       <div class="panel-body">
                                   <ul class="list-group">
+                                          {% if  not app.session.get('evolution')%}
+                                                <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ path('AeagSqeBundle_suiviHydrobio_synthese')}}" title="Synthèse de l’avancement des suivis Hydrobio"><i class="fa fa-calendar fa-3x"></i> Synthèse suivis Hydrobio</a></li>
+                                            {% endif %}
                                           <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}" title="Suivi hydrobio"><i class="fa fa-calendar fa-3x"></i> Suivi Hydrobio</a></li>
                                           <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ path('AeagSqeBundle_suiviSediment_index')}}" title="Suivi hydrobio"><i class="fa fa-calendar fa-3x"></i> Suivi Sédiment</a></li>
                                  </ul>

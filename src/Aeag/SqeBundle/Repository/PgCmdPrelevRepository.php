@@ -65,6 +65,27 @@ class PgCmdPrelevRepository extends EntityRepository {
         //print_r($query);
         return $qb->getResult();
     }
+    
+     public function getPgCmdPrelevBySupport($pgSandreSupports) {
+        $query = "select p";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelev p";
+        $query = $query . " where p.codeSupport = '" . $pgSandreSupports->getCodeSupport() . "'";
+         $query = $query . " order by p.station,  p.periode";
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+        return $qb->getResult();
+    }
+    
+     public function getPgCmdPrelevBySupportPresta($pgSandreSupports, $pgProgWebUser) {
+        $query = "select p";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelev p";
+        $query = $query . " where p.codeSupport = " . $pgSandreSupports->getCodeSupport();
+        $query = $query . "  and presta_prel_id = '" . $pgProgWebUser->getPrestataire() . "'";
+         $query = $query . " order by p.station,  p.periode";
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+        return $qb->getResult();
+    }
 
       public function getPgCmdPrelevByDemandeStationPeriode($pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes) {
         $query = "select p";

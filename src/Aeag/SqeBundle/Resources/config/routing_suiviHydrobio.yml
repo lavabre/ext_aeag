@@ -100,6 +100,17 @@ AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_fichier_telecharge
     requirements:
          methods:  GET|POST
          
+AeagSqeBundle_suiviHydrobio_synthese:
+    path:  /synthese    
+    defaults: { _controller: AeagSqeBundle:SuiviHydrobio:synthese}
+    requirements:
+         methods:  GET|POST
+         
+AeagSqeBundle_suiviHydrobio_synthese_support:
+    path:  /synthese/support/{codeSupport}   
+    defaults: { _controller: AeagSqeBundle:SuiviHydrobio:syntheseSupport, codeSupport: null}
+    requirements:
+         methods:  GET|POST
          
 AeagSqeBundle_suiviHydrobio_planning:
     path:  /planning
