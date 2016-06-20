@@ -58,7 +58,7 @@ class PgCmdFichiersRpsRepository extends EntityRepository {
         $query .= " order by rps.id asc";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('phase', $phase);
-        $qb->setMaxResults(5);
+        $qb->setMaxResults(1);
         return $qb->getResult();
     }
     

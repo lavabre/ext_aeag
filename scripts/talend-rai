@@ -2,17 +2,20 @@
 jour=$(date +"%Y%m%d")
 if [ "$1" = "-env" ]; then
     if [ "$2" = "prod" ]; then
-        dirbase="/base/extranet/ext_aeag/"
+        dirbase="/usr/local/bin"
+        dirlog="/base/extranet/ext_aeag/app/logs"
     elif [ "$2" = "preprod" ]; then
-        dirbase="/base/extranet/preprod/ext_aeag/"
+        dirbase="/usr/local/bin/sqe/preprod"
+        dirlog="/base/extranet/preprod/ext_aeag/app/logs"
     else
-        dirbase="/base/extranet/dev/Vincent/ext_aeag/"
+        dirbase="/usr/local/bin/sqe/dev"
+        dirlog="/base/extranet/dev/Vincent/ext_aeag/app/logs"
     fi
 else
-    dirbase="/base/extranet/dev/Vincent/ext_aeag/"
+    dirbase="/usr/local/bin/sqe/dev"
+    dirlog="/base/extranet/dev/Vincent/ext_aeag/app/logs"
 fi
-dirlog=$dirbase"app/logs"
 if [ ! -d "$dirlog" ]; then
   mkdir $dirlog
 fi
-/usr/local/bin/sqe/preprod/Validation_RAI_tmp/Validation_RAI_tmp/Validation_RAI_tmp_run.sh >> $dirlog/process_$jour.log
+$dirbase/Validation_RAI_tmp/Validation_RAI_tmp/Validation_RAI_tmp_run.sh >> $dirlog/process_$jour.log
