@@ -134,7 +134,7 @@ class PgCmdPrelev {
     /**
      * @var \Doctrine\Common\Collections\Collection
      *
-     * @ORM\ManyToMany(targetEntity="PgProgLotPeriodeProg", inversedBy="prelev")
+     * @ORM\ManyToMany(targetEntity="PgProgLotPeriodeProg")
      * @ORM\JoinTable(name="pg_cmd_prel_pprog",
      *   joinColumns={
      *     @ORM\JoinColumn(name="prelev_id", referencedColumnName="id")

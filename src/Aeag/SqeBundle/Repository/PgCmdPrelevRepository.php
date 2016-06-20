@@ -215,7 +215,8 @@ class PgCmdPrelevRepository extends EntityRepository {
         $query = $query . " and prl.id = sp.prelev";
         $query = $query . " and sp.statutPrel = 'P'";
         $query = $query . " and sp.validation <> 'R'";
-        $query = $query . " group by sup.codeSupport, sup.nomSupport";
+        $query = $query . " group by sp.datePrel, sup.codeSupport, sup.nomSupport";
+        $query = $query . " order by sp.datePrel";
         $qb = $this->_em->createQuery($query);
 //        if ($pgCmdPrelev->getStation()->getOuvFoncId() == 557655){
 //        print_r($query);

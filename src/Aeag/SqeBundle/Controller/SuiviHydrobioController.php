@@ -501,19 +501,22 @@ class SuiviHydrobioController extends Controller {
 
             $erreur = 0;
             foreach ($liste as $nomFichier) {
-                $tabNomFichier = explode('-', $nomFichier);
+                //$tabNomFichier = explode('-', $nomFichier);
                 $trouve = false;
                 for ($k = 0; $k < count($tabStations); $k++) {
-                    if ($tabStations[$k]['station']->getCode() == $tabNomFichier[0]) {
+                    //if ($tabStations[$k]['station']->getCode() == $tabNomFichier[0]) {
+                    if (strpos($nomFichier, $tabStations[$k]['station']->getCode()) !== false) {
                         $trouve = true;
                         break;
                     }
                 }
                 if (!$trouve) {
-                    $contenu = 'pas de station à raccorder au fichier ' . $nomFichier . CHR(13) . CHR(10) . CHR(13) . CHR(10);
-                    $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                    fputs($rapport, $contenu);
-                    $erreur = 1;
+                    if (filesize($pathBase . '/' . $nomFichier) > 0) {
+                        $contenu = 'pas de station à raccorder au fichier ' . $nomFichier . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                        fputs($rapport, $contenu);
+                        //$erreur = 1;
+                    }
                 } else {
                     $st = count($tabStations[$k]['fichiers']);
                     $tabStations[$k]['fichiers'][$st] = $nomFichier;
@@ -523,20 +526,21 @@ class SuiviHydrobioController extends Controller {
             for ($k = 0; $k < count($tabStations); $k++) {
                 if (count($tabStations[$k]['fichiers'])) {
                     $tabFichiers = $tabStations[$k]['fichiers'];
-                    if (count($tabFichiers) > 3) {
-                        $contenu = 'La station  ' . $tabStations[$k]['station']->getCode() . ' ne doit pas regrouper plus de 3 fichiers ' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                    if (count($tabFichiers) < 3) {
+                        $contenu = 'La station  ' . $tabStations[$k]['station']->getCode() . ' doit regrouper au moins 3 fichiers ' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
                         $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                         fputs($rapport, $contenu);
                         $erreur = 1;
-                    } elseif (count($tabFichiers) > 1) {
+                    } elseif (count($tabFichiers) > 0) {
                         for ($nb = 0; $nb < count($tabFichiers); $nb++) {
-                            $tabNomFichier = explode('-', $tabFichiers[$nb]);
-                            if ($tabNomFichier[1] != 'FT' && $tabNomFichier[1] != 'photo1' && $tabNomFichier[1] != 'photo2') {
-                                $contenu = 'La station  ' . $tabStations[$k]['station']->getCode() . ' ne doit pas regrouper  le fichier :  ' . $tabFichiers[$nb] . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                            //$tabNomFichier = explode('-', $tabFichiers[$nb]);
+                            //if ($tabNomFichier[1] != 'ft' && $tabNomFichier[1] != 'photo1' && $tabNomFichier[1] != 'photo2') {
+                            if ((strpos($tabFichiers[$nb], 'ft') === false) && (strpos($tabFichiers[$nb], 'terrain') === false) && (strpos($tabFichiers[$nb], 'photo') === false)) {
+                                $contenu = 'La station  ' . $tabStations[$k]['station']->getCode() . ' ne peut pas regrouper  le fichier : ' . $tabFichiers[$nb] . ' (non reconnu comme photo ni fiche terrain)' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
                                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                                 fputs($rapport, $contenu);
                                 $erreur = 1;
-                            };
+                            }
                         }
                     }
                 }
@@ -568,41 +572,59 @@ class SuiviHydrobioController extends Controller {
                         } else {
                             $name = $tabFichiers[0];
                         }
-                        $pgCmdSuiviPrel = $tabStations[$k]['prelevs'][0]['cmdSuiviPrelevs'][0];
-                        if ($pgCmdSuiviPrel->getFichierRps()) {
-                            $pgCmdFichiersRps = $pgCmdSuiviPrel->getFichierRps();
-                            $emSqe->remove($pgCmdFichiersRps);
-                        }
-                        $pgCmdFichiersRps = new PgCmdFichiersRps();
-                        $pgCmdFichiersRps->setDemande($pgCmdPrelev->getDemande());
-                        $pgCmdFichiersRps->setNomFichier($name);
-                        $pgCmdFichiersRps->setDateDepot(new \DateTime());
-                        $pgCmdFichiersRps->setTypeFichier('SUI');
-                        $pgCmdFichiersRps->setPhaseFichier($pgProgPhases);
-                        $pgCmdFichiersRps->setUser($pgProgWebUser);
-                        $pgCmdFichiersRps->setSuppr('N');
 
-                        $emSqe->persist($pgCmdFichiersRps);
-                        $pgCmdSuiviPrel->setFichierRps($pgCmdFichiersRps);
-                        $emSqe->persist($pgCmdSuiviPrel);
-                        $emSqe->flush();
-                        $pathBaseFic = $this->getCheminEchange($pgCmdSuiviPrel, $pgCmdFichiersRps->getId());
-                        if (!is_dir($pathBaseFic)) {
-                            if (!mkdir($pathBaseFic, 0777, true)) {
-                                $session->getFlashBag()->add('notice-error', 'Le répertoire : ' . $pathBaseFic . ' n\'a pas pu être créé');
-                                ;
+                        $pgCmdSuiviPrels = $tabStations[$k]['prelevs'][0]['cmdSuiviPrelevs'];
+                        if ($pgCmdSuiviPrels) {
+                            $pgCmdSuiviPrel = $tabStations[$k]['prelevs'][0]['cmdSuiviPrelevs'][0];
+                            if (($pgCmdSuiviPrel->getStatutPrel() == 'N') or ( $pgCmdSuiviPrel->getStatutPrel() == 'F')) {
+                                if ($pgCmdSuiviPrel->getFichierRps()) {
+                                    $pgCmdFichiersRps = $pgCmdSuiviPrel->getFichierRps();
+                                    $emSqe->remove($pgCmdFichiersRps);
+                                }
+                                $pgCmdFichiersRps = new PgCmdFichiersRps();
+                                $pgCmdFichiersRps->setDemande($pgCmdPrelev->getDemande());
+                                $pgCmdFichiersRps->setNomFichier($name);
+                                $pgCmdFichiersRps->setDateDepot(new \DateTime());
+                                $pgCmdFichiersRps->setTypeFichier('SUI');
+                                $pgCmdFichiersRps->setPhaseFichier($pgProgPhases);
+                                $pgCmdFichiersRps->setUser($pgProgWebUser);
+                                $pgCmdFichiersRps->setSuppr('N');
+
+                                $emSqe->persist($pgCmdFichiersRps);
+                                $pgCmdSuiviPrel->setFichierRps($pgCmdFichiersRps);
+                                $emSqe->persist($pgCmdSuiviPrel);
+                                $emSqe->flush();
+                                $pathBaseFic = $this->getCheminEchange($pgCmdSuiviPrel, $pgCmdFichiersRps->getId());
+                                if (!is_dir($pathBaseFic)) {
+                                    if (!mkdir($pathBaseFic, 0777, true)) {
+                                        $session->getFlashBag()->add('notice-error', 'Le répertoire : ' . $pathBaseFic . ' n\'a pas pu être créé');
+                                        ;
+                                    }
+                                }
+                                //                        $contenu = 'Le fichier ' . $pathBase . '/' . $name . ' a été déposé vers  ' . $pathBaseFic . '/' . $name . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                                //                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                //                        fputs($rapport, $contenu);
+                                copy($pathBase . '/' . $name, $pathBaseFic . '/' . $name);
+                                unlink($pathBase . '/' . $name);
+                                $contenu = 'Le fichier ' . $name . ' a été déposé sur la station ' . $tabStations[$k]['station']->getCode() . ' ' . $tabStations[$k]['station']->getLibelle() . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                fputs($rapport, $contenu);
+                            } else {
+                                $contenu = 'Association impossible : le dernier suivi de la station  ' . $tabStations[$k]['station']->getCode() . ' doit être "Effectué" ou "Non effectué".' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                fputs($rapport, $contenu);
                             }
+                        } else {
+                            $contenu = 'Association impossible : pas de suivi renseigné pour la station  ' . $tabStations[$k]['station']->getCode() . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                            fputs($rapport, $contenu);
                         }
-//                        $contenu = 'Le fichier ' . $pathBase . '/' . $name . ' a été déposé vers  ' . $pathBaseFic . '/' . $name . CHR(13) . CHR(10) . CHR(13) . CHR(10);
-//                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-//                        fputs($rapport, $contenu);
-                        copy($pathBase . '/' . $name, $pathBaseFic . '/' . $name);
-                        unlink($pathBase . '/' . $name);
-                        $contenu = 'Le fichier ' . $name . ' a été déposé sur la station ' . $tabStations[$k]['station']->getCode() . ' ' . $tabStations[$k]['station']->getLibelle() . CHR(13) . CHR(10) . CHR(13) . CHR(10);
-                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                        fputs($rapport, $contenu);
                     }
                 }
+            } else {
+                $contenu = 'Au moins une erreur rencontrée. Aucun fichier intégré' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                fputs($rapport, $contenu);
             }
             fclose($rapport);
         }
@@ -1253,8 +1275,9 @@ class SuiviHydrobioController extends Controller {
         $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevById($prelevId);
 
         if ($user->hasRole('ROLE_ADMINSQE')) {
-            $pgProgWebUsers = $repoPgProgWebUsers->getPgProgWebusersByPrestataire($pgCmdPrelev->getPrestaPrel());
-            $pgProgWebUser = $pgProgWebUsers[0];
+            //$pgProgWebUsers = $repoPgProgWebUsers->getPgProgWebusersByPrestataire($pgCmdPrelev->getPrestaPrel());
+            //$pgProgWebUser = $pgProgWebUsers[0];
+            $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         } else {
             $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         }

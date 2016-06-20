@@ -138,7 +138,7 @@ class EtatController extends Controller {
     }
 
     /**
-     * Retourne le code HTML correspondant à une liste de etat proposées (pour un type donné)
+     * Retourne le code HTML correspondant à une liste de etat proposés (pour un type donné)
      * 
      * mode Ajax
      */
