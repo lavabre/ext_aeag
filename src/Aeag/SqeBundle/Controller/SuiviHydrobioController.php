@@ -12,6 +12,7 @@ use \Aeag\SqeBundle\Entity\PgCmdAnalyse;
 use \Aeag\SqeBundle\Entity\PgCmdPrelevPc;
 use Aeag\SqeBundle\Form\PgCmdSuiviPrelMajType;
 use Aeag\SqeBundle\Form\PgCmdSuiviPrelVoirType;
+use \Aeag\SqeBundle\Form\SyntheseSupportStationType;
 use Aeag\SqeBundle\Form\LotPeriodeStationDemandeSuiviSaisirType;
 use Aeag\AeagBundle\Controller\AeagController;
 use Symfony\Component\HttpFoundation\Response;
@@ -1928,15 +1929,15 @@ class SuiviHydrobioController extends Controller {
                         if ($trouve) {
                             break;
                         }
-                   }
-                }else{
+                    }
+                } else {
                     $trouve = true;
                 }
                 if ($trouve) {
                     $pgProgLot = $pgCmdPrelev->getDemande()->getLotan()->getLot();
                     $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
                     if (substr($pgProgTypeMilieu->getCodeMilieu(), 1, 2) === 'HB') {
-                        $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelev($pgCmdPrelev);
+                        $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelevOrderDate($pgCmdPrelev);
                         if ($pgCmdSuiviPrels) {
                             $tabStations[$i]['station'] = $pgCmdPrelev->getStation();
                             $tabStations[$i]['lien'] = '/sqe_fiches_stations/' . str_replace('/', '-', $pgCmdPrelev->getStation()->getCode()) . '.pdf';
@@ -1999,6 +2000,77 @@ class SuiviHydrobioController extends Controller {
 //        return new Response('');
 
         return $this->render('AeagSqeBundle:SuiviHydrobio:syntheseSupport.html.twig', array('support' => $pgSandreSupport, 'stations' => $tabStations,));
+    }
+
+    public function syntheseSupportStationAction($codeSupport = null, $stationId = null, $suiviPrelId = null, $tr = null, Request $request) {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'syntheseHydrobio');
+        $session->set('controller', 'SuiviHydrobio');
+        $session->set('fonction', 'syntheseSupportStation');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        $repoPgSandreSupport = $emSqe->getRepository('AeagSqeBundle:PgSandreSupports');
+        $repoPgRefStationMesure = $emSqe->getRepository('AeagSqeBundle:PgRefStationMesure');
+        $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
+        $repoPgRefReseauMesure = $emSqe->getRepository('AeagSqeBundle:PgRefReseauMesure');
+        $repoPgProgLotStationAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotStationAn');
+
+        $pgSandreSupport = $repoPgSandreSupport->getPgSandreSupportsByCodeSupport($codeSupport);
+        $pgRefStationMesure = $repoPgRefStationMesure->getPgRefStationMesureByOuvFoncId($stationId);
+        $pgCmdSuiviPrel = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelById($suiviPrelId);
+        $pgCmdSuiviPrelActuel = clone($pgCmdSuiviPrel);
+        $pgCmdPrelev = $pgCmdSuiviPrel->getPrelev();
+        $lien = '/sqe_fiches_stations/' . str_replace('/', '-', $pgRefStationMesure->getCode()) . '.pdf';
+        $pgProgLotStationAn = $repoPgProgLotStationAn->getPgProgLotStationAnByLotAnStation($pgCmdPrelev->getDemande()->getLotan(), $pgCmdPrelev->getStation());
+        $pgRefReseauMesure = $repoPgRefReseauMesure->getPgRefReseauMesureByGroupementId($pgProgLotStationAn->getRsxId());
+        if ($pgRefReseauMesure) {
+            $reseau = $pgRefReseauMesure;
+        } else {
+            $reseau = null;
+        }
+       
+
+        $form = $this->createForm(new SyntheseSupportStationType($pgCmdSuiviPrel));
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            if ($pgCmdSuiviPrelActuel->getCommentaire()) {
+                $commentaire = $pgCmdSuiviPrelActuel->getCommentaire() . CHR(13) . CHR(10) . $_POST['commentaire'];
+            }else{ 
+                $commentaire =  $_POST['commentaire'];
+            }
+            $pgCmdSuiviPrel->setvalidation($_POST['validation']);
+            $pgCmdSuiviPrel->setCommentaire($commentaire);
+            $emSqe->persist($pgCmdSuiviPrel);
+            $emSqe->flush();
+            return $this->render('AeagSqeBundle:SuiviHydrobio:syntheseSupportStationMaj.html.twig', array('support' => $pgSandreSupport,
+                        'station' => $pgRefStationMesure,
+                        'lien' => $lien,
+                        'reseau' => $reseau,
+                        'cmdPrelev' => $pgCmdPrelev,
+                        'suiviPrel' => $pgCmdSuiviPrel,
+                        'tr' => $tr));
+        }
+
+        return $this->render('AeagSqeBundle:SuiviHydrobio:syntheseSupportStation.html.twig', array('support' => $pgSandreSupport,
+                        'station' => $pgRefStationMesure,
+                        'lien' => $lien,
+                        'reseau' => $reseau,
+                        'cmdPrelev' => $pgCmdPrelev,
+                        'suiviPrel' => $pgCmdSuiviPrel,
+                        'tr' => $tr,
+                        'form' => $form->createView(),
+        ));
+
+
+
+//          \Symfony\Component\VarDumper\VarDumper::dump($tabDemande);
+//        return new Response ('');
     }
 
     public function planningAction() {

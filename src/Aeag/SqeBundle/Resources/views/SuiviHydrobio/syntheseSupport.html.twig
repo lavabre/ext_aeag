@@ -176,12 +176,13 @@
                 </tr>
             </thead>
             <tbody>
+                {% set nb = 0 %}
                 {%if stations | length%} 
-                    {% for station in stations %}
+                      {% for station in stations %}
                         {% if  station.cmdPrelevs | length %}
                             {% for cmdPrelev in station.cmdPrelevs %}
-                             {#   {%if cmdPrelev.suiviPrels | length %}#}
-                                <tr>
+                             {% set nb = nb + 1%}
+                               <tr>
                                     <td width="10%" nowrap>
                                         {%if cmdPrelev.suiviPrels | length%}
                                             <a id="idVoirSuivi{{ cmdPrelev.cmdPrelev.id }}" class="btn btn-primary" href="#" title="consulter l'historique">
@@ -197,20 +198,25 @@
                                                     {% endif %}
                                                 {% endif %}
                                             {% endif %}
-                                            {#      {% if is_granted('ROLE_ADMINSQE') %}
-                                                      <a  id="idMaj-{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}" class="btn btn-warning"  title="valider le suivi">
-                                                          <i class="fa fa-check"></i>
-                                                      </a>
-                                                    {% endif %}#}
+                                                  {% if is_granted('ROLE_ADMINSQE') %}
+                                                      {% if cmdPrelev.suiviPrels.0.suiviPrel.statutPrel  == 'F'  and 
+                                                             ( cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'E' or 
+                                                               cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'F' or 
+                                                               cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'D') %}
+                                                      <a  id="idMaj-{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}" class="btn btn-warning"  title="Donner un avis">
+                                                               <i class="fa fa-graduation-cap"></i>
+                                                       </a>
+                                                     {% endif %}
+                                                  {% endif %}
                                         {% endif %}
 
                                     </td>
-                                    <td>
+                                    <td id="idTd-{{nb}}">
                                         {%if cmdPrelev.suiviPrels | length%}
                                             {% if cmdPrelev.suiviPrels.0.suiviPrel.validation == 'F' %}
-                                                Favorable
+                                                <span class="label label-success">Favorable</span>
                                             {% elseif cmdPrelev.suiviPrels.0.suiviPrel.validation == 'D' %}
-                                                Défavorable
+                                                <span class="label label-danger">Défavorable</span>
                                             {% endif %}
                                         {% endif %}
                                     </td>
@@ -226,18 +232,10 @@
                                     <td>
                                         {{ cmdPrelev.cmdPrelev.prestaPrel.nomCorres }}
                                     </td>
-                                    {# <td>
-                                         {%if  cmdPrelev.autrePrelevs %}
-                                              {% for autrePrelev in cmdPrelev.autrePrelevs  %}
-                                                  {{ autrePrelev.datePrel | date("d/m/Y H:i") }} : {{ autrePrelev.support }} </br>
-                                               {% endfor %}
-                                         {% endif %}
-                                     </td>#}
-                                    {%if not cmdPrelev.suiviPrels | length %}
+                                       {%if not cmdPrelev.suiviPrels | length %}
                                         <td></td>
                                         <td></td>
-                                        {#     <td></td>#}
-                                    {% else %}
+                                     {% else %}
                                         {% if cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'A' %}
                                             <td class="success" nowrap>
                                             {% elseif cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'R' %}
@@ -262,25 +260,9 @@
                                             {% endif %}
                                             {{cmdPrelev.suiviPrels.0.suiviPrel.datePrel | date("d/m/Y H:i") }}
                                         </td>
-                                        {#      {% if cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'A' %}
-                                                <td class="success" nowrap>
-                                                {% elseif cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'R' %}
-                                                <td class="danger" nowrap>
-                                                {% else%}
-                                                <td class="warning" nowrap>
-                                                {% endif %}
-                                                {% if cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'A' %}
-                                                    Accepté
-                                                {% elseif cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'R' %}
-                                                   Refusé
-                                                {% else %}
-                                                   En attente
-                                                  {% endif %}
-                                            </td>#}
-                                    {% endif %}
+                                             {% endif %}
                                 </tr>
-                             {#   {% endif %}#}
-                            {% endfor %}
+                             {% endfor %}
                         {% endif %}
                     {% endfor %}
                 {% endif %}
@@ -305,7 +287,7 @@
     jQuery(document).ready(function() {
 
     $('#idTable_stations').DataTable( {
-    "stateSave": true,
+    "stateSave": false,
     "order": [[ 1, "asc" ]],
     "language": {
     "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
@@ -320,7 +302,7 @@
 
     {#  api.columns().indexes().flatten().each( function ( i ) {#}
     $("#idTable_stations thead td").each( function ( i ) {
-    if (i != 0 && i != 2 && i != 5 && i != 6){
+    if (i != 0 && i != 2 && i != 7){
     var column =  api.column( i );
     var select = $('<select><option value=""></option></select>')
     .appendTo( $(this).empty() )
@@ -343,11 +325,13 @@
     handle: ".modal-header"
     }); 
 
+     {%set nb1 = 0 %}
     {%if stations | length%} 
         {% for station in stations %}
             {% if  station.cmdPrelevs | length %}
                 {% for cmdPrelev in station.cmdPrelevs %}
-
+                     {%set nb1 = nb1 + 1 %}
+                                    
                     $("#modalArchive{{ cmdPrelev.cmdPrelev.id }}").draggable({
                     handle: ".modal-header"
                     }); 
@@ -358,6 +342,39 @@
                     $('#modalArchive{{ cmdPrelev.cmdPrelev.id }}').modal('show');
                     $('#modalTraitementEncours').modal('hide');
                     });
+                    
+                     
+                      {%if cmdPrelev.suiviPrels.0.suiviPrel | length%} 
+                           {% if is_granted('ROLE_ADMINSQE') %}
+                                  {% if cmdPrelev.suiviPrels.0.suiviPrel.statutPrel  == 'F'  and 
+                                        ( cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'E' or 
+                                          cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'F' or 
+                                          cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'D') %}
+                                       $(document).on('click','#idMaj-{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}',function(e){
+                                        e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                                        $('#modalTraitementEncours').modal('toggle');
+                                        var url = '{{ path("AeagSqeBundle_suiviHydrobio_synthese_support_station",{"codeSupport": "par1", "stationId": "par2", "suiviPrelId":  "par3", "tr": "par4"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                        url = url.replace("par1", {{ support.codeSupport }});
+                                        url = url.replace("par2", {{station.station.ouvFoncId }});
+                                        url = url.replace("par3", {{ cmdPrelev.suiviPrels.0.suiviPrel.id }});
+                                        url = url.replace("par4", {{ nb1 }});
+                                        url = url.replace("amp;","");
+                                        $.ajax({
+                                        url: url,
+                                        type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+                                        success: function(html) { // Je récupère la réponse du fichier PHP
+                                         $('#idModalContentNouveauSuivi').empty().append(html);
+                                        var html = 'Avis sur le suivi Hydrobio de la station  {{ station.station.code }} sur le support :  {{ cmdPrelev.cmdPrelev.codeSupport.nomSupport }}';
+                                        $('#labelModalNouveauSuivi').html(html);
+                                        $('#modalNouveauSuivi').modal('show');
+                                        $('#modalTraitementEncours').modal('hide');
+                                        }
+                                        });
+                                        });
+                        
+                                 {% endif %}
+                            {% endif %}
+                    {% endif %}
 
                 {% endfor %}
             {% endif %}
