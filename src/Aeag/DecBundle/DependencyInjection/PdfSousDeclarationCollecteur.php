@@ -66,9 +66,9 @@ class PdfSousDeclarationCollecteur extends PageGroup {
         $this->SetFont('Arial', '', 8);
 
         $this->Cell(100);
-        $this->Cell($w[0], 7, number_format($dec['sousDeclarationCollecteur']->getQuantiteReel(), 0, ',', ' '), 'LR', 0, 'C');
-        $this->Cell($w[1], 7, number_format($dec['sousDeclarationCollecteur']->getQuantiteRet(), 0, ',', ' '), 'LR', 0, 'C');
-        $this->Cell($w[2], 7, number_format($dec['sousDeclarationCollecteur']->getMontAide(), 2, ',', ' '), 'LR', 0, 'C');
+        $this->Cell($w[0], 7, rtrim(number_format($dec['sousDeclarationCollecteur']->getQuantiteReel(), 3, ',', ' '),',000'), 'LR', 0, 'C');
+        $this->Cell($w[1], 7, rtrim(number_format($dec['sousDeclarationCollecteur']->getQuantiteRet(), 3, ',', ' '),',000'), 'LR', 0, 'C');
+        $this->Cell($w[2], 7, rtrim(number_format($dec['sousDeclarationCollecteur']->getMontAide(), 2, ',', ' '),',00'), 'LR', 0, 'C');
         $this->Ln();
         $h = $h + 7;
         // rectangle 
@@ -167,10 +167,10 @@ class PdfSousDeclarationCollecteur extends PageGroup {
             $this->Cell(50, 4, $declarationDetail['nature'], 'LR', 0, 'L', $fill);
             $this->Cell(10, 4, $declarationDetail['traitFiliere'], 'LR', 0, 'C', $fill);
             $this->Cell(10, 4, $declarationDetail['centreTraitement'], 'LR', 0, 'C', $fill);
-            $this->Cell(15, 4, number_format($declarationDetail['quantiteReel'], 0, ',', ' '), 'LR', 0, 'R', $fill);
-            $this->Cell(10, 4, $declarationDetail['filiere'], 'LR', 0, 'C', $fill);
-            $this->Cell(15, 4, number_format($declarationDetail['coutFacture'], 4, ',', ' '), 'LR', 0, 'R', $fill);
-            $this->Cell(15, 4, number_format($declarationDetail['montAide'], 2, ',', ' '), 'LR', 0, 'R', $fill);
+           $this->Cell(15, 4, rtrim(number_format($declarationDetail['quantiteReel'], 3, ',', ' '),',000'), 'LR', 0, 'R', $fill); 
+           $this->Cell(10, 4, $declarationDetail['filiere'], 'LR', 0, 'C', $fill);
+            $this->Cell(15, 4, rtrim(number_format($declarationDetail['coutFacture'], 4, ',', ' '),',0000'), 'LR', 0, 'R', $fill);
+            $this->Cell(15, 4, rtrim(number_format($declarationDetail['montAide'], 2, ',', ' '),',00'), 'LR', 0, 'R', $fill);
             $this->Cell(10, 4, $declarationDetail['centreDepot'], 'LR', 0, 'C', $fill);
             $this->Cell(10, 4, $declarationDetail['centreTransit'], 'LR', 0, 'C', $fill);
             $this->Ln();

@@ -291,9 +291,11 @@
                                                     </a>
                                                     {% endif %}
                                                 {% else %}
+                                                      {% if cmdPrelev.suiviPrels.0.suiviPrel.fichierRps.nomFichier %}
                                                         <a id="idTelechargerSuivi{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_suiviSediment_lot_periode_station_demande_suivi_fichier_telecharger',{'suiviPrelId': cmdPrelev.suiviPrels.0.suiviPrel.id })}}" title="Télécharger le fichier terrain">
                                                             <i class="fa fa-upload"></i> 
                                                         </a>
+                                                       {% endif %}
                                                  {% endif %}
                                             {% endif %}
                                             {% if is_granted('ROLE_ADMINSQE') %}

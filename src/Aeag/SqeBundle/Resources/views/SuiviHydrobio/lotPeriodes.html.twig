@@ -69,6 +69,7 @@
 
 {% block scripts %}
     jQuery(document).ready(function() {
+    
         var table = $('#idTable_demandes').DataTable(
             {"stateSave": true,
              "order": [[ 1, "asc" ]],
@@ -104,38 +105,7 @@
             setTimeout("window.location.reload()",2000);//or other value
         });
         
-        $('.btn-voir-reponses').click(function (){
-            $('#modalTraitementEncours').modal();
-            var url = '{{ path("AeagSqeBundle_echangefichiers_reponses",{"demandeId":  "par1" }) }}';
-            url = url.replace("par1", $(this).attr('id'));
-            $.ajax({
-                url: url,
-                type: 'get',
-                success: function(html) {
-                    $('#modal-reponses-content').empty().append(html);
-                    $('#modalTraitementEncours').modal('hide');
-                    $('#modal_reponses').modal();
-                }
-            });
-            
-        });
-        
-        $('.btn-deposer-reponse').click(function (){
-            $('#modalTraitementEncours').modal();
-            var url = '{{ path("AeagSqeBundle_echangefichiers_reponses_selectionner",{"demandeId":  "par1" }) }}';
-            var demandeId = $(this).data('id');
-            url = url.replace("par1", demandeId);
-            $.ajax({
-                url: url,
-                type: 'get',
-                success: function(html) {
-                    $('#modal-reponses-selection-content').empty().append(html);
-                    $('#modalTraitementEncours').modal('hide');
-                    $('#modal_reponses_selection').modal();
-                }
-            });
-        
-        });
+     
     });
     
 {%endblock scripts %}    
