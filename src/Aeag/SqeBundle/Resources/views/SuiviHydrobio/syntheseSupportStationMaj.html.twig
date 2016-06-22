@@ -1,7 +1,15 @@
          {% if suiviPrel.validation == 'F' %}
-            <span class="label label-success">Favorable</span>
+            Favorable
         {% elseif suiviPrel.validation == 'D' %}
-            <span class="label label-danger">Défavorable</span>
+             Défavorable
         {% endif %}
+        
+        <script>
+              {% if suiviPrel.validation == 'F' %}
+                  $('#idTd-{{nb}}').removeClass('danger').addClass('success');
+             {% else %}
+                 $('#idTd-{{nb}}').removeClass('sucees').addClass('danger')
+            {% endif %}
+         </script>
   
 

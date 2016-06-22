@@ -20,10 +20,14 @@ class SyntheseSupportStationType extends AbstractType {
                     'required' => true,
                     'data' => $pgCmdSuiviPrel->getValidation(),
                 ))
-                ->add('commentaire', 'textarea', array(
+                 ->add('commentaireActuel', 'textarea', array(
                     'label' => 'Commentaire',
                     'data' => $pgCmdSuiviPrel->getCommentaire(),
-                    'required' => false))
+                    'required' => false,
+                     'disabled' => true))
+                ->add('commentaire', 'textarea', array(
+                    'label' => 'Commentaire',
+                    'required' => true))
         ;
     }
 

@@ -10,8 +10,10 @@
             <th>Bureau</th>
             <th>Sécretaire</th>
             <th>Service</th>
+            <th>agents du service</th>
        </tr>
        <tr>
+           <td></td>
            <td></td>
            <td></td>
            <td></td>
@@ -24,10 +26,14 @@
        </tr>
     </thead>
     <tbody>
+        {% set nbPresents = 0 %}
+        {% set nbAbsents = 0 %}
         {% for agent in tabAgents %}
             {% if agent.etat | trim == 'absent' or agent.etat | trim  == 'absente' %}
+                {% set nbAbsents = nbAbsents + 1 %}
                <tr class="danger">
             {% elseif agent.etat | trim == 'présent' or agent.etat | trim  == 'présente' %}
+                 {% set nbPresents = nbPresents + 1 %}
                <tr class="success">
             {% else %}
                 <tr>
@@ -44,6 +50,7 @@
                     {{ agent.nomSec }} (tél. : {{ agent.telSec }} )
                     {% endif %}
                 </td>
+                <td>{{ agent.service }}</td>
                 <td id="idTd_{{ agent.matri }}">
                     <div class="text-center" id="idDiv_{{ agent.matri }}">
                         <a id="idBt_{{ agent.matri }}" class="btn btn-primary" data-toggle="modal" href="#">
@@ -54,7 +61,16 @@
               </tr>
          {% endfor %}
     </tbody>
- </table>
+  </table>
+    
+    <div class="row">
+           <div class="col-md-12 pull-right text-info">
+             <ul class="list-inline">
+               <li><span class="label label-success">Presents : {{ nbPresents }}</span></li>
+              <li><span class="label label-danger">Absents : {{ nbAbsents }}</span></li>
+             </ul>  
+           </div>
+      </div>        
     
  <script type="text/javascript" language="javascript">
     jQuery(document).ready(function() { 
@@ -90,7 +106,7 @@
       
         $("#idTable thead td").each( function ( i ) {
     
-     if (i != 2 && i != 8){
+     if (i != 2 && i != 9){
         var select = $('<select><option value=""></option></select>')
             .appendTo( $(this).empty() )
             .on( 'change', function () {

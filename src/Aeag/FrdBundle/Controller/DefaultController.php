@@ -16,16 +16,16 @@ class DefaultController extends Controller {
 
         $user = $this->getUser();
         $session = $this->get('session');
-
+         $session->clear();
+        $session->set('appli', 'frd');
         $session->set('retourErreur', $this->generateUrl('aeag_frd'));
-
+        $session->set('menu', 'index');
+        $session->set('controller', 'default');
+        $session->set('fonction', 'index');
+    
         $emFrd = $this->getDoctrine()->getManager('frd');
         $repoParametre = $emFrd->getRepository('AeagFrdBundle:Parametre');
         $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
-
-        $session->set('appli', 'frd');
-        $session->set('default', 'acceuil');
-        $session->set('menu', '');
 
 
         $annee = $repoParametre->getParametreByCode('ANNEE');

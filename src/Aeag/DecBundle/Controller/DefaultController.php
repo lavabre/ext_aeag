@@ -13,17 +13,17 @@ use Aeag\AeagBundle\Controller\AeagController;
 class DefaultController extends Controller {
 
     public function indexAction() {
+        
         $user = $this->getUser();
         $session = $this->get('session');
-
-        $session->set('retourErreur', $this->generateUrl('aeag_dec'));
-
+        $session->clear();
         $session->set('appli', 'dec');
+        $session->set('retourErreur', $this->generateUrl('aeag_dec'));
+        $session->set('menu', 'index');
+        $session->set('controller', 'default');
+        $session->set('fonction', 'index');
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
-
-        $session->set('default', 'acceuil');
-        $session->set('menu', '');
 
         $ua = $this->getBrowser();
 //        $yourbrowser= "Your browser: " . $ua['name'] . " " . $ua['version'] . " on " .$ua['platform'] . " reports: <br >" . $ua['userAgent'];

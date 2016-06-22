@@ -268,8 +268,11 @@
                     </ul>
                 </li>
          #}
-       
-        <li>
+        {%if app.session.get('menu') == 'contact'%}  
+         <li class="active>
+        {% else %}
+            <li>
+         {% endif %}}
                 <a href="{{ path('AeagDecBundle_collecteur_envoyerMessage') }}">
                 Contact
                 </a>

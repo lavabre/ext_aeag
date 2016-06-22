@@ -1957,26 +1957,18 @@ class SuiviHydrobioController extends Controller {
                             $tabSuiviPrels = array();
                             $nbSuiviPrels = 0;
                             foreach ($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
-//                               if ( $pgCmdSuiviPrel->getStatutPrel() == 'F' and $pgCmdSuiviPrel->getValidation() != 'A') {
                                 $tabSuiviPrels[$nbSuiviPrels]['suiviPrel'] = $pgCmdSuiviPrel;
-                                $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'N';
-                                if ($pgCmdSuiviPrel->getUser()->getPrestataire() == $pgCmdPrelev->getPrestaPrel()) {
-                                    if ($pgCmdSuiviPrel->getStatutPrel() != 'F' or ( $pgCmdSuiviPrel->getStatutPrel() == 'F' and $pgCmdSuiviPrel->getValidation() != 'A')) {
-                                        $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'O';
-                                        $tabCmdPrelevs[$nbCmdPrelevs]['maj'] = 'O';
-                                    }
-                                } else {
-                                    if ($user->hasRole('ROLE_ADMINSQE')) {
-                                        if ($pgCmdSuiviPrel->getStatutPrel() != 'F' or ( $pgCmdSuiviPrel->getStatutPrel() == 'F' and $pgCmdSuiviPrel->getValidation() != 'A')) {
-                                            $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'O';
-                                            $tabCmdPrelevs[$nbCmdPrelevs]['maj'] = 'O';
-                                        }
-                                    } else {
-                                        $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'N';
+                                $dateLimite = null;
+                                $dateLimite = $pgCmdSuiviPrel->getDatePrel();
+                                if ($pgCmdSuiviPrel->getFichierRps()) {
+                                    if ($pgCmdSuiviPrel->getFichierRps()->getDateDepot()) {
+                                        $dateDepot = $pgCmdSuiviPrel->getFichierRps()->getDateDepot();
+                                        $delai = 21;
+                                        $dateLimite = $dateDepot->add(new \DateInterval('P' . $delai . 'D'));
                                     }
                                 }
+                                $tabSuiviPrels[$nbSuiviPrels]['dateLimite'] = $dateLimite;
                                 $nbSuiviPrels++;
-//                            }
                             }
                             $tabCmdPrelevs[$nbCmdPrelevs]['suiviPrels'] = $tabSuiviPrels;
                             $tabAutrePrelevs = $repoPgCmdPrelev->getAutrePrelevs($pgCmdPrelev);
@@ -1999,7 +1991,9 @@ class SuiviHydrobioController extends Controller {
 //         \Symfony\Component\VarDumper\VarDumper::dump($tabStations);
 //        return new Response('');
 
-        return $this->render('AeagSqeBundle:SuiviHydrobio:syntheseSupport.html.twig', array('support' => $pgSandreSupport, 'stations' => $tabStations,));
+        return $this->render('AeagSqeBundle:SuiviHydrobio:syntheseSupport.html.twig', array('pgProgWebUser' => $pgProgWebUser,
+                    'support' => $pgSandreSupport,
+                    'stations' => $tabStations,));
     }
 
     public function syntheseSupportStationAction($codeSupport = null, $stationId = null, $suiviPrelId = null, $tr = null, Request $request) {
@@ -2033,19 +2027,29 @@ class SuiviHydrobioController extends Controller {
         } else {
             $reseau = null;
         }
-       
-
-        $form = $this->createForm(new SyntheseSupportStationType($pgCmdSuiviPrel));
+        $dateLimite = null;
+        if ($pgCmdSuiviPrel->getFichierRps()) {
+            if ($pgCmdSuiviPrel->getFichierRps()->getDateDepot()) {
+                $dateDepot = $pgCmdSuiviPrel->getFichierRps()->getDateDepot();
+                $delai = 21;
+                $dateLimite = $dateDepot->add(new \DateInterval('P' . $delai . 'D'));
+            }
+        }
+        
+         $form = $this->createForm(new SyntheseSupportStationType($pgCmdSuiviPrel));
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            if ($pgCmdSuiviPrelActuel->getCommentaire()) {
-                $commentaire = $pgCmdSuiviPrelActuel->getCommentaire() . CHR(13) . CHR(10) . $_POST['commentaire'];
-            }else{ 
-                $commentaire =  $_POST['commentaire'];
+            $validation = $_POST['validation'];
+            if ($validation == 'D') {
+                if ($pgCmdSuiviPrelActuel->getCommentaire()) {
+                    $commentaire = $pgCmdSuiviPrelActuel->getCommentaire() . CHR(13) . CHR(10) . $_POST['commentaire'];
+                } else {
+                    $commentaire = $_POST['commentaire'];
+                }
+                $pgCmdSuiviPrel->setCommentaire($commentaire);
             }
-            $pgCmdSuiviPrel->setvalidation($_POST['validation']);
-            $pgCmdSuiviPrel->setCommentaire($commentaire);
+            $pgCmdSuiviPrel->setvalidation($validation);
             $emSqe->persist($pgCmdSuiviPrel);
             $emSqe->flush();
             return $this->render('AeagSqeBundle:SuiviHydrobio:syntheseSupportStationMaj.html.twig', array('support' => $pgSandreSupport,
@@ -2054,17 +2058,19 @@ class SuiviHydrobioController extends Controller {
                         'reseau' => $reseau,
                         'cmdPrelev' => $pgCmdPrelev,
                         'suiviPrel' => $pgCmdSuiviPrel,
-                        'tr' => $tr));
+                        'dateLimite' => $dateLimite,
+                        'nb' => $tr));
         }
 
         return $this->render('AeagSqeBundle:SuiviHydrobio:syntheseSupportStation.html.twig', array('support' => $pgSandreSupport,
-                        'station' => $pgRefStationMesure,
-                        'lien' => $lien,
-                        'reseau' => $reseau,
-                        'cmdPrelev' => $pgCmdPrelev,
-                        'suiviPrel' => $pgCmdSuiviPrel,
-                        'tr' => $tr,
-                        'form' => $form->createView(),
+                    'station' => $pgRefStationMesure,
+                    'lien' => $lien,
+                    'reseau' => $reseau,
+                    'cmdPrelev' => $pgCmdPrelev,
+                    'suiviPrel' => $pgCmdSuiviPrel,
+                    'tr' => $tr,
+                    'dateLimite' => $dateLimite,
+                    'form' => $form->createView(),
         ));
 
 

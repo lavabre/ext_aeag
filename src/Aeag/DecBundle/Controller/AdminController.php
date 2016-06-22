@@ -36,10 +36,17 @@ class AdminController extends Controller {
 
     public function indexAction() {
 
-        $session = $this->get('session');
-        $session->set('menu', 'declarations');
-        $emDec = $this->getDoctrine()->getManager('dec');
         $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagDecBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'index');
+        $session->set('controller', 'admin');
+        $session->set('fonction', 'index');
+        $em = $this->get('doctrine')->getManager();
+        $emDec = $this->get('doctrine')->getManager('dec');
+        
         $repoDeclarationCollecteur = $emDec->getRepository('AeagDecBundle:DeclarationCollecteur');
         $paraAnnee = $emDec->getRepository('AeagDecBundle:Parametre')->findOneBy(array('code' => 'ANNEE'));
         $annee = $paraAnnee->getLibelle();
@@ -51,9 +58,17 @@ class AdminController extends Controller {
 
     public function aideAction() {
 
-        $emDec = $this->getDoctrine()->getManager('dec');
+        $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagDecBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'aide');
+        $session->set('controller', 'admin');
+        $session->set('fonction', 'aide');
+        $em = $this->get('doctrine')->getManager();
+        $emDec = $this->get('doctrine')->getManager('dec');
+        
         $annee = $emDec->getRepository('AeagDecBundle:Parametre')->findOneBy(array('code' => 'ANNEE'));
         return $this->render('AeagDecBundle:Admin:aide.html.twig', array(
                     'annee' => $annee,
@@ -63,16 +78,20 @@ class AdminController extends Controller {
     public function listeDeclarationCollecteursAction($annee = null, $statut = null) {
 
         $user = $this->getUser();
-        $em = $this->getDoctrine()->getManager();
-        $emDec = $this->getDoctrine()->getManager('dec');
+         if (!$user) {
+            return $this->render('AeagDecBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
+        $session->set('menu', 'declarations');
+        $session->set('controller', 'admin');
+        $session->set('fonction', 'listeDeclarationCollecteurs');
+        $em = $this->get('doctrine')->getManager();
+        $emDec = $this->get('doctrine')->getManager('dec');
 
         $repoDeclarationCollecteur = $emDec->getRepository('AeagDecBundle:DeclarationCollecteur');
         $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
         $annees = $repoDeclarationCollecteur->getAnnees();
         $session->set('annees', $annees);
-
-        $session->set('menu', 'declarations');
         $session->set('statut', $statut);
         if (!$annee) {
             $paraAnnee = $emDec->getRepository('AeagDecBundle:Parametre')->findOneBy(array('code' => 'ANNEE'));
@@ -161,9 +180,17 @@ class AdminController extends Controller {
 
     public function validerSousDeclarationAction($sousDeclarationCollecteur_id = null) {
 
-        $emDec = $this->getDoctrine()->getManager('dec');
         $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagDecBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
+        $session->set('menu', 'declarations');
+        $session->set('controller', 'admin');
+        $session->set('fonction', 'validerSousDeclaration');
+        $em = $this->get('doctrine')->getManager();
+        $emDec = $this->get('doctrine')->getManager('dec');
+        
         $repoStatut = $emDec->getRepository('AeagDecBundle:Statut');
         $repoDeclarationCollecteur = $emDec->getRepository('AeagDecBundle:DeclarationCollecteur');
         $repoSousDeclarationCollecteur = $emDec->getRepository('AeagDecBundle:SousDeclarationCollecteur');
@@ -211,8 +238,17 @@ class AdminController extends Controller {
 
     public function devaliderSousDeclarationAction($sousDeclarationCollecteur_id = null) {
 
-        $emDec = $this->getDoctrine()->getManager('dec');
+       $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagDecBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
+        $session->set('menu', 'declarations');
+        $session->set('controller', 'admin');
+        $session->set('fonction', 'devaliderSousDeclaration');
+        $em = $this->get('doctrine')->getManager();
+        $emDec = $this->get('doctrine')->getManager('dec');
+        
         $repoStatut = $emDec->getRepository('AeagDecBundle:Statut');
         $repoDeclarationCollecteur = $emDec->getRepository('AeagDecBundle:DeclarationCollecteur');
         $repoSousDeclarationCollecteur = $emDec->getRepository('AeagDecBundle:SousDeclarationCollecteur');
@@ -243,9 +279,16 @@ class AdminController extends Controller {
 
     public function supprimerSousDeclarationAction($sousDeclarationCollecteur_id = null) {
 
-        $emDec = $this->getDoctrine()->getManager('dec');
-        $user = $this->getUser();
+       $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagDecBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
+        $session->set('menu', 'declarations');
+        $session->set('controller', 'admin');
+        $session->set('fonction', 'supprimerSousDeclaration');
+        $em = $this->get('doctrine')->getManager();
+        $emDec = $this->get('doctrine')->getManager('dec');
 
         $repoDeclarationCollecteur = $emDec->getRepository('AeagDecBundle:DeclarationCollecteur');
         $repoDeclarationProducteur = $emDec->getRepository('AeagDecBundle:DeclarationProducteur');
@@ -311,10 +354,16 @@ class AdminController extends Controller {
 
     public function transfererSousDeclarationAction($sousDeclarationCollecteur_id = null) {
 
-        $em = $this->getDoctrine()->getManager();
-        $emDec = $this->getDoctrine()->getManager('dec');
         $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagDecBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
+        $session->set('menu', 'declarations');
+        $session->set('controller', 'admin');
+        $session->set('fonction', 'tansfererSousDeclaration');
+        $em = $this->get('doctrine')->getManager();
+        $emDec = $this->get('doctrine')->getManager('dec');
 
         $repoParametre = $emDec->getRepository('AeagDecBundle:Parametre');
         $repoStatut = $emDec->getRepository('AeagDecBundle:Statut');
@@ -459,10 +508,17 @@ class AdminController extends Controller {
 
     public function envoyerMessageAction($id = null, Request $request) {
 
-        $em = $this->getDoctrine()->getManager();
-        $emDec = $this->getDoctrine()->getManager('dec');
-        $user = $this->getUser();
+       $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagDecBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
+        $session->set('menu', 'declarations');
+        $session->set('controller', 'admin');
+        $session->set('fonction', 'envoyerMessage');
+        $em = $this->get('doctrine')->getManager();
+        $emDec = $this->get('doctrine')->getManager('dec');
+        
         $repoUsers = $em->getRepository('AeagUserBundle:User');
         $repoNotifications = $em->getRepository('AeagAeagBundle:Notification');
 
@@ -553,10 +609,16 @@ class AdminController extends Controller {
 
     public function majCompteursProducteursAction($annee = null) {
 
-        $session = $this->get('session');
-        $em = $this->getDoctrine()->getManager();
-        $emDec = $this->getDoctrine()->getManager('dec');
         $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagDecBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'declarations');
+        $session->set('controller', 'admin');
+        $session->set('fonction', 'majCompteursProducteurs');
+        $em = $this->get('doctrine')->getManager();
+        $emDec = $this->get('doctrine')->getManager('dec');
 
         $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
         $repoDeclarationCollecteur = $emDec->getRepository('AeagDecBundle:DeclarationCollecteur');
@@ -705,10 +767,17 @@ class AdminController extends Controller {
 
     public function ajouterDeclarationAction($annee = null, $statut = null) {
 
-        $em = $this->getDoctrine()->getManager();
-        $emDec = $this->getDoctrine()->getManager('dec');
-        $session = $this->get('session');
         $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagDecBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'declarations');
+        $session->set('controller', 'admin');
+        $session->set('fonction', 'ajouterDeclaration');
+        $em = $this->get('doctrine')->getManager();
+        $emDec = $this->get('doctrine')->getManager('dec');
+        
         if (is_object($user)) {
             $mes = AeagController::notificationAction($user, $em, $session);
             $mes1 = AeagController::messageAction($user, $em, $session);

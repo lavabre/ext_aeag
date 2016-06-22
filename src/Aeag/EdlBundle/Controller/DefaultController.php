@@ -33,6 +33,7 @@ class DefaultController extends Controller {
         $user = $this->getUser();
         $session = $this->get('session');
         $session->clear();
+        $session->set('appli', 'edl');
         $session->set('retourErreur', $this->generateUrl('aeag_edl'));
         $session->set('menu', 'index');
         $session->set('controller', 'default');
@@ -161,10 +162,9 @@ class DefaultController extends Controller {
 // Liste des dossiers selectionnés
         $user = $this->getUser();
         $session = $this->get('session');
-        $session->set('retourErreur', $this->generateUrl('aeag_edl'));
         $session->set('menu', 'acceuil');
         $session->set('controller', 'default');
-        $session->set('fonction', 'index');
+        $session->set('fonction', 'listeMasseEau');
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
         $repoUtilisateur = $emEdl->getRepository('AeagEdlBundle:Utilisateur');
@@ -620,7 +620,6 @@ class DefaultController extends Controller {
 // Liste des dossiers selectionnés
         $user = $this->getUser();
         $session = $this->get('session');
-        $session->set('retourErreur', $this->generateUrl('aeag_edl'));
         $session->set('menu', 'acceuil');
         $session->set('controller', 'default');
         $session->set('fonction', 'exportEtat');
@@ -833,7 +832,6 @@ class DefaultController extends Controller {
 // Liste des dossiers selectionnés
         $user = $this->getUser();
         $session = $this->get('session');
-        $session->set('retourErreur', $this->generateUrl('aeag_edl'));
         $session->set('menu', 'acceuil');
         $session->set('controller', 'default');
         $session->set('fonction', 'exportPression');
@@ -901,6 +899,13 @@ class DefaultController extends Controller {
     }
 
     public function massedeauAction($code) {
+         $user = $this->getUser();
+        $session = $this->get('session');
+        $session->set('menu', 'acceuil');
+        $session->set('controller', 'default');
+        $session->set('fonction', 'massedeau');
+        $em = $this->get('doctrine')->getManager();
+        $emEdl = $this->get('doctrine')->getManager('edl');
 
         $request = $this->container->get('request');
 
@@ -921,7 +926,14 @@ class DefaultController extends Controller {
     }
 
     public function contactAction() {
-
+        $user = $this->getUser();
+        $session = $this->get('session');
+        $session->set('menu', 'acceuil');
+        $session->set('controller', 'default');
+        $session->set('fonction', 'contact');
+        $em = $this->get('doctrine')->getManager();
+        $emEdl = $this->get('doctrine')->getManager('edl');
+        
         $enquiry = new Contact();
         $form = $this->createForm(new ContactType(), $enquiry);
 
@@ -953,6 +965,11 @@ class DefaultController extends Controller {
 
     public function majUtilisateurs() {
 
+         $user = $this->getUser();
+        $session = $this->get('session');
+        $session->set('menu', 'acceuil');
+        $session->set('controller', 'default');
+        $session->set('fonction', 'majUtilisateurs');
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
 
@@ -982,6 +999,11 @@ class DefaultController extends Controller {
 
     public function initUtilisateurs() {
 
+         $user = $this->getUser();
+        $session = $this->get('session');
+        $session->set('menu', 'acceuil');
+        $session->set('controller', 'default');
+        $session->set('fonction', 'initUtilisateur');
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
         $factory = $this->get('security.encoder_factory');

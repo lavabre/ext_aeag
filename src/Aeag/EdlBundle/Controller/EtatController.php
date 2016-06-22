@@ -74,7 +74,7 @@ class EtatController extends Controller {
         }
         $session = $this->get('session');
         $session->set('controller', 'Etat');
-        $session->set('fonction', 'etatForm');
+        $session->set('fonction', 'etatSubmit');
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
         $repoUtilisateur = $emEdl->getRepository('AeagEdlBundle:Utilisateur');
@@ -191,7 +191,10 @@ class EtatController extends Controller {
     }
 
     public function removeEtatAction(Request $request) {
-        $user = $this->getUser();
+         $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagEdlBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('controller', 'Etat');
         $session->set('fonction', 'removeEtat');

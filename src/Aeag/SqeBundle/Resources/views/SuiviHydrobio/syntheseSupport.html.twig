@@ -183,7 +183,7 @@
                             {% for cmdPrelev in station.cmdPrelevs %}
                              {% set nb = nb + 1%}
                                <tr>
-                                    <td width="10%" nowrap>
+                                    <td width="10%" class="text-center" nowrap>
                                         {%if cmdPrelev.suiviPrels | length%}
                                             <a id="idVoirSuivi{{ cmdPrelev.cmdPrelev.id }}" class="btn btn-primary" href="#" title="consulter l'historique">
                                                 <i class="fa fa-archive"></i> 
@@ -198,32 +198,45 @@
                                                     {% endif %}
                                                 {% endif %}
                                             {% endif %}
-                                                  {% if is_granted('ROLE_ADMINSQE') %}
-                                                      {% if cmdPrelev.suiviPrels.0.suiviPrel.statutPrel  == 'F'  and 
-                                                             ( cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'E' or 
-                                                               cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'F' or 
-                                                               cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'D') %}
-                                                      <a  id="idMaj-{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}" class="btn btn-warning"  title="Donner un avis">
-                                                               <i class="fa fa-graduation-cap"></i>
-                                                       </a>
-                                                     {% endif %}
-                                                  {% endif %}
+                                            
+                                            {% if is_granted('ROLE_ADMINSQE') or pgProgWebUser.typeUser == 'XHBIO' %}
+                                                {% if cmdPrelev.suiviPrels.0.suiviPrel.statutPrel  == 'F'  and 
+                                                       ( cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'E' or 
+                                                         cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'F' or 
+                                                         cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'D') %}
+                                                        <a  id="idMaj-{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}" class="btn btn-warning"  title="Donner un avis">
+                                                                 <i class="fa fa-graduation-cap"></i>
+                                                         </a>
+                                                          {% if cmdPrelev.suiviPrels.0.dateLimite %}
+                                                                </br>
+                                                                <div class="danger text-info">date limite : {{cmdPrelev.suiviPrels.0.dateLimite | date("d/m/Y") }}</div>
+                                                        {% endif %}
+                                               {% endif %}
+                                            {% endif %}
+                                                  
                                         {% endif %}
 
                                     </td>
-                                    <td id="idTd-{{nb}}">
-                                        {%if cmdPrelev.suiviPrels | length%}
-                                            {% if cmdPrelev.suiviPrels.0.suiviPrel.validation == 'F' %}
-                                                <span class="label label-success">Favorable</span>
-                                            {% elseif cmdPrelev.suiviPrels.0.suiviPrel.validation == 'D' %}
-                                                <span class="label label-danger">Défavorable</span>
-                                            {% endif %}
+                                    {%if cmdPrelev.suiviPrels | length%}
+                                        {% if cmdPrelev.suiviPrels.0.suiviPrel.validation == 'F' %}
+                                            <td id="idTd-{{nb}}" class="success text-center">
+                                                Favorable 
+                                            </td>
+                                        {% elseif cmdPrelev.suiviPrels.0.suiviPrel.validation == 'D' %}
+                                            <td id="idTd-{{nb}}" class="danger text-center">
+                                                 Défavorable
+                                            </td>
+                                         {% else %}
+                                              <td id="idTd-{{nb}}"></td>
                                         {% endif %}
-                                    </td>
+                                    {% else %}
+                                    <td id="idTd-{{nb}}"> </td>
+                                    {% endif %}
                                     <td>
                                         <a  href="{{ station.lien }}" target="_blank" title="Localisation">{{ station.station.code }}</a>
                                     </td>
                                     <td>
+                                        {{ cmdPrelev.suiviPrels.0.suiviPrel.id }}
                                        {{ station.station.libelle }}
                                     </td>
                                     <td>
@@ -345,7 +358,7 @@
                     
                      
                       {%if cmdPrelev.suiviPrels.0.suiviPrel | length%} 
-                           {% if is_granted('ROLE_ADMINSQE') %}
+                           {% if is_granted('ROLE_ADMINSQE') or pgProgWebUser.typeUser == 'XHBIO' %}
                                   {% if cmdPrelev.suiviPrels.0.suiviPrel.statutPrel  == 'F'  and 
                                         ( cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'E' or 
                                           cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'F' or 
