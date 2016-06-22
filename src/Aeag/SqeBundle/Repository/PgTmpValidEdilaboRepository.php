@@ -44,7 +44,21 @@ class PgTmpValidEdilaboRepository extends EntityRepository {
     }
     
     public function getDiffCodePrelevementMissing($demandeId, $reponseId) {
-        $query = "select distinct dmd.codePrelevement";
+        
+        $query = "select dmd.*, rps.* from";
+        $query .= " (select distinct code_parametre, code_fraction from pg_tmp_valid_edilabo";
+        $query .= " where demande_id = :demande and fichier_rps_id is null) dmd";
+        $query .= " left join (select distinct code_parametre, code_fraction from pg_tmp_valid_edilabo";
+        $query .= " where demande_id = :demande and fichier_rps_id is not null) rps";
+        $query .= " on  dmd.code_parametre = rps.code_parametre and ((dmd.code_fraction is null and rps.code_fraction is null) or (dmd.code_fraction = rps.code_fraction))";
+        $query .= " where rps.code_parametre is null";
+        
+        $stmt = $this->_em->getConnection()->prepare($query);
+        $stmt->bindValue('demande', $demandeId);
+        $stmt->execute();
+        return $stmt->fetchAll();
+        
+        /*$query = "select distinct dmd.codePrelevement";
         $query .= " from Aeag\SqeBundle\Entity\PgTmpValidEdilabo dmd";
         $query .= " where dmd.demandeId = :demande";
         $query .= " and dmd.fichierRpsId IS NULL";
@@ -57,7 +71,7 @@ class PgTmpValidEdilaboRepository extends EntityRepository {
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('demande', $demandeId);
         $qb->setParameter('reponse', $reponseId);
-        return $qb->getResult();
+        return $qb->getResult();*/
     }
     
     public function getCodePrelevement($demandeId, $reponseId = null) {
@@ -96,7 +110,12 @@ class PgTmpValidEdilaboRepository extends EntityRepository {
             $qb->setParameter('reponse', $reponseId);
         }
         $qb->setParameter('codePrelevement', $codePrelevement);
-        return $qb->getOneOrNullResult();
+        try {
+            $result = $qb->getOneOrNullResult();
+        } catch (Doctrine\ORM\NonUniqueResultException $ex) {
+            var_dump('Le code prelev '.$codePrelevement.' possède plusieurs date de prelevement');
+        }
+        return $result;
     }
     
     public function getDiffLabo($codePrelevement, $demandeId, $reponseId) {
@@ -179,7 +198,7 @@ class PgTmpValidEdilaboRepository extends EntityRepository {
         return $qb->getResult();
     }
     
-    public function getMesuresByCodeParametre($codeParametre, $codePrelevement, $demandeId, $reponseId = null) {
+    public function getMesuresByCodeParametre($codeParametre, $codePrelevement, $demandeId, $reponseId = null, $codeFraction = null) {
         $query = "select p.codeFraction, p.codeUnite, p.codeParametre, p.lqM";
         $query .= " from Aeag\SqeBundle\Entity\PgTmpValidEdilabo p";
         $query .= " where p.demandeId = :demande";
@@ -188,6 +207,11 @@ class PgTmpValidEdilaboRepository extends EntityRepository {
         } else {
             $query .= " and p.fichierRpsId IS NULL";
         }
+        
+        if (!is_null($codeFraction)) {
+            $query .= " and p.codeFraction = :codeFraction";
+        }
+        
         $query .= " and p.codePrelevement = :codePrelevement";
         $query .= " and p.codeParametre = :codeParametre";
         $query .= " order by p.codeParametre ASC";
@@ -198,27 +222,72 @@ class PgTmpValidEdilaboRepository extends EntityRepository {
         }
         $qb->setParameter('codePrelevement', $codePrelevement);
         $qb->setParameter('codeParametre', $codeParametre);
-        return $qb->getOneOrNullResult();
+        if (!is_null($codeFraction)) {
+            $qb->setParameter('codeFraction', $codeFraction);    
+        }
+        
+        try {
+            $result = $qb->getOneOrNullResult();
+        } catch (Doctrine\ORM\NonUniqueResultException $ex) {
+            var_dump('Le code paramètre '.$codeParametre.' possède plusieurs mesures(s) ('.$codePrelevement.')');
+        }
+        return $result;
     }
     
-    public function getMesureByCodeParametre($codeParametre, $demandeId, $reponseId, $codePrelevement) {
+    public function getMesureByCodeParametre($codeParametre, $demandeId, $reponseId, $codePrelevement, $codeFraction = null) {
         $query = "select p.resM";
         $query .= " from Aeag\SqeBundle\Entity\PgTmpValidEdilabo p";
         $query .= " where p.demandeId = :demande";
         $query .= " and p.fichierRpsId = :reponse";
         $query .= " and p.codeParametre = :codeParametre";
         $query .= " and p.codePrelevement = :codePrelevement";
+        if (!is_null($codeFraction)) {
+            $query .= " and p.codeFraction = :codeFraction";
+        }
+        
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('demande', $demandeId);
         $qb->setParameter('reponse', $reponseId);
         $qb->setParameter('codeParametre', $codeParametre);
         $qb->setParameter('codePrelevement', $codePrelevement);
-        $result = $qb->getOneOrNullResult();
-        
-        if (!is_null($result)) {
-            $result = $result['resM'];
+        if (!is_null($codeFraction)) {
+            $qb->setParameter('codeFraction', $codeFraction);
         }
-        return $result;
+        try {
+            $result = $qb->getOneOrNullResult();
+            if (!is_null($result)) {
+                $result = $result['resM'];
+            }
+            return $result;
+        } catch (Doctrine\ORM\NonUniqueResultException $ex) {
+            var_dump('Le code paramètre '.$codeParametre.' possède plusieurs mesures ('.$codePrelevement.')');
+            return null;
+        }
+        
+    }
+    
+    public function getAllMesureByCodeParametre($codeParametre, $demandeId, $reponseId, $codePrelevement, $codeFraction = null) {
+        $query = "select p.resM";
+        $query .= " from Aeag\SqeBundle\Entity\PgTmpValidEdilabo p";
+        $query .= " where p.demandeId = :demande";
+        $query .= " and p.fichierRpsId = :reponse";
+        $query .= " and p.codeParametre = :codeParametre";
+        $query .= " and p.codePrelevement = :codePrelevement";
+        if (!is_null($codeFraction)) {
+            $query .= " and p.codeFraction = :codeFraction";
+        }
+        
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('demande', $demandeId);
+        $qb->setParameter('reponse', $reponseId);
+        $qb->setParameter('codeParametre', $codeParametre);
+        $qb->setParameter('codePrelevement', $codePrelevement);
+        if (!is_null($codeFraction)) {
+            $qb->setParameter('codeFraction', $codeFraction);
+        }
+        
+        return $qb->getResult();
+
     }
     
     public function getMesureByCodeUnite($codeUnite, $demandeId, $reponseId, $codePrelevement, $excludeCodeParam = null) {
@@ -281,7 +350,11 @@ class PgTmpValidEdilaboRepository extends EntityRepository {
         $qb->setParameter('reponse', $reponseId);
         $qb->setParameter('codeParametre', $codeParametre);
         $qb->setParameter('codePrelevement', $codePrelevement);
-        $result = $qb->getOneOrNullResult();
+        try {
+            $result = $qb->getOneOrNullResult();
+        } catch (Doctrine\ORM\NonUniqueResultException $ex) {
+            var_dump('Le code paramètre '.$codeParametre.' possède plusieurs lq ('.$codePrelevement.')');
+        }
         
         if (!is_null($result)) {
             $result = $result['lqM'];
@@ -289,20 +362,29 @@ class PgTmpValidEdilaboRepository extends EntityRepository {
         return $result;
     }
     
-    public function getCodeRqByCodeParametre($codeParametre, $demandeId, $reponseId, $codePrelevement) {
+    public function getCodeRqByCodeParametre($codeParametre, $demandeId, $reponseId, $codePrelevement, $codeFraction = null) {
         $query = "select p.codeRqM";
         $query .= " from Aeag\SqeBundle\Entity\PgTmpValidEdilabo p";
         $query .= " where p.demandeId = :demande";
         $query .= " and p.fichierRpsId = :reponse";
         $query .= " and p.codeParametre = :codeParametre";
         $query .= " and p.codePrelevement = :codePrelevement";
+        if (!is_null($codeFraction)){
+            $query .= " and p.codeFraction = :codeFraction";
+        }
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('demande', $demandeId);
         $qb->setParameter('reponse', $reponseId);
         $qb->setParameter('codeParametre', $codeParametre);
         $qb->setParameter('codePrelevement', $codePrelevement);
-        $result = $qb->getOneOrNullResult();
-        
+        if (!is_null($codeFraction)){
+            $qb->setParameter('codeFraction', $codeFraction);
+        }
+        try {
+            $result = $qb->getOneOrNullResult();
+        } catch (Doctrine\ORM\NonUniqueResultException $ex) {
+            var_dump('Le code paramètre '.$codeParametre.' possède plusieurs code remarque ('.$codePrelevement.')');
+        }
         if (!is_null($result)) {
             $result = $result['codeRqM'];
         }
@@ -327,7 +409,31 @@ class PgTmpValidEdilaboRepository extends EntityRepository {
     }
     
     public function getDiffCodeParametreAdd($codePrelevement, $demandeId, $reponseId) {
-         $query = " select rps.codeParametre";
+        
+        $query = "select dmd.*, rps.* from";
+        $query .= " (select distinct code_parametre, code_fraction from pg_tmp_valid_edilabo";
+        $query .= " where demande_id = :demande and fichier_rps_id = :reponse and code_prelevement = :codePrelevement) dmd";
+        $query .= " left join (select distinct code_parametre, code_fraction from pg_tmp_valid_edilabo";
+        $query .= " where demande_id = :demande and fichier_rps_id is null and code_prelevement = :codePrelevement) rps";
+        $query .= " on  dmd.code_parametre = rps.code_parametre and ((dmd.code_fraction is null and rps.code_fraction is null) or (dmd.code_fraction = rps.code_fraction))";
+        $query .= " where rps.code_parametre is null";
+        
+        $stmt = $this->_em->getConnection()->prepare($query);
+        $stmt->bindValue('demande', $demandeId);
+        $stmt->bindValue('reponse', $reponseId);
+        $stmt->bindValue('codePrelevement', $codePrelevement);
+        $stmt->execute();
+        $results = $stmt->fetchAll();
+        $return = array();
+        foreach($results as $result){
+            if (!is_null($result['code_parametre'])) {
+                $return[] = $result['code_parametre'];
+            }
+        }
+        
+        return $return;
+        
+        /*$query = " select rps.codeParametre";
         $query .= " from Aeag\SqeBundle\Entity\PgTmpValidEdilabo rps";
         $query .= " where rps.demandeId = :demande";
         $query .= " and rps.fichierRpsId = :reponse";
@@ -343,12 +449,36 @@ class PgTmpValidEdilaboRepository extends EntityRepository {
         $qb->setParameter('demande', $demandeId);
         $qb->setParameter('reponse', $reponseId);
         $qb->setParameter('codePrelevement', $codePrelevement);
-        return $qb->getResult();
+        return $qb->getResult();*/
     }
     
     public function getDiffCodeParametreMissing($codePrelevement, $demandeId, $reponseId) {
         
-        $query = "select distinct dmd.codeParametre";
+        $query = "select dmd.*, rps.* from";
+        $query .= " (select distinct code_parametre, code_fraction from pg_tmp_valid_edilabo";
+        $query .= " where demande_id = :demande and fichier_rps_id is null and code_prelevement = :codePrelevement) dmd";
+        $query .= " left join (select distinct code_parametre, code_fraction from pg_tmp_valid_edilabo";
+        $query .= " where demande_id = :demande and fichier_rps_id = :reponse and code_prelevement = :codePrelevement) rps";
+        $query .= " on  dmd.code_parametre = rps.code_parametre and ((dmd.code_fraction is null and rps.code_fraction is null) or (dmd.code_fraction = rps.code_fraction))";
+        $query .= " where rps.code_parametre is null";
+        
+        $stmt = $this->_em->getConnection()->prepare($query);
+        $stmt->bindValue('demande', $demandeId);
+        $stmt->bindValue('reponse', $reponseId);
+        $stmt->bindValue('codePrelevement', $codePrelevement);
+        $stmt->execute();
+        
+        $results = $stmt->fetchAll();
+        $return = array();
+        foreach($results as $result){
+            if (!is_null($result['code_parametre'])) {
+                $return[] = $result['code_parametre'];
+            }
+        }
+        
+        return $return;
+        
+        /*$query = "select distinct dmd.codeParametre";
         $query .= " from Aeag\SqeBundle\Entity\PgTmpValidEdilabo dmd";
         $query .= " where dmd.demandeId = :demande";
         $query .= " and dmd.fichierRpsId IS NULL";
@@ -365,7 +495,7 @@ class PgTmpValidEdilaboRepository extends EntityRepository {
         $qb->setParameter('demande', $demandeId);
         $qb->setParameter('reponse', $reponseId);
         $qb->setParameter('codePrelevement', $codePrelevement);
-        return $qb->getResult();
+        return $qb->getResult();*/
     }
     
     

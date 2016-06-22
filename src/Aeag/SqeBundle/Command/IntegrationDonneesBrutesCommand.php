@@ -51,6 +51,7 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
             $destinataires[] = $this->repoPgProgWebUsers->findOneByPrestataire($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getTitulaire());
             $destinataires[] = $this->repoPgProgWebUsers->findOneByProducteur($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getRespAdrCor());
 
+            // TODO Ajouter le Fichier de CR
             $objetMessage = "SQE - RAI : Fichier csv des données brutes disponible pour le lot " . $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getNomLot();
             $url = $this->getContainer()->get('router')->generate('AeagSqeBundle_echangefichiers_reponses_telecharger', array("reponseId" => $pgCmdFichierRps->getId(), "typeFichier" => "DB"), UrlGeneratorInterface::ABSOLUTE_URL);
             $txtMessage = "Lot : " . $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getNomLot() . "<br/>";
@@ -88,7 +89,7 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
                     $this->_addLog('warning', $demandeId, $reponseId, "Cette RAI a déjà été intégrée dans SQE");
                 } else {
                     $pgCmdPrelev->setFichierRps($pgCmdFichierRps);
-                    $pgTmpValidEdilabo = $this->repoPgTmpValidEdilabo->findOneBy(array('fichierRpsId' => $reponseId, 'demandeId' => $demandeId, 'codePrelevement' => $codePrelevement));
+                    $pgTmpValidEdilabo = $this->repoPgTmpValidEdilabo->findOneBy(array('fichierRpsId' => $reponseId, 'demandeId' => $demandeId, 'codePrelevement' => $codePrelevement, 'numOrdre' => $pgCmdPrelev->getNumOrdre()));
                     if (!is_null($pgTmpValidEdilabo->getDatePrel())) {
                         if (!is_null($pgTmpValidEdilabo->getHeurePrel())) {
                             $date = $pgTmpValidEdilabo->getDatePrel() . ' ' . $pgTmpValidEdilabo->getHeurePrel();
