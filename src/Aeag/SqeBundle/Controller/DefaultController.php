@@ -83,7 +83,9 @@ class DefaultController extends Controller {
             //$session->getFlashBag()->add('notice-success', $message);
         }
 
-        $suiviHb = false;
+         $suiviHb = false;
+         $suiviQHb = false;
+         $suiviSED = true;
         $suiviDonnees = false;
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         if ($pgProgWebUser->getTypeUser() == 'PREST' or $pgProgWebUser->getTypeUser() == 'PROG') {
@@ -102,13 +104,18 @@ class DefaultController extends Controller {
                 }
             }
         }
+         if ($pgProgWebUser->getTypeUser() == 'XHBIO') {
+             $suiviQHb = true;
+         }
         if (is_object($user) && ($this->get('security.authorization_checker')->isGranted('ROLE_ADMINSQE'))) {
             $suiviHb = true;
+            $suiviQHb = true;
             $suiviDonnees = true;
             $suiviSED = true;
         }
 
         $session->set('suiviHb', $suiviHb);
+        $session->set('suiviQHb', $suiviQHb);
         $session->set('suiviDonnees', $suiviDonnees);
         $session->set('suiviSED', $suiviHb);
 

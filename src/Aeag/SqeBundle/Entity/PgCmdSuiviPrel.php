@@ -82,6 +82,13 @@ class PgCmdSuiviPrel {
     private $validation;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="avis", type="string", length=1, nullable=true)
+     */
+    private $avis;
+
+    /**
      * Get id
      *
      * @return string
@@ -228,6 +235,14 @@ class PgCmdSuiviPrel {
 
     function setValidation($validation) {
         $this->validation = $validation;
+    }
+
+    function getAvis() {
+        return $this->avis;
+    }
+
+    function setAvis($avis) {
+        $this->avis = $avis;
     }
 
 }

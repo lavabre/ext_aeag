@@ -61,11 +61,11 @@
 
         <ul class="dropdown-menu">
                 {% if  not app.session.get('evolution')%}
-                    <li><a href="{{ path('AeagSqeBundle_suiviHydrobio_synthese')}}">Synthèse suivis Hydrobio</a></li>
+                    <li><a href="{{ path('AeagSqeBundle_suiviHydrobio_synthese')}}">Qualification suivis Hydrobio</a></li>
                 {% endif %}
                 <li><a href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}">Suivi Hydrobio</a></li>
                 {# {% if  not app.session.get('evolution')%}#}
-                    <li><a href="{{ path('AeagSqeBundle_suiviSediment_index')}}">Suivi Sédiment</a></li>
+                {#    <li><a href="{{ path('AeagSqeBundle_suiviSediment_index')}}">Suivi Sédiment</a></li>#}
                 {#{% endif %}#}
         </ul>
     </li>

@@ -98,6 +98,17 @@ class PgCmdPrelevRepository extends EntityRepository {
         return $qb->getResult();
     }
     
+      public function getPgCmdPrelevByPrestaPrelDemandePeriode($pgRefCorresPresta, $pgCmdDemande,  $pgProgPeriodes) {
+        $query = "select p";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelev p";
+        $query = $query . " where p.prestaPrel = " . $pgRefCorresPresta->getAdrCorid();
+        $query = $query . " and p.demande = " . $pgCmdDemande->getId();
+         $query = $query . " and p.periode = " . $pgProgPeriodes->getId();
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+        return $qb->getResult();
+    }
+    
     public function getPgCmdPrelevByPrestaPrelDemandeStationPeriode($pgRefCorresPresta, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelev p";
@@ -237,7 +248,7 @@ class PgCmdPrelevRepository extends EntityRepository {
         $query = $query . " and sp.statutPrel = 'P'";
         $query = $query . " and sp.validation <> 'R'";
         $query = $query . " group by sp.datePrel, sup.codeSupport, sup.nomSupport";
-        $query = $query . " order by sp.datePrel";
+        $query = $query . " order by sp.datePrel desc";
         $qb = $this->_em->createQuery($query);
 //        if ($pgCmdPrelev->getStation()->getOuvFoncId() == 557655){
 //        print_r($query);

@@ -116,31 +116,34 @@ class SaisieDonneesController extends Controller {
                             foreach ($pgCmdDemandes as $pgCmdDemande) {
                                 if ($pgCmdDemande) {
                                     $tabStations[$j] = $pgProgLotPeriodeProg->getStationAn()->getStation();
-                                     $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($pgCmdDemande->getPrestataire(), $pgCmdDemande, $tabStations[$j], $pgProgLotPeriodeAn->getPeriode());
-                                    $nbPrelevs = 0;
+                                     $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandePeriode($pgCmdDemande->getPrestataire(), $pgCmdDemande,  $pgProgLotPeriodeAn->getPeriode());
+                                    $nbPrelevs = count($pgCmdPrelevs);
                                     $nbPrelevCorrects = 0;
+//                                     \Symfony\Component\VarDumper\VarDumper::dump($pgCmdPrelevs);
+//                                        return new Response('');
+                          
                                     foreach ($pgCmdPrelevs as $pgCmdPrelev) {
-                                        if (( $userPrestataire and $pgCmdPrelev->getprestaPrel()->getAdrCorId() == $userPrestataire->getAdrCorId()) or $user->hasRole('ROLE_ADMINSQE')) {
-                                            $pgCmdPrelevPcs = $repoPgCmdPrelevPc->getPgCmdPrelevPcByPrelev($pgCmdPrelev);
-                                            foreach ($pgCmdPrelevPcs as $pgCmdPrelevPc) {
-                                                if ($pgCmdPrelevPc->getZoneVerticale()) {
-                                                    if ($pgProgTypeMilieu->getCodeMilieu() == 'LPC') {
-                                                        if ($pgCmdPrelevPc->getZoneVerticale()->getCodeZone() == '6') {
-                                                            $nbPrelevs++;
-                                                            break;
-                                                        }
-                                                    } else {
-                                                        if ($pgCmdPrelevPc->getZoneVerticale()->getCodeZone() == '1') {
-                                                            $nbPrelevs++;
-                                                            break;
-                                                        }
-                                                    }
-                                                }
-                                            }
+//                                        if (( $userPrestataire and $pgCmdPrelev->getprestaPrel()->getAdrCorId() == $userPrestataire->getAdrCorId()) or $user->hasRole('ROLE_ADMINSQE')) {
+//                                            $pgCmdPrelevPcs = $repoPgCmdPrelevPc->getPgCmdPrelevPcByPrelev($pgCmdPrelev);
+//                                            foreach ($pgCmdPrelevPcs as $pgCmdPrelevPc) {
+//                                                if ($pgCmdPrelevPc->getZoneVerticale()) {
+//                                                    if ($pgProgTypeMilieu->getCodeMilieu() == 'LPC') {
+//                                                        if ($pgCmdPrelevPc->getZoneVerticale()->getCodeZone() == '6') {
+//                                                            $nbPrelevs++;
+//                                                            break;
+//                                                        }
+//                                                    } else {
+//                                                        if ($pgCmdPrelevPc->getZoneVerticale()->getCodeZone() == '1') {
+//                                                            $nbPrelevs++;
+//                                                            break;
+//                                                        }
+//                                                    }
+//                                                }
+//                                            }
                                             if ($pgCmdPrelev->getPhaseDmd()->getcodePhase() == 'M40') {
                                                 $nbPrelevCorrects++;
                                             }
-                                        }
+//                                        }
                                     }
                                     if ($nbPrelevs == $nbPrelevCorrects and $nbPrelevs > 0) {
                                         $nbStationCorrectes++;
@@ -476,11 +479,11 @@ class SaisieDonneesController extends Controller {
                         $ip++;
                     }
                     $tabPgCmdDemandes[$id]['pgCmdPrelevs'] = $tabPgCmdPrelevs;
-                    $id++;
+                     $id++;
                 }
                 sort($tabPgCmdDemandes);
                 $tabStations[$is]['pgCmdDemandes'] = $tabPgCmdDemandes;
-//                if ( $station->getCode() == '08752X0055/F'){
+//                if ( $station->getCode() == '05235070'){
 //                     \Symfony\Component\VarDumper\VarDumper::dump($tabStations);
 //                     return new Response('');
 //                }

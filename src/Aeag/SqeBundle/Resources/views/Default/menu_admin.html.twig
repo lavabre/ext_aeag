@@ -103,7 +103,7 @@
     <ul class="dropdown-menu">
         <li><a href="{{ path('AeagSqeBundle_saisieDonnees_index')}}">Terrain</a></li>
          {% if  not app.session.get('evolution')%}
-            <li><a href="{{ path('AeagSqeBundle_suiviHydrobio_synthese')}}">Synthèse suivis Hydrobio</a></li>
+            <li><a href="{{ path('AeagSqeBundle_suiviHydrobio_synthese')}}">Qualification suivis Hydrobio</a></li>
         {% endif %}
         <li><a href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}">Suivi Hydrobio</a></li>
         {% if app.session.get('suiviSED') %}
