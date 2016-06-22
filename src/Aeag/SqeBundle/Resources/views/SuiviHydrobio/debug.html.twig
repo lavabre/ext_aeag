@@ -1,0 +1,7 @@
+{% if stations | length %} 
+        {% for station in stations %}
+                       <pre>
+                        {{ dump(station) }}
+                    </pre>
+         {% endfor %}
+ {% endif %}

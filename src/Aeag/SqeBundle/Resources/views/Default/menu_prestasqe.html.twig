@@ -55,7 +55,7 @@
 </li>
 
 {% if app.session.get('suiviDonnees')  or app.session.get('suiviHb') or app.session.get('suiviSED') %}
-    {%if app.session.get('menu') == 'saisieDonnees' or app.session.get('menu') == 'suiviHydrobio' or app.session.get('menu') == 'suiviSediment'%}
+    {%if app.session.get('menu') == 'saisieDonnees' or app.session.get('menu') == 'syntheseHydrobio' or app.session.get('menu') == 'suiviHydrobio' or app.session.get('menu') == 'suiviSediment'%}
         <li  class="active">
         {% else %}
         <li>
@@ -71,6 +71,9 @@
                 <li><a href="{{ path('AeagSqeBundle_saisieDonnees_index')}}">Terrain</a></li>
                 {% endif %}
                 {% if app.session.get('suiviHb') %}
+                    {% if  not app.session.get('evolution')%}
+                       <li><a href="{{ path('AeagSqeBundle_suiviHydrobio_synthese')}}">Synthèse suivis Hydrobio</a></li>
+                   {% endif %}
                 <li><a href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}">Suivi Hydrobio</a></li>
                 {% endif  %}
                 {#{% if  not app.session.get('evolution')%}#}

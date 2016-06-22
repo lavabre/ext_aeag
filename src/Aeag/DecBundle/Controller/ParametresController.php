@@ -12,10 +12,18 @@ use Aeag\DecBundle\Form\Parametres\MajParametreType;
 class ParametresController extends Controller {
 
     public function indexAction() {
-
+        
+        $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagDecBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'parametres');
-        $emDec = $this->getDoctrine()->getManager('dec');
+        $session->set('controller', 'Parametres');
+        $session->set('fonction', 'index');
+        $em = $this->get('doctrine')->getManager();
+        $emDec = $this->get('doctrine')->getManager('dec');
+
         $repoPara = $emDec->getRepository('AeagDecBundle:Parametre');
         $parametres = $repoPara->getParametres();
         return $this->render('AeagDecBundle:Parametres:index.html.twig', array(
@@ -24,10 +32,18 @@ class ParametresController extends Controller {
     }
 
     public function parametreAction($code = null, Request $request) {
-
-
-        $emDec = $this->getDoctrine()->getManager('dec');
         
+        $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagDecBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'parametres');
+        $session->set('controller', 'Parametres');
+        $session->set('fonction', 'parametre');
+        $em = $this->get('doctrine')->getManager();
+        $emDec = $this->get('doctrine')->getManager('dec');
+  
         $repoPara = $emDec->getRepository('AeagDecBundle:Parametre');
 
         if (!$code or $code == 'new') {

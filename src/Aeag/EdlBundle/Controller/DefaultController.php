@@ -33,6 +33,7 @@ class DefaultController extends Controller {
         $user = $this->getUser();
         $session = $this->get('session');
         $session->clear();
+        $session->set('appli', 'edl');
         $session->set('retourErreur', $this->generateUrl('aeag_edl'));
         $session->set('menu', 'index');
         $session->set('controller', 'default');
@@ -161,10 +162,9 @@ class DefaultController extends Controller {
 // Liste des dossiers selectionnés
         $user = $this->getUser();
         $session = $this->get('session');
-        $session->set('retourErreur', $this->generateUrl('aeag_edl'));
         $session->set('menu', 'acceuil');
         $session->set('controller', 'default');
-        $session->set('fonction', 'index');
+        $session->set('fonction', 'listeMasseEau');
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
         $repoUtilisateur = $emEdl->getRepository('AeagEdlBundle:Utilisateur');
@@ -306,12 +306,16 @@ class DefaultController extends Controller {
                 $where = $where . " and b.euCd = a.euCd";
                 $where = $where . " and b.inseeDepartement = '" . $deptcle . "'";
                 $where = $where . " and b.inseeDepartement = c.inseeDepartement";
-                $where = $where . " and c.utilisateur = " . $utilisateur->getId();
+                if ($utilisateur) {
+                    $where = $where . " and c.utilisateur = " . $utilisateur->getId();
+                }
             } else {
 
                 $where = $where . " and b.euCd = a.euCd";
                 $where = $where . " and b.inseeDepartement = c.inseeDepartement";
-                $where = $where . " and c.utilisateur = " . $utilisateur->getId();
+                if ($utilisateur) {
+                    $where = $where . " and c.utilisateur = " . $utilisateur->getId();
+                }
             }
 
             $query = "select a from Aeag\EdlBundle\Entity\MasseEau a,";
@@ -616,7 +620,6 @@ class DefaultController extends Controller {
 // Liste des dossiers selectionnés
         $user = $this->getUser();
         $session = $this->get('session');
-        $session->set('retourErreur', $this->generateUrl('aeag_edl'));
         $session->set('menu', 'acceuil');
         $session->set('controller', 'default');
         $session->set('fonction', 'exportEtat');
@@ -680,7 +683,13 @@ class DefaultController extends Controller {
         }
         fclose($fic);
 
-        return $this->render('AeagEdlBundle:Etat:csv.html.twig', array('fichier' => $nom_fichier_etat));
+        //return $this->render('AeagEdlBundle:Etat:csv.html.twig', array('fichier' => $nom_fichier_etat));
+        $ext = strtolower(pathinfo($nom_fichier_etat, PATHINFO_EXTENSION));
+        header('Content-Type', 'application/' . $ext);
+        header('Content-disposition: attachment; filename="' . $nom_fichier_etat . '"');
+        header('Content-Length: ' . filesize($repertoire . '/' . $nom_fichier_etat));
+        readfile($repertoire . '/' . $nom_fichier_etat);
+        exit();
     }
 
     public function pressionGroupeAction($code = null, Request $request) {
@@ -823,7 +832,6 @@ class DefaultController extends Controller {
 // Liste des dossiers selectionnés
         $user = $this->getUser();
         $session = $this->get('session');
-        $session->set('retourErreur', $this->generateUrl('aeag_edl'));
         $session->set('menu', 'acceuil');
         $session->set('controller', 'default');
         $session->set('fonction', 'exportPression');
@@ -881,10 +889,23 @@ class DefaultController extends Controller {
             fputs($fic, $contenu);
         }
         fclose($fic);
-        return $this->render('AeagEdlBundle:Pression:csv.html.twig', array('fichier' => $nom_fichier_pression));
+        //return $this->render('AeagEdlBundle:Pression:csv.html.twig', array('fichier' => $nom_fichier_pression));
+        $ext = strtolower(pathinfo($nom_fichier_pression, PATHINFO_EXTENSION));
+        header('Content-Type', 'application/' . $ext);
+        header('Content-disposition: attachment; filename="' . $nom_fichier_pression . '"');
+        header('Content-Length: ' . filesize($repertoire . '/' . $nom_fichier_pression));
+        readfile($repertoire . '/' . $nom_fichier_pression);
+        exit();
     }
 
     public function massedeauAction($code) {
+         $user = $this->getUser();
+        $session = $this->get('session');
+        $session->set('menu', 'acceuil');
+        $session->set('controller', 'default');
+        $session->set('fonction', 'massedeau');
+        $em = $this->get('doctrine')->getManager();
+        $emEdl = $this->get('doctrine')->getManager('edl');
 
         $request = $this->container->get('request');
 
@@ -905,7 +926,14 @@ class DefaultController extends Controller {
     }
 
     public function contactAction() {
-
+        $user = $this->getUser();
+        $session = $this->get('session');
+        $session->set('menu', 'acceuil');
+        $session->set('controller', 'default');
+        $session->set('fonction', 'contact');
+        $em = $this->get('doctrine')->getManager();
+        $emEdl = $this->get('doctrine')->getManager('edl');
+        
         $enquiry = new Contact();
         $form = $this->createForm(new ContactType(), $enquiry);
 
@@ -937,6 +965,11 @@ class DefaultController extends Controller {
 
     public function majUtilisateurs() {
 
+         $user = $this->getUser();
+        $session = $this->get('session');
+        $session->set('menu', 'acceuil');
+        $session->set('controller', 'default');
+        $session->set('fonction', 'majUtilisateurs');
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
 
@@ -966,6 +999,11 @@ class DefaultController extends Controller {
 
     public function initUtilisateurs() {
 
+         $user = $this->getUser();
+        $session = $this->get('session');
+        $session->set('menu', 'acceuil');
+        $session->set('controller', 'default');
+        $session->set('fonction', 'initUtilisateur');
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
         $factory = $this->get('security.encoder_factory');

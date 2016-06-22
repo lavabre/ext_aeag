@@ -14,9 +14,13 @@ class AdminController extends Controller {
 
     public function indexAction() {
 
+         $user = $this->getUser();
         $session = $this->get('session');
-        $session->set('menu', 'admin');
-        $user = $this->getUser();
+        $session->set('menu', 'acceuil');
+        $session->set('controller', 'admin');
+        $session->set('fonction', 'index');
+        $em = $this->get('doctrine')->getManager();
+        $emEdl = $this->get('doctrine')->getManager('frd');
         return $this->redirect($this->generateUrl('AeagFrdBundle_admin_consulterFraisDeplacementsParAnnee', array('anneeSelect' => date_format($session->get('annee'),'Y'))));
     }
 

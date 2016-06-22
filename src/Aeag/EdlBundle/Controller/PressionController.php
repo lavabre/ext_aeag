@@ -21,7 +21,7 @@ class PressionController extends Controller {
         $user = $this->getUser();
         $session = $this->get('session');
         $session->set('controller', 'Pression');
-        $session->set('fonction', 'pressionListProposed');
+        $session->set('fonction', 'pressionForm');
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
         //if ($request->isXmlHttpRequest()) { // is it an Ajax request?
@@ -70,7 +70,7 @@ class PressionController extends Controller {
         }
         $session = $this->get('session');
         $session->set('controller', 'Pression');
-        $session->set('fonction', 'pressionListProposed');
+        $session->set('fonction', 'pressionSubmit');
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
         $repoUtilisateur = $emEdl->getRepository('AeagEdlBundle:Utilisateur');
@@ -176,6 +176,9 @@ class PressionController extends Controller {
 
     public function removePressionAction(Request $request) {
         $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagEdlBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('controller', 'Pression');
         $session->set('fonction', 'removePression');

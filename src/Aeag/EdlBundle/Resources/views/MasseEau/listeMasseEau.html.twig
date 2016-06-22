@@ -35,13 +35,13 @@
         </div>
         <div  class="col-sm-3 input-group">
                      <div id="idBtExportEtat" class="col-sm-5">
-                       <a class="btn btn-primary" id="idExportEtat" href="#" title="Générer Etat">
-                           <i class="fa fa-file-excel-o "> Générer Etat </i>
+                       <a class="btn btn-primary"  href="{{ path('AeagEdlBundle_ExportEtat') }}" title="Exporter Etat">
+                           <i class="fa fa-file-excel-o "> Exporter Etat </i>
                        </a>
                    </div>
                     <div id="idBtExportPression" class="col-sm-3">
-                       <a class="btn btn-primary" id="idExportPression" href="#" title="Générer Pression">
-                           <i class="fa fa-file-excel-o "> Générer Pression</i>
+                       <a class="btn btn-primary" href="{{ path('AeagEdlBundle_ExportPression') }}" title="Exporter Pression">
+                           <i class="fa fa-file-excel-o "> Exporter Pression</i>
                        </a>
                    </div>
          </div>
@@ -102,50 +102,18 @@
 
 {% block scripts %}
     jQuery(document).ready(function() {
-    var table = $('#idTable').DataTable(
-    {"stateSave": false,
-    "order": [[ 1, "asc" ]],
-    "language": {
-    "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
-    },
-    "aLengthMenu": [
-    [10, 25, 50, 100, -1],
-    [10, 25, 50, 100, "Tous"]
-    ],
-    "iDisplayLength": 10
-    });
-    });
-
-    $(document).on('click', '#idExportEtat',function(e){
-    e.preventDefault();
-    $('#modaProgression').modal('show');
-    html = 'Génération du fichier csv en cours';
-    $('#idProgress').empty().append(html);
-    var url = '{{ path('AeagEdlBundle_ExportEtat') }}'; 
-    $.ajax({
-    url: url,
-    type: 'get', // La méthode indiquée dans le formulaire (get ou post)
-    success: function(html) { // Je récupère la réponse du fichier PHP
-    $('#idBtExportEtat').empty().append(html);
-    $('#modaProgression').modal('hide');
-    }
-    });
-    });
-    
-     $(document).on('click', '#idExportPression',function(e){
-    e.preventDefault();
-    $('#modaProgression').modal('show');
-    html = 'Génération du fichier csv en cours';
-    $('#idProgress').empty().append(html);
-    var url = '{{ path('AeagEdlBundle_ExportPression') }}'; 
-    $.ajax({
-    url: url,
-    type: 'get', // La méthode indiquée dans le formulaire (get ou post)
-    success: function(html) { // Je récupère la réponse du fichier PHP
-    $('#idBtExportPression').empty().append(html);
-    $('#modaProgression').modal('hide');
-    }
-    });
+        var table = $('#idTable').DataTable(
+        {"stateSave": false,
+        "order": [[ 1, "asc" ]],
+        "language": {
+        "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
+        },
+        "aLengthMenu": [
+        [10, 25, 50, 100, -1],
+        [10, 25, 50, 100, "Tous"]
+        ],
+        "iDisplayLength": 10
+        });
     });
 
 {%endblock scripts %}
