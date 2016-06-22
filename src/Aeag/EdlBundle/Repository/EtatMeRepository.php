@@ -77,15 +77,33 @@ class EtatMeRepository extends EntityRepository {
 //        }
     }
 
-    public function getEtatMe($code, $cdGroupe) {
+//    public function getEtatMe($code, $cdGroupe) {
+//
+//        $query = "select e from Aeag\EdlBundle\Entity\MasseEau m";
+//        $query = $query . " , Aeag\EdlBundle\Entity\EtatType t";
+//        $query = $query . " , Aeag\EdlBundle\Entity\EtatMe e";
+//        $query = $query . " where m.euCd = e.euCd and e.cdEtat = t.cdEtat and m.typeMe = t.typeMe and m.euCd = '" . $code . "' and t.cdGroupe = '" . $cdGroupe . "'";
+//        //$query = $query . " and e.cdEtat != 'RW_ECO_VAL'";
+//        $query = $query . " order by t.ordre";
+//        // return new Response('query  : ' . $query);
+//
+//        try {
+//            $r = $this->_em->createQuery($query)
+//                    ->getResult();
+//            return $r;
+//        } catch (Exception $e) {
+//            return null;
+//        }
+//    }
+    
+      public function getEtatMe($code, $cdGroupe) {
 
-        $query = "select e from Aeag\EdlBundle\Entity\MasseEau m";
-        $query = $query . " , Aeag\EdlBundle\Entity\EtatType t";
+        $query = "select e from Aeag\EdlBundle\Entity\EtatType t";
         $query = $query . " , Aeag\EdlBundle\Entity\EtatMe e";
-        $query = $query . " where m.euCd = e.euCd and e.cdEtat = t.cdEtat and m.typeMe = t.typeMe and m.euCd = '" . $code . "' and t.cdGroupe = '" . $cdGroupe . "'";
+        $query = $query . " where  t.cdEtat = e.cdEtat  and e.euCd = '" . $code . "' and t.cdGroupe = '" . $cdGroupe . "'";
         //$query = $query . " and e.cdEtat != 'RW_ECO_VAL'";
         $query = $query . " order by t.ordre";
-        // return new Response('query  : ' . $query);
+        //  print_r('query  : ' . $query);
 
         try {
             $r = $this->_em->createQuery($query)
@@ -96,12 +114,30 @@ class EtatMeRepository extends EntityRepository {
         }
     }
 
-    public function getNbEtatMe($code, $cdGroupe) {
+//    public function getNbEtatMe($code, $cdGroupe) {
+//
+//        $query = "select count(e.valeur) from Aeag\EdlBundle\Entity\MasseEau m";
+//        $query = $query . " , Aeag\EdlBundle\Entity\EtatType t";
+//        $query = $query . " , Aeag\EdlBundle\Entity\EtatMe e";
+//        $query = $query . " where m.euCd = e.euCd and e.cdEtat = t.cdEtat and m.typeMe = t.typeMe and m.euCd = '" . $code . "' and t.cdGroupe = '" . $cdGroupe . "'";
+//        //$query = $query . " and e.cdEtat != 'RW_ECO_VAL'";
+//        // print_r('query  : ' . $query);
+//
+//        try {
+//            $r = $this->_em->createQuery($query)
+//                    ->getSingleScalarResult();
+//            ;
+//            return $r;
+//        } catch (Exception $e) {
+//            return null;
+//        }
+//    }
+    
+     public function getNbEtatMe($code, $cdGroupe) {
 
-        $query = "select count(e.valeur) from Aeag\EdlBundle\Entity\MasseEau m";
-        $query = $query . " , Aeag\EdlBundle\Entity\EtatType t";
+        $query = "select count(e.valeur)  from Aeag\EdlBundle\Entity\EtatType t";
         $query = $query . " , Aeag\EdlBundle\Entity\EtatMe e";
-        $query = $query . " where m.euCd = e.euCd and e.cdEtat = t.cdEtat and m.typeMe = t.typeMe and m.euCd = '" . $code . "' and t.cdGroupe = '" . $cdGroupe . "'";
+        $query = $query . " where  t.cdEtat = e.cdEtat  and e.euCd = '" . $code . "' and t.cdGroupe = '" . $cdGroupe . "'";
         //$query = $query . " and e.cdEtat != 'RW_ECO_VAL'";
         // print_r('query  : ' . $query);
 

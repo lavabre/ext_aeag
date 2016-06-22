@@ -34,6 +34,7 @@
          
     </head>
     <body id="body" class="responsive">
+        {% block header %}
         <header class="page-header">
             <!--[if lt IE 9]>
             <div class="page-header-ie8">
@@ -179,6 +180,7 @@
            </div>
            <![endif]-->
          </header>
+        {% endblock header %}
           
            {% block navbar %}
              <nav class="navbar navbar-default" >
