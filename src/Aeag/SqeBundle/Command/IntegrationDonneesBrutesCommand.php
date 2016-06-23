@@ -51,12 +51,13 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
             $destinataires[] = $this->repoPgProgWebUsers->findOneByPrestataire($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getTitulaire());
             $destinataires[] = $this->repoPgProgWebUsers->findOneByProducteur($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getRespAdrCor());
 
-            // TODO Ajouter le Fichier de CR
             $objetMessage = "SQE - RAI : Fichier csv des données brutes disponible pour le lot " . $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getNomLot();
-            $url = $this->getContainer()->get('router')->generate('AeagSqeBundle_echangefichiers_reponses_telecharger', array("reponseId" => $pgCmdFichierRps->getId(), "typeFichier" => "DB"), UrlGeneratorInterface::ABSOLUTE_URL);
+            $urlDb = $this->getContainer()->get('router')->generate('AeagSqeBundle_echangefichiers_reponses_telecharger', array("reponseId" => $pgCmdFichierRps->getId(), "typeFichier" => "DB"), UrlGeneratorInterface::ABSOLUTE_URL);
+            $urlCr = $this->getContainer()->get('router')->generate('AeagSqeBundle_echangefichiers_reponses_telecharger', array("reponseId" => $pgCmdFichierRps->getId(), "typeFichier" => "CR"), UrlGeneratorInterface::ABSOLUTE_URL);
             $txtMessage = "Lot : " . $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getNomLot() . "<br/>";
             $txtMessage .= "Période : " . $pgCmdFichierRps->getDemande()->getPeriode()->getLabelPeriode() . "<br/>";
-            $txtMessage .= 'Vous pouvez récupérer le fichier csv à l\'adresse suivante : <a href="' . $url . '">' . $pgCmdFichierRps->getNomFichierDonneesBrutes() . '</a>';
+            $txtMessage .= 'Vous pouvez récupérer le fichier csv à l\'adresse suivante: <a href="' . $urlDb . '">' . $pgCmdFichierRps->getNomFichierDonneesBrutes() . '</a><br/>';
+            $txtMessage .= 'Le fichier de compte rendu est, quand à lui, disponible ici: <a href="' . $urlCr . '">' . $pgCmdFichierRps->getNomFichierCompteRendu() . '</a>';
             foreach ($destinataires as $destinataire) {
                 if (!is_null($destinataire)) {
                     $mailer = $this->getContainer()->get('mailer');
@@ -89,7 +90,7 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
                     $this->_addLog('warning', $demandeId, $reponseId, "Cette RAI a déjà été intégrée dans SQE");
                 } else {
                     $pgCmdPrelev->setFichierRps($pgCmdFichierRps);
-                    $pgTmpValidEdilabo = $this->repoPgTmpValidEdilabo->findOneBy(array('fichierRpsId' => $reponseId, 'demandeId' => $demandeId, 'codePrelevement' => $codePrelevement, 'numOrdre' => $pgCmdPrelev->getNumOrdre()));
+                    $pgTmpValidEdilabo = $this->repoPgTmpValidEdilabo->findOneBy(array('fichierRpsId' => $reponseId, 'demandeId' => $demandeId, 'codePrelevement' => $codePrelevement, 'numOrdre' => '1'));
                     if (!is_null($pgTmpValidEdilabo->getDatePrel())) {
                         if (!is_null($pgTmpValidEdilabo->getHeurePrel())) {
                             $date = $pgTmpValidEdilabo->getDatePrel() . ' ' . $pgTmpValidEdilabo->getHeurePrel();

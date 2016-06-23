@@ -7,4 +7,6 @@ php /base/extranet/ext_aeag/app/console doctrine:cache:clear-metadata
 php /base/extranet/ext_aeag/app/console doctrine:cache:clear-query
 php /base/extranet/ext_aeag/app/console doctrine:cache:clear-result  
 
+rm -Rf /base/extranet/ext_aeag/app/logs/prod/*
+
 chmod -R 777 /base/extranet/ext_aeag/app/logs /base/extranet/ext_aeag/app/cache

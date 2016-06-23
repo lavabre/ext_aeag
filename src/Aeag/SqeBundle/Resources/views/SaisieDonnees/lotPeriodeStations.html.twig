@@ -248,7 +248,7 @@
                     
                      $(document).on('click','#idCommentaire{{ cmdPrelev.cmdPrelev.id }}',function(e){
                     e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                    html = 'Station : ' + {{ station.station.code }} + ' ' + '{{ station.station.libelle }}'
+                    html = 'Station : ' + '{{ station.station.code }}' + ' ' + '{{ station.station.libelle }}'
                     $('#idHeaderCommentaire').html(html);
                     html = '<h4>Prélèvement ' + {{ cmdPrelev.cmdPrelev.id }} + ' prévu le  ' + {{ cmdPrelev.cmdPrelev.datePrelev | date("d/m/Y") }} + '</h4>';
                     html += '</br></br>';
