@@ -83,6 +83,14 @@ class ExportAvisEtat {
     /**
      * @var string
      *
+     * @ORM\Column(name="utilisateur", type="string", length=255, nullable=true)
+     * @ORM\Id
+     */
+    private $utilisateur;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="proposition_date", type="string", length=255, nullable=true)
      * @ORM\Id
      */
@@ -199,6 +207,10 @@ class ExportAvisEtat {
 
     function getCdEtat() {
         return $this->cdEtat;
+    }
+
+    function getUtilisateur() {
+        return $this->utilisateur;
     }
 
     function getPropositionDate() {

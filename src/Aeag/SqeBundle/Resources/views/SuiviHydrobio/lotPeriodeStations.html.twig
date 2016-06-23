@@ -320,9 +320,9 @@
                                     </td>
                                     <td>
                                         {%if  cmdPrelev.autrePrelevs %}
-                                             {% for autrePrelev in cmdPrelev.autrePrelevs  %}
-                                                 {{ autrePrelev.datePrel | date("d/m/Y H:i") }} : {{ autrePrelev.support }} </br>
-                                              {% endfor %}
+                                       {#      {% for autrePrelev in cmdPrelev.autrePrelevs  %}#}
+                                                 {{ cmdPrelev.autrePrelevs.0.datePrel | date("d/m/Y H:i") }} : {{ cmdPrelev.autrePrelevs.0.support }} </br>
+                                          {#    {% endfor %}#}
                                         {% endif %}
                                     </td>
                                     {%if not cmdPrelev.suiviPrels.0.suiviPrel | length %}
@@ -337,6 +337,7 @@
                                                 {% else %}
                                                 <td class="warning" nowrap>
                                               {% endif %}
+                                              <span class="hidden">{{cmdPrelev.suiviPrels.0.suiviPrel.datePrel | date("Y/m/d H:i") }}</span>
                                              {{cmdPrelev.suiviPrels.0.suiviPrel.datePrel | date("d/m/Y H:i") }}
                                       </td>
                                         {% if cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'A' %}

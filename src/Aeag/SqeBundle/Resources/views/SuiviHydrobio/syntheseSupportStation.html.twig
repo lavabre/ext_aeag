@@ -7,13 +7,13 @@
             {% endif %}
 
              <div class="form-group">
-                    <label class="col-xs-3 control-label">Validation :</label>
-                    {%if form_errors(form.validation) %}
+                    <label class="col-xs-3 control-label">Avis :</label>
+                    {%if form_errors(form.avis) %}
                         <div class="col-xs-8 input-group has-error has-feedback">
                         {% else %}
                             <div class="col-xs-8 input-group">
                             {% endif %}
-                            {{ form_widget(form.validation, { 'attr': {'class': 'form-control ', 'placeholder': 'validation'} }) }}
+                            {{ form_widget(form.avis, { 'attr': {'class': 'form-control ', 'placeholder': 'avis'} }) }}
                         </div>
                     </div> 
                         
@@ -63,7 +63,7 @@
                         $('#idMessage').hide();
                         $('#btFermer').hide();
                      
-                        if ($('#validation').val() != 'D') {
+                        if ($('#avis').val() != 'D') {
                                     $('#commentaire').removeAttr('required');
                                     $('#idCommentaire').hide();
                         } else {
@@ -72,9 +72,9 @@
                         };
                     
                     
-                        $(document).on('change', '#validation', function (e) {
+                        $(document).on('change', '#avis', function (e) {
                              e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                             if ($('#validation').val() != 'D') {
+                             if ($('#avis').val() != 'D') {
                                     $('#commentaire').removeAttr('required');
                                     $('#idCommentaire').hide();
                                     } else {
@@ -86,7 +86,7 @@
                                 
                         $(document).on('click', '#btValider', function (e) {
                              erreur = false;
-                            if ( $('#validation').val() == 'D' && $('#commentaire').val() == '')
+                            if ( $('#avis').val() == 'D' && $('#commentaire').val() == '')
                             {
                                 alert("Veuillez saisir un commentaire svp");
                                 erreur = true;

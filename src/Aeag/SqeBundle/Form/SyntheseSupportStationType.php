@@ -15,10 +15,10 @@ class SyntheseSupportStationType extends AbstractType {
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $pgCmdSuiviPrel = $this->pgCmdSuiviPrel;
         $builder
-                ->add('validation', 'choice', array(
+                ->add('avis', 'choice', array(
                     'choices' => array('F' => 'Favorable', 'D' => 'Défavorable'),
                     'required' => true,
-                    'data' => $pgCmdSuiviPrel->getValidation(),
+                    'data' => $pgCmdSuiviPrel->getAvis(),
                 ))
                  ->add('commentaireActuel', 'textarea', array(
                     'label' => 'Commentaire',

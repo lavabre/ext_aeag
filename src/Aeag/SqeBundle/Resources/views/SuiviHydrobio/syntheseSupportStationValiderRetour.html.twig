@@ -1,0 +1,49 @@
+<a id="idVoirSuivi{{ cmdPrelev.id }}" class="btn btn-primary" href="#" title="consulter l'historique">
+     <i class="fa fa-archive"></i> 
+ </a>
+
+ {% if suiviPrel.statutPrel  == 'F' %}
+     {% if   suiviPrel.fichierRps %}
+         {% if suiviPrel.fichierRps.nomFichier %}
+         <a id="idTelechargerSuivi{{ suiviPrel.id }}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_fichier_telecharger',{'suiviPrelId': suiviPrel.id })}}" title="Télécharger le fichier terrain">
+             <i class="fa fa-upload"></i> 
+         </a>
+         {% endif %}
+     {% endif %}
+ {% endif %}
+
+ {% if is_granted('ROLE_ADMINSQE') or pgProgWebUser.typeUser == 'XHBIO' %}
+     {% if suiviPrel.statutPrel  == 'F'  and 
+             suiviPrel.validation  == 'E'  %}
+             <a  id="idAvis-{{ suiviPrel.id }}" class="btn btn-warning"  title="Donner un avis">
+                      <i class="fa fa-graduation-cap"></i>
+              </a>
+               {% if dateLimite %}
+                     </br>
+                     <div class="danger text-info">date limite : {{ dateLimite | date("d/m/Y") }}</div>
+             {% endif %}
+    {% endif %}
+ {% endif %}
+
+  {% if is_granted('ROLE_ADMINSQE') %}
+     <a  id="idValider-{{ suiviPrel.id }}" class="btn btn-warning"  title="valider le suivi">
+         <i class="fa fa-check"></i>
+     </a>
+   {% endif %}
+   
+    <script>
+              {% if  suiviPrel.validation  == 'A' %}
+                  $('#idTd7-{{nb}}').removeClass('danger').removeClass('warning').addClass('success');
+                  $('#idTd8-{{nb}}').removeClass('danger').removeClass('warning').addClass('success');
+              {% elseif suiviPrel.validation  == 'R' %}
+                  $('#idTd7-{{nb}}').removeClass('success').removeClass('warning').addClass('danger');
+                  $('#idTd8-{{nb}}').removeClass('success').removeClass('warning').addClass('danger');
+             {% else %}
+                 $('#idTd7-{{nb}}').removeClass('danger').removeClass('success').addClass('warning');
+                  $('#idTd8-{{nb}}').removeClass('danger').removeClass('success').addClass('warning');
+            {% endif %}
+         </script>
+                                            
+     
+  
+

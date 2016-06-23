@@ -68,93 +68,10 @@ class DefaultController extends Controller {
         $critere = new Criteres();
         $form = $this->createForm(new MasseEauRechercheForm(), $critere);
 
-        $exportAvistEtats = $repoExportAvisEtat->getExportAvisEtats();
-        $exportAvistPressions = $repoExportAvisPression->getExportAvisPressions();
-        $repertoire = "fichiers";
-        $date_import = date('Ymd_His');
-        if ($utilisateur) {
-            $nom_fichier_etat = "ExportAvisEtat_" . $utilisateur->getUserName() . ".csv";
-            $nom_fichier_pression = "ExportAvisPression_" . $utilisateur->getUserName() . ".csv";
-        } else {
-            $nom_fichier_etat = "ExportAvisEtat_" . $date_import . ".csv";
-            $nom_fichier_pression = "ExportAvisPression_" . $date_import . ".csv";
-        }
-        if (count($exportAvistEtats) > 0) {
-            $fic_import_etat = $repertoire . "/" . $nom_fichier_etat;
-//ouverture fichier
-            $fic = fopen($fic_import_etat, "w");
-            $contenu = "eu_cd; type_me; nom_masse_eau; ct; ct_lib; uhr; uhr_lib; depts; cd_etat; proposition_date; groupe; libelle; e_sdage2016; e_sdage2016_lib; e_propose; e_propose_lib; e_retenu; e_retenu_lib; commentaire\n";
-            fputs($fic, utf8_decode($contenu));
-            foreach ($exportAvistEtats as $exportAvistEtat) {
-                $contenu = $exportAvistEtat->getEuCd() . ";";
-                $contenu = $contenu . $exportAvistEtat->getTypeMe() . ";";
-                $contenu = $contenu . $exportAvistEtat->getNomMasseEau() . ";";
-                $contenu = $contenu . $exportAvistEtat->getCt() . ";";
-                $contenu = $contenu . $exportAvistEtat->getCtLib() . ";";
-                $contenu = $contenu . $exportAvistEtat->getUhr() . ";";
-                $contenu = $contenu . $exportAvistEtat->getUhrLib() . ";";
-                $contenu = $contenu . $exportAvistEtat->getDepts() . ";";
-                $contenu = $contenu . $exportAvistEtat->getCdEtat() . ";";
-                $contenu = $contenu . $exportAvistEtat->getPropositionDate() . ";";
-                $contenu = $contenu . $exportAvistEtat->getGroupe() . ";";
-                $contenu = $contenu . $exportAvistEtat->getLibelle() . ";";
-                $contenu = $contenu . $exportAvistEtat->getESdage2016() . ";";
-                $contenu = $contenu . $exportAvistEtat->getESdage2016Lib() . ";";
-                $contenu = $contenu . $exportAvistEtat->getEpropose() . ";";
-                $contenu = $contenu . $exportAvistEtat->getEproposeLib() . ";";
-                $contenu = $contenu . $exportAvistEtat->getERetenu() . ";";
-                $contenu = $contenu . $exportAvistEtat->getERetenuLib() . ";";
-                $contenu = $contenu . $exportAvistEtat->getCommentaire() . ";\n";
-                $contenu = str_replace(CHR(13) . CHR(10), "", $contenu);
-                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                fputs($fic, $contenu);
-            }
-            fclose($fic);
-        } else {
-            $nom_fichier_etat = null;
-        }
-
-        if (count($exportAvistPressions) > 0) {
-            $fic_import_pression = $repertoire . "/" . $nom_fichier_pression;
-//ouverture fichier
-            $fic = fopen($fic_import_pression, "w");
-            $contenu = "eu_cd; type_me; nom_masse_eau; ct; ct_lib; uhr; uhr_lib; depts; cd_pression; proposition_date; groupe; libelle; e_sdage2016; e_sdage2016_lib; e_propose; e_propose_lib; e_retenu; e_retenu_lib; commentaire\n";
-            fputs($fic, utf8_decode($contenu));
-            foreach ($exportAvistPressions as $exportAvisPression) {
-                $contenu = $exportAvisPression->getEuCd() . ";";
-                $contenu = $contenu . $exportAvisPression->getTypeMe() . ";";
-                $contenu = $contenu . $exportAvisPression->getNomMasseEau() . ";";
-                $contenu = $contenu . $exportAvisPression->getCt() . ";";
-                $contenu = $contenu . $exportAvisPression->getCtLib() . ";";
-                $contenu = $contenu . $exportAvisPression->getUhr() . ";";
-                $contenu = $contenu . $exportAvisPression->getUhrLib() . ";";
-                $contenu = $contenu . $exportAvisPression->getDepts() . ";";
-                $contenu = $contenu . $exportAvisPression->getCdPression() . ";";
-                $contenu = $contenu . $exportAvisPression->getPropositionDate() . ";";
-                $contenu = $contenu . $exportAvisPression->getGroupe() . ";";
-                $contenu = $contenu . $exportAvisPression->getLibelle() . ";";
-                $contenu = $contenu . $exportAvisPression->getPSdage2016() . ";";
-                $contenu = $contenu . $exportAvisPression->getPSdage2016Lib() . ";";
-                $contenu = $contenu . $exportAvisPression->getPpropose() . ";";
-                $contenu = $contenu . $exportAvisPression->getPproposeLib() . ";";
-                $contenu = $contenu . $exportAvisPression->getPRetenu() . ";";
-                $contenu = $contenu . $exportAvisPression->getPRetenuLib() . ";";
-                $contenu = $contenu . $exportAvisPression->getCommentaire() . ";\n";
-                $contenu = str_replace(CHR(13) . CHR(10), "", $contenu);
-                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                fputs($fic, $contenu);
-            }
-            fclose($fic);
-        } else {
-            $nom_fichier_pression = null;
-        }
-
 
         return $this->render('AeagEdlBundle:Default:index.html.twig', array(
                     'form' => $form->createView(),
-                    'fichierEtat' => $nom_fichier_etat,
-                    'fichierPression' => $nom_fichier_pression
-        ));
+          ));
     }
 
     public function listeMasseEauAction(Request $request) {
@@ -348,90 +265,7 @@ class DefaultController extends Controller {
 
         $MasseEaux = $emEdl->createQuery($query)
                 ->getResult();
-
-        $exportAvistEtats = $repoExportAvisEtat->getExportAvisEtatByWhere($whereCsv);
-        $exportAvistPressions = $repoExportAvisPression->getExportAvisPressionByWhere($whereCsv);
-        $repertoire = "fichiers";
-        $date_import = date('Ymd_His');
-        if ($utilisateur) {
-            $nom_fichier_etat = "ExportAvisEtat_" . $utilisateur->getUserName() . ".csv";
-            $nom_fichier_pression = "ExportAvisPression_" . $utilisateur->getUserName() . ".csv";
-        } else {
-            $nom_fichier_etat = "ExportAvisEtat_" . $date_import . ".csv";
-            $nom_fichier_pression = "ExportAvisPression_" . $date_import . ".csv";
-        }
-        if (count($exportAvistEtats) > 0) {
-            $fic_import_etat = $repertoire . "/" . $nom_fichier_etat;
-//ouverture fichier
-            $fic = fopen($fic_import_etat, "w");
-            $contenu = "eu_cd; type_me; nom_masse_eau; ct; ct_lib; uhr; uhr_lib; depts; cd_etat; proposition_date; groupe; libelle; e_sdage2016; e_sdage2016_lib; e_propose; e_propose_lib; e_retenu; e_retenu_lib; commentaire\n";
-            fputs($fic, utf8_decode($contenu));
-            foreach ($exportAvistEtats as $exportAvistEtat) {
-                $contenu = $exportAvistEtat->getEuCd() . ";";
-                $contenu = $contenu . $exportAvistEtat->getTypeMe() . ";";
-                $contenu = $contenu . $exportAvistEtat->getNomMasseEau() . ";";
-                $contenu = $contenu . $exportAvistEtat->getCt() . ";";
-                $contenu = $contenu . $exportAvistEtat->getCtLib() . ";";
-                $contenu = $contenu . $exportAvistEtat->getUhr() . ";";
-                $contenu = $contenu . $exportAvistEtat->getUhrLib() . ";";
-                $contenu = $contenu . $exportAvistEtat->getDepts() . ";";
-                $contenu = $contenu . $exportAvistEtat->getCdEtat() . ";";
-                $contenu = $contenu . $exportAvistEtat->getPropositionDate() . ";";
-                $contenu = $contenu . $exportAvistEtat->getGroupe() . ";";
-                $contenu = $contenu . $exportAvistEtat->getLibelle() . ";";
-                $contenu = $contenu . $exportAvistEtat->getESdage2016() . ";";
-                $contenu = $contenu . $exportAvistEtat->getESdage2016Lib() . ";";
-                $contenu = $contenu . $exportAvistEtat->getEpropose() . ";";
-                $contenu = $contenu . $exportAvistEtat->getEproposeLib() . ";";
-                $contenu = $contenu . $exportAvistEtat->getERetenu() . ";";
-                $contenu = $contenu . $exportAvistEtat->getERetenuLib() . ";";
-                $contenu = $contenu . $exportAvistEtat->getCommentaire() . ";\n";
-                $contenu = str_replace(CHR(13) . CHR(10), "", $contenu);
-                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                fputs($fic, $contenu);
-            }
-            fclose($fic);
-            $tabSelection['FichierEtat'] = $nom_fichier_etat;
-        } else {
-            $tabSelection['FichierEtat'] = null;
-        }
-
-        if (count($exportAvistPressions) > 0) {
-            $fic_import_pression = $repertoire . "/" . $nom_fichier_pression;
-//ouverture fichier
-            $fic = fopen($fic_import_pression, "w");
-            $contenu = "eu_cd; type_me; nom_masse_eau; ct; ct_lib; uhr; uhr_lib; depts; cd_pression; proposition_date; groupe; libelle; e_sdage2016; e_sdage2016_lib; e_propose; e_propose_lib; e_retenu; e_retenu_lib; commentaire\n";
-            fputs($fic, utf8_decode($contenu));
-            foreach ($exportAvistPressions as $exportAvisPression) {
-                $contenu = $exportAvisPression->getEuCd() . ";";
-                $contenu = $contenu . $exportAvisPression->getTypeMe() . ";";
-                $contenu = $contenu . $exportAvisPression->getNomMasseEau() . ";";
-                $contenu = $contenu . $exportAvisPression->getCt() . ";";
-                $contenu = $contenu . $exportAvisPression->getCtLib() . ";";
-                $contenu = $contenu . $exportAvisPression->getUhr() . ";";
-                $contenu = $contenu . $exportAvisPression->getUhrLib() . ";";
-                $contenu = $contenu . $exportAvisPression->getDepts() . ";";
-                $contenu = $contenu . $exportAvisPression->getCdPression() . ";";
-                $contenu = $contenu . $exportAvisPression->getPropositionDate() . ";";
-                $contenu = $contenu . $exportAvisPression->getGroupe() . ";";
-                $contenu = $contenu . $exportAvisPression->getLibelle() . ";";
-                $contenu = $contenu . $exportAvisPression->getPSdage2016() . ";";
-                $contenu = $contenu . $exportAvisPression->getPSdage2016Lib() . ";";
-                $contenu = $contenu . $exportAvisPression->getPpropose() . ";";
-                $contenu = $contenu . $exportAvisPression->getPproposeLib() . ";";
-                $contenu = $contenu . $exportAvisPression->getPRetenu() . ";";
-                $contenu = $contenu . $exportAvisPression->getPRetenuLib() . ";";
-                $contenu = $contenu . $exportAvisPression->getCommentaire() . ";\n";
-                $contenu = str_replace(CHR(13) . CHR(10), "", $contenu);
-                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                fputs($fic, $contenu);
-            }
-            fclose($fic);
-            $tabSelection['FichierPression'] = $nom_fichier_pression;
-        } else {
-            $tabSelection['FichierPression'] = null;
-        }
-
+   
         $res = array();
         $i = 0;
         foreach ($MasseEaux as $MasseEau) {
@@ -655,28 +489,29 @@ class DefaultController extends Controller {
         $fic_import_etat = $repertoire . "/" . $nom_fichier_etat;
 //ouverture fichier
         $fic = fopen($fic_import_etat, "w");
-        $contenu = "eu_cd; type_me; nom_masse_eau; ct; ct_lib; uhr; uhr_lib; depts; cd_etat; proposition_date; groupe; libelle; e_sdage2016; e_sdage2016_lib; e_propose; e_propose_lib; e_retenu; e_retenu_lib; commentaire\n";
+        $contenu = "eu_cd; type_me; nom_masse_eau; ct; ct_lib; uhr; uhr_lib; depts; cd_etat; utilisateur; proposition_date; groupe; libelle; e_sdage2016; e_sdage2016_lib; e_propose; e_propose_lib; e_retenu; e_retenu_lib; commentaire\n";
         fputs($fic, utf8_decode($contenu));
         foreach ($exportAvistEtats as $exportAvistEtat) {
             $contenu = $exportAvistEtat->getEuCd() . ";";
-            $contenu = $contenu . $exportAvistEtat->getTypeMe() . ";";
-            $contenu = $contenu . $exportAvistEtat->getNomMasseEau() . ";";
-            $contenu = $contenu . $exportAvistEtat->getCt() . ";";
-            $contenu = $contenu . $exportAvistEtat->getCtLib() . ";";
-            $contenu = $contenu . $exportAvistEtat->getUhr() . ";";
-            $contenu = $contenu . $exportAvistEtat->getUhrLib() . ";";
-            $contenu = $contenu . $exportAvistEtat->getDepts() . ";";
-            $contenu = $contenu . $exportAvistEtat->getCdEtat() . ";";
-            $contenu = $contenu . $exportAvistEtat->getPropositionDate() . ";";
-            $contenu = $contenu . $exportAvistEtat->getGroupe() . ";";
-            $contenu = $contenu . $exportAvistEtat->getLibelle() . ";";
-            $contenu = $contenu . $exportAvistEtat->getESdage2016() . ";";
-            $contenu = $contenu . $exportAvistEtat->getESdage2016Lib() . ";";
-            $contenu = $contenu . $exportAvistEtat->getEpropose() . ";";
-            $contenu = $contenu . $exportAvistEtat->getEproposeLib() . ";";
-            $contenu = $contenu . $exportAvistEtat->getERetenu() . ";";
-            $contenu = $contenu . $exportAvistEtat->getERetenuLib() . ";";
-            $contenu = $contenu . $exportAvistEtat->getCommentaire() . ";\n";
+            $contenu = $contenu . rtrim($exportAvistEtat->getTypeMe()) . ";";
+            $contenu = $contenu . rtrim($exportAvistEtat->getNomMasseEau()) . ";";
+            $contenu = $contenu . rtrim($exportAvistEtat->getCt()) . ";";
+            $contenu = $contenu . rtrim($exportAvistEtat->getCtLib()) . ";";
+            $contenu = $contenu . rtrim($exportAvistEtat->getUhr()) . ";";
+            $contenu = $contenu . rtrim($exportAvistEtat->getUhrLib()) . ";";
+            $contenu = $contenu . rtrim($exportAvistEtat->getDepts()) . ";";
+            $contenu = $contenu . rtrim($exportAvistEtat->getCdEtat()) . ";";
+            $contenu = $contenu . rtrim($exportAvistEtat->getUtilisateur()) . ";";
+            $contenu = $contenu . rtrim($exportAvistEtat->getPropositionDate()) . ";";
+            $contenu = $contenu . rtrim($exportAvistEtat->getGroupe()) . ";";
+            $contenu = $contenu . rtrim($exportAvistEtat->getLibelle()) . ";";
+            $contenu = $contenu . rtrim($exportAvistEtat->getESdage2016()) . ";";
+            $contenu = $contenu . rtrim($exportAvistEtat->getESdage2016Lib()) . ";";
+            $contenu = $contenu . rtrim($exportAvistEtat->getEpropose()) . ";";
+            $contenu = $contenu . rtrim($exportAvistEtat->getEproposeLib()) . ";";
+            $contenu = $contenu . rtrim($exportAvistEtat->getERetenu()) . ";";
+            $contenu = $contenu . rtrim($exportAvistEtat->getERetenuLib()) . ";";
+            $contenu = $contenu . rtrim($exportAvistEtat->getCommentaire()) . ";\n";
             $contenu = str_replace(CHR(13) . CHR(10), "", $contenu);
             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
             fputs($fic, $contenu);
@@ -862,28 +697,29 @@ class DefaultController extends Controller {
         $fic_import_pression = $repertoire . "/" . $nom_fichier_pression;
 //ouverture fichier
         $fic = fopen($fic_import_pression, "w");
-        $contenu = "eu_cd; type_me; nom_masse_eau; ct; ct_lib; uhr; uhr_lib; depts; cd_pression; proposition_date; groupe; libelle; e_sdage2016; e_sdage2016_lib; e_propose; e_propose_lib; e_retenu; e_retenu_lib; commentaire\n";
+        $contenu = "eu_cd; type_me; nom_masse_eau; ct; ct_lib; uhr; uhr_lib; depts; cd_pression; utilisateur; proposition_date; groupe; libelle; e_sdage2016; e_sdage2016_lib; e_propose; e_propose_lib; e_retenu; e_retenu_lib; commentaire\n";
         fputs($fic, utf8_decode($contenu));
         foreach ($exportAvistPressions as $exportAvisPression) {
             $contenu = $exportAvisPression->getEuCd() . ";";
-            $contenu = $contenu . $exportAvisPression->getTypeMe() . ";";
-            $contenu = $contenu . $exportAvisPression->getNomMasseEau() . ";";
-            $contenu = $contenu . $exportAvisPression->getCt() . ";";
-            $contenu = $contenu . $exportAvisPression->getCtLib() . ";";
-            $contenu = $contenu . $exportAvisPression->getUhr() . ";";
-            $contenu = $contenu . $exportAvisPression->getUhrLib() . ";";
-            $contenu = $contenu . $exportAvisPression->getDepts() . ";";
-            $contenu = $contenu . $exportAvisPression->getCdPression() . ";";
-            $contenu = $contenu . $exportAvisPression->getPropositionDate() . ";";
-            $contenu = $contenu . $exportAvisPression->getGroupe() . ";";
-            $contenu = $contenu . $exportAvisPression->getLibelle() . ";";
-            $contenu = $contenu . $exportAvisPression->getPSdage2016() . ";";
-            $contenu = $contenu . $exportAvisPression->getPSdage2016Lib() . ";";
-            $contenu = $contenu . $exportAvisPression->getPpropose() . ";";
-            $contenu = $contenu . $exportAvisPression->getPproposeLib() . ";";
-            $contenu = $contenu . $exportAvisPression->getPRetenu() . ";";
-            $contenu = $contenu . $exportAvisPression->getPRetenuLib() . ";";
-            $contenu = $contenu . $exportAvisPression->getCommentaire() . ";\n";
+            $contenu = $contenu . rtrim($exportAvisPression->getTypeMe()) . ";";
+            $contenu = $contenu . rtrim($exportAvisPression->getNomMasseEau()) . ";";
+            $contenu = $contenu . rtrim($exportAvisPression->getCt()) . ";";
+            $contenu = $contenu . rtrim($exportAvisPression->getCtLib()) . ";";
+            $contenu = $contenu . rtrim($exportAvisPression->getUhr()) . ";";
+            $contenu = $contenu . rtrim($exportAvisPression->getUhrLib()) . ";";
+            $contenu = $contenu . rtrim($exportAvisPression->getDepts()) . ";";
+            $contenu = $contenu . rtrim($exportAvisPression->getCdPression()) . ";";
+            $contenu = $contenu . rtrim($exportAvisPression->getUtilisateur()) . ";";
+            $contenu = $contenu . rtrim($exportAvisPression->getPropositionDate()) . ";";
+            $contenu = $contenu . rtrim($exportAvisPression->getGroupe()) . ";";
+            $contenu = $contenu . rtrim($exportAvisPression->getLibelle()) . ";";
+            $contenu = $contenu . rtrim($exportAvisPression->getPSdage2016()) . ";";
+            $contenu = $contenu . rtrim($exportAvisPression->getPSdage2016Lib()) . ";";
+            $contenu = $contenu . rtrim($exportAvisPression->getPpropose()) . ";";
+            $contenu = $contenu . rtrim($exportAvisPression->getPproposeLib()) . ";";
+            $contenu = $contenu . rtrim($exportAvisPression->getPRetenu()) . ";";
+            $contenu = $contenu . rtrim($exportAvisPression->getPRetenuLib()) . ";";
+            $contenu = $contenu . rtrim($exportAvisPression->getCommentaire()) . ";\n";
             $contenu = str_replace(CHR(13) . CHR(10), "", $contenu);
             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
             fputs($fic, $contenu);

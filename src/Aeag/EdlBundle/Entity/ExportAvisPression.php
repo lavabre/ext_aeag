@@ -83,6 +83,14 @@ class ExportAvisPression {
     /**
      * @var string
      *
+     * @ORM\Column(name="utilisateur", type="string", length=255, nullable=true)
+     * @ORM\Id
+     */
+    private $utilisateur;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="proposition_date", type="string", length=255, nullable=true)
      * @ORM\Id
      */
@@ -143,8 +151,8 @@ class ExportAvisPression {
      * @ORM\Column(name="p_propose_lib", type="text", nullable=true)
      */
     private $pProposeLib;
-    
-     /**
+
+    /**
      * @var string $pRetenu
      *
      * @ORM\Column(name="e_retenu", type="string", length=255, nullable=true)
@@ -201,6 +209,10 @@ class ExportAvisPression {
         return $this->cdPression;
     }
 
+    function getUtilisateur() {
+        return $this->utilisateur;
+    }
+
     function getPropositionDate() {
         return $this->propositionDate;
     }
@@ -236,7 +248,7 @@ class ExportAvisPression {
     function getPProposeLib() {
         return $this->pProposeLib;
     }
-    
+
     function getPRetenu() {
         return $this->pRetenu;
     }
@@ -245,7 +257,6 @@ class ExportAvisPression {
         return $this->pRetenuLib;
     }
 
-    
     function getCommentaire() {
         return $this->commentaire;
     }

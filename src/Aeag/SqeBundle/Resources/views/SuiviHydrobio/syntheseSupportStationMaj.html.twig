@@ -1,11 +1,11 @@
-         {% if suiviPrel.validation == 'F' %}
+         {% if suiviPrel.avis == 'F' %}
             Favorable
-        {% elseif suiviPrel.validation == 'D' %}
+        {% elseif suiviPrel.avis == 'D' %}
              Défavorable
         {% endif %}
         
         <script>
-              {% if suiviPrel.validation == 'F' %}
+              {% if suiviPrel.avis == 'F' %}
                   $('#idTd-{{nb}}').removeClass('danger').addClass('success');
              {% else %}
                  $('#idTd-{{nb}}').removeClass('sucees').addClass('danger')
