@@ -123,7 +123,7 @@ class EtatController extends Controller {
 
             if ($derniereProps) {
                 $derniereProp = $derniereProps[0];
-                $msg = "Proposition :<span class=dce_etat_" . $derniereProp->getValeur() . ">" . $derniereProp->getValueLib() ;
+                $msg = "Proposition :<span class=dce_etat_" . $derniereProp->getValeur() . ">" . $derniereProp->getValueLib();
             } else {
                 $derniereProp = null;
                 $msg = "Proposition :";
@@ -159,17 +159,18 @@ class EtatController extends Controller {
 
         $repo = $emEdl->getRepository('AeagEdlBundle:EtatMe');
         $etatInitiale = $repo->findOneBy(array('euCd' => $euCd, 'cdEtat' => $cdEtat));
-
-
-        $proposeds = $etatInitiale->getProposed();
         $tabProposeds = array();
-        $k = 0;
-        foreach ($proposeds as $proposed) {
-            $tabProposeds[$k] = $proposed;
-            $k++;
-        }
-        if (count($tabProposeds) > 0) {
-            usort($tabProposeds, create_function('$a,$b', 'return strcasecmp($a->getPropositionDate(),$b->getPropositionDate());'));
+        if ($etatInitiale) {
+            $proposeds = $etatInitiale->getProposed();
+
+            $k = 0;
+            foreach ($proposeds as $proposed) {
+                $tabProposeds[$k] = $proposed;
+                $k++;
+            }
+            if (count($tabProposeds) > 0) {
+                usort($tabProposeds, create_function('$a,$b', 'return strcasecmp($a->getPropositionDate(),$b->getPropositionDate());'));
+            }
         }
 
         // return new Response ('$masseEau : ' . $euCd. '  $etatType : ' . $cdEtat);
@@ -191,7 +192,7 @@ class EtatController extends Controller {
     }
 
     public function removeEtatAction(Request $request) {
-         $user = $this->getUser();
+        $user = $this->getUser();
         if (!$user) {
             return $this->render('AeagEdlBundle:Default:interdit.html.twig');
         }
@@ -215,16 +216,16 @@ class EtatController extends Controller {
         $emEdl->remove($proposition);
         $emEdl->flush();
 
-           $derniereProps = $repoEtatDerniereProposition->getDernierePropositionByEucdCdEtat($euCd, $cdEtat);
+        $derniereProps = $repoEtatDerniereProposition->getDernierePropositionByEucdCdEtat($euCd, $cdEtat);
 
         if ($derniereProps) {
             $derniereProp = $derniereProps[0];
-            $msg = "Proposition :<span class='dce_etat_" . $derniereProp->getValeur() . "'>" . $derniereProp->getValueLib() ;
+            $msg = "Proposition :<span class='dce_etat_" . $derniereProp->getValeur() . "'>" . $derniereProp->getValueLib();
         } else {
             $derniereProp = null;
-             $msg = "Proposition :";
+            $msg = "Proposition :";
         }
-         return new Response($msg);
+        return new Response($msg);
     }
 
 }
