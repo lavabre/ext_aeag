@@ -33,9 +33,9 @@ use Aeag\AeagBundle\Controller\AeagController;
 class CollecteurController extends Controller {
 
     public function indexAction() {
-        
+
         $user = $this->getUser();
-         if (!$user) {
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -44,7 +44,7 @@ class CollecteurController extends Controller {
         $session->set('fonction', 'index');
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
-      
+
         if (is_object($user)) {
             $mes = AeagController::notificationAction($user, $em, $session);
             $mes1 = AeagController::messageAction($user, $em, $session);
@@ -81,9 +81,9 @@ class CollecteurController extends Controller {
     }
 
     public function aideAction() {
-        
+
         $user = $this->getUser();
-         if (!$user) {
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -100,9 +100,9 @@ class CollecteurController extends Controller {
     }
 
     public function majCompteAction(Request $request) {
-        
+
         $user = $this->getUser();
-         if (!$user) {
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -111,8 +111,8 @@ class CollecteurController extends Controller {
         $session->set('fonction', 'majCompte');
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
-       
-       $repoUser = $em->getRepository('AeagUserBundle:User');
+
+        $repoUser = $em->getRepository('AeagUserBundle:User');
         $repoNotifications = $emDec->getRepository('AeagDecBundle:Notification');
 
         $entity = $repoUser->find($user->getId());
@@ -161,9 +161,9 @@ class CollecteurController extends Controller {
     }
 
     public function envoyerMessageAction(Request $request) {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -173,7 +173,7 @@ class CollecteurController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
 
-         $repoUsers = $em->getRepository('AeagUserBundle:User');
+        $repoUsers = $em->getRepository('AeagUserBundle:User');
         $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
         $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
         $repoMessages = $em->getRepository('AeagAeagBundle:Message');
@@ -251,8 +251,8 @@ class CollecteurController extends Controller {
 
     public function consulterMessageAction($id = null) {
 
-         $user = $this->getUser();
-         if (!$user) {
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -261,7 +261,7 @@ class CollecteurController extends Controller {
         $session->set('fonction', 'consulterMessage');
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
-        
+
         $repoMessages = $emDec->getRepository('AeagDecBundle:Message');
         $message = $repoMessages->getMessageById($id);
         $lignes = explode('<br />', nl2br($message->getMessage()));
@@ -273,8 +273,8 @@ class CollecteurController extends Controller {
 
     public function supprimerMessageAction($id = null) {
 
-         $user = $this->getUser();
-         if (!$user) {
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -307,9 +307,9 @@ class CollecteurController extends Controller {
     }
 
     public function consulterCollecteurAction($id = null) {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -370,9 +370,9 @@ class CollecteurController extends Controller {
     }
 
     public function consulterCentreTransitAction($id = null) {
-        
-          $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -406,9 +406,9 @@ class CollecteurController extends Controller {
     }
 
     public function consulterCentreTraitementAction($id = null) {
-        
-          $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -442,9 +442,9 @@ class CollecteurController extends Controller {
     }
 
     public function listeProducteursAction() {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -454,7 +454,7 @@ class CollecteurController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
 
-         $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
+        $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
         $repoCollecteurProducteur = $emDec->getRepository('AeagDecBundle:CollecteurProducteur');
         $repoProducteurTauxSpecial = $emDec->getRepository('AeagDecBundle:ProducteurTauxSpecial');
 
@@ -496,9 +496,9 @@ class CollecteurController extends Controller {
      *  Fichier PDF
      */
     public function pdfListeProducteursAction($collecteur_id = null) {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -508,7 +508,7 @@ class CollecteurController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
 
-         $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
+        $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
         $repoCollecteurProducteur = $emDec->getRepository('AeagDecBundle:CollecteurProducteur');
         $repoProducteurTauxSpecial = $emDec->getRepository('AeagDecBundle:ProducteurTauxSpecial');
 
@@ -551,9 +551,9 @@ class CollecteurController extends Controller {
     }
 
     public function consulterProducteurAction($id = null) {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -588,9 +588,9 @@ class CollecteurController extends Controller {
     }
 
     public function producteurCpAction(Request $request) {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -599,7 +599,7 @@ class CollecteurController extends Controller {
         $session->set('fonction', 'producteurCp');
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
-     
+
         $repoCodePostal = $em->getRepository('AeagAeagBundle:CodePostal');
         $repoCommune = $em->getRepository('AeagAeagBundle:Commune');
 
@@ -623,9 +623,9 @@ class CollecteurController extends Controller {
     }
 
     public function majProducteurAction($collecteur_id = null, $producteur_id = null, Request $request) {
-        
-          $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -634,7 +634,7 @@ class CollecteurController extends Controller {
         $session->set('fonction', 'majProducteur');
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
-       
+
         $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
         $repoCodePostal = $em->getRepository('AeagAeagBundle:CodePostal');
         $repoCommune = $em->getRepository('AeagAeagBundle:Commune');
@@ -737,9 +737,9 @@ class CollecteurController extends Controller {
     }
 
     public function ajouterProducteurAction($collecteur_id = null, Request $request) {
-        
-          $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -748,7 +748,7 @@ class CollecteurController extends Controller {
         $session->set('fonction', 'ajouterProducteur');
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
-        
+
         $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
         $repoCodePostal = $em->getRepository('AeagAeagBundle:CodePostal');
         $repoCommune = $em->getRepository('AeagAeagBundle:Commune');
@@ -864,8 +864,8 @@ class CollecteurController extends Controller {
 
     public function supprimerProducteurAction($id = null) {
 
-          $user = $this->getUser();
-         if (!$user) {
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -938,9 +938,9 @@ class CollecteurController extends Controller {
     }
 
     public function tauxSpecialProducteurAction($id = null) {
-        
-          $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -976,9 +976,9 @@ class CollecteurController extends Controller {
     }
 
     public function majCollecteurAction($id = null, Request $request) {
-        
+
         $user = $this->getUser();
-         if (!$user) {
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -1043,9 +1043,9 @@ class CollecteurController extends Controller {
     }
 
     public function listeDeclarationsAction() {
-        
+
         $user = $this->getUser();
-         if (!$user) {
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -1098,9 +1098,9 @@ class CollecteurController extends Controller {
     }
 
     public function ajouterDeclarationAction($collecteur_id = null) {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -1144,9 +1144,9 @@ class CollecteurController extends Controller {
     }
 
     public function supprimerDeclarationAction($declarationCollecteur_id = null) {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -1155,8 +1155,8 @@ class CollecteurController extends Controller {
         $session->set('fonction', 'supprimerDeclarations');
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
-        
-       $repoDeclarationCollecteur = $emDec->getRepository('AeagDecBundle:DeclarationCollecteur');
+
+        $repoDeclarationCollecteur = $emDec->getRepository('AeagDecBundle:DeclarationCollecteur');
         $repoDeclarationProducteur = $emDec->getRepository('AeagDecBundle:DeclarationProducteur');
         $repoDeclarationDetail = $emDec->getRepository('AeagDecBundle:DeclarationDetail');
         $repoSousDeclarationCollecteur = $emDec->getRepository('AeagDecBundle:SousDeclarationCollecteur');
@@ -1187,11 +1187,8 @@ class CollecteurController extends Controller {
     }
 
     public function listeSousDeclarationsAction($declarationCollecteur_id = null) {
-        
-         $user = $this->getUser();
-         if (!$user) {
-            return $this->render('AeagDecBundle:Default:interdit.html.twig');
-        }
+
+        $user = $this->getUser();
         $session = $this->get('session');
         $session->set('menu', 'declarations');
         $session->set('controller', 'Collecteur');
@@ -1199,11 +1196,22 @@ class CollecteurController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
 
-      
+
         $repoDeclarationCollecteur = $emDec->getRepository('AeagDecBundle:DeclarationCollecteur');
         $repoSousDeclarationCollecteur = $emDec->getRepository('AeagDecBundle:SousDeclarationCollecteur');
         $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
         $repoParametre = $emDec->getRepository('AeagDecBundle:Parametre');
+
+        if (is_object($user)) {
+            $mes = AeagController::notificationAction($user, $em, $session);
+            $mes1 = AeagController::messageAction($user, $em, $session);
+            $tabMail = split("@", $user->getEmail());
+            if ($tabMail[1] == "a-renseigner-merci.svp") {
+                $valider = 'N';
+            } else {
+                $valider = 'O';
+            }
+        }
 
         $parametre = $repoParametre->findOneBy(array('code' => 'REP_IMPORT'));
         $declarationCollecteur = $repoDeclarationCollecteur->getDeclarationCollecteurById($declarationCollecteur_id);
@@ -1230,9 +1238,9 @@ class CollecteurController extends Controller {
     }
 
     public function pdfSousDeclarationAction($sousDeclarationCollecteur_id = null) {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -1241,7 +1249,7 @@ class CollecteurController extends Controller {
         $session->set('fonction', 'pdfSousDeclarations');
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
-        
+
         $repoSousDeclarationCollecteur = $emDec->getRepository('AeagDecBundle:SousDeclarationCollecteur');
         $repoDeclarationDetail = $emDec->getRepository('AeagDecBundle:DeclarationDetail');
         $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
@@ -1359,9 +1367,9 @@ class CollecteurController extends Controller {
     }
 
     public function ajouterSousDeclarationAction($declarationCollecteur_id = null) {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -1411,9 +1419,9 @@ class CollecteurController extends Controller {
     }
 
     public function validerSousDeclarationAction($sousDeclarationCollecteur_id = null) {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -1422,7 +1430,7 @@ class CollecteurController extends Controller {
         $session->set('fonction', 'validerSousDeclaration');
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
-        
+
         $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
         $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
         $repoOuvrageCorrespondant = $em->getRepository('AeagAeagBundle:OuvrageCorrespondant');
@@ -1524,9 +1532,9 @@ class CollecteurController extends Controller {
     }
 
     public function devaliderSousDeclarationAction($sousDeclarationCollecteur_id = null) {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -1596,9 +1604,9 @@ class CollecteurController extends Controller {
     }
 
     public function supprimerSousDeclarationAction($sousDeclarationCollecteur_id = null) {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -1650,9 +1658,9 @@ class CollecteurController extends Controller {
     }
 
     public function listeDeclarationDetailsAction($sousDeclarationCollecteur_id = null, $declarationDetail_id = null) {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -1661,7 +1669,7 @@ class CollecteurController extends Controller {
         $session->set('fonction', 'listeDeclarationDetails');
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
-        
+
         $repoSousDeclarationCollecteur = $emDec->getRepository('AeagDecBundle:SousDeclarationCollecteur');
         $repoDeclarationDetail = $emDec->getRepository('AeagDecBundle:DeclarationDetail');
         $repoDeclarationCollecteur = $emDec->getRepository('AeagDecBundle:DeclarationCollecteur');
@@ -1700,7 +1708,11 @@ class CollecteurController extends Controller {
 
                 if ($declaration->getCentreTraitement()) {
                     $centreTraitement = $repoOuvrage->getOuvrageById($declaration->getCentreTraitement());
+                    if ($centreTraitement){
                     $tab[$i]['centreTraitement'] = $centreTraitement->getNumero();
+                    }else{
+                        $tab[$i]['centreTraitement'] = "";
+                    }
                 } else {
                     $tab[$i]['centreTraitement'] = "";
                 }
@@ -1786,9 +1798,9 @@ class CollecteurController extends Controller {
     }
 
     public function ajouterFichierAction($sousDeclarationCollecteur_id = null) {
-        
+
         $user = $this->getUser();
-         if (!$user) {
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -1945,9 +1957,9 @@ class CollecteurController extends Controller {
     }
 
     public function ajouterFichierDeclarationDetailAction($sousDeclarationCollecteur_id = null) {
-        
+
         $user = $this->getUser();
-         if (!$user) {
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -1956,7 +1968,7 @@ class CollecteurController extends Controller {
         $session->set('fonction', 'ajouterFichierDeclarationDetail');
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
-        
+
         $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
         $repoDepartement = $em->getRepository('AeagAeagBundle:Departement');
         $repoCommune = $em->getRepository('AeagAeagBundle:Commune');
@@ -2492,9 +2504,9 @@ class CollecteurController extends Controller {
     }
 
     public function crudDeclarationDetailAction($crud = null, $sousDeclarationCollecteur_id = null, $declarationDetail_id = null, Request $request) {
-        
+
         $user = $this->getUser();
-         if (!$user) {
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -2503,7 +2515,7 @@ class CollecteurController extends Controller {
         $session->set('fonction', 'crudDeclarationDetail');
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
-        
+
         $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
         $repoDeclarationProducteur = $emDec->getRepository('AeagDecBundle:DeclarationProducteur');
         $repoDeclarationCollecteur = $emDec->getRepository('AeagDecBundle:DeclarationCollecteur');
