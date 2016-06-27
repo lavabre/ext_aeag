@@ -63,6 +63,8 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
                     $mailer = $this->getContainer()->get('mailer');
                     if (!$this->getContainer()->get('aeag_sqe.message')->createMail($this->em, $mailer, $txtMessage, $destinataire, $objetMessage)) {
                         $this->_addLog('warning', $pgCmdFichierRps->getDemande()->getId(), $pgCmdFichierRps->getId(), "Erreur lors de l\'envoi de mail dans le process de verification des RAIs", null, $destinataire);
+                    } else {
+                        $this->output->writeln($date->format('d/m/Y H:i:s') . '- Integration Données Brutes : Un email a été envoyé à ' . $destinataire->getMail() . ' pour la RAI '.$pgCmdFichierRps->getId());
                     }
                 }
             }
@@ -154,8 +156,13 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
                                 }
                                 $pgCmdMesureEnv->setDateMes($dateM);
                             }
-
-                            $pgCmdMesureEnv->setResultat($pgTmpValidEdilabo->getResM());
+                            
+                            if ($pgTmpValidEdilabo->getResM() == "") {
+                                $pgCmdMesureEnv->setResultat(null);
+                            } else {
+                                $pgCmdMesureEnv->setResultat($pgTmpValidEdilabo->getResM());
+                            }
+                            
                             $pgSandreUnites = $this->repoPgSandreUnites->findOneByCodeUnite($pgTmpValidEdilabo->getCodeUnite());
                             if (!is_null($pgSandreUnites)) {
                                 $pgCmdMesureEnv->setCodeUnite($pgSandreUnites);
