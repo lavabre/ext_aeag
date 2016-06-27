@@ -397,6 +397,15 @@ class SuiviHydrobioController extends Controller {
         $tabMessage = array();
         $nbMessages = 0;
 
+        $dateDepot = new \DateTime();
+        $pathBase = '/base/extranet/Transfert/Sqe/csv-' . $dateDepot->format('Y-m-d-H-i-s');
+          if (!is_dir($pathBase)) {
+                        if (!mkdir($pathBase, 0777, true)) {
+                            $session->getFlashBag()->add('notice-error', 'Le répertoire : ' . $pathBase . ' n\'a pas pu être créé');
+                            ;
+                        }
+                    }
+
         switch ($error) {
             case UPLOAD_ERR_OK:
                 $valid = true;
@@ -418,22 +427,16 @@ class SuiviHydrobioController extends Controller {
 //upload file
                 if ($valid) {
 // Enregistrement du fichier sur le serveur
-                    $dateDepot = new \DateTime();
-                    $pathBase = '/base/extranet/Transfert/Sqe/csv-' . $dateDepot->format('Y-m-d-H-i-s');
+
                     $pathRapport = '/base/extranet/Transfert/Sqe/csv';
-                    if (!is_dir($pathBase)) {
-                        if (!mkdir($pathBase, 0777, true)) {
-                            $session->getFlashBag()->add('notice-error', 'Le répertoire : ' . $pathBase . ' n\'a pas pu être créé');
-                            ;
-                        }
-                    }
+                  
                     move_uploaded_file($_FILES['file']['tmp_name'], $pathBase . '/' . $name);
 
                     $response = $name . ' déposé le ' . $dateDepot->format('d/m/Y');
                 }
                 break;
             case UPLOAD_ERR_INI_SIZE:
-                $response = 'La taille (' . $size . ' octets' . ') du fichier téléchargé excède la taille de upload_max_filesize dans php.ini.';
+                $response = 'La taille du fichier téléchargé excède la taille de upload_max_filesize dans php.ini.';
                 $tabMessage[$nbMessages][0] = 'ko';
                 $tabMessage[$nbMessages][1] = $response;
                 $nbMessages++;
@@ -2266,17 +2269,19 @@ class SuiviHydrobioController extends Controller {
 
     protected function rmAllDir($strDirectory) {
         $handle = opendir($strDirectory);
-        while (false !== ($entry = readdir($handle))) {
-            if ($entry != '.' && $entry != '..') {
-                if (is_dir($strDirectory . '/' . $entry)) {
-                    $this->rmAllDir($strDirectory . '/' . $entry);
-                } elseif (is_file($strDirectory . '/' . $entry)) {
-                    unlink($strDirectory . '/' . $entry);
+        if (!$handle) {
+            while (false !== ($entry = readdir($handle))) {
+                if ($entry != '.' && $entry != '..') {
+                    if (is_dir($strDirectory . '/' . $entry)) {
+                        $this->rmAllDir($strDirectory . '/' . $entry);
+                    } elseif (is_file($strDirectory . '/' . $entry)) {
+                        unlink($strDirectory . '/' . $entry);
+                    }
                 }
             }
+            rmdir($strDirectory . '/' . $entry);
+            closedir($handle);
         }
-        rmdir($strDirectory . '/' . $entry);
-        closedir($handle);
     }
 
 }
