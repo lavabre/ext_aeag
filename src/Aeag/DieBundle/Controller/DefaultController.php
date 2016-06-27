@@ -18,9 +18,14 @@ use Symfony\Component\HttpFoundation\Request;
 class DefaultController extends Controller {
 
     public function indexAction($theme = null, $sousTheme = null, $light = null) {
-     
+        
+        $user = $this->getUser();
         $session = $this->get('session');
-
+        $session->set('menu', 'Default');
+        $session->set('controller', 'Default');
+        $session->set('fonction', 'index');
+        $em = $this->getDoctrine()->getEntityManager('die');
+     
         $session->set('logo', '1');
         $session->set('size', '2');
 
@@ -42,8 +47,7 @@ class DefaultController extends Controller {
 
 
         if (!is_null($theme)) {
-            $em = $this->getDoctrine()->getEntityManager('die');
-            $Theme = $em->getRepository('AeagDieBundle:Theme')->findOneById($theme);
+           $Theme = $em->getRepository('AeagDieBundle:Theme')->findOneById($theme);
             if (!$Theme) {
                 throw $this->createNotFoundException('pas de theme associé à : ' . $theme);
             }

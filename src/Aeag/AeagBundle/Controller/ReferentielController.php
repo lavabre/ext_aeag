@@ -22,13 +22,18 @@ use Aeag\AeagBundle\DependencyInjection\PdfListeCommune;
 class ReferentielController extends Controller {
 
     public function listeRegionAction() {
-
+        
+         $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagAeagBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
-        $em = $this->getDoctrine()->getManager();
         $session->set('menu', 'referentiel');
-        $session->set('referentiel', 'Region');
+        $session->set('controller', 'Referentiel');
+        $session->set('fonction', ' listeRegion');
+        $em = $this->get('doctrine')->getManager();
 
-        $repoRegion = $em->getRepository('AeagAeagBundle:Region');
+         $repoRegion = $em->getRepository('AeagAeagBundle:Region');
 
         $entities = $repoRegion->getRegions();
 
@@ -38,13 +43,18 @@ class ReferentielController extends Controller {
     }
 
     public function pdfListeRegionAction() {
-
+        
+         $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagAeagBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
-        $em = $this->getDoctrine()->getManager();
+        $session->set('menu', 'referentiel');
+        $session->set('controller', 'Referentiel');
+        $session->set('fonction', ' pdfListeRegion');
+        $em = $this->get('doctrine')->getManager();
 
-        $session->set('referentiel', 'Region');
-
-        $repoRegion = $em->getRepository('AeagAeagBundle:Region');
+         $repoRegion = $em->getRepository('AeagAeagBundle:Region');
 
         if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
             $entities = $repoRegion->getRegions();
@@ -68,8 +78,17 @@ class ReferentielController extends Controller {
     }
 
     public function editerRegionAction($reg = null, Request $request) {
+        
+         $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagAeagBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
-        $em = $this->getDoctrine()->getManager();
+        $session->set('menu', 'referentiel');
+        $session->set('controller', 'Referentiel');
+        $session->set('fonction', 'editerRegion');
+        $em = $this->get('doctrine')->getManager();
+        
         $repoRegion = $em->getRepository('AeagAeagBundle:Region');
         $repoDepartement = $em->getRepository('AeagAeagBundle:Departement');
         $repoCommune = $em->getRepository('AeagAeagBundle:Commune');
@@ -112,12 +131,17 @@ class ReferentielController extends Controller {
     }
 
     public function listeDepartementAction($reg = null) {
-
+        
+         $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagAeagBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
-        $security = $this->get('security.authorization_checker');
-        $em = $this->getDoctrine()->getManager();
         $session->set('menu', 'referentiel');
-        $session->set('referentiel', 'Departement');
+        $session->set('controller', 'Referentiel');
+        $session->set('fonction', 'listeDepartement');
+        $em = $this->get('doctrine')->getManager();
+
         $repoRegion = $em->getRepository('AeagAeagBundle:Region');
         $repoDepartement = $em->getRepository('AeagAeagBundle:Departement');
         if ($reg) {
@@ -135,11 +159,19 @@ class ReferentielController extends Controller {
     }
 
     public function pdfListeDepartementAction($reg = null) {
-
+        
+        $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagAeagBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'referentiel');
+        $session->set('controller', 'Referentiel');
+        $session->set('fonction', 'pdfListeDepartement');
+        $em = $this->get('doctrine')->getManager();
         $session = $this->get('session');
         $em = $this->getDoctrine()->getManager();
 
-        $session->set('referentiel', 'Departement');
         $repoRegion = $em->getRepository('AeagAeagBundle:Region');
         $repoDepartement = $em->getRepository('AeagAeagBundle:Departement');
         $region = $repoRegion->getRegionByReg($reg);
@@ -167,8 +199,17 @@ class ReferentielController extends Controller {
     }
 
     public function editerDepartementAction($dept = null, Request $request) {
+        
+         $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagAeagBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
-        $em = $this->getDoctrine()->getManager();
+        $session->set('menu', 'referentiel');
+        $session->set('controller', 'Referentiel');
+        $session->set('fonction', 'editerDepartement');
+        $em = $this->get('doctrine')->getManager();
+        
         $repoRegion = $em->getRepository('AeagAeagBundle:Region');
         $repoDepartement = $em->getRepository('AeagAeagBundle:Departement');
         $departement = $repoDepartement->getDepartementByDept($dept);
@@ -207,11 +248,16 @@ class ReferentielController extends Controller {
     }
 
     public function listeCommuneAction($dept = null) {
-
+        
+         $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagAeagBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
-        $em = $this->getDoctrine()->getManager();
         $session->set('menu', 'referentiel');
-        $session->set('referentiel', 'Commune');
+        $session->set('controller', 'Referentiel');
+        $session->set('fonction', 'listeCommune');
+        $em = $this->get('doctrine')->getManager();
 
         $repoCommune = $em->getRepository('AeagAeagBundle:Commune');
         $repoDepartement = $em->getRepository('AeagAeagBundle:Departement');
@@ -225,11 +271,16 @@ class ReferentielController extends Controller {
     }
 
     public function pdfListeCommuneAction($dept = null) {
-
+        
+         $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagAeagBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
-        $em = $this->getDoctrine()->getManager();
-
-        $session->set('referentiel', 'Departement');
+        $session->set('menu', 'referentiel');
+        $session->set('controller', 'Referentiel');
+        $session->set('fonction', 'pdfListeCommune');
+        $em = $this->get('doctrine')->getManager();
 
         $repoDepartement = $em->getRepository('AeagAeagBundle:Departement');
         $repoCommune = $em->getRepository('AeagAeagBundle:Commune');
@@ -256,8 +307,17 @@ class ReferentielController extends Controller {
     }
 
     public function editerCommuneAction($id = null, Request $request) {
+        
+         $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagAeagBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
-        $em = $this->getDoctrine()->getManager();
+        $session->set('menu', 'referentiel');
+        $session->set('controller', 'Referentiel');
+        $session->set('fonction', 'editerCommune');
+        $em = $this->get('doctrine')->getManager();
+        
         $repoCodePostal = $em->getRepository('AeagAeagBundle:CodePostal');
         $repoCommune = $em->getRepository('AeagAeagBundle:Commune');
         $commune = $repoCommune->getCommuneById($id);
@@ -287,12 +347,18 @@ class ReferentielController extends Controller {
     }
 
     public function listeCodePostalAction($commune = null) {
-
+        
+         $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagAeagBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
-        $em = $this->getDoctrine()->getManager();
         $session->set('menu', 'referentiel');
-        $session->set('referentiel', 'CodePostal');
-        $repoCodePostal = $em->getRepository('AeagAeagBundle:CodePostal');
+        $session->set('controller', 'Referentiel');
+        $session->set('fonction', 'listeCodePostalt');
+        $em = $this->get('doctrine')->getManager();
+
+         $repoCodePostal = $em->getRepository('AeagAeagBundle:CodePostal');
         $repoCommune = $em->getRepository('AeagAeagBundle:Commune');
         $commune = $repoCommune->getCommuneById($commune);
         $entities = $repoCodePostal->getCodePostalByCommune($commune->getid());
@@ -304,8 +370,17 @@ class ReferentielController extends Controller {
     }
 
     public function editerCodePostalAction($id = null, Request $request) {
+        
+         $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagAeagBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
-        $em = $this->getDoctrine()->getManager();
+        $session->set('menu', 'referentiel');
+        $session->set('controller', 'Referentiel');
+        $session->set('fonction', 'editerCodePostal');
+        $em = $this->get('doctrine')->getManager();
+        
         $repoCodePostal = $em->getRepository('AeagAeagBundle:CodePostal');
         $codePostal = $repoCodePostal->getCodePostalById($id);
         $form = $this->createForm(new MajDecType(), $codePostal);
@@ -329,13 +404,18 @@ class ReferentielController extends Controller {
     }
 
     public function listeOuvrageAction() {
-
+        
+         $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagAeagBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
-        $em = $this->getDoctrine()->getManager();
         $session->set('menu', 'referentiel');
-        $session->set('referentiel', 'Ouvrage');
+        $session->set('controller', 'Referentiel');
+        $session->set('fonction', 'listeOuvrage');
+        $em = $this->get('doctrine')->getManager();
 
-        $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
+         $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
 
         $entities = $repoOuvrage->getOuvrages();
 
@@ -345,11 +425,16 @@ class ReferentielController extends Controller {
     }
 
     public function listeCorrespondantsAction() {
-
+        
+         $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagAeagBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
-        $em = $this->getDoctrine()->getManager();
         $session->set('menu', 'acteurs');
-        $session->set('referentiel', 'RefCentre');
+        $session->set('controller', 'Referentiel');
+        $session->set('fonction', 'listeCorrespondant');
+        $em = $this->get('doctrine')->getManager();
 
         $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
 
@@ -361,13 +446,18 @@ class ReferentielController extends Controller {
     }
 
     public function listeOuvrageCorrespondantAction($ouvrage) {
-
+        
+         $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagAeagBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
-        $em = $this->getDoctrine()->getManager();
         $session->set('menu', 'acteurs');
-        $session->set('referentiel', 'OuvrageCorrespondant');
+        $session->set('controller', 'Referentiel');
+        $session->set('fonction', 'listeOuvrageCorrespondant');
+        $em = $this->get('doctrine')->getManager();
 
-        $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
+       $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
         $repoOuvrageCorrespondant = $em->getRepository('AeagAeagBundle:OuvrageCorrespondant');
 
         $Ouvrage = $repoOuvrage->getOuvrageByNumero($ouvrage);
@@ -380,6 +470,16 @@ class ReferentielController extends Controller {
     }
 
     public function listeCorrespondantOuvrageAction($correspondant) {
+        
+         $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagAeagBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'referentiel');
+        $session->set('controller', 'Referentiel');
+        $session->set('fonction', 'listeDepartement');
+        $em = $this->get('doctrine')->getManager();
 
         $session = $this->get('session');
         $em = $this->getDoctrine()->getManager();
@@ -399,10 +499,17 @@ class ReferentielController extends Controller {
     }
 
     public function consulterCorrespondantAction($id = null) {
-
-        $em = $this->getDoctrine()->getManager();
-        $user = $this->getUser();
+        
+         $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagAeagBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
+        $session->set('menu', 'referentiel');
+        $session->set('controller', 'Referentiel');
+        $session->set('fonction', 'consulterCorrespondant');
+        $em = $this->get('doctrine')->getManager();
+
         $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
         $repoOuvrageCorrespondant = $em->getRepository('AeagAeagBundle:OuvrageCorrespondant');
 
@@ -427,8 +534,17 @@ class ReferentielController extends Controller {
     }
 
     public function majOuvrageAction($id = null, Request $request) {
+        
+         $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagAeagBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
-        $em = $this->getDoctrine()->getManager();
+        $session->set('menu', 'referentiel');
+        $session->set('controller', 'Referentiel');
+        $session->set('fonction', 'majOuvrage');
+        $em = $this->get('doctrine')->getManager();
+        
         $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
         $repoOuvrageCorrespondant = $em->getRepository('AeagAeagBundle:OuvrageCorrespondant');
 

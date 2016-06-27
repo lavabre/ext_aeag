@@ -2,28 +2,54 @@
 
 {% block navbar %}{% endblock navbar %}
 
-{% block breadcrumb %}{% endblock breadcrumb %}
+{% block breadcrumb %}
+    <li>
+        <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+    </li>
+     <li class="active">
+        Organisme
+    </li>
+{% endblock breadcrumb %} 
+
+{% block modal %}
+     {% for entity in entities %}
+          <div class="modal fade" id="sup-{{ entity.id }}">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="supLabel-{{ entity.id }}">Suppression de l'organisme   {{ entity.organisme }}   </h4>
+                    </div>
+                    <div class="modal-body">
+                        <h4>Cliquer sur la corbeille pour valider la suppression de l'organisme {{ entity.organisme }}</h4>
+                        <br/><br/>
+                        <div class="alert alert-danger">Attention : Une fois supprimée, l'organisme sera supprimé définitivement</div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
+                        <a  id="idSupprimerGroupe"  class="btn btn-danger"  href="{{ path('organisme_delete', { 'id': entity.id }) }}" title="Supprimer">
+                            <i class="fa fa-trash-o"> Supprimer</i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>  
+     {% endfor %}
+{% endblock modal %}
 
 {%block panel_heading %}
     <h1>Administration des organismes</H1>
 {%endblock panel_heading %}
 
 {%block content %}
-
-<div align="center">
-   <h1>Administration des organismes</H1>
-</div>
-<br>
-<table align="center">
-    <tr>
-        <td align="left">
-            <a href="{{ path('organisme_new') }}">
-                <img src="{{ asset('bundles/aeagdie/images/icons/web-app/24/Add.png') }}">
-                Nouveau organisme
-            </a>
-        </td>
-    </tr>
-</table>
+    
+     <div class="row">
+        <div class="col-md-7">
+                <a  class="btn btn-success"  href="{{ path('organisme_new') }}" title="Nouveau organisme">
+                    <i class="fa fa-plus"> Nouveau organisme</i> 
+                 </a>
+           </div>
+      </div>
 
   <div class="row">
         <div class="col-xm-12">
@@ -36,17 +62,19 @@
                             <th  nowrap>N° ordre</th>
                             <th  nowrap>Organisme</th>
                            </tr>
-                    </thead>
+                  </thead>
                     <tbody>
      {% for entity in entities %}
         <tr>
               <td width="10%" align="right">
-                             <a  class="btn btn-warning" href=""{{ path('organisme_edit', { 'id': entity.id }) }}" title="Modifier l'organisme">
+                  {% if is_granted('ROLE_ADMIN') %}
+                             <a  class="btn btn-warning" href="{{ path('organisme_edit', { 'id': entity.id }) }}" title="Modifier l'organisme">
                                 <i class="fa fa-edit"></i> 
                             </a>
-                            <a class="btn btn-danger"  href="{{ path('organisme_delete', { 'id': entity.id }) }}" title="Supprimer l'organisme">
+                            <a class="btn btn-danger" data-toggle="modal" href="#sup-{{ entity.id }}" title="Supprimer l'organisme">
                                 <i class="fa fa-trash-o"></i>
                             </a>
+                   {% endif %}
             </td>
             <td width="10%"><a href="{{ path('organisme_edit', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
             <td width="5%">{{ entity.ordre }}</td>
@@ -66,50 +94,22 @@
 {% endblock  content%}
 
 {% block scripts %}
-
-    // DataTable
-    var table = $('#idTable').DataTable(
-    {"stateSave": false,
-    "oLanguage": {
-    "sSearch": "Filtre",
-    "sFirst": "1ere page",
-    "sLast": "Dernière page",
-    "sNext": "Prochaine page",
-    "sPrevious": "Page précédente",
-    "EmptyTable": "Pas de données",
-    "sInfo": "Nombre d'enregistrements :  _TOTAL_",
-    "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
-    "sZeroRecords": "Pas d'enregistrement à afficher",
-    "sInfoEmpty": "Pas d'enregistrement à afficher",
-    "sInfoThousands": " ",
-    "sLengthMenu": 'Afficher <select>' +
-        '<option value="10">10</option>' +
-        '<option value="20">20</option>' +
-        '<option value="30">30</option>' +
-        '<option value="40">40</option>' +
-        '<option value="50">50</option>' +
-        '<option value="-1">Tous</option>' +
-        '</select> enregistrements',
-    "sPaginationType": "full_numbers"
-    }
-    }
+    
+     var table =  $('#idTable').DataTable( {
+            "processing": true,
+            "stateSave": true,
+            "order": [[ 0, "asc" ]],
+            "language": {
+            "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
+            },
+            "aLengthMenu": [
+            [10, 25, 50, 100, -1],
+            [10, 25, 50, 100, "Tous"]
+            ],
+            "iDisplayLength": 10
+            }
     );
 
-    $("#idTable thead td").each( function ( i ) {
-
-    if (i != 4){
-    var select = $('<select><option value=""></option></select>')
-    .appendTo( $(this).empty() )
-    .on( 'change', function () {
-    table.column( i )
-    .search( $(this).val() )
-    .draw();
-    } );
-
-    table.column( i ).data().unique().sort().each( function ( d, j ) {
-    select.append( '<option value="'+d+'">'+d+'</option>' )
-    } );
-    };
-    } );
+ 
 
 {% endblock scripts %}

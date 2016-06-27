@@ -83,30 +83,32 @@ class DefaultController extends Controller {
             //$session->getFlashBag()->add('notice-success', $message);
         }
 
-         $suiviHb = false;
-         $suiviQHb = false;
-         $suiviSED = true;
+        $suiviHb = false;
+        $suiviQHb = false;
+        $suiviSED = true;
         $suiviDonnees = false;
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
-        if ($pgProgWebUser->getTypeUser() == 'PREST' or $pgProgWebUser->getTypeUser() == 'PROG') {
-            if ($pgProgWebUser->getPrestataire()) {
-                $pgProgPrestaTypfics = $repoPgProgPrestaTypfic->getPgProgPrestaTypficByPrestataire($pgProgWebUser->getPrestataire());
-                foreach ($pgProgPrestaTypfics as $pgProgPrestaTypfic) {
-                   if ($pgProgPrestaTypfic->getFormatFic() == 'Suivi_HB') {
-                        $suiviHb = true;
-                    }
-                    if (substr($pgProgPrestaTypfic->getFormatFic(), 0, 7) == 'Saisie_') {
-                        $suiviDonnees = true;
-                    }
-                    if ($pgProgPrestaTypfic->getFormatFic() == 'Suivi_SED') {
-                        $suiviSED = true;
+        if ($pgProgWebUser) {
+            if ($pgProgWebUser->getTypeUser() == 'PREST' or $pgProgWebUser->getTypeUser() == 'PROG') {
+                if ($pgProgWebUser->getPrestataire()) {
+                    $pgProgPrestaTypfics = $repoPgProgPrestaTypfic->getPgProgPrestaTypficByPrestataire($pgProgWebUser->getPrestataire());
+                    foreach ($pgProgPrestaTypfics as $pgProgPrestaTypfic) {
+                        if ($pgProgPrestaTypfic->getFormatFic() == 'Suivi_HB') {
+                            $suiviHb = true;
+                        }
+                        if (substr($pgProgPrestaTypfic->getFormatFic(), 0, 7) == 'Saisie_') {
+                            $suiviDonnees = true;
+                        }
+                        if ($pgProgPrestaTypfic->getFormatFic() == 'Suivi_SED') {
+                            $suiviSED = true;
+                        }
                     }
                 }
             }
+            if ($pgProgWebUser->getTypeUser() == 'XHBIO') {
+                $suiviQHb = true;
+            }
         }
-         if ($pgProgWebUser->getTypeUser() == 'XHBIO') {
-             $suiviQHb = true;
-         }
         if (is_object($user) && ($this->get('security.authorization_checker')->isGranted('ROLE_ADMINSQE'))) {
             $suiviHb = true;
             $suiviQHb = true;

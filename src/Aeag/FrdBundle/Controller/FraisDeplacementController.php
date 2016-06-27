@@ -34,13 +34,19 @@ class FraisDeplacementController extends Controller {
      * @Template()
      */
     public function indexAction() {
-
-        $user = $this->getUser();
-        $em = $this->getDoctrine()->getManager();
-        $emFrd = $this->getDoctrine()->getManager('frd');
+        
+             $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
-        $session->set('menu', 'membre');
+        $session->set('menu', 'Frais');
+        $session->set('controller', 'Admin');
+        $session->set('fonction', 'index');
+        $em = $this->get('doctrine')->getManager();
+        $emFrd = $this->getDoctrine()->getManager('frd');
 
+      
 //        if ($session->get('passage') == '1') {
 //            $session->set('passage', '0');
 //        } else {
@@ -83,12 +89,18 @@ class FraisDeplacementController extends Controller {
     }
     
     public function consulterFraisDeplacementsParAnneeAction($anneeSelect = null) {
-
-        $user = $this->getUser();
+        
+       $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
-        $session->set('referentiel', 'refFraisDeplacement');
-        $em = $this->getDoctrine()->getManager();
+        $session->set('menu', 'Frais');
+        $session->set('controller', 'Admin');
+        $session->set('fonction', 'consulterFraisDeplacementsParAnnee');
+        $em = $this->get('doctrine')->getManager();
         $emFrd = $this->getDoctrine()->getManager('frd');
+
         $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
         $repoUsers = $em->getRepository('AeagUserBundle:User');
         $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
@@ -140,13 +152,19 @@ class FraisDeplacementController extends Controller {
     }
 
     public function validerFraisDeplacementAction($id) {
-
-        $user = $this->getUser();
-
+        
+         $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
-        $em = $this->getDoctrine()->getManager();
+        $session->set('menu', 'Frais');
+        $session->set('controller', 'Admin');
+        $session->set('fonction', 'validerFraisDeplacement');
+        $em = $this->get('doctrine')->getManager();
         $emFrd = $this->getDoctrine()->getManager('frd');
 
+      
         $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
         $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
         $repoPhase = $this->getDoctrine()->getManager('frd')->getRepository('AeagFrdBundle:Phase');
@@ -207,14 +225,19 @@ class FraisDeplacementController extends Controller {
     }
 
     public function devaliderFraisDeplacementAction($id) {
-
-        $user = $this->getUser();
-
+        
+          $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
-        $em = $this->getDoctrine()->getManager();
+        $session->set('menu', 'Frais');
+        $session->set('controller', 'Admin');
+        $session->set('fonction', 'devaliderFraisDeplacement');
+        $em = $this->get('doctrine')->getManager();
         $emFrd = $this->getDoctrine()->getManager('frd');
 
-        $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
+          $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
         $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
         $repoPhase = $this->getDoctrine()->getManager('frd')->getRepository('AeagFrdBundle:Phase');
         $repoUsers = $em->getRepository('AeagUserBundle:User');
@@ -284,11 +307,16 @@ class FraisDeplacementController extends Controller {
      * @Method("DELETE")
      */
     public function deleteFraisDeplacementAction(Request $request, $id) {
-
-        $user = $this->getUser();
-
+        
+          $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
-        $em = $this->getDoctrine()->getManager();
+        $session->set('menu', 'Frais');
+        $session->set('controller', 'Admin');
+        $session->set('fonction', 'deleteFraisDeplacement');
+        $em = $this->get('doctrine')->getManager();
         $emFrd = $this->getDoctrine()->getManager('frd');
 
         $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
@@ -341,12 +369,19 @@ class FraisDeplacementController extends Controller {
      * or modify a FraisDeplacement entity.
      */
     public function fraisDeplacementAction($id, Request $request) {
-        $user = $this->getUser();
+        
+          $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
-        $em = $this->getDoctrine()->getManager();
+        $session->set('menu', 'Frais');
+        $session->set('controller', 'Admin');
+        $session->set('fonction', 'fraisDeplacement');
+        $em = $this->get('doctrine')->getManager();
         $emFrd = $this->getDoctrine()->getManager('frd');
-
-        $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
+        
+         $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
         $repoPhase = $this->getDoctrine()->getManager('frd')->getRepository('AeagFrdBundle:Phase');
         $repoUsers = $em->getRepository('AeagUserBundle:User');
         $repoDept = $em->getRepository('AeagAeagBundle:Departement');
@@ -486,12 +521,19 @@ class FraisDeplacementController extends Controller {
      * @Template()
      */
     public function viewFraisDeplacementAction($id) {
-        $user = $this->getUser();
+        
+           $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
-        $em = $this->getDoctrine()->getManager();
+        $session->set('menu', 'Frais');
+        $session->set('controller', 'Admin');
+        $session->set('fonction', 'viewfraisDeplacement');
+        $em = $this->get('doctrine')->getManager();
         $emFrd = $this->getDoctrine()->getManager('frd');
-
-        $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
+        
+           $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
         $repoUsers = $em->getRepository('AeagUserBundle:User');
         $repoDept = $em->getRepository('AeagAeagBundle:Departement');
 
@@ -549,9 +591,16 @@ class FraisDeplacementController extends Controller {
      *  Fichier PDF
      */
     public function pdfAction($id) {
-
-        $user = $this->getUser();
-        $em = $this->getDoctrine()->getManager();
+        
+           $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'Frais');
+        $session->set('controller', 'Admin');
+        $session->set('fonction', 'pdf');
+        $em = $this->get('doctrine')->getManager();
         $emFrd = $this->getDoctrine()->getManager('frd');
 
         $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
@@ -593,14 +642,19 @@ class FraisDeplacementController extends Controller {
      */
 
     public function sendAccuseReception($id) {
-
+        
+           $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
-
-        $user = $this->getUser();
-        $em = $this->getDoctrine()->getManager();
+        $session->set('menu', 'Frais');
+        $session->set('controller', 'Admin');
+        $session->set('fonction', ' sendAccuseReception');
+        $em = $this->get('doctrine')->getManager();
         $emFrd = $this->getDoctrine()->getManager('frd');
 
-        $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
+         $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
         $repoUsers = $em->getRepository('AeagUserBundle:User');
         $repoDept = $em->getRepository('AeagAeagBundle:Departement');
 
@@ -660,14 +714,19 @@ class FraisDeplacementController extends Controller {
      */
 
     public function sendAccuseResponsable($id) {
-
+        
+            $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
-
-        $user = $this->getUser();
-        $em = $this->getDoctrine()->getManager();
+        $session->set('menu', 'Frais');
+        $session->set('controller', 'Admin');
+        $session->set('fonction', ' sendAccuseResponsable');
+        $em = $this->get('doctrine')->getManager();
         $emFrd = $this->getDoctrine()->getManager('frd');
 
-        $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
+         $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
         $repoUsers = $em->getRepository('AeagUserBundle:User');
         $repoDept = $em->getRepository('AeagAeagBundle:Departement');
 
@@ -704,12 +763,18 @@ class FraisDeplacementController extends Controller {
     }
 
     public function envoyerMessageAction(Request $request) {
-
-        $em = $this->getDoctrine()->getManager();
-        $session = $this->get('session');
-        $user = $this->getUser();
+        
+           $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'contact');
+        $session->set('controller', 'Admin');
+        $session->set('fonction', 'envoyerMessage');
+        $em = $this->get('doctrine')->getManager();
+        $emFrd = $this->getDoctrine()->getManager('frd');
+
         $repoUsers = $em->getRepository('AeagUserBundle:User');
         $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
         $repoMessages = $em->getRepository('AeagAeagBundle:Message');
@@ -780,52 +845,5 @@ class FraisDeplacementController extends Controller {
         ));
     }
 
-    public function consulterMessageAction($id = null) {
-
-        $em = $this->getDoctrine()->getManager();
-        $emDec = $this->getDoctrine()->getManager('dec');
-        $session = $this->get('session');
-        ;
-        $user = $this->getUser();
-        if (is_object($user)) {
-            $mes = AeagController::notificationAction($user, $em, $session);
-            $mes1 = AeagController::messageAction($user, $em, $session);
-        }
-        $repoMessages = $emDec->getRepository('AeagDecBundle:Message');
-        $message = $repoMessages->getMessageById($id);
-        $lignes = explode('<br />', nl2br($message->getMessage()));
-        return $this->render('AeagDecBundle:Collecteur:consulterMessage.html.twig', array(
-                    'message' => $message,
-                    'lignes' => $lignes,
-        ));
-    }
-
-    public function supprimerMessageAction($id = null) {
-
-        $session = $this->get('session');
-
-        $emDec = $this->getDoctrine()->getManager('dec');
-
-        $user = $this->getUser();
-        if (is_object($user)) {
-            $mes = AeagController::notificationAction($user, $em, $session);
-            $mes1 = AeagController::messageAction($user, $em, $session);
-        }
-
-        $messages = null;
-
-
-        $repoMessages = $emDec->getRepository('AeagDecBundle:Message');
-        $message = $repoMessages->getMessageById($id);
-        $session->set('Messages', '');
-        $em->remove($message);
-        $emDec->flush();
-        $messages = $repoMessages->getMessageByRecepteur($user);
-        $session->set('Messages', $messages);
-
-        return $this->render('AeagDecBundle:Collecteur:listeMessages.html.twig', array(
-                    'messages' => $messages,
-        ));
-    }
 
 }

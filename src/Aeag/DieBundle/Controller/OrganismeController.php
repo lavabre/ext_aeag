@@ -3,7 +3,8 @@
 namespace Aeag\DieBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Aeag\DieBundle\Entity\Organisme;
 use Aeag\DieBundle\Form\OrganismeType;
 
@@ -11,20 +12,29 @@ use Aeag\DieBundle\Form\OrganismeType;
  * Organisme controller.
  *
  */
-class OrganismeController extends Controller
-{
+class OrganismeController extends Controller {
+
     /**
      * Lists all Organisme entities.
      *
      */
-    public function indexAction()
-    {
+    public function indexAction() {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagDieBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'Admin');
+        $session->set('controller', 'Organisme');
+        $session->set('fonction', 'index');
         $em = $this->getDoctrine()->getEntityManager('die');
 
-        $entities = $em->getRepository('AeagDieBundle:Organisme')->findAll();
+        $repoOrganisme = $em->getRepository('AeagDieBundle:Organisme');
+        $entities = $repoOrganisme->getOrganismes();
 
         return $this->render('AeagDieBundle:Organisme:index.html.twig', array(
-            'entities' => $entities
+                    'entities' => $entities
         ));
     }
 
@@ -32,9 +42,18 @@ class OrganismeController extends Controller
      * Finds and displays a Organisme entity.
      *
      */
-    public function showAction($id)
-    {
+    public function showAction($id) {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagDieBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'Admin');
+        $session->set('controller', 'Organisme');
+        $session->set('fonction', 'show');
         $em = $this->getDoctrine()->getEntityManager('die');
+
 
         $entity = $em->getRepository('AeagDieBundle:Organisme')->find($id);
 
@@ -45,9 +64,8 @@ class OrganismeController extends Controller
         $deleteForm = $this->createDeleteForm($id);
 
         return $this->render('AeagDieBundle:Organisme:show.html.twig', array(
-            'entity'      => $entity,
-            'delete_form' => $deleteForm->createView(),
-
+                    'entity' => $entity,
+                    'delete_form' => $deleteForm->createView(),
         ));
     }
 
@@ -55,14 +73,24 @@ class OrganismeController extends Controller
      * Displays a form to create a new Organisme entity.
      *
      */
-    public function newAction()
-    {
+    public function newAction() {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagDieBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'Admin');
+        $session->set('controller', 'Organisme');
+        $session->set('fonction', 'new');
+        $em = $this->getDoctrine()->getEntityManager('die');
+
         $entity = new Organisme();
-        $form   = $this->createForm(new OrganismeType(), $entity);
+        $form = $this->createForm(new OrganismeType(), $entity);
 
         return $this->render('AeagDieBundle:Organisme:new.html.twig', array(
-            'entity' => $entity,
-            'form'   => $form->createView()
+                    'entity' => $entity,
+                    'form' => $form->createView()
         ));
     }
 
@@ -70,25 +98,32 @@ class OrganismeController extends Controller
      * Creates a new Organisme entity.
      *
      */
-    public function createAction()
-    {
-        $entity  = new Organisme();
-        $request = $this->getRequest();
-        $form    = $this->createForm(new OrganismeType(), $entity);
-        $form->bindRequest($request);
+    public function createAction(Request $request) {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagDieBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'Admin');
+        $session->set('controller', 'Organisme');
+        $session->set('fonction', 'create');
+        $em = $this->getDoctrine()->getEntityManager('die');
+
+        $entity = new Organisme();
+        $form = $this->createForm(new OrganismeType(), $entity);
+        $form->handleRequest($request);
 
         if ($form->isValid()) {
-            $em = $this->getDoctrine()->getEntityManager('die');
             $em->persist($entity);
             $em->flush();
 
             return $this->redirect($this->generateUrl('organisme'));
-            
         }
 
         return $this->render('AeagDieBundle:Organisme:new.html.twig', array(
-            'entity' => $entity,
-            'form'   => $form->createView()
+                    'entity' => $entity,
+                    'form' => $form->createView()
         ));
     }
 
@@ -96,8 +131,16 @@ class OrganismeController extends Controller
      * Displays a form to edit an existing Organisme entity.
      *
      */
-    public function editAction($id)
-    {
+    public function editAction($id) {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagDieBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'Admin');
+        $session->set('controller', 'Organisme');
+        $session->set('fonction', 'edit');
         $em = $this->getDoctrine()->getEntityManager('die');
 
         $entity = $em->getRepository('AeagDieBundle:Organisme')->find($id);
@@ -106,13 +149,11 @@ class OrganismeController extends Controller
             throw $this->createNotFoundException('Unable to find Organisme entity.');
         }
 
-        $editForm = $this->createForm(new OrganismeType(), $entity);
-        $deleteForm = $this->createDeleteForm($id);
+        $form = $this->createForm(new OrganismeType(), $entity);
 
         return $this->render('AeagDieBundle:Organisme:edit.html.twig', array(
-            'entity'      => $entity,
-            'edit_form'        => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
+                    'entity' => $entity,
+                    'form' => $form->createView(),
         ));
     }
 
@@ -120,8 +161,16 @@ class OrganismeController extends Controller
      * Edits an existing Organisme entity.
      *
      */
-    public function updateAction($id)
-    {
+    public function updateAction($id, Request $request) {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagDieBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'Admin');
+        $session->set('controller', 'Organisme');
+        $session->set('fonction', 'update');
         $em = $this->getDoctrine()->getEntityManager('die');
 
         $entity = $em->getRepository('AeagDieBundle:Organisme')->find($id);
@@ -130,14 +179,11 @@ class OrganismeController extends Controller
             throw $this->createNotFoundException('Unable to find Organisme entity.');
         }
 
-        $editForm   = $this->createForm(new OrganismeType(), $entity);
-        $deleteForm = $this->createDeleteForm($id);
+        $form = $this->createForm(new OrganismeType(), $entity);
 
-        $request = $this->getRequest();
+        $form->handleRequest($request);
 
-        $editForm->bindRequest($request);
-
-        if ($editForm->isValid()) {
+        if ($form->isValid()) {
             $em->persist($entity);
             $em->flush();
 
@@ -145,9 +191,8 @@ class OrganismeController extends Controller
         }
 
         return $this->render('AeagDieBundle:Organisme:edit.html.twig', array(
-            'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
+                    'entity' => $entity,
+                    'form' => $form->createView(),
         ));
     }
 
@@ -155,27 +200,29 @@ class OrganismeController extends Controller
      * Deletes a Organisme entity.
      *
      */
-    public function deleteAction($id)
-    {
-    	$em = $this->getDoctrine()->getEntityManager('die');
-    	
-        	$entity = $em->getRepository('AeagDieBundle:Organisme')->find($id);
-    	
-    	if (!$entity) {
-    		throw $this->createNotFoundException('Unable to find Organisme entity.');
-    	}
-    	
-    	$em->remove($entity);
-    	$em->flush();
-    
+    public function deleteAction($id) {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagDieBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'Admin');
+        $session->set('controller', 'Organisme');
+        $session->set('fonction', 'delete');
+        $em = $this->getDoctrine()->getEntityManager('die');
+
+        $entity = $em->getRepository('AeagDieBundle:Organisme')->find($id);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Organisme entity.');
+        }
+
+        $em->remove($entity);
+        $em->flush();
+
         return $this->redirect($this->generateUrl('organisme'));
     }
 
-    private function createDeleteForm($id)
-    {
-        return $this->createFormBuilder(array('id' => $id))
-            ->add('id', 'hidden')
-            ->getForm()
-        ;
-    }
+
 }

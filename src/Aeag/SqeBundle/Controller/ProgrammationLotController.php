@@ -1914,7 +1914,7 @@ class ProgrammationLotController extends Controller {
         $notification->setEmetteur($user->getId());
         $notification->setNouveau(true);
         $notification->setIteration(2);
-        $notification->setMessage("la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été validéz par l'administrateur " . $emetteur->getNom());
+        $notification->setMessage("la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été validé par l'administrateur " . $emetteur->getNom());
         $em->persist($notification);
         // Récupération du service.
         $mailer = $this->get('mailer');

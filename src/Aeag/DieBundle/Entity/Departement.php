@@ -19,7 +19,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity()
- * @ORM\Table(name="Departement")
+ * @ORM\Table(name="departement")
  * 
  */
 class Departement {

@@ -18,12 +18,14 @@ class DateTimePression extends \DateTime {
 class PressionController extends Controller {
 
     public function pressionFormAction(Request $request) {
+
         $user = $this->getUser();
         $session = $this->get('session');
         $session->set('controller', 'Pression');
         $session->set('fonction', 'pressionForm');
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
+
         //if ($request->isXmlHttpRequest()) { // is it an Ajax request?
         $euCd = $request->get('euCd');
         $cdPression = $request->get('cdPression');
@@ -73,6 +75,7 @@ class PressionController extends Controller {
         $session->set('fonction', 'pressionSubmit');
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
+
         $repoUtilisateur = $emEdl->getRepository('AeagEdlBundle:Utilisateur');
         $repoPressionDerniereProposition = $emEdl->getRepository('AeagEdlBundle:PressionDerniereProposition');
 
@@ -130,6 +133,7 @@ class PressionController extends Controller {
     }
 
     public function pressionListProposedAction(Request $request) {
+
         $user = $this->getUser();
         $session = $this->get('session');
         $session->set('controller', 'Pression');
@@ -176,6 +180,7 @@ class PressionController extends Controller {
     }
 
     public function removePressionAction(Request $request) {
+
         $user = $this->getUser();
         if (!$user) {
             return $this->render('AeagEdlBundle:Default:interdit.html.twig');

@@ -14,27 +14,48 @@ class AdminController extends Controller {
 
     public function indexAction() {
 
-         $user = $this->getUser();
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
-        $session->set('menu', 'acceuil');
-        $session->set('controller', 'admin');
+        $session->clear();
+        $session->set('menu', 'Frais');
+        $session->set('controller', 'Admin');
         $session->set('fonction', 'index');
         $em = $this->get('doctrine')->getManager();
-        $emEdl = $this->get('doctrine')->getManager('frd');
-        return $this->redirect($this->generateUrl('AeagFrdBundle_admin_consulterFraisDeplacementsParAnnee', array('anneeSelect' => date_format($session->get('annee'),'Y'))));
+        $emFrd = $this->getDoctrine()->getManager('frd');
+
+        $repoParametre = $emFrd->getRepository('AeagFrdBundle:Parametre');
+
+        $annee = $repoParametre->getParametreByCode('ANNEE');
+
+        if (!$annee) {
+            $message = $this->forward('AeagFrdBundle:Referentiel:chargeAppli');
+            $annee = $repoParametre->getParametreByCode('ANNEE');
+        }
+        $annee = new \DateTime($annee->getLibelle());
+        $session->set('annee', $annee);
+        return $this->redirect($this->generateUrl('AeagFrdBundle_admin_consulterFraisDeplacementsParAnnee', array('anneeSelect' => date_format($session->get('annee'), 'Y'))));
     }
 
     public function validerFraisDeplacementAction() {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'Frais');
+        $session->set('controller', 'Admin');
+        $session->set('fonction', 'validerFraisDeplacement');
+        $em = $this->get('doctrine')->getManager();
+        $emFrd = $this->getDoctrine()->getManager('frd');
 
 
         $id = $_POST['id'];
         $datePhase = $_POST['datePhase'];
 
-        $user = $this->getUser();
-
-        $session = $this->get('session');
-        $em = $this->getDoctrine()->getManager();
-        $emFrd = $this->getDoctrine()->getManager('frd');
 
         $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
         $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
@@ -58,7 +79,7 @@ class AdminController extends Controller {
         $entity->setExporter('N');
         $emFrd->persist($entity);
         $emFrd->flush();
-        
+
         $fraisDeplacement = $entity;
         $entity = array();
         $entity[0] = $fraisDeplacement;
@@ -71,7 +92,7 @@ class AdminController extends Controller {
         if ($entity[1]->getEmail()) {
             $this->sendAccuseReceptionCourrier($entity[0]->getId());
         }
-        
+
         $notification = new Notification();
         $notification->setRecepteur($membre->getId());
         $notification->setEmetteur($user->getId());
@@ -81,7 +102,7 @@ class AdminController extends Controller {
         $em->persist($notification);
         $em->flush();
         $mes = AeagController::notificationAction($user, $em, $session);
-        
+
         $message = 'Courrier reçu le ' . $datePhase . ' pour les frais de déplacement n° ' . $entity[0]->getId();
         $message = $message . ' du ' . $entity[0]->getDateDepart()->format('d/m/Y') . ' ' . $entity[0]->getHeureDepart();
         $message = $message . ' au ' . $entity[0]->getDateRetour()->format('d/m/Y') . ' ' . $entity[0]->getHeureRetour();
@@ -95,10 +116,16 @@ class AdminController extends Controller {
     public function devaliderFraisDeplacementAction($id) {
 
         $user = $this->getUser();
-
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
-        $em = $this->getDoctrine()->getManager();
+        $session->set('menu', 'Frais');
+        $session->set('controller', 'Admin');
+        $session->set('fonction', 'devaliderFraisDeplacement');
+        $em = $this->get('doctrine')->getManager();
         $emFrd = $this->getDoctrine()->getManager('frd');
+
 
         $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
         $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
@@ -154,7 +181,7 @@ class AdminController extends Controller {
         $correspondant = $repoCorrespondant->getCorrespondantById($membre->getCorrespondant());
         $entity[2] = $correspondant;
         $entity[3] = null;
-        
+
         $notification = new Notification();
         $notification->setRecepteur($membre->getId());
         $notification->setEmetteur($user->getId());
@@ -164,7 +191,7 @@ class AdminController extends Controller {
         $em->persist($notification);
         $em->flush();
         $mes = AeagController::notificationAction($user, $em, $session);
-       
+
         $message = 'Les frais de déplacement n° ' . $entity[0]->getId();
         $message = $message . ' du ' . $entity[0]->getDateDepart()->format('d/m/Y') . ' ' . $entity[0]->getHeureDepart();
         $message = $message . ' au ' . $entity[0]->getDateRetour()->format('d/m/Y') . ' ' . $entity[0]->getHeureRetour();
@@ -179,9 +206,17 @@ class AdminController extends Controller {
 
     public function exporterListeFraisDeplacementsAction(Request $request) {
 
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
-        $em = $this->getDoctrine()->getManager();
+        $session->set('menu', 'Frais');
+        $session->set('controller', 'Admin');
+        $session->set('fonction', 'exporterListeFraisDeplacements');
+        $em = $this->get('doctrine')->getManager();
         $emFrd = $this->getDoctrine()->getManager('frd');
+
         $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
         $repoParametres = $emFrd->getRepository('AeagFrdBundle:Parametre');
         $repoPhase = $this->getDoctrine()->getManager('frd')->getRepository('AeagFrdBundle:Phase');
@@ -211,7 +246,7 @@ class AdminController extends Controller {
         $i = 0;
         $j = 1;
 
-          if ($request->getMethod() == 'POST') {
+        if ($request->getMethod() == 'POST') {
 
             $parametre = $repoParametres->findOneBy(array('code' => 'REP_IMPORT'));
             $rep_import = $parametre->getLibelle();
@@ -245,7 +280,7 @@ class AdminController extends Controller {
              */
 
             foreach ($entities as $entity) {
-                if ($_POST["tout"] == "ok" or (isset($_POST['exp-' . $entity[0]->getId()]))) {
+                if ($_POST["tout"] == "ok" or ( isset($_POST['exp-' . $entity[0]->getId()]))) {
                     $dept = $repoDept->getDepartementByDept($entity[0]->getdepartement());
                     $contenu = $entity[0]->getId() . ';';
                     $contenu = $contenu . $entity[1]->getCorrespondant() . ';';
@@ -322,15 +357,15 @@ class AdminController extends Controller {
                         $destinataires[$i][0] = $entity[1];
                         $destinataires[$i][1] = $entity[0];
                         $i += 1;
-                     } else {
+                    } else {
                         if (!in_array($entity[1]->getId(), $destinataires)) {
                             $destinataires[$i][0] = $entity[1];
                             $destinataires[$i][1] = $entity[0];
                             $i += 1;
-                         } else {
+                        } else {
                             $destinataires[$i][1] = $entity[0];
                             $i += 1;
-                         }
+                        }
                     }
                 }
             }
@@ -349,20 +384,20 @@ class AdminController extends Controller {
                         $dest = $destinataire[0];
                         $frais[$i] = $destinataire[1];
                         $i++;
-                    }elseif ($dest->getId() <> $destinataire[0]->getId()){
+                    } elseif ($dest->getId() <> $destinataire[0]->getId()) {
                         $this->sendExporterFraisDeplacement($dest, $frais);
                         $frais = array();
                         $i = 0;
                         $dest = $destinataire[0];
                         $frais[$i] = $destinataire[1];
                         $i++;
-                    }else{
-                       $frais[$i] = $destinataire[1];
-                        $i++; 
+                    } else {
+                        $frais[$i] = $destinataire[1];
+                        $i++;
                     }
-                 }
+                }
                 $this->sendExporterFraisDeplacement($dest, $frais);
-            
+
                 //$message = $this->telechargerFichierAction($nom_fichier, $rep_import);
                 $message = $this->Ftp($rep_import, 'Applications/Transfert/Frd/Import/Encours');
 
@@ -397,10 +432,15 @@ class AdminController extends Controller {
 
     public function sendAccuseReceptionCourrier($id) {
 
-        $session = $this->get('session');
-
         $user = $this->getUser();
-        $em = $this->getDoctrine()->getManager();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'Frais');
+        $session->set('controller', 'Admin');
+        $session->set('fonction', 'sendAccuseReception');
+        $em = $this->get('doctrine')->getManager();
         $emFrd = $this->getDoctrine()->getManager('frd');
 
         $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
@@ -441,7 +481,17 @@ class AdminController extends Controller {
 
     public function sendExporterFraisDeplacement($dest, $frais) {
 
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'Frais');
+        $session->set('controller', 'Admin');
+        $session->set('fonction', 'sendExporterFraisDeplacement');
+        $em = $this->get('doctrine')->getManager();
         $emFrd = $this->getDoctrine()->getManager('frd');
+
         $repoParametres = $emFrd->getRepository('AeagFrdBundle:Parametre');
         $parametre = $repoParametres->findOneBy(array('code' => 'REP_IMPORT'));
         $rep_import = $parametre->getLibelle() . "/Pdf";

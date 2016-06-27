@@ -23,10 +23,17 @@ use Aeag\AeagBundle\Entity\Form\EnvoyerMessageAll;
 class InterlocuteurController extends Controller {
 
     public function indexAction() {
-        $security = $this->get('security.authorization_checker');
-        $user = $this->getUser();
-        $em = $this->getDoctrine()->getManager();
+        
+          $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagAeagBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
+        $session->set('menu', 'accueil');
+        $session->set('controller', 'Interlocuteur');
+        $session->set('fonction', 'index');
+        $em = $this->get('doctrine')->getManager();
+        
         $repoInterlocuteur = $em->getRepository('AeagAeagBundle:Interlocuteur');
         $interlocuteurs = array();
         if ($user->getCorrespondant()) {
@@ -37,9 +44,17 @@ class InterlocuteurController extends Controller {
     }
 
     public function ajouterAction(Request $request) {
-        $security = $this->get('security.authorization_checker');
-        $user = $this->getUser();
-        $em = $this->getDoctrine()->getManager();
+        
+          $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagAeagBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'accueil');
+        $session->set('controller', 'Interlocuteur');
+        $session->set('fonction', 'ajouter');
+        $em = $this->get('doctrine')->getManager();
+        
         $majInterlocuteur = new MajInterlocuteur();
         $form = $this->createForm(new MajInterlocuteurType(), $majInterlocuteur);
 
@@ -66,9 +81,17 @@ class InterlocuteurController extends Controller {
     }
 
     public function editerAction($id = null, Request $request) {
-        $security = $this->get('security.authorization_checker');
-        $user = $this->getUser();
-        $em = $this->getDoctrine()->getManager();
+        
+         $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagAeagBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'accueil');
+        $session->set('controller', 'Interlocuteur');
+        $session->set('fonction', 'editer');
+        $em = $this->get('doctrine')->getManager();
+   
         $repoInterlocuteur = $em->getRepository('AeagAeagBundle:Interlocuteur');
         $interlocuteur = $repoInterlocuteur->getInterlocuteurById($id);
         $majInterlocuteur = clone($interlocuteur);
@@ -97,8 +120,17 @@ class InterlocuteurController extends Controller {
     }
 
     public function supprimerAction($id = null) {
+        
+         $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagAeagBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'accueil');
+        $session->set('controller', 'Interlocuteur');
+        $session->set('fonction', 'supprimer');
+        $em = $this->get('doctrine')->getManager();
 
-        $em = $this->getDoctrine()->getManager();
         $repoInterlocuteur = $em->getRepository('AeagAeagBundle:Interlocuteur');
         $interlocuteur = $repoInterlocuteur->getInterlocuteurById($id);
         $em->remove($interlocuteur);
@@ -107,10 +139,18 @@ class InterlocuteurController extends Controller {
     }
 
     public function envoyerMessageAllAction($id = null, Request $request) {
-        $security = $this->get('security.authorization_checker');
-        $em = $this->getDoctrine()->getManager();
-        $user = $this->getUser();
+        
+         $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagAeagBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
+        $session->set('menu', 'accueil');
+        $session->set('controller', 'Interlocuteur');
+        $session->set('fonction', 'envoyerMessageAll');
+        $em = $this->get('doctrine')->getManager();
+        
+        $security = $this->get('security.authorization_checker');
         $repoUsers = $em->getRepository('AeagUserBundle:User');
         $repoNotifications = $em->getRepository('AeagAeagBundle:Notification');
 
@@ -207,10 +247,18 @@ class InterlocuteurController extends Controller {
     }
 
     public function envoyerMessageAction($id = null, Request $request) {
-        $security = $this->get('security.authorization_checker');
-        $em = $this->getDoctrine()->getManager();
-        $user = $this->getUser();
+        
+         $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagAeagBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
+        $session->set('menu', 'accueil');
+        $session->set('controller', 'Interlocuteur');
+        $session->set('fonction', 'envoyerMessage');
+        $em = $this->get('doctrine')->getManager();
+        
+        $security = $this->get('security.authorization_checker');
         $repoInterlocuteur = $em->getRepository('AeagAeagBundle:Interlocuteur');
         $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
         $repoUser = $em->getRepository('AeagUserBundle:User');
@@ -287,10 +335,17 @@ class InterlocuteurController extends Controller {
     }
 
     public function consulterMessageAction($id = null) {
-
-        $em = $this->getDoctrine()->getManager();
-        $user = $this->getUser();
+        
+         $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagAeagBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
+        $session->set('menu', 'accueil');
+        $session->set('controller', 'Interlocuteur');
+        $session->set('fonction', 'consulterMessage');
+        $em = $this->get('doctrine')->getManager();
+
         $repoMessages = $em->getRepository('AeagAeagBundle:Message');
         $repoUser = $em->getRepository('AeagUserBundle:User');
         $message = $repoMessages->getMessageById($id);
@@ -308,15 +363,18 @@ class InterlocuteurController extends Controller {
     }
 
     public function supprimerMessageAction($id = null) {
-
+        
+         $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagAeagBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
-
-        $em = $this->getDoctrine()->getManager();
-
-        $user = $this->getUser();
+        $session->set('menu', 'accueil');
+        $session->set('controller', 'Interlocuteur');
+        $session->set('fonction', 'supprimerMessage');
+        $em = $this->get('doctrine')->getManager();
 
         $messages = null;
-
 
         $repoMessages = $em->getRepository('AeagAeagBundle:Message');
         $message = $repoMessages->getMessageById($id);

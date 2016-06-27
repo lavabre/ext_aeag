@@ -15,15 +15,20 @@ class DefaultController extends Controller {
     public function indexAction() {
 
         $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
-         $session->clear();
+        $session->clear();
+        $session->set('menu', 'Frais');
+        $session->set('controller', 'Default');
+        $session->set('fonction', 'index');
+        $em = $this->get('doctrine')->getManager();
+        $emFrd = $this->getDoctrine()->getManager('frd');
+
         $session->set('appli', 'frd');
         $session->set('retourErreur', $this->generateUrl('aeag_frd'));
-        $session->set('menu', 'index');
-        $session->set('controller', 'default');
-        $session->set('fonction', 'index');
-    
-        $emFrd = $this->getDoctrine()->getManager('frd');
+
         $repoParametre = $emFrd->getRepository('AeagFrdBundle:Parametre');
         $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
 

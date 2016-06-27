@@ -3,9 +3,8 @@
 namespace Aeag\DieBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Aeag\DieBundle\Entity\SousTheme;
 use Aeag\DieBundle\Form\SousThemeType;
 
@@ -20,10 +19,20 @@ class SousThemeController extends Controller {
      *
      */
     public function indexAction() {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagDieBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'Admin');
+        $session->set('controller', 'SousTheme');
+        $session->set('fonction', 'index');
         $em = $this->getDoctrine()->getEntityManager('die');
-        
-        $entities = $em->getRepository('AeagDieBundle:SousTheme')->findAll();
-        
+
+        $repoSousTheme = $em->getRepository('AeagDieBundle:SousTheme');
+        $entities = $repoSousTheme->getSousThemes();
+
         return $this->render('AeagDieBundle:SousTheme:index.html.twig', array(
                     'entities' => $entities
         ));
@@ -34,6 +43,15 @@ class SousThemeController extends Controller {
      *
      */
     public function showAction($id) {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagDieBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'Admin');
+        $session->set('controller', 'SousTheme');
+        $session->set('fonction', 'show');
         $em = $this->getDoctrine()->getEntityManager('die');
 
         $entity = $em->getRepository('AeagDieBundle:SousTheme')->find($id);
@@ -55,6 +73,17 @@ class SousThemeController extends Controller {
      *
      */
     public function newAction() {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagDieBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'Admin');
+        $session->set('controller', 'SousTheme');
+        $session->set('fonction', 'new');
+        $em = $this->getDoctrine()->getEntityManager('die');
+
         $entity = new SousTheme();
         $form = $this->createForm(new SousThemeType(), $entity);
 
@@ -68,11 +97,21 @@ class SousThemeController extends Controller {
      * Creates a new SousTheme entity.
      *
      */
-    public function createAction() {
+    public function createAction(Request $request) {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagDieBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'Admin');
+        $session->set('controller', 'SousTheme');
+        $session->set('fonction', 'create');
+        $em = $this->getDoctrine()->getEntityManager('die');
+
         $entity = new SousTheme();
-        $request = $this->getRequest();
         $form = $this->createForm(new SousThemeType(), $entity);
-        $form->bindRequest($request);
+        $form->handleRequest($request);
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getEntityManager('die');
@@ -93,6 +132,15 @@ class SousThemeController extends Controller {
      *
      */
     public function editAction($id) {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagDieBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'Admin');
+        $session->set('controller', 'SousTheme');
+        $session->set('fonction', 'edit');
         $em = $this->getDoctrine()->getEntityManager('die');
 
         $entity = $em->getRepository('AeagDieBundle:SousTheme')->find($id);
@@ -101,13 +149,11 @@ class SousThemeController extends Controller {
             throw $this->createNotFoundException('Unable to find SousTheme entity.');
         }
 
-        $editForm = $this->createForm(new SousThemeType(), $entity);
-        $deleteForm = $this->createDeleteForm($id);
+        $form = $this->createForm(new SousThemeType(), $entity);
 
         return $this->render('AeagDieBundle:SousTheme:edit.html.twig', array(
                     'entity' => $entity,
-                    'edit_form' => $editForm->createView(),
-                    'delete_form' => $deleteForm->createView(),
+                    'form' => $form->createView(),
         ));
     }
 
@@ -115,7 +161,16 @@ class SousThemeController extends Controller {
      * Edits an existing SousTheme entity.
      *
      */
-    public function updateAction($id) {
+    public function updateAction($id, Request $request) {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagDieBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'Admin');
+        $session->set('controller', 'SousTheme');
+        $session->set('fonction', 'update');
         $em = $this->getDoctrine()->getEntityManager('die');
 
         $entity = $em->getRepository('AeagDieBundle:SousTheme')->find($id);
@@ -124,14 +179,11 @@ class SousThemeController extends Controller {
             throw $this->createNotFoundException('Unable to find SousTheme entity.');
         }
 
-        $editForm = $this->createForm(new SousThemeType(), $entity);
-        $deleteForm = $this->createDeleteForm($id);
+        $form = $this->createForm(new SousThemeType(), $entity);
 
-        $request = $this->getRequest();
+        $form->handleRequest($request);
 
-        $editForm->bindRequest($request);
-
-        if ($editForm->isValid()) {
+        if ($form->isValid()) {
             $em->persist($entity);
             $em->flush();
 
@@ -140,8 +192,7 @@ class SousThemeController extends Controller {
 
         return $this->render('AeagDieBundle:SousTheme:edit.html.twig', array(
                     'entity' => $entity,
-                    'edit_form' => $editForm->createView(),
-                    'delete_form' => $deleteForm->createView(),
+                    'form' => $form->createView(),
         ));
     }
 
@@ -151,7 +202,16 @@ class SousThemeController extends Controller {
      */
     public function deleteAction($id) {
 
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagDieBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'Admin');
+        $session->set('controller', 'SousTheme');
+        $session->set('fonction', 'delete');
         $em = $this->getDoctrine()->getEntityManager('die');
+
         $entity = $em->getRepository('AeagDieBundle:SousTheme')->find($id);
 
         if (!$entity) {
@@ -162,13 +222,6 @@ class SousThemeController extends Controller {
         $em->flush();
 
         return $this->redirect($this->generateUrl('soustheme'));
-    }
-
-    private function createDeleteForm($id) {
-        return $this->createFormBuilder(array('id' => $id))
-                        ->add('id', 'hidden')
-                        ->getForm()
-        ;
     }
 
 }
