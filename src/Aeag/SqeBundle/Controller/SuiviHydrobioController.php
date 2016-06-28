@@ -307,10 +307,8 @@ class SuiviHydrobioController extends Controller {
         $session->set('fonction', 'lotPeriodeStationsIntegrer');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
-
         return $this->render('AeagSqeBundle:SuiviHydrobio:lotPeriodeStationsImporter.html.twig', array(
-                    'periodeAnId' => $periodeAnId
-        ));
+                    'periodeAnId' => $periodeAnId));
 
 
 
@@ -338,9 +336,11 @@ class SuiviHydrobioController extends Controller {
         $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
         $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
+        $repoPgProgWebUserTypmil = $emSqe->getRepository('AeagSqeBundle:PgProgWebuserTypmil');
         $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
 
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
+        $pgProgWebUserTypmils = $repoPgProgWebUserTypmil->getPgProgWebuserTypmilByWebuser($pgProgWebUser);
         $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R10');
 
         $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($periodeAnId);
@@ -348,6 +348,13 @@ class SuiviHydrobioController extends Controller {
         $pgProgLot = $pgProgLotAn->getLot();
         $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
         $pgProgPeriode = $pgProgLotPeriodeAn->getPeriode();
+        if ($pgProgLot->getDelaiPrel()) {
+            $dateFin = clone($pgProgPeriode->getDateDeb());
+            $delai = $pgProgLot->getDelaiPrel();
+            $dateFin->add(new \DateInterval('P' . $delai . 'D'));
+        } else {
+            $dateFin = $pgProgPeriode->getDateFin();
+        }
         if ($pgProgLotPeriodeAn->getCodeStatut()->getCodeStatut() != 'DEL' and $pgProgLotPeriodeAn->getCodeStatut()->getCodeStatut() != 'INV') {
             $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByPeriodeAn($pgProgLotPeriodeAn);
             $tabStations = array();
@@ -396,15 +403,19 @@ class SuiviHydrobioController extends Controller {
         $response = null;
         $tabMessage = array();
         $nbMessages = 0;
+        $tabRapport = array();
+        $nbRapport = 0;
+        $nbCorrect = 0;
+        $nbIncorrect = 0;
 
         $dateDepot = new \DateTime();
         $pathBase = '/base/extranet/Transfert/Sqe/csv-' . $dateDepot->format('Y-m-d-H-i-s');
-          if (!is_dir($pathBase)) {
-                        if (!mkdir($pathBase, 0777, true)) {
-                            $session->getFlashBag()->add('notice-error', 'Le répertoire : ' . $pathBase . ' n\'a pas pu être créé');
-                            ;
-                        }
-                    }
+        if (!is_dir($pathBase)) {
+            if (!mkdir($pathBase, 0777, true)) {
+                $session->getFlashBag()->add('notice-error', 'Le répertoire : ' . $pathBase . ' n\'a pas pu être créé');
+                ;
+            }
+        }
 
         switch ($error) {
             case UPLOAD_ERR_OK:
@@ -429,7 +440,7 @@ class SuiviHydrobioController extends Controller {
 // Enregistrement du fichier sur le serveur
 
                     $pathRapport = '/base/extranet/Transfert/Sqe/csv';
-                  
+
                     move_uploaded_file($_FILES['file']['tmp_name'], $pathBase . '/' . $name);
 
                     $response = $name . ' déposé le ' . $dateDepot->format('d/m/Y');
@@ -497,14 +508,19 @@ class SuiviHydrobioController extends Controller {
             $liste = array();
             $liste = $this->unzip($pathBase . '/' . $name, $pathBase . '/');
             $rapport = fopen($pathRapport . '/' . $user->getId() . '_' . $dateDepot->format('Y-m-d-H') . '_rapport.csv', "w+");
-            $contenu = '                          rapport d\'intégration du fichier : ' . $name . ' déposé le ' . $dateDepot->format('d/m/Y') . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+            $contenu = '                                  Rapport d\'intégration du fichier : ' . $name . ' déposé le ' . $dateDepot->format('d/m/Y') . CHR(13) . CHR(10) . CHR(13) . CHR(10);
             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+            $tabRapport[$nbRapport] = '<h4><div class="text-center">Rapport d\'intégration du fichier : ' . $name . ' déposé le ' . $dateDepot->format('d/m/Y') . '</div></h4>';
+            $nbRapport++;
             fputs($rapport, $contenu);
             $contenu = 'Le fichier zip contient  ' . count($liste) . ' fichier(s)' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+            $tabRapport[$nbRapport] = 'Le fichier zip contient  ' . count($liste) . ' fichier(s)</br>';
+            $nbRapport++;
             fputs($rapport, $contenu);
 
             $erreur = 0;
+
             foreach ($liste as $nomFichier) {
 //$tabNomFichier = explode('-', $nomFichier);
                 $trouve = false;
@@ -520,6 +536,7 @@ class SuiviHydrobioController extends Controller {
                         $contenu = 'pas de station à raccorder au fichier ' . $nomFichier . CHR(13) . CHR(10) . CHR(13) . CHR(10);
                         $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                         fputs($rapport, $contenu);
+                        $nbIncorrect++;
 //$erreur = 1;
                     }
                 } else {
@@ -552,6 +569,8 @@ class SuiviHydrobioController extends Controller {
             }
 
             if ($erreur == 0) {
+                $tabSupport = array();
+                $nbsupport = 0;
                 for ($k = 0; $k < count($tabStations); $k++) {
                     if (count($tabStations[$k]['fichiers'])) {
                         $tabFichiers = $tabStations[$k]['fichiers'];
@@ -578,6 +597,18 @@ class SuiviHydrobioController extends Controller {
                             $name = $tabFichiers[0];
                         }
 
+                        $pgCmdPrelev = $tabStations[$k]['prelevs'][0]['cmdPrelev'];
+                        $trouve = false;
+                        for ($nbSupport = 0; count($tabSupport); $nbSupport++) {
+                            if ($tabSupport[$nbSupport] == $pgCmdPrelev->getCodeSupport()->getCodeSupport()) {
+                                $trouve = true;
+                                break;
+                            }
+                        }
+                        if (!$trouve) {
+                            $nbSupport = count($tabSupport) + 1;
+                            $tabSupport[$nbSupport] = $pgCmdPrelev->getCodeSupport()->getCodeSupport();
+                        }
                         $pgCmdSuiviPrels = $tabStations[$k]['prelevs'][0]['cmdSuiviPrelevs'];
                         if ($pgCmdSuiviPrels) {
                             $pgCmdSuiviPrel = $tabStations[$k]['prelevs'][0]['cmdSuiviPrelevs'][0];
@@ -610,14 +641,43 @@ class SuiviHydrobioController extends Controller {
 //                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
 //                        fputs($rapport, $contenu);
                                 copy($pathBase . '/' . $name, $pathBaseFic . '/' . $name);
-                                unlink($pathBase . '/' . $name);
+                                // unlink($pathBase . '/' . $name);
                                 $contenu = 'Le fichier ' . $name . ' a été déposé sur la station ' . $tabStations[$k]['station']->getCode() . ' ' . $tabStations[$k]['station']->getLibelle() . CHR(13) . CHR(10) . CHR(13) . CHR(10);
                                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                                 fputs($rapport, $contenu);
+                                $nbCorrect++;
                             } else {
                                 $contenu = 'Association impossible : le dernier suivi de la station  ' . $tabStations[$k]['station']->getCode() . ' doit être "Effectué" ou "Non effectué".' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
                                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                                 fputs($rapport, $contenu);
+                                $nbIncorrect++;
+                            }
+
+                            // envoi mail 
+                            $pgProgWebusers = $repoPgProgWebUsers->getPgProgWebusersByTypeUser('XHBIO');
+                            foreach ($pgProgWebusers as $destinataire) {
+                                if ($destinataire->getCodeSupport()) {
+                                    $trouve = false;
+                                    for ($nbSupport = 0; count($tabSupport); $nbSupport++) {
+                                        if ($tabSupport[$nbSupport] == $destinataire->getCodeSupport()) {
+                                            $trouve = true;
+                                            break;
+                                        }
+                                    }
+                                } else {
+                                    $trouve = true;
+                                }
+                                if ($trouve) {
+                                    // Envoi d'un mail
+                                    $objetMessage = "fichier terrrain déposé ";
+                                    $txtMessage = "Un ou plusieurs fichiers terrain ont été déposés sur le lot " . $pgProgLot->getNomLot() . " pour la période du " . $pgProgPeriode->getDateDeb()->format('d/m/Y') . " au " . $dateFin->format('d/m/Y');
+                                    $mailer = $this->get('mailer');
+                                    if ($this->get('aeag_sqe.message')->envoiMessage($emSqe, $mailer, $txtMessage, $destinataire, $objetMessage)) {
+                                        $session->getFlashBag()->add('notice-success', 'un email  a été envoyé à ' . $destinataire->getNom() . ' pour l\'informer du dépôt');
+                                    } else {
+                                        $session->getFlashBag()->add('notice-warning', 'Le dépôt a été traité, mais l\'email n\'a pas pu être envoyé à ' . $destinataire->getNom());
+                                    }
+                                }
                             }
                         } else {
                             $contenu = 'Association impossible : pas de suivi renseigné pour la station  ' . $tabStations[$k]['station']->getCode() . CHR(13) . CHR(10) . CHR(13) . CHR(10);
@@ -628,7 +688,7 @@ class SuiviHydrobioController extends Controller {
                         $pgCmdSuiviPrels = $tabStations[$k]['prelevs'][0]['cmdSuiviPrelevs'];
                         if ($pgCmdSuiviPrels) {
                             $pgCmdSuiviPrel = $tabStations[$k]['prelevs'][0]['cmdSuiviPrelevs'][0];
-                            if ($pgCmdSuiviPrel->getStatutPrel() == 'F') {
+                            if ($pgCmdSuiviPrel->getStatutPrel() == 'F' and ! $pgCmdSuiviPrel->getfichierRps()) {
                                 $contenu = 'Attention : le dernier suivi de la station  ' . $tabStations[$k]['station']->getCode() . ' a le statut : "Effectué" et il n\'y a pas de fichier terrain associé.' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
                                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                                 fputs($rapport, $contenu);
@@ -644,13 +704,23 @@ class SuiviHydrobioController extends Controller {
             fclose($rapport);
         }
 
-        $this->rmAllDir($pathBase);
+        $tabRapport[$nbRapport] = "Nombre de fichiers déposés : " . $nbCorrect;
+        $nbRapport++;
+        $tabRapport[$nbRapport] = "Nombre de fichiers incorrects : " . $nbIncorrect;
+        $nbRapport++;
+        $tabRapport[$nbRapport] = "</br><h5><div class='text-center'>Voir le rapport d'integration </div></h5>";
+        if ($nbIncorrect == 0) {
+            $this->rmAllDir($pathBase);
+        }
 
         $tabReponse = array();
         $tabReponse[0] = $name;
         $tabReponse[1] = 'rapport_' . $name;
         $tabReponse[2] = $tabMessage;
+        $tabReponse[3] = $tabRapport;
 
+//         \Symfony\Component\VarDumper\VarDumper::dump($tabReponse);
+//          return new Response (''); 
 //$session->getFlashBag()->add('notice-warning', $response);
 
         return new Response(json_encode($tabReponse));
@@ -2269,7 +2339,7 @@ class SuiviHydrobioController extends Controller {
 
     protected function rmAllDir($strDirectory) {
         $handle = opendir($strDirectory);
-        if (!$handle) {
+        if ($handle != false) {
             while (false !== ($entry = readdir($handle))) {
                 if ($entry != '.' && $entry != '..') {
                     if (is_dir($strDirectory . '/' . $entry)) {

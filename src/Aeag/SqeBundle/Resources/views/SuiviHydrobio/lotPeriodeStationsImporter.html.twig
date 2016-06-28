@@ -3,16 +3,13 @@
     <label class="col-xs-3 control-label" for="file">Fichier zip à importer</label>
     <div id="idSelection" class="col-xs-7">
         <form method="POST" enctype="multipart/form-data" action="#" id="idFormFichierIntegrer">
-            <input class="form-control" type="file" name="file" >
+            <input class="form-control" type="file" id="file" name="file" >
         </form> 
     </div>
     <div class="col-xs-1">
         <button type="button" id="idImporter" class="btn btn-success" >Importer</button> 
         <button type="button" id="idImportSupprimer" class="btn btn-danger" >Supprimer</button> 
-        <a id ="idImportRapport" class="btn btn-primary" href="#" target="_blank">
-            <i class="fa fa-file-excel-o "> Rapport</i>
-        </a>
-    </div>
+       </div>
 </div>
 <br><br>
 <div class="form-group text-center">
@@ -39,6 +36,18 @@
         $('#idImportSupprimer').hide();
         $('#idImportMessage').hide();
         $('#idImportRapport').hide();
+        
+        $('#idAnnuler').on('click', function (e) {
+            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+            if ($("#file").val() == '' ){
+                    $('#importerFichier').modal('hide');
+            }else{
+                    var url1 = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_stations",{"periodeAnId": "par1"}) }}', // Le nom du fichier indiqué dans le formulaire
+                    url1 = url1.replace("par1", {{ periodeAnId }});
+                    url1 = url1.replace("amp;", "");
+                    window.location.replace(url1);
+                };
+        });
 
         $('#idImporter').on('click', function (e) {
             e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
@@ -63,6 +72,7 @@
                     fichier = tabReponse[0];
                     rapport = tabReponse[1];
                     tabMessages = tabReponse[2];
+                    tabRapports = tabReponse[3];
                    var erreur = false;
                    var nbMessage = 0;
                     var html = "<ul>";
@@ -81,7 +91,17 @@
                     if (nbMessage > 0){
                             $('#idImportMessage').show();
                             $('#idImportMessage').empty().append(html).show();
-                     }
+                     }else{
+                            var html = "</br>";
+                            for (var ii = 0; ii < tabRapports.length; ii++){
+                                    var rapport = tabRapports[ii];
+                                    html = html + rapport + "</br>" ;
+                             }
+                             erreur = true;
+                            $('#idImportMessage').show();
+                            $('#idImportMessage').empty().append(html).show();
+                            $('#idImportRapport').show();
+                    }
                     $('#idImportProgress').hide();
                    if (!erreur){
                             var url1 = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_stations",{"periodeAnId": "par1"}) }}', // Le nom du fichier indiqué dans le formulaire

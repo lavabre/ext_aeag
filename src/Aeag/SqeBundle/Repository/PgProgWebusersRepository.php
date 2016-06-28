@@ -79,5 +79,15 @@ class PgProgWebusersRepository extends EntityRepository {
         //print_r($query);
          return $qb->getResult();
     }
+    
+    public function getPgProgWebusersByTypeUser($typeUser) {
+        $query = "select p";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgProgWebusers p";
+        $query = $query . " where p.typeUser = '" . $typeUser . "'";
+        $query = $query . " order by p.nom";
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+        return $qb->getResult();
+    }
 
 }
