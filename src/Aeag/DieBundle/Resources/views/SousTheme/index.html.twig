@@ -27,7 +27,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
-                        <a  id="idSupprimerGroupe"  class="btn btn-danger"  href="{{ path('theme_delete', { 'id': entity.id }) }}" title="Supprimer">
+                        <a  id="idSupprimerGroupe"  class="btn btn-danger"  href="{{ path('soustheme_delete', { 'id': entity.id }) }}" title="Supprimer">
                             <i class="fa fa-trash-o"> Supprimer</i>
                         </a>
                     </div>
@@ -60,6 +60,9 @@
                             <th width="5%">Actions</th>
                             <th class="th-text" nowrap>Id</th>
                             <th class="th-text" nowrap>Thème</th>
+                            <th class="th-text" nowrap>Sous thème</th>
+                            <th class="th-text" nowrap>Destinataire</th>
+                            <th class="th-text" nowrap>Objet</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -77,7 +80,10 @@
                                     {%  endif  %}
                                 </td>
                                 <td width="10%"><a href="{{ path('soustheme_edit', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
-                                <td width="80%">{{ entity.soustheme }}</td>
+                                <td width="20%">{{ entity.theme.theme }}</td>
+                                <td width="20%">{{ entity.soustheme }}</td>
+                                 <td width="20%">{{ entity.destinataire }}</td>
+                                  <td width="20%">{{ entity.objet }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>

@@ -32,9 +32,7 @@ demande_listesoustheme:
     path: /listesoustheme
     defaults : { _controller: "AeagDieBundle:Demande:listesoustheme"}
     
-demande_listeDemandes:
-    path: /{page}
-    defaults: { _controller: "AeagDieBundle:Demande:listeDemandes" }
+
 
     
     

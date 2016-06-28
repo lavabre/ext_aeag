@@ -394,7 +394,7 @@ class UserController extends Controller {
         }
 
         $message = null;
-        $editForm = $this->createForm(new UsersUpdateType($entity), $entity);
+        $editForm = $this->createForm(new UsersUpdateType($entity,$role), $entity);
         $maj = 'ko';
         return $this->render('AeagUserBundle:User:edit.html.twig', array(
                     'entity' => $entity,
@@ -431,28 +431,31 @@ class UserController extends Controller {
 
         $message = null;
 
+        $roles = $entity->getRoles();
         $role = 'ROLE_AEAG';
+        foreach ($roles as $roleLu) {
 
-        if ($security->isGranted('ROLE_ADMIN')) {
-            $role = 'ROLE_AEAG';
-        };
-        if ($security->isGranted('ROLE_ADMINDEC')) {
-            $role = 'ROLE_ODEC';
-        };
-        if ($security->isGranted('ROLE_ADMINFRD')) {
-            $role = 'ROLE_FRD';
-        };
+            if (strpos($roleLu, 'DEC')) {
+                $role = 'ROLE_ODEC';
+            }
+            if (strpos($roleLu, 'FRD')) {
+                $role = 'ROLE_FRD';
+            };
+            if (strpos($roleLu, 'SQE')) {
+                $role = 'ROLE_SQE';
+            };
 
-        if ($security->isGranted('ROLE_ADMINSQE')) {
-            $role = 'ROLE_SQE';
-        };
+            if (strpos($roleLu, 'EDL')) {
+                $role = 'ROLE_EDL';
+            }
 
-        if ($security->isGranted('ROLE_ADMINSTOCK')) {
-            $role = 'ROLE_STOCK';
-        };
+            if (strpos($roleLu, 'STOCK')) {
+                $role = 'ROLE_STOCK';
+            };
+        }
 
-        if ($security->isGranted('ROLE_ADMINEDL')) {
-            $role = 'ROLE_EDL';
+
+        if ($role == 'ROLE_EDL') {
             $utilisateur = $repoUtilisateur->getUtilisateurByExtid($entity->getId());
             $deptUtilisateurs = $repoDeptUtilisateur->getDepartementByUtilisateur($utilisateur);
         } else {
@@ -460,10 +463,8 @@ class UserController extends Controller {
             $deptUtilisateurs = null;
         }
 
-
-
         $maj = 'ko';
-        $form = $this->createForm(new UsersUpdateType($entity), $entity);
+        $form = $this->createForm(new UsersUpdateType($entity, $role), $entity);
 
         $form->handleRequest($request);
 

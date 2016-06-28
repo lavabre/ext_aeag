@@ -64,25 +64,28 @@
                            </tr>
                   </thead>
                     <tbody>
-     {% for entity in entities %}
-        <tr>
-              <td width="10%" align="right">
-                  {% if is_granted('ROLE_ADMIN') %}
-                             <a  class="btn btn-warning" href="{{ path('organisme_edit', { 'id': entity.id }) }}" title="Modifier l'organisme">
-                                <i class="fa fa-edit"></i> 
-                            </a>
-                            <a class="btn btn-danger" data-toggle="modal" href="#sup-{{ entity.id }}" title="Supprimer l'organisme">
-                                <i class="fa fa-trash-o"></i>
-                            </a>
-                   {% endif %}
-            </td>
-            <td width="10%"><a href="{{ path('organisme_edit', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
-            <td width="5%">{{ entity.ordre }}</td>
-            <td width="75%">{{ entity.organisme }}</td>
-          </tr>
-    {% endfor %}
-    </tbody>
-</table>
+                    {% for entity in entities %}
+                       <tr>
+                             <td width="10%" align="right">
+                                 {% if is_granted('ROLE_ADMIN') %}
+                                            <a  class="btn btn-warning" href="{{ path('organisme_edit', { 'id': entity.id }) }}" title="Modifier l'organisme">
+                                               <i class="fa fa-edit"></i> 
+                                           </a>
+                                           <a class="btn btn-danger" data-toggle="modal" href="#sup-{{ entity.id }}" title="Supprimer l'organisme">
+                                               <i class="fa fa-trash-o"></i>
+                                           </a>
+                                  {% endif %}
+                           </td>
+                           <td width="10%"><a href="{{ path('organisme_edit', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
+                           <td width="5%">{{ entity.ordre }}</td>
+                           <td width="75%">{{ entity.organisme }}</td>
+                         </tr>
+                   {% endfor %}
+                   </tbody>
+               </table>
+            </div>
+        </div>
+  </div>
     
      <div class="form-group">
            <div class="col-xs-offset-4 col-xs-8">

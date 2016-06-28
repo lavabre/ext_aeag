@@ -21,13 +21,13 @@ class UserUpdateType extends AbstractType {
                     'required' => true,
                     'expanded' => true,
                 ))
-                ->add('roles', 'choice', array(
-                    'choices' => array('ROLE_ADMINEDL' => 'Administrateur Edl',
-                          'ROLE_COMMENTATEUREDL' => 'Commentateur Edl',
-                         'ROLE_SUPERVISEUREDL' => 'Superviseur Edl',),
-                    'required' => true,
-                    'multiple' => true,
-                ))
+//                ->add('roles', 'choice', array(
+//                    'choices' => array('ROLE_ADMINEDL' => 'Administrateur Edl',
+//                          'ROLE_COMMENTATEUREDL' => 'Commentateur Edl',
+//                         'ROLE_SUPERVISEUREDL' => 'Superviseur Edl',),
+//                    'required' => true,
+//                    'multiple' => true,
+//                ))
                
 //           ->add('dept', 'entity', array(
 //		'class' => 'Aeag\EdlBundle\Entity\AdminDepartement',

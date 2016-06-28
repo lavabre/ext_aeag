@@ -22,7 +22,7 @@ class DemandeRepository extends EntityRepository {
     public function getDemandes() {
         $query = "select c";
         $query = $query . " from Aeag\DieBundle\Entity\Demande c";
-        $query = $query . " order by c.code";
+        $query = $query . " order by c.id";
         $qb = $this->_em->createQuery($query);
         //print_r($query);
         return $qb->getResult();

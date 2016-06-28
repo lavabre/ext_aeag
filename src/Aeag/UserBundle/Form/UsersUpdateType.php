@@ -8,13 +8,15 @@ use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
 
 class UsersUpdateType extends AbstractType {
 
-    public function __construct($user) {
+    public function __construct($user, $role) {
         $this->user = $user;
+        $this->role = $role;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $user = $this->user;
-        if ($user->hasRole('ROLE_AEAG')) {
+        $role = $this->role;
+        if ($role == 'ROLE_AEAG') {
             $builder
                     ->add('username', 'text', array('label' => 'Login', 'required' => false, 'read_only' => true))
                     ->add('password', 'text', array('label' => 'password', 'required' => false, 'read_only' => true))
@@ -56,7 +58,7 @@ class UsersUpdateType extends AbstractType {
                             return $qb->orderBy('d.inseeDepartement', 'ASC');
                         },
             ));
-        }elseif ($user->hasRole('ROLE_ODEC')) {
+        }elseif ($role == 'ROLE_ODEC') {
             $builder
                     ->add('username', 'text', array('label' => 'Login', 'required' => false, 'read_only' => true))
                     ->add('password', 'text', array('label' => 'password', 'required' => false, 'read_only' => true))
@@ -77,7 +79,7 @@ class UsersUpdateType extends AbstractType {
                         'empty_value' => '     ',
                     ));
        
-        }elseif ($user->hasRole('ROLE_FRD')) {
+        }elseif ($role == 'ROLE_FRD') {
             $builder
                     ->add('username', 'text', array('label' => 'Login', 'required' => false, 'read_only' => true))
                     ->add('password', 'text', array('label' => 'password', 'required' => false, 'read_only' => true))
@@ -97,7 +99,7 @@ class UsersUpdateType extends AbstractType {
                         'multiple' => true,
                         'empty_value' => '     ',
                     ));
-        }elseif ($user->hasRole('ROLE_SQE')) {
+        }elseif ($role == 'ROLE_SQE') {
             $builder
                     ->add('username', 'text', array('label' => 'Login', 'required' => false, 'read_only' => true))
                     ->add('password', 'text', array('label' => 'password', 'required' => false, 'read_only' => true))
@@ -119,7 +121,7 @@ class UsersUpdateType extends AbstractType {
                         'multiple' => true,
                         'empty_value' => '     ',
                     ));
-        }elseif ($user->hasRole('ROLE_STOCK')) {
+        }elseif ($role == 'ROLE_STOCK') {
             $builder
                     ->add('username', 'text', array('label' => 'Login', 'required' => false, 'read_only' => true))
                     ->add('password', 'text', array('label' => 'password', 'required' => false, 'read_only' => true))
@@ -139,7 +141,7 @@ class UsersUpdateType extends AbstractType {
                         'multiple' => true,
                         'empty_value' => '     ',
                     ));
-        }elseif ($user->hasRole('ROLE_EDL')) {
+        }elseif ($role == 'ROLE_EDL') {
             $builder
                     ->add('username', 'text', array('label' => 'Login', 'required' => false, 'read_only' => true))
                     ->add('password', 'text', array('label' => 'password', 'required' => false, 'read_only' => true))

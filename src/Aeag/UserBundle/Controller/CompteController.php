@@ -137,6 +137,7 @@ class CompteController extends Controller {
 
     public function editAction(Request $request) {
         $user = $this->getUser();
+        $userHold = clone($user);
         if (!is_object($user) || !$user instanceof UserInterface) {
             throw new AccessDeniedException('This user does not have access to this section.');
         }
@@ -166,7 +167,8 @@ class CompteController extends Controller {
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            /** @var $userManager \FOS\UserBundle\Model\UserManagerInterface */
+             $user->setRoles($userHold->getRoles());
+               /** @var $userManager \FOS\UserBundle\Model\UserManagerInterface */
             $userManager = $this->get('fos_user.user_manager');
 
             $event = new FormEvent($form, $request);
@@ -193,7 +195,8 @@ class CompteController extends Controller {
             return $response;
         }
 
-        //return new Response ('ici');
+//         \Symfony\Component\VarDumper\VarDumper::dump($user->getRoles());
+//          return new Response (''); 
 
         return $this->render('AeagUserBundle:Profile:edit.html.twig', array(
                     'form' => $form->createView()

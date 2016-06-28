@@ -1,226 +1,173 @@
-{% extends 'AeagDieBundle::layout.html.twig' %}
+{% extends "AeagDieBundle::layout.html.twig" %}
 
+{% block breadcrumb %}
+    <li>
+        <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+    </li>
+    <li>
+        <a href="{{ path('demande') }}">Demande</a> 
+    </li>
+     <li class="active">
+        Nouvelle
+    </li>
+{% endblock breadcrumb %} 
 
-{% block title %}
-Demande
-{% endblock %}
-{% block contenu %}
+{%block panel_heading %}
+             <h3 class="page-title text-center">
+                Création d'une demande
+             </h3>
+  {%endblock panel_heading %}
 
-
-
-<div align="center">
-   <h1>Nouvelle demande </H1>
-</div>
-<br>
-
-
-<section class="grid_6">
-
-
-<p align="center">Veuillez utiliser le formulaire ci-dessous pour nous faire part de
-    vos commentaires ou de vos questions<br>
-    (Tous les champs sont obligatoires)</p>
-
- 
-
-
-<form  class="form" id="contact"  action="{{ path('demande_create') }}"  method="post" { form_enctype(form) }}>
-
-      <!-- Les erreurs générales du formulaire. -->
-	 {{ form_errors(form) }}
-    <table class="table1" cellspacing="0" width="50%" align="center">
-
-        <caption><h2>Informations personnelles</h2></caption>
-        <tbody>
-            <tr>
-
-                <td align="left" width="15%">{{ form_label(form.nom,'Nom') }}</td>
-                <td width="85%">
-                {% if form_errors(form.nom) | length %}
-                   <span class="relative"> 
-                    {{ form_widget(form.nom, { 'attr': {'class': 'full-width error'} }) }}
-                    <span class="check-error"></span>
-                {% else %}
-                  {{ form_widget(form.nom, { 'attr': {'class': 'full-width'} }) }}
-                {% endif %}       
-                </td>
-                <td  nowrap><div class="symfony-form-errors">{{ form_errors(form.nom) }}</div></td>
-                    
-            </tr>
-            <tr>
-
-                <td align="left">{{ form_label(form.prenom, "Prénom") }}</td>
-                <td width="85%">
-                {% if form_errors(form.prenom) | length %}
-                   <span class="relative"> 
-                    {{ form_widget(form.prenom, { 'attr': {'class': 'full-width error'} }) }}
-                    <span class="check-error"></span>
-                {% else %}
-                  {{ form_widget(form.prenom, { 'attr': {'class': 'full-width'} }) }}
-                {% endif %}    
-                </td>
-                <td nowrap><div class="symfony-form-errors">{{ form_errors(form.prenom) }}</div></td>
-            </tr>
-
-            <tr>
-
-                <td align="left">{{ form_label(form.organisme, "Organisme") }}</td>
-                <td width="85%">
-                {% if form_errors(form.organisme) | length %}
-                   <span class="relative"> 
-                    {{ form_widget(form.organisme, { 'attr': {'class': 'full-width error'} }) }}
-                    <span class="check-error"></span>
-                {% else %}
-                  {{ form_widget(form.organisme, { 'attr': {'class': 'full-width'} }) }}
-                {% endif %}  
-                </td>
-                <td nowrap><div class="symfony-form-errors">{{ form_errors(form.organisme) }}</div></td>
-            </tr>
-            <tr>
-
-                <td align="left" width="15%">{{ form_label(form.dept,'Département') }}</td>
-                <td width="85%">
-                {% if form_errors(form.dept) | length %}
-                   <span class="relative"> 
-                    {{ form_widget(form.dept, { 'attr': {'class': 'full-width error'} }) }}
-                    <span class="check-error"></span>
-                {% else %}
-                  {{ form_widget(form.dept, { 'attr': {'class': 'full-width'} }) }}
-                {% endif %}       
-                </td>
-                <td  nowrap><div class="symfony-form-errors">{{ form_errors(form.dept) }}</div></td>
-                    
-            </tr>
-            <tr>
-
-                <td align="left">{{ form_label(form.email, "Courriel") }}</td>
-                <td width="85%">
-                {% if form_errors(form.email) | length %}
-                   <span class="relative"> 
-                    {{ form_widget(form.email, { 'attr': {'class': 'full-width error'} }) }}
-                    <span class="check-error"></span>
-                {% else %}
-                  {{ form_widget(form.email, { 'attr': {'class': 'full-width'} }) }}
-                {% endif %}  
-                 </td>
-                <td nowrap><div class="symfony-form-errors">{{ form_errors(form.email) }}</div></td> 
-            </tr>
-        </tbody>
-    </table>
-
-   
-    <table class="table1" cellspacing="0" width="50%" align="center">
-
-        <caption><h2>Objet</h2></caption>
-        <tbody>
-            <tr>
-
-                <td align="left" width="15%">{{ form_label(form.theme) }}</td>
-                <td width="85%">
-                {% if form_errors(form.theme) | length %}
-                   <span class="relative"> 
-                    {{ form_widget(form.theme, { 'attr': {'class': 'full-width error'} }) }}
-                    <span class="check-error"></span>
-                {% else %}
-                  {{ form_widget(form.theme, { 'attr': {'class': 'full-width'} }) }}
-                {% endif %}  
-                </td>
-                <td nowrap><div class="symfony-form-errors">{{ form_errors(form.theme) }}</div></td>
-            </tr>
-
-            <tr>
-
-                <td align="left">{{ form_label(form.objet, "Objet") }}</td>
-                <td width="85%">
-                {% if form_errors(form.objet) | length %}
-                   <span class="relative"> 
-                    {{ form_widget(form.objet, { 'attr': {'class': 'full-width error'} }) }}
-                    <span class="check-error"></span>
-                {% else %}
-                  {{ form_widget(form.objet, { 'attr': {'class': 'full-width'} }) }}
-                {% endif %}  
-                </td>
-                <td nowrap><div class="symfony-form-errors">{{ form_errors(form.objet) }}</div></td>
-            </tr>
-            <tr>
-                <td align="left">{{ form_label(form.corps, "Corps") }}</td>
-                <td width="85%">
-                {% if form_errors(form.corps) | length %}
-                   <span class="relative"> 
-                    {{ form_widget(form.corps, { 'attr': {'rows':5, 'class': 'full-width error'} }) }}
-                    <span class="check-error"></span>
-                {% else %}
-                  {{ form_widget(form.corps, { 'attr': {'rows':5, 'class': 'full-width'} }) }}
-                {% endif %}  
-                </td>
-                <td nowrap><div class="symfony-form-errors">{{ form_errors(form.corps) }}</div></td>
-            </tr>
-        </tbody>
-    </table>
-
-    {{ form_rest(form) }}</td>
-
-    <div  align="center">
-      <button   class="button blue" type="submit">Créer la demande</button>
+{% block content %}
+    
+    <div class="row">
+          <div class="col-xs-offset-3 col-xs-8 small">
+                 <div class="alert alert-info" role="alert">
+                     Veuillez utiliser le formulaire ci-dessous pour nous adresser votre demande d’information<br>
+                    (Tous les champs sont obligatoires)
+                  </div>
+          </div>
     </div>
 
-</section>
+
+        <form  class="form" id="contact"  action="{{ path('demande_create') }}"  method="post" {{ form_enctype(form) }}>
+
+            {% spaceless %}
+                {% if not form.vars.valid %}
+                    <div class="alert alert-danger">
+                        {% for children in form.children %}
+                            {% if not children.vars.valid %}
+                                {{ form_errors(children) }}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
 
 
-</form>
-<br>
- <table align="center">
-    <tr>
-        <td>
-            <a class="button blue" href="{{ path('demande') }}">
-                <img src="{{ asset('bundles/aeagdie/images/icons/web-app/24/back.png') }}">  
-                Retour
-            </a>
-        </td>
-    </tr>
-</table>
+            {% endspaceless %}
 
-{% endblock %}
-{% block javascripts %}
+     <div class="row">
+          <div class="col-xs-offset-3 col-xs-8 small">
+            <div class="panel panel-default">
+                <div class="panel-heading"><h2>Informations personnelles</h2></div>
+                <div class="panel-body">
 
-<script src="{{ asset('bundles/aeagdie/js/die.js') }}" type="text/javascript"></script>
+                    <div class="form-group">
+                        <label for="Nom" class="col-xs-3 control-label">Nom <i class="fa fa-asterisk text-danger btn-xs"></i></label>
+                            {%if form_errors(form.nom) %}
+                                <div class="col-xs-8 input-group has-error has-feedback">
+                            {% else %}
+                                <div class="col-xs-8 input-group">
+                                {% endif %}
+                                {{ form_widget(form.nom, { 'attr': {'class': 'form-control ', 'placeholder': 'Nom'} }) }}
+                            </div>
+                        </div> 
 
-<script>
+                        <div class="form-group">
+                            <label for="Prenom" class="col-xs-3 control-label">Prénom <i class="fa fa-asterisk text-danger btn-xs"></i></label>
+                                {%if form_errors(form.prenom) %}
+                                   <div class="col-xs-8 input-group has-error has-feedback">
+                                {% else %}
+                                    <div class="col-xs-8 input-group">
+                                    {% endif %}
+                                    {{ form_widget(form.prenom, { 'attr': {'class': 'form-control ', 'placeholder': 'Prénom'} }) }}
+                                </div>
+                            </div> 
 
-		$(".loading").hide();
+                            <div class="form-group">
+                                <label for="Organisme" class="col-xs-3 control-label">Organisme<i class="fa fa-asterisk text-danger btn-xs"></i></label>
+                                    {%if form_errors(form.organisme) %}
+                                        <div class="col-xs-8 input-group has-error has-feedback">
+                                    {% else %}
+                                        <div class="col-xs-8 input-group">
+                                        {% endif %}
+                                        {{ form_widget(form.organisme, { 'attr': {'class': 'form-control ', 'placeholder': 'Organisme'} }) }}
+                                    </div>
+                                </div> 
 
-		$("#aeag_diebundle_demandetype_theme").change(function() {
+                                <div class="form-group">
+                                    <label for="Departement" class="col-xs-3 control-label">Département<i class="fa fa-asterisk text-danger btn-xs"></i></label>
+                                        {%if form_errors(form.dept) %}
+                                            <div class="col-xs-8 input-group has-error has-feedback">
+                                        {% else %}
+                                            <div class="col-xs-8 input-group">
+                                            {% endif %}
+                                            {{ form_widget(form.dept, { 'attr': {'class': 'form-control ', 'placeholder': 'Département'} }) }}
+                                        </div>
+                                    </div> 
 
-			$(".loading").show();
-			
-			var id_theme = $("#aeag_diebundle_demandetype_theme").val();
-			var DATA = 'id_theme=' + id_theme;
-		
-			$.ajax({
-				methode: "POST",
-				mode: "abort",
-				dataType: "html",
-			    url:  "{{ path('demande_listesoustheme') }}" ,
-				data: DATA,
-			    cache: false,
-			    success : function(response) {
-		
-			    	  $("#aeag_diebundle_demandetype_sousTheme").find("option").remove();
-		             // $.each(response, function(i, item) {
-			         //   $("#aeag_diebundle_demandetype_sousTheme").append(new Option(item, i));
-		             // });
-			           $("#aeag_diebundle_demandetype_sousTheme").html(response);
-			
-			           $(".loading").hide();
-				}
-			});
-			
-			 return false;
-				
-		
-		})
+                                    <div class="form-group">
+                                        <label for="Courriel" class="col-xs-3 control-label">Courriel<i class="fa fa-asterisk text-danger btn-xs"></i></label>
+                                            {%if form_errors(form.email) %}
+                                               <div class="col-xs-8 input-group has-error has-feedback">
+                                            {% else %}
+                                                <div class="col-xs-8 input-group">
+                                                {% endif %}
+                                                {{ form_widget(form.email, { 'attr': {'class': 'form-control ', 'placeholder': 'Courriel'} }) }}
+                                            </div>
+                                        </div> 
 
-		
-	</script>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-{% endblock %}
+                    <div class="row">
+                            <div class="col-xs-offset-3 col-xs-8 small">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading"><h2>Votre message</h2></div>
+                                    <div class="panel-body">
+
+                                            <div class="form-group">
+                                                <label for="Theme" class="col-xs-3 control-label">Thème<i class="fa fa-asterisk text-danger btn-xs"></i></label>
+                                                    {%if form_errors(form.theme) %}
+                                                         <div class="col-xs-8 input-group has-error has-feedback">
+                                                    {% else %}
+                                                        <div class="col-xs-8 input-group">
+                                                        {% endif %}
+                                                        {{ form_widget(form.theme, { 'attr': {'class': 'form-control ', 'placeholder': 'Theme'} }) }}
+                                                    </div>
+                                                </div> 
+                                     
+                                            <div class="form-group">
+                                                <label for="Description" class="col-xs-3 control-label">Description<i class="fa fa-asterisk text-danger btn-xs"></i></label>
+                                                    {%if form_errors(form.objet) %}
+                                                        <div class="col-xs-8 input-group has-error has-feedback">
+                                                    {% else %}
+                                                        <div class="col-xs-8 input-group">
+                                                        {% endif %}
+                                                        {{ form_widget(form.objet, { 'attr': {'class': 'form-control ', 'placeholder': 'Description'} }) }}
+                                                    </div>
+                                                </div> 
+
+                                                <div class="form-group">
+                                                    <label for=Message" class="col-xs-3 control-label">Message<i class="fa fa-asterisk text-danger btn-xs"></i></label>
+                                                        {%if form_errors(form.corps) %}
+                                                             <div class="col-xs-8 input-group has-error has-feedback">
+                                                        {% else %}
+                                                            <div class="col-xs-8 input-group">
+                                                            {% endif %}
+                                                            {{ form_widget(form.corps, { 'attr': {'rows':5,'class': 'form-control ', 'placeholder': 'corps'} }) }}
+                                                        </div>
+                                                    </div> 
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="hide">
+                                    {{ form_rest(form) }}
+                                </div>
+
+                                <div  align="center">
+                                    <button type="submit" class="btn btn-primary">Envoyer la demande</button>
+                                </div>
+                </form>      
+
+    </div>
+
+{% endblock content %}
+    

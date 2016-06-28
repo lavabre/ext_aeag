@@ -79,6 +79,13 @@ class DefaultController extends Controller {
     }
 
     public function indexLightAction($theme = null, $sousTheme = null) {
+        
+         $user = $this->getUser();
+        $session = $this->get('session');
+        $session->set('menu', 'Default');
+        $session->set('controller', 'Default');
+        $session->set('fonction', 'indexLight');
+        $em = $this->getDoctrine()->getEntityManager('die');
 
         if ($this->get('security.context')->isGranted('ROLE_ADMIN')) {
             // accres au menu adminitrateur
@@ -97,8 +104,7 @@ class DefaultController extends Controller {
 
 
         if (!is_null($theme)) {
-            $em = $this->getDoctrine()->getEntityManager('die');
-            $Theme = $em->getRepository('AeagDieBundle:Theme')->findOneById($theme);
+             $Theme = $em->getRepository('AeagDieBundle:Theme')->findOneById($theme);
             if (!$Theme) {
                 throw $this->createNotFoundException('pas de theme associé à : ' . $theme);
             }
@@ -137,6 +143,13 @@ class DefaultController extends Controller {
      *
      */
     public function createAction(Request $request) {
+        
+        $user = $this->getUser();
+        $session = $this->get('session');
+        $session->set('menu', 'Default');
+        $session->set('controller', 'Default');
+        $session->set('fonction', 'create');
+        $em = $this->getDoctrine()->getEntityManager('die');
 
 
         $entity = new Demande();
@@ -154,8 +167,6 @@ class DefaultController extends Controller {
         //return new Response("theme : " . $session->get('theme')->getId() );
 
         if ($form->isValid()) {
-
-            $em = $this->getDoctrine()->getEntityManager('die');
 
             $Organisme = $em->getRepository('AeagDieBundle:Organisme')->find($entity->getOrganisme()->getId());
 
@@ -217,11 +228,16 @@ class DefaultController extends Controller {
     }
 
     public function createLightAction($theme = null, Request $request) {
-
+        
+        $user = $this->getUser();
+        $session = $this->get('session');
+        $session->set('menu', 'Default');
+        $session->set('controller', 'Default');
+        $session->set('fonction', 'createLight');
         $em = $this->getDoctrine()->getEntityManager('die');
+
         $entity = new Demande();
-        $request = $this->getRequest();
-        //$session = $request->getSession();
+       //$session = $request->getSession();
         $session = $this->get('session');
         $idTheme = $theme;
         if ($idTheme) {
@@ -236,8 +252,6 @@ class DefaultController extends Controller {
        // return new Response("theme : " . $Theme->getId() );
 
         if ($form->isValid()) {
-
-
 
             $Organisme = $em->getRepository('AeagDieBundle:Organisme')->find($entity->getOrganisme()->getId());
 
@@ -357,6 +371,13 @@ class DefaultController extends Controller {
      */
 
     public function listesousthemeAction() {
+        
+        $user = $this->getUser();
+        $session = $this->get('session');
+        $session->set('menu', 'Default');
+        $session->set('controller', 'Default');
+        $session->set('fonction', 'listesoustheme');
+        $em = $this->getDoctrine()->getEntityManager('die');
 
         $list_sous_theme = array();
         $request = $this->container->get('request');
@@ -365,9 +386,6 @@ class DefaultController extends Controller {
 
             $id_theme = '';
             $id_theme = $request->get('id_theme');
-
-            $em = $this->container->get('doctrine')->getEntityManager('die');
-
 
             if ($id_theme != '') {
                 $qb = $em->createQueryBuilder();
