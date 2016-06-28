@@ -109,7 +109,7 @@ class PgProgWebusers {
      * @ORM\Column(name="ext_id", type="integer", nullable=true)
      */
     private $extId;
-    
+
     /**
      * @var \PgRefCorresPresta
      *
@@ -119,7 +119,7 @@ class PgProgWebusers {
      * })
      */
     private $prestataire;
-    
+
     /**
      * @var \PgRefCorresProducteur
      *
@@ -129,6 +129,13 @@ class PgProgWebusers {
      * })
      */
     private $producteur;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="code_support", type="string", length=3, nullable=true)
+     */
+    private $codeSupport;
 
     /**
      * Constructor
@@ -350,15 +357,14 @@ class PgProgWebusers {
     function setExtId($extId) {
         $this->extId = $extId;
     }
-    
-        /**
+
+    /**
      * Set prestataire
      *
      * @param \Aeag\SqeBundle\Entity\PgRefCorresPresta $prestataire
      * @return PgProgPrestaWebusers
      */
-    public function setPrestataire(\Aeag\SqeBundle\Entity\PgRefCorresPresta $prestataire = null)
-    {
+    public function setPrestataire(\Aeag\SqeBundle\Entity\PgRefCorresPresta $prestataire = null) {
         $this->prestataire = $prestataire;
 
         return $this;
@@ -369,11 +375,10 @@ class PgProgWebusers {
      *
      * @return \Aeag\SqeBundle\Entity\PgRefCorresPresta 
      */
-    public function getPrestataire()
-    {
+    public function getPrestataire() {
         return $this->prestataire;
     }
-    
+
     public function getProducteur() {
         return $this->producteur;
     }
@@ -382,6 +387,12 @@ class PgProgWebusers {
         $this->producteur = $producteur;
     }
 
+    function getCodeSupport() {
+        return $this->codeSupport;
+    }
 
+    function setCodeSupport($codeSupport) {
+        $this->codeSupport = $codeSupport;
+    }
 
 }
