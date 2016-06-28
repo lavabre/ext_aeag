@@ -57,6 +57,6 @@ parameters:
     secret: ThisTokenIsNotSoSecretChangeIt
     
     repertoire_echange : /base/extranet/Transfert/Sqe/Echanges/
-    router_host: vslindev211
-    router_scheme: http
-    router_baseurl: /preprod/aeag/app_dev.php
+    router.request_context.host: vslindev211
+    router.request_context.scheme: http
+    router.request_context.base_url: /preprod/aeag/app_dev.php
