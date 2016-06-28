@@ -17,5 +17,5 @@ if [ ! -d "$dirlog" ]; then
   mkdir $dirlog
 fi
 if [ $(ps -ax | grep -v grep | grep 'rai:integration_db' | wc -l) -lt 4 ]; then
-    php $dircmd rai:integration_db >> $dirlog/process_$jour.log
+    php $dircmd rai:integration_db -e $2 >> $dirlog/process_$jour.log
 fi

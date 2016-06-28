@@ -16,6 +16,6 @@ dircmd=$dirbase"app/console_process_rai"
 if [ ! -d "$dirlog" ]; then
   mkdir $dirlog
 fi
-php $dircmd rai:check_sandre >> $dirlog/process_$jour.log
+php $dircmd rai:check_sandre -e $2 >> $dirlog/process_$jour.log
 
 find $dirlog/process_* -mtime +14 -exec rm {} \;
