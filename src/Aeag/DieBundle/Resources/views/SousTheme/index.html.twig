@@ -1,69 +1,120 @@
 {% extends "AeagDieBundle::layout.html.twig" %}
 
+{% block navbar %}{% endblock navbar %}
 
-{% block contenu %}
+{% block breadcrumb %}
+    <li>
+        <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+    </li>
+    <li class="active">
+        Sous thème
+    </li>
+{% endblock breadcrumb %} 
 
-<div align="center">
-   <h1>Administration des sous-thèmes</H1>
-</div>
-<br>
-<table align="center">
-    <tr>
-        <td align="left">
-            <a href="{{ path('soustheme_new') }}">
-                <img src="{{ asset('bundles/aeagdie/images/icons/web-app/24/Add.png') }}">
-                Nouveau sous-thème
-            </a>
-        </td>
-    </tr>
-</table>
-
-
-<table class="table" cellspacing="0" width="50%" align="center">
-    <thead>
-        <tr>
-            <th class="th-text" nowrap>Id</th>
-            <th class="th-text" nowrap>Thème</th>
-            <th class="th-text" nowrap align="left">Modifier</th>
-            <th class="th-text" nowrap align="left">Supprimer</th>
-        </tr>
-    </thead>
-    <tbody>
-    {% set i = 1 %}
+{% block modal %}
     {% for entity in entities %}
-        <tr class="resultat{{ i }}">
-            <td width="10%"><a href="{{ path('soustheme_edit', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
-            <td width="80%">{{ entity.soustheme }}</td>
-            <td width="10%" align="right">
-                {% if is_granted('ROLE_ADMIN') %}
-                    <a href="{{ path('soustheme_edit', { 'id': entity.id }) }}">
-                        <img src="{{ asset('bundles/aeagdie/images/icons/web-app/24/Modify.png') }}">  
-                    </a>
-	       {%  endif  %}
-            </td>
-            <td align="left">
-                 {% if is_granted('ROLE_ADMIN') %}
-                    <a href="{{ path('soustheme_delete', { 'id': entity.id }) }}">
-                        <img src="{{ asset('bundles/aeagdie/images/icons/web-app/24/Delete.png') }}">
-                    </a>
-                 {%  endif  %}
-	    </td>
-        </tr>
-       {% set i = i + 1 %}
-       {% if i > 2 %}
-       {% set i = 1 %}
-        {% endif %}
+        <div class="modal fade" id="sup-{{ entity.id }}">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="supLabel-{{ entity.id }}">Suppression du sous thème   {{ entity.soustheme }}   </h4>
+                    </div>
+                    <div class="modal-body">
+                        <h4>Cliquer sur la corbeille pour valider la suppression du sousthème {{ entity.soustheme }}</h4>
+                        <br/><br/>
+                        <div class="alert alert-danger">Attention : Une fois supprimée, le sous thème sera supprimé définitivement</div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
+                        <a  id="idSupprimerGroupe"  class="btn btn-danger"  href="{{ path('soustheme_delete', { 'id': entity.id }) }}" title="Supprimer">
+                            <i class="fa fa-trash-o"> Supprimer</i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>  
     {% endfor %}
-    </tbody>
-</table>
-<table align="center">
-        <tr>
-            <td>
-                <a class="button blue" href="{{ path('admin') }}">
-                    <img src="{{ asset('bundles/aeagdie/images/icons/web-app/24/back.png') }}">  
-                    Retour
-                </a>
-            </td>
-        </tr>
-    </table>
-{% endblock %}
+{% endblock modal %}
+
+{%block panel_heading %}
+    <h1>Administration des sous-thèmes</H1>
+    {%endblock panel_heading %}
+
+{%block content %}
+
+    <div class="row">
+        <div class="col-md-7">
+            <a  class="btn btn-success"  href="{{ path('soustheme_new') }}" title="Nouveau sous thème">
+                <i class="fa fa-plus"> Nouveau sous thème</i> 
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xm-12">
+            <div class="small">
+                <table class="table table-bordered table-condensed table-advance" id="idTable">
+                    <thead>
+                        <tr>
+                            <th width="5%">Actions</th>
+                            <th class="th-text" nowrap>Id</th>
+                            <th class="th-text" nowrap>Thème</th>
+                            <th class="th-text" nowrap>Sous thème</th>
+                            <th class="th-text" nowrap>Destinataire</th>
+                            <th class="th-text" nowrap>Objet</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% set i = 1 %}
+                        {% for entity in entities %}
+                            <tr>
+                                <td width="10%" class="text-center">
+                                    {% if is_granted('ROLE_ADMIN') %}
+                                        <a  class="btn btn-warning" href="{{ path('soustheme_edit', { 'id': entity.id }) }}" title="Modifier le sous thème">
+                                            <i class="fa fa-edit"></i> 
+                                        </a>
+                                        <a class="btn btn-danger" data-toggle="modal" href="#sup-{{ entity.id }}" title="Supprimer le sous thème">
+                                            <i class="fa fa-trash-o"></i>
+                                        </a>
+                                    {%  endif  %}
+                                </td>
+                                <td width="10%"><a href="{{ path('soustheme_edit', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
+                                <td width="20%">{{ entity.theme.theme }}</td>
+                                <td width="20%">{{ entity.soustheme }}</td>
+                                 <td width="20%">{{ entity.destinataire }}</td>
+                                  <td width="20%">{{ entity.objet }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+
+                <div class="form-group">
+                    <div class="col-xs-offset-4 col-xs-8">
+                        <a  id="btFermer" class="btn btn-danger" href="{{ path('aeag_die_admin') }}"><i class="fa fa-power-off"></i> Retour</a>
+                    </div>
+                </div>
+
+            {% endblock  content%}
+
+            {% block scripts %}
+
+                var table =  $('#idTable').DataTable( {
+                "processing": true,
+                "stateSave": true,
+                "order": [[ 0, "asc" ]],
+                "language": {
+                "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
+                },
+                "aLengthMenu": [
+                [10, 25, 50, 100, -1],
+                [10, 25, 50, 100, "Tous"]
+                ],
+                "iDisplayLength": 10
+                }
+                );
+
+
+
+            {% endblock scripts %}

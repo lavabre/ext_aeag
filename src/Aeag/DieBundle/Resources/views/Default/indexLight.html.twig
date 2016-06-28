@@ -6,19 +6,21 @@
 
 {%block panel_heading %}Demande{%endblock panel_heading %}
 
-{%block content %}
-
-    <div class="col-xs-offset-3 col-xs-8 small">
-
-               
-        <div class="alert alert-info" role="alert">.
-             Veuillez utiliser le formulaire ci-dessous pour nous adresser votre demande d’information<br>
-            (Tous les champs sont obligatoires)
+{% block content %}
+    
+    <div class="row">
+          <div class="col-xs-offset-3 col-xs-5 smaller">
+                 <div class="alert alert-info" role="alert">
+                     Veuillez utiliser le formulaire ci-dessous pour nous adresser votre demande d’information<br>
+                    (Tous les champs sont obligatoires)
+                  </div>
           </div>
+    </div>
 
 
-<form  class="form" id="contact"  action="{{ path('aeag_die_createLight', {'theme' : theme}) }}"  method="post" {{ form_enctype(form) }}>
-  {% spaceless %}
+        <form  class="form" id="contact"  action="{{ path('aeag_die_createLight', {'theme' : theme}) }}"  method="post" {{ form_enctype(form) }}>
+
+            {% spaceless %}
                 {% if not form.vars.valid %}
                     <div class="alert alert-danger">
                         {% for children in form.children %}
@@ -32,7 +34,8 @@
 
             {% endspaceless %}
 
-
+     <div class="row">
+          <div class="col-xs-offset-3 col-xs-5 smaller">
             <div class="panel panel-default">
                 <div class="panel-heading"><h2>Informations personnelles</h2></div>
                 <div class="panel-body">
@@ -40,7 +43,7 @@
                     <div class="form-group">
                         <label for="Nom" class="col-xs-3 control-label">Nom <i class="fa fa-asterisk text-danger btn-xs"></i></label>
                             {%if form_errors(form.nom) %}
-                            <div class="col-xs-8 input-group has-error has-feedback">
+                                <div class="col-xs-8 input-group has-error has-feedback">
                             {% else %}
                                 <div class="col-xs-8 input-group">
                                 {% endif %}
@@ -51,7 +54,7 @@
                         <div class="form-group">
                             <label for="Prenom" class="col-xs-3 control-label">Prénom <i class="fa fa-asterisk text-danger btn-xs"></i></label>
                                 {%if form_errors(form.prenom) %}
-                                <div class="col-xs-8 input-group has-error has-feedback">
+                                   <div class="col-xs-8 input-group has-error has-feedback">
                                 {% else %}
                                     <div class="col-xs-8 input-group">
                                     {% endif %}
@@ -62,7 +65,7 @@
                             <div class="form-group">
                                 <label for="Organisme" class="col-xs-3 control-label">Organisme<i class="fa fa-asterisk text-danger btn-xs"></i></label>
                                     {%if form_errors(form.organisme) %}
-                                    <div class="col-xs-8 input-group has-error has-feedback">
+                                        <div class="col-xs-8 input-group has-error has-feedback">
                                     {% else %}
                                         <div class="col-xs-8 input-group">
                                         {% endif %}
@@ -73,7 +76,7 @@
                                 <div class="form-group">
                                     <label for="Departement" class="col-xs-3 control-label">Département<i class="fa fa-asterisk text-danger btn-xs"></i></label>
                                         {%if form_errors(form.dept) %}
-                                        <div class="col-xs-8 input-group has-error has-feedback">
+                                            <div class="col-xs-8 input-group has-error has-feedback">
                                         {% else %}
                                             <div class="col-xs-8 input-group">
                                             {% endif %}
@@ -84,7 +87,7 @@
                                     <div class="form-group">
                                         <label for="Courriel" class="col-xs-3 control-label">Courriel<i class="fa fa-asterisk text-danger btn-xs"></i></label>
                                             {%if form_errors(form.email) %}
-                                            <div class="col-xs-8 input-group has-error has-feedback">
+                                               <div class="col-xs-8 input-group has-error has-feedback">
                                             {% else %}
                                                 <div class="col-xs-8 input-group">
                                                 {% endif %}
@@ -94,13 +97,17 @@
 
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
 
-
+                    <div class="row">
+                            <div class="col-xs-offset-3 col-xs-5 smaller">
                                 <div class="panel panel-default">
                                     <div class="panel-heading"><h2>Votre message</h2></div>
                                     <div class="panel-body">
 
-                                        {% if not theme %}
+                                            {% if not theme %}
                                             <div class="form-group">
                                                 <label for="Theme" class="col-xs-3 control-label">Thème<i class="fa fa-asterisk text-danger btn-xs"></i></label>
                                                     {%if form_errors(form.theme) %}
@@ -112,11 +119,11 @@
                                                     </div>
                                                 </div> 
                                             {% endif %}
-
+                                     
                                             <div class="form-group">
                                                 <label for="Description" class="col-xs-3 control-label">Description<i class="fa fa-asterisk text-danger btn-xs"></i></label>
                                                     {%if form_errors(form.objet) %}
-                                                    <div class="col-xs-8 input-group has-error has-feedback">
+                                                        <div class="col-xs-8 input-group has-error has-feedback">
                                                     {% else %}
                                                         <div class="col-xs-8 input-group">
                                                         {% endif %}
@@ -127,7 +134,7 @@
                                                 <div class="form-group">
                                                     <label for=Message" class="col-xs-3 control-label">Message<i class="fa fa-asterisk text-danger btn-xs"></i></label>
                                                         {%if form_errors(form.corps) %}
-                                                        <div class="col-xs-8 input-group has-error has-feedback">
+                                                             <div class="col-xs-8 input-group has-error has-feedback">
                                                         {% else %}
                                                             <div class="col-xs-8 input-group">
                                                             {% endif %}
@@ -137,16 +144,21 @@
 
                                                 </div>
                                             </div>
+                                        </div>
+                                    </div>
+                                </div>
 
-                                            <div class="hide">
-                                                {{ form_rest(form) }}
-                                            </div>
+                                <div class="hide">
+                                    {{ form_rest(form) }}
+                                </div>
 
-                                            <div  align="center">
-                                                <button type="submit" class="btn btn-primary">Envoyer la demande</button>
-                                            </div>
+                                <div  align="center">
+                                    <button type="submit" class="btn btn-primary">Envoyer la demande</button>
+                                </div>
                 </form>      
 
     </div>
 
 {% endblock content %}
+
+

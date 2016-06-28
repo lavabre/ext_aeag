@@ -13,9 +13,17 @@ class ParametresController extends Controller {
 
     public function indexAction() {
 
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
         $session->set('menu', 'parametres');
+        $session->set('controller', 'Parametres');
+        $session->set('fonction', 'index');
+        $em = $this->get('doctrine')->getManager();
         $emFrd = $this->getDoctrine()->getManager('frd');
+
         $repoPara = $emFrd->getRepository('AeagFrdBundle:Parametre');
         $entities = $repoPara->getParametres();
         return $this->render('AeagFrdBundle:Parametres:index.html.twig', array(
@@ -23,11 +31,19 @@ class ParametresController extends Controller {
         ));
     }
 
-     public function parametreAction($code = null, Request $request) {
+    public function parametreAction($code = null, Request $request) {
 
-
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'parametres');
+        $session->set('controller', 'Parametres');
+        $session->set('fonction', 'parametre');
+        $em = $this->get('doctrine')->getManager();
         $emFrd = $this->getDoctrine()->getManager('frd');
-        
+
         $repoPara = $emFrd->getRepository('AeagFrdBundle:Parametre');
 
         if (!$code or $code == 'new') {
@@ -36,7 +52,7 @@ class ParametresController extends Controller {
         } else {
             $parametre = $repoPara->getParametreByCode($code);
             $form = $this->createForm(new MajParametreType(), $parametre);
-         }
+        }
 
         if ($request->getMethod() == 'POST') {
 
@@ -59,4 +75,3 @@ class ParametresController extends Controller {
     }
 
 }
-

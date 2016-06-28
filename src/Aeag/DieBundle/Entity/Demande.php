@@ -4,12 +4,12 @@ namespace Aeag\DieBundle\Entity;
 
 use Doctrine\ORM\Id as ID;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
  * @ORM\Table(name="Demande")
+ * @ORM\Entity(repositoryClass="Aeag\DieBundle\Repository\DemandeRepository")
  */
 class Demande {
 

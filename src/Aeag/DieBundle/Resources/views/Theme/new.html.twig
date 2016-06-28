@@ -1,49 +1,63 @@
 {% extends "AeagDieBundle::layout.html.twig" %}
 
-{% block contenu %}
+{% block breadcrumb %}
+    <li>
+        <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+    </li>
+    <li>
+        <a href="{{ path('organisme') }}">Thème</a> 
+    </li>
+     <li class="active">
+        Nouveau
+    </li>
+{% endblock breadcrumb %} 
 
-<div align="center">
-    <h1>Création d'un thème </H1>
-</div>
-<br>
+{%block panel_heading %}
+             <h3 class="page-title text-center">
+                Création d'un thème
+             </h3>
+  {%endblock panel_heading %}
+
+{% block content %}
+
 
 
 <form class="form" action="{{ path('theme_create') }}" method="post" {{ form_enctype(form) }}>
-     {{ form_errors(form) }}
+     
+     {% spaceless %}
+                {% if not form.vars.valid %}
+                        <div class="alert alert-danger">
+                           {% for children in form.children %}
+                                {% if not children.vars.valid %}
+                                    {{ form_errors(children) }}
+                               {% endif %}
+                            {% endfor %}
+                        </div>
+                {% endif %}
+          {% endspaceless %}      
+          
+          <div class="form-group">
+            <label for="ordre" class="col-xs-offset-2 col-xs-2 control-label">Thème</label>
+            {%if form_errors(form.theme) %}
+                <div class="col-xs-3 input-group has-error has-feedback">
+            {% else %}
+                 <div class="col-xs-3 input-group">
+             {% endif %}
+               {{ form_widget(form.theme, { 'attr': {'class': 'form-control ', 'placeholder': 'Thème'} }) }}
+             </div>
+         </div> 
+             
+            <div class="hide">
+           {{ form_rest(form) }}
+           </div>
     
-        <table align="center">
-            <tr>
-                <td align="right" width="35%">{{ form_label(form.theme,'Thème') }}</td>
-                <td width="65%" align="left">
-                {% if form_errors(form.theme) | length %}
-                <span class="relative"> 
-                    {{ form_widget(form.theme, { 'attr': {'class': 'full-width error'} }) }}
-                    <span class="check-error"></span>
-                {% else %}
-                {{ form_widget(form.theme, { 'attr': {'class': 'full-width'} }) }}
-                {% endif %}  
-                </td>
-                <td nowrap><div class="symfony-form-errors">{{ form_errors(form.theme) }}</div></td>
-            </tr>
-        </table>
-        <br><br>
+          <div class="form-group">
+                <div class="col-xs-offset-3 col-xs-9">
+                   <button type="submit" class="btn btn-success"><i class="fa fa-save"></i> Enregister</button>
+                   <a class="btn btn-danger" href="{{ path('theme') }}"><i class="fa fa-power-off"></i> Annuler</a>
+                </div>
+          </div>
 
-        {{ form_rest(form) }}
-
-        <div  align="center">
-            <button   class="button blue" type="submit">Créer</button>
-        </div>
 </form>
-<br>
-<br>
-<table align="center">
-    <tr>
-        <td>
-            <a class="button blue" href="{{ path('theme') }}">
-                <img src="{{ asset('bundles/aeagdie/images/icons/web-app/24/back.png') }}">  
-                Retour
-            </a>
-        </td>
-    </tr>
-</table>
-{% endblock %}
+
+{% endblock content%}

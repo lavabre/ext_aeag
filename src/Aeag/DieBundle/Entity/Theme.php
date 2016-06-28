@@ -13,8 +13,9 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ORM\Entity
- * @ORM\Table(name="Theme")
+ * @ORM\Entity()
+ * @ORM\Table(name="theme")
+ * @ORM\Entity(repositoryClass="Aeag\DieBundle\Repository\ThemeRepository")
  */
 class Theme {
 
@@ -32,6 +33,7 @@ class Theme {
      * @assert\LessThan(150)
      */
     private $theme;
+    
     private $themeLibelle;
 
     public function getId() {

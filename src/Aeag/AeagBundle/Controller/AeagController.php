@@ -18,10 +18,18 @@ use Aeag\AeagBundle\Entity\Form\EnvoyerMessageAll;
 class AeagController extends Controller {
 
     public function indexAction() {
-        $security = $this->get('security.authorization_checker');
-        $user = $this->getUser();
-        $em = $this->getDoctrine()->getManager();
+        
+          $user = $this->getUser();
+//         if (!$user) {
+//            return $this->render('AeagAeagBundle:Default:interdit.html.twig');
+//        }
         $session = $this->get('session');
+        $session->set('menu', 'accueil');
+        $session->set('controller', 'Aeag');
+        $session->set('fonction', 'index');
+        $em = $this->get('doctrine')->getManager();
+        
+        $security = $this->get('security.authorization_checker');
         $session->clear();
         \apc_clear_cache();
 
@@ -77,11 +85,19 @@ class AeagController extends Controller {
     }
 
     public function envoyerMessageAllAction($id = nul, Request $request) {
-        $security = $this->get('security.authorization_checker');
-        $em = $this->getDoctrine()->getManager();
-        $user = $this->getUser();
+        
+         $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagAeagBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
-        $repoUsers = $em->getRepository('AeagUserBundle:User');
+        $session->set('menu', 'accueil');
+        $session->set('controller', 'Aeag');
+        $session->set('fonction', 'envoyerMessageAll');
+        $em = $this->get('doctrine')->getManager();
+        
+        $security = $this->get('security.authorization_checker');
+         $repoUsers = $em->getRepository('AeagUserBundle:User');
         $repoNotifications = $em->getRepository('AeagAeagBundle:Notification');
         $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
 
@@ -93,6 +109,8 @@ class AeagController extends Controller {
             $utilisateurs = $repoUsers->getUsersByRole('ROLE_FRD');
         } elseif ($security->isGranted('ROLE_SQE')) {
             $utilisateurs = $repoUsers->getUsersByRole('ROLE_SQE');
+         } elseif ($security->isGranted('ROLE_EDL')) {
+            $utilisateurs = $repoUsers->getUsersByRole('ROLE_EDL');
         } else {
             $utilisateurs = $repoUsers->getUsersByRole('ROLE_AEAG');
         }
@@ -220,11 +238,19 @@ class AeagController extends Controller {
     }
 
     public function envoyerMessageAction($id = null, Request $request) {
-        $security = $this->get('security.authorization_checker');
-        $em = $this->getDoctrine()->getManager();
-        $emSqe = $this->get('doctrine')->getManager('sqe');
-        $user = $this->getUser();
+        
+          $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagAeagBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
+        $session->set('menu', 'accueil');
+        $session->set('controller', 'Aeag');
+        $session->set('fonction', 'envoyerMessage');
+        $em = $this->get('doctrine')->getManager();
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+        
+        $security = $this->get('security.authorization_checker');
         $repoUsers = $em->getRepository('AeagUserBundle:User');
         $repoInterlocuteur = $em->getRepository('AeagAeagBundle:Interlocuteur');
         $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
@@ -346,10 +372,17 @@ class AeagController extends Controller {
     }
 
     public function consulterMessageAction($id = null) {
-
-        $em = $this->getDoctrine()->getManager();
-        $user = $this->getUser();
+        
+         $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagAeagBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
+        $session->set('menu', 'accueil');
+        $session->set('controller', 'Aeag');
+        $session->set('fonction', 'consulterMessage');
+        $em = $this->get('doctrine')->getManager();
+     
         $repoMessages = $em->getRepository('AeagAeagBundle:Message');
         $repoUser = $em->getRepository('AeagUserBundle:User');
         $message = $repoMessages->getMessageById($id);
@@ -367,16 +400,18 @@ class AeagController extends Controller {
     }
 
     public function supprimerMessageAction($id = null) {
-
+        
+          $user = $this->getUser();
+         if (!$user) {
+            return $this->render('AeagAeagBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
+        $session->set('menu', 'accueil');
+        $session->set('controller', 'Aeag');
+        $session->set('fonction', 'supprimerMessage');
+        $em = $this->get('doctrine')->getManager();
 
-        $em = $this->getDoctrine()->getManager();
-
-        $user = $this->getUser();
-
-        $messages = null;
-
-
+         $messages = null;
         $repoMessages = $em->getRepository('AeagAeagBundle:Message');
         $message = $repoMessages->getMessageById($id);
         $session->set('Messages', '');

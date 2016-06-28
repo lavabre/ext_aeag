@@ -10,27 +10,27 @@
 
 {%block content %}
 
-<div class="col-xs-offset-3 col-xs-8 small">
+<div class="col-xs-offset-4 col-xs-4 small">
 
 <div class="list-group">
-        <a class="list-group-item btn btn-default btn-lg" data-toggle="modal" href="{{ path('organisme') }}" title="Gestion des Organismes">
-                   <i class="fa fa-share">  Gestion des Organismes</i>
+        <a class="list-group-item" href="{{ path('organisme') }}" title="Gestion des Organismes">
+            <div class=" btn btn-info btn-lg"><i class="fa fa-institution"></i>  Gestion des Organismes</div>
          </a>
-         <a class="list-group-item btn btn-default btn-lg" data-toggle="modal" href="{{ path('theme') }}" title="Gestion des Thèmes">
-                   <i class="fa fa-share">  Gestion des Thèmes</i>
+         <a class="list-group-item"  href="{{ path('theme') }}" title="Gestion des Thèmes">
+             <div class=" btn btn-info btn-lg"><i class="fa fa-cubes"></i>  Gestion des Thèmes</div>
          </a>
-         <a class="list-group-item btn btn-default btn-lg" data-toggle="modal" href="{{ path('soustheme') }}" title="Gestion des Sous-Thèmes">
-                   <i class="fa fa-share">  Gestion des Sous-Thèmes</i>
+         <a class="list-group-item"  href="{{ path('soustheme') }}" title="Gestion des Sous-Thèmes">
+            <div class=" btn btn-info btn-lg"><i class="fa fa-cube"></i>  Gestion des Sous-Thèmes</div>
          </a>
-         <a class="list-group-item btn btn-default btn-lg" data-toggle="modal" href="{{ path('demande') }}" title="Gestion des Demandes">
-                   <i class="fa fa-share">  Gestion des Demandes</i>
+         <a class="list-group-item"  href="{{ path('demande') }}" title="Gestion des Demandes">
+              <div class=" btn btn-info btn-lg"><i class="fa fa-question-circle"></i>  Gestion des Demandes</div>
          </a>
 </div>
             
 </div>     
                    
   <div class="form-actions fluid center">
-          <div class="col-md-offset-5 col-md-9">
+          <div class="col-md-offset-5 col-md-3">
                   <a id="idValider" class="btn btn-primary"  href="{{ path('fos_user_security_logout') }}" title="Deconnexionr">
                           <i class="fa fa-home"> Deconnexion  </i>
                   </a>

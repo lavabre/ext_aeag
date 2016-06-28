@@ -13,8 +13,9 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ORM\Entity
- * @ORM\Table(name="SousTheme")
+ * @ORM\Entity()
+ * @ORM\Table(name="sousTheme")
+ * @ORM\Entity(repositoryClass="Aeag\DieBundle\Repository\SousThemeRepository")
  */
 class SousTheme {
 

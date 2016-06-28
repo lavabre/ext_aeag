@@ -18,6 +18,7 @@ class DateTimeEtat extends \DateTime {
 class EtatController extends Controller {
 
     public function etatFormAction(Request $request) {
+
         $user = $this->getUser();
         $session = $this->get('session');
         $session->set('controller', 'Etat');
@@ -77,6 +78,7 @@ class EtatController extends Controller {
         $session->set('fonction', 'etatSubmit');
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
+
         $repoUtilisateur = $emEdl->getRepository('AeagEdlBundle:Utilisateur');
         $repoEtatDerniereProposition = $emEdl->getRepository('AeagEdlBundle:EtatDerniereProposition');
 
@@ -192,6 +194,7 @@ class EtatController extends Controller {
     }
 
     public function removeEtatAction(Request $request) {
+
         $user = $this->getUser();
         if (!$user) {
             return $this->render('AeagEdlBundle:Default:interdit.html.twig');

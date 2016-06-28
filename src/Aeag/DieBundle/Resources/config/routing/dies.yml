@@ -10,7 +10,7 @@ aeag_die_Light_theme:
     path:  /{theme}
     defaults: { _controller: AeagDieBundle:Default:indexLight, theme:null }
     requirements:
-        theme: '[0-9]{2}'
+        theme: '[0-9]'
  
     
 aeag_die_createLight:
@@ -18,7 +18,7 @@ aeag_die_createLight:
     defaults: { _controller: AeagDieBundle:Default:createLight, theme:null  }
     requirements: 
         methods: post
-        theme: '[0-9]{2}'
+        theme: '[0-9]'
     
 
 

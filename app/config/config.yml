@@ -145,7 +145,7 @@ doctrine:
             die:
                 connection:       die
                 mappings:
-                    AeagSqeBundle : ~
+                    AeagDieBundle : ~
                     
             edl:
                 connection:       edl

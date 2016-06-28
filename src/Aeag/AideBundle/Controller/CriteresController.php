@@ -27,8 +27,13 @@ class CriteresController extends Controller {
      *
      */
     public function criteresAction(Request $request) {
-        $session = $this->get('session');
 
+        $session = $this->get('session');
+        $session->set('menu', 'aide');
+        $session->set('controller', 'Criteres');
+        $session->set('fonction', 'criteres');
+        $emAeag = $this->getDoctrine()->getManager();
+        $em = $this->getDoctrine()->getManager('aide');
         $session->set('retourErreur', $this->generateUrl('aeag_aide'));
 
         $criteres = new CriteresRequest();
@@ -38,8 +43,6 @@ class CriteresController extends Controller {
         if ($request->getMethod() == 'POST') {
             $form->handleRequest($request);
 
-            $emAeag = $this->getDoctrine()->getManager();
-            $em = $this->getDoctrine()->getManager('aide');
             $repoLigne = $em->getRepository('AeagAideBundle:Ligne');
             $repoCategorie = $em->getRepository('AeagAideBundle:Categorie');
             $repoAnnee = $em->getRepository('AeagAideBundle:Annee');
@@ -93,19 +96,19 @@ class CriteresController extends Controller {
             }
             $session->set('categorie_libelle', $variables['categorie_libelle']);
 
-              // Critère date de decision
-             if ($criteres->getDateDebut()) {
+            // Critère date de decision
+            if ($criteres->getDateDebut()) {
                 if (!$criteres->getDateFin()) {
                     $criteres->setDateFin(new \DateTime(date('Y-m-d')));
                 }
-                $mois_fr = Array("", "janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", 
-                        "septembre", "octobre", "novembre", "décembre");
+                $mois_fr = Array("", "janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août",
+                    "septembre", "octobre", "novembre", "décembre");
                 list( $jour, $mois, $anneeDebut) = explode('/', $criteres->getDateDebut()->format("d/n/Y"));
-                $dateDebut =  $jour.' '.$mois_fr[$mois].' '.$anneeDebut; 
+                $dateDebut = $jour . ' ' . $mois_fr[$mois] . ' ' . $anneeDebut;
                 list($jour, $mois, $anneeFin) = explode('/', $criteres->getDateFin()->format("d/n/Y"));
-                $dateFin =  $jour.' '.$mois_fr[$mois].' '.$anneeFin; 
+                $dateFin = $jour . ' ' . $mois_fr[$mois] . ' ' . $anneeFin;
                 $variables['decision_libelle'] = "décision prise entre le  " . $dateDebut . " et le  " . $dateFin;
-                $where_date_decision= " and a.date_decision >= '" . $criteres->getDateDebut()->format('Y-m-d') . "' and a.date_decision <= '" . $criteres->getDateFin()->format('Y-m-d') . "'";
+                $where_date_decision = " and a.date_decision >= '" . $criteres->getDateDebut()->format('Y-m-d') . "' and a.date_decision <= '" . $criteres->getDateFin()->format('Y-m-d') . "'";
             } else {
                 $variables['decision_libelle'] = "décision prise depuis le 1er janvier 2000";
                 $where_date_decision = " and a.annee >= 2000 ";
@@ -113,12 +116,12 @@ class CriteresController extends Controller {
                 $anneeFin = null;
             }
             $session->set('decision_libelle', $variables['decision_libelle']);
-             if ($anneeDebut != $anneeFin) {
-                    $variables['annees'] = true;
-                } else {
-                    $variables['annees'] = false;
-                }
-                $session->set('annees', $variables['annees']);
+            if ($anneeDebut != $anneeFin) {
+                $variables['annees'] = true;
+            } else {
+                $variables['annees'] = false;
+            }
+            $session->set('annees', $variables['annees']);
 
 
             // Critère Region administrative
@@ -254,8 +257,13 @@ class CriteresController extends Controller {
     }
 
     public function regionDepartementsAction(Request $request) {
-        $em = $this->getDoctrine()->getManager();
+
         $session = $this->get('session');
+        $session->set('menu', 'aide');
+        $session->set('controller', 'Criteres');
+        $session->set('fonction', 'regionDepartements');
+        $em = $this->getDoctrine()->getManager();
+
         $repoDepartement = $em->getRepository('AeagAeagBundle:Departement');
         $repoRegionAdmin = $em->getRepository('AeagAeagBundle:Region');
 
@@ -268,21 +276,25 @@ class CriteresController extends Controller {
             $departements = $repoDepartement->getDepartements();
         }
 
-            return $this->render('AeagAideBundle:Criteres:regionDepartements.html.twig', array(
-                        'region' => $critRegion,
-                        'departements' => $departements
-            ));
-        }
+        return $this->render('AeagAideBundle:Criteres:regionDepartements.html.twig', array(
+                    'region' => $critRegion,
+                    'departements' => $departements
+        ));
+    }
 
     /**
      *  Fichier PDF
      */
     public function pdfAction() {
 
-        $em = $this->getDoctrine()->getManager('aide');
-        $repoDossier = $em->getRepository('AeagAideBundle:Dossier');
-
         $session = $this->get('session');
+        $session->set('menu', 'aide');
+        $session->set('controller', 'Criteres');
+        $session->set('fonction', 'pdf');
+        $emAeag = $this->getDoctrine()->getManager();
+        $em = $this->getDoctrine()->getManager('aide');
+
+        $repoDossier = $em->getRepository('AeagAideBundle:Dossier');
 
         // Critère ligne
 
@@ -295,7 +307,7 @@ class CriteresController extends Controller {
 
         // Critère annee
         $variables['annees'] = $session->get('annees');
-        
+
         // Critère decision dates
         $variables['decision_libelle'] = $session->get('decision_libelle');
 
@@ -377,10 +389,14 @@ class CriteresController extends Controller {
 
     public function csvAction() {
 
-        $em = $this->getDoctrine()->getManager('aide');
-        $repoDossier = $em->getRepository('AeagAideBundle:Dossier');
-
         $session = $this->get('session');
+        $session->set('menu', 'aide');
+        $session->set('controller', 'Criteres');
+        $session->set('fonction', 'csv');
+        $emAeag = $this->getDoctrine()->getManager();
+        $em = $this->getDoctrine()->getManager('aide');
+
+        $repoDossier = $em->getRepository('AeagAideBundle:Dossier');
 
         // Critère ligne
 

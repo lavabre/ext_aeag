@@ -29,17 +29,17 @@ class DefaultController extends Controller {
         /* Recherche  des mases d'eau
          * 
          */
-
         $user = $this->getUser();
         $session = $this->get('session');
-        $session->clear();
-        $session->set('appli', 'edl');
-        $session->set('retourErreur', $this->generateUrl('aeag_edl'));
         $session->set('menu', 'index');
-        $session->set('controller', 'default');
+        $session->set('controller', 'Default');
         $session->set('fonction', 'index');
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
+        $session->clear();
+        $session->set('appli', 'edl');
+        $session->set('retourErreur', $this->generateUrl('aeag_edl'));
+
         $repoUtilisateur = $emEdl->getRepository('AeagEdlBundle:Utilisateur');
         $repoExportAvisEtat = $emEdl->getRepository('AeagEdlBundle:ExportAvisEtat');
         $repoExportAvisPression = $emEdl->getRepository('AeagEdlBundle:ExportAvisPression');
@@ -71,7 +71,7 @@ class DefaultController extends Controller {
 
         return $this->render('AeagEdlBundle:Default:index.html.twig', array(
                     'form' => $form->createView(),
-          ));
+        ));
     }
 
     public function listeMasseEauAction(Request $request) {
@@ -84,6 +84,7 @@ class DefaultController extends Controller {
         $session->set('fonction', 'listeMasseEau');
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
+
         $repoUtilisateur = $emEdl->getRepository('AeagEdlBundle:Utilisateur');
         $repoExportAvisEtat = $emEdl->getRepository('AeagEdlBundle:ExportAvisEtat');
         $repoExportAvisPression = $emEdl->getRepository('AeagEdlBundle:ExportAvisPression');
@@ -265,7 +266,7 @@ class DefaultController extends Controller {
 
         $MasseEaux = $emEdl->createQuery($query)
                 ->getResult();
-   
+
         $res = array();
         $i = 0;
         foreach ($MasseEaux as $MasseEau) {
@@ -339,7 +340,6 @@ class DefaultController extends Controller {
         $session->set('fonction', 'etatGroupe');
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
-
 
         $repo = $emEdl->getRepository('AeagEdlBundle:EtatGroupe');
         $meRepo = $emEdl->getRepository('AeagEdlBundle:MasseEau');
@@ -459,6 +459,7 @@ class DefaultController extends Controller {
         $session->set('fonction', 'exportEtat');
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
+
         $repoUtilisateur = $emEdl->getRepository('AeagEdlBundle:Utilisateur');
         $repoExportAvisEtat = $emEdl->getRepository('AeagEdlBundle:ExportAvisEtat');
         $repoExportAvisPression = $emEdl->getRepository('AeagEdlBundle:ExportAvisPression');
@@ -536,13 +537,11 @@ class DefaultController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
 
-
         $repo = $emEdl->getRepository('AeagEdlBundle:PressionGroupe');
         $meRepo = $emEdl->getRepository('AeagEdlBundle:MasseEau');
         $repoAvisHistorique = $emEdl->getRepository('AeagEdlBundle:AvisHistorique');
         $repoPressionMe = $emEdl->getRepository('AeagEdlBundle:PressionMe');
         $repoPressionDerniereProposition = $emEdl->getRepository('AeagEdlBundle:PressionDerniereProposition');
-
 
         $pressionGroupes = $repo->getPressionGroupe();
 
@@ -735,7 +734,8 @@ class DefaultController extends Controller {
     }
 
     public function massedeauAction($code) {
-         $user = $this->getUser();
+
+        $user = $this->getUser();
         $session = $this->get('session');
         $session->set('menu', 'acceuil');
         $session->set('controller', 'default');
@@ -762,6 +762,7 @@ class DefaultController extends Controller {
     }
 
     public function contactAction() {
+
         $user = $this->getUser();
         $session = $this->get('session');
         $session->set('menu', 'acceuil');
@@ -769,7 +770,7 @@ class DefaultController extends Controller {
         $session->set('fonction', 'contact');
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
-        
+
         $enquiry = new Contact();
         $form = $this->createForm(new ContactType(), $enquiry);
 
@@ -801,7 +802,7 @@ class DefaultController extends Controller {
 
     public function majUtilisateurs() {
 
-         $user = $this->getUser();
+        $user = $this->getUser();
         $session = $this->get('session');
         $session->set('menu', 'acceuil');
         $session->set('controller', 'default');
@@ -835,7 +836,7 @@ class DefaultController extends Controller {
 
     public function initUtilisateurs() {
 
-         $user = $this->getUser();
+        $user = $this->getUser();
         $session = $this->get('session');
         $session->set('menu', 'acceuil');
         $session->set('controller', 'default');

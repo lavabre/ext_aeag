@@ -3,10 +3,24 @@
 
 {% block menu %}
      <li><a href="{{ path('aeag_homepage') }}"><i class="fa fa-home"></i>&nbsp; Accueil</a></li>
+      <li>
+         <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+            Référentiel
+            <i class="fa fa-angle-down"></i>     
+        </a>
+            <ul class="dropdown-menu">
+                 <li><a href="{{ path('Aeag_listeRegion')}}">Région</a></li>
+                  <li><a href="{{ path('Aeag_listeDepartement') }}">Départements</a></li>
+                 <li><a href="{{ path('Aeag_listeOuvrage') }}">Ouvrages</a></li>
+                 <li><a href="{{ path('Aeag_listeCorrespondants') }}">Correspondants</a></li>
+            </ul>
+        </li>
      <li><a href="{{ path('aeag_dec') }}"><i class="fa fa-home"></i>&nbsp; Dechets</a></li>
      <li><a href="{{ path('aeag_frd') }}"><i class="fa fa-home"></i>&nbsp; Frd</a></li>
      <li><a href="{{ path('aeag_aide') }}"><i class="fa fa-home"></i>&nbsp; Aide</a></li>
-     <li><a href="{{ path('aeag_sqe') }}"><i class="fa fa-home"></i>&nbsp; Programmation SQE</a></li>
+     <li><a href="{{ path('aeag_sqe') }}"><i class="fa fa-home"></i>&nbsp;SQE</a></li>
+     <li><a href="{{ path('aeag_edl') }}"><i class="fa fa-home"></i>&nbsp;Edl</a></li>
+     <li><a href="{{ path('aeag_die') }}"><i class="fa fa-home"></i>&nbsp;Die</a></li>
      <li><a href="{{ path('AeagUserBundle_User', { 'role': 'ROLE_AEAG' }) }}"><i class="fa fa-users"></i>&nbsp; Utilisateurs</a></li>
  {% endblock menu %}
 

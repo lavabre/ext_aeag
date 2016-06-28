@@ -23,9 +23,16 @@ class ReferentielController extends Controller {
 
     public function indexAction() {
 
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
-
-        $session->set('menuPrincipal', 'menuReferentiel');
+        $session->set('menu', 'referentiel');
+        $session->set('controller', 'Referentiel');
+        $session->set('fonction', 'index');
+        $em = $this->get('doctrine')->getManager();
+        $emFrd = $this->getDoctrine()->getManager('frd');
 
         $session->set('refMess', null);
 
@@ -33,6 +40,16 @@ class ReferentielController extends Controller {
     }
 
     public function chargeAppliAction() {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'referentiel');
+        $session->set('controller', 'Referentiel');
+        $session->set('fonction', 'chargeAppli');
+        $em = $this->get('doctrine')->getManager();
         $emFrd = $this->getDoctrine()->getManager('frd');
 
         $parametre = new Parametre();
@@ -110,9 +127,16 @@ class ReferentielController extends Controller {
 
     public function chargeReferentielAction() {
 
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
-
-        $session->set('referentiel', 'chargeReferentiel');
+        $session->set('menu', 'referentiel');
+        $session->set('controller', 'Referentiel');
+        $session->set('fonction', 'chargeReferentiel');
+        $em = $this->get('doctrine')->getManager();
+        $emFrd = $this->getDoctrine()->getManager('frd');
 
         $emFrd = $this->getDoctrine()->getManager('frd');
         $parametre = $emFrd->getRepository('AeagFrdBundle:Parametre')->findOneBy(array('code' => 'REP_REFERENTIEL'));
@@ -164,7 +188,16 @@ class ReferentielController extends Controller {
 
     public function chargeFichierAction($ficent = null, $message = null, $passage = null) {
 
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
+        $session->set('menu', 'referentiel');
+        $session->set('controller', 'Referentiel');
+        $session->set('fonction', 'chargeFichier');
+        $em = $this->get('doctrine')->getManager();
+        $emFrd = $this->getDoctrine()->getManager('frd');
 
         $session->set('refMess', null);
 
@@ -228,8 +261,17 @@ class ReferentielController extends Controller {
 
     public function chargeUsersAction($ficent = null, $repertoire = 'REP_REFERENTIEL') {
 
-        $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'referentiel');
+        $session->set('controller', 'Referentiel');
+        $session->set('fonction', 'chargeUsers');
+        $em = $this->get('doctrine')->getManager();
         $emFrd = $this->getDoctrine()->getManager('frd');
+
         $factory = $this->get('security.encoder_factory');
         $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
         $repoUsers = $em->getRepository('AeagUserBundle:User');
@@ -387,7 +429,18 @@ class ReferentielController extends Controller {
     }
 
     public function chargeFinaliteAction($ficent = null) {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'referentiel');
+        $session->set('controller', 'Referentiel');
+        $session->set('fonction', 'chargeFinalite');
+        $em = $this->get('doctrine')->getManager();
         $emFrd = $this->getDoctrine()->getManager('frd');
+
         $parametre = $emFrd->getRepository('AeagFrdBundle:Parametre')->findOneBy(array('code' => 'REP_REFERENTIEL'));
         $rep = $parametre->getLibelle();
         $fichier = $rep . "/" . $ficent;
@@ -438,7 +491,17 @@ class ReferentielController extends Controller {
 
     public function chargeSousThemeAction($ficent = null, $repertoire = 'REP_REFERENTIEL') {
 
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'referentiel');
+        $session->set('controller', 'Referentiel');
+        $session->set('fonction', 'chargeSousTheme');
+        $em = $this->get('doctrine')->getManager();
         $emFrd = $this->getDoctrine()->getManager('frd');
+
         $parametre = $emFrd->getRepository('AeagFrdBundle:Parametre')->findOneBy(array('code' => $repertoire));
         $rep = $parametre->getLibelle();
         $fichier = $rep . "/" . $ficent;
@@ -492,7 +555,17 @@ class ReferentielController extends Controller {
 
     public function chargeTypeMissionAction($ficent = null, $repertoire = 'REP_REFERENTIEL') {
 
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'referentiel');
+        $session->set('controller', 'Referentiel');
+        $session->set('fonction', 'chargeTypeMission');
+        $em = $this->get('doctrine')->getManager();
         $emFrd = $this->getDoctrine()->getManager('frd');
+
         $parametre = $emFrd->getRepository('AeagFrdBundle:Parametre')->findOneBy(array('code' => $repertoire));
         $rep = $parametre->getLibelle();
         $fichier = $rep . "/" . $ficent;
@@ -540,10 +613,17 @@ class ReferentielController extends Controller {
 
     public function chargeDepartementsAction($ficent = null) {
 
-
-
-        $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'referentiel');
+        $session->set('controller', 'Referentiel');
+        $session->set('fonction', 'chargeDepartement');
+        $em = $this->get('doctrine')->getManager();
         $emFrd = $this->getDoctrine()->getManager('frd');
+
         $parametre = $emFrd->getRepository('AeagFrdBundle:Parametre')->findOneBy(array('code' => 'REP_REFERENTIEL'));
         $rep = $parametre->getLibelle();
         $fichier = $rep . "/" . $ficent;
@@ -596,8 +676,17 @@ class ReferentielController extends Controller {
 
     public function chargeFraisDeplacementsAction($ficent = null) {
 
-        $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'referentiel');
+        $session->set('controller', 'Referentiel');
+        $session->set('fonction', 'chargeFraisDeplacement');
+        $em = $this->get('doctrine')->getManager();
         $emFrd = $this->getDoctrine()->getManager('frd');
+
         $parametre = $emFrd->getRepository('AeagFrdBundle:Parametre')->findOneBy(array('code' => 'REP_REFERENTIEL'));
         $rep = $parametre->getLibelle();
         $fichier = $rep . "/" . $ficent;
@@ -1008,8 +1097,17 @@ class ReferentielController extends Controller {
 
     public function chargeFraisDeplacementsRetourAction($ficent = null) {
 
-        $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'referentiel');
+        $session->set('controller', 'Referentiel');
+        $session->set('fonction', 'chargeFraisDeplacementsRetour');
+        $em = $this->get('doctrine')->getManager();
         $emFrd = $this->getDoctrine()->getManager('frd');
+
         $parametre = $emFrd->getRepository('AeagFrdBundle:Parametre')->findOneBy(array('code' => 'REP_REFERENTIEL'));
         $rep = $parametre->getLibelle();
         $fichier = $rep . "/" . $ficent;
@@ -1242,9 +1340,16 @@ class ReferentielController extends Controller {
 
     public function consulterDepartementsAction() {
 
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
-
-        $session->set('referentiel', 'refDepartements');
+        $session->set('menu', 'referentiel');
+        $session->set('controller', 'Referentiel');
+        $session->set('fonction', 'consulterDepartements');
+        $em = $this->get('doctrine')->getManager();
+        $emFrd = $this->getDoctrine()->getManager('frd');
 
         $repoDepartement = $this->getDoctrine()->getManager('frd')->getRepository('AeagFrdBundle:Departement');
 
@@ -1257,9 +1362,16 @@ class ReferentielController extends Controller {
 
     public function consulterFinalitesAction() {
 
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
-
-        $session->set('referentiel', 'refFinalites');
+        $session->set('menu', 'referentiel');
+        $session->set('controller', 'Referentiel');
+        $session->set('fonction', 'consulterFinalites');
+        $em = $this->get('doctrine')->getManager();
+        $emFrd = $this->getDoctrine()->getManager('frd');
 
         $repoFinalite = $this->getDoctrine()->getManager('frd')->getRepository('AeagFrdBundle:Finalite');
 
@@ -1272,9 +1384,16 @@ class ReferentielController extends Controller {
 
     public function consulterSousThemesAction() {
 
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
-
-        $session->set('referentiel', 'refSousThemes');
+        $session->set('menu', 'referentiel');
+        $session->set('controller', 'Referentiel');
+        $session->set('fonction', 'consulterSousThemes');
+        $em = $this->get('doctrine')->getManager();
+        $emFrd = $this->getDoctrine()->getManager('frd');
 
         $repoSousTheme = $this->getDoctrine()->getManager('frd')->getRepository('AeagFrdBundle:SousTheme');
 
@@ -1287,10 +1406,17 @@ class ReferentielController extends Controller {
 
     public function consulterFraisDeplacementsAction() {
 
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
-        $session->set('referentiel', 'refFraisDeplacement');
-        $em = $this->getDoctrine()->getManager();
+        $session->set('menu', 'referentiel');
+        $session->set('controller', 'Referentiel');
+        $session->set('fonction', 'consulterFraisDeplacements');
+        $em = $this->get('doctrine')->getManager();
         $emFrd = $this->getDoctrine()->getManager('frd');
+
         $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
         $repoUsers = $em->getRepository('AeagUserBundle:User');
         $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
@@ -1334,20 +1460,27 @@ class ReferentielController extends Controller {
 
     public function consulterFraisDeplacementsParAnneeAction($anneeSelect = null) {
 
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
-        $session->set('referentiel', 'refFraisDeplacement');
-        $em = $this->getDoctrine()->getManager();
+        $session->set('menu', 'referentiel');
+        $session->set('controller', 'Referentiel');
+        $session->set('fonction', 'consulterFraisDeplacementsParAnnee');
+        $em = $this->get('doctrine')->getManager();
         $emFrd = $this->getDoctrine()->getManager('frd');
+
         $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
         $repoUsers = $em->getRepository('AeagUserBundle:User');
         $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
-        
+
         if ($anneeSelect == '9999') {
             $anneeSel = $session->get('annee');
         } else {
             $annee = $anneeSelect . '-01-01';
             $anneeSel = new \DateTime($annee);
-         }
+        }
 
         $annee1 = $anneeSel->format('Y');
         $anneeDeb1 = $annee1 . '-01-01';
@@ -1355,7 +1488,7 @@ class ReferentielController extends Controller {
         $anneeDeb = new \DateTime($anneeDeb1);
         $anneeFin = new \DateTime($anneeFin1);
 
-         $fraisDeplacements = $repoFraisDeplacement->getFraisDeplacementByAnnee($anneeDeb, $anneeFin);
+        $fraisDeplacements = $repoFraisDeplacement->getFraisDeplacementByAnnee($anneeDeb, $anneeFin);
         $i = 0;
         $entities = array();
         foreach ($fraisDeplacements as $fraisDeplacement) {
@@ -1395,12 +1528,17 @@ class ReferentielController extends Controller {
      * @Template()
      */
     public function consulterFraisDeplacementAction($id) {
+
         $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
+        $session->set('menu', 'referentiel');
+        $session->set('controller', 'Referentiel');
+        $session->set('fonction', 'consulterFraisDeplacement');
+        $em = $this->get('doctrine')->getManager();
         $emFrd = $this->getDoctrine()->getManager('frd');
-
-        $session->set('referentiel', 'membre');
-
 
         $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
 
@@ -1422,9 +1560,16 @@ class ReferentielController extends Controller {
 
     public function consulterPhasesAction() {
 
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
         $session = $this->get('session');
-
-        $session->set('referentiel', 'refSousThemes');
+        $session->set('menu', 'referentiel');
+        $session->set('controller', 'Referentiel');
+        $session->set('fonction', 'consulterPhases');
+        $em = $this->get('doctrine')->getManager();
+        $emFrd = $this->getDoctrine()->getManager('frd');
 
         $repoPhase = $this->getDoctrine()->getManager('frd')->getRepository('AeagFrdBundle:Phase');
 
@@ -1437,7 +1582,15 @@ class ReferentielController extends Controller {
 
     public function phaseAction($code = null, Request $request) {
 
-
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'referentiel');
+        $session->set('controller', 'Referentiel');
+        $session->set('fonction', 'phase');
+        $em = $this->get('doctrine')->getManager();
         $emFrd = $this->getDoctrine()->getManager('frd');
 
         $repoPhase = $emFrd->getRepository('AeagFrdBundle:Phase');

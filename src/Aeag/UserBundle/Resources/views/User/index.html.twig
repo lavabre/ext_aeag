@@ -59,6 +59,8 @@
                                     <td>
                                         {%if entity.1%}
                                          {{ entity.1.adr1 }}  {{ entity.1.adr2 }}
+                                         {% else %}
+                                            {{ entity.0.prenom  }}
                                         {%endif%}
                                     </td>
                                     <td>
@@ -74,9 +76,11 @@
                                          {% if role == 'ROLE_ADMINFRD' %} {{'Gestionnaire Frd'}} {% endif %}
                                          {% if role == 'ROLE_ADMINSQE' %} {{'Gestionnaire Sqe'}} {% endif %}
                                          {% if role == 'ROLE_ADMINEDL' %} {{'Gestionnaire Edl'}} {% endif %}
+                                         {% if role == 'ROLE_ADMINSTOCK' %} {{'Gestionnaire Stock'}} {% endif %}
                                          {% if role == 'ROLE_ODEC' %} {{'Collecteur Déchet'}} {% endif %}
                                          {% if role == 'ROLE_FRD' %} {{'Membre Frd'}} {% endif %}
                                          {% if role == 'ROLE_SQE' %} {{'Intervenant Sqe'}} {% endif %}
+                                         {% if role == 'ROLE_STOCK' %} {{'Intervenant Stock'}} {% endif %}
                                          {% if role == 'ROLE_COMMENTATEUREDL' %} {{'Commentateur Edl'}} {% endif %}
                                          {% if role == 'ROLE_SUPERVISEUREDL' %} {{'Superviseur Edl'}} {% endif %}
                                     {% endfor %}
