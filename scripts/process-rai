@@ -18,5 +18,5 @@ if [ ! -d "$dirlog" ]; then
 fi
 
 if [ $(ps -ax | grep -v grep | grep 'rai:process' | wc -l) -lt 4 ]; then
-    php $dircmd rai:process >> $dirlog/process_$jour.log
+    php $dircmd rai:process -e $2 >> $dirlog/process_$jour.log
 fi
