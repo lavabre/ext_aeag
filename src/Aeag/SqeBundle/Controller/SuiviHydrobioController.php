@@ -115,7 +115,7 @@ class SuiviHydrobioController extends Controller {
                     }
                     $tabPeriodeAns[$i]['dateFin'] = $dateFin;
                     $trouve = false;
-                    for ($k = 0; $k < count($tabStations); $k++) {
+                    for ($k = 0; $k <= count($tabStations); $k++) {
                         if ($tabStations[$k]->getOuvFoncid() == $pgProgLotPeriodeProg->getStationAn()->getStation()->getOuvFoncid()) {
                             $trouve = true;
                             break;
@@ -188,7 +188,7 @@ class SuiviHydrobioController extends Controller {
             }
             $trouve = false;
             if (count($tabStations) > 0) {
-                for ($k = 0; $k < count($tabStations); $k++) {
+                for ($k = 0; $k <= count($tabStations); $k++) {
                     if ($tabStations[$k]['station']->getOuvFoncId() == $pgProgLotPeriodeProg->getStationAn()->getStation()->getOuvFoncId()) {
                         $trouve = true;
                         break;
@@ -363,7 +363,7 @@ class SuiviHydrobioController extends Controller {
             $j = 0;
             foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
                 $trouve = false;
-                for ($k = 0; $k < count($tabStations); $k++) {
+                for ($k = 0; $k <= count($tabStations); $k++) {
                     if ($tabStations[$k]['station']->getOuvFoncid() == $pgProgLotPeriodeProg->getStationAn()->getStation()->getOuvFoncid()) {
                         $trouve = true;
                         break;
@@ -524,7 +524,7 @@ class SuiviHydrobioController extends Controller {
             foreach ($liste as $nomFichier) {
 //$tabNomFichier = explode('-', $nomFichier);
                 $trouve = false;
-                for ($k = 0; $k < count($tabStations); $k++) {
+                for ($k = 0; $k <= count($tabStations); $k++) {
 //if ($tabStations[$k]['station']->getCode() == $tabNomFichier[0]) {
                     if (strpos($nomFichier, $tabStations[$k]['station']->getCode()) !== false) {
                         $trouve = true;
@@ -546,7 +546,7 @@ class SuiviHydrobioController extends Controller {
                 }
             }
 
-            for ($k = 0; $k < count($tabStations); $k++) {
+            for ($k = 0; $k <= count($tabStations); $k++) {
                 if (count($tabStations[$k]['fichiers'])) {
                     $tabFichiers = $tabStations[$k]['fichiers'];
                     if (count($tabFichiers) < 3) {
@@ -557,7 +557,7 @@ class SuiviHydrobioController extends Controller {
                         $nbCorrect = $nbCorrect - count($tabFichiers);
                         $nbIncorrect = $nbIncorrect +  count($tabFichiers);
                     } elseif (count($tabFichiers) > 0) {
-                        for ($nb = 0; $nb < count($tabFichiers); $nb++) {
+                        for ($nb = 0; $nb <= count($tabFichiers); $nb++) {
 //$tabNomFichier = explode('-', $tabFichiers[$nb]);
 //if ($tabNomFichier[1] != 'ft' && $tabNomFichier[1] != 'photo1' && $tabNomFichier[1] != 'photo2') {
                             if ((strpos($tabFichiers[$nb], 'ft') === false) && (strpos($tabFichiers[$nb], 'terrain') === false) && (strpos($tabFichiers[$nb], 'photo') === false)) {
@@ -575,8 +575,8 @@ class SuiviHydrobioController extends Controller {
 
             if ($erreur == 0) {
                 $tabSupport = array();
-                $nbsupport = 0;
-                for ($k = 0; $k < count($tabStations); $k++) {
+                $nbSupport = 0;
+                for ($k = 0; $k <= count($tabStations); $k++) {
                     if (count($tabStations[$k]['fichiers'])) {
                         $tabFichiers = $tabStations[$k]['fichiers'];
                         if (count($tabFichiers) > 1) {
@@ -588,7 +588,7 @@ class SuiviHydrobioController extends Controller {
                             $contenu = 'le fichier  ' . $zipName . ' regroupe ' . count($tabFichiers) . ' fichiers : ' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
                             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                             fputs($rapport, $contenu);
-                            for ($nb = 0; $nb < count($tabFichiers); $nb++) {
+                            for ($nb = 0; $nb <= count($tabFichiers); $nb++) {
                                 array_push($files, $pathBase . '/' . $tabFichiers[$nb]);
                                 $contenu = '                  -  ' . $tabFichiers[$nb] . CHR(13) . CHR(10) . CHR(13) . CHR(10);
                                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
@@ -607,7 +607,7 @@ class SuiviHydrobioController extends Controller {
 
                         $pgCmdPrelev = $tabStations[$k]['prelevs'][0]['cmdPrelev'];
                         $trouve = false;
-                        for ($nbSupport = 0; count($tabSupport); $nbSupport++) {
+                        for ($nbSupport = 0; $nbSupport <= count($tabSupport); $nbSupport++) {
                             if ($tabSupport[$nbSupport] == $pgCmdPrelev->getCodeSupport()->getCodeSupport()) {
                                 $trouve = true;
                                 break;
@@ -671,7 +671,7 @@ class SuiviHydrobioController extends Controller {
                             foreach ($pgProgWebusers as $destinataire) {
                                 if ($destinataire->getCodeSupport()) {
                                     $trouve = false;
-                                    for ($nbSupport = 0; count($tabSupport); $nbSupport++) {
+                                    for ($nbSupport = 0; $nbSupport <= count($tabSupport); $nbSupport++) {
                                         if ($tabSupport[$nbSupport] == $destinataire->getCodeSupport()) {
                                             $trouve = true;
                                             break;
@@ -820,7 +820,7 @@ class SuiviHydrobioController extends Controller {
             $j = 0;
             foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
                 $trouve = false;
-                for ($k = 0; $k < count($tabStations); $k++) {
+                for ($k = 0; $k <= count($tabStations); $k++) {
                     if ($tabStations[$k]['station']->getOuvFoncid() == $pgProgLotPeriodeProg->getStationAn()->getStation()->getOuvFoncid()) {
                         $trouve = true;
                         break;
@@ -952,7 +952,7 @@ class SuiviHydrobioController extends Controller {
                         fputs($rapport, $contenu);
                     } else {
                         $trouve = false;
-                        for ($i = 0; $i < count($tabStations); $i++) {
+                        for ($i = 0; $i <= count($tabStations); $i++) {
                             if ($tabStations[$i]['station'] == $pgRefStationMesure) {
                                 $trouve = true;
                                 $prelevs = $tabStations[$i]['prelevs'];
@@ -1050,11 +1050,11 @@ class SuiviHydrobioController extends Controller {
 
                     $trouve = false;
                     $prelev = null;
-                    for ($j = 0; $j < count($prelevs); $j++) {
+                    for ($j = 0; $j <= count($prelevs); $j++) {
                         $prelev = $prelevs[$j]['cmdPrelev'];
                         if ($prelev->getCodeSupport()->getCodeSupport() != '10' && $prelev->getCodeSupport()->getCodeSupport() != '11') {
                             $autrePgCmdPrelevs = $repoPgCmdPrelev->getAutrePrelevs($prelev);
-                            for ($i = 0; $i < count($autrePgCmdPrelevs); $i++) {
+                            for ($i = 0; $i <= count($autrePgCmdPrelevs); $i++) {
                                 $autreSuport = $autrePgCmdPrelevs[$i]['codeSupport'];
                                 if ($autreSuport != '10' && $autreSuport != '11') {
                                     $autreDateDebut = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
@@ -1076,7 +1076,7 @@ class SuiviHydrobioController extends Controller {
                             $trouve = true;
                             $suiviPrels = $prelevs[$j]['cmdSuiviPrelevs'];
                             $suiviPrelActuel = null;
-                            for ($k = 0; $k < count($suiviPrels); $k++) {
+                            for ($k = 0; $k <= count($suiviPrels); $k++) {
                                 if ($k == 0) {
                                     $suiviPrelActuel = $suiviPrels[$k];
                                 }
@@ -1092,7 +1092,7 @@ class SuiviHydrobioController extends Controller {
                                 }
                             }
                             $nbStations = 0;
-                            for ($k = 0; $k < count($suiviPrels); $k++) {
+                            for ($k = 0; $k <= count($suiviPrels); $k++) {
                                 $suiviPrel = $suiviPrels[$k];
                                 if ($suiviPrel->getDatePrel() == $datePrel and
                                         $suiviPrel->getCommentaire() == $commentaire) {
@@ -1427,7 +1427,7 @@ class SuiviHydrobioController extends Controller {
 
             if ($pgCmdPrelev->getCodeSupport()->getCodeSupport() != '10' && $pgCmdPrelev->getCodeSupport()->getCodeSupport() != '11') {
                 $autrePgCmdPrelevs = $repoPgCmdPrelev->getAutrePrelevs($pgCmdPrelev);
-                for ($i = 0; $i < count($autrePgCmdPrelevs); $i++) {
+                for ($i = 0; $i <= count($autrePgCmdPrelevs); $i++) {
                     $autreSuport = $autrePgCmdPrelevs[$i]['codeSupport'];
                     if ($autreSuport != '10' && $autreSuport != '11') {
                         $autreDateDebut = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
