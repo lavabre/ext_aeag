@@ -1708,9 +1708,9 @@ class CollecteurController extends Controller {
 
                 if ($declaration->getCentreTraitement()) {
                     $centreTraitement = $repoOuvrage->getOuvrageById($declaration->getCentreTraitement());
-                    if ($centreTraitement){
-                    $tab[$i]['centreTraitement'] = $centreTraitement->getNumero();
-                    }else{
+                    if ($centreTraitement) {
+                        $tab[$i]['centreTraitement'] = $centreTraitement->getNumero();
+                    } else {
                         $tab[$i]['centreTraitement'] = "";
                     }
                 } else {
@@ -2293,21 +2293,23 @@ class CollecteurController extends Controller {
                                 }
                             }
                             $centreDepot = null;
-                            if ($tab[14]) {
-                                $tab[14] = str_replace(' ', '', $tab[14]);
-                                if (strlen($tab[14]) == 14) {
-                                    $centreDepots = $repoOuvrage->getOuvragesBySiretType($tab[14], 'ODEC');
-                                    if ($centreDepots) {
-                                        $centreDepot = null;
+                            if (count($tab) >= 15) {
+                                if ($tab[14]) {
+                                    $tab[14] = str_replace(' ', '', $tab[14]);
+                                    if (strlen($tab[14]) == 14) {
+                                        $centreDepots = $repoOuvrage->getOuvragesBySiretType($tab[14], 'ODEC');
+                                        if ($centreDepots) {
+                                            $centreDepot = null;
+                                        }
+                                    } else {
+                                        $centreDepot = $repoOuvrage->getOuvrageByNumeroType($tab[14], 'ODEC');
                                     }
-                                } else {
-                                    $centreDepot = $repoOuvrage->getOuvrageByNumeroType($tab[14], 'ODEC');
-                                }
-                                if ($centreDepot) {
-                                    $declarationDetail->setCentreDepot($centreDepot->getid());
-                                } else {
-                                    $err = true;
-                                    $message = "dans le fichier CSV : centre de d'entreposage " . $tab[14] . " incorrect à la ligne " . $ligne . " \n";
+                                    if ($centreDepot) {
+                                        $declarationDetail->setCentreDepot($centreDepot->getid());
+                                    } else {
+                                        $err = true;
+                                        $message = "dans le fichier CSV : centre de d'entreposage " . $tab[14] . " incorrect à la ligne " . $ligne . " \n";
+                                    }
                                 }
                             }
 
