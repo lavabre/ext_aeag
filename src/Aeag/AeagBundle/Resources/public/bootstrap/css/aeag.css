@@ -886,4 +886,13 @@ h3 {
     margin: 0px 0px 0px;
 }
 
+/* Important part */
+.modal-dialog{
+    overflow-y: initial !important
+}
+.reponse-body{
+    height: 600px;
+    overflow-y: auto;
+}
+
 

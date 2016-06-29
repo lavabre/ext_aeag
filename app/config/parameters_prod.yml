@@ -60,4 +60,4 @@ parameters:
     repertoire_echange : /base/extranet/Transfert/Sqe/Echanges/
     router.request_context.host: ext.eau-adour-garonne.fr
     router.request_context.scheme: http
-    router.request_context.base_url: /sqe/
+    router.request_context.base_url: 

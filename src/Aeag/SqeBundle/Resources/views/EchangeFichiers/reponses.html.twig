@@ -4,7 +4,7 @@
         Liste des réponses - {{demande.lotAn.lot.nomLot}} - {{demande.codeDemandeCmd}}
     </h4>
 </div>
-<div id="body-modal-reponses"class="modal-body">
+<div id="body-modal-reponses"class="modal-body reponse-body">
     {% if (is_granted('ROLE_ADMINSQE') or user.prestataire == demande.prestataire and ("Saisie" not in demande.formatFichier)) and (demande.phaseDemande.codePhase != 'D40' and demande.phaseDemande.codePhase != 'D50') %}
         <a class="btn btn-primary btn-file" id="btn-deposer-reponse" data-id="{{demande.id}}">
             <i class="fa fa-download"></i> Déposer une RAI
@@ -67,7 +67,6 @@
     var table1 = $('#idTable_reponses').DataTable(
             {"stateSave": true,
                 "order": [[1, "desc"]],
-                "bLengthChange": false,
                 "oLanguage": {
                     "sSearch": "Filtre",
                     "sFirst": "1ere page",
@@ -80,15 +79,14 @@
                     "sZeroRecords": "Pas d'enregistrement à afficher",
                     "sInfoEmpty": "Pas d'enregistrement à afficher",
                     "sInfoThousands": " ",
-                    "iDisplayLength": 5,
-                    /*"sLengthMenu": 'Afficher <select>' +
-                            '<option value="5">5</option>' +
+                    "sLengthMenu": 'Afficher <select>' +
+                            '<option value="10">10</option>' +
                             '<option value="20">20</option>' +
                             '<option value="30">30</option>' +
                             '<option value="40">40</option>' +
                             '<option value="50">50</option>' +
                             '<option value="-1">Tous</option>' +
-                            '</select> enregistrements',*/
+                            '</select> enregistrements',
                     "sPaginationType": "full_numbers"
                 }
             }
