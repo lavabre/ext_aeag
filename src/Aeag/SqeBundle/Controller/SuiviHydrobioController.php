@@ -701,7 +701,7 @@ class SuiviHydrobioController extends Controller {
             fclose($rapport);
         }
 
-        if ($erreur = 0) {
+        if ($erreur ==  0) {
             // envoi mail 
             $pgProgWebusers = $repoPgProgWebUsers->getPgProgWebusersByTypeUser('XHBIO');
             foreach ($pgProgWebusers as $destinataire) {
