@@ -675,35 +675,6 @@ class SuiviHydrobioController extends Controller {
                                         $nbIncorrect = $nbIncorrect + 1;
                                     }
                                 }
-
-                                // envoi mail 
-                                $pgProgWebusers = $repoPgProgWebUsers->getPgProgWebusersByTypeUser('XHBIO');
-                                foreach ($pgProgWebusers as $destinataire) {
-                                    if ($destinataire->getCodeSupport()) {
-                                        $trouve = false;
-                                        if (count($tabSupport) > 0) {
-                                            for ($nbSupport = 0; $nbSupport < count($tabSupport); $nbSupport++) {
-                                                if ($tabSupport[$nbSupport] == $destinataire->getCodeSupport()) {
-                                                    $trouve = true;
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                    } else {
-                                        $trouve = true;
-                                    }
-                                    if ($trouve) {
-                                        // Envoi d'un mail
-                                        $objetMessage = "fichier terrrain déposé ";
-                                        $txtMessage = "Un ou plusieurs fichiers terrain ont été déposés sur le lot " . $pgProgLot->getNomLot() . " pour la période du " . $pgProgPeriode->getDateDeb()->format('d/m/Y') . " au " . $dateFin->format('d/m/Y');
-                                        $mailer = $this->get('mailer');
-                                        if ($this->get('aeag_sqe.message')->envoiMessage($emSqe, $mailer, $txtMessage, $destinataire, $objetMessage)) {
-                                            $session->getFlashBag()->add('notice-success', 'un email  a été envoyé à ' . $destinataire->getNom() . ' pour l\'informer du dépôt');
-                                        } else {
-                                            $session->getFlashBag()->add('notice-warning', 'Le dépôt a été traité, mais l\'email n\'a pas pu être envoyé à ' . $destinataire->getNom());
-                                        }
-                                    }
-                                }
                             } else {
                                 $contenu = 'Association impossible : pas de suivi renseigné pour la station  ' . $tabStations[$k]['station']->getCode() . CHR(13) . CHR(10) . CHR(13) . CHR(10);
                                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
@@ -728,6 +699,37 @@ class SuiviHydrobioController extends Controller {
                 fputs($rapport, $contenu);
             }
             fclose($rapport);
+        }
+
+        if ($erreur = 0) {
+            // envoi mail 
+            $pgProgWebusers = $repoPgProgWebUsers->getPgProgWebusersByTypeUser('XHBIO');
+            foreach ($pgProgWebusers as $destinataire) {
+                if ($destinataire->getCodeSupport()) {
+                    $trouve = false;
+                    if (count($tabSupport) > 0) {
+                        for ($nbSupport = 0; $nbSupport < count($tabSupport); $nbSupport++) {
+                            if ($tabSupport[$nbSupport] == $destinataire->getCodeSupport()) {
+                                $trouve = true;
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    $trouve = true;
+                }
+                if ($trouve) {
+                    // Envoi d'un mail
+                    $objetMessage = "fichier terrrain déposé ";
+                    $txtMessage = "Un ou plusieurs fichiers terrain ont été déposés sur le lot " . $pgProgLot->getNomLot() . " pour la période du " . $pgProgPeriode->getDateDeb()->format('d/m/Y') . " au " . $dateFin->format('d/m/Y');
+                    $mailer = $this->get('mailer');
+                    if ($this->get('aeag_sqe.message')->envoiMessage($emSqe, $mailer, $txtMessage, $destinataire, $objetMessage)) {
+                        $session->getFlashBag()->add('notice-success', 'un email  a été envoyé à ' . $destinataire->getNom() . ' pour l\'informer du dépôt');
+                    } else {
+                        $session->getFlashBag()->add('notice-warning', 'Le dépôt a été traité, mais l\'email n\'a pas pu être envoyé à ' . $destinataire->getNom());
+                    }
+                }
+            }
         }
 
         $tabRapport[$nbRapport] = "Nombre de fichiers intégrés : " . $nbCorrect;
@@ -833,14 +835,14 @@ class SuiviHydrobioController extends Controller {
             $j = 0;
             foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
                 $trouve = false;
-                 if (count($tabStations) > 0) {
-                for ($k = 0; $k < count($tabStations); $k++) {
-                    if ($tabStations[$k]['station']->getOuvFoncid() == $pgProgLotPeriodeProg->getStationAn()->getStation()->getOuvFoncid()) {
-                        $trouve = true;
-                        break;
+                if (count($tabStations) > 0) {
+                    for ($k = 0; $k < count($tabStations); $k++) {
+                        if ($tabStations[$k]['station']->getOuvFoncid() == $pgProgLotPeriodeProg->getStationAn()->getStation()->getOuvFoncid()) {
+                            $trouve = true;
+                            break;
+                        }
                     }
                 }
-                 }
                 if (!$trouve) {
                     $tabStations[$j]['station'] = $pgProgLotPeriodeProg->getStationAn()->getStation();
                     $pgCmdDemande = $repoPgCmdDemande->getPgCmdDemandeByLotanPrestatairePeriode($pgProgLotAn, $pgProgLotPeriodeProg->getGrparAn()->getPrestaDft(), $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
@@ -967,15 +969,15 @@ class SuiviHydrobioController extends Controller {
                         fputs($rapport, $contenu);
                     } else {
                         $trouve = false;
-                         if (count($tabStations) > 0) {
-                        for ($i = 0; $i < count($tabStations); $i++) {
-                            if ($tabStations[$i]['station'] == $pgRefStationMesure) {
-                                $trouve = true;
-                                $prelevs = $tabStations[$i]['prelevs'];
-                                break;
+                        if (count($tabStations) > 0) {
+                            for ($i = 0; $i < count($tabStations); $i++) {
+                                if ($tabStations[$i]['station'] == $pgRefStationMesure) {
+                                    $trouve = true;
+                                    $prelevs = $tabStations[$i]['prelevs'];
+                                    break;
+                                }
                             }
                         }
-                         }
                         if (!$trouve) {
                             $err = true;
                             $contenu = 'ligne  ' . $ligne . '  :  code station  (' . $codeStation . ') non référencé dans la liste' . CHR(13) . CHR(10);
@@ -1067,75 +1069,75 @@ class SuiviHydrobioController extends Controller {
 
                     $trouve = false;
                     $prelev = null;
-                     if (count($prelevs) > 0) {
-                    for ($j = 0; $j < count($prelevs); $j++) {
-                        $prelev = $prelevs[$j]['cmdPrelev'];
-                        if ($prelev->getCodeSupport()->getCodeSupport() != '10' && $prelev->getCodeSupport()->getCodeSupport() != '11') {
-                            $autrePgCmdPrelevs = $repoPgCmdPrelev->getAutrePrelevs($prelev);
-                            for ($i = 0; $i < count($autrePgCmdPrelevs); $i++) {
-                                $autreSuport = $autrePgCmdPrelevs[$i]['codeSupport'];
-                                if ($autreSuport != '10' && $autreSuport != '11') {
-                                    $autreDateDebut = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
-                                    $autreDateDebut->sub(new \DateInterval('P7D'));
-                                    $autreDateFin = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
-                                    $autreDateFin->add(new \DateInterval('P7D'));
-                                    if ($datePrel >= $autreDateDebut and $datePrel <= $autreDateFin) {
-                                        if (!$user->hasRole('ROLE_ADMINSQE')) {
-                                            $err = true;
+                    if (count($prelevs) > 0) {
+                        for ($j = 0; $j < count($prelevs); $j++) {
+                            $prelev = $prelevs[$j]['cmdPrelev'];
+                            if ($prelev->getCodeSupport()->getCodeSupport() != '10' && $prelev->getCodeSupport()->getCodeSupport() != '11') {
+                                $autrePgCmdPrelevs = $repoPgCmdPrelev->getAutrePrelevs($prelev);
+                                for ($i = 0; $i < count($autrePgCmdPrelevs); $i++) {
+                                    $autreSuport = $autrePgCmdPrelevs[$i]['codeSupport'];
+                                    if ($autreSuport != '10' && $autreSuport != '11') {
+                                        $autreDateDebut = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
+                                        $autreDateDebut->sub(new \DateInterval('P7D'));
+                                        $autreDateFin = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
+                                        $autreDateFin->add(new \DateInterval('P7D'));
+                                        if ($datePrel >= $autreDateDebut and $datePrel <= $autreDateFin) {
+                                            if (!$user->hasRole('ROLE_ADMINSQE')) {
+                                                $err = true;
+                                            }
+                                            $contenu = 'ligne  ' . $ligne . '  : Date  (' . $datePrel->format('d/m/Y H:i') . ') doit être inférieure à ' . $autreDateDebut->format('d/m/Y H:i') . ' ou supérieure à  ' . $autreDateFin->format('d/m/Y H:i');
+                                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                            fputs($rapport, $contenu);
                                         }
-                                        $contenu = 'ligne  ' . $ligne . '  : Date  (' . $datePrel->format('d/m/Y H:i') . ') doit être inférieure à ' . $autreDateDebut->format('d/m/Y H:i') . ' ou supérieure à  ' . $autreDateFin->format('d/m/Y H:i');
+                                    }
+                                }
+                            }
+                            if ($prelev->getCodeSupport()->getCodeSupport() == $codeSupport) {
+                                $trouve = true;
+                                $suiviPrels = $prelevs[$j]['cmdSuiviPrelevs'];
+                                $suiviPrelActuel = null;
+                                for ($k = 0; $k < count($suiviPrels); $k++) {
+                                    if ($k == 0) {
+                                        $suiviPrelActuel = $suiviPrels[$k];
+                                    }
+                                    $suiviPrel = $suiviPrels[$k];
+                                    if ($suiviPrel->getDatePrel() == $datePrel and
+                                            $suiviPrel->getStatutPrel() == $statutPrel and
+                                            $suiviPrel->getCommentaire() == $commentaire) {
+                                        $err = true;
+                                        $contenu = 'ligne  ' . $ligne . '  :  suivi déja intégré ' . CHR(13) . CHR(10);
+                                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                        fputs($rapport, $contenu);
+                                        $k = count($suiviPrels) + 1;
+                                    }
+                                }
+                                $nbStations = 0;
+                                for ($k = 0; $k < count($suiviPrels); $k++) {
+                                    $suiviPrel = $suiviPrels[$k];
+                                    if ($suiviPrel->getDatePrel() == $datePrel and
+                                            $suiviPrel->getCommentaire() == $commentaire) {
+                                        $nbStations++;
+                                    }
+                                }
+                                if ($pgCmdPrelev->getCodeSupport()->getCodeSupport() == '13' || $pgCmdPrelev->getCodeSupport()->getCodeSupport() == '11') {
+                                    if ($nbStations > 4) {
+                                        $err = true;
+                                        $contenu = 'ligne  ' . $ligne . '  :  4 stations maxi le même jour pour un même commentaire ' . CHR(13) . CHR(10);
+                                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                        fputs($rapport, $contenu);
+                                    }
+                                }
+                                if ($pgCmdPrelev->getCodeSupport()->getCodeSupport() == '10') {
+                                    if ($nbStations > 6) {
+                                        $err = true;
+                                        $contenu = 'ligne  ' . $ligne . '  :  4 stations maxi le même jour pour un même commentaire ' . CHR(13) . CHR(10);
                                         $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                                         fputs($rapport, $contenu);
                                     }
                                 }
                             }
                         }
-                        if ($prelev->getCodeSupport()->getCodeSupport() == $codeSupport) {
-                            $trouve = true;
-                            $suiviPrels = $prelevs[$j]['cmdSuiviPrelevs'];
-                            $suiviPrelActuel = null;
-                            for ($k = 0; $k < count($suiviPrels); $k++) {
-                                if ($k == 0) {
-                                    $suiviPrelActuel = $suiviPrels[$k];
-                                }
-                                $suiviPrel = $suiviPrels[$k];
-                                if ($suiviPrel->getDatePrel() == $datePrel and
-                                        $suiviPrel->getStatutPrel() == $statutPrel and
-                                        $suiviPrel->getCommentaire() == $commentaire) {
-                                    $err = true;
-                                    $contenu = 'ligne  ' . $ligne . '  :  suivi déja intégré ' . CHR(13) . CHR(10);
-                                    $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                                    fputs($rapport, $contenu);
-                                    $k = count($suiviPrels) + 1;
-                                }
-                            }
-                            $nbStations = 0;
-                            for ($k = 0; $k < count($suiviPrels); $k++) {
-                                $suiviPrel = $suiviPrels[$k];
-                                if ($suiviPrel->getDatePrel() == $datePrel and
-                                        $suiviPrel->getCommentaire() == $commentaire) {
-                                    $nbStations++;
-                                }
-                            }
-                            if ($pgCmdPrelev->getCodeSupport()->getCodeSupport() == '13' || $pgCmdPrelev->getCodeSupport()->getCodeSupport() == '11') {
-                                if ($nbStations > 4) {
-                                    $err = true;
-                                    $contenu = 'ligne  ' . $ligne . '  :  4 stations maxi le même jour pour un même commentaire ' . CHR(13) . CHR(10);
-                                    $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                                    fputs($rapport, $contenu);
-                                }
-                            }
-                            if ($pgCmdPrelev->getCodeSupport()->getCodeSupport() == '10') {
-                                if ($nbStations > 6) {
-                                    $err = true;
-                                    $contenu = 'ligne  ' . $ligne . '  :  4 stations maxi le même jour pour un même commentaire ' . CHR(13) . CHR(10);
-                                    $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                                    fputs($rapport, $contenu);
-                                }
-                            }
-                        }
                     }
-                }
                     if (!$trouve) {
                         $err = true;
                         $contenu = 'ligne  ' . $ligne . '  :  code support ne correspond pas à celui du prélèvement associé à la station ' . CHR(13) . CHR(10);
