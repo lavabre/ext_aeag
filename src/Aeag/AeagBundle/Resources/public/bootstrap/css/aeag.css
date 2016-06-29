@@ -3,8 +3,8 @@ body {
 }
 
 .page-header {
-    padding-bottom: 9px;
-    margin: 20px 0px 0px;
+    padding-bottom: 0px;
+    margin: 0px 0px 0px;
     border-bottom: 1px solid #36648b;
     background-image : url('../../images/bandeauAeag.jpg'); 
     background-repeat:no-repeat;
@@ -15,8 +15,8 @@ body {
 }
 
 .page-header-ie8 {
-    padding-bottom: 9px;
-    margin: 20px 0px 0px;
+    padding-bottom: 0px;
+    margin: 0px 0px 0px;
     border-bottom: 1px solid #36648b;
     background-color: #36648b;
     color : #ffffff;
@@ -52,7 +52,7 @@ img#logo
 
 .navbar {
     position: relative;
-    min-height: 50px;
+    min-height: 30px;
     margin-bottom: 0px;
     padding-bottom: 0px;
     border: 1px solid transparent;
