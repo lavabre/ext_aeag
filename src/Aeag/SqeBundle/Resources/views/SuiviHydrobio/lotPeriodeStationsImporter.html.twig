@@ -73,6 +73,7 @@
                     rapport = tabReponse[1];
                     tabMessages = tabReponse[2];
                     tabRapports = tabReponse[3];
+                    ficRapport = tabReponse[4];
                    var erreur = false;
                    var nbMessage = 0;
                     var html = "<ul>";
@@ -100,7 +101,13 @@
                              erreur = true;
                             $('#idImportMessage').show();
                             $('#idImportMessage').empty().append(html).show();
-                            $('#idImportRapport').show();
+                            var urlRapport = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_stations_telecharger_rapport",{"periodeAnId": "par1", "fichier": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
+                            urlRapport = urlRapport.replace("par1", {{ periodeAnId }});
+                            urlRapport = urlRapport.replace("par2", ficRapport);
+                            urlRapport = urlRapport.replace("amp;", "");
+                            html =  '<a  class="btn btn-info"  href="' + urlRapport + '" title="Rapport d\'integration du fichier de suivi">';
+                            html = html + '<i class="fa fa-book"> Rapport d\'integration</i></a>';
+                            $('#idImportRapport').empty().append(html).show();
                     }
                     $('#idImportProgress').hide();
                    if (!erreur){
