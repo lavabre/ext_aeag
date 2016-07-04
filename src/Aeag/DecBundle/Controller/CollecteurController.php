@@ -1284,16 +1284,23 @@ class CollecteurController extends Controller {
                 $tab[$i]['id'] = $declaration->getId();
                 $tab[$i]['statutCode'] = $declaration->getStatut()->getCode();
                 $tab[$i]['declarationProducteurId'] = $declaration->getDeclarationproducteur()->getId();
-                $tab[$i]['producteurSiret'] = $producteur->getSiret();
-                $tab[$i]['producteurLibelle'] = $producteur->getLibelle();
+                if ($producteur) {
+                    $tab[$i]['producteurSiret'] = $producteur->getSiret();
+                    $tab[$i]['producteurLibelle'] = $producteur->getLibelle();
+                    if (!$producteur->getCommune()) {
+                        $tab[$i]['producteurCodePostal'] = $producteur->getCp();
+                    } else {
+                        $tab[$i]['producteurCodePostal'] = $producteur->getCommune()->getCommune();
+                    }
+                } else {
+                    $tab[$i]['producteurSiret'] = null;
+                    $tab[$i]['producteurLibelle'] = null;
+                     $tab[$i]['producteurCodePostal'] = null;
+                }
                 $tab[$i]['declarationProducteurQuantiteReel'] = $declaration->getDeclarationProducteur()->getQuantiteReel();
                 $tab[$i]['declarationProducteurQuantiteRet'] = $declaration->getDeclarationProducteur()->getQuantiteRet();
                 $tab[$i]['declarationProducteurMontAide'] = $declaration->getDeclarationProducteur()->getMontAide();
-                if (!$producteur->getCommune()) {
-                    $tab[$i]['producteurCodePostal'] = $producteur->getCp();
-                } else {
-                    $tab[$i]['producteurCodePostal'] = $producteur->getCommune()->getCommune();
-                }
+
                 if ($centreTraitement) {
                     $tab[$i]['centreTraitement'] = $centreTraitement->getNumero();
                 } else {

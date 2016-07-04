@@ -10,6 +10,7 @@ use Aeag\SqeBundle\Entity\PgCmdFichiersRps;
 use \Aeag\SqeBundle\Entity\PgCmdMesureEnv;
 use \Aeag\SqeBundle\Entity\PgCmdAnalyse;
 use \Aeag\SqeBundle\Entity\PgCmdPrelevPc;
+use Aeag\SqeBundle\Entity\PgCmdDwnldUsrRps;
 use Aeag\SqeBundle\Form\PgCmdSuiviPrelMajType;
 use Aeag\SqeBundle\Form\PgCmdSuiviPrelVoirType;
 use \Aeag\SqeBundle\Form\SyntheseSupportStationType;
@@ -701,7 +702,7 @@ class SuiviHydrobioController extends Controller {
             fclose($rapport);
         }
 
-        if ($erreur ==  0) {
+        if ($erreur == 0) {
             // envoi mail 
             $pgProgWebusers = $repoPgProgWebUsers->getPgProgWebusersByTypeUser('XHBIO');
             foreach ($pgProgWebusers as $destinataire) {
@@ -1174,6 +1175,9 @@ class SuiviHydrobioController extends Controller {
                         if ($user->hasRole('ROLE_ADMINSQE')) {
                             $pgProgWebUsers = $repoPgProgWebUsers->getPgProgWebusersByPrestataire($pgCmdPrelev->getPrestaPrel());
                             $pgProgWebUser = $pgProgWebUsers[0];
+                            if (!$pgProgWebUser) {
+                                $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
+                            }
                         } else {
                             $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
                         }
@@ -1762,6 +1766,7 @@ class SuiviHydrobioController extends Controller {
 
         $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
+        $repoPgCmdDwnldUsrRps = $emSqe->getRepository('AeagSqeBundle:PgCmdDwnldUsrRps');
 
         $pgCmdSuiviPrel = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelById($suiviPrelId);
         $pgCmdPrelev = $pgCmdSuiviPrel->getPrelev();
@@ -1783,6 +1788,10 @@ class SuiviHydrobioController extends Controller {
 // On supprime l'enregistrement  $pgCmdFichiersRps
             $pgCmdSuiviPrel->setFichierRps(null);
             $emSqe->persist($pgCmdSuiviPrel);
+            $pgCmdDwnldUsrRps = $repoPgCmdDwnldUsrRps->getPgCmdDwnldUsrRpsByFichierReponse($pgCmdFichiersRps);
+            foreach ($pgCmdDwnldUsrRps as $pgCmdDwnldUsrRp) {
+                $emSqe->remove($pgCmdDwnldUsrRp);
+            }
             $emSqe->remove($pgCmdFichiersRps);
         }
         $emSqe->remove($pgCmdSuiviPrel);
@@ -1917,6 +1926,7 @@ class SuiviHydrobioController extends Controller {
         $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
         $repoPgCmdFichiersRps = $emSqe->getRepository('AeagSqeBundle:PgCmdFichiersRps');
+        $repoPgCmdDwnldUsrRps = $emSqe->getRepository('AeagSqeBundle:PgCmdDwnldUsrRps');
 
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgCmdSuiviPrel = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelById($suiviPrelId);
@@ -1938,6 +1948,10 @@ class SuiviHydrobioController extends Controller {
 // On supprime l'enregistrement  $pgCmdFichiersRps
         $pgCmdSuiviPrel->setFichierRps(null);
         $emSqe->persist($pgCmdSuiviPrel);
+        $pgCmdDwnldUsrRps = $repoPgCmdDwnldUsrRps->getPgCmdDwnldUsrRpsByFichierReponse($pgCmdFichiersRps);
+        foreach ($pgCmdDwnldUsrRps as $pgCmdDwnldUsrRp) {
+            $emSqe->remove($pgCmdDwnldUsrRp);
+        }
         $emSqe->remove($pgCmdFichiersRps);
         $emSqe->flush();
         $response = null;
@@ -1969,13 +1983,23 @@ class SuiviHydrobioController extends Controller {
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
         $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
+        $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
 
+        $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgCmdSuiviPrel = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelById($suiviPrelId);
         $pgCmdPrelev = $pgCmdSuiviPrel->getPrelev();
         $pgCmdFichiersRps = $pgCmdSuiviPrel->getFichierRps();
         $chemin = $this->getCheminEchange($pgCmdSuiviPrel);
         $fichier = $pgCmdFichiersRps->getNomFichier();
         $ext = strtolower(pathinfo($fichier, PATHINFO_EXTENSION));
+
+        $pgCmdDwnldUsrRps = new PgCmdDwnldUsrRps();
+        $pgCmdDwnldUsrRps->setUser($pgProgWebUser);
+        $pgCmdDwnldUsrRps->setFichierReponse($pgCmdFichiersRps);
+        $pgCmdDwnldUsrRps->setDate(new \DateTime());
+        $pgCmdDwnldUsrRps->setTypeFichier($pgCmdFichiersRps->getTypeFichier());
+        $emSqe->persist($pgCmdDwnldUsrRps);
+        $emSqe->flush();
 
         header('Content-Type', 'application/' . $ext);
         header('Content-disposition: attachment; filename="' . $fichier . '"');
