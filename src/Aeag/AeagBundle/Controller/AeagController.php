@@ -80,8 +80,8 @@ class AeagController extends Controller {
             return $this->redirect($this->generateUrl('aeag_sqe'));
         };
 
-
-        return $this->render('AeagAeagBundle:Default:index.html.twig', array('roles' => $roles));
+        return $this->render('AeagAeagBundle:Default:interdit.html.twig');
+//        return $this->render('AeagAeagBundle:Default:index.html.twig', array('roles' => $roles));
     }
 
     public function envoyerMessageAllAction($id = nul, Request $request) {

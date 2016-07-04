@@ -10,6 +10,7 @@ use Aeag\SqeBundle\Entity\PgCmdFichiersRps;
 use \Aeag\SqeBundle\Entity\PgCmdMesureEnv;
 use \Aeag\SqeBundle\Entity\PgCmdAnalyse;
 use \Aeag\SqeBundle\Entity\PgCmdPrelevPc;
+use Aeag\SqeBundle\Entity\PgCmdDwnldUsrRps;
 use Aeag\SqeBundle\Form\PgCmdSuiviPrelMajType;
 use Aeag\SqeBundle\Form\PgCmdSuiviPrelVoirType;
 use Aeag\SqeBundle\Form\LotPeriodeStationDemandeSuiviSaisirType;
@@ -1539,6 +1540,7 @@ class SuiviSedimentController extends Controller {
 
         $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
+        $repoPgCmdDwnldUsrRps = $emSqe->getRepository('AeagSqeBundle:PgCmdDwnldUsrRps');
 
         $pgCmdSuiviPrel = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelById($suiviPrelId);
         $pgCmdPrelev = $pgCmdSuiviPrel->getPrelev();
@@ -1549,17 +1551,21 @@ class SuiviSedimentController extends Controller {
             $dir_iterator = new \RecursiveDirectoryIterator($dossier);
             $iterator = new \RecursiveIteratorIterator($dir_iterator, \RecursiveIteratorIterator::CHILD_FIRST);
 
-// On supprime chaque dossier et chaque fichier	du dossier cible
+//// On supprime chaque dossier et chaque fichier	du dossier cible
             foreach ($iterator as $fichier) {
                 if ($fichier != "." && $fichier != "..") {
                     is_dir($fichier) ? null : unlink($fichier);
                 }
             }
-// On supprime le dossier cible
+//// On supprime le dossier cible
             rmdir($dossier);
 // On supprime l'enregistrement  $pgCmdFichiersRps
             $pgCmdSuiviPrel->setFichierRps(null);
             $emSqe->persist($pgCmdSuiviPrel);
+            $pgCmdDwnldUsrRps = $repoPgCmdDwnldUsrRps->getPgCmdDwnldUsrRpsByFichierReponse($pgCmdFichiersRps);
+            foreach ($pgCmdDwnldUsrRps as $pgCmdDwnldUsrRp) {
+                $emSqe->remove($pgCmdDwnldUsrRp);
+            }
             $emSqe->remove($pgCmdFichiersRps);
         }
         $emSqe->remove($pgCmdSuiviPrel);
@@ -1694,12 +1700,12 @@ class SuiviSedimentController extends Controller {
         $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
         $repoPgCmdFichiersRps = $emSqe->getRepository('AeagSqeBundle:PgCmdFichiersRps');
+        $repoPgCmdDwnldUsrRps = $emSqe->getRepository('AeagSqeBundle:PgCmdDwnldUsrRps');
 
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgCmdSuiviPrel = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelById($suiviPrelId);
         $pgCmdPrelev = $pgCmdSuiviPrel->getPrelev();
         $pgCmdFichiersRps = $pgCmdSuiviPrel->getFichierRps();
-
         $dossier = $this->getCheminEchange($pgCmdSuiviPrel);
         $dir_iterator = new \RecursiveDirectoryIterator($dossier);
         $iterator = new \RecursiveIteratorIterator($dir_iterator, \RecursiveIteratorIterator::CHILD_FIRST);
@@ -1715,6 +1721,11 @@ class SuiviSedimentController extends Controller {
 // On supprime l'enregistrement  $pgCmdFichiersRps
         $pgCmdSuiviPrel->setFichierRps(null);
         $emSqe->persist($pgCmdSuiviPrel);
+        $pgCmdDwnldUsrRps = $repoPgCmdDwnldUsrRps->getPgCmdDwnldUsrRpsByFichierReponse($pgCmdFichiersRps);
+        foreach ($pgCmdDwnldUsrRps as $pgCmdDwnldUsrRp) {
+            $emSqe->remove($pgCmdDwnldUsrRp);
+        }
+
         $emSqe->remove($pgCmdFichiersRps);
         $emSqe->flush();
         $response = null;
@@ -1746,13 +1757,23 @@ class SuiviSedimentController extends Controller {
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
         $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
+        $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
 
+        $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgCmdSuiviPrel = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelById($suiviPrelId);
         $pgCmdPrelev = $pgCmdSuiviPrel->getPrelev();
         $pgCmdFichiersRps = $pgCmdSuiviPrel->getFichierRps();
         $chemin = $this->getCheminEchange($pgCmdSuiviPrel);
         $fichier = $pgCmdFichiersRps->getNomFichier();
         $ext = strtolower(pathinfo($fichier, PATHINFO_EXTENSION));
+
+        $pgCmdDwnldUsrRps = new PgCmdDwnldUsrRps();
+        $pgCmdDwnldUsrRps->setUser($pgProgWebUser);
+        $pgCmdDwnldUsrRps->setFichierReponse($pgCmdFichiersRps);
+        $pgCmdDwnldUsrRps->setDate(new \DateTime());
+        $pgCmdDwnldUsrRps->setTypeFichier($pgCmdFichiersRps->getTypeFichier());
+        $emSqe->persist($pgCmdDwnldUsrRps);
+        $emSqe->flush();
 
         header('Content-Type', 'application/' . $ext);
         header('Content-disposition: attachment; filename="' . $fichier . '"');

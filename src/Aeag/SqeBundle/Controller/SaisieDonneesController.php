@@ -160,6 +160,9 @@ class SaisieDonneesController extends Controller {
                 $i++;
             }
         }
+        
+//                                     \Symfony\Component\VarDumper\VarDumper::dump($tabPeriodeAns);
+//                                        return new Response('');
 
 
         return $this->render('AeagSqeBundle:SaisieDonnees:lotPeriodes.html.twig', array(

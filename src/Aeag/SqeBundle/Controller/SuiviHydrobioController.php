@@ -10,6 +10,7 @@ use Aeag\SqeBundle\Entity\PgCmdFichiersRps;
 use \Aeag\SqeBundle\Entity\PgCmdMesureEnv;
 use \Aeag\SqeBundle\Entity\PgCmdAnalyse;
 use \Aeag\SqeBundle\Entity\PgCmdPrelevPc;
+use Aeag\SqeBundle\Entity\PgCmdDwnldUsrRps;
 use Aeag\SqeBundle\Form\PgCmdSuiviPrelMajType;
 use Aeag\SqeBundle\Form\PgCmdSuiviPrelVoirType;
 use \Aeag\SqeBundle\Form\SyntheseSupportStationType;
@@ -115,10 +116,12 @@ class SuiviHydrobioController extends Controller {
                     }
                     $tabPeriodeAns[$i]['dateFin'] = $dateFin;
                     $trouve = false;
-                    for ($k = 0; $k <= count($tabStations); $k++) {
-                        if ($tabStations[$k]->getOuvFoncid() == $pgProgLotPeriodeProg->getStationAn()->getStation()->getOuvFoncid()) {
-                            $trouve = true;
-                            break;
+                    if (count($tabStations) > 0) {
+                        for ($k = 0; $k < count($tabStations); $k++) {
+                            if ($tabStations[$k]->getOuvFoncid() == $pgProgLotPeriodeProg->getStationAn()->getStation()->getOuvFoncid()) {
+                                $trouve = true;
+                                break;
+                            }
                         }
                     }
                     if (!$trouve) {
@@ -188,7 +191,7 @@ class SuiviHydrobioController extends Controller {
             }
             $trouve = false;
             if (count($tabStations) > 0) {
-                for ($k = 0; $k <= count($tabStations); $k++) {
+                for ($k = 0; $k < count($tabStations); $k++) {
                     if ($tabStations[$k]['station']->getOuvFoncId() == $pgProgLotPeriodeProg->getStationAn()->getStation()->getOuvFoncId()) {
                         $trouve = true;
                         break;
@@ -295,7 +298,7 @@ class SuiviHydrobioController extends Controller {
                     'rapport' => $rapport));
     }
 
-    public function lotPeriodeStationsImporterAction($periodeAnId = null,  Request $request) {
+    public function lotPeriodeStationsImporterAction($periodeAnId = null, Request $request) {
 
         $user = $this->getUser();
         if (!$user) {
@@ -363,10 +366,12 @@ class SuiviHydrobioController extends Controller {
             $j = 0;
             foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
                 $trouve = false;
-                for ($k = 0; $k <= count($tabStations); $k++) {
-                    if ($tabStations[$k]['station']->getOuvFoncid() == $pgProgLotPeriodeProg->getStationAn()->getStation()->getOuvFoncid()) {
-                        $trouve = true;
-                        break;
+                if (count($tabStations) > 0) {
+                    for ($k = 0; $k < count($tabStations); $k++) {
+                        if ($tabStations[$k]['station']->getOuvFoncid() == $pgProgLotPeriodeProg->getStationAn()->getStation()->getOuvFoncid()) {
+                            $trouve = true;
+                            break;
+                        }
                     }
                 }
                 if (!$trouve) {
@@ -412,7 +417,7 @@ class SuiviHydrobioController extends Controller {
         $dateDepot = new \DateTime();
         $pathBase = '/base/extranet/Transfert/Sqe/csv-' . $dateDepot->format('Y-m-d-H-i-s');
         $pathRapport = '/base/extranet/Transfert/Sqe/csv';
-        $ficRapport =  $user->getId() . '_' . $dateDepot->format('Y-m-d-H') . '_rapport.csv';
+        $ficRapport = $user->getId() . '_' . $dateDepot->format('Y-m-d-H') . '_rapport.csv';
         if (!is_dir($pathBase)) {
             if (!mkdir($pathBase, 0777, true)) {
                 $session->getFlashBag()->add('notice-error', 'Le répertoire : ' . $pathBase . ' n\'a pas pu être créé');
@@ -441,7 +446,7 @@ class SuiviHydrobioController extends Controller {
 //upload file
                 if ($valid) {
 // Enregistrement du fichier sur le serveur
-                  move_uploaded_file($_FILES['file']['tmp_name'], $pathBase . '/' . $name);
+                    move_uploaded_file($_FILES['file']['tmp_name'], $pathBase . '/' . $name);
 
                     $response = $name . ' déposé le ' . $dateDepot->format('d/m/Y');
                 }
@@ -524,11 +529,13 @@ class SuiviHydrobioController extends Controller {
             foreach ($liste as $nomFichier) {
 //$tabNomFichier = explode('-', $nomFichier);
                 $trouve = false;
-                for ($k = 0; $k <= count($tabStations); $k++) {
+                if (count($tabStations) > 0) {
+                    for ($k = 0; $k < count($tabStations); $k++) {
 //if ($tabStations[$k]['station']->getCode() == $tabNomFichier[0]) {
-                    if (strpos($nomFichier, $tabStations[$k]['station']->getCode()) !== false) {
-                        $trouve = true;
-                        break;
+                        if (strpos($nomFichier, $tabStations[$k]['station']->getCode()) !== false) {
+                            $trouve = true;
+                            break;
+                        }
                     }
                 }
                 if (!$trouve) {
@@ -546,165 +553,143 @@ class SuiviHydrobioController extends Controller {
                 }
             }
 
-            for ($k = 0; $k <= count($tabStations); $k++) {
-                if (count($tabStations[$k]['fichiers'])) {
-                    $tabFichiers = $tabStations[$k]['fichiers'];
-                    if (count($tabFichiers) < 3) {
-                        $contenu = 'La station  ' . $tabStations[$k]['station']->getCode() . ' doit regrouper au moins 3 fichiers ' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
-                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                        fputs($rapport, $contenu);
-                        $erreur = 1;
-                        $nbCorrect = $nbCorrect - count($tabFichiers);
-                        $nbIncorrect = $nbIncorrect +  count($tabFichiers);
-                    } elseif (count($tabFichiers) > 0) {
-                        for ($nb = 0; $nb <= count($tabFichiers); $nb++) {
+            if (count($tabStations) > 0) {
+                for ($k = 0; $k < count($tabStations); $k++) {
+                    if (count($tabStations[$k]['fichiers'])) {
+                        $tabFichiers = $tabStations[$k]['fichiers'];
+                        if (count($tabFichiers) < 3) {
+                            $contenu = 'La station  ' . $tabStations[$k]['station']->getCode() . ' doit regrouper au moins 3 fichiers ' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                            fputs($rapport, $contenu);
+                            $erreur = 1;
+                            $nbCorrect = $nbCorrect - count($tabFichiers);
+                            $nbIncorrect = $nbIncorrect + count($tabFichiers);
+                        } elseif (count($tabFichiers) > 0) {
+                            for ($nb = 0; $nb < count($tabFichiers); $nb++) {
 //$tabNomFichier = explode('-', $tabFichiers[$nb]);
 //if ($tabNomFichier[1] != 'ft' && $tabNomFichier[1] != 'photo1' && $tabNomFichier[1] != 'photo2') {
-                            if ((strpos($tabFichiers[$nb], 'ft') === false) && (strpos($tabFichiers[$nb], 'terrain') === false) && (strpos($tabFichiers[$nb], 'photo') === false)) {
-                                $contenu = 'La station  ' . $tabStations[$k]['station']->getCode() . ' ne peut pas regrouper  le fichier : ' . $tabFichiers[$nb] . ' (non reconnu comme photo ni fiche terrain)' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
-                                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                                fputs($rapport, $contenu);
-                                $erreur = 1;
-                                $nbCorrect = $nbCorrect - 1;
-                                $nbIncorrect = $nbIncorrect +  1;
+                                if ((strpos($tabFichiers[$nb], 'ft') === false) && (strpos($tabFichiers[$nb], 'terrain') === false) && (strpos($tabFichiers[$nb], 'photo') === false)) {
+                                    $contenu = 'La station  ' . $tabStations[$k]['station']->getCode() . ' ne peut pas regrouper  le fichier : ' . $tabFichiers[$nb] . ' (non reconnu comme photo ni fiche terrain)' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                                    $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                    fputs($rapport, $contenu);
+                                    $erreur = 1;
+                                    $nbCorrect = $nbCorrect - 1;
+                                    $nbIncorrect = $nbIncorrect + 1;
+                                }
                             }
                         }
                     }
                 }
             }
-
             if ($erreur == 0) {
                 $tabSupport = array();
                 $nbSupport = 0;
-                for ($k = 0; $k <= count($tabStations); $k++) {
-                    if (count($tabStations[$k]['fichiers'])) {
-                        $tabFichiers = $tabStations[$k]['fichiers'];
-                        if (count($tabFichiers) > 1) {
-                            $fichier_archive = true;
-                            $nb_archive = count($tabFichiers);
-                            $files = array();
-                            $zip = new \ZipArchive();
-                            $zipName = $tabStations[$k]['station']->getCode() . "-archive.zip";
-                            $contenu = 'le fichier  ' . $zipName . ' regroupe ' . count($tabFichiers) . ' fichiers : ' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
-                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                            fputs($rapport, $contenu);
-                            for ($nb = 0; $nb <= count($tabFichiers); $nb++) {
-                                array_push($files, $pathBase . '/' . $tabFichiers[$nb]);
-                                $contenu = '                  -  ' . $tabFichiers[$nb] . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                if (count($tabStations) > 0) {
+                    for ($k = 0; $k < count($tabStations); $k++) {
+                        if (count($tabStations[$k]['fichiers'])) {
+                            $tabFichiers = $tabStations[$k]['fichiers'];
+                            if (count($tabFichiers) > 1) {
+                                $fichier_archive = true;
+                                $nb_archive = count($tabFichiers);
+                                $files = array();
+                                $zip = new \ZipArchive();
+                                $zipName = $tabStations[$k]['station']->getCode() . "-archive.zip";
+                                $contenu = 'le fichier  ' . $zipName . ' regroupe ' . count($tabFichiers) . ' fichiers : ' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
                                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                                 fputs($rapport, $contenu);
-                            }
-                            $zip->open($pathBase . '/' . $zipName, \ZipArchive::CREATE);
-                            foreach ($files as $f) {
-                                $zip->addFromString(basename($f), file_get_contents($f));
-                            }
-                            $zip->close();
-                            $name = $zipName;
-                        } else {
-                            $fichier_archive = false;
-                            $name = $tabFichiers[0];
-                        }
-
-                        $pgCmdPrelev = $tabStations[$k]['prelevs'][0]['cmdPrelev'];
-                        $trouve = false;
-                        for ($nbSupport = 0; $nbSupport <= count($tabSupport); $nbSupport++) {
-                            if ($tabSupport[$nbSupport] == $pgCmdPrelev->getCodeSupport()->getCodeSupport()) {
-                                $trouve = true;
-                                break;
-                            }
-                        }
-                        if (!$trouve) {
-                            $nbSupport = count($tabSupport) + 1;
-                            $tabSupport[$nbSupport] = $pgCmdPrelev->getCodeSupport()->getCodeSupport();
-                        }
-                        $pgCmdSuiviPrels = $tabStations[$k]['prelevs'][0]['cmdSuiviPrelevs'];
-                        if ($pgCmdSuiviPrels) {
-                            $pgCmdSuiviPrel = $tabStations[$k]['prelevs'][0]['cmdSuiviPrelevs'][0];
-                            if (($pgCmdSuiviPrel->getStatutPrel() == 'N') or ( $pgCmdSuiviPrel->getStatutPrel() == 'F')) {
-                                if ($pgCmdSuiviPrel->getFichierRps()) {
-                                    $pgCmdFichiersRps = $pgCmdSuiviPrel->getFichierRps();
-                                    $emSqe->remove($pgCmdFichiersRps);
+                                for ($nb = 0; $nb < count($tabFichiers); $nb++) {
+                                    array_push($files, $pathBase . '/' . $tabFichiers[$nb]);
+                                    $contenu = '                  -  ' . $tabFichiers[$nb] . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                                    $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                    fputs($rapport, $contenu);
                                 }
-                                $pgCmdFichiersRps = new PgCmdFichiersRps();
-                                $pgCmdFichiersRps->setDemande($pgCmdPrelev->getDemande());
-                                $pgCmdFichiersRps->setNomFichier($name);
-                                $pgCmdFichiersRps->setDateDepot(new \DateTime());
-                                $pgCmdFichiersRps->setTypeFichier('SUI');
-                                $pgCmdFichiersRps->setPhaseFichier($pgProgPhases);
-                                $pgCmdFichiersRps->setUser($pgProgWebUser);
-                                $pgCmdFichiersRps->setSuppr('N');
+                                $zip->open($pathBase . '/' . $zipName, \ZipArchive::CREATE);
+                                foreach ($files as $f) {
+                                    $zip->addFromString(basename($f), file_get_contents($f));
+                                }
+                                $zip->close();
+                                $name = $zipName;
+                            } else {
+                                $fichier_archive = false;
+                                $name = $tabFichiers[0];
+                            }
 
-                                $emSqe->persist($pgCmdFichiersRps);
-                                $pgCmdSuiviPrel->setFichierRps($pgCmdFichiersRps);
-                                $emSqe->persist($pgCmdSuiviPrel);
-                                $emSqe->flush();
-                                $pathBaseFic = $this->getCheminEchange($pgCmdSuiviPrel, $pgCmdFichiersRps->getId());
-                                if (!is_dir($pathBaseFic)) {
-                                    if (!mkdir($pathBaseFic, 0777, true)) {
-                                        $session->getFlashBag()->add('notice-error', 'Le répertoire : ' . $pathBaseFic . ' n\'a pas pu être créé');
-                                        ;
+                            $pgCmdPrelev = $tabStations[$k]['prelevs'][0]['cmdPrelev'];
+                            $trouve = false;
+                            if (count($tabSupport) > 0) {
+                                for ($nbSupport = 0; $nbSupport < count($tabSupport); $nbSupport++) {
+                                    if ($tabSupport[$nbSupport] == $pgCmdPrelev->getCodeSupport()->getCodeSupport()) {
+                                        $trouve = true;
+                                        break;
                                     }
                                 }
+                            }
+                            if (!$trouve) {
+                                $nbSupport = count($tabSupport);
+                                $tabSupport[$nbSupport] = $pgCmdPrelev->getCodeSupport()->getCodeSupport();
+                            }
+                            $pgCmdSuiviPrels = $tabStations[$k]['prelevs'][0]['cmdSuiviPrelevs'];
+                            if ($pgCmdSuiviPrels) {
+                                $pgCmdSuiviPrel = $tabStations[$k]['prelevs'][0]['cmdSuiviPrelevs'][0];
+                                if (($pgCmdSuiviPrel->getStatutPrel() == 'N') or ( $pgCmdSuiviPrel->getStatutPrel() == 'F')) {
+                                    if ($pgCmdSuiviPrel->getFichierRps()) {
+                                        $pgCmdFichiersRps = $pgCmdSuiviPrel->getFichierRps();
+                                        $emSqe->remove($pgCmdFichiersRps);
+                                    }
+                                    $pgCmdFichiersRps = new PgCmdFichiersRps();
+                                    $pgCmdFichiersRps->setDemande($pgCmdPrelev->getDemande());
+                                    $pgCmdFichiersRps->setNomFichier($name);
+                                    $pgCmdFichiersRps->setDateDepot(new \DateTime());
+                                    $pgCmdFichiersRps->setTypeFichier('SUI');
+                                    $pgCmdFichiersRps->setPhaseFichier($pgProgPhases);
+                                    $pgCmdFichiersRps->setUser($pgProgWebUser);
+                                    $pgCmdFichiersRps->setSuppr('N');
+
+                                    $emSqe->persist($pgCmdFichiersRps);
+                                    $pgCmdSuiviPrel->setFichierRps($pgCmdFichiersRps);
+                                    $emSqe->persist($pgCmdSuiviPrel);
+                                    $emSqe->flush();
+                                    $pathBaseFic = $this->getCheminEchange($pgCmdSuiviPrel, $pgCmdFichiersRps->getId());
+                                    if (!is_dir($pathBaseFic)) {
+                                        if (!mkdir($pathBaseFic, 0777, true)) {
+                                            $session->getFlashBag()->add('notice-error', 'Le répertoire : ' . $pathBaseFic . ' n\'a pas pu être créé');
+                                            ;
+                                        }
+                                    }
 //                        $contenu = 'Le fichier ' . $pathBase . '/' . $name . ' a été déposé vers  ' . $pathBaseFic . '/' . $name . CHR(13) . CHR(10) . CHR(13) . CHR(10);
 //                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
 //                        fputs($rapport, $contenu);
-                                copy($pathBase . '/' . $name, $pathBaseFic . '/' . $name);
-                                // unlink($pathBase . '/' . $name);
-                                $contenu = 'Le fichier ' . $name . ' a été déposé sur la station ' . $tabStations[$k]['station']->getCode() . ' ' . $tabStations[$k]['station']->getLibelle() . CHR(13) . CHR(10) . CHR(13) . CHR(10);
-                                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                                fputs($rapport, $contenu);
-                             } else {
-                                $contenu = 'Association impossible : le dernier suivi de la station  ' . $tabStations[$k]['station']->getCode() . ' doit être "Effectué" ou "Non effectué".' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
-                                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                                fputs($rapport, $contenu);
-                                if ($fichier_archive){
-                                    $nbCorrect = $nbCorrect - $nb_archive;
-                                    $nbIncorrect = $nbIncorrect +  $nb_archive;
-                                }else{
-                                    $nbCorrect = $nbCorrect - 1;
-                                    $nbIncorrect = $nbIncorrect +  1;
-                                }
-                             }
-
-                            // envoi mail 
-                            $pgProgWebusers = $repoPgProgWebUsers->getPgProgWebusersByTypeUser('XHBIO');
-                            foreach ($pgProgWebusers as $destinataire) {
-                                if ($destinataire->getCodeSupport()) {
-                                    $trouve = false;
-                                    for ($nbSupport = 0; $nbSupport <= count($tabSupport); $nbSupport++) {
-                                        if ($tabSupport[$nbSupport] == $destinataire->getCodeSupport()) {
-                                            $trouve = true;
-                                            break;
-                                        }
-                                    }
+                                    copy($pathBase . '/' . $name, $pathBaseFic . '/' . $name);
+                                    // unlink($pathBase . '/' . $name);
+                                    $contenu = 'Le fichier ' . $name . ' a été déposé sur la station ' . $tabStations[$k]['station']->getCode() . ' ' . $tabStations[$k]['station']->getLibelle() . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                                    $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                    fputs($rapport, $contenu);
                                 } else {
-                                    $trouve = true;
-                                }
-                                if ($trouve) {
-                                    // Envoi d'un mail
-                                    $objetMessage = "fichier terrrain déposé ";
-                                    $txtMessage = "Un ou plusieurs fichiers terrain ont été déposés sur le lot " . $pgProgLot->getNomLot() . " pour la période du " . $pgProgPeriode->getDateDeb()->format('d/m/Y') . " au " . $dateFin->format('d/m/Y');
-                                    $mailer = $this->get('mailer');
-                                    if ($this->get('aeag_sqe.message')->envoiMessage($emSqe, $mailer, $txtMessage, $destinataire, $objetMessage)) {
-                                        $session->getFlashBag()->add('notice-success', 'un email  a été envoyé à ' . $destinataire->getNom() . ' pour l\'informer du dépôt');
+                                    $contenu = 'Association impossible : le dernier suivi de la station  ' . $tabStations[$k]['station']->getCode() . ' doit être "Effectué" ou "Non effectué".' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                                    $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                    fputs($rapport, $contenu);
+                                    if ($fichier_archive) {
+                                        $nbCorrect = $nbCorrect - $nb_archive;
+                                        $nbIncorrect = $nbIncorrect + $nb_archive;
                                     } else {
-                                        $session->getFlashBag()->add('notice-warning', 'Le dépôt a été traité, mais l\'email n\'a pas pu être envoyé à ' . $destinataire->getNom());
+                                        $nbCorrect = $nbCorrect - 1;
+                                        $nbIncorrect = $nbIncorrect + 1;
                                     }
                                 }
+                            } else {
+                                $contenu = 'Association impossible : pas de suivi renseigné pour la station  ' . $tabStations[$k]['station']->getCode() . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                fputs($rapport, $contenu);
                             }
                         } else {
-                            $contenu = 'Association impossible : pas de suivi renseigné pour la station  ' . $tabStations[$k]['station']->getCode() . CHR(13) . CHR(10) . CHR(13) . CHR(10);
-                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                            fputs($rapport, $contenu);
-                        }
-                    } else {
-                        $pgCmdSuiviPrels = $tabStations[$k]['prelevs'][0]['cmdSuiviPrelevs'];
-                        if ($pgCmdSuiviPrels) {
-                            $pgCmdSuiviPrel = $tabStations[$k]['prelevs'][0]['cmdSuiviPrelevs'][0];
-                            if ($pgCmdSuiviPrel->getStatutPrel() == 'F' and ! $pgCmdSuiviPrel->getfichierRps()) {
-                                $contenu = 'Attention : le dernier suivi de la station  ' . $tabStations[$k]['station']->getCode() . ' a le statut : "Effectué" et il n\'y a pas de fichier terrain associé.' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
-                                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                                fputs($rapport, $contenu);
+                            $pgCmdSuiviPrels = $tabStations[$k]['prelevs'][0]['cmdSuiviPrelevs'];
+                            if ($pgCmdSuiviPrels) {
+                                $pgCmdSuiviPrel = $tabStations[$k]['prelevs'][0]['cmdSuiviPrelevs'][0];
+                                if ($pgCmdSuiviPrel->getStatutPrel() == 'F' and ! $pgCmdSuiviPrel->getfichierRps()) {
+                                    $contenu = 'Attention : le dernier suivi de la station  ' . $tabStations[$k]['station']->getCode() . ' a le statut : "Effectué" et il n\'y a pas de fichier terrain associé.' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                                    $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                    fputs($rapport, $contenu);
+                                }
                             }
                         }
                     }
@@ -715,6 +700,37 @@ class SuiviHydrobioController extends Controller {
                 fputs($rapport, $contenu);
             }
             fclose($rapport);
+        }
+
+        if ($erreur == 0) {
+            // envoi mail 
+            $pgProgWebusers = $repoPgProgWebUsers->getPgProgWebusersByTypeUser('XHBIO');
+            foreach ($pgProgWebusers as $destinataire) {
+                if ($destinataire->getCodeSupport()) {
+                    $trouve = false;
+                    if (count($tabSupport) > 0) {
+                        for ($nbSupport = 0; $nbSupport < count($tabSupport); $nbSupport++) {
+                            if ($tabSupport[$nbSupport] == $destinataire->getCodeSupport()) {
+                                $trouve = true;
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    $trouve = true;
+                }
+                if ($trouve) {
+                    // Envoi d'un mail
+                    $objetMessage = "fichier terrrain déposé ";
+                    $txtMessage = "Un ou plusieurs fichiers terrain ont été déposés sur le lot " . $pgProgLot->getNomLot() . " pour la période du " . $pgProgPeriode->getDateDeb()->format('d/m/Y') . " au " . $dateFin->format('d/m/Y');
+                    $mailer = $this->get('mailer');
+                    if ($this->get('aeag_sqe.message')->envoiMessage($emSqe, $mailer, $txtMessage, $destinataire, $objetMessage)) {
+                        $session->getFlashBag()->add('notice-success', 'un email  a été envoyé à ' . $destinataire->getNom() . ' pour l\'informer du dépôt');
+                    } else {
+                        $session->getFlashBag()->add('notice-warning', 'Le dépôt a été traité, mais l\'email n\'a pas pu être envoyé à ' . $destinataire->getNom());
+                    }
+                }
+            }
         }
 
         $tabRapport[$nbRapport] = "Nombre de fichiers intégrés : " . $nbCorrect;
@@ -820,10 +836,12 @@ class SuiviHydrobioController extends Controller {
             $j = 0;
             foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
                 $trouve = false;
-                for ($k = 0; $k <= count($tabStations); $k++) {
-                    if ($tabStations[$k]['station']->getOuvFoncid() == $pgProgLotPeriodeProg->getStationAn()->getStation()->getOuvFoncid()) {
-                        $trouve = true;
-                        break;
+                if (count($tabStations) > 0) {
+                    for ($k = 0; $k < count($tabStations); $k++) {
+                        if ($tabStations[$k]['station']->getOuvFoncid() == $pgProgLotPeriodeProg->getStationAn()->getStation()->getOuvFoncid()) {
+                            $trouve = true;
+                            break;
+                        }
                     }
                 }
                 if (!$trouve) {
@@ -952,11 +970,13 @@ class SuiviHydrobioController extends Controller {
                         fputs($rapport, $contenu);
                     } else {
                         $trouve = false;
-                        for ($i = 0; $i <= count($tabStations); $i++) {
-                            if ($tabStations[$i]['station'] == $pgRefStationMesure) {
-                                $trouve = true;
-                                $prelevs = $tabStations[$i]['prelevs'];
-                                break;
+                        if (count($tabStations) > 0) {
+                            for ($i = 0; $i < count($tabStations); $i++) {
+                                if ($tabStations[$i]['station'] == $pgRefStationMesure) {
+                                    $trouve = true;
+                                    $prelevs = $tabStations[$i]['prelevs'];
+                                    break;
+                                }
                             }
                         }
                         if (!$trouve) {
@@ -1050,69 +1070,71 @@ class SuiviHydrobioController extends Controller {
 
                     $trouve = false;
                     $prelev = null;
-                    for ($j = 0; $j <= count($prelevs); $j++) {
-                        $prelev = $prelevs[$j]['cmdPrelev'];
-                        if ($prelev->getCodeSupport()->getCodeSupport() != '10' && $prelev->getCodeSupport()->getCodeSupport() != '11') {
-                            $autrePgCmdPrelevs = $repoPgCmdPrelev->getAutrePrelevs($prelev);
-                            for ($i = 0; $i <= count($autrePgCmdPrelevs); $i++) {
-                                $autreSuport = $autrePgCmdPrelevs[$i]['codeSupport'];
-                                if ($autreSuport != '10' && $autreSuport != '11') {
-                                    $autreDateDebut = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
-                                    $autreDateDebut->sub(new \DateInterval('P7D'));
-                                    $autreDateFin = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
-                                    $autreDateFin->add(new \DateInterval('P7D'));
-                                    if ($datePrel >= $autreDateDebut and $datePrel <= $autreDateFin) {
-                                        if (!$user->hasRole('ROLE_ADMINSQE')) {
-                                            $err = true;
+                    if (count($prelevs) > 0) {
+                        for ($j = 0; $j < count($prelevs); $j++) {
+                            $prelev = $prelevs[$j]['cmdPrelev'];
+                            if ($prelev->getCodeSupport()->getCodeSupport() != '10' && $prelev->getCodeSupport()->getCodeSupport() != '11') {
+                                $autrePgCmdPrelevs = $repoPgCmdPrelev->getAutrePrelevs($prelev);
+                                for ($i = 0; $i < count($autrePgCmdPrelevs); $i++) {
+                                    $autreSuport = $autrePgCmdPrelevs[$i]['codeSupport'];
+                                    if ($autreSuport != '10' && $autreSuport != '11') {
+                                        $autreDateDebut = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
+                                        $autreDateDebut->sub(new \DateInterval('P7D'));
+                                        $autreDateFin = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
+                                        $autreDateFin->add(new \DateInterval('P7D'));
+                                        if ($datePrel >= $autreDateDebut and $datePrel <= $autreDateFin) {
+                                            if (!$user->hasRole('ROLE_ADMINSQE')) {
+                                                $err = true;
+                                            }
+                                            $contenu = 'ligne  ' . $ligne . '  : Date  (' . $datePrel->format('d/m/Y H:i') . ') doit être inférieure à ' . $autreDateDebut->format('d/m/Y H:i') . ' ou supérieure à  ' . $autreDateFin->format('d/m/Y H:i');
+                                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                            fputs($rapport, $contenu);
                                         }
-                                        $contenu = 'ligne  ' . $ligne . '  : Date  (' . $datePrel->format('d/m/Y H:i') . ') doit être inférieure à ' . $autreDateDebut->format('d/m/Y H:i') . ' ou supérieure à  ' . $autreDateFin->format('d/m/Y H:i');
+                                    }
+                                }
+                            }
+                            if ($prelev->getCodeSupport()->getCodeSupport() == $codeSupport) {
+                                $trouve = true;
+                                $suiviPrels = $prelevs[$j]['cmdSuiviPrelevs'];
+                                $suiviPrelActuel = null;
+                                for ($k = 0; $k < count($suiviPrels); $k++) {
+                                    if ($k == 0) {
+                                        $suiviPrelActuel = $suiviPrels[$k];
+                                    }
+                                    $suiviPrel = $suiviPrels[$k];
+                                    if ($suiviPrel->getDatePrel() == $datePrel and
+                                            $suiviPrel->getStatutPrel() == $statutPrel and
+                                            $suiviPrel->getCommentaire() == $commentaire) {
+                                        $err = true;
+                                        $contenu = 'ligne  ' . $ligne . '  :  suivi déja intégré ' . CHR(13) . CHR(10);
+                                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                        fputs($rapport, $contenu);
+                                        $k = count($suiviPrels) + 1;
+                                    }
+                                }
+                                $nbStations = 0;
+                                for ($k = 0; $k < count($suiviPrels); $k++) {
+                                    $suiviPrel = $suiviPrels[$k];
+                                    if ($suiviPrel->getDatePrel() == $datePrel and
+                                            $suiviPrel->getCommentaire() == $commentaire) {
+                                        $nbStations++;
+                                    }
+                                }
+                                if ($pgCmdPrelev->getCodeSupport()->getCodeSupport() == '13' || $pgCmdPrelev->getCodeSupport()->getCodeSupport() == '11') {
+                                    if ($nbStations > 4) {
+                                        $err = true;
+                                        $contenu = 'ligne  ' . $ligne . '  :  4 stations maxi le même jour pour un même commentaire ' . CHR(13) . CHR(10);
                                         $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                                         fputs($rapport, $contenu);
                                     }
                                 }
-                            }
-                        }
-                        if ($prelev->getCodeSupport()->getCodeSupport() == $codeSupport) {
-                            $trouve = true;
-                            $suiviPrels = $prelevs[$j]['cmdSuiviPrelevs'];
-                            $suiviPrelActuel = null;
-                            for ($k = 0; $k <= count($suiviPrels); $k++) {
-                                if ($k == 0) {
-                                    $suiviPrelActuel = $suiviPrels[$k];
-                                }
-                                $suiviPrel = $suiviPrels[$k];
-                                if ($suiviPrel->getDatePrel() == $datePrel and
-                                        $suiviPrel->getStatutPrel() == $statutPrel and
-                                        $suiviPrel->getCommentaire() == $commentaire) {
-                                    $err = true;
-                                    $contenu = 'ligne  ' . $ligne . '  :  suivi déja intégré ' . CHR(13) . CHR(10);
-                                    $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                                    fputs($rapport, $contenu);
-                                    $k = count($suiviPrels) + 1;
-                                }
-                            }
-                            $nbStations = 0;
-                            for ($k = 0; $k <= count($suiviPrels); $k++) {
-                                $suiviPrel = $suiviPrels[$k];
-                                if ($suiviPrel->getDatePrel() == $datePrel and
-                                        $suiviPrel->getCommentaire() == $commentaire) {
-                                    $nbStations++;
-                                }
-                            }
-                            if ($pgCmdPrelev->getCodeSupport()->getCodeSupport() == '13' || $pgCmdPrelev->getCodeSupport()->getCodeSupport() == '11') {
-                                if ($nbStations > 4) {
-                                    $err = true;
-                                    $contenu = 'ligne  ' . $ligne . '  :  4 stations maxi le même jour pour un même commentaire ' . CHR(13) . CHR(10);
-                                    $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                                    fputs($rapport, $contenu);
-                                }
-                            }
-                            if ($pgCmdPrelev->getCodeSupport()->getCodeSupport() == '10') {
-                                if ($nbStations > 6) {
-                                    $err = true;
-                                    $contenu = 'ligne  ' . $ligne . '  :  4 stations maxi le même jour pour un même commentaire ' . CHR(13) . CHR(10);
-                                    $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                                    fputs($rapport, $contenu);
+                                if ($pgCmdPrelev->getCodeSupport()->getCodeSupport() == '10') {
+                                    if ($nbStations > 6) {
+                                        $err = true;
+                                        $contenu = 'ligne  ' . $ligne . '  :  4 stations maxi le même jour pour un même commentaire ' . CHR(13) . CHR(10);
+                                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                        fputs($rapport, $contenu);
+                                    }
                                 }
                             }
                         }
@@ -1153,6 +1175,9 @@ class SuiviHydrobioController extends Controller {
                         if ($user->hasRole('ROLE_ADMINSQE')) {
                             $pgProgWebUsers = $repoPgProgWebUsers->getPgProgWebusersByPrestataire($pgCmdPrelev->getPrestaPrel());
                             $pgProgWebUser = $pgProgWebUsers[0];
+                            if (!$pgProgWebUser) {
+                                $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
+                            }
                         } else {
                             $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
                         }
@@ -1427,7 +1452,7 @@ class SuiviHydrobioController extends Controller {
 
             if ($pgCmdPrelev->getCodeSupport()->getCodeSupport() != '10' && $pgCmdPrelev->getCodeSupport()->getCodeSupport() != '11') {
                 $autrePgCmdPrelevs = $repoPgCmdPrelev->getAutrePrelevs($pgCmdPrelev);
-                for ($i = 0; $i <= count($autrePgCmdPrelevs); $i++) {
+                for ($i = 0; $i < count($autrePgCmdPrelevs); $i++) {
                     $autreSuport = $autrePgCmdPrelevs[$i]['codeSupport'];
                     if ($autreSuport != '10' && $autreSuport != '11') {
                         $autreDateDebut = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
@@ -1741,6 +1766,7 @@ class SuiviHydrobioController extends Controller {
 
         $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
+        $repoPgCmdDwnldUsrRps = $emSqe->getRepository('AeagSqeBundle:PgCmdDwnldUsrRps');
 
         $pgCmdSuiviPrel = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelById($suiviPrelId);
         $pgCmdPrelev = $pgCmdSuiviPrel->getPrelev();
@@ -1762,6 +1788,10 @@ class SuiviHydrobioController extends Controller {
 // On supprime l'enregistrement  $pgCmdFichiersRps
             $pgCmdSuiviPrel->setFichierRps(null);
             $emSqe->persist($pgCmdSuiviPrel);
+            $pgCmdDwnldUsrRps = $repoPgCmdDwnldUsrRps->getPgCmdDwnldUsrRpsByFichierReponse($pgCmdFichiersRps);
+            foreach ($pgCmdDwnldUsrRps as $pgCmdDwnldUsrRp) {
+                $emSqe->remove($pgCmdDwnldUsrRp);
+            }
             $emSqe->remove($pgCmdFichiersRps);
         }
         $emSqe->remove($pgCmdSuiviPrel);
@@ -1896,6 +1926,7 @@ class SuiviHydrobioController extends Controller {
         $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
         $repoPgCmdFichiersRps = $emSqe->getRepository('AeagSqeBundle:PgCmdFichiersRps');
+        $repoPgCmdDwnldUsrRps = $emSqe->getRepository('AeagSqeBundle:PgCmdDwnldUsrRps');
 
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgCmdSuiviPrel = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelById($suiviPrelId);
@@ -1917,6 +1948,10 @@ class SuiviHydrobioController extends Controller {
 // On supprime l'enregistrement  $pgCmdFichiersRps
         $pgCmdSuiviPrel->setFichierRps(null);
         $emSqe->persist($pgCmdSuiviPrel);
+        $pgCmdDwnldUsrRps = $repoPgCmdDwnldUsrRps->getPgCmdDwnldUsrRpsByFichierReponse($pgCmdFichiersRps);
+        foreach ($pgCmdDwnldUsrRps as $pgCmdDwnldUsrRp) {
+            $emSqe->remove($pgCmdDwnldUsrRp);
+        }
         $emSqe->remove($pgCmdFichiersRps);
         $emSqe->flush();
         $response = null;
@@ -1948,13 +1983,23 @@ class SuiviHydrobioController extends Controller {
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
         $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
+        $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
 
+        $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgCmdSuiviPrel = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelById($suiviPrelId);
         $pgCmdPrelev = $pgCmdSuiviPrel->getPrelev();
         $pgCmdFichiersRps = $pgCmdSuiviPrel->getFichierRps();
         $chemin = $this->getCheminEchange($pgCmdSuiviPrel);
         $fichier = $pgCmdFichiersRps->getNomFichier();
         $ext = strtolower(pathinfo($fichier, PATHINFO_EXTENSION));
+
+        $pgCmdDwnldUsrRps = new PgCmdDwnldUsrRps();
+        $pgCmdDwnldUsrRps->setUser($pgProgWebUser);
+        $pgCmdDwnldUsrRps->setFichierReponse($pgCmdFichiersRps);
+        $pgCmdDwnldUsrRps->setDate(new \DateTime());
+        $pgCmdDwnldUsrRps->setTypeFichier($pgCmdFichiersRps->getTypeFichier());
+        $emSqe->persist($pgCmdDwnldUsrRps);
+        $emSqe->flush();
 
         header('Content-Type', 'application/' . $ext);
         header('Content-disposition: attachment; filename="' . $fichier . '"');

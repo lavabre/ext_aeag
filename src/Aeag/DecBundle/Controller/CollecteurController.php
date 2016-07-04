@@ -1284,16 +1284,23 @@ class CollecteurController extends Controller {
                 $tab[$i]['id'] = $declaration->getId();
                 $tab[$i]['statutCode'] = $declaration->getStatut()->getCode();
                 $tab[$i]['declarationProducteurId'] = $declaration->getDeclarationproducteur()->getId();
-                $tab[$i]['producteurSiret'] = $producteur->getSiret();
-                $tab[$i]['producteurLibelle'] = $producteur->getLibelle();
+                if ($producteur) {
+                    $tab[$i]['producteurSiret'] = $producteur->getSiret();
+                    $tab[$i]['producteurLibelle'] = $producteur->getLibelle();
+                    if (!$producteur->getCommune()) {
+                        $tab[$i]['producteurCodePostal'] = $producteur->getCp();
+                    } else {
+                        $tab[$i]['producteurCodePostal'] = $producteur->getCommune()->getCommune();
+                    }
+                } else {
+                    $tab[$i]['producteurSiret'] = null;
+                    $tab[$i]['producteurLibelle'] = null;
+                     $tab[$i]['producteurCodePostal'] = null;
+                }
                 $tab[$i]['declarationProducteurQuantiteReel'] = $declaration->getDeclarationProducteur()->getQuantiteReel();
                 $tab[$i]['declarationProducteurQuantiteRet'] = $declaration->getDeclarationProducteur()->getQuantiteRet();
                 $tab[$i]['declarationProducteurMontAide'] = $declaration->getDeclarationProducteur()->getMontAide();
-                if (!$producteur->getCommune()) {
-                    $tab[$i]['producteurCodePostal'] = $producteur->getCp();
-                } else {
-                    $tab[$i]['producteurCodePostal'] = $producteur->getCommune()->getCommune();
-                }
+
                 if ($centreTraitement) {
                     $tab[$i]['centreTraitement'] = $centreTraitement->getNumero();
                 } else {
@@ -1708,9 +1715,9 @@ class CollecteurController extends Controller {
 
                 if ($declaration->getCentreTraitement()) {
                     $centreTraitement = $repoOuvrage->getOuvrageById($declaration->getCentreTraitement());
-                    if ($centreTraitement){
-                    $tab[$i]['centreTraitement'] = $centreTraitement->getNumero();
-                    }else{
+                    if ($centreTraitement) {
+                        $tab[$i]['centreTraitement'] = $centreTraitement->getNumero();
+                    } else {
                         $tab[$i]['centreTraitement'] = "";
                     }
                 } else {
@@ -2293,21 +2300,23 @@ class CollecteurController extends Controller {
                                 }
                             }
                             $centreDepot = null;
-                            if ($tab[14]) {
-                                $tab[14] = str_replace(' ', '', $tab[14]);
-                                if (strlen($tab[14]) == 14) {
-                                    $centreDepots = $repoOuvrage->getOuvragesBySiretType($tab[14], 'ODEC');
-                                    if ($centreDepots) {
-                                        $centreDepot = null;
+                            if (count($tab) >= 15) {
+                                if ($tab[14]) {
+                                    $tab[14] = str_replace(' ', '', $tab[14]);
+                                    if (strlen($tab[14]) == 14) {
+                                        $centreDepots = $repoOuvrage->getOuvragesBySiretType($tab[14], 'ODEC');
+                                        if ($centreDepots) {
+                                            $centreDepot = null;
+                                        }
+                                    } else {
+                                        $centreDepot = $repoOuvrage->getOuvrageByNumeroType($tab[14], 'ODEC');
                                     }
-                                } else {
-                                    $centreDepot = $repoOuvrage->getOuvrageByNumeroType($tab[14], 'ODEC');
-                                }
-                                if ($centreDepot) {
-                                    $declarationDetail->setCentreDepot($centreDepot->getid());
-                                } else {
-                                    $err = true;
-                                    $message = "dans le fichier CSV : centre de d'entreposage " . $tab[14] . " incorrect à la ligne " . $ligne . " \n";
+                                    if ($centreDepot) {
+                                        $declarationDetail->setCentreDepot($centreDepot->getid());
+                                    } else {
+                                        $err = true;
+                                        $message = "dans le fichier CSV : centre de d'entreposage " . $tab[14] . " incorrect à la ligne " . $ligne . " \n";
+                                    }
                                 }
                             }
 

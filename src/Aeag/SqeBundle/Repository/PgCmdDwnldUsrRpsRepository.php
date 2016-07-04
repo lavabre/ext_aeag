@@ -16,7 +16,7 @@ class PgCmdDwnldUsrRpsRepository extends EntityRepository {
      */
     public function getPPgCmdDwnldUsrRpss() {
         $query = "select c";
-        $query = $query . " from Aeag\SqeBundle\Entity\PPgCmdDwnldUsrRps c";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdDwnldUsrRps c";
         $query = $query . " order by c.date";
         $qb = $this->_em->createQuery($query);
         //print_r($query);
@@ -28,8 +28,20 @@ class PgCmdDwnldUsrRpsRepository extends EntityRepository {
      */
     public function getPPgCmdDwnldUsrRpsByUser($pgProgWebusers) {
         $query = "select c";
-        $query = $query . " from Aeag\SqeBundle\Entity\PPgCmdDwnldUsrRps c";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdDwnldUsrRps c";
         $query = $query . " where c.user = " . $pgProgWebusers->getId() ;
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+        return $qb->getResult();
+    }
+    
+      /**
+     * @return array
+     */
+    public function getPgCmdDwnldUsrRpsByFichierReponse($pgCmdFichiersRps) {
+        $query = "select c";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdDwnldUsrRps c";
+        $query = $query . " where c.fichierReponse = " . $pgCmdFichiersRps->getId() ;
         $qb = $this->_em->createQuery($query);
         //print_r($query);
         return $qb->getResult();
