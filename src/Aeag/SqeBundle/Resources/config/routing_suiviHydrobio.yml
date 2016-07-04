@@ -131,3 +131,7 @@ AeagSqeBundle_suiviHydrobio_planning:
 AeagSqeBundle_suiviHydrobio_planning_table:
     path:  /planning/table
     defaults: { _controller: AeagSqeBundle:SuiviHydrobio:planningTable }
+    
+AeagSqeBundle_suiviHydrobio_planning_modal:
+    path:  /planning/modal
+    defaults: { _controller: AeagSqeBundle:SuiviHydrobio:planningModal }

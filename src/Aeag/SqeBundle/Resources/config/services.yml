@@ -16,3 +16,8 @@ services:
         arguments: [@mailer]
     aeag_sqe.controle_vraisemblance:
         class: %aeag_sqe.controle_vraisemblance.class%
+    class.twig_extension:
+        class: Aeag\SqeBundle\Twig\ClassTwigExtension
+        public: false
+        tags:
+            - { name: twig.extension }
