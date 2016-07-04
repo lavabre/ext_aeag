@@ -1,38 +1,44 @@
 <table class="table">
     <theading>
         <tr>
-            <th></th>
-            <th>Lundi {{joursemaine[0]}}</th>
-            <th>Mardi {{joursemaine[1]}}</th>
-            <th>Mercredi {{joursemaine[2]}}</th>
-            <th>Jeudi {{joursemaine[3]}}</th>
-            <th>Vendredi {{joursemaine[4]}}</th>
-            <th>Samedi {{joursemaine[5]}}</th>
-            <th>Dimanche {{joursemaine[6]}}</th>
+            {% for jourSemaine in joursSemaine %}
+                <th>{{jourSemaine}}</th>
+                {%endfor%}
         </tr>
     </theading>
     <tbody>
         <tr>
-            <td></td>
-            <td>
-                <button type="button" class="btn btn-info">station1 - support2 - presta1</button>
-                <button type="button" class="btn btn-info">station1 - support1 - presta2</button>
-                <button type="button" class="btn btn-warning">station2 - support1 - presta2</button>
-            </td>
-            <td></td>
-            <td>
-                <button type="button" class="btn btn-warning">station2 - support2 - presta1</button>
-            </td>
-            <td>
-                <button type="button" class="btn btn-warning">station2 - support2 - presta2</button>
-                <button type="button" class="btn btn-success">station3 - support1 - presta2</button>
-            </td>
-            <td>
-                <button type="button" class="btn btn-info">station1 - support2 - presta2</button>
-                <button type="button" class="btn btn-success">station3 - support1 - presta2</button>
-            </td>
-            <td></td>
-            <td></td>
+            {% for i in 1..7 %}
+                <td>
+                    {% for evenement in evenements[i]%}
+                        {% if evenement | length %}
+                            <div class="alert aeag-alert-{{evenement.prelev.prestaPrel.couleur}} evenement" role="alert">
+                                <strong>{{evenement.datePrel | date('H:i')}}</strong>
+                                {{evenement.prelev.station.libelle}} - {{evenement.prelev.codeSupport.nomSupport}} - {{evenement.prelev.prestaPrel.nomCorres}}
+                                <div style='display:none' >
+                                    <span class='id_evt'>{{evenement.id}}</span>
+                                </div>
+                            </div>
+                        {%endif%}    
+                    {%endfor%}
+                </td>
+            {%endfor%}
         </tr>
     </tbody>
 </table>
+<div class="modal fade" tabindex="-1" role="dialog" id='modal-planning'>
+</div><!-- /.modal -->
+<script>
+    $('.evenement').click(function () {
+        var idEvt = $(this).find('.id_evt').html();
+        $.ajax({url: "{{ path('AeagSqeBundle_suiviHydrobio_planning_modal') }}",
+            method: "GET",
+            data: {evt: idEvt},
+            success: function (result) {
+                $("#modal-planning").html(result);
+                $("#modal-planning").modal();
+            }
+        });
+    });
+
+</script>

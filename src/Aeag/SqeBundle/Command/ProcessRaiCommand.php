@@ -185,7 +185,7 @@ class ProcessRaiCommand extends AeagCommand {
 
             // Vérif STQ : concordance STQ RAI (unique ou multiple) / DAI : stations rajoutées => Erreur
             if (count($diff = $this->repoPgTmpValidEdilabo->getDiffCodeStation($codePrelev["codePrelevement"], $demandeId, $reponseId)) > 0) {
-                $this->_addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: Date Prelevement", $codePrelev["codePrelevement"], $diff);
+                $this->_addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: Stations rajoutées", $codePrelev["codePrelevement"], $diff);
             }
 
             // paramètres/unité : si unité changée => erreur

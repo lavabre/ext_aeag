@@ -50,6 +50,13 @@ class PgRefCorresPresta
      * @ORM\Column(name="code_sandre", type="string", length=14, nullable=true)
      */
     private $codeSandre;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="couleur", type="string", length=7, nullable=true)
+     */
+    private $couleur;
 
 
 
@@ -157,6 +164,14 @@ class PgRefCorresPresta
     
      public function getAncnumNomCorres() {
         return $this->ancnum . ' ' . str_replace("\'"," ",$this->nomCorres);
+    }
+    
+    public function getCouleur() {
+        return $this->couleur;
+    }
+
+    public function setCouleur($couleur) {
+        $this->couleur = $couleur;
     }
 
 }

@@ -2312,22 +2312,74 @@ class SuiviHydrobioController extends Controller {
 //        return new Response ('');
     }
 
+    
     public function planningAction() {
-        return $this->render('AeagSqeBundle:SuiviHydrobio:planning.html.twig', array());
+        
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+        
+        $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
+        
+        // Récupération des stations
+        $pgRefStationMesure = $repoPgCmdSuiviPrel->getStationsFromSuiviPrel();
+        
+        // Récupération des supports
+        $pgSandreSupport = $repoPgCmdSuiviPrel->getSupportsFromSuiviPrel();
+        
+        // Récupération des prestataires
+        $pgRefCorresPresta = $repoPgCmdSuiviPrel->getPrestatairesFromSuiviPrel();
+        
+        return $this->render('AeagSqeBundle:SuiviHydrobio:planning.html.twig', array('stations' => $pgRefStationMesure, 'supports' => $pgSandreSupport, 'prestataires' => $pgRefCorresPresta));
     }
 
     public function planningTableAction() {
         $request = $this->get('request');
+        
+        $emSqe = $this->get('doctrine')->getManager('sqe');
 
         $semaine = $request->get('semaine');
         $annee = $request->get('annee');
-        $jourSemaine = array();
-        for ($day = 1; $day <= 7; $day++) {
-            $jourSemaine[] = date('d F', strtotime($annee . "W" . $semaine . $day));
+        $support = $request->get('support');
+        $station = $request->get('station');
+        $presta = $request->get('presta');
+        
+        if ($semaine < 10) {
+            $semaine = '0'.$semaine;
         }
+        
+        $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
+        
+        $joursSemaine = array();
+        for ($day = 1; $day <= 7; $day++) {
+            $joursSemaine[] = $this->dateFR($annee . "W" . $semaine . $day);
+        }
+        
+        // Récupération des rdv
+        $evenements = array();
+        for ($day = 1; $day <= 7; $day++) {
+            $date = new \DateTime($annee . "W" . $semaine . $day);
+            $evenements[$day] = $repoPgCmdSuiviPrel->getEvenements($date, $support, $station, $presta);
+        }
+        
+        return $this->render('AeagSqeBundle:SuiviHydrobio:planningTable.html.twig', array("joursSemaine" => $joursSemaine, "evenements" => $evenements));
+    }
+    
+    public function planningModalAction() {
+        $request = $this->get('request');
+        
+        $emSqe = $this->get('doctrine')->getManager('sqe');
 
-
-        return $this->render('AeagSqeBundle:SuiviHydrobio:planningTable.html.twig', array("joursemaine" => $jourSemaine));
+        $evt = $request->get('evt');
+        
+        $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
+        $pgCmdSuiviPrel = $repoPgCmdSuiviPrel->findOneById($evt);
+        
+        return $this->render('AeagSqeBundle:SuiviHydrobio:planningModal.html.twig', array('evenement' => $pgCmdSuiviPrel));
+    }
+    
+    protected function dateFR( $time )
+    {
+       setlocale(LC_TIME, 'fr_FR.utf8','fra'); 
+       return strftime( "%A %d %B" , strtotime( $time ) );
     }
 
     protected function getCheminEchange($pgCmdSuiviPrel) {
