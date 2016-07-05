@@ -60,8 +60,7 @@ class SuiviHydrobioController extends Controller {
         foreach ($pgProgLotAns as $pgProgLotAn) {
             $pgProgLot = $pgProgLotAn->getLot();
             $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
-            //if (substr($pgProgTypeMilieu->getCodeMilieu(), 1, 2) === 'HB' or substr($pgProgTypeMilieu->getCodeMilieu(), 1, 3) === 'RHM') {
-            if (substr($pgProgTypeMilieu->getCodeMilieu(), 1, 2) === 'HB') {
+            if (substr($pgProgTypeMilieu->getCodeMilieu(), 1, 2) === 'HB' or substr($pgProgTypeMilieu->getCodeMilieu(), 1, 3) === 'RHM') {
                 $pgProgLotPeriodeAns = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnByLotan($pgProgLotAn);
                 if (count($pgProgLotPeriodeAns) > 0) {
                     $trouve = false;
@@ -244,7 +243,7 @@ class SuiviHydrobioController extends Controller {
                             foreach ($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
                                 $tabSuiviPrels[$nbSuiviPrels]['suiviPrel'] = $pgCmdSuiviPrel;
                                 $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'N';
-                                if ($user->hasRole('ROLE_ADMINSQE') or ( $pgCmdSuiviPrel->getUser()->getPrestataire() == $pgCmdDemande->getPrestataire())) {
+                                if ($user->hasRole('ROLE_ADMINSQE') or ( $pgCmdPrelev->getPrestaPrel() == $pgCmdDemande->getPrestataire())) {
                                     if ($pgCmdSuiviPrel->getStatutPrel() != 'F' or ( $pgCmdSuiviPrel->getStatutPrel() == 'F' and $pgCmdSuiviPrel->getValidation() != 'A')) {
                                         $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'O';
                                         $tabCmdPrelevs[$nbCmdPrelevs]['maj'] = 'O';
@@ -1129,7 +1128,8 @@ class SuiviHydrobioController extends Controller {
                                 $autrePgCmdPrelevs = $repoPgCmdPrelev->getAutrePrelevs($prelev);
                                 for ($i = 0; $i < count($autrePgCmdPrelevs); $i++) {
                                     $autreSuport = $autrePgCmdPrelevs[$i]['codeSupport'];
-                                    if ($autreSuport != '10' && $autreSuport != '11') {
+                                    if (($autreSuport != '10' && $autreSuport != '11') ||
+                                            ($prelev->getCodeSupport()->getCodeSupport() == '69' && $autreSuport != '4')) {
                                         $autreDateDebut = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
                                         $autreDateDebut->sub(new \DateInterval('P7D'));
                                         $autreDateFin = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
@@ -1226,8 +1226,9 @@ class SuiviHydrobioController extends Controller {
                     } else {
                         if ($user->hasRole('ROLE_ADMINSQE')) {
                             $pgProgWebUsers = $repoPgProgWebUsers->getPgProgWebusersByPrestataire($pgCmdPrelev->getPrestaPrel());
-                            $pgProgWebUser = $pgProgWebUsers[0];
-                            if (!$pgProgWebUser) {
+                            if (count($pgProgWebUsers) > 0) {
+                                $pgProgWebUser = $pgProgWebUsers[0];
+                            } else {
                                 $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
                             }
                         } else {
@@ -1238,7 +1239,7 @@ class SuiviHydrobioController extends Controller {
                         $pgCmdSuiviPrel->setUser($pgProgWebUser);
                         $pgCmdSuiviPrel->setDatePrel($datePrel);
                         $pgCmdSuiviPrel->setStatutPrel($statutPrel);
-                        $pgCmdSuiviPrel->setCommentaire($commentaire);
+                        $pgCmdSuiviPrel->setCommentaire(utf8_encode($commentaire));
                         $pgCmdSuiviPrel->setValidation('E');
                         $emSqe->persist($pgCmdSuiviPrel);
                         if ($pgCmdSuiviPrel->getStatutPrel() == 'N') {
@@ -1538,7 +1539,8 @@ class SuiviHydrobioController extends Controller {
                 $autrePgCmdPrelevs = $repoPgCmdPrelev->getAutrePrelevs($pgCmdPrelev);
                 for ($i = 0; $i < count($autrePgCmdPrelevs); $i++) {
                     $autreSuport = $autrePgCmdPrelevs[$i]['codeSupport'];
-                    if ($autreSuport != '10' && $autreSuport != '11') {
+                    if (($autreSuport != '10' && $autreSuport != '11') ||
+                            ($prelev->getCodeSupport()->getCodeSupport() == '69' && $autreSuport != '4')) {
                         $autreDateDebut = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
                         $autreDateDebut->sub(new \DateInterval('P7D'));
                         $autreDateFin = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
