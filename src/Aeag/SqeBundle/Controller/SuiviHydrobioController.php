@@ -22,16 +22,23 @@ use Symfony\Component\HttpFoundation\Request;
 class SuiviHydrobioController extends Controller {
 
     public function indexAction() {
+       
         $user = $this->getUser();
-        if (!$user) {
-            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
-        }
-
+      
         $session = $this->get('session');
         $session->set('menu', 'suiviHydrobio');
         $session->set('controller', 'SuiviHydrobio');
         $session->set('fonction', 'index');
+         $em = $this->get('doctrine')->getManager();
         $emSqe = $this->get('doctrine')->getManager('sqe');
+        
+           if (is_object($user)) {
+            $mes = AeagController::notificationAction($user, $em, $session);
+            $mes1 = AeagController::messageAction($user, $em, $session);
+        } else {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+
 
 // Récupération des programmations
         $repoPgProgLotAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotAn');
@@ -147,15 +154,22 @@ class SuiviHydrobioController extends Controller {
     }
 
     public function lotPeriodeStationsAction($periodeAnId) {
+        
         $user = $this->getUser();
-        if (!$user) {
-            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
-        }
+     
         $session = $this->get('session');
         $session->set('menu', 'suiviHydrobio');
         $session->set('controller', 'SuiviHydrobio');
         $session->set('fonction', 'lotPeriodeStations');
+        $em = $this->get('doctrine')->getManager();
         $emSqe = $this->get('doctrine')->getManager('sqe');
+        
+           if (is_object($user)) {
+            $mes = AeagController::notificationAction($user, $em, $session);
+            $mes1 = AeagController::messageAction($user, $em, $session);
+        } else {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
 
         $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
         $repoPgProgLotPeriodeProg = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeProg');
@@ -330,6 +344,7 @@ class SuiviHydrobioController extends Controller {
         $session->set('menu', 'suiviHydrobio');
         $session->set('controller', 'SuiviHydrobio');
         $session->set('fonction', 'lotPeriodeStationsIntegrerFichier');
+        $em = $this->get('doctrine')->getManager();
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
         $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
@@ -703,7 +718,10 @@ class SuiviHydrobioController extends Controller {
         }
 
         if ($erreur == 0) {
-            // envoi mail 
+            $objetMessage = "fichier terrrain déposé ";
+            $txtMessage = "Un ou plusieurs fichiers terrain ont été déposés sur le lot " . $pgProgLot->getNomLot() . " pour la période du " . $pgProgPeriode->getDateDeb()->format('d/m/Y') . " au " . $dateFin->format('d/m/Y');
+            $mailer = $this->get('mailer');
+            // envoi mail  aux XHBIO
             $pgProgWebusers = $repoPgProgWebUsers->getPgProgWebusersByTypeUser('XHBIO');
             foreach ($pgProgWebusers as $destinataire) {
                 if ($destinataire->getCodeSupport()) {
@@ -721,15 +739,39 @@ class SuiviHydrobioController extends Controller {
                 }
                 if ($trouve) {
                     // Envoi d'un mail
-                    $objetMessage = "fichier terrrain déposé ";
-                    $txtMessage = "Un ou plusieurs fichiers terrain ont été déposés sur le lot " . $pgProgLot->getNomLot() . " pour la période du " . $pgProgPeriode->getDateDeb()->format('d/m/Y') . " au " . $dateFin->format('d/m/Y');
-                    $mailer = $this->get('mailer');
                     if ($this->get('aeag_sqe.message')->envoiMessage($emSqe, $mailer, $txtMessage, $destinataire, $objetMessage)) {
                         $session->getFlashBag()->add('notice-success', 'un email  a été envoyé à ' . $destinataire->getNom() . ' pour l\'informer du dépôt');
                     } else {
                         $session->getFlashBag()->add('notice-warning', 'Le dépôt a été traité, mais l\'email n\'a pas pu être envoyé à ' . $destinataire->getNom());
                     }
                 }
+            }
+            // envoi mail  aux presta connecte 
+            $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
+            if ($pgProgWebUser) {
+                $txtMessage.= '<br/><br/>Veullez trouver en pièce jointe le rapport d\'intégration';
+                $htmlMessage = "<html><head></head><body>";
+                $htmlMessage .= "Bonjour, <br/><br/>";
+                $htmlMessage .= $txtMessage;
+                $htmlMessage .= "<br/><br/>Cordialement, <br/>L'équipe SQE";
+                $htmlMessage .= "</body></html>";
+                $mail = \Swift_Message::newInstance('Wonderful Subject')
+                        ->setSubject($objetMessage)
+                        ->setFrom('automate@eau-adour-garonne.fr')
+                        ->setTo($pgProgWebUser->getMail())
+                        ->setBody($htmlMessage, 'text/html');
+
+                $mail->attach(\Swift_Attachment::fromPath($pathRapport . '/' .$ficRapport));
+                $mailer->send($mail);
+                $message = 'un email  vous a été envoyé avec en pièce jointe le fichier rapport du dépôt ';
+                $notification = new Notification();
+                $notification->setRecepteur($user->getId());
+                $notification->setEmetteur($user->getId());
+                $notification->setNouveau(true);
+                $notification->setIteration(2);
+                $notification->setMessage($message);
+                $em->persist($notification);
+                $em->flush();
             }
         }
 
@@ -813,6 +855,7 @@ class SuiviHydrobioController extends Controller {
         $session->set('menu', 'suiviHydrobio');
         $session->set('controller', 'SuiviHydrobio');
         $session->set('fonction', 'lotPeriodeStationsIntegrerFichier');
+        $em = $this->get('doctrine')->getManager();
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
         $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
@@ -1208,6 +1251,38 @@ class SuiviHydrobioController extends Controller {
             fclose($fichier);
             unlink($pathBase . '/' . $name);
             unlink($pathBase . '/trans-' . $user->getId() . '.csv');
+            
+              // envoi mail  aux presta connecte 
+            $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
+            if ($pgProgWebUser) {
+                 $objetMessage = "fichier de suivi ";
+                $txtMessage = "Un fichier de suivi a été déposé sur le lot " . $pgProgLot->getNomLot() . " pour la période du " . $pgProgPeriode->getDateDeb()->format('d/m/Y') . " au " . $dateFin->format('d/m/Y');
+                $mailer = $this->get('mailer');
+       
+                $txtMessage.= '<br/><br/>Veullez trouver en pièce jointe le rapport d\'intégration';
+                $htmlMessage = "<html><head></head><body>";
+                $htmlMessage .= "Bonjour, <br/><br/>";
+                $htmlMessage .= $txtMessage;
+                $htmlMessage .= "<br/><br/>Cordialement, <br/>L'équipe SQE";
+                $htmlMessage .= "</body></html>";
+                $mail = \Swift_Message::newInstance('Wonderful Subject')
+                        ->setSubject($objetMessage)
+                        ->setFrom('automate@eau-adour-garonne.fr')
+                        ->setTo($pgProgWebUser->getMail())
+                        ->setBody($htmlMessage, 'text/html');
+
+                $mail->attach(\Swift_Attachment::fromPath($pathBase . '/' . '/' . $user->getId() . '_' . $dateDepot->format('Y-m-d-H') . '_rapport.csv'));
+                $mailer->send($mail);
+                $message = 'un email  vous a été envoyé avec en pièce jointe le fichier rapport du dépôt ';
+                $notification = new Notification();
+                $notification->setRecepteur($user->getId());
+                $notification->setEmetteur($user->getId());
+                $notification->setNouveau(true);
+                $notification->setIteration(2);
+                $notification->setMessage($message);
+                $em->persist($notification);
+                $em->flush();
+            }
         }
 
         $tabMessage = array();
@@ -2312,28 +2387,27 @@ class SuiviHydrobioController extends Controller {
 //        return new Response ('');
     }
 
-    
     public function planningAction() {
-        
+
         $emSqe = $this->get('doctrine')->getManager('sqe');
-        
+
         $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
-        
+
         // Récupération des stations
         $pgRefStationMesure = $repoPgCmdSuiviPrel->getStationsFromSuiviPrel();
-        
+
         // Récupération des supports
         $pgSandreSupport = $repoPgCmdSuiviPrel->getSupportsFromSuiviPrel();
-        
+
         // Récupération des prestataires
         $pgRefCorresPresta = $repoPgCmdSuiviPrel->getPrestatairesFromSuiviPrel();
-        
+
         return $this->render('AeagSqeBundle:SuiviHydrobio:planning.html.twig', array('stations' => $pgRefStationMesure, 'supports' => $pgSandreSupport, 'prestataires' => $pgRefCorresPresta));
     }
 
     public function planningTableAction() {
         $request = $this->get('request');
-        
+
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
         $semaine = $request->get('semaine');
@@ -2341,45 +2415,44 @@ class SuiviHydrobioController extends Controller {
         $support = $request->get('support');
         $station = $request->get('station');
         $presta = $request->get('presta');
-        
+
         if ($semaine < 10) {
-            $semaine = '0'.$semaine;
+            $semaine = '0' . $semaine;
         }
-        
+
         $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
-        
+
         $joursSemaine = array();
         for ($day = 1; $day <= 7; $day++) {
             $joursSemaine[] = $this->dateFR($annee . "W" . $semaine . $day);
         }
-        
+
         // Récupération des rdv
         $evenements = array();
         for ($day = 1; $day <= 7; $day++) {
             $date = new \DateTime($annee . "W" . $semaine . $day);
             $evenements[$day] = $repoPgCmdSuiviPrel->getEvenements($date, $support, $station, $presta);
         }
-        
+
         return $this->render('AeagSqeBundle:SuiviHydrobio:planningTable.html.twig', array("joursSemaine" => $joursSemaine, "evenements" => $evenements));
     }
-    
+
     public function planningModalAction() {
         $request = $this->get('request');
-        
+
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
         $evt = $request->get('evt');
-        
+
         $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
         $pgCmdSuiviPrel = $repoPgCmdSuiviPrel->findOneById($evt);
-        
+
         return $this->render('AeagSqeBundle:SuiviHydrobio:planningModal.html.twig', array('evenement' => $pgCmdSuiviPrel));
     }
-    
-    protected function dateFR( $time )
-    {
-       setlocale(LC_TIME, 'fr_FR.utf8','fra'); 
-       return strftime( "%A %d %B" , strtotime( $time ) );
+
+    protected function dateFR($time) {
+        setlocale(LC_TIME, 'fr_FR.utf8', 'fra');
+        return strftime("%A %d %B", strtotime($time));
     }
 
     protected function getCheminEchange($pgCmdSuiviPrel) {
