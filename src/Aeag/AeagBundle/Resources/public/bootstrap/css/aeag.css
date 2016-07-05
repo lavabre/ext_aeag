@@ -8,10 +8,10 @@ body {
     border-bottom: 1px solid #36648b;
     background-image : url('../../images/bandeauAeag.jpg'); 
     background-repeat:no-repeat;
-    background-size: 2000px 70px;
+    background-size: 2000px 90px;
     background-color: #36648b;
     color : #fcfcfc;
-    min-height: 70px;
+    min-height: 90px;
 }
 
 .page-header-ie8 {
@@ -1021,6 +1021,7 @@ h3 {
     border-color: #e0f2f1;
     color: #ffffff;
     cursor : pointer;
+}
 
 .aeag-alert-bleucie {
     background-color: #b2ebf2;

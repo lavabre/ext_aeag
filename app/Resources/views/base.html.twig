@@ -7,19 +7,19 @@
         <link rel="icon" type="image/x-icon" href="{{ asset('bundles/aeagaeag/images/favicon.ico') }}" />
         <title>{% block title %}Agence de l'eau Adour-garonne{% endblock %}</title>
         <!--<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.0/css/jquery.dataTables.css">-->
-        <link href="{{ asset('bundles/aeagaeag/bootstrap/js/jquery-ui/jquery-ui.css') }}" rel="stylesheet">
+        <link href="{{ asset('bundles/aeagaeag/bootstrap/js/jquery-ui/jquery-ui.min.css') }}" rel="stylesheet">
         <link href="{{ asset('bundles/aeagaeag/DataTables/media/css/jquery.dataTables.min.css') }}" rel="stylesheet">
         <link href="{{ asset('bundles/aeagaeag/DataTables/extensions/TableTools/css/dataTables.tableTools.min.css') }}" rel="stylesheet">
         <link href="{{ asset('bundles/aeagaeag/DataTables/extensions/ColVis/css/dataTables.colVis.min.css') }}" rel="stylesheet">
         <link href="{{ asset('bundles/aeagaeag/DataTables/extensions/FixedHeader/css/dataTables.fixedHeader.min.css') }}" rel="stylesheet">
         <link href="{{ asset('bundles/aeagaeag/DataTables/extensions/FixedColumns/css/dataTables.fixedColumns.min.css') }}" rel="stylesheet">
-        <link href="{{ asset('bundles/aeagaeag/font-awesome/css/font-awesome.css') }}" rel="stylesheet">
+        <link href="{{ asset('bundles/aeagaeag/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
         <link href="{{ asset('bundles/aeagaeag/bootstrap/css/datepicker.css') }}" rel="stylesheet">
         <link href="{{ asset('bundles/aeagaeag/bootstrap/css/timepicker.css') }}" rel="stylesheet">
         <link href="{{ asset('bundles/aeagaeag/bootstrap/css/bootstrap-datetimepicker.min.css') }}" rel="stylesheet">
         <link href="{{ asset('bundles/aeagaeag/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
          <link href="{{ asset('bundles/aeagaeag/bootstrap/css/Autocomplete.css') }}" rel="stylesheet">
-         <link href="{{ asset('bundles/aeagaeag/jquery-validation/demo/css/screen.css') }}" rel="stylesheet">
+       {#  <link href="{{ asset('bundles/aeagaeag/jquery-validation/demo/css/screen.css') }}" rel="stylesheet">#}
          <link href="{{ asset('bundles/aeagaeag/bootstrap/css/aeag.css') }}" rel="stylesheet">
         
         <!-- Javascript -->
@@ -354,15 +354,15 @@
        
         {% block javascripts %}
         <script type="text/javascript" src="{{ asset('bundles/aeagaeag/bootstrap/js/jquery-2.1.4.js') }}"> </script>
-        <script type="text/javascript" src="{{ asset('bundles/aeagaeag/bootstrap/js/jquery-ui/jquery-ui.js') }}"> </script>
+        <script type="text/javascript" src="{{ asset('bundles/aeagaeag/bootstrap/js/jquery-ui/jquery-ui.min.js') }}"> </script>
         <script type="text/javascript" src="{{ asset('bundles/aeagaeag/bootstrap/js/jquery.form.js') }}"> </script>
-        <script type="text/javascript" src="{{ asset('bundles/aeagaeag/bootstrap/js/bootstrap.js') }}"> </script>
-         <script type="text/javascript" src="{{ asset('bundles/aeagaeag/jquery-validation/dist/jquery.validate.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('bundles/aeagaeag/jquery-validation/dist/additional-methods.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('bundles/aeagaeag/jquery-validation/dist/localization/messages_fr.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('bundles/aeagaeag/bootstrap/js/bootstrap.min.js') }}"> </script>
+         <script type="text/javascript" src="{{ asset('bundles/aeagaeag/jquery-validation/dist/jquery.validate.min.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('bundles/aeagaeag/jquery-validation/dist/additional-methods.min.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('bundles/aeagaeag/jquery-validation/dist/localization/messages_fr.min.js') }}"></script>
         {#<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script> #}
-        <script src="{{ asset('bundles/aeagaeag/DataTables/media/js/jquery.dataTables.js') }}" type="text/javascript"></script>
+        <script src="{{ asset('bundles/aeagaeag/DataTables/media/js/jquery.dataTables.min.js') }}" type="text/javascript"></script>
         <script src="{{ asset('bundles/aeagaeag/DataTables/extensions/FixedHeader/js/dataTables.fixedHeader.min.js') }}" type="text/javascript"></script>
         <script src="{{ asset('bundles/aeagaeag/DataTables/extensions/FixedColumns/js/dataTables.fixedColumns.min.js') }}" type="text/javascript"></script>
         <script src="{{ asset('bundles/aeagaeag/DataTables/extensions/ColVis/js/dataTables.colVis.min.js') }}" type="text/javascript"></script>
