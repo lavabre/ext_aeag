@@ -60,7 +60,7 @@ class SuiviHydrobioController extends Controller {
         foreach ($pgProgLotAns as $pgProgLotAn) {
             $pgProgLot = $pgProgLotAn->getLot();
             $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
-            if (substr($pgProgTypeMilieu->getCodeMilieu(), 1, 2) === 'HB' or substr($pgProgTypeMilieu->getCodeMilieu(), 1, 3) === 'RHM') {
+            if (substr($pgProgTypeMilieu->getCodeMilieu(), 1, 2) === 'HB' or $pgProgTypeMilieu->getCodeMilieu() === 'RHM') {
                 $pgProgLotPeriodeAns = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnByLotan($pgProgLotAn);
                 if (count($pgProgLotPeriodeAns) > 0) {
                     $trouve = false;
