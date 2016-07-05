@@ -22,17 +22,17 @@ use Symfony\Component\HttpFoundation\Request;
 class SuiviHydrobioController extends Controller {
 
     public function indexAction() {
-       
+
         $user = $this->getUser();
-            
+
         $session = $this->get('session');
         $session->set('menu', 'suiviHydrobio');
         $session->set('controller', 'SuiviHydrobio');
         $session->set('fonction', 'index');
-         $em = $this->get('doctrine')->getManager();
+        $em = $this->get('doctrine')->getManager();
         $emSqe = $this->get('doctrine')->getManager('sqe');
-        
-           if (is_object($user)) {
+
+        if (is_object($user)) {
             $mes = AeagController::notificationAction($user, $em, $session);
             $mes1 = AeagController::messageAction($user, $em, $session);
         } else {
@@ -60,6 +60,7 @@ class SuiviHydrobioController extends Controller {
         foreach ($pgProgLotAns as $pgProgLotAn) {
             $pgProgLot = $pgProgLotAn->getLot();
             $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
+            //if (substr($pgProgTypeMilieu->getCodeMilieu(), 1, 2) === 'HB' or substr($pgProgTypeMilieu->getCodeMilieu(), 1, 3) === 'RHM') {
             if (substr($pgProgTypeMilieu->getCodeMilieu(), 1, 2) === 'HB') {
                 $pgProgLotPeriodeAns = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnByLotan($pgProgLotAn);
                 if (count($pgProgLotPeriodeAns) > 0) {
@@ -154,17 +155,17 @@ class SuiviHydrobioController extends Controller {
     }
 
     public function lotPeriodeStationsAction($periodeAnId) {
-        
+
         $user = $this->getUser();
-     
+
         $session = $this->get('session');
         $session->set('menu', 'suiviHydrobio');
         $session->set('controller', 'SuiviHydrobio');
         $session->set('fonction', 'lotPeriodeStations');
         $em = $this->get('doctrine')->getManager();
         $emSqe = $this->get('doctrine')->getManager('sqe');
-        
-           if (is_object($user)) {
+
+        if (is_object($user)) {
             $mes = AeagController::notificationAction($user, $em, $session);
             $mes1 = AeagController::messageAction($user, $em, $session);
         } else {
@@ -740,7 +741,15 @@ class SuiviHydrobioController extends Controller {
                 if ($trouve) {
                     // Envoi d'un mail
                     if ($this->get('aeag_sqe.message')->envoiMessage($emSqe, $mailer, $txtMessage, $destinataire, $objetMessage)) {
-                        $session->getFlashBag()->add('notice-success', 'un email  a été envoyé à ' . $destinataire->getNom() . ' pour l\'informer du dépôt');
+                        $message = 'un email  vous a été envoyé par ' . $pgProgWebUser->getNom() . ' suite à l\'intégration de plusieurs fichiers de terrain ' . CHR(13) . CHR(10) . ' sur le lot ' . $pgProgLot->getNomLot() . ' pour la période du ' . $pgProgPeriode->getDateDeb()->format('d/m/Y') . ' au ' . $dateFin->format('d/m/Y');
+                        $notification = new Notification();
+                        $notification->setRecepteur($destinataire->getExtId());
+                        $notification->setEmetteur($user->getId());
+                        $notification->setNouveau(true);
+                        $notification->setIteration(2);
+                        $notification->setMessage($message);
+                        $em->persist($notification);
+                        $em->flush();
                     } else {
                         $session->getFlashBag()->add('notice-warning', 'Le dépôt a été traité, mais l\'email n\'a pas pu être envoyé à ' . $destinataire->getNom());
                     }
@@ -761,7 +770,7 @@ class SuiviHydrobioController extends Controller {
                         ->setTo($pgProgWebUser->getMail())
                         ->setBody($htmlMessage, 'text/html');
 
-                $mail->attach(\Swift_Attachment::fromPath($pathRapport . '/' .$ficRapport));
+                $mail->attach(\Swift_Attachment::fromPath($pathRapport . '/' . $ficRapport));
                 $mailer->send($mail);
                 $message = 'un email  vous a été envoyé avec en pièce jointe le fichier rapport du dépôt ';
                 $notification = new Notification();
@@ -1251,14 +1260,14 @@ class SuiviHydrobioController extends Controller {
             fclose($fichier);
             unlink($pathBase . '/' . $name);
             unlink($pathBase . '/trans-' . $user->getId() . '.csv');
-            
-              // envoi mail  aux presta connecte 
+
+            // envoi mail  aux presta connecte 
             $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
             if ($pgProgWebUser) {
-                 $objetMessage = "fichier de suivi ";
+                $objetMessage = "fichier de suivi ";
                 $txtMessage = "Un fichier de suivi a été déposé sur le lot " . $pgProgLot->getNomLot() . " pour la période du " . $pgProgPeriode->getDateDeb()->format('d/m/Y') . " au " . $dateFin->format('d/m/Y');
                 $mailer = $this->get('mailer');
-       
+
                 $txtMessage.= '<br/><br/>Veullez trouver en pièce jointe le rapport d\'intégration';
                 $htmlMessage = "<html><head></head><body>";
                 $htmlMessage .= "Bonjour, <br/><br/>";
