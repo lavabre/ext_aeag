@@ -202,7 +202,7 @@
                                             {% if is_granted('ROLE_ADMINSQE') or pgProgWebUser.typeUser == 'XHBIO' %}
                                                 {% if cmdPrelev.suiviPrels.0.suiviPrel.statutPrel  == 'F'  and 
                                                         cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'E'  and
-                                                        cmdPrelev.suiviPrels.0.fichierRps | length %}
+                                                        cmdPrelev.suiviPrels.0.suiviPrel.fichierRps | length %}
                                                         <a  id="idAvis-{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}" class="btn btn-warning"  title="Donner un avis">
                                                                  <i class="fa fa-graduation-cap"></i>
                                                          </a>

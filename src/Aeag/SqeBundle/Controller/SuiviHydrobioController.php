@@ -2196,6 +2196,7 @@ class SuiviHydrobioController extends Controller {
                                 }
                                 $tabSuiviPrels[$nbSuiviPrels]['dateLimite'] = $dateLimite;
                                 $nbSuiviPrels++;
+                                break;
                             }
                             $tabCmdPrelevs[$nbCmdPrelevs]['suiviPrels'] = $tabSuiviPrels;
                             $tabAutrePrelevs = $repoPgCmdPrelev->getAutrePrelevs($pgCmdPrelev);
