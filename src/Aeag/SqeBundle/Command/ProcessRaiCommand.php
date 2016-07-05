@@ -86,11 +86,6 @@ class ProcessRaiCommand extends AeagCommand {
             $this->_insertFichierLog($pgCmdFichierRps);
 
             // Envoi mail
-            $context = $this->getContainer()->get('router')->getContext();
-            $context->setHost($this->getContainer()->getParameter('router_host'));
-            $context->setScheme($this->getContainer()->getParameter('router_scheme'));
-            $context->setBaseUrl($this->getContainer()->getParameter('router_baseurl'));
-
             $objetMessage = "SQE - RAI : Fichier " . $pgCmdFichierRps->getNomFichier() . " - Récapitulatif";
             $url = $this->getContainer()->get('router')->generate('AeagSqeBundle_echangefichiers_reponses_telecharger', array("reponseId" => $pgCmdFichierRps->getId(), "typeFichier" => "CR"), UrlGeneratorInterface::ABSOLUTE_URL);
             $txtMessage = "Lot : " . $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getNomLot() . "<br/>";
