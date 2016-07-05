@@ -50,6 +50,7 @@ security:
         ROLE_ADMINSQE: [ROLE_PROGSQE]
         ROLE_PROGSQE: [ ROLE_PRESTASQE]
         ROLE_PRESTASQE: [ROLE_SQE]
+        ROLE_XHBIOSQE: [ROLE_SQE]
         ROLE_ADMINEDL:  [ROLE_SUPERVISEUREDL]       # On a dit que l'admin héritait des droits d'auteur et de modérateur
         ROLE_ADMIN: [ROLE_ADMINDEC, ROLE_ADMINFRD, ROLE_ADMINSQE, ROLE_ADMINEDL]
         ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]

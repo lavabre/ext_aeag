@@ -413,6 +413,9 @@ class DefaultController extends Controller {
             if ($pgProgWebuser->getTypeUser() == 'PREST') {
                 $tabRoles[] = 'ROLE_PRESTASQE';
             }
+            if ($pgProgWebuser->getTypeUser() == 'XHBIO') {
+                $tabRoles[] = 'ROLE_XHBIOSQE';
+            }
             $entityUser->setRoles($tabRoles);
             $encoder = $factory->getEncoder($entityUser);
             $entityUser->setUsername($pgProgWebuser->getLogin());
