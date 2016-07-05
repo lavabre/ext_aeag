@@ -24,7 +24,7 @@ class SuiviHydrobioController extends Controller {
     public function indexAction() {
        
         $user = $this->getUser();
-      
+            
         $session = $this->get('session');
         $session->set('menu', 'suiviHydrobio');
         $session->set('controller', 'SuiviHydrobio');
