@@ -12,10 +12,20 @@
                      <button type="button" id="idSupprimer" class="btn btn-danger" >Supprimer</button> 
                   </div>
             </div>
-        <div id="idMessage" class="col-xs-offset-3 col-xs-5 alert alert-warning text-danger text-center" role="alert"></div>
-         <div id="idProgress" class="col-xs-offset-3 col-xs-5 alert alert-info"><progress></progress></div>
-         </br></br>
-      </div>
+         </div>
+
+        <br><br>
+        <div class="form-group text-center">
+            <div class="col-xs-offset-2 col-xs-8 info alert-info text-info text-center">
+                seul l'extension zip est acceptée et la taille du fichier doit ête inférieure à 100 MB. 
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div id="idImportMessage" class="col-xs-offset-3 col-xs-5 alert alert-warning text-danger text-center" role="alert"></div>
+            <div id="idImportProgress" class="col-xs-offset-3 col-xs-5 alert alert-info"><progress></progress></div>
+            </br></br>
+        </div>
        
 
        <div class="form-group">
@@ -29,16 +39,19 @@
              jQuery(document).ready(function() {
            
                           
-                   $('#idProgress').hide();
-                   $('#idSupprimer').hide();
-                   $('#idMessage').hide();
+                    $('#idSupprimer').hide();
+                    $('#idImportProgress').hide();
+                    $('#idImportSupprimer').hide();
+                    $('#idImportMessage').hide();
+                    $('#idImportRapport').hide();
              
                     $('#idDeposer').on('click', function (e) {
                          e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
                          $('#idProgress').show();
-                        var url = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_fichier_deposer",{"suiviPrelId":  "par1", "periodeAnId": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
-                         url = url.replace("par1", {{ suiviPrel.id }});
-                         url = url.replace("par2", {{ periodeAnId }});
+                        var url = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_fichier_deposer",{"stationId": "par1", "suiviPrelId":  "par2", "periodeAnId": "par3"}) }}', // Le nom du fichier indiqué dans le formulaire
+                         url = url.replace("par1", {{ stationId }});
+                         url = url.replace("par2", {{ suiviPrel.id }});
+                         url = url.replace("par3", {{ periodeAnId }});
                          url = url.replace("amp;","");
                          var formulaire = new FormData($('form')[0]);
                          $.ajax({

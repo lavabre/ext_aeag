@@ -488,9 +488,10 @@
                         $(document).on('click','#idDeposerSuivi{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}',function(e){
                         e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
                         $('#modalTraitementEncours').modal('toggle');
-                        var url = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_deposer",{"suiviPrelId":  "par1", "periodeAnId": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
-                        url = url.replace("par1", {{ cmdPrelev.suiviPrels.0.suiviPrel.id }});
-                        url = url.replace("par2", {{ periodeAn.id }});
+                        var url = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_deposer",{"stationId": "par1","suiviPrelId":  "par2", "periodeAnId": "par3"}) }}', // Le nom du fichier indiqué dans le formulaire
+                         url = url.replace("par1", {{ station.station.ouvFoncId }});
+                        url = url.replace("par2", {{ cmdPrelev.suiviPrels.0.suiviPrel.id }});
+                        url = url.replace("par3", {{ periodeAn.id }});
                         url = url.replace("amp;","");
                         $.ajax({
                         url: url,

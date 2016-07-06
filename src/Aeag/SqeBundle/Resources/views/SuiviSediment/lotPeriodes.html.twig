@@ -5,137 +5,90 @@
         <a href="{{ path('aeag_homepage') }}">Accueil</a> 
     </li>
     <li>
-           <a href="{{ path('AeagSqeBundle_suiviSediment_index') }}">Suivi Sediment</a> 
+        <a href="{{ path('AeagSqeBundle_suiviSediment_index') }}">Suivi Sediment</a> 
     </li>
     <li>
-           <a href="{{ path('AeagSqeBundle_suiviSediment_index') }}">Lots</a> 
+        <a href="{{ path('AeagSqeBundle_suiviSediment_index') }}">Lots</a> 
     </li>
     <li class="active">
-          Périodes
+        Périodes
     </li>
 {% endblock breadcrumb %} 
 
 {%block panel_heading %}
     <div class="row">
-            <div class="col-md-offset-3 col-md-7">
-                    <h3 class="page-title">
-                        <table>
-                       {#     <tr><td>Suivi Sediment </td></tr>#}
-                            <tr><td>Liste des périodes</td></tr>
-                             <tr><td>{{ lotan.lot.nomLot }} - {{ lotan.anneeProg }} - version :  {{ lotan.version }}</td></tr>
-                        </table>
-                    </h3>
-            </div>
+        <div class="col-md-offset-3 col-md-7">
+            <h3 class="page-title">
+                <table>
+                    {#     <tr><td>Suivi Sediment </td></tr>#}
+                    <tr><td>Liste des périodes</td></tr>
+                    <tr><td>{{ lotan.lot.nomLot }} - {{ lotan.anneeProg }} - version :  {{ lotan.version }}</td></tr>
+                </table>
+            </h3>
+        </div>
     </div>
 {%endblock panel_heading %}
 
 {%block content %}
-    <div class="form-body">        
-        <table class="table table-bordered table-condensed table-advance" id="idTable_demandes">
-            <thead>
-                <tr>
-                    <th width="1%">Actions</th>
-                    <th width="90%">Périodes</th>
-                    <th>Nombre de stations</th>
-                  </tr>
-            </thead>
-            <tbody>
-                 {%if periodeAns | length%} 
-                    {% for periodeAn in periodeAns %}
-                          <tr>
-                            <td align="center" nowrap> 
-                                 <a id="id_{{ periodeAn.pgProgLotPeriodeAn.id }}" class="btn btn-primary" href="{{path('AeagSqeBundle_suiviSediment_lot_periode_stations',{ 'periodeAnId': periodeAn.pgProgLotPeriodeAn.id })}}" title="Stations">
-                                    <i class="fa fa-eye"></i> 
-                                </a>
-                            </td>
-                               <td>{{ periodeAn.pgProgLotPeriodeAn.periode.labelPeriode }} (du {{ periodeAn.pgProgLotPeriodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;au&nbsp;&nbsp; {{ periodeAn.dateFin | date("d/m/Y") }})</td>
-                               <td class="text-center">{{ periodeAn.nbStations }}{#</br>
-                                      {% for station in periodeAn.stations %}
-                                          {{ station.code }} {{ station.libelle }}</br>
-                                      {% endfor %}#}
-                               </td>
-                          </tr>
-                    {% endfor %}
-                {% endif %}
-            </tbody>
-        </table>
-
+    <div class="row responsive">
+        <div class="col-xm-12">
+            <div class="small ">          
+                <table class="table table-bordered table-condensed table-advance" id="idTable">
+                    <thead>
+                        <tr>
+                            <th width="1%">Actions</th>
+                            <th width="90%">Périodes</th>
+                            <th>Nombre de stations</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {%if periodeAns | length%} 
+                            {% for periodeAn in periodeAns %}
+                                <tr>
+                                    <td align="center" nowrap> 
+                                        <a id="id_{{ periodeAn.pgProgLotPeriodeAn.id }}" class="btn btn-primary btn-demandes" href="{{path('AeagSqeBundle_suiviSediment_lot_periode_stations',{ 'periodeAnId': periodeAn.pgProgLotPeriodeAn.id })}}" title="Stations">
+                                            <i class="fa fa-eye"></i> 
+                                        </a>
+                                    </td>
+                                    <td>{{ periodeAn.pgProgLotPeriodeAn.periode.labelPeriode }} (du {{ periodeAn.pgProgLotPeriodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;au&nbsp;&nbsp; {{ periodeAn.dateFin | date("d/m/Y") }})</td>
+                                    <td class="text-center">{{ periodeAn.nbStations }}{#</br>
+                                           {% for station in periodeAn.stations %}
+                                               {{ station.code }} {{ station.libelle }}</br>
+                                           {% endfor %}#}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 {%endblock content %}    
 
-{% block modal %}
-   
-{%endblock modal %}
 
 {% block scripts %}
+
     jQuery(document).ready(function() {
-        var table = $('#idTable_demandes').DataTable(
-            {"stateSave": true,
-             "order": [[ 1, "asc" ]],
-            "language": {
-                                 "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
-                             },
-            "aLengthMenu": [
-                                [10, 25, 50, 100, -1],
-                                [10, 25, 50, 100, "Tous"]
-                            ],
-             "iDisplayLength": -1
-            }
-            );
 
-            $("#idTable_demandes thead td").each( function ( i ) {
+    var table = $('#idTable').DataTable(
+    {"stateSave": true,
+    "order": [[ 1, "asc" ]],
+    "language": {
+    "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
+    },
+    "aLengthMenu": [
+    [10, 25, 50, 100, -1],
+    [10, 25, 50, 100, "Tous"]
+    ],
+    "iDisplayLength": -1
+    }
+    );
 
-            if (i != 0){
-            var select = $('<select><option value=""></option></select>')
-            .appendTo( $(this).empty() )
-            .on( 'change', function () {
-            table.column( i )
-            .search( $(this).val() )
-            .draw();
-            });
-
-            table.column( i ).data().unique().sort().each( function ( d, j ) {
-                select.append( '<option value="'+d+'">'+d+'</option>' )
-            });
-            };
-            }); 
-            
-        $('.btn-telecharger').click(function (){
-            setTimeout("window.location.reload()",2000);//or other value
-        });
-        
-        $('.btn-voir-reponses').click(function (){
-            $('#modalTraitementEncours').modal();
-            var url = '{{ path("AeagSqeBundle_echangefichiers_reponses",{"demandeId":  "par1" }) }}';
-            url = url.replace("par1", $(this).attr('id'));
-            $.ajax({
-                url: url,
-                type: 'get',
-                success: function(html) {
-                    $('#modal-reponses-content').empty().append(html);
-                    $('#modalTraitementEncours').modal('hide');
-                    $('#modal_reponses').modal();
-                }
-            });
-            
-        });
-        
-        $('.btn-deposer-reponse').click(function (){
-            $('#modalTraitementEncours').modal();
-            var url = '{{ path("AeagSqeBundle_echangefichiers_reponses_selectionner",{"demandeId":  "par1" }) }}';
-            var demandeId = $(this).data('id');
-            url = url.replace("par1", demandeId);
-            $.ajax({
-                url: url,
-                type: 'get',
-                success: function(html) {
-                    $('#modal-reponses-selection-content').empty().append(html);
-                    $('#modalTraitementEncours').modal('hide');
-                    $('#modal_reponses_selection').modal();
-                }
-            });
-        
-        });
+    $(".btn-demandes").click(function() {
+    $('#modalTraitementEncours').modal();
     });
-    
+
+    });
+
 {%endblock scripts %}    

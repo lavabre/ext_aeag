@@ -18,10 +18,10 @@ use Aeag\AeagBundle\Controller\AeagController;
 class ProgrammationLotController extends Controller {
 
     public function indexAction($action = null) {
-        
-         $user = $this->getUser();
+
+        $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
 
         $session = $this->get('session');
@@ -248,7 +248,7 @@ class ProgrammationLotController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -568,11 +568,11 @@ class ProgrammationLotController extends Controller {
             $tabLots = array();
             $i = 0;
             foreach ($tabLotBis as $lot) {
-                if ($lot->getTitulaire()){
-                if ($lot->getTitulaire()->getAdrCorId() == $critTitulaire) {
-                    $tabLots[$i] = $lot;
-                    $i++;
-                }
+                if ($lot->getTitulaire()) {
+                    if ($lot->getTitulaire()->getAdrCorId() == $critTitulaire) {
+                        $tabLots[$i] = $lot;
+                        $i++;
+                    }
                 }
             }
         }
@@ -673,9 +673,9 @@ class ProgrammationLotController extends Controller {
 
     public function resultatsAction($action = null, Request $request) {
 
-         $user = $this->getUser();
+        $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -1238,7 +1238,7 @@ class ProgrammationLotController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -1293,7 +1293,7 @@ class ProgrammationLotController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -1667,10 +1667,10 @@ class ProgrammationLotController extends Controller {
         if (count($tabLots) == 1) {
             $session->set('critMarche', $tabLots[0]['lot']->getMarche()->getId());
             $session->set('critMarche', $tabLots[0]['lot']->getMarche()->getId());
-            if ($tabLots[0]['lot']->getTitulaire()){
-             $session->set('critTitulaire', $tabLots[0]['lot']->getTitulaire()->getAdrCorId());
-            }else{
-              $session->set('critTitulaire', null);  
+            if ($tabLots[0]['lot']->getTitulaire()) {
+                $session->set('critTitulaire', $tabLots[0]['lot']->getTitulaire()->getAdrCorId());
+            } else {
+                $session->set('critTitulaire', null);
             }
             $session->set('critZoneGeoRef', $tabLots[0]['lot']->getZGeoRef()->getId());
             $session->set('critTypeMilieu', $tabLots[0]['lot']->getCodeMilieu()->getCodeMilieu());
@@ -1698,7 +1698,7 @@ class ProgrammationLotController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -1728,8 +1728,8 @@ class ProgrammationLotController extends Controller {
         $now = date('Y-m-d H:i');
         $now = new \DateTime($now);
         $pgProgLotAn->setDateModif($now);
-        $pgProgWebuser  = $repoPgProgWebusers->getPgProgWebusersByExtid($user->getId());
-         if ($pgProgWebuser) {
+        $pgProgWebuser = $repoPgProgWebusers->getPgProgWebusersByExtid($user->getId());
+        if ($pgProgWebuser) {
             $pgProgLotAn->setUtilModif($pgProgWebuser);
         }
         $emSqe->persist($pgProgLotAn);
@@ -1765,7 +1765,7 @@ class ProgrammationLotController extends Controller {
             $notification->setEmetteur($user->getId());
             $notification->setNouveau(true);
             $notification->setIteration(2);
-            $notification->setMessage("la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été soumise à la validation par " . $pgProgWebuser->getNom()  . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y') );
+            $notification->setMessage("la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été soumise à la validation par " . $pgProgWebuser->getNom() . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y'));
             $em->persist($notification);
             // Récupération du service.
             $mailer = $this->get('mailer');
@@ -1804,7 +1804,7 @@ class ProgrammationLotController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -1833,7 +1833,7 @@ class ProgrammationLotController extends Controller {
         $now = date('Y-m-d H:i');
         $now = new \DateTime($now);
         $pgProgLotAn->setDateModif($now);
-        $pgProgWebuser  = $repoPgProgWebusers->getPgProgWebusersByExtid($user->getId());
+        $pgProgWebuser = $repoPgProgWebusers->getPgProgWebusersByExtid($user->getId());
         if ($pgProgWebuser) {
             $pgProgLotAn->setUtilModif($pgProgWebuser);
         }
@@ -1855,7 +1855,7 @@ class ProgrammationLotController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -1880,8 +1880,8 @@ class ProgrammationLotController extends Controller {
 
         $pgProgWebuser = $pgProgLotAn->getUtilModif();
         $recepteur = $repoUsers->getUserByUsernamePassword($pgProgWebuser->getLogin(), $pgProgWebuser->getPwd());
-        
-         $pgProgPhase = $repoPgProgPhases->getPgProgPhasesByCodePhase('P30');
+
+        $pgProgPhase = $repoPgProgPhases->getPgProgPhasesByCodePhase('P30');
         $pgProgLotAn->setPhase($pgProgPhase);
         $pgProgStatut = $repoPgProgStatut->getPgProgStatutByCodeStatut('UPD');
         $pgProgLotAn->setCodeStatut($pgProgStatut);
@@ -1889,7 +1889,7 @@ class ProgrammationLotController extends Controller {
         $now = new \DateTime($now);
         $pgProgLotAn->setDateModif($now);
         $emetteur = $repoPgProgWebusers->getPgProgWebusersByExtid($user->getId());
-         if ($emetteur) {
+        if ($emetteur) {
             $pgProgLotAn->setUtilModif($emetteur);
         }
         $emSqe->persist($pgProgLotAn);
@@ -1948,7 +1948,7 @@ class ProgrammationLotController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -1963,7 +1963,11 @@ class ProgrammationLotController extends Controller {
         $tabMessage[$i] = null;
         $i++;
 
-        $motifRefus = $_POST["idRefusMotif-" . $lotAnId];
+        if (isset($_POST["idRefusMotif-" . $lotAnId])) {
+            $motifRefus = $_POST["idRefusMotif-" . $lotAnId];
+        } else {
+            $motifRefus = null;
+        }
 
         $repoPgProgLotAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotAn');
         $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
@@ -1975,7 +1979,7 @@ class ProgrammationLotController extends Controller {
 
         $pgProgWebuser = $pgProgLotAn->getUtilModif();
         $recepteur = $repoUsers->getUserByUsernamePassword($pgProgWebuser->getLogin(), $pgProgWebuser->getPwd());
-        
+
         $pgProgPhase = $repoPgProgPhases->getPgProgPhasesByCodePhase('P15');
         $pgProgLotAn->setPhase($pgProgPhase);
         $pgProgStatut = $repoPgProgStatut->getPgProgStatutByCodeStatut('UPD');
@@ -1998,9 +2002,14 @@ class ProgrammationLotController extends Controller {
         $texte = "Bonjour ," . PHP_EOL;
         $texte = $texte . " " . PHP_EOL;
         $texte = $texte . "La programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL;
-        $texte = $texte . " a été refusée par l'administrateur " . $emetteur->getNom() . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y') . " pour la raision suivante : " . PHP_EOL;
-        $texte = $texte . " " . PHP_EOL;
-        $texte = $texte . $motifRefus . PHP_EOL;
+        if ($motifRefus) {
+            $texte = $texte . " a été refusée par l'administrateur " . $emetteur->getNom() . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y') . " pour la raision suivante : " . PHP_EOL;
+            $texte = $texte . " " . PHP_EOL;
+            $texte = $texte . $motifRefus . PHP_EOL;
+        } else {
+            $texte = $texte . " a été refusée par l'administrateur " . $emetteur->getNom() . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y') . PHP_EOL;
+            $texte = $texte . " " . PHP_EOL;
+        }
         $texte = $texte . " " . PHP_EOL;
         $texte = $texte . "Vous devez la modifier et la soumettre à nouveau à la validation." . PHP_EOL;
         $texte = $texte . " " . PHP_EOL;
@@ -2013,7 +2022,7 @@ class ProgrammationLotController extends Controller {
         $notification->setEmetteur($user->getId());
         $notification->setNouveau(true);
         $notification->setIteration(2);
-        $notification->setMessage("la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été refusée par l'administrateur " . $emetteur->getNom()  . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y') );
+        $notification->setMessage("la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été refusée par l'administrateur " . $emetteur->getNom() . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y'));
         $em->persist($notification);
         // Récupération du service.
         $mailer = $this->get('mailer');
@@ -2049,7 +2058,7 @@ class ProgrammationLotController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -2100,7 +2109,7 @@ class ProgrammationLotController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -2182,8 +2191,8 @@ class ProgrammationLotController extends Controller {
                 $now = date('Y-m-d H:i');
                 $now = new \DateTime($now);
                 $pgProgLotAnPrec->setDateModif($now);
-                 $pgProgWebuser = $repoPgProgWebusers->getPgProgWebusersByExtid($user->getId());
-                 $pgProgLotAnPrec->setUtilModif($pgProgWebuser);
+                $pgProgWebuser = $repoPgProgWebusers->getPgProgWebusersByExtid($user->getId());
+                $pgProgLotAnPrec->setUtilModif($pgProgWebuser);
                 $emSqe->persist($pgProgLotAnPrec);
                 // $session->set('critPhase', $pgProgPhase->getId());
             }
@@ -2199,7 +2208,7 @@ class ProgrammationLotController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');

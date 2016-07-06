@@ -71,8 +71,8 @@ AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_voir:
          methods:  GET|POST
          
 AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_deposer:
-    path:  /deposer/{suiviPrelId}/{periodeAnId}
-    defaults: { _controller: AeagSqeBundle:SuiviHydrobio:lotPeriodeStationDemandeSuiviDeposer, suiviPrelId : null, periodeAnId : null}
+    path:  /deposer/{stationId}/{suiviPrelId}/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SuiviHydrobio:lotPeriodeStationDemandeSuiviDeposer,  stationId : null, suiviPrelId : null, periodeAnId : null}
     requirements:
          methods:  GET|POST
    
@@ -83,8 +83,8 @@ AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_supprimer:
         methods:  GET|POST
   
 AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_fichier_deposer:
-    path:  /fichier/deposer/{suiviPrelId}/{periodeAnId}
-    defaults: { _controller: AeagSqeBundle:SuiviHydrobio:lotPeriodeStationDemandeSuiviFichierDeposer, suiviPrelId : null, periodeAnId : null }
+    path:  /fichier/deposer/{stationId}/{suiviPrelId}/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SuiviHydrobio:lotPeriodeStationDemandeSuiviFichierDeposer,  stationId : null,  suiviPrelId : null, periodeAnId : null }
     requirements:
         methods:  GET|POST
         
