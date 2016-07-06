@@ -1540,7 +1540,7 @@ class SuiviHydrobioController extends Controller {
                 for ($i = 0; $i < count($autrePgCmdPrelevs); $i++) {
                     $autreSuport = $autrePgCmdPrelevs[$i]['codeSupport'];
                     if (($autreSuport != '10' && $autreSuport != '11') ||
-                            ($prelev->getCodeSupport()->getCodeSupport() == '69' && $autreSuport != '4')) {
+                            ($pgCmdPrelev->getCodeSupport()->getCodeSupport() == '69' && $autreSuport != '4')) {
                         $autreDateDebut = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
                         $autreDateDebut->sub(new \DateInterval('P7D'));
                         $autreDateFin = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
@@ -2164,7 +2164,7 @@ class SuiviHydrobioController extends Controller {
                 if ($trouve) {
                     $pgProgLot = $pgCmdPrelev->getDemande()->getLotan()->getLot();
                     $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
-                    if (substr($pgProgTypeMilieu->getCodeMilieu(), 1, 2) === 'HB') {
+                    if (substr($pgProgTypeMilieu->getCodeMilieu(), 1, 2) === 'HB' or $pgProgTypeMilieu->getCodeMilieu() === 'RHM') {
                         $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelevOrderDate($pgCmdPrelev);
                         if ($pgCmdSuiviPrels) {
                             $tabStations[$i]['station'] = $pgCmdPrelev->getStation();
