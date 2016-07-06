@@ -570,7 +570,7 @@ class SuiviHydrobioController extends Controller {
 
             if (count($tabStations) > 0) {
                 for ($k = 0; $k < count($tabStations); $k++) {
-                    if (count($tabStations[$k]['fichiers'])) {
+                    if (count($tabStations[$k]['fichiers']) > 0) {
                         $tabFichiers = $tabStations[$k]['fichiers'];
                         if (count($tabFichiers) < 3) {
                             $contenu = 'La station  ' . $tabStations[$k]['station']->getCode() . ' doit regrouper au moins 3 fichiers ' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
@@ -580,19 +580,36 @@ class SuiviHydrobioController extends Controller {
                             $nbCorrect = $nbCorrect - count($tabFichiers);
                             $nbIncorrect = $nbIncorrect + count($tabFichiers);
                         } elseif (count($tabFichiers) > 0) {
+                            $NbFt = 0;
+                            $NbPhoto = 0;
                             for ($nb = 0; $nb < count($tabFichiers); $nb++) {
 //$tabNomFichier = explode('-', $tabFichiers[$nb]);
 //if ($tabNomFichier[1] != 'ft' && $tabNomFichier[1] != 'photo1' && $tabNomFichier[1] != 'photo2') {
-                                if ((strpos($tabFichiers[$nb], 'ft') === false) && (strpos($tabFichiers[$nb], 'terrain') === false) && (strpos($tabFichiers[$nb], 'photo') === false)) {
+                                if ((strpos(strtoupper($tabFichiers[$nb]), 'FT') === false) && (strpos(strtoupper($tabFichiers[$nb]), 'PHOTO') === false)) {
                                     $contenu = 'La station  ' . $tabStations[$k]['station']->getCode() . ' ne peut pas regrouper  le fichier : ' . $tabFichiers[$nb] . ' (non reconnu comme photo ni fiche terrain)' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
                                     $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                                     fputs($rapport, $contenu);
                                     $erreur = 1;
                                     $nbCorrect = $nbCorrect - 1;
                                     $nbIncorrect = $nbIncorrect + 1;
+                                } else {
+                                    if (strpos($tabFichiers[$nb], 'ft') === true) {
+                                        $NbFt++;
+                                    }
+                                    if (strpos($tabFichiers[$nb], 'photo') === true) {
+                                        $NbPhoto++;
+                                    }
                                 }
                             }
+                            if ($NbFt < 1 or $NbPhoto < 2) {
+                                $contenu = 'La station  ' . $tabStations[$k]['station']->getCode() . ' doit  regrouper  au moins un fichier dont le nom contient \'ft\' et 2 fichiers dont le nom contient \'photo\'.' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                fputs($rapport, $contenu);
+                                $erreur = 1;
+                            }
                         }
+                    } else {
+                        $tabFichiers = 0;
                     }
                 }
             }
@@ -601,7 +618,7 @@ class SuiviHydrobioController extends Controller {
                 $nbSupport = 0;
                 if (count($tabStations) > 0) {
                     for ($k = 0; $k < count($tabStations); $k++) {
-                        if (count($tabStations[$k]['fichiers'])) {
+                        if (count($tabStations[$k]['fichiers']) > 0) {
                             $tabFichiers = $tabStations[$k]['fichiers'];
                             if (count($tabFichiers) > 1) {
                                 $fichier_archive = true;
