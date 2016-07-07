@@ -27,47 +27,9 @@
                                 <ul class="list-group">
                                     <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ path('Aeag_sqe_programmation_lots', {'action': 'V'}) }}" title="Consulter"><i class="fa fa-eye fa-3x"></i> Consulter</a></li>
                                     <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ path('Aeag_sqe_programmation_lots', {'action': 'P'}) }}" title="Programmer"><i class="fa fa-edit fa-3x"></i> Programmer</a></li>
-                                    {%if   is_granted('ROLE_ADMINSQE') %}
+                                    {%if   is_granted('ROLE_ADMINSQE') and not app.session.get('evolution')%}
                                         <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ path('AeagSqeBundle_suiviHydrobio_planning') }}" title="Planning"><i class="fa fa-calendar fa-3x"></i> Planning</a></li>
-                                    {% endif %}    
-                          </ul>
-                </div>
-              </div>
-        </div>
-         
-         <div class="col-md-offset-1 col-md-4">
-            <div class="panel panel-primary">
-                <div class="panel-heading text-center"><h3>Echange de fichiers</h3></div>
-                <div class="panel-body">
-                             <ul class="list-group">
-                                    <li class="list-group-item  list-group-item-info"><a class="btn btn-primary" href="{{ path('AeagSqeBundle_echangefichiers_index')}}" title="Echange de fichiers"><i class="fa fa-download fa-3x"></i> Echange de fichiers</a></li>
-                            </ul>
-                </div>
-              </div>
-        </div>
-    </div>
-           
-     {% if app.session.get('suiviDonnees')  or app.session.get('suiviHb') or app.session.get('suiviQHb') or app.session.get('suiviSED') %}
-            <div class="row">
-              <div class="col-md-offset-2 col-md-4">
-                  <div class="panel panel-primary">
-                      <div class="panel-heading text-center"><h3>Saisie</h3></div>
-                      <div class="panel-body text-justify">
-                                  <ul class="list-group">
-                                      {% if app.session.get('suiviDonnees') %}
-                                          <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ path('AeagSqeBundle_saisieDonnees_index')}}" title="Saisie des données"><i class="fa fa-dashboard fa-3x"></i> Terrain</a></li>
-                                       {% endif %}
-                                       {% if app.session.get('suiviQHb') %}
-                                            {% if  not app.session.get('evolution')%}
-                                            <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ path('AeagSqeBundle_suiviHydrobio_synthese')}}" title="Qualification de l’avancement des suivis Hydrobio"><i class="fa fa-graduation-cap fa-3x"></i> Qualification suivis Hydrobio</a></li>
-                                            {% endif %}
-                                      {% endif %}
-                                      {% if app.session.get('suiviHb') %}
-                                          <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}" title="Suivi hydrobio"><i class="fa fa-calendar fa-3x"></i> Suivi Hydrobio</a></li>
-                                       {% endif %}
-                                       {% if app.session.get('suiviSED') %}
-                                          <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ path('AeagSqeBundle_suiviSediment_index')}}" title="Suivi hydrobio"><i class="fa fa-calendar fa-3x"></i> Suivi Sédiment</a></li>
-                                       {% endif %}
+                                    {% endif %}   
                                 </ul>
                             </div>
                         </div>

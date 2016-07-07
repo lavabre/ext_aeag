@@ -25,7 +25,9 @@
     <ul class="dropdown-menu">
         <li><a href="{{ path('Aeag_sqe_programmation_lots', {'action': 'P'}) }}">Programmer</a></li>
         <li><a href="{{ path('Aeag_sqe_programmation_lots', {'action': 'V'}) }}">Consulter</a></li>
-        <li><a href="{{ path('AeagSqeBundle_suiviHydrobio_planning') }}">Planning</a></li>
+        {% if  not app.session.get('evolution')%}
+            <li><a href="{{ path('AeagSqeBundle_suiviHydrobio_planning') }}">Planning</a></li>
+        {%endif%}
         
     </ul>
 </li>
