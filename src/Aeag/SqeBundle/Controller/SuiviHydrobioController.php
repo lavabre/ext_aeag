@@ -593,10 +593,10 @@ class SuiviHydrobioController extends Controller {
                                     $nbCorrect = $nbCorrect - 1;
                                     $nbIncorrect = $nbIncorrect + 1;
                                 } else {
-                                    if (strpos($tabFichiers[$nb], 'ft') === true) {
+                                    if (strpos($tabFichiers[$nb], 'ft') !== false) {
                                         $NbFt++;
                                     }
-                                    if (strpos($tabFichiers[$nb], 'photo') === true) {
+                                    if (strpos($tabFichiers[$nb], 'photo') !== false) {
                                         $NbPhoto++;
                                     }
                                 }
