@@ -237,6 +237,11 @@ class AeagCommand extends ContainerAwareCommand {
         foreach ($pgPgLogValidEdilabos as $pgPgLogValidEdilabo) {
             $this->emSqe->remove($pgPgLogValidEdilabo);
         }
+        
+        $pgProgSuiviPhases = $this->repoPgProgSuiviPhases->findBy(array('typeObjet' => 'RPS', 'objId' => $reponseId));
+        foreach ($pgProgSuiviPhases as $pgProgSuiviPhase) {
+            $this->emSqe->remove($pgProgSuiviPhase);
+        }
 
         $this->emSqe->flush();
     }
