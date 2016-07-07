@@ -184,7 +184,7 @@
              {%endif%}
                     <ul class="dropdown-menu">
                         {% if is_granted('ROLE_ADMIN') %}
-                            <li><a href="{{ path('AeagUserBundle_User', { 'role': 'ROLE_AEAG' }) }}">Utiisateurs</a></li>
+                            <li><a href="{{ path('AeagUserBundle_User', { 'role': 'ROLE_AEAG' }) }}">Utilisateurs</a></li>
                         {% elseif is_granted('ROLE_ADMINDEC') %}
                             <li><a href="{{ path('AeagUserBundle_User', { 'role': 'ROLE_ODEC' }) }}">Utilisateurs</a></li>
                         {% elseif is_granted('ROLE_ADMINFRD')%}

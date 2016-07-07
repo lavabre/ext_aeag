@@ -22,17 +22,17 @@ use Symfony\Component\HttpFoundation\Request;
 class SuiviHydrobioController extends Controller {
 
     public function indexAction() {
-       
+
         $user = $this->getUser();
-            
+
         $session = $this->get('session');
         $session->set('menu', 'suiviHydrobio');
         $session->set('controller', 'SuiviHydrobio');
         $session->set('fonction', 'index');
-         $em = $this->get('doctrine')->getManager();
+        $em = $this->get('doctrine')->getManager();
         $emSqe = $this->get('doctrine')->getManager('sqe');
-        
-           if (is_object($user)) {
+
+        if (is_object($user)) {
             $mes = AeagController::notificationAction($user, $em, $session);
             $mes1 = AeagController::messageAction($user, $em, $session);
         } else {
@@ -60,7 +60,7 @@ class SuiviHydrobioController extends Controller {
         foreach ($pgProgLotAns as $pgProgLotAn) {
             $pgProgLot = $pgProgLotAn->getLot();
             $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
-            if (substr($pgProgTypeMilieu->getCodeMilieu(), 1, 2) === 'HB') {
+            if (substr($pgProgTypeMilieu->getCodeMilieu(), 1, 2) === 'HB' or $pgProgTypeMilieu->getCodeMilieu() === 'RHM') {
                 $pgProgLotPeriodeAns = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnByLotan($pgProgLotAn);
                 if (count($pgProgLotPeriodeAns) > 0) {
                     $trouve = false;
@@ -154,17 +154,17 @@ class SuiviHydrobioController extends Controller {
     }
 
     public function lotPeriodeStationsAction($periodeAnId) {
-        
+
         $user = $this->getUser();
-     
+
         $session = $this->get('session');
         $session->set('menu', 'suiviHydrobio');
         $session->set('controller', 'SuiviHydrobio');
         $session->set('fonction', 'lotPeriodeStations');
         $em = $this->get('doctrine')->getManager();
         $emSqe = $this->get('doctrine')->getManager('sqe');
-        
-           if (is_object($user)) {
+
+        if (is_object($user)) {
             $mes = AeagController::notificationAction($user, $em, $session);
             $mes1 = AeagController::messageAction($user, $em, $session);
         } else {
@@ -243,7 +243,7 @@ class SuiviHydrobioController extends Controller {
                             foreach ($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
                                 $tabSuiviPrels[$nbSuiviPrels]['suiviPrel'] = $pgCmdSuiviPrel;
                                 $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'N';
-                                if ($user->hasRole('ROLE_ADMINSQE') or ( $pgCmdSuiviPrel->getUser()->getPrestataire() == $pgCmdDemande->getPrestataire())) {
+                                if ($user->hasRole('ROLE_ADMINSQE') or ( $pgCmdPrelev->getPrestaPrel() == $pgCmdDemande->getPrestataire())) {
                                     if ($pgCmdSuiviPrel->getStatutPrel() != 'F' or ( $pgCmdSuiviPrel->getStatutPrel() == 'F' and $pgCmdSuiviPrel->getValidation() != 'A')) {
                                         $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'O';
                                         $tabCmdPrelevs[$nbCmdPrelevs]['maj'] = 'O';
@@ -570,7 +570,7 @@ class SuiviHydrobioController extends Controller {
 
             if (count($tabStations) > 0) {
                 for ($k = 0; $k < count($tabStations); $k++) {
-                    if (count($tabStations[$k]['fichiers'])) {
+                    if (count($tabStations[$k]['fichiers']) > 0) {
                         $tabFichiers = $tabStations[$k]['fichiers'];
                         if (count($tabFichiers) < 3) {
                             $contenu = 'La station  ' . $tabStations[$k]['station']->getCode() . ' doit regrouper au moins 3 fichiers ' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
@@ -580,19 +580,36 @@ class SuiviHydrobioController extends Controller {
                             $nbCorrect = $nbCorrect - count($tabFichiers);
                             $nbIncorrect = $nbIncorrect + count($tabFichiers);
                         } elseif (count($tabFichiers) > 0) {
+                            $NbFt = 0;
+                            $NbPhoto = 0;
                             for ($nb = 0; $nb < count($tabFichiers); $nb++) {
 //$tabNomFichier = explode('-', $tabFichiers[$nb]);
 //if ($tabNomFichier[1] != 'ft' && $tabNomFichier[1] != 'photo1' && $tabNomFichier[1] != 'photo2') {
-                                if ((strpos($tabFichiers[$nb], 'ft') === false) && (strpos($tabFichiers[$nb], 'terrain') === false) && (strpos($tabFichiers[$nb], 'photo') === false)) {
+                                if ((strpos(strtoupper($tabFichiers[$nb]), 'FT') === false) && (strpos(strtoupper($tabFichiers[$nb]), 'PHOTO') === false)) {
                                     $contenu = 'La station  ' . $tabStations[$k]['station']->getCode() . ' ne peut pas regrouper  le fichier : ' . $tabFichiers[$nb] . ' (non reconnu comme photo ni fiche terrain)' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
                                     $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                                     fputs($rapport, $contenu);
                                     $erreur = 1;
                                     $nbCorrect = $nbCorrect - 1;
                                     $nbIncorrect = $nbIncorrect + 1;
+                                } else {
+                                    if (strpos($tabFichiers[$nb], 'ft') === true) {
+                                        $NbFt++;
+                                    }
+                                    if (strpos($tabFichiers[$nb], 'photo') === true) {
+                                        $NbPhoto++;
+                                    }
                                 }
                             }
+                            if ($NbFt < 1 or $NbPhoto < 2) {
+                                $contenu = 'La station  ' . $tabStations[$k]['station']->getCode() . ' doit  regrouper  au moins un fichier dont le nom contient \'ft\' et 2 fichiers dont le nom contient \'photo\'.' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                fputs($rapport, $contenu);
+                                $erreur = 1;
+                            }
                         }
+                    } else {
+                        $tabFichiers = 0;
                     }
                 }
             }
@@ -601,7 +618,7 @@ class SuiviHydrobioController extends Controller {
                 $nbSupport = 0;
                 if (count($tabStations) > 0) {
                     for ($k = 0; $k < count($tabStations); $k++) {
-                        if (count($tabStations[$k]['fichiers'])) {
+                        if (count($tabStations[$k]['fichiers']) > 0) {
                             $tabFichiers = $tabStations[$k]['fichiers'];
                             if (count($tabFichiers) > 1) {
                                 $fichier_archive = true;
@@ -740,7 +757,15 @@ class SuiviHydrobioController extends Controller {
                 if ($trouve) {
                     // Envoi d'un mail
                     if ($this->get('aeag_sqe.message')->envoiMessage($emSqe, $mailer, $txtMessage, $destinataire, $objetMessage)) {
-                        $session->getFlashBag()->add('notice-success', 'un email  a été envoyé à ' . $destinataire->getNom() . ' pour l\'informer du dépôt');
+                        $message = 'un email  vous a été envoyé par ' . $pgProgWebUser->getNom() . ' suite à l\'intégration de plusieurs fichiers de terrain ' . CHR(13) . CHR(10) . ' sur le lot ' . $pgProgLot->getNomLot() . ' pour la période du ' . $pgProgPeriode->getDateDeb()->format('d/m/Y') . ' au ' . $dateFin->format('d/m/Y');
+                        $notification = new Notification();
+                        $notification->setRecepteur($destinataire->getExtId());
+                        $notification->setEmetteur($user->getId());
+                        $notification->setNouveau(true);
+                        $notification->setIteration(2);
+                        $notification->setMessage($message);
+                        $em->persist($notification);
+                        $em->flush();
                     } else {
                         $session->getFlashBag()->add('notice-warning', 'Le dépôt a été traité, mais l\'email n\'a pas pu être envoyé à ' . $destinataire->getNom());
                     }
@@ -761,7 +786,7 @@ class SuiviHydrobioController extends Controller {
                         ->setTo($pgProgWebUser->getMail())
                         ->setBody($htmlMessage, 'text/html');
 
-                $mail->attach(\Swift_Attachment::fromPath($pathRapport . '/' .$ficRapport));
+                $mail->attach(\Swift_Attachment::fromPath($pathRapport . '/' . $ficRapport));
                 $mailer->send($mail);
                 $message = 'un email  vous a été envoyé avec en pièce jointe le fichier rapport du dépôt ';
                 $notification = new Notification();
@@ -1120,7 +1145,8 @@ class SuiviHydrobioController extends Controller {
                                 $autrePgCmdPrelevs = $repoPgCmdPrelev->getAutrePrelevs($prelev);
                                 for ($i = 0; $i < count($autrePgCmdPrelevs); $i++) {
                                     $autreSuport = $autrePgCmdPrelevs[$i]['codeSupport'];
-                                    if ($autreSuport != '10' && $autreSuport != '11') {
+                                    if (($autreSuport != '10' && $autreSuport != '11') ||
+                                            ($prelev->getCodeSupport()->getCodeSupport() == '69' && $autreSuport != '4')) {
                                         $autreDateDebut = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
                                         $autreDateDebut->sub(new \DateInterval('P7D'));
                                         $autreDateFin = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
@@ -1217,8 +1243,9 @@ class SuiviHydrobioController extends Controller {
                     } else {
                         if ($user->hasRole('ROLE_ADMINSQE')) {
                             $pgProgWebUsers = $repoPgProgWebUsers->getPgProgWebusersByPrestataire($pgCmdPrelev->getPrestaPrel());
-                            $pgProgWebUser = $pgProgWebUsers[0];
-                            if (!$pgProgWebUser) {
+                            if (count($pgProgWebUsers) > 0) {
+                                $pgProgWebUser = $pgProgWebUsers[0];
+                            } else {
                                 $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
                             }
                         } else {
@@ -1229,7 +1256,7 @@ class SuiviHydrobioController extends Controller {
                         $pgCmdSuiviPrel->setUser($pgProgWebUser);
                         $pgCmdSuiviPrel->setDatePrel($datePrel);
                         $pgCmdSuiviPrel->setStatutPrel($statutPrel);
-                        $pgCmdSuiviPrel->setCommentaire($commentaire);
+                        $pgCmdSuiviPrel->setCommentaire(utf8_encode($commentaire));
                         $pgCmdSuiviPrel->setValidation('E');
                         $emSqe->persist($pgCmdSuiviPrel);
                         if ($pgCmdSuiviPrel->getStatutPrel() == 'N') {
@@ -1251,14 +1278,14 @@ class SuiviHydrobioController extends Controller {
             fclose($fichier);
             unlink($pathBase . '/' . $name);
             unlink($pathBase . '/trans-' . $user->getId() . '.csv');
-            
-              // envoi mail  aux presta connecte 
+
+            // envoi mail  aux presta connecte 
             $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
             if ($pgProgWebUser) {
-                 $objetMessage = "fichier de suivi ";
+                $objetMessage = "fichier de suivi ";
                 $txtMessage = "Un fichier de suivi a été déposé sur le lot " . $pgProgLot->getNomLot() . " pour la période du " . $pgProgPeriode->getDateDeb()->format('d/m/Y') . " au " . $dateFin->format('d/m/Y');
                 $mailer = $this->get('mailer');
-       
+
                 $txtMessage.= '<br/><br/>Veullez trouver en pièce jointe le rapport d\'intégration';
                 $htmlMessage = "<html><head></head><body>";
                 $htmlMessage .= "Bonjour, <br/><br/>";
@@ -1529,7 +1556,8 @@ class SuiviHydrobioController extends Controller {
                 $autrePgCmdPrelevs = $repoPgCmdPrelev->getAutrePrelevs($pgCmdPrelev);
                 for ($i = 0; $i < count($autrePgCmdPrelevs); $i++) {
                     $autreSuport = $autrePgCmdPrelevs[$i]['codeSupport'];
-                    if ($autreSuport != '10' && $autreSuport != '11') {
+                    if (($autreSuport != '10' && $autreSuport != '11') ||
+                            ($pgCmdPrelev->getCodeSupport()->getCodeSupport() == '69' && $autreSuport != '4')) {
                         $autreDateDebut = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
                         $autreDateDebut->sub(new \DateInterval('P7D'));
                         $autreDateFin = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
@@ -2153,7 +2181,7 @@ class SuiviHydrobioController extends Controller {
                 if ($trouve) {
                     $pgProgLot = $pgCmdPrelev->getDemande()->getLotan()->getLot();
                     $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
-                    if (substr($pgProgTypeMilieu->getCodeMilieu(), 1, 2) === 'HB') {
+                    if (substr($pgProgTypeMilieu->getCodeMilieu(), 1, 2) === 'HB' or $pgProgTypeMilieu->getCodeMilieu() === 'RHM') {
                         $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelevOrderDate($pgCmdPrelev);
                         if ($pgCmdSuiviPrels) {
                             $tabStations[$i]['station'] = $pgCmdPrelev->getStation();
@@ -2185,6 +2213,7 @@ class SuiviHydrobioController extends Controller {
                                 }
                                 $tabSuiviPrels[$nbSuiviPrels]['dateLimite'] = $dateLimite;
                                 $nbSuiviPrels++;
+                                break;
                             }
                             $tabCmdPrelevs[$nbCmdPrelevs]['suiviPrels'] = $tabSuiviPrels;
                             $tabAutrePrelevs = $repoPgCmdPrelev->getAutrePrelevs($pgCmdPrelev);
