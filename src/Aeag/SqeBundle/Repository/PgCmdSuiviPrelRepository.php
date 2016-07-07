@@ -101,6 +101,11 @@ class PgCmdSuiviPrelRepository extends EntityRepository {
         if($presta != "") {
             $query .= " and p.prestaPrel = :presta";
         }
+        $query .= " and c IN (";
+        $query .= " select max(c1)";
+        $query .= " from Aeag\SqeBundle\Entity\PgCmdSuiviPrel c1";
+        $query .= " group by c1.prelev";
+        $query .= " order by c1.prelev)";
         $query .= " order by c.datePrel asc";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('dateDebut', $date);

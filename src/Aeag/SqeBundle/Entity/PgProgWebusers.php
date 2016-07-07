@@ -136,6 +136,10 @@ class PgProgWebusers {
      * @ORM\Column(name="code_support", type="string", length=3, nullable=true)
      */
     private $codeSupport;
+    
+    /*public function __toString() {
+        return $this->getNom();
+    }*/
 
     /**
      * Constructor

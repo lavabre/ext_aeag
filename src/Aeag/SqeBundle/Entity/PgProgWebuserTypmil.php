@@ -28,7 +28,7 @@ class PgProgWebuserTypmil {
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="PgProgTypeMilieu")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="code_milieu", referencedColumnName="codeMilieu")
+     *   @ORM\JoinColumn(name="code_milieu", referencedColumnName="code_milieu")
      * })
      */
     private $typmil;

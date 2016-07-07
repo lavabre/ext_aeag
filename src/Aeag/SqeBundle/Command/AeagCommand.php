@@ -29,10 +29,14 @@ class AeagCommand extends ContainerAwareCommand {
     protected $repoPgProgWebUsers;
     protected $repoPgSandreParametres;
     protected $repoPgSandreUnites;
+    protected $repoPgSandreMethodes;
     protected $repoPgSandreZoneVerticaleProspectee;
     protected $repoPgProgSuiviPhases;
+    protected $repoPgCmdMesureEnv;
+    protected $repoPgCmdAnalyse;
     protected $detectionCodeRemarqueComplet;
     protected $detectionCodeRemarqueMoitie;
+    
 
     protected function configure() {
         $this
@@ -70,6 +74,9 @@ class AeagCommand extends ContainerAwareCommand {
         $this->repoPgSandreZoneVerticaleProspectee = $this->emSqe->getRepository('AeagSqeBundle:PgSandreZoneVerticaleProspectee');
         $this->repoPgProgLotParamAn = $this->emSqe->getRepository('AeagSqeBundle:PgProgLotParamAn');
         $this->repoPgProgSuiviPhases = $this->emSqe->getRepository('AeagSqeBundle:PgProgSuiviPhases');
+        $this->repoPgSandreMethodes = $this->emSqe->getRepository('AeagSqeBundle:PgSandreMethodes');
+        $this->repoPgCmdMesureEnv = $this->emSqe->getRepository('AeagSqeBundle:PgCmdMesureEnv');
+        $this->repoPgCmdAnalyse = $this->emSqe->getRepository('AeagSqeBundle:PgCmdAnalyse');
 
         // Chargement des fichiers csv dans des tableaux 
         $cheminCourant = __DIR__ . '/../../../../';
