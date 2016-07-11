@@ -48,9 +48,9 @@ AeagDieBundle_demande:
     resource: "routing/demande.yml"
     prefix:   /admin/demande
     
-AeagDieBundle_dies:
-    resource: "routing/dies.yml"
-    prefix:   /dies
+#AeagDieBundle_dies:
+#    resource: "routing/dies.yml"
+#    prefix:   /dies
 
     
     

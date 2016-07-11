@@ -1037,3 +1037,21 @@ h3 {
     cursor : pointer;
 }
 
+.tableDie > tbody > tr > td, .tableDie > tbody > tr > th, .tableDie > tfoot > tr > td, .tableDie > tfoot > tr > th, .tableDie > thead > tr > td, .tableDie > thead > tr > th{
+    border-top: 1px solid #ddd;
+    line-height: 0.5;
+    padding: 2px;
+    vertical-align: middle;
+}
+
+.alertDie {
+    border: 1px solid transparent;
+    border-radius: 4px;
+    margin-bottom: 5px;
+    padding: 5px;
+}
+
+.error
+{
+    color: red;
+}
