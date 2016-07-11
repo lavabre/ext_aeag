@@ -16,7 +16,7 @@ security:
 
         # Firewall pour les pages de connexion, inscription, et récupération de mot de passe
         login:
-            pattern:   ^/(login$|register|resetting|aide)  # Les adresses de ces pages sont login, register et resetting
+            pattern:   ^/(login$|register|resetting|aide|die)  # Les adresses de ces pages sont login, register et resetting
             anonymous: true 
            
         # Firewall principal pour le reste de notre site
@@ -47,12 +47,12 @@ security:
         ROLE_SUPERVISEUREDL : [ROLE_COMMENTATEUREDL]
         ROLE_ADMINDEC: [ROLE_ODEC]
         ROLE_ADMINFRD: [ROLE_FRD]
-        ROLE_ADMINSQE: [ROLE_PROGSQE]
+        ROLE_ADMINSQE: [ROLE_PROGSQE, ROLE_XHBIOSQE]
         ROLE_PROGSQE: [ ROLE_PRESTASQE]
         ROLE_PRESTASQE: [ROLE_SQE]
         ROLE_XHBIOSQE: [ROLE_SQE]
         ROLE_ADMINEDL:  [ROLE_SUPERVISEUREDL]       # On a dit que l'admin héritait des droits d'auteur et de modérateur
-        ROLE_ADMIN: [ROLE_ADMINDEC, ROLE_ADMINFRD, ROLE_ADMINSQE, ROLE_ADMINEDL]
+        ROLE_ADMIN: [ROLE_ADMINDEC, ROLE_ADMINFRD, ROLE_ADMINSQE, ROLE_ADMINEDL, ROLE_ADMINDIE]
         ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
 
 
@@ -86,6 +86,9 @@ security:
          - { path: ^/adminfrd*, role: [ROLE_ADMINFRD] }
           # PAGES ACCESSIBLES AUX UTILISATEURS FRD
          - { path: ^/frd*, role: [ROLE_FRD] }
+         
+         # PAGES ACCESSIBLES AUX ADMINISTRATEURSDIE
+         - { path: ^/admindie*, role: [ROLE_ADMINDIE] }
          
          # PAGES ACCESSIBLES AUX ADMINISTRATEURS SQE
          - { path: ^/adminsqe*, role: [ROLE_ADMINSQE] }

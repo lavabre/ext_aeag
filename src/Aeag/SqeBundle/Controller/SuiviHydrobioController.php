@@ -1911,7 +1911,7 @@ class SuiviHydrobioController extends Controller {
 //        return new Response ('');
     }
 
-    public function lotPeriodeStationDemandeSuiviFichierDeposerAction($stationId = null,$suiviPrelId = null, $periodeAnId = null) {
+    public function lotPeriodeStationDemandeSuiviFichierDeposerAction($stationId = null, $suiviPrelId = null, $periodeAnId = null) {
 
         $user = $this->getUser();
         if (!$user) {
@@ -1932,7 +1932,11 @@ class SuiviHydrobioController extends Controller {
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgRefStationMesure = $repoPgRefStationMesure->getPgRefStationMesureByOuvFoncId($stationId);
         $pgCmdSuiviPrel = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelById($suiviPrelId);
+        $pgCmdFichiersRps = $pgCmdSuiviPrel->getFichierRps();
         $pgCmdPrelev = $pgCmdSuiviPrel->getPrelev();
+        $pgCmdDemande = $pgCmdPrelev->getDemande();
+        $pgProgLotAn = $pgCmdDemande->getLotan();
+        $pgProgLot = $pgProgLotAn->getLot();
         $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R10');
 
 // Récupération des valeurs du fichier
@@ -1964,7 +1968,7 @@ class SuiviHydrobioController extends Controller {
         switch ($error) {
             case UPLOAD_ERR_OK:
                 $valid = true;
-                 if (!in_array($ext, array('zip'))) {
+                if (!in_array($ext, array('zip'))) {
                     $valid = false;
                     $response = 'extension du fichier incorrecte.';
                     $tabMessage[$nbMessages][0] = 'ko';
@@ -1975,44 +1979,77 @@ class SuiviHydrobioController extends Controller {
                 if ($size > 10485760) {
                     $valid = false;
                     $response = 'La taille du fichier (' . $size / 1024 . ') est plus grande que la taille autorisée.';
+                    $tabMessage[$nbMessages][0] = 'ko';
+                    $tabMessage[$nbMessages][1] = $response;
+                    $nbMessages++;
                 }
 //upload file
                 if ($valid) {
-     
-// Enregistrement du fichier sur le serveur
-                     move_uploaded_file($_FILES['file']['tmp_name'], $pathBase . '/' . $name);
 
-                    $dateDepot = $pgCmdFichiersRps->getDateDepot();
+// Enregistrement du fichier sur le serveur
+                    move_uploaded_file($_FILES['file']['tmp_name'], $pathBase . '/' . $name);
                     $response = $name . ' déposé le ' . $dateDepot->format('d/m/Y');
                     break;
                 }
             case UPLOAD_ERR_INI_SIZE:
                 $response = 'La taille (' . $size . ' octets' . ') du fichier téléchargé excède la taille de upload_max_filesize dans php.ini.';
+                $tabMessage[$nbMessages][0] = 'ko';
+                $tabMessage[$nbMessages][1] = $response;
+                $nbMessages++;
+                $valid = false;
                 break;
             case UPLOAD_ERR_FORM_SIZE:
                 $response = 'La taille (' . $size . ') du fichier téléchargé excède la taille de MAX_FILE_SIZE qui a été spécifié dans le formulaire HTML.';
+                $tabMessage[$nbMessages][0] = 'ko';
+                $tabMessage[$nbMessages][1] = $response;
+                $nbMessages++;
+                $valid = false;
                 break;
             case UPLOAD_ERR_PARTIAL:
                 $response = 'Le fichier n\'a été que partiellement téléchargé.';
+                $tabMessage[$nbMessages][0] = 'ko';
+                $tabMessage[$nbMessages][1] = $response;
+                $nbMessages++;
+                $valid = false;
                 break;
             case UPLOAD_ERR_NO_FILE:
                 $response = 'Aucun fichier sélectionné.';
+                $tabMessage[$nbMessages][0] = 'ko';
+                $tabMessage[$nbMessages][1] = $response;
+                $nbMessages++;
+                $valid = false;
                 break;
             case UPLOAD_ERR_NO_TMP_DIR:
                 $response = 'Manquantes dans un dossier temporaire. Introduit en PHP 4.3.10 et PHP 5.0.3.';
+                $tabMessage[$nbMessages][0] = 'ko';
+                $tabMessage[$nbMessages][1] = $response;
+                $nbMessages++;
+                $valid = false;
                 break;
             case UPLOAD_ERR_CANT_WRITE:
                 $response = 'Impossible d\'écrire le fichier sur le disque. Introduit en PHP 5.1.0.';
+                $tabMessage[$nbMessages][0] = 'ko';
+                $tabMessage[$nbMessages][1] = $response;
+                $nbMessages++;
+                $valid = false;
                 break;
             case UPLOAD_ERR_EXTENSION:
                 $response = 'Le téléchargement du fichier arrêté par extension. Introduit en PHP 5.2.0.';
+                $tabMessage[$nbMessages][0] = 'ko';
+                $tabMessage[$nbMessages][1] = $response;
+                $nbMessages++;
+                $valid = false;
                 break;
             default:
                 $response = 'erreur inconnue';
+                $tabMessage[$nbMessages][0] = 'ko';
+                $tabMessage[$nbMessages][1] = $response;
+                $nbMessages++;
+                $valid = false;
                 break;
         }
 
-         if ($valid) {
+        if ($valid) {
             $liste = array();
             $liste = $this->unzip($pathBase . '/' . $name, $pathBase . '/');
             $rapport = fopen($pathRapport . '/' . $user->getId() . '_' . $dateDepot->format('Y-m-d-H') . '_rapport.csv', "w+");
@@ -2033,11 +2070,11 @@ class SuiviHydrobioController extends Controller {
             foreach ($liste as $nomFichier) {
 //$tabNomFichier = explode('-', $nomFichier);
                 $trouve = false;
-                         if (strpos($nomFichier, $pgRefStationMesure->getCode()) !== false) {
-                            $trouve = true;
-                            break;
-                        }
-                 if (!$trouve) {
+                if (strpos($nomFichier, $pgRefStationMesure->getCode()) !== false) {
+                    $trouve = true;
+                    break;
+                }
+                if (!$trouve) {
                     if (filesize($pathBase . '/' . $nomFichier) > 0) {
                         $contenu = 'pas de station à raccorder au fichier ' . $nomFichier . CHR(13) . CHR(10) . CHR(13) . CHR(10);
                         $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
@@ -2046,147 +2083,147 @@ class SuiviHydrobioController extends Controller {
 //$erreur = 1;
                     }
                 } else {
-                    $tabFichers[$nbFichier] = $nomFichier;
+                    $tabFichiers[$nbFichier] = $nomFichier;
                     $nbFichier++;
                     $nbCorrect++;
                 }
             }
 
             if (count($tabFichiers) > 0) {
-                        if (count($tabFichiers) < 3) {
-                            $contenu = 'La station  ' . $tabStations[$k]['station']->getCode() . ' doit regrouper au moins 3 fichiers ' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                if (count($tabFichiers) < 3) {
+                    $contenu = 'La station  ' . $pgRefStationMesure->getCode() . ' doit regrouper au moins 3 fichiers ' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                    $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                    fputs($rapport, $contenu);
+                    $erreur = 1;
+                    $nbCorrect = $nbCorrect - count($tabFichiers);
+                    $nbIncorrect = $nbIncorrect + count($tabFichiers);
+                } elseif (count($tabFichiers) > 0) {
+                    $NbFt = 0;
+                    $NbPhoto = 0;
+                    for ($nb = 0; $nb < count($tabFichiers); $nb++) {
+//$tabNomFichier = explode('-', $tabFichiers[$nb]);
+//if ($tabNomFichier[1] != 'ft' && $tabNomFichier[1] != 'photo1' && $tabNomFichier[1] != 'photo2') {
+                        if ((strpos(strtoupper($tabFichiers[$nb]), 'FT') === false) && (strpos(strtoupper($tabFichiers[$nb]), 'PHOTO') === false)) {
+                            $contenu = 'La station  ' . $pgRefStationMesure->getCode() . ' ne peut pas regrouper  le fichier : ' . $tabFichiers[$nb] . ' (non reconnu comme photo ni fiche terrain)' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
                             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                             fputs($rapport, $contenu);
                             $erreur = 1;
-                            $nbCorrect = $nbCorrect - count($tabFichiers);
-                            $nbIncorrect = $nbIncorrect + count($tabFichiers);
-                        } elseif (count($tabFichiers) > 0) {
-                            $NbFt = 0;
-                            $NbPhoto = 0;
-                            for ($nb = 0; $nb < count($tabFichiers); $nb++) {
-//$tabNomFichier = explode('-', $tabFichiers[$nb]);
-//if ($tabNomFichier[1] != 'ft' && $tabNomFichier[1] != 'photo1' && $tabNomFichier[1] != 'photo2') {
-                                if ((strpos(strtoupper($tabFichiers[$nb]), 'FT') === false) && (strpos(strtoupper($tabFichiers[$nb]), 'PHOTO') === false)) {
-                                    $contenu = 'La station  ' . $tabStations[$k]['station']->getCode() . ' ne peut pas regrouper  le fichier : ' . $tabFichiers[$nb] . ' (non reconnu comme photo ni fiche terrain)' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
-                                    $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                                    fputs($rapport, $contenu);
-                                    $erreur = 1;
-                                    $nbCorrect = $nbCorrect - 1;
-                                    $nbIncorrect = $nbIncorrect + 1;
-                                } else {
-                                    if (strpos($tabFichiers[$nb], 'ft') === true) {
-                                        $NbFt++;
-                                    }
-                                    if (strpos($tabFichiers[$nb], 'photo') === true) {
-                                        $NbPhoto++;
-                                    }
-                                }
+                            $nbCorrect = $nbCorrect - 1;
+                            $nbIncorrect = $nbIncorrect + 1;
+                        } else {
+                            if (strpos($tabFichiers[$nb], 'ft') === true) {
+                                $NbFt++;
                             }
-                            if ($NbFt < 1 or $NbPhoto < 2) {
-                                $contenu = 'La station  ' . $tabStations[$k]['station']->getCode() . ' doit  regrouper  au moins un fichier dont le nom contient \'ft\' et 2 fichiers dont le nom contient \'photo\'.' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
-                                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                                fputs($rapport, $contenu);
-                                $erreur = 1;
+                            if (strpos($tabFichiers[$nb], 'photo') === true) {
+                                $NbPhoto++;
                             }
                         }
-               }
+                    }
+                    if ($NbFt < 1 or $NbPhoto < 2) {
+                        $contenu = 'La station  ' . $pgRefStationMesure->getCode() . ' doit  regrouper  au moins un fichier dont le nom contient \'ft\' et 2 fichiers dont le nom contient \'photo\'.' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                        fputs($rapport, $contenu);
+                        $erreur = 1;
+                    }
+                }
+            }
             if ($erreur == 0) {
                 $tabSupport = array();
                 $nbSupport = 0;
-                        if (count($tabFichiers) > 0) {
-                            if (count($tabFichiers) > 1) {
-                                $fichier_archive = true;
-                                $nb_archive = count($tabFichiers);
-                                $files = array();
-                                $zip = new \ZipArchive();
-                                $zipName = $tabStations[$k]['station']->getCode() . "-archive.zip";
-                                $contenu = 'le fichier  ' . $zipName . ' regroupe ' . count($tabFichiers) . ' fichiers : ' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
-                                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                                fputs($rapport, $contenu);
-                                for ($nb = 0; $nb < count($tabFichiers); $nb++) {
-                                    array_push($files, $pathBase . '/' . $tabFichiers[$nb]);
-                                    $contenu = '                  -  ' . $tabFichiers[$nb] . CHR(13) . CHR(10) . CHR(13) . CHR(10);
-                                    $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                                    fputs($rapport, $contenu);
-                                }
-                                $zip->open($pathBase . '/' . $zipName, \ZipArchive::CREATE);
-                                foreach ($files as $f) {
-                                    $zip->addFromString(basename($f), file_get_contents($f));
-                                }
-                                $zip->close();
-                                $name = $zipName;
-                            } else {
-                                $fichier_archive = false;
-                                $name = $tabFichiers[0];
-                            }
-                            
-                            // Enregistrement des valeurs en base
-                           $trouve = false;
-                            if (count($tabSupport) > 0) {
-                                for ($nbSupport = 0; $nbSupport < count($tabSupport); $nbSupport++) {
-                                    if ($tabSupport[$nbSupport] == $pgCmdPrelev->getCodeSupport()->getCodeSupport()) {
-                                        $trouve = true;
-                                        break;
-                                    }
-                                }
-                            }
-                            if (!$trouve) {
-                                $nbSupport = count($tabSupport);
-                                $tabSupport[$nbSupport] = $pgCmdPrelev->getCodeSupport()->getCodeSupport();
-                            }
-                                  if (($pgCmdSuiviPrel->getStatutPrel() == 'N') or ( $pgCmdSuiviPrel->getStatutPrel() == 'F')) {
-                                    if ($pgCmdSuiviPrel->getFichierRps()) {
-                                        $pgCmdFichiersRps = $pgCmdSuiviPrel->getFichierRps();
-                                        $emSqe->remove($pgCmdFichiersRps);
-                                    }
-                                    $pgCmdFichiersRps = new PgCmdFichiersRps();
-                                    $pgCmdFichiersRps->setDemande($pgCmdPrelev->getDemande());
-                                    $pgCmdFichiersRps->setNomFichier($name);
-                                    $pgCmdFichiersRps->setDateDepot(new \DateTime());
-                                    $pgCmdFichiersRps->setTypeFichier('SUI');
-                                    $pgCmdFichiersRps->setPhaseFichier($pgProgPhases);
-                                    $pgCmdFichiersRps->setUser($pgProgWebUser);
-                                    $pgCmdFichiersRps->setSuppr('N');
+                if (count($tabFichiers) > 0) {
+                    if (count($tabFichiers) > 1) {
+                        $fichier_archive = true;
+                        $nb_archive = count($tabFichiers);
+                        $files = array();
+                        $zip = new \ZipArchive();
+                        $zipName = $pgRefStationMesure->getCode() . "-archive.zip";
+                        $contenu = 'le fichier  ' . $zipName . ' regroupe ' . count($tabFichiers) . ' fichiers : ' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                        fputs($rapport, $contenu);
+                        for ($nb = 0; $nb < count($tabFichiers); $nb++) {
+                            array_push($files, $pathBase . '/' . $tabFichiers[$nb]);
+                            $contenu = '                  -  ' . $tabFichiers[$nb] . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                            fputs($rapport, $contenu);
+                        }
+                        $zip->open($pathBase . '/' . $zipName, \ZipArchive::CREATE);
+                        foreach ($files as $f) {
+                            $zip->addFromString(basename($f), file_get_contents($f));
+                        }
+                        $zip->close();
+                        $name = $zipName;
+                    } else {
+                        $fichier_archive = false;
+                        $name = $tabFichiers[0];
+                    }
 
-                                    $emSqe->persist($pgCmdFichiersRps);
-                                    $pgCmdSuiviPrel->setFichierRps($pgCmdFichiersRps);
-                                    $emSqe->persist($pgCmdSuiviPrel);
-                                    $emSqe->flush();
-                                    $pathBaseFic = $this->getCheminEchange($pgCmdSuiviPrel, $pgCmdFichiersRps->getId());
-                                    if (!is_dir($pathBaseFic)) {
-                                        if (!mkdir($pathBaseFic, 0777, true)) {
-                                            $session->getFlashBag()->add('notice-error', 'Le répertoire : ' . $pathBaseFic . ' n\'a pas pu être créé');
-                                            ;
-                                        }
-                                    }
+                    // Enregistrement des valeurs en base
+                    $trouve = false;
+                    if (count($tabSupport) > 0) {
+                        for ($nbSupport = 0; $nbSupport < count($tabSupport); $nbSupport++) {
+                            if ($tabSupport[$nbSupport] == $pgCmdPrelev->getCodeSupport()->getCodeSupport()) {
+                                $trouve = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (!$trouve) {
+                        $nbSupport = count($tabSupport);
+                        $tabSupport[$nbSupport] = $pgCmdPrelev->getCodeSupport()->getCodeSupport();
+                    }
+                    if (($pgCmdSuiviPrel->getStatutPrel() == 'N') or ( $pgCmdSuiviPrel->getStatutPrel() == 'F')) {
+                        if ($pgCmdSuiviPrel->getFichierRps()) {
+                            $pgCmdFichiersRps = $pgCmdSuiviPrel->getFichierRps();
+                            $emSqe->remove($pgCmdFichiersRps);
+                        }
+                        $pgCmdFichiersRps = new PgCmdFichiersRps();
+                        $pgCmdFichiersRps->setDemande($pgCmdPrelev->getDemande());
+                        $pgCmdFichiersRps->setNomFichier($name);
+                        $pgCmdFichiersRps->setDateDepot(new \DateTime());
+                        $pgCmdFichiersRps->setTypeFichier('SUI');
+                        $pgCmdFichiersRps->setPhaseFichier($pgProgPhases);
+                        $pgCmdFichiersRps->setUser($pgProgWebUser);
+                        $pgCmdFichiersRps->setSuppr('N');
+
+                        $emSqe->persist($pgCmdFichiersRps);
+                        $pgCmdSuiviPrel->setFichierRps($pgCmdFichiersRps);
+                        $emSqe->persist($pgCmdSuiviPrel);
+                        $emSqe->flush();
+                        $pathBaseFic = $this->getCheminEchange($pgCmdSuiviPrel, $pgCmdFichiersRps->getId());
+                        if (!is_dir($pathBaseFic)) {
+                            if (!mkdir($pathBaseFic, 0777, true)) {
+                                $session->getFlashBag()->add('notice-error', 'Le répertoire : ' . $pathBaseFic . ' n\'a pas pu être créé');
+                                ;
+                            }
+                        }
 //                        $contenu = 'Le fichier ' . $pathBase . '/' . $name . ' a été déposé vers  ' . $pathBaseFic . '/' . $name . CHR(13) . CHR(10) . CHR(13) . CHR(10);
 //                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
 //                        fputs($rapport, $contenu);
-                                    copy($pathBase . '/' . $name, $pathBaseFic . '/' . $name);
-                                    // unlink($pathBase . '/' . $name);
-                                    $contenu = 'Le fichier ' . $name . ' a été déposé sur la station ' . $tabStations[$k]['station']->getCode() . ' ' . $tabStations[$k]['station']->getLibelle() . CHR(13) . CHR(10) . CHR(13) . CHR(10);
-                                    $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                                    fputs($rapport, $contenu);
-                                } else {
-                                    $contenu = 'Association impossible : le dernier suivi de la station  ' . $tabStations[$k]['station']->getCode() . ' doit être "Effectué" ou "Non effectué".' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
-                                    $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                                    fputs($rapport, $contenu);
-                                    if ($fichier_archive) {
-                                        $nbCorrect = $nbCorrect - $nb_archive;
-                                        $nbIncorrect = $nbIncorrect + $nb_archive;
-                                    } else {
-                                        $nbCorrect = $nbCorrect - 1;
-                                        $nbIncorrect = $nbIncorrect + 1;
-                                    }
-                                }
-                                } else {
-                                 if ($pgCmdSuiviPrel->getStatutPrel() == 'F' and ! $pgCmdSuiviPrel->getfichierRps()) {
-                                    $contenu = 'Attention : le dernier suivi de la station  ' . $tabStations[$k]['station']->getCode() . ' a le statut : "Effectué" et il n\'y a pas de fichier terrain associé.' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
-                                    $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                                    fputs($rapport, $contenu);
-                                }
-                         }
-               } else {
+                        copy($pathBase . '/' . $name, $pathBaseFic . '/' . $name);
+                        // unlink($pathBase . '/' . $name);
+                        $contenu = 'Le fichier ' . $name . ' a été déposé sur la station ' . $pgRefStationMesure->getCode() . ' ' . $pgRefStationMesure->getLibelle() . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                        fputs($rapport, $contenu);
+                    } else {
+                        $contenu = 'Association impossible : le dernier suivi de la station  ' . $pgRefStationMesure->getCode() . ' doit être "Effectué" ou "Non effectué".' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                        fputs($rapport, $contenu);
+                        if ($fichier_archive) {
+                            $nbCorrect = $nbCorrect - $nb_archive;
+                            $nbIncorrect = $nbIncorrect + $nb_archive;
+                        } else {
+                            $nbCorrect = $nbCorrect - 1;
+                            $nbIncorrect = $nbIncorrect + 1;
+                        }
+                    }
+                } else {
+                    if ($pgCmdSuiviPrel->getStatutPrel() == 'F' and ! $pgCmdSuiviPrel->getfichierRps()) {
+                        $contenu = 'Attention : le dernier suivi de la station  ' . $pgRefStationMesure->getCode() . ' a le statut : "Effectué" et il n\'y a pas de fichier terrain associé.' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                        fputs($rapport, $contenu);
+                    }
+                }
+            } else {
                 $contenu = 'Au moins une erreur rencontrée. Aucun fichier intégré' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                 fputs($rapport, $contenu);
@@ -2194,6 +2231,71 @@ class SuiviHydrobioController extends Controller {
             fclose($rapport);
         }
 
+         if ($erreur == 0) {
+            $objetMessage = "fichier terrrain déposé ";
+            $txtMessage = "Un ou plusieurs fichiers terrain ont été déposés sur le lot " . $pgProgLot->getNomLot() . " pour la période du " . $pgProgPeriode->getDateDeb()->format('d/m/Y') . " au " . $dateFin->format('d/m/Y');
+            $mailer = $this->get('mailer');
+            // envoi mail  aux XHBIO
+            $pgProgWebusers = $repoPgProgWebUsers->getPgProgWebusersByTypeUser('XHBIO');
+            foreach ($pgProgWebusers as $destinataire) {
+                if ($destinataire->getCodeSupport()) {
+                    $trouve = false;
+                    if (count($tabSupport) > 0) {
+                        for ($nbSupport = 0; $nbSupport < count($tabSupport); $nbSupport++) {
+                            if ($tabSupport[$nbSupport] == $destinataire->getCodeSupport()) {
+                                $trouve = true;
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    $trouve = true;
+                }
+                if ($trouve) {
+                    // Envoi d'un mail
+                    if ($this->get('aeag_sqe.message')->envoiMessage($emSqe, $mailer, $txtMessage, $destinataire, $objetMessage)) {
+                        $message = 'un email  vous a été envoyé par ' . $pgProgWebUser->getNom() . ' suite à l\'intégration de plusieurs fichiers de terrain ' . CHR(13) . CHR(10) . ' sur le lot ' . $pgProgLot->getNomLot() . ' pour la période du ' . $pgProgPeriode->getDateDeb()->format('d/m/Y') . ' au ' . $dateFin->format('d/m/Y');
+                        $notification = new Notification();
+                        $notification->setRecepteur($destinataire->getExtId());
+                        $notification->setEmetteur($user->getId());
+                        $notification->setNouveau(true);
+                        $notification->setIteration(2);
+                        $notification->setMessage($message);
+                        $em->persist($notification);
+                        $em->flush();
+                    } else {
+                        $session->getFlashBag()->add('notice-warning', 'Le dépôt a été traité, mais l\'email n\'a pas pu être envoyé à ' . $destinataire->getNom());
+                    }
+                }
+            }
+            // envoi mail  aux presta connecte 
+            $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
+            if ($pgProgWebUser) {
+                $txtMessage.= '<br/><br/>Veullez trouver en pièce jointe le rapport d\'intégration';
+                $htmlMessage = "<html><head></head><body>";
+                $htmlMessage .= "Bonjour, <br/><br/>";
+                $htmlMessage .= $txtMessage;
+                $htmlMessage .= "<br/><br/>Cordialement, <br/>L'équipe SQE";
+                $htmlMessage .= "</body></html>";
+                $mail = \Swift_Message::newInstance('Wonderful Subject')
+                        ->setSubject($objetMessage)
+                        ->setFrom('automate@eau-adour-garonne.fr')
+                        ->setTo($pgProgWebUser->getMail())
+                        ->setBody($htmlMessage, 'text/html');
+
+                $mail->attach(\Swift_Attachment::fromPath($pathRapport . '/' . $ficRapport));
+                $mailer->send($mail);
+                $message = 'un email  vous a été envoyé avec en pièce jointe le fichier rapport du dépôt ';
+                $notification = new Notification();
+                $notification->setRecepteur($user->getId());
+                $notification->setEmetteur($user->getId());
+                $notification->setNouveau(true);
+                $notification->setIteration(2);
+                $notification->setMessage($message);
+                $em->persist($notification);
+                $em->flush();
+            }
+        }
         
         $tabRapport[$nbRapport] = "Nombre de fichiers intégrés : " . $nbCorrect;
         $nbRapport++;

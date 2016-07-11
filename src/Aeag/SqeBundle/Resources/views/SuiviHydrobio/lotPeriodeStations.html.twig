@@ -134,7 +134,17 @@
                                     <div class="modal-body">
                                         <div id="idModalContentMajSuivi{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}"></div>
                                     </div>  
-                                    <div class="modal-footer"></div>
+                                    <div class="modal-footer">
+                                         <div class="row">
+                                             <div id="idImportRapport{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}" class="col-xs-offset-4 col-xs-2"> </div>
+                                              <div class="col-xs-offset-2 col-xs-4">
+                                                    {# <a id="idAnnuler" class="btn btn-danger"  href="#" title="Annuler">
+                                                        <i class="fa fa-undo"> Annuler</i> 
+                                                     </a>#}
+                                                  <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
+                                                 </div>
+                                           </div>        
+                                    </div>
                                 </div>
                             </div>
                         </div>
