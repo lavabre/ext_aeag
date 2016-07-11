@@ -141,9 +141,14 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
 
                     foreach ($pgTmpValidEdilabos as $pgTmpValidEdilabo) {
                         if ($pgTmpValidEdilabo->getInSitu() == 0) {
-                            $pgCmdMesureEnv = new \Aeag\SqeBundle\Entity\PgCmdMesureEnv();
-                            $pgCmdMesureEnv->setPrelev($pgCmdPrelev);
                             $pgSandreParametres = $this->repoPgSandreParametres->findOneByCodeParametre($pgTmpValidEdilabo->getCodeParametre());
+                            $pgCmdMesureEnv = $this->repoPgCmdMesureEnv->findOneBy(array("prelev" => $pgCmdPrelev, "codeParametre" => $pgSandreParametres));
+                            if (is_null($pgCmdMesureEnv)) {
+                                $pgCmdMesureEnv = new \Aeag\SqeBundle\Entity\PgCmdMesureEnv();
+                            }
+                            
+                            $pgCmdMesureEnv->setPrelev($pgCmdPrelev);
+                            
                             if (!is_null($pgSandreParametres)) {
                                 $pgCmdMesureEnv->setCodeParametre($pgSandreParametres);
                             }
@@ -177,10 +182,14 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
                             }
                             $this->emSqe->persist($pgCmdMesureEnv);
                         } else {
-                            $pgCmdAnalyse = new \Aeag\SqeBundle\Entity\PgCmdAnalyse();
+                            $pgSandreParametres = $this->repoPgSandreParametres->findOneByCodeParametre($pgTmpValidEdilabo->getCodeParametre());
+                            $pgCmdAnalyse = $this->repoPgCmdAnalyse->findOneBy(array("prelevId" => $pgCmdPrelev->getId(), "numOrdre" => $pgTmpValidEdilabo->getNumOrdre(), "codeParametre" => $pgSandreParametres));
+                            if (is_null($pgCmdAnalyse)) {
+                                $pgCmdAnalyse = new \Aeag\SqeBundle\Entity\PgCmdAnalyse();
+                            }
+                            
                             $pgCmdAnalyse->setPrelevId($pgCmdPrelev->getId());
                             $pgCmdAnalyse->setNumOrdre($pgTmpValidEdilabo->getNumOrdre());
-                            $pgSandreParametres = $this->repoPgSandreParametres->findOneByCodeParametre($pgTmpValidEdilabo->getCodeParametre());
                             if (!is_null($pgSandreParametres)) {
                                 $pgCmdAnalyse->setCodeParametre($pgSandreParametres);
                             }
@@ -199,10 +208,11 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
                                 }
                                 $pgCmdAnalyse->setDateAna($dateM);
                             }
-                            if ($pgTmpValidEdilabo->getResM() == "") {
+                            $resM = trim(preg_replace('/\t+/', '', $pgTmpValidEdilabo->getResM()));
+                            if ($resM == "") {
                                 $pgCmdAnalyse->setResultat(null);
                             } else {
-                                $pgCmdAnalyse->setResultat($pgTmpValidEdilabo->getResM());
+                                $pgCmdAnalyse->setResultat($resM);
                             }
                             
                             $pgSandreUnites = $this->repoPgSandreUnites->findOneByCodeUnite($pgTmpValidEdilabo->getCodeUnite());

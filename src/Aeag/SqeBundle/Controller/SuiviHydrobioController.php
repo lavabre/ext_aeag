@@ -399,7 +399,7 @@ class SuiviHydrobioController extends Controller {
                         $nbCmdPrelevs = 0;
                         foreach ($pgCmdPrelevs as $pgCmdPrelev) {
                             $tabCmdPrelevs[$nbCmdPrelevs]['cmdPrelev'] = $pgCmdPrelev;
-                            $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelevOrderDate($pgCmdPrelev);
+                            $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelevOrderId($pgCmdPrelev);
                             $tabCmdPrelevs[$nbCmdPrelevs]['cmdSuiviPrelevs'] = $pgCmdSuiviPrels;
                             $nbCmdPrelevs++;
                         }
@@ -593,10 +593,10 @@ class SuiviHydrobioController extends Controller {
                                     $nbCorrect = $nbCorrect - 1;
                                     $nbIncorrect = $nbIncorrect + 1;
                                 } else {
-                                    if (strpos($tabFichiers[$nb], 'ft') === true) {
+                                    if (strpos($tabFichiers[$nb], 'ft') !== false) {
                                         $NbFt++;
                                     }
-                                    if (strpos($tabFichiers[$nb], 'photo') === true) {
+                                    if (strpos($tabFichiers[$nb], 'photo') !== false) {
                                         $NbPhoto++;
                                     }
                                 }
@@ -922,7 +922,7 @@ class SuiviHydrobioController extends Controller {
                         $nbCmdPrelevs = 0;
                         foreach ($pgCmdPrelevs as $pgCmdPrelev) {
                             $tabCmdPrelevs[$nbCmdPrelevs]['cmdPrelev'] = $pgCmdPrelev;
-                            $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelevOrderDate($pgCmdPrelev);
+                            $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelevOrderId($pgCmdPrelev);
                             $tabCmdPrelevs[$nbCmdPrelevs]['cmdSuiviPrelevs'] = $pgCmdSuiviPrels;
                             $nbCmdPrelevs++;
                         }
@@ -1509,7 +1509,7 @@ class SuiviHydrobioController extends Controller {
         } else {
             $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         }
-        $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelevOrderDate($pgCmdPrelev);
+        $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelevOrderId($pgCmdPrelev);
         if ($pgCmdSuiviPrels) {
             $pgCmdSuiviPrelActuel = $pgCmdSuiviPrels[0];
         } else {
@@ -1738,7 +1738,7 @@ class SuiviHydrobioController extends Controller {
 
         $pgCmdSuiviPrel = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelById($suiviPrelId);
         $pgCmdPrelev = $pgCmdSuiviPrel->getPrelev();
-        $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelevOrderDate($pgCmdPrelev);
+        $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelevOrderId($pgCmdPrelev);
         if ($pgCmdSuiviPrels) {
             $pgCmdSuiviPrelActuel = $pgCmdSuiviPrels[0];
         } else {
@@ -2387,7 +2387,7 @@ class SuiviHydrobioController extends Controller {
                     $pgProgLot = $pgCmdPrelev->getDemande()->getLotan()->getLot();
                     $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
                     if (substr($pgProgTypeMilieu->getCodeMilieu(), 1, 2) === 'HB' or $pgProgTypeMilieu->getCodeMilieu() === 'RHM') {
-                        $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelevOrderDate($pgCmdPrelev);
+                        $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelevOrderId($pgCmdPrelev);
                         if ($pgCmdSuiviPrels) {
                             $tabStations[$i]['station'] = $pgCmdPrelev->getStation();
                             $tabStations[$i]['lien'] = '/sqe_fiches_stations/' . str_replace('/', '-', $pgCmdPrelev->getStation()->getCode()) . '.pdf';

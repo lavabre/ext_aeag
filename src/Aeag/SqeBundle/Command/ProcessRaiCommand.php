@@ -86,11 +86,6 @@ class ProcessRaiCommand extends AeagCommand {
             $this->_insertFichierLog($pgCmdFichierRps);
 
             // Envoi mail
-            $context = $this->getContainer()->get('router')->getContext();
-            $context->setHost($this->getContainer()->getParameter('router_host'));
-            $context->setScheme($this->getContainer()->getParameter('router_scheme'));
-            $context->setBaseUrl($this->getContainer()->getParameter('router_baseurl'));
-
             $objetMessage = "SQE - RAI : Fichier " . $pgCmdFichierRps->getNomFichier() . " - Récapitulatif";
             $url = $this->getContainer()->get('router')->generate('AeagSqeBundle_echangefichiers_reponses_telecharger', array("reponseId" => $pgCmdFichierRps->getId(), "typeFichier" => "CR"), UrlGeneratorInterface::ABSOLUTE_URL);
             $txtMessage = "Lot : " . $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getNomLot() . "<br/>";
@@ -468,6 +463,8 @@ class ProcessRaiCommand extends AeagCommand {
         $this->detectionCodeRemarqueLot8($demandeId, $reponseId, $codePrelevement);
         
         $this->controleLqAeag($pgCmdFichierRps, $codePrelevement);
+        
+        $this->codeMethodesValides($pgCmdFichierRps, $codePrelevement);
 
     }
     
@@ -560,6 +557,24 @@ class ProcessRaiCommand extends AeagCommand {
                         $this->_addLog('warning', $demandeId, $reponseId, "Controle Lq AEAG : Lq supérieure à la valeur prévue: ". $pgTmpValidEdilabo->getLqM(), $codePrelevement, $pgTmpValidEdilabo->getCodeParametre());
                         //return array("warning", "Controle Lq AEAG : Lq supérieure à la valeur prévue");
                     }
+                }
+            }
+        }
+    }
+    
+    public function codeMethodesValides($pgCmdFichierRps, $codePrelevement) {
+        $demandeId = $pgCmdFichierRps->getDemande()->getId();
+        $reponseId = $pgCmdFichierRps->getId();
+        // Récupération des code Methodes
+        $codesMethodes = $this->repoPgTmpValidEdilabo->getCodesMethodes($codePrelevement, $demandeId, $reponseId);
+        //
+        foreach($codesMethodes as $codeMethode) {
+            foreach($codeMethode as $codeMeth) {
+                if ($codeMeth != "") {
+                    $pgSandreMethode = $this->repoPgSandreMethodes->findOneByCodeMethode($codeMeth);
+                    if (is_null($pgSandreMethode)) {
+                        $this->_addLog('error', $demandeId, $reponseId, "Controle codes méthode : Code Méthode inexistant en base: ". $codeMeth, $codePrelevement, $codeMeth);
+                    }    
                 }
             }
         }

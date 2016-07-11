@@ -498,6 +498,22 @@ class PgTmpValidEdilaboRepository extends EntityRepository {
         return $qb->getResult();*/
     }
     
+    public function getCodesMethodes($codePrelevement, $demandeId, $reponseId) {
+        $query = "select distinct p.methAna, p.methPrel";
+        $query .= " from Aeag\SqeBundle\Entity\PgTmpValidEdilabo p";
+        $query .= " where p.demandeId = :demande";
+        $query .= " and p.fichierRpsId = :reponse";
+        $query .= " and p.codePrelevement = :codePrelevement";
+        
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('demande', $demandeId);
+        $qb->setParameter('reponse', $reponseId);
+        $qb->setParameter('codePrelevement', $codePrelevement);
+        $result = $qb->getResult();
+        
+        return $result;
+    }
+    
     
     
 }

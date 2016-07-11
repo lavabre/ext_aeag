@@ -27,6 +27,9 @@
                                 <ul class="list-group">
                                     <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ path('Aeag_sqe_programmation_lots', {'action': 'V'}) }}" title="Consulter"><i class="fa fa-eye fa-3x"></i> Consulter</a></li>
                                     <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ path('Aeag_sqe_programmation_lots', {'action': 'P'}) }}" title="Programmer"><i class="fa fa-edit fa-3x"></i> Programmer</a></li>
+                                    {%if   is_granted('ROLE_ADMINSQE') and not app.session.get('evolution')%}
+                                        <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ path('AeagSqeBundle_suiviHydrobio_planning') }}" title="Planning"><i class="fa fa-calendar fa-3x"></i> Planning</a></li>
+                                    {% endif %}   
                                 </ul>
                             </div>
                         </div>
