@@ -223,12 +223,14 @@
               </nav> 
            {% endblock navbar %}
           
+           {% block breadcrumbAll %}
                  <ol class="breadcrumb"> 
                     {% block breadcrumb %}
                       <li><a href="{{ path('aeag_homepage') }}">Accueil</a></li> 
                       <li class="active">page active</li> 
                     {% endblock breadcrumb %}
                 </ol> 
+           {% endblock breadcrumbAll %}
             
             <div class="container">
                     

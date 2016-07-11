@@ -16,7 +16,7 @@ security:
 
         # Firewall pour les pages de connexion, inscription, et récupération de mot de passe
         login:
-            pattern:   ^/(login$|register|resetting|aide|die)  # Les adresses de ces pages sont login, register et resetting
+            pattern:   ^/(login$|register|resetting|aide)  # Les adresses de ces pages sont login, register et resetting
             anonymous: true 
            
         # Firewall principal pour le reste de notre site

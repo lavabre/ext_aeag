@@ -60,6 +60,7 @@
                         <tr>
                              <th width="5%">Actions</th>
                             <th class="th-text" nowrap>Id</th>
+                            <th  nowrap>N° ordre</th>
                             <th class="th-text" nowrap>Thème</th>
                             <th class="th-text" nowrap>Sous thème</th>
                         </tr>
@@ -81,6 +82,7 @@
                    {% endif %}
             </td>
             <td width="10%"><a href="{{ path('theme_edit', { 'id': entity.theme.id }) }}">{{ entity.theme.id }}</a></td>
+             <td width="5%">{{ entity.theme.ordre }}</td>
             <td width="70%">{{ entity.theme.theme }}</td>
             <td width="10%" class="text-center">{{ entity.nbSousThemes }}</td>
         </tr>

@@ -11,6 +11,7 @@ class ThemeType extends AbstractType
     {
         $builder
             ->add('theme')
+            ->add('ordre')
         ;
     }
 
