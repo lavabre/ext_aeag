@@ -101,7 +101,8 @@ class DefaultController extends Controller {
 
 
          $entity = new Demande();
-
+//         return new Response("theme : " . $theme );
+        
 
         if (!is_null($theme)) {
              $Theme = $em->getRepository('AeagDieBundle:Theme')->findOneById($theme);
@@ -201,7 +202,11 @@ class DefaultController extends Controller {
 
             $this->sendDestinataire($entity, $Organisme, $Theme, $SousTheme);
             
+             if ($idTheme) {
+                 return $this->redirect($this->generateUrl('aeag_die'));
+             }else{
              return $this->redirect($this->generateUrl('aeag_die'));
+             }
 
 //            $form = $this->createForm(new DemandeEnvoyeeType(), $entity);
 //
@@ -286,7 +291,12 @@ class DefaultController extends Controller {
 
             $this->sendDestinataire($entity, $Organisme, $Theme, $SousTheme);
 
-            return $this->redirect($this->generateUrl('aeag_die_Light'));
+           
+            if ($idTheme) {
+                  return $this->redirect($this->generateUrl('aeag_die_Light_theme', array('theme' => $idTheme)));
+             }else{
+                return $this->redirect($this->generateUrl('aeag_die_Light'));
+             }
         }
 
 

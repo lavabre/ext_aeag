@@ -6,13 +6,13 @@ aeag_die_Light:
 
 aeag_die_Light_theme:
     path:  /{theme}
-    defaults: { _controller: AeagDieBundle:Default:indexLight, theme:20}
+    defaults: { _controller: AeagDieBundle:Default:indexLight, theme:null}
     requirements:
         theme: \d+
  
     
 aeag_die_createLight:
-    path:  /create/{theme}
+    path:  /createLight/{theme}
     defaults: { _controller: AeagDieBundle:Default:createLight, theme:null  }
     requirements: 
         methods: post
