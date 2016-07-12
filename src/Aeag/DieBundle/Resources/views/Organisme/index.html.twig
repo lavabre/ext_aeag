@@ -17,10 +17,9 @@
     <ul class="dropdown-menu">
                <li><a href="{{ path('organisme') }}">Organismes</a></li>
                 <li><a href="{{ path('theme') }}">Thèmes</a></li>
-                <li><a href="{{ path('soustheme') }}">Sous-thèmes</a></li>
+                <li><a href="{{ path('soustheme') }}">Formulaires</a></li>
                 <li><a href="{{ path('demande') }}">demandes</a></li>
-                <li><a href="{{ path('historique') }}">Historique</a></li>
-     </ul>
+      </ul>
 </li>   
 
 {% endblock menu %}
@@ -90,7 +89,7 @@
                     {% for entity in entities %}
                        <tr>
                              <td width="10%" align="right" nowrap>
-                                 {% if is_granted('ROLE_ADMIN') %}
+                                 {% if is_granted('ROLE_ADMINDIE') %}
                                            <a  class="btn btn-info" href="{{ path('organisme_show', { 'id': entity.id }) }}" title="Voir l'organisme">
                                                <i class="fa fa-eye"></i> 
                                            </a>

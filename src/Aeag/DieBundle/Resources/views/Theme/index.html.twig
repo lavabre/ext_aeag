@@ -17,10 +17,9 @@
     <ul class="dropdown-menu">
                <li><a href="{{ path('organisme') }}">Organismes</a></li>
                 <li><a href="{{ path('theme') }}">Thèmes</a></li>
-                <li><a href="{{ path('soustheme') }}">Sous-thèmes</a></li>
+                <li><a href="{{ path('soustheme') }}">Formulaires</a></li>
                 <li><a href="{{ path('demande') }}">demandes</a></li>
-                <li><a href="{{ path('historique') }}">Historique</a></li>
-     </ul>
+       </ul>
 </li>   
 
 {% endblock menu %}
@@ -85,7 +84,7 @@
                             <th class="th-text" nowrap>Id</th>
                             <th  nowrap>N° ordre</th>
                             <th class="th-text" nowrap>Thème</th>
-                            <th class="th-text" nowrap>Sous thème</th>
+                            <th class="th-text" nowrap>Formulaire</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -93,7 +92,7 @@
     {% for entity in entities %}
         <tr>
            <td width="10%" class="text-center" nowrap>
-                 {% if is_granted('ROLE_ADMIN') %}
+                 {% if is_granted('ROLE_ADMINDIE') %}
                              <a  class="btn btn-info" href="{{ path('theme_show', { 'id': entity.theme.id }) }}" title="Voir le thème">
                                   <i class="fa fa-eye"></i> 
                             </a>
