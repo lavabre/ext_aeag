@@ -1,33 +1,55 @@
-<h1>Theme</h1>
+{% extends "AeagDieBundle::layout.html.twig" %}
 
-<table class="record_properties">
-    <tbody>
-        <tr>
-            <th>Id</th>
-            <td>{{ entity.id }}</td>
-        </tr>
-        <tr>
-            <th>Theme</th>
-            <td>{{ entity.theme }}</td>
-        </tr>
-    </tbody>
-</table>
+{% block breadcrumb %}
+    <li>
+        <a href="{{ path('aeag_die') }}">Accueil</a> 
+    </li>
+    <li>
+        <a href="{{ path('theme') }}">Thème</a> 
+    </li>
+     <li class="active">
+        {{ entity.theme }}
+    </li>
+{% endblock breadcrumb %} 
 
-<ul class="record_actions">
-    <li>
-        <a href="{{ path('theme') }}">
-            Back to the list
-        </a>
-    </li>
-    <li>
-        <a href="{{ path('theme_edit', { 'id': entity.id }) }}">
-            Edit
-        </a>
-    </li>
-    <li>
-        <form action="{{ path('theme_delete', { 'id': entity.id }) }}" method="post">
-            {{ form_widget(delete_form) }}
-            <button type="submit">Delete</button>
-        </form>
-    </li>
-</ul>
+{%block panel_heading %}
+             <h3 class="page-title text-center">
+               Thème : {{ entity.theme }}
+             </h3>
+  {%endblock panel_heading %}
+
+
+{% block content %}
+    
+     <div class="row">
+         <div class="form-group">
+            <label for="ordre" class="col-xs-offset-2 col-xs-2 control-label">Id</label>
+              <div class="col-xs-3 input-group">
+               {{ entity.id }}
+             </div>
+         </div> 
+             
+         <div class="form-group">
+            <label for="ordre" class="col-xs-offset-2 col-xs-2 control-label">N° ordre</label>
+              <div class="col-xs-3 input-group">
+               {{ entity.ordre }}
+             </div>
+         </div> 
+             
+         <div class="form-group">
+            <label for="ordre" class="col-xs-offset-2 col-xs-2 control-label">Thème</label>
+              <div class="col-xs-3 input-group">
+               {{ entity.theme }}
+             </div>
+         </div> 
+             
+     </div>
+
+
+<div class="form-group">
+    <div class="col-xs-offset-4 col-xs-7">
+       <a class="btn btn-primary" href="{{ path('theme') }}"><i class="fa fa-power-off"></i> Retour</a>
+    </div>
+</div>
+
+{% endblock content %}

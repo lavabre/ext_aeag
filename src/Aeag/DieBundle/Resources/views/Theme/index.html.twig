@@ -1,10 +1,33 @@
 {% extends "AeagDieBundle::layout.html.twig" %}
 
-{% block navbar %}{% endblock navbar %}
+{% block menu %}
+
+    <li><a href="{{ path('aeag_die') }}"><i class="fa fa-home"></i>&nbsp; Accueil</a></li>
+
+   {%if app.session.get('menu') == 'referentiel'%}
+    <li  class="active">
+    {% else %}
+    <li>
+    {%endif%}
+    <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+        {%if app.session.get('menu') == 'referentiel'%}<span class="selected"></span>{%endif%}
+        Référentiel
+        <i class="fa fa-angle-down"></i>     
+    </a>
+    <ul class="dropdown-menu">
+               <li><a href="{{ path('organisme') }}">Organismes</a></li>
+                <li><a href="{{ path('theme') }}">Thèmes</a></li>
+                <li><a href="{{ path('soustheme') }}">Sous-thèmes</a></li>
+                <li><a href="{{ path('demande') }}">demandes</a></li>
+                <li><a href="{{ path('historique') }}">Historique</a></li>
+     </ul>
+</li>   
+
+{% endblock menu %}
 
 {% block breadcrumb %}
     <li>
-        <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+        <a href="{{ path('aeag_die') }}">Accueil</a> 
     </li>
      <li class="active">
         Thème
@@ -69,8 +92,11 @@
     {% set i = 1 %}
     {% for entity in entities %}
         <tr>
-           <td width="10%" class="text-center">
+           <td width="10%" class="text-center" nowrap>
                  {% if is_granted('ROLE_ADMIN') %}
+                             <a  class="btn btn-info" href="{{ path('theme_show', { 'id': entity.theme.id }) }}" title="Voir le thème">
+                                  <i class="fa fa-eye"></i> 
+                            </a>
                              <a  class="btn btn-warning" href="{{ path('theme_edit', { 'id': entity.theme.id }) }}" title="Modifier le thème">
                                 <i class="fa fa-edit"></i> 
                             </a>
@@ -79,6 +105,10 @@
                                         <i class="fa fa-trash-o"></i>
                                     </a>
                              {% endif %}
+                   {% else %}
+                            <a  class="btn btn-info" href="{{ path('theme_show', { 'id': entity.theme.id }) }}" title="Voir le thème">
+                                  <i class="fa fa-eye"></i> 
+                            </a>
                    {% endif %}
             </td>
             <td width="10%"><a href="{{ path('theme_edit', { 'id': entity.theme.id }) }}">{{ entity.theme.id }}</a></td>

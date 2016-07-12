@@ -3,50 +3,48 @@ aeag_die:
     path:  /
     defaults: { _controller: "AeagDieBundle:Default:index" }
     
-aeag_die_admin:
-    path:  /admin
-    defaults: { _controller: "AeagDieBundle:Admin:index" }
+aeag_die_theme:
+    path:  /{theme}
+    defaults: { _controller: "AeagDieBundle:Default:index" }
+    requirements:
+        theme: \d+
     
-   
-
+aeag_die_create:
+    path:  /create/{theme}
+    defaults: { _controller: AeagDieBundle:Default:create, theme:null  }
+    requirements: 
+        methods: post
+        theme: \d+
+        
 aeag_die_message:
     path: /die/envoye
     defaults: { _controller: "AeagDieBundle:Default:envoye" }
-
-aeag_die_create:
-    path:  /die/create
-    defaults: { _controller: "AeagDieBundle:Default:create" }
-    methods:  GET|POST
-     
+    
 aeag_die_listesoustheme:
     path: /die/listesoustheme
     defaults : { _controller: "AeagDieBundle:Default:listesoustheme"}
     
+aeag_die_admin:
+    path:  /admindie
+    defaults: { _controller: "AeagDieBundle:Admin:index" }
     
-aeag_die_theme:
-    path:  /theme/{theme}
-    defaults: { _controller: "AeagDieBundle:Default:index" }
-    
-
+ 
 AeagDieBundle_organisme:
     resource: "routing/organisme.yml"
-    prefix:   /admin/organisme
+    prefix:   /admindie/organisme
     
 AeagDiebundlle_soustheme:
     resource: "routing/soustheme.yml"
-    prefix:   /admin/soustheme
+    prefix:   /admindie/soustheme
     
 AeagDieBundle_theme:
     resource: "routing/theme.yml"
-    prefix:   /admin/theme
+    prefix:   /admindie/theme
     
-AeagDieBundle_historique:
-    resource: "routing/historique.yml"
-    prefix:   /admin/historique
-    
+  
 AeagDieBundle_demande:
     resource: "routing/demande.yml"
-    prefix:   /admin/demande
+    prefix:   /admindie/demande
     
 #AeagDieBundle_dies:
 #    resource: "routing/dies.yml"

@@ -35,10 +35,9 @@ class OrganismeRepository extends EntityRepository {
         $query = "select c";
         $query = $query . " from Aeag\DieBundle\Entity\Organisme c";
         $query = $query . " where c.organisme = '" . $organisme . "'";
-        $query = $query . " order by c.code";
         $qb = $this->_em->createQuery($query);
         //print_r($query);
-        return $qb->getResult();
+       return $qb->getOneOrNullResult();
     }
 
     /**

@@ -22,6 +22,8 @@ Aeag_die:
     resource: "@AeagDieBundle/Resources/config/routing.yml"
     prefix:   /die
     
+
+    
 Aeag_dies:
     resource: "@AeagDieBundle/Resources/config/routing/dies.yml"
     prefix:   /dies

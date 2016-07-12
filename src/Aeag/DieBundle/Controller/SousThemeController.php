@@ -28,7 +28,7 @@ class SousThemeController extends Controller {
         $session->set('menu', 'Admin');
         $session->set('controller', 'SousTheme');
         $session->set('fonction', 'index');
-        $em = $this->getDoctrine()->getEntityManager('die');
+        $em = $this->get('doctrine')->getManager('die');
 
         $repoSousTheme = $em->getRepository('AeagDieBundle:SousTheme');
         $entities = $repoSousTheme->getSousThemes();
@@ -52,7 +52,7 @@ class SousThemeController extends Controller {
         $session->set('menu', 'Admin');
         $session->set('controller', 'SousTheme');
         $session->set('fonction', 'show');
-        $em = $this->getDoctrine()->getEntityManager('die');
+        $em = $this->get('doctrine')->getManager('die');
 
         $entity = $em->getRepository('AeagDieBundle:SousTheme')->find($id);
 
@@ -60,11 +60,8 @@ class SousThemeController extends Controller {
             throw $this->createNotFoundException('Unable to find SousTheme entity.');
         }
 
-        $deleteForm = $this->createDeleteForm($id);
-
         return $this->render('AeagDieBundle:SousTheme:show.html.twig', array(
                     'entity' => $entity,
-                    'delete_form' => $deleteForm->createView(),
         ));
     }
 
@@ -82,7 +79,7 @@ class SousThemeController extends Controller {
         $session->set('menu', 'Admin');
         $session->set('controller', 'SousTheme');
         $session->set('fonction', 'new');
-        $em = $this->getDoctrine()->getEntityManager('die');
+        $em = $this->get('doctrine')->getManager('die');
 
         $entity = new SousTheme();
         $form = $this->createForm(new SousThemeType(), $entity);
@@ -107,14 +104,14 @@ class SousThemeController extends Controller {
         $session->set('menu', 'Admin');
         $session->set('controller', 'SousTheme');
         $session->set('fonction', 'create');
-        $em = $this->getDoctrine()->getEntityManager('die');
+        $em = $this->get('doctrine')->getManager('die');
 
         $entity = new SousTheme();
         $form = $this->createForm(new SousThemeType(), $entity);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            $em = $this->getDoctrine()->getEntityManager('die');
+            $em = $this->get('doctrine')->getManager('die');
             $em->persist($entity);
             $em->flush();
 
@@ -141,7 +138,7 @@ class SousThemeController extends Controller {
         $session->set('menu', 'Admin');
         $session->set('controller', 'SousTheme');
         $session->set('fonction', 'edit');
-        $em = $this->getDoctrine()->getEntityManager('die');
+        $em = $this->get('doctrine')->getManager('die');
 
         $entity = $em->getRepository('AeagDieBundle:SousTheme')->find($id);
 
@@ -171,7 +168,7 @@ class SousThemeController extends Controller {
         $session->set('menu', 'Admin');
         $session->set('controller', 'SousTheme');
         $session->set('fonction', 'update');
-        $em = $this->getDoctrine()->getEntityManager('die');
+        $em = $this->get('doctrine')->getManager('die');
 
         $entity = $em->getRepository('AeagDieBundle:SousTheme')->find($id);
 
@@ -210,7 +207,7 @@ class SousThemeController extends Controller {
         $session->set('menu', 'Admin');
         $session->set('controller', 'SousTheme');
         $session->set('fonction', 'delete');
-        $em = $this->getDoctrine()->getEntityManager('die');
+        $em = $this->get('doctrine')->getManager('die');
 
         $entity = $em->getRepository('AeagDieBundle:SousTheme')->find($id);
 

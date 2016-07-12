@@ -4,50 +4,42 @@ namespace Aeag\DieBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Aeag\DieBundle\Entity\Demande;
-use Aeag\DieBundle\Entity\Organisme;
-use Aeag\DieBundle\Entity\Theme;
-use Aeag\DieBundle\Entity\SousTheme;
 use Aeag\DieBundle\Form\DemandeType;
-use Aeag\DieBundle\Form\DemandeEnvoyeeType;
 use Aeag\DieBundle\Form\DemandeThemeType;
-use Aeag\DieBundle\Form\DemandeSousThemeType;
-use Symfony\Component\Security\Core\SecurityContext;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 
 class DefaultController extends Controller {
 
     public function indexAction($theme = null, $sousTheme = null, $light = null) {
-        
+
         $user = $this->getUser();
         $session = $this->get('session');
         $session->set('menu', 'Default');
         $session->set('controller', 'Default');
         $session->set('fonction', 'index');
-        $em = $this->getDoctrine()->getEntityManager('die');
-     
+        $em = $this->get('doctrine')->getManager('die');
+
         $session->set('logo', '1');
         $session->set('size', '2');
 
 
-        if ($this->get('security.context')->isGranted('ROLE_ADMIN')) {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
             // accres au menu adminitrateur
             return $this->render('AeagDieBundle:Admin:index.html.twig', array(
                         'logo' => $session->get('logo'),
                         'size' => $session->get('size'),
-                    ));
+            ));
         }
 
         //return new Response("theme: " . $theme );
-
-
         // $session->getFlashBag()->add('notice-success', '');
-   
+
         $entity = new Demande();
 
 
         if (!is_null($theme)) {
-           $Theme = $em->getRepository('AeagDieBundle:Theme')->findOneById($theme);
+            $Theme = $em->getRepository('AeagDieBundle:Theme')->findOneById($theme);
             if (!$Theme) {
                 throw $this->createNotFoundException('pas de theme associé à : ' . $theme);
             }
@@ -75,19 +67,19 @@ class DefaultController extends Controller {
                     'logo' => $session->get('logo'),
                     'size' => $session->get('size'),
                     'theme' => $session->get('theme'),
-                ));
+        ));
     }
 
     public function indexLightAction($theme = null, $sousTheme = null) {
-        
-         $user = $this->getUser();
+
+        $user = $this->getUser();
         $session = $this->get('session');
         $session->set('menu', 'Default');
         $session->set('controller', 'Default');
         $session->set('fonction', 'indexLight');
-        $em = $this->getDoctrine()->getEntityManager('die');
+        $em = $this->get('doctrine')->getManager('die');
 
-        if ($this->get('security.context')->isGranted('ROLE_ADMIN')) {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
             // accres au menu adminitrateur
             return $this->render('AeagDieBundle:Admin:index.html.twig');
         }
@@ -100,12 +92,12 @@ class DefaultController extends Controller {
         $session->set('size', '1');
 
 
-         $entity = new Demande();
+        $entity = new Demande();
 //         return new Response("theme : " . $theme );
-        
+
 
         if (!is_null($theme)) {
-             $Theme = $em->getRepository('AeagDieBundle:Theme')->findOneById($theme);
+            $Theme = $em->getRepository('AeagDieBundle:Theme')->findOneById($theme);
             if (!$Theme) {
                 throw $this->createNotFoundException('pas de theme associé à : ' . $theme);
             }
@@ -136,34 +128,34 @@ class DefaultController extends Controller {
                     'logo' => $session->get('logo'),
                     'size' => $session->get('size'),
                     'theme' => $session->get('theme'),
-                ));
+        ));
     }
 
     /**
      * Creates a new Demande entity .
      *
      */
-    public function createAction(Request $request) {
-        
+    public function createAction($theme = null, Request $request) {
+
         $user = $this->getUser();
         $session = $this->get('session');
         $session->set('menu', 'Default');
         $session->set('controller', 'Default');
         $session->set('fonction', 'create');
-        $em = $this->getDoctrine()->getEntityManager('die');
+        $em = $this->get('doctrine')->getManager('die');
 
 
         $entity = new Demande();
         //$session = $request->getSession();
         $session = $this->get('session');
-        $idTheme = $session->get('theme');
+        $idTheme = $theme;
         if ($idTheme) {
             $form = $this->createForm(new DemandeThemeType($idTheme), $entity);
             // return new Response("theme : " . $idTheme );
         } else {
             $form = $this->createForm(new DemandeType(), $entity);
         }
-       $form->handleRequest($request);
+        $form->handleRequest($request);
 
         //return new Response("theme : " . $session->get('theme')->getId() );
 
@@ -201,12 +193,12 @@ class DefaultController extends Controller {
             $this->sendAccuseReception($entity, $Organisme, $Theme, $SousTheme);
 
             $this->sendDestinataire($entity, $Organisme, $Theme, $SousTheme);
-            
-             if ($idTheme) {
-                 return $this->redirect($this->generateUrl('aeag_die'));
-             }else{
-             return $this->redirect($this->generateUrl('aeag_die'));
-             }
+
+            if ($idTheme) {
+                return $this->redirect($this->generateUrl('aeag_die_theme', array('theme' => $idTheme)));
+            } else {
+                return $this->redirect($this->generateUrl('aeag_die'));
+            }
 
 //            $form = $this->createForm(new DemandeEnvoyeeType(), $entity);
 //
@@ -220,29 +212,29 @@ class DefaultController extends Controller {
         }
 
 
-       
-        
-        
+
+
+
         return $this->render('AeagDieBundle:Default:index.html.twig', array(
                     'entity' => $entity,
                     'form' => $form->createView(),
                     'logo' => $session->get('logo'),
                     'size' => $session->get('size'),
                     'theme' => $session->get('theme'),
-                ));
+        ));
     }
 
     public function createLightAction($theme = null, Request $request) {
-        
+
         $user = $this->getUser();
         $session = $this->get('session');
         $session->set('menu', 'Default');
         $session->set('controller', 'Default');
         $session->set('fonction', 'createLight');
-        $em = $this->getDoctrine()->getEntityManager('die');
+        $em = $this->get('doctrine')->getManager('die');
 
         $entity = new Demande();
-       //$session = $request->getSession();
+        //$session = $request->getSession();
         $session = $this->get('session');
         $idTheme = $theme;
         if ($idTheme) {
@@ -254,7 +246,7 @@ class DefaultController extends Controller {
         }
         $form->handleRequest($request);
 
-       // return new Response("theme : " . $Theme->getId() );
+        // return new Response("theme : " . $Theme->getId() );
 
         if ($form->isValid()) {
 
@@ -291,12 +283,12 @@ class DefaultController extends Controller {
 
             $this->sendDestinataire($entity, $Organisme, $Theme, $SousTheme);
 
-           
+
             if ($idTheme) {
-                  return $this->redirect($this->generateUrl('aeag_die_Light_theme', array('theme' => $idTheme)));
-             }else{
+                return $this->redirect($this->generateUrl('aeag_die_Light_theme', array('theme' => $idTheme)));
+            } else {
                 return $this->redirect($this->generateUrl('aeag_die_Light'));
-             }
+            }
         }
 
 
@@ -305,8 +297,8 @@ class DefaultController extends Controller {
                     'form' => $form->createView(),
                     'logo' => $session->get('logo'),
                     'size' => $session->get('size'),
-                    'theme' => $idTheme 
-                ));
+                    'theme' => $idTheme
+        ));
     }
 
     /*
@@ -354,9 +346,8 @@ class DefaultController extends Controller {
 //        $body = str_replace("#ORGANISME#", $Organisme->getOrganisme(), $body);
 //        $body = str_replace("#OBJET#", $Demande->getObjet(), $body);
 //        $body = str_replace("#DESCRIPTION#", $Demande->getCorps(), $body);
-
         // Création de l'e-mail : le service mailer utilise SwiftMailer, donc nous créons une instance de Swift_Message.
-         $message = \Swift_Message::newInstance()
+        $message = \Swift_Message::newInstance()
                 ->setSubject($Demande->getObjet())
                 ->setFrom('automate@eau-adour-garonne.fr')
                 ->setTo($SousTheme->getDestinataire())
@@ -381,13 +372,13 @@ class DefaultController extends Controller {
      */
 
     public function listesousthemeAction() {
-        
+
         $user = $this->getUser();
         $session = $this->get('session');
         $session->set('menu', 'Default');
         $session->set('controller', 'Default');
         $session->set('fonction', 'listesoustheme');
-        $em = $this->getDoctrine()->getEntityManager('die');
+        $em = $this->get('doctrine')->getManager('die');
 
         $list_sous_theme = array();
         $request = $this->container->get('request');
@@ -414,7 +405,7 @@ class DefaultController extends Controller {
 
             return $this->container->get('templating')->renderResponse('AeagDieBundle:SousTheme:liste.html.twig', array(
                         'sousthemes' => $sousthemes
-                    ));
+            ));
         }
     }
 

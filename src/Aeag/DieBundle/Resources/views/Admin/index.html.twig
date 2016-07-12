@@ -1,8 +1,30 @@
 {% extends 'AeagDieBundle::layout.html.twig' %}
 
-{% block navbar %}{% endblock navbar %}
+ {% block breadcrumb %}{% endblock breadcrumb %}
+ 
+{% block menu %}
 
-{% block breadcrumb %}{% endblock breadcrumb %}
+    <li><a href="{{ path('aeag_die') }}"><i class="fa fa-home"></i>&nbsp; Accueil</a></li>
+
+   {%if app.session.get('menu') == 'referentiel'%}
+    <li  class="active">
+    {% else %}
+    <li>
+    {%endif%}
+    <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+        {%if app.session.get('menu') == 'referentiel'%}<span class="selected"></span>{%endif%}
+        Référentiel
+        <i class="fa fa-angle-down"></i>     
+    </a>
+    <ul class="dropdown-menu">
+               <li><a href="{{ path('organisme') }}">Organismes</a></li>
+                <li><a href="{{ path('theme') }}">Thèmes</a></li>
+                <li><a href="{{ path('soustheme') }}">Sous-thèmes</a></li>
+                <li><a href="{{ path('demande') }}">demandes</a></li>
+      </ul>
+</li>   
+
+{% endblock menu %}
 
 {%block panel_heading %}
     <h1>Administration du site</H1>
