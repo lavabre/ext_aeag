@@ -113,7 +113,15 @@
             <td width="10%"><a href="{{ path('theme_edit', { 'id': entity.theme.id }) }}">{{ entity.theme.id }}</a></td>
              <td width="5%">{{ entity.theme.ordre }}</td>
             <td width="70%">{{ entity.theme.theme }}</td>
-            <td width="10%" class="text-center">{{ entity.nbSousThemes }}</td>
+            <td width="10%" class="text-center">
+                {% if entity.sousTheme | length %}
+                    <a  class="btn btn-info" href="{{ path('soustheme_show', { 'id': entity.sousTheme.id }) }}" title="Voir le formulaire">
+                       <i class="fa fa-eye"></i> 
+                   </a>
+                {% else %}
+                 {{ entity.nbSousThemes }}
+               {% endif %}
+            </td>
         </tr>
      {% endfor %}
     </tbody>

@@ -32,6 +32,8 @@ class SousThemeController extends Controller {
 
         $repoSousTheme = $em->getRepository('AeagDieBundle:SousTheme');
         $entities = $repoSousTheme->getSousThemes();
+        
+        $session->set('urlRetour',$this->generateUrl('soustheme'));
 
         return $this->render('AeagDieBundle:SousTheme:index.html.twig', array(
                     'entities' => $entities

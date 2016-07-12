@@ -40,8 +40,15 @@ class ThemeController extends Controller {
             $entities[$i]['theme'] = $theme;
             $sousThemes = $repoSousTheme->getSousThemesByTheme($theme);
             $entities[$i]['nbSousThemes'] = count($sousThemes);
+            if (count($sousThemes) == 1){
+                $entities[$i]['sousTheme'] = $sousThemes[0];
+            }else{
+                $entities[$i]['sousTheme'] = null;
+            }
             $i++;
         }
+        
+        $session->set('urlRetour', $this->generateUrl('theme'));
 
         return $this->render('AeagDieBundle:Theme:index.html.twig', array(
                     'entities' => $entities
