@@ -32,26 +32,29 @@
 
 {%block content %}
 
-<div class="col-xs-offset-4 col-xs-4 small">
+<div class="col-xs-offset-4 col-xs-3 small">
 
 <div class="list-group">
+    <div class="text-center">
         <a class="list-group-item" href="{{ path('organisme') }}" title="Gestion des Organismes">
             <div class=" btn btn-info btn-lg"><i class="fa fa-institution"></i>  Gestion des Organismes</div>
          </a>
-         <a class="list-group-item"  href="{{ path('theme') }}" title="Gestion des Thèmes">
+  
+         <a class="list-group-item center"  href="{{ path('theme') }}" title="Gestion des Thèmes">
              <div class=" btn btn-info btn-lg"><i class="fa fa-cubes"></i>  Gestion des Thèmes</div>
          </a>
-         <a class="list-group-item"  href="{{ path('soustheme') }}" title="Gestion des formulaires">
+         <a class="list-group-item center"  href="{{ path('soustheme') }}" title="Gestion des formulaires">
             <div class=" btn btn-info btn-lg"><i class="fa fa-cube"></i>  Gestion des Formulaires</div>
          </a>
-         <a class="list-group-item"  href="{{ path('demande') }}" title="Gestion des Demandes">
+         <a class="list-group-item center"  href="{{ path('demande') }}" title="Gestion des Demandes">
               <div class=" btn btn-info btn-lg"><i class="fa fa-question-circle"></i>  Gestion des Demandes</div>
          </a>
-</div>
+   </div>
+ </div>
             
 </div>     
                    
-  <div class="form-actions fluid center">
+  <div class="row fluid center">
           <div class="col-md-offset-5 col-md-3">
                   <a id="idValider" class="btn btn-primary"  href="{{ path('fos_user_security_logout') }}" title="Deconnexion">
                           <i class="fa fa-home"> Deconnexion  </i>
