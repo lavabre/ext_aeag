@@ -35,7 +35,7 @@ AeagDieBundle_organisme:
     
 AeagDiebundlle_soustheme:
     resource: "routing/soustheme.yml"
-    prefix:   /admindie/soustheme
+    prefix:   /admindie/formulaire
     
 AeagDieBundle_theme:
     resource: "routing/theme.yml"
