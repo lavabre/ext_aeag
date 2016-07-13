@@ -80,6 +80,8 @@
                                                                         Effectué
                                                                     {% elseif suiviPrel.suiviPrel.statutPrel == 'N' %}
                                                                         Non effectué
+                                                                    {% elseif suiviPrel.suiviPrel.statutPrel == 'R' %}
+                                                                        Reporté
                                                                     {% elseif suiviPrel.suiviPrel.statutPrel == 'A' %}
                                                                         Analyses effectuées
                                                                     {% elseif suiviPrel.suiviPrel.statutPrel == 'V' %}
@@ -369,6 +371,8 @@
                                                 Effectué
                                             {% elseif cmdPrelev.suiviPrels.0.suiviPrel.statutPrel == 'N' %}
                                                 Non effectué
+                                            {% elseif cmdPrelev.suiviPrels.0.suiviPrel.statutPrel == 'R' %}
+                                                Reporté
                                             {% endif %}
                                         </td>
                                           {% if cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'A' %}

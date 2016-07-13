@@ -663,7 +663,7 @@ class SuiviHydrobioController extends Controller {
                             $pgCmdSuiviPrels = $tabStations[$k]['prelevs'][0]['cmdSuiviPrelevs'];
                             if ($pgCmdSuiviPrels) {
                                 $pgCmdSuiviPrel = $tabStations[$k]['prelevs'][0]['cmdSuiviPrelevs'][0];
-                                if (($pgCmdSuiviPrel->getStatutPrel() == 'N') or ( $pgCmdSuiviPrel->getStatutPrel() == 'F')) {
+                                if (($pgCmdSuiviPrel->getStatutPrel() == 'N') or ( $pgCmdSuiviPrel->getStatutPrel() == 'F') or ( $pgCmdSuiviPrel->getStatutPrel() == 'R')) {
                                     if ($pgCmdSuiviPrel->getFichierRps()) {
                                         $pgCmdFichiersRps = $pgCmdSuiviPrel->getFichierRps();
                                         $emSqe->remove($pgCmdFichiersRps);
@@ -1065,7 +1065,7 @@ class SuiviHydrobioController extends Controller {
                     }
 
                     $statutPrel = $tab[2];
-                    if ($statutPrel != 'P' and $statutPrel != 'F' and $statutPrel != 'N') {
+                    if ($statutPrel != 'P' and $statutPrel != 'F' and $statutPrel != 'N' and $statutPrel != 'R') {
                         $err = true;
                         $contenu = 'ligne  ' . $ligne . '  :  code statut inconnu (\'' . $statutPrel . '\')' . CHR(13) . CHR(10);
                         $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
@@ -1127,7 +1127,7 @@ class SuiviHydrobioController extends Controller {
                             fputs($rapport, $contenu);
                         }
                     }
-                    if ($statutPrel == 'N') {
+                    if ($statutPrel == 'N' or $statutPrel == 'R') {
                         if (!$commentaire or $commentaire == '') {
                             $err = true;
                             $contenu = 'ligne  ' . $ligne . '  :  commentaire obligatoire indiquer pourquoi   ' . CHR(13) . CHR(10);
@@ -1145,8 +1145,9 @@ class SuiviHydrobioController extends Controller {
                                 $autrePgCmdPrelevs = $repoPgCmdPrelev->getAutrePrelevs($prelev);
                                 for ($i = 0; $i < count($autrePgCmdPrelevs); $i++) {
                                     $autreSuport = $autrePgCmdPrelevs[$i]['codeSupport'];
-                                    if (($autreSuport != '10' && $autreSuport != '11') ||
-                                            ($prelev->getCodeSupport()->getCodeSupport() == '69' && $autreSuport != '4')) {
+                                    if (( $autreSuport == '4' && $autreSuport == '69') ||
+                                        ($prelev->getCodeSupport()->getCodeSupport() == '69' && $autreSuport != '4') ||
+                                        ($prelev->getCodeSupport()->getCodeSupport() == '4' && $autreSuport != '69')){
                                         $autreDateDebut = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
                                         $autreDateDebut->sub(new \DateInterval('P7D'));
                                         $autreDateFin = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
@@ -1259,7 +1260,7 @@ class SuiviHydrobioController extends Controller {
                         $pgCmdSuiviPrel->setCommentaire(utf8_encode($commentaire));
                         $pgCmdSuiviPrel->setValidation('E');
                         $emSqe->persist($pgCmdSuiviPrel);
-                        if ($pgCmdSuiviPrel->getStatutPrel() == 'N') {
+                        if ($pgCmdSuiviPrel->getStatutPrel() == 'N' or $pgCmdSuiviPrel->getStatutPrel() == 'R') {
                             $pgCmdPrelev->setDatePrelev($datePrel);
                             $pgCmdPrelev->setRealise('N');
                         }
@@ -1586,7 +1587,7 @@ class SuiviHydrobioController extends Controller {
                     $nbMessages++;
                 }
             }
-            if ($pgCmdSuiviPrel->getStatutPrel() == 'N') {
+            if ($pgCmdSuiviPrel->getStatutPrel() == 'N' or $pgCmdSuiviPrel->getStatutPrel() == 'R') {
                 if (!$pgCmdSuiviPrel->getCommentaire() or $pgCmdSuiviPrel->getCommentaire() == '') {
                     $err = true;
                     $contenu = ' Commentaire obligatoire indiquer pourquoi   ';
@@ -1675,7 +1676,7 @@ class SuiviHydrobioController extends Controller {
                 if ($pgCmdSuiviPrel->getStatutPrel() == 'F' and $pgCmdSuiviPrel->getValidation() == 'A') {
                     $pgCmdPrelev->setDatePrelev($datePrel);
                     $pgCmdPrelev->setRealise('O');
-                } elseif ($pgCmdSuiviPrel->getStatutPrel() == 'N') {
+                } elseif ($pgCmdSuiviPrel->getStatutPrel() == 'N' or $pgCmdSuiviPrel->getStatutPrel() == 'R') {
                     $pgCmdPrelev->setDatePrelev($datePrel);
                     $pgCmdPrelev->setRealise('N');
                 } else {
@@ -1753,7 +1754,7 @@ class SuiviHydrobioController extends Controller {
             if ($pgCmdSuiviPrel->getStatutPrel() == 'F' and $pgCmdSuiviPrel->getValidation() == 'A') {
                 $pgCmdPrelev->setDatePrelev($datePrel);
                 $pgCmdPrelev->setRealise('O');
-            } elseif ($pgCmdSuiviPrel->getStatutPrel() == 'N') {
+            } elseif ($pgCmdSuiviPrel->getStatutPrel() == 'N' or $pgCmdSuiviPrel->getStatutPrel() == 'R') {
                 $pgCmdPrelev->setDatePrelev($datePrel);
                 $pgCmdPrelev->setRealise('N');
             } else {
@@ -2171,7 +2172,7 @@ class SuiviHydrobioController extends Controller {
                         $nbSupport = count($tabSupport);
                         $tabSupport[$nbSupport] = $pgCmdPrelev->getCodeSupport()->getCodeSupport();
                     }
-                    if (($pgCmdSuiviPrel->getStatutPrel() == 'N') or ( $pgCmdSuiviPrel->getStatutPrel() == 'F')) {
+                    if (($pgCmdSuiviPrel->getStatutPrel() == 'N') or ( $pgCmdSuiviPrel->getStatutPrel() == 'F')  or ( $pgCmdSuiviPrel->getStatutPrel() == 'R')) {
                         if ($pgCmdSuiviPrel->getFichierRps()) {
                             $pgCmdFichiersRps = $pgCmdSuiviPrel->getFichierRps();
                             $emSqe->remove($pgCmdFichiersRps);
@@ -2682,7 +2683,7 @@ class SuiviHydrobioController extends Controller {
             if ($pgCmdSuiviPrel->getStatutPrel() == 'F' and $pgCmdSuiviPrel->getValidation() == 'A') {
                 $pgCmdPrelev->setDatePrelev($datePrel);
                 $pgCmdPrelev->setRealise('O');
-            } elseif ($pgCmdSuiviPrel->getStatutPrel() == 'N') {
+            } elseif ($pgCmdSuiviPrel->getStatutPrel() == 'N' or $pgCmdSuiviPrel->getStatutPrel() == 'R') {
                 $pgCmdPrelev->setDatePrelev($datePrel);
                 $pgCmdPrelev->setRealise('N');
             } else {
