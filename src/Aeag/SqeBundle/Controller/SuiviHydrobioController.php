@@ -239,10 +239,15 @@ class SuiviHydrobioController extends Controller {
                             $tabSuiviPrels[$nbSuiviPrels]['suiviPrel'] = array();
                             $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'O';
                             $tabCmdPrelevs[$nbCmdPrelevs]['maj'] = 'O';
+                            $tabSuiviPrels[$nbSuiviPrels]['avisSaisie'] = 'N';
                         } else {
                             foreach ($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
                                 $tabSuiviPrels[$nbSuiviPrels]['suiviPrel'] = $pgCmdSuiviPrel;
                                 $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'N';
+                                $tabSuiviPrels[$nbSuiviPrels]['avisSaisie'] = 'N';
+                                if ($pgCmdSuiviPrel->getAvis() == 'F') {
+                                    $tabSuiviPrels[$nbSuiviPrels]['avisSaisie'] = 'A';
+                                }
                                 if ($user->hasRole('ROLE_ADMINSQE') or ( $pgCmdPrelev->getPrestaPrel() == $pgCmdDemande->getPrestataire())) {
                                     if ($pgCmdSuiviPrel->getStatutPrel() != 'F' or ( $pgCmdSuiviPrel->getStatutPrel() == 'F' and $pgCmdSuiviPrel->getValidation() != 'A')) {
                                         $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'O';
@@ -258,21 +263,26 @@ class SuiviHydrobioController extends Controller {
                                         $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'N';
                                     }
                                 }
-                                if (!$user->hasRole('ROLE_ADMINSQE')) {
-                                    $commentaire = $pgCmdSuiviPrel->getCommentaire();
-                                    $tabCommentaires = explode(CHR(13) . CHR(10), $commentaire);
-                                    for ($nbLignes = 0; $nbLignes < count($tabCommentaires); $nbLignes++) {
-                                        $pos = explode(' ', $tabCommentaires[$nbLignes]);
-                                        //echo ('ligne : ' . $nbLignes . '  pos : ' . $pos[0] .  ' ligne : ' . $tabCommentaires[$nbLignes] . '</br>');
-                                        if ($pos[0] == 'Déposé' and $pos[1] = 'le' and $pos[3] == 'à' and $pos[5] == 'par' and $pos[7] == ':') {
-                                            $commentaireBis = null;
-                                            for ($nbLignesBis = 0; $nbLignesBis < $nbLignes; $nbLignesBis++) {
-                                                $commentaireBis .= $tabCommentaires[$nbLignesBis] . CHR(13) . CHR(10);
-                                            }
+                                $commentaire = $pgCmdSuiviPrel->getCommentaire();
+                                $tabCommentaires = explode(CHR(13) . CHR(10), $commentaire);
+                                for ($nbLignes = 0; $nbLignes < count($tabCommentaires); $nbLignes++) {
+                                    $pos = explode(' ', $tabCommentaires[$nbLignes]);
+                                    //echo ('ligne : ' . $nbLignes . '  pos : ' . $pos[0] .  ' ligne : ' . $tabCommentaires[$nbLignes] . '</br>');
+                                    if ($pos[0] == 'Déposé' and $pos[1] = 'le' and $pos[3] == 'à' and $pos[5] == 'par' and $pos[7] == ':') {
+                                        if ($pgCmdSuiviPrel->getAvis() == 'F') {
+                                            $tabSuiviPrels[$nbSuiviPrels]['avisSaisie'] = 'M';
+                                        }
+                                        $commentaireBis = null;
+                                        for ($nbLignesBis = 0; $nbLignesBis < $nbLignes; $nbLignesBis++) {
+                                            $commentaireBis .= $tabCommentaires[$nbLignesBis] . CHR(13) . CHR(10);
+                                        }
+                                        if (!$user->hasRole('ROLE_ADMINSQE')) {
                                             $tabSuiviPrels[$nbSuiviPrels]['suiviPrel']->setCommentaire($commentaireBis);
+                                            break;
                                         }
                                     }
-//                                    if ($pgProgLotStationAn->getStation()->getCode() == '05105950') {
+                                }
+                                if ($pgProgLotStationAn->getStation()->getCode() == '05105950') {
 //                                        \Symfony\Component\VarDumper\VarDumper::dump($tabSuiviPrels[$nbSuiviPrels]['suiviPrel']);
 //                                        return new Response('');
 //                                    }

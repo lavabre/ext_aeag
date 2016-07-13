@@ -287,8 +287,8 @@
                     {% for station in stations %}
                         {% if  station.cmdPrelevs | length %}
                             {% for cmdPrelev in station.cmdPrelevs %}
-                                <tr>
-                                    <td width="10%" nowrap>
+                                  <tr>
+                                      <td width="10%" nowrap>
                                         {% if is_granted('ROLE_PRESTASQE') %}
                                             {% if  cmdPrelev.suiviPrels.0.maj == 'O' %}
                                                 <a class="btn btn-success" id="idNouveauSuivi{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Nouveau suivi">
@@ -327,7 +327,13 @@
                                         {% endif %}
 
                                     </td>
-                                    <td>
+                                       {%if cmdPrelev.suiviPrels.0.avisSaisie == 'M' %}
+                                          <td class="alert alert-success" >
+                                        {% elseif  cmdPrelev.suiviPrels.0.avisSaisie == 'A' %}
+                                             <td class="alert alert-info" >
+                                        {% else %}
+                                           <td>
+                                        {% endif %}
                                         <a  href="{{ station.lien }}" target="_blank" title="Localisation">{{ station.station.code }}</a>
                                     </td>
                                     <td>
@@ -403,7 +409,13 @@
            </div>
 
         <div class="row responsive">
-            <div class="col-md-12 pull-right text-info">
+              <div class="col-md-9 pull-left text-info">
+                <ul class="list-inline">
+                    <li><span class="label label-success">Avis favorable manuel</span></li>
+                    <li><span class="label label-info">Avis favorable automatique</span></li>
+                </ul>  
+            </div>
+            <div class="col-md-3 pull-right text-info">
                 <ul class="list-inline">
                     <li><span class="label label-success">Accepté</span></li>
                     <li><span class="label label-warning">En attente</span></li>
