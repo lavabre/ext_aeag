@@ -258,6 +258,25 @@ class SuiviHydrobioController extends Controller {
                                         $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'N';
                                     }
                                 }
+                                if (!$user->hasRole('ROLE_ADMINSQE')) {
+                                    $commentaire = $pgCmdSuiviPrel->getCommentaire();
+                                    $tabCommentaires = explode(CHR(13) . CHR(10), $commentaire);
+                                    for ($nbLignes = 0; $nbLignes < count($tabCommentaires); $nbLignes++) {
+                                        $pos = explode(' ', $tabCommentaires[$nbLignes]);
+                                        //echo ('ligne : ' . $nbLignes . '  pos : ' . $pos[0] .  ' ligne : ' . $tabCommentaires[$nbLignes] . '</br>');
+                                        if ($pos[0] == 'Déposé' and $pos[1] = 'le' and $pos[3] == 'à' and $pos[5] == 'par' and $pos[7] == ':') {
+                                            $commentaireBis = null;
+                                            for ($nbLignesBis = 0; $nbLignesBis < $nbLignes; $nbLignesBis++) {
+                                                $commentaireBis .= $tabCommentaires[$nbLignesBis] . CHR(13) . CHR(10);
+                                            }
+                                            $tabSuiviPrels[$nbSuiviPrels]['suiviPrel']->setCommentaire($commentaireBis);
+                                        }
+                                    }
+//                                    if ($pgProgLotStationAn->getStation()->getCode() == '05105950') {
+//                                        \Symfony\Component\VarDumper\VarDumper::dump($tabSuiviPrels[$nbSuiviPrels]['suiviPrel']);
+//                                        return new Response('');
+//                                    }
+                                }
                                 $nbSuiviPrels++;
                             }
                         }
@@ -1907,10 +1926,8 @@ class SuiviHydrobioController extends Controller {
 
 //        return $this->redirect($this->generateUrl('AeagSqeBundle_suiviHydrobio_lot_periode_stations', array('stationId' => $pgCmdPrelev->getStation()->getOuvFoncId(),
 //                            'periodeAnId' => $periodeAnId)));
-
-
 //          \Symfony\Component\VarDumper\VarDumper::dump($tabDemande);
-        return new Response ('');
+        return new Response('');
     }
 
     public function lotPeriodeStationDemandeSuiviFichierDeposerAction($stationId = null, $suiviPrelId = null, $periodeAnId = null) {
