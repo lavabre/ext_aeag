@@ -5,7 +5,7 @@
         <a href="{{ path('aeag_homepage') }}">Accueil</a> 
     </li>
     <li>
-        <a href="{{ path('soustheme') }}">Sous Thème</a> 
+        <a href="{{ path('soustheme') }}">Formulaire</a> 
     </li>
     <li class="active">
         {{ entity.soustheme }}
@@ -14,7 +14,7 @@
 
 {%block panel_heading %}
     <h3 class="page-title text-center">
-        Mise  à jour du sous-thème : {{ entity.sousTheme }}
+        Mise à jour du formulaire : {{ entity.sousTheme }}
     </h3>
 {%endblock panel_heading %}
 
@@ -48,7 +48,7 @@
             </div> 
 
             <div class="form-group">
-                <label for="ordre" class="col-xs-offset-2 col-xs-2 control-label">Sous-thème</label>
+                <label for="ordre" class="col-xs-offset-2 col-xs-2 control-label">Formulaire</label>
                 {%if form_errors(form.sousTheme) %}
                     <div class="col-xs-3 input-group has-error has-feedback">
                     {% else %}

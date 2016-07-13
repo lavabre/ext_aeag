@@ -11,13 +11,13 @@ class AdminController extends Controller {
         
          $user = $this->getUser();
           if (!$user) {
-            return $this->render('AeagDieBundle:Default:interdit.html.twig');
+              return $this->redirect($this->generateUrl('fos_user_security_login'));
         }
         $session = $this->get('session');
         $session->set('menu', 'Admin');
         $session->set('controller', 'Admin');
         $session->set('fonction', 'index');
-        $em = $this->getDoctrine()->getEntityManager('die');
+        $em = $this->get('doctrine')->getManager('die');
         
         return $this->render('AeagDieBundle:Admin:index.html.twig');
     }

@@ -223,12 +223,14 @@
               </nav> 
            {% endblock navbar %}
           
+           {% block breadcrumbAll %}
                  <ol class="breadcrumb"> 
                     {% block breadcrumb %}
                       <li><a href="{{ path('aeag_homepage') }}">Accueil</a></li> 
                       <li class="active">page active</li> 
                     {% endblock breadcrumb %}
                 </ol> 
+           {% endblock breadcrumbAll %}
             
             <div class="container">
                     
@@ -280,7 +282,8 @@
                                 <p> {{ flashMessage }} </p>
                             </div>
                          {% endfor %}
-                        
+                         
+                        {% block modalAll %}
                         {% block modal %}
                  	   <div class="modal fade" id="{% block modal_id %}modal_id{% endblock modal_id %}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                                     <div class="modal-dialog">
@@ -329,6 +332,8 @@
                               </div>
                             </div>
                          </div>
+                          
+                          {% endblock modalAll %}
                                 
                         <div class="panel panel-group">
                            <div id="idPanelHeading" class="panel-heading">{% block panel_heading %}panel title{% endblock panel_heading %}</div>
@@ -339,6 +344,7 @@
                                  
                  </div>
            
+             {% block footer %}
               <footer class="page-footer hidden-xs hidden-sm medium text-cente">
                 <!--[if lt IE 9]>
                  <div class="page-footer-ie8 hidden-xs hidden-sm">
@@ -351,6 +357,7 @@
                 </div>
                 <![endif]-->
               </footer>
+             {% endblock footer %}
        
         {% block javascripts %}
         <script type="text/javascript" src="{{ asset('bundles/aeagaeag/bootstrap/js/jquery-2.1.4.js') }}"> </script>

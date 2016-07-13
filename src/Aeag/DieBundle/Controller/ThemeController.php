@@ -28,7 +28,7 @@ class ThemeController extends Controller {
         $session->set('menu', 'Admin');
         $session->set('controller', 'Theme');
         $session->set('fonction', 'index');
-        $em = $this->getDoctrine()->getEntityManager('die');
+        $em = $this->get('doctrine')->getManager('die');
         
         $repoTheme = $em->getRepository('AeagDieBundle:Theme');
         $repoSousTheme = $em->getRepository('AeagDieBundle:SousTheme');
@@ -40,8 +40,15 @@ class ThemeController extends Controller {
             $entities[$i]['theme'] = $theme;
             $sousThemes = $repoSousTheme->getSousThemesByTheme($theme);
             $entities[$i]['nbSousThemes'] = count($sousThemes);
+            if (count($sousThemes) == 1){
+                $entities[$i]['sousTheme'] = $sousThemes[0];
+            }else{
+                $entities[$i]['sousTheme'] = null;
+            }
             $i++;
         }
+        
+        $session->set('urlRetour', $this->generateUrl('theme'));
 
         return $this->render('AeagDieBundle:Theme:index.html.twig', array(
                     'entities' => $entities
@@ -62,7 +69,7 @@ class ThemeController extends Controller {
         $session->set('menu', 'Admin');
         $session->set('controller', 'Theme');
         $session->set('fonction', 'show');
-        $em = $this->getDoctrine()->getEntityManager('die');
+        $em = $this->get('doctrine')->getManager('die');
      
         $entity = $em->getRepository('AeagDieBundle:Theme')->find($id);
 
@@ -70,11 +77,8 @@ class ThemeController extends Controller {
             throw $this->createNotFoundException('Unable to find Theme entity.');
         }
 
-        $deleteForm = $this->createDeleteForm($id);
-
         return $this->render('AeagDieBundle:Theme:show.html.twig', array(
                     'entity' => $entity,
-                    'delete_form' => $deleteForm->createView(),
         ));
     }
 
@@ -92,7 +96,7 @@ class ThemeController extends Controller {
         $session->set('menu', 'Admin');
         $session->set('controller', 'Theme');
         $session->set('fonction', 'new');
-        $em = $this->getDoctrine()->getEntityManager('die');
+        $em = $this->get('doctrine')->getManager('die');
         
         $entity = new Theme();
         $form = $this->createForm(new ThemeType(), $entity);
@@ -117,7 +121,7 @@ class ThemeController extends Controller {
         $session->set('menu', 'Admin');
         $session->set('controller', 'Theme');
         $session->set('fonction', 'create');
-        $em = $this->getDoctrine()->getEntityManager('die');
+        $em = $this->get('doctrine')->getManager('die');
         
         $entity = new Theme();
         $form = $this->createForm(new ThemeType(), $entity);
@@ -149,7 +153,7 @@ class ThemeController extends Controller {
         $session->set('menu', 'Admin');
         $session->set('controller', 'Theme');
         $session->set('fonction', 'edit');
-        $em = $this->getDoctrine()->getEntityManager('die');
+        $em = $this->get('doctrine')->getManager('die');
     
         $entity = $em->getRepository('AeagDieBundle:Theme')->find($id);
 
@@ -179,7 +183,7 @@ class ThemeController extends Controller {
         $session->set('menu', 'Admin');
         $session->set('controller', 'Theme');
         $session->set('fonction', 'update');
-        $em = $this->getDoctrine()->getEntityManager('die');
+        $em = $this->get('doctrine')->getManager('die');
   
         $entity = $em->getRepository('AeagDieBundle:Theme')->find($id);
 
@@ -218,7 +222,7 @@ class ThemeController extends Controller {
         $session->set('menu', 'Admin');
         $session->set('controller', 'Theme');
         $session->set('fonction', 'delete');
-        $em = $this->getDoctrine()->getEntityManager('die');
+        $em = $this->get('doctrine')->getManager('die');
 
         $qb = $em->createQueryBuilder();
         $qb->select('count(a)')

@@ -30,7 +30,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'data' => $pgCmdSuiviPrelActuel->getDatePrel(),
                                         ))
                                         ->add('statutPrel', 'choice', array(
-                                            'choices' => array('P' => 'Prévisionnel', 'F' => 'Effectué', 'N' => 'Non effectué'),
+                                            'choices' => array('P' => 'Prévisionnel', 'F' => 'Effectué', 'N' => 'Non effectué', 'R' => 'Reporté'),
                                             'required' => true,
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
@@ -67,7 +67,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'required' => true,
                                             'data' => $pgCmdSuiviPrelActuel->getDatePrel(),))
                                         ->add('statutPrel', 'choice', array(
-                                            'choices' => array('P' => 'Prévisionnel', 'F' => 'Effectué', 'N' => 'Non effectué'),
+                                            'choices' => array('P' => 'Prévisionnel', 'F' => 'Effectué', 'N' => 'Non effectué', 'R' => 'Reporté'),
                                             'required' => true,
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
@@ -89,7 +89,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'required' => true,
                                             'data' => $pgCmdSuiviPrelActuel->getDatePrel(),))
                                         ->add('statutPrel', 'choice', array(
-                                            'choices' => array('F' => 'Effectué', 'N' => 'Non effectué'),
+                                            'choices' => array('F' => 'Effectué', 'N' => 'Non effectué', 'R' => 'Reporté'),
                                             'required' => true,
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
@@ -107,7 +107,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'required' => true,
                                             'data' => $pgCmdSuiviPrelActuel->getDatePrel(),))
                                         ->add('statutPrel', 'choice', array(
-                                            'choices' => array('P' => 'Prévisionnel', 'F' => 'Effectué', 'N' => 'Non effectué'),
+                                            'choices' => array('P' => 'Prévisionnel', 'F' => 'Effectué', 'N' => 'Non effectué', 'R' => 'Reporté'),
                                             'required' => true,
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
@@ -126,7 +126,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'data' => $pgCmdSuiviPrelActuel->getDatePrel(),
                                             'disabled' => true))
                                         ->add('statutPrel', 'choice', array(
-                                            'choices' => array('F' => 'Effectué', 'N' => 'Non effectué'),
+                                            'choices' => array('F' => 'Effectué', 'N' => 'Non effectué', 'R' => 'Reporté'),
                                             'required' => true,
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
@@ -148,7 +148,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'data' => $pgCmdSuiviPrelActuel->getDatePrel(),
                                             'required' => true,))
                                         ->add('statutPrel', 'choice', array(
-                                            'choices' => array('F' => 'Effectué', 'N' => 'Non effectué'),
+                                            'choices' => array('F' => 'Effectué', 'N' => 'Non effectué', 'R' => 'Reporté'),
                                             'required' => true,
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
@@ -166,7 +166,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'data' => $pgCmdSuiviPrelActuel->getDatePrel(),
                                             'required' => true,))
                                         ->add('statutPrel', 'choice', array(
-                                            'choices' => array('P' => 'Prévisionnel', 'F' => 'Effectué', 'N' => 'Non effectué'),
+                                            'choices' => array('P' => 'Prévisionnel', 'F' => 'Effectué', 'N' => 'Non effectué', 'R' => 'Reporté'),
                                             'required' => true,
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
@@ -185,7 +185,66 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'required' => true,
                                             'disabled' => true))
                                         ->add('statutPrel', 'choice', array(
-                                            'choices' => array('F' => 'Effectué', 'N' => 'Non effectué'),
+                                            'choices' => array('F' => 'Effectué', 'N' => 'Non effectué', 'R' => 'Reporté'),
+                                            'required' => true,
+                                            'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
+                                        ))
+                                        ->add('validation', 'choice', array(
+                                            'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté'),
+                                            'required' => false,
+                                        ))
+                                        ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
+                                ;
+                                break;
+                        }
+                        break;
+                    case 'R' :
+                        switch ($pgCmdSuiviPrelActuel->getValidation()) {
+                            case 'E' :
+                                $builder
+                                        ->add('datePrel', 'date', array('widget' => 'single_text',
+                                            'format' => 'dd/MM/yyyy HH:mm',
+                                            'data' => $pgCmdSuiviPrelActuel->getDatePrel(),
+                                            'required' => true,))
+                                        ->add('statutPrel', 'choice', array(
+                                            'choices' => array('F' => 'Effectué', 'N' => 'Non effectué', 'R' => 'Reporté'),
+                                            'required' => true,
+                                            'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
+                                        ))
+                                        ->add('validation', 'choice', array(
+                                            'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté'),
+                                            'required' => false,
+                                        ))
+                                        ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
+                                ;
+                                break;
+                            case 'R' :
+                                $builder
+                                        ->add('datePrel', 'date', array('widget' => 'single_text',
+                                            'format' => 'dd/MM/yyyy HH:mm',
+                                            'data' => $pgCmdSuiviPrelActuel->getDatePrel(),
+                                            'required' => true,))
+                                        ->add('statutPrel', 'choice', array(
+                                            'choices' => array('P' => 'Prévisionnel', 'F' => 'Effectué', 'N' => 'Non effectué', 'R' => 'Reporté'),
+                                            'required' => true,
+                                            'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
+                                        ))
+                                        ->add('validation', 'choice', array(
+                                            'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté'),
+                                            'required' => false,
+                                        ))
+                                        ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
+                                ;
+                                break;
+                            case 'A' :
+                                $builder
+                                        ->add('datePrel', 'date', array('widget' => 'single_text',
+                                            'format' => 'dd/MM/yyyy HH:mm',
+                                            'data' => $pgCmdSuiviPrelActuel->getDatePrel(),
+                                            'required' => true,
+                                            'disabled' => true))
+                                        ->add('statutPrel', 'choice', array(
+                                            'choices' => array('F' => 'Effectué', 'N' => 'Non effectué', 'R' => 'Reporté'),
                                             'required' => true,
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
@@ -211,7 +270,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'data' => $pgCmdSuiviPrelActuel->getDatePrel(),
                                         ))
                                         ->add('statutPrel', 'choice', array(
-                                            'choices' => array('P' => 'Prévisionnel', 'F' => 'Effectué', 'N' => 'Non effectué'),
+                                            'choices' => array('P' => 'Prévisionnel', 'F' => 'Effectué', 'N' => 'Non effectué', 'R' => 'Reporté'),
                                             'required' => true,
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
@@ -239,7 +298,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'required' => true,
                                             'data' => $pgCmdSuiviPrelActuel->getDatePrel(),))
                                         ->add('statutPrel', 'choice', array(
-                                            'choices' => array('P' => 'Prévisionnel', 'F' => 'Effectué', 'N' => 'Non effectué'),
+                                            'choices' => array('P' => 'Prévisionnel', 'F' => 'Effectué', 'N' => 'Non effectué', 'R' => 'Reporté'),
                                             'required' => true,
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
@@ -257,7 +316,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'required' => true,
                                             'data' => $pgCmdSuiviPrelActuel->getDatePrel(),))
                                         ->add('statutPrel', 'choice', array(
-                                            'choices' => array('F' => 'Effectué', 'N' => 'Non effectué'),
+                                            'choices' => array('F' => 'Effectué', 'N' => 'Non effectué', 'R' => 'Reporté'),
                                             'required' => true,
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
@@ -271,7 +330,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'required' => true,
                                             'data' => $pgCmdSuiviPrelActuel->getDatePrel(),))
                                         ->add('statutPrel', 'choice', array(
-                                            'choices' => array('P' => 'Prévisionnel', 'F' => 'Effectué', 'N' => 'Non effectué'),
+                                            'choices' => array('P' => 'Prévisionnel', 'F' => 'Effectué', 'N' => 'Non effectué', 'R' => 'Reporté'),
                                             'required' => true,
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
@@ -286,7 +345,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'data' => $pgCmdSuiviPrelActuel->getDatePrel(),
                                             'disabled' => true))
                                         ->add('statutPrel', 'choice', array(
-                                            'choices' => array('F' => 'Effectué', 'N' => 'Non effectué'),
+                                            'choices' => array('F' => 'Effectué', 'N' => 'Non effectué', 'R' => 'Reporté'),
                                             'required' => true,
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
@@ -304,7 +363,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'data' => $pgCmdSuiviPrelActuel->getDatePrel(),
                                             'required' => true,))
                                         ->add('statutPrel', 'choice', array(
-                                            'choices' => array('F' => 'Effectué', 'N' => 'Non effectué'),
+                                            'choices' => array('F' => 'Effectué', 'N' => 'Non effectué', 'R' => 'Reporté'),
                                             'required' => true,
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
@@ -318,7 +377,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'data' => $pgCmdSuiviPrelActuel->getDatePrel(),
                                             'required' => true,))
                                         ->add('statutPrel', 'choice', array(
-                                            'choices' => array('P' => 'Prévisionnel', 'F' => 'Effectué', 'N' => 'Non effectué'),
+                                            'choices' => array('P' => 'Prévisionnel', 'F' => 'Effectué', 'N' => 'Non effectué', 'R' => 'Reporté'),
                                             'required' => true,
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
@@ -333,7 +392,54 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'required' => true,
                                             'disabled' => true))
                                         ->add('statutPrel', 'choice', array(
-                                            'choices' => array('F' => 'Effectué', 'N' => 'Non effectué'),
+                                            'choices' => array('F' => 'Effectué', 'N' => 'Non effectué', 'R' => 'Reporté'),
+                                            'required' => true,
+                                            'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
+                                        ))
+                                        ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
+                                ;
+                                break;
+                        }
+                        break;
+                    case 'R' :
+                        switch ($pgCmdSuiviPrelActuel->getValidation()) {
+                            case 'E' :
+                                $builder
+                                        ->add('datePrel', 'date', array('widget' => 'single_text',
+                                            'format' => 'dd/MM/yyyy HH:mm',
+                                            'data' => $pgCmdSuiviPrelActuel->getDatePrel(),
+                                            'required' => true,))
+                                        ->add('statutPrel', 'choice', array(
+                                            'choices' => array('F' => 'Effectué', 'N' => 'Non effectué', 'R' => 'Reporté'),
+                                            'required' => true,
+                                            'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
+                                        ))
+                                        ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
+                                ;
+                                break;
+                            case 'R' :
+                                $builder
+                                        ->add('datePrel', 'date', array('widget' => 'single_text',
+                                            'format' => 'dd/MM/yyyy HH:mm',
+                                            'data' => $pgCmdSuiviPrelActuel->getDatePrel(),
+                                            'required' => true,))
+                                        ->add('statutPrel', 'choice', array(
+                                            'choices' => array('P' => 'Prévisionnel', 'F' => 'Effectué', 'N' => 'Non effectué', 'R' => 'Reporté'),
+                                            'required' => true,
+                                            'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
+                                        ))
+                                        ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
+                                ;
+                                break;
+                            case 'A' :
+                                $builder
+                                        ->add('datePrel', 'date', array('widget' => 'single_text',
+                                            'format' => 'dd/MM/yyyy HH:mm',
+                                            'data' => $pgCmdSuiviPrelActuel->getDatePrel(),
+                                            'required' => true,
+                                            'disabled' => true))
+                                        ->add('statutPrel', 'choice', array(
+                                            'choices' => array('F' => 'Effectué', 'N' => 'Non effectué', 'R' => 'Reporté'),
                                             'required' => true,
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
@@ -351,7 +457,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                             'format' => 'dd/MM/yyyy HH:mm',
                             'required' => true,))
                         ->add('statutPrel', 'choice', array(
-                            'choices' => array('P' => 'Prévisionnel', 'F' => 'Effectué', 'N' => 'Non effectué'),
+                            'choices' => array('P' => 'Prévisionnel', 'F' => 'Effectué', 'N' => 'Non effectué', 'R' => 'Reporté'),
                             'required' => true,
                         ))
                         ->add('validation', 'choice', array(
@@ -366,7 +472,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                             'format' => 'dd/MM/yyyy HH:mm',
                             'required' => true,))
                         ->add('statutPrel', 'choice', array(
-                            'choices' => array('P' => 'Prévisionnel', 'F' => 'Effectué', 'N' => 'Non effectué'),
+                            'choices' => array('P' => 'Prévisionnel', 'F' => 'Effectué', 'N' => 'Non effectué', 'R' => 'Reporté'),
                             'required' => true,
                         ))
                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => false))

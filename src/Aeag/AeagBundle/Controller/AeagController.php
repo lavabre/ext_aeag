@@ -79,6 +79,11 @@ class AeagController extends Controller {
             $session->set('appli', 'sqe');
             return $this->redirect($this->generateUrl('aeag_sqe'));
         };
+        
+         if ($security->isGranted('ROLE_ADMINDIE')) {
+            $session->set('appli', 'die');
+            return $this->redirect($this->generateUrl('aeag_die_admin'));
+        };
 
         return $this->render('AeagAeagBundle:Default:interdit.html.twig');
 //        return $this->render('AeagAeagBundle:Default:index.html.twig', array('roles' => $roles));

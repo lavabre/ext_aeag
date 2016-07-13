@@ -28,7 +28,7 @@ class OrganismeController extends Controller {
         $session->set('menu', 'Admin');
         $session->set('controller', 'Organisme');
         $session->set('fonction', 'index');
-        $em = $this->getDoctrine()->getEntityManager('die');
+        $em = $this->get('doctrine')->getManager('die');
 
         $repoOrganisme = $em->getRepository('AeagDieBundle:Organisme');
         $entities = $repoOrganisme->getOrganismes();
@@ -52,7 +52,7 @@ class OrganismeController extends Controller {
         $session->set('menu', 'Admin');
         $session->set('controller', 'Organisme');
         $session->set('fonction', 'show');
-        $em = $this->getDoctrine()->getEntityManager('die');
+        $em = $this->get('doctrine')->getManager('die');
 
 
         $entity = $em->getRepository('AeagDieBundle:Organisme')->find($id);
@@ -61,11 +61,8 @@ class OrganismeController extends Controller {
             throw $this->createNotFoundException('Unable to find Organisme entity.');
         }
 
-        $deleteForm = $this->createDeleteForm($id);
-
         return $this->render('AeagDieBundle:Organisme:show.html.twig', array(
                     'entity' => $entity,
-                    'delete_form' => $deleteForm->createView(),
         ));
     }
 
@@ -83,7 +80,7 @@ class OrganismeController extends Controller {
         $session->set('menu', 'Admin');
         $session->set('controller', 'Organisme');
         $session->set('fonction', 'new');
-        $em = $this->getDoctrine()->getEntityManager('die');
+        $em = $this->get('doctrine')->getManager('die');
 
         $entity = new Organisme();
         $form = $this->createForm(new OrganismeType(), $entity);
@@ -108,7 +105,7 @@ class OrganismeController extends Controller {
         $session->set('menu', 'Admin');
         $session->set('controller', 'Organisme');
         $session->set('fonction', 'create');
-        $em = $this->getDoctrine()->getEntityManager('die');
+        $em = $this->get('doctrine')->getManager('die');
 
         $entity = new Organisme();
         $form = $this->createForm(new OrganismeType(), $entity);
@@ -141,7 +138,7 @@ class OrganismeController extends Controller {
         $session->set('menu', 'Admin');
         $session->set('controller', 'Organisme');
         $session->set('fonction', 'edit');
-        $em = $this->getDoctrine()->getEntityManager('die');
+        $em = $this->get('doctrine')->getManager('die');
 
         $entity = $em->getRepository('AeagDieBundle:Organisme')->find($id);
 
@@ -171,7 +168,7 @@ class OrganismeController extends Controller {
         $session->set('menu', 'Admin');
         $session->set('controller', 'Organisme');
         $session->set('fonction', 'update');
-        $em = $this->getDoctrine()->getEntityManager('die');
+        $em = $this->get('doctrine')->getManager('die');
 
         $entity = $em->getRepository('AeagDieBundle:Organisme')->find($id);
 
@@ -210,7 +207,7 @@ class OrganismeController extends Controller {
         $session->set('menu', 'Admin');
         $session->set('controller', 'Organisme');
         $session->set('fonction', 'delete');
-        $em = $this->getDoctrine()->getEntityManager('die');
+        $em = $this->get('doctrine')->getManager('die');
 
         $entity = $em->getRepository('AeagDieBundle:Organisme')->find($id);
 

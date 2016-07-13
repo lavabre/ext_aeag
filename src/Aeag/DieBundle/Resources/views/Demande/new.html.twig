@@ -20,17 +20,13 @@
 
 {% block content %}
     
-    <div class="row">
-          <div class="col-xs-offset-3 col-xs-8 small">
-                 <div class="alert alert-info" role="alert">
-                     Veuillez utiliser le formulaire ci-dessous pour nous adresser votre demande d’information<br>
-                    (Tous les champs sont obligatoires)
-                  </div>
-          </div>
-    </div>
+   <p class="alertDie alert-info" align="center">
+        Veuillez utiliser le formulaire ci-dessous pour nous adresser votre demande d’information<br>
+        (Tous les champs sont obligatoires)
+    </p>
 
 
-        <form  class="form" id="contact"  action="{{ path('demande_create') }}"  method="post" {{ form_enctype(form) }}>
+        <form  class="form" id="contact"  action="{{ path('demande_create') }}"  method="post" >
 
             {% spaceless %}
                 {% if not form.vars.valid %}
@@ -42,132 +38,137 @@
                         {% endfor %}
                     </div>
                 {% endif %}
+           {% endspaceless %}
 
+         <table class="table tableDie table-striped table-condensed table-responsive" cellspacing="0" width="580px" align="center">
 
-            {% endspaceless %}
+        <caption><h5 class="alertDie alert-info" align="center">Informations personnelles </h5></caption>
+        <tbody>
+            <tr>
 
-     <div class="row">
-          <div class="col-xs-offset-3 col-xs-8 small">
-            <div class="panel panel-default">
-                <div class="panel-heading"><h2>Informations personnelles</h2></div>
-                <div class="panel-body">
-
-                    <div class="form-group">
-                        <label for="Nom" class="col-xs-3 control-label">Nom <i class="fa fa-asterisk text-danger btn-xs"></i></label>
-                            {%if form_errors(form.nom) %}
-                                <div class="col-xs-8 input-group has-error has-feedback">
-                            {% else %}
-                                <div class="col-xs-8 input-group">
-                                {% endif %}
-                                {{ form_widget(form.nom, { 'attr': {'class': 'form-control ', 'placeholder': 'Nom'} }) }}
-                            </div>
-                        </div> 
-
-                        <div class="form-group">
-                            <label for="Prenom" class="col-xs-3 control-label">Prénom <i class="fa fa-asterisk text-danger btn-xs"></i></label>
-                                {%if form_errors(form.prenom) %}
-                                   <div class="col-xs-8 input-group has-error has-feedback">
-                                {% else %}
-                                    <div class="col-xs-8 input-group">
-                                    {% endif %}
-                                    {{ form_widget(form.prenom, { 'attr': {'class': 'form-control ', 'placeholder': 'Prénom'} }) }}
-                                </div>
-                            </div> 
-
-                            <div class="form-group">
-                                <label for="Organisme" class="col-xs-3 control-label">Organisme<i class="fa fa-asterisk text-danger btn-xs"></i></label>
-                                    {%if form_errors(form.organisme) %}
-                                        <div class="col-xs-8 input-group has-error has-feedback">
-                                    {% else %}
-                                        <div class="col-xs-8 input-group">
-                                        {% endif %}
-                                        {{ form_widget(form.organisme, { 'attr': {'class': 'form-control ', 'placeholder': 'Organisme'} }) }}
-                                    </div>
-                                </div> 
-
-                                <div class="form-group">
-                                    <label for="Departement" class="col-xs-3 control-label">Département<i class="fa fa-asterisk text-danger btn-xs"></i></label>
-                                        {%if form_errors(form.dept) %}
-                                            <div class="col-xs-8 input-group has-error has-feedback">
-                                        {% else %}
-                                            <div class="col-xs-8 input-group">
-                                            {% endif %}
-                                            {{ form_widget(form.dept, { 'attr': {'class': 'form-control ', 'placeholder': 'Département'} }) }}
-                                        </div>
-                                    </div> 
-
-                                    <div class="form-group">
-                                        <label for="Courriel" class="col-xs-3 control-label">Courriel<i class="fa fa-asterisk text-danger btn-xs"></i></label>
-                                            {%if form_errors(form.email) %}
-                                               <div class="col-xs-8 input-group has-error has-feedback">
-                                            {% else %}
-                                                <div class="col-xs-8 input-group">
-                                                {% endif %}
-                                                {{ form_widget(form.email, { 'attr': {'class': 'form-control ', 'placeholder': 'Courriel'} }) }}
-                                            </div>
-                                        </div> 
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                <td align="left" width="15%">{{ form_label(form.nom,'Nom') }}</td>
+                <td width="85%">
+                   {%if form_errors(form.nom) %}
+                        <div class="col-xs-12 input-group has-error has-feedback">
+                    {% else %}
+                        <div class="col-xs-12 input-group">
+                        {% endif %}
+                        {{ form_widget(form.nom, { 'attr': {'class': 'form-control ', 'placeholder': 'Nom'} }) }}
                     </div>
+                  </td>
+                     
+            </tr>
+            <tr>
 
-                    <div class="row">
-                            <div class="col-xs-offset-3 col-xs-8 small">
-                                <div class="panel panel-default">
-                                    <div class="panel-heading"><h2>Votre message</h2></div>
-                                    <div class="panel-body">
+                <td  align="left" width="15%" >{{ form_label(form.prenom, "Prénom") }}</td>
+                <td width="85%">
+                    {%if form_errors(form.prenom) %}
+                                   <div class="col-xs-12 input-group has-error has-feedback">
+                    {% else %}
+                        <div class="col-xs-12 input-group">
+                        {% endif %}
+                        {{ form_widget(form.prenom, { 'attr': {'class': 'form-control ', 'placeholder': 'Prénom'} }) }}
+                    </div>
+                </td>
+            </tr>
 
-                                            <div class="form-group">
-                                                <label for="Theme" class="col-xs-3 control-label">Thème<i class="fa fa-asterisk text-danger btn-xs"></i></label>
-                                                    {%if form_errors(form.theme) %}
-                                                         <div class="col-xs-8 input-group has-error has-feedback">
-                                                    {% else %}
-                                                        <div class="col-xs-8 input-group">
-                                                        {% endif %}
-                                                        {{ form_widget(form.theme, { 'attr': {'class': 'form-control ', 'placeholder': 'Theme'} }) }}
-                                                    </div>
-                                                </div> 
-                                     
-                                            <div class="form-group">
-                                                <label for="Description" class="col-xs-3 control-label">Description<i class="fa fa-asterisk text-danger btn-xs"></i></label>
-                                                    {%if form_errors(form.objet) %}
-                                                        <div class="col-xs-8 input-group has-error has-feedback">
-                                                    {% else %}
-                                                        <div class="col-xs-8 input-group">
-                                                        {% endif %}
-                                                        {{ form_widget(form.objet, { 'attr': {'class': 'form-control ', 'placeholder': 'Description'} }) }}
-                                                    </div>
-                                                </div> 
+            <tr>
 
-                                                <div class="form-group">
-                                                    <label for=Message" class="col-xs-3 control-label">Message<i class="fa fa-asterisk text-danger btn-xs"></i></label>
-                                                        {%if form_errors(form.corps) %}
-                                                             <div class="col-xs-8 input-group has-error has-feedback">
-                                                        {% else %}
-                                                            <div class="col-xs-8 input-group">
-                                                            {% endif %}
-                                                            {{ form_widget(form.corps, { 'attr': {'rows':5,'class': 'form-control ', 'placeholder': 'corps'} }) }}
-                                                        </div>
-                                                    </div> 
+                <td align="left"  width="15%">{{ form_label(form.organisme, "Catégorie/Organisme") }}</td>
+                <td width="85%">
+                   {%if form_errors(form.organisme) %}
+                        <div class="col-xs-12 input-group has-error has-feedback">
+                    {% else %}
+                        <div class="col-xs-12 input-group">
+                        {% endif %}
+                        {{ form_widget(form.organisme, { 'attr': {'class': 'form-control ', 'placeholder': 'Organisme'} }) }}
+                    </div>
+                </td>
+            </tr>
+             <tr>
 
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                <td align="left"  width="15%">{{ form_label(form.dept,'Département') }}</td>
+                <td width="85%">
+                   {%if form_errors(form.dept) %}
+                        <div class="col-xs-12 input-group has-error has-feedback">
+                    {% else %}
+                        <div class="col-xs-12 input-group">
+                        {% endif %}
+                        {{ form_widget(form.dept, { 'attr': {'class': 'form-control ', 'placeholder': 'Département'} }) }}
+                    </div>
+                </td>
+            </tr>
+            <tr>
 
-                                <div class="hide">
-                                    {{ form_rest(form) }}
-                                </div>
+                <td align="left"  width="15%">{{ form_label(form.email, "Courriel") }}</td>
+                <td width="85%">
+                   {%if form_errors(form.email) %}
+                        <div class="col-xs-12 input-group has-error has-feedback">
+                     {% else %}
+                         <div class="col-xs-12 input-group">
+                         {% endif %}
+                         {{ form_widget(form.email, { 'attr': {'class': 'form-control', 'placeholder': 'Courriel'} }) }}
+                     </div>
+                 </td>
+            </tr>
+        </tbody>
+    </table>
+   
+           <table class="table tableDie table-striped table-condensed table-responsive" cellspacing="0" width="580px" align="center">
 
-                                <div  align="center">
-                                    <button type="submit" class="btn btn-primary">Envoyer la demande</button>
-                                </div>
-                </form>      
+        <caption><h5 class="alertDie alert-info" align="center">Votre message</h5></caption>
+        <tbody>
+      
+            <tr>
 
+                <td align="left" width="15%">{{ form_label(form.theme) }}</td>
+                <td width="85%">
+                   {%if form_errors(form.theme) %}
+                    <div class="col-xs-12 input-group has-error has-feedback">
+                    {% else %}
+                        <div class="col-xs-12 input-group">
+                        {% endif %}
+                        {{ form_widget(form.theme, { 'attr': {'class': 'form-control ', 'placeholder': 'Theme'} }) }}
+                    </div>
+                </td>
+            </tr>
+     
+            <tr>
+
+                <td align="left">{{ form_label(form.objet, "Description") }}</td>
+                <td width="85%">
+                  {%if form_errors(form.objet) %}
+                        <div class="col-xs-12 input-group has-error has-feedback">
+                    {% else %}
+                        <div class="col-xs-12 input-group">
+                        {% endif %}
+                        {{ form_widget(form.objet, { 'attr': {'class': 'form-control ', 'placeholder': 'Description'} }) }}
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td align="left" >{{ form_label(form.corps, "Message") }}</td>
+                <td width="85%">
+                  {%if form_errors(form.corps) %}
+                        <div class="col-xs-12 input-group has-error has-feedback">
+                   {% else %}
+                       <div class="col-xs-12 input-group">
+                       {% endif %}
+                       {{ form_widget(form.corps, { 'attr': {'rows':5,'class': 'form-control ', 'placeholder': 'corps'} }) }}
+                   </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+                   
+    <div class="hide">
+        {{ form_rest(form) }}
     </div>
+
+    <div  align="center">
+        <button type="submit" class="btn btn-primary">Envoyer la demande</button>
+    </div>
+    </form>      
 
 {% endblock content %}
     

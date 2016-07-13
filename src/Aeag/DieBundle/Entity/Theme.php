@@ -33,8 +33,12 @@ class Theme {
      * @assert\LessThan(150)
      */
     private $theme;
-    
     private $themeLibelle;
+
+    /**
+     * @ORM\Column(name="ordre", type="integer", length=2, nullable=true)
+     */
+    private $ordre;
 
     public function getId() {
         return $this->id;
@@ -54,6 +58,14 @@ class Theme {
 
     public function getThemeLibelle() {
         return $this->id . " : " . $this->theme;
+    }
+
+    function getOrdre() {
+        return $this->ordre;
+    }
+
+    function setOrdre($ordre) {
+        $this->ordre = $ordre;
     }
 
 }

@@ -43,16 +43,18 @@ security:
         ROLE_FRD: [ROLE_AEAG]
         ROLE_SQE: [ROLE_AEAG]
         ROLE_EDL: [ROLE_AEAG]
+        ROLE_DIE: [ROLE_AEAG]
         ROLE_COMMENTATEUREDL : [ROLE_EDL]
         ROLE_SUPERVISEUREDL : [ROLE_COMMENTATEUREDL]
         ROLE_ADMINDEC: [ROLE_ODEC]
         ROLE_ADMINFRD: [ROLE_FRD]
-        ROLE_ADMINSQE: [ROLE_PROGSQE]
+        ROLE_ADMINSQE: [ROLE_PROGSQE, ROLE_XHBIOSQE]
         ROLE_PROGSQE: [ ROLE_PRESTASQE]
         ROLE_PRESTASQE: [ROLE_SQE]
         ROLE_XHBIOSQE: [ROLE_SQE]
         ROLE_ADMINEDL:  [ROLE_SUPERVISEUREDL]       # On a dit que l'admin héritait des droits d'auteur et de modérateur
-        ROLE_ADMIN: [ROLE_ADMINDEC, ROLE_ADMINFRD, ROLE_ADMINSQE, ROLE_ADMINEDL]
+        ROLE_ADMINDIE:  [ROLE_DIE] 
+        ROLE_ADMIN: [ROLE_ADMINDEC, ROLE_ADMINFRD, ROLE_ADMINSQE, ROLE_ADMINEDL, ROLE_ADMINDIE]
         ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
 
 
@@ -87,6 +89,11 @@ security:
           # PAGES ACCESSIBLES AUX UTILISATEURS FRD
          - { path: ^/frd*, role: [ROLE_FRD] }
          
+         # PAGES ACCESSIBLES AUX ADMINISTRATEURS DIE
+         - { path: ^/admindie*, role: [ROLE_ADMINDIE] }
+         # PAGES ACCESSIBLES AUX UTILISATEURSDIE
+#         - { path: ^/die*, role: [ROLE_DIE] }
+         
          # PAGES ACCESSIBLES AUX ADMINISTRATEURS SQE
          - { path: ^/adminsqe*, role: [ROLE_ADMINSQE] }
           # PAGES ACCESSIBLES AUX UTILISATEURS SQE
@@ -97,8 +104,8 @@ security:
 
            # PAGES ACCESSIBLES À TOUS
          - { path: ^/aide*, role: IS_AUTHENTICATED_ANONYMOUSLY }
-         - { path: ^/die*, role: IS_AUTHENTICATED_ANONYMOUSLY }
          - { path: ^/avis*, role: IS_AUTHENTICATED_ANONYMOUSLY }
+         - { path: ^/die*, role: IS_AUTHENTICATED_ANONYMOUSLY }
          #- { path: ^/.*, role: IS_AUTHENTICATED_ANONYMOUSLY }
          #- { path: ^/*, role: IS_AUTHENTICATED_ANONYMOUSLY }
      

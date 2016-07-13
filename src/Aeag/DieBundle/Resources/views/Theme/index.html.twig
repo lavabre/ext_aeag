@@ -1,10 +1,32 @@
 {% extends "AeagDieBundle::layout.html.twig" %}
 
-{% block navbar %}{% endblock navbar %}
+{% block menu %}
+
+    <li><a href="{{ path('aeag_die') }}"><i class="fa fa-home"></i>&nbsp; Accueil</a></li>
+
+   {%if app.session.get('menu') == 'referentiel'%}
+    <li  class="active">
+    {% else %}
+    <li>
+    {%endif%}
+    <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+        {%if app.session.get('menu') == 'referentiel'%}<span class="selected"></span>{%endif%}
+        Référentiel
+        <i class="fa fa-angle-down"></i>     
+    </a>
+    <ul class="dropdown-menu">
+               <li><a href="{{ path('organisme') }}">Organismes</a></li>
+                <li><a href="{{ path('theme') }}">Thèmes</a></li>
+                <li><a href="{{ path('soustheme') }}">Formulaires</a></li>
+                <li><a href="{{ path('demande') }}">demandes</a></li>
+       </ul>
+</li>   
+
+{% endblock menu %}
 
 {% block breadcrumb %}
     <li>
-        <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+        <a href="{{ path('aeag_die') }}">Accueil</a> 
     </li>
      <li class="active">
         Thème
@@ -60,16 +82,20 @@
                         <tr>
                              <th width="5%">Actions</th>
                             <th class="th-text" nowrap>Id</th>
+                            <th  nowrap>N° ordre</th>
                             <th class="th-text" nowrap>Thème</th>
-                            <th class="th-text" nowrap>Sous thème</th>
+                            <th class="th-text" nowrap>Formulaire</th>
                         </tr>
                     </thead>
                     <tbody>
     {% set i = 1 %}
     {% for entity in entities %}
         <tr>
-           <td width="10%" class="text-center">
-                 {% if is_granted('ROLE_ADMIN') %}
+           <td width="10%" class="text-center" nowrap>
+                 {% if is_granted('ROLE_ADMINDIE') %}
+                             <a  class="btn btn-info" href="{{ path('theme_show', { 'id': entity.theme.id }) }}" title="Voir le thème">
+                                  <i class="fa fa-eye"></i> 
+                            </a>
                              <a  class="btn btn-warning" href="{{ path('theme_edit', { 'id': entity.theme.id }) }}" title="Modifier le thème">
                                 <i class="fa fa-edit"></i> 
                             </a>
@@ -78,11 +104,24 @@
                                         <i class="fa fa-trash-o"></i>
                                     </a>
                              {% endif %}
+                   {% else %}
+                            <a  class="btn btn-info" href="{{ path('theme_show', { 'id': entity.theme.id }) }}" title="Voir le thème">
+                                  <i class="fa fa-eye"></i> 
+                            </a>
                    {% endif %}
             </td>
             <td width="10%"><a href="{{ path('theme_edit', { 'id': entity.theme.id }) }}">{{ entity.theme.id }}</a></td>
+             <td width="5%">{{ entity.theme.ordre }}</td>
             <td width="70%">{{ entity.theme.theme }}</td>
-            <td width="10%" class="text-center">{{ entity.nbSousThemes }}</td>
+            <td width="10%" class="text-center">
+                {% if entity.sousTheme | length %}
+                    <a  class="btn btn-info" href="{{ path('soustheme_show', { 'id': entity.sousTheme.id }) }}" title="Voir le formulaire">
+                       <i class="fa fa-eye"></i> 
+                   </a>
+                {% else %}
+                 {{ entity.nbSousThemes }}
+               {% endif %}
+            </td>
         </tr>
      {% endfor %}
     </tbody>

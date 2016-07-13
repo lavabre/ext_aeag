@@ -34,7 +34,7 @@ class DemandeType extends AbstractType {
                     'empty_value' => '',
                     'query_builder' => function(\Doctrine\ORM\EntityRepository $er) {
                         $qb = $er->createQueryBuilder('d');
-                        return $qb->orderBy('d.theme', 'ASC');
+                        return $qb->orderBy('d.ordre', 'ASC');
                     },
                 ))
                 /* ->add('sousTheme', 'entity', array(

@@ -18,9 +18,7 @@ class PgProgTypeMilieu
      *
      * @ORM\Column(name="code_milieu", type="string", length=3, nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="SEQUENCE")
-     * @ORM\SequenceGenerator(sequenceName="pg_prog_type_milieu_code_milieu_seq", allocationSize=1, initialValue=1)
-     */
+      */
     private $codeMilieu;
 
     /**

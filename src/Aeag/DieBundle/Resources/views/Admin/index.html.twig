@@ -1,8 +1,30 @@
 {% extends 'AeagDieBundle::layout.html.twig' %}
 
-{% block navbar %}{% endblock navbar %}
+ {% block breadcrumb %}{% endblock breadcrumb %}
+ 
+{% block menu %}
 
-{% block breadcrumb %}{% endblock breadcrumb %}
+    <li><a href="{{ path('aeag_die') }}"><i class="fa fa-home"></i>&nbsp; Accueil</a></li>
+
+   {%if app.session.get('menu') == 'referentiel'%}
+    <li  class="active">
+    {% else %}
+    <li>
+    {%endif%}
+    <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+        {%if app.session.get('menu') == 'referentiel'%}<span class="selected"></span>{%endif%}
+        Référentiel
+        <i class="fa fa-angle-down"></i>     
+    </a>
+    <ul class="dropdown-menu">
+               <li><a href="{{ path('organisme') }}">Organismes</a></li>
+                <li><a href="{{ path('theme') }}">Thèmes</a></li>
+                <li><a href="{{ path('soustheme') }}">Formulaires</a></li>
+                <li><a href="{{ path('demande') }}">demandes</a></li>
+      </ul>
+</li>   
+
+{% endblock menu %}
 
 {%block panel_heading %}
     <h1>Administration du site</H1>
@@ -10,31 +32,34 @@
 
 {%block content %}
 
-<div class="col-xs-offset-4 col-xs-4 small">
+     <div class="row center">
+         <div class="col-xs-offset-4 col-xs-3 small">
+                <div class="list-group">
+                    <div class="text-center">
+                        <a class="list-group-item" href="{{ path('organisme') }}" title="Gestion des Organismes">
+                            <div class=" btn btn-info btn-lg"><i class="fa fa-institution"></i>  Gestion des Organismes</div>
+                        </a>
 
-<div class="list-group">
-        <a class="list-group-item" href="{{ path('organisme') }}" title="Gestion des Organismes">
-            <div class=" btn btn-info btn-lg"><i class="fa fa-institution"></i>  Gestion des Organismes</div>
-         </a>
-         <a class="list-group-item"  href="{{ path('theme') }}" title="Gestion des Thèmes">
-             <div class=" btn btn-info btn-lg"><i class="fa fa-cubes"></i>  Gestion des Thèmes</div>
-         </a>
-         <a class="list-group-item"  href="{{ path('soustheme') }}" title="Gestion des Sous-Thèmes">
-            <div class=" btn btn-info btn-lg"><i class="fa fa-cube"></i>  Gestion des Sous-Thèmes</div>
-         </a>
-         <a class="list-group-item"  href="{{ path('demande') }}" title="Gestion des Demandes">
-              <div class=" btn btn-info btn-lg"><i class="fa fa-question-circle"></i>  Gestion des Demandes</div>
-         </a>
-</div>
-            
-</div>     
+                        <a class="list-group-item center"  href="{{ path('theme') }}" title="Gestion des Thèmes">
+                            <div class=" btn btn-info btn-lg"><i class="fa fa-cubes"></i>  Gestion des Thèmes</div>
+                        </a>
+                        <a class="list-group-item center"  href="{{ path('soustheme') }}" title="Gestion des formulaires">
+                            <div class=" btn btn-info btn-lg"><i class="fa fa-cube"></i>  Gestion des Formulaires</div>
+                        </a>
+                        <a class="list-group-item center"  href="{{ path('demande') }}" title="Gestion des Demandes">
+                            <div class=" btn btn-info btn-lg"><i class="fa fa-question-circle"></i>  Gestion des Demandes</div>
+                        </a>
+                    </div>
+             </div>
+        </div>    
+     </div>
                    
-  <div class="form-actions fluid center">
-          <div class="col-md-offset-5 col-md-3">
-                  <a id="idValider" class="btn btn-primary"  href="{{ path('fos_user_security_logout') }}" title="Deconnexionr">
+  <div class="row center">
+      <div class="col-xs-offset-5 col-xs-3 small">
+                  <a id="idValider" class="btn btn-primary"  href="{{ path('fos_user_security_logout') }}" title="Deconnexion">
                           <i class="fa fa-home"> Deconnexion  </i>
                   </a>
-          </div>
+       </div>
   </div>                  
 
 

@@ -1,6 +1,28 @@
 {% extends 'AeagDieBundle::layout.html.twig' %}
 
-{% block navbar %}{% endblock navbar %}
+{% block menu %}
+
+    <li><a href="{{ path('aeag_die') }}"><i class="fa fa-home"></i>&nbsp; Accueil</a></li>
+
+   {%if app.session.get('menu') == 'referentiel'%}
+    <li  class="active">
+    {% else %}
+    <li>
+    {%endif%}
+    <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+        {%if app.session.get('menu') == 'referentiel'%}<span class="selected"></span>{%endif%}
+        Référentiel
+        <i class="fa fa-angle-down"></i>     
+    </a>
+    <ul class="dropdown-menu">
+               <li><a href="{{ path('organisme') }}">Organismes</a></li>
+                <li><a href="{{ path('theme') }}">Thèmes</a></li>
+                <li><a href="{{ path('soustheme') }}">Formulaires</a></li>
+                <li><a href="{{ path('demande') }}">demandes</a></li>
+      </ul>
+</li>   
+
+{% endblock menu %}
 
 {% block breadcrumb %}
     <li>
@@ -63,6 +85,7 @@
                             <th>Prénom&nbsp;</th>
                             <th>Email&nbsp;</th>
                             <th>Organisme&nbsp;</th>
+                             <th>Thème&nbsp;</th>
                             <th>Objet&nbsp;</th>
                             <th nowrap>Date création&nbsp;</th>
                             <th nowrap>Date écheance&nbsp;</th>
@@ -71,14 +94,21 @@
                 <tbody>
                     {% for entity in entities %}
                         <tr>
-                             <td nowrap class="texte-center">
-                                  {% if is_granted('ROLE_ADMIN') %}
+                             <td nowrap class="texte-center" nowrap>
+                                  {% if is_granted('ROLE_ADMINDIE') %}
+                                             <a  class="btn btn-info" href="{{ path('demande_show', { 'id': entity.id }) }}" title="Voir la demande">
+                                                    <i class="fa fa-eye"></i> 
+                                             </a>
                                              <a  class="btn btn-warning" href="{{ path('demande_edit', { 'id': entity.id }) }}" title="Modifier la demande">
                                                 <i class="fa fa-edit"></i> 
                                             </a>
                                             <a class="btn btn-danger" data-toggle="modal" href="#sup-{{ entity.id }}" title="Supprimer la demande">
                                                 <i class="fa fa-trash-o"></i>
                                             </a>
+                                   {% else %}
+                                        <a  class="btn btn-info" href="{{ path('demande_show', { 'id': entity.id }) }}" title="Voir la demande">
+                                                <i class="fa fa-eye"></i> 
+                                        </a>
                                    {% endif %}
                             </td>
                             <td><a href="{{ path('demande_edit', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
@@ -86,6 +116,7 @@
                             <td>{{ entity.prenom }}&nbsp;</td>
                             <td>{{ entity.email }}&nbsp;</td>
                             <td>{{ entity.organisme }}&nbsp;</td>
+                            <td>{{ entity.theme }}&nbsp;</td>
                             <td>{{ entity.objet }}&nbsp;</td>
                              <td nowrap>
                                  {% if entity.dateCreation %}

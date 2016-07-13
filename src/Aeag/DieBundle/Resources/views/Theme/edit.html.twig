@@ -33,7 +33,18 @@
                             {% endfor %}
                         </div>
                 {% endif %}
-          {% endspaceless %}              
+          {% endspaceless %}      
+          
+          <div class="form-group">
+            <label for="ordre" class="col-xs-offset-2 col-xs-2 control-label">N° ordre</label>
+            {%if form_errors(form.ordre) %}
+                <div class="col-xs-3 input-group has-error has-feedback">
+            {% else %}
+                 <div class="col-xs-3 input-group">
+             {% endif %}
+               {{ form_widget(form.ordre, { 'attr': {'class': 'form-control ', 'placeholder': 'N° ordre'} }) }}
+             </div>
+         </div> 
     
             <div class="form-group">
             <label for="ordre" class="col-xs-offset-2 col-xs-2 control-label">Thème</label>

@@ -1,13 +1,35 @@
 {% extends "AeagDieBundle::layout.html.twig" %}
 
-{% block navbar %}{% endblock navbar %}
+{% block menu %}
+
+    <li><a href="{{ path('aeag_die') }}"><i class="fa fa-home"></i>&nbsp; Accueil</a></li>
+
+   {%if app.session.get('menu') == 'referentiel'%}
+    <li  class="active">
+    {% else %}
+    <li>
+    {%endif%}
+    <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+        {%if app.session.get('menu') == 'referentiel'%}<span class="selected"></span>{%endif%}
+        Référentiel
+        <i class="fa fa-angle-down"></i>     
+    </a>
+    <ul class="dropdown-menu">
+               <li><a href="{{ path('organisme') }}">Organismes</a></li>
+                <li><a href="{{ path('theme') }}">Thèmes</a></li>
+                <li><a href="{{ path('soustheme') }}">Formulaires</a></li>
+                <li><a href="{{ path('demande') }}">demandes</a></li>
+     </ul>
+</li>   
+
+{% endblock menu %}
 
 {% block breadcrumb %}
     <li>
         <a href="{{ path('aeag_homepage') }}">Accueil</a> 
     </li>
     <li class="active">
-        Sous thème
+        Formulaire
     </li>
 {% endblock breadcrumb %} 
 
@@ -18,12 +40,12 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <h4 class="modal-title" id="supLabel-{{ entity.id }}">Suppression du sous thème   {{ entity.soustheme }}   </h4>
+                        <h4 class="modal-title" id="supLabel-{{ entity.id }}">Suppression du formulaire   {{ entity.soustheme }}   </h4>
                     </div>
                     <div class="modal-body">
-                        <h4>Cliquer sur la corbeille pour valider la suppression du sousthème {{ entity.soustheme }}</h4>
+                        <h4>Cliquer sur la corbeille pour valider la suppression du formulaire {{ entity.soustheme }}</h4>
                         <br/><br/>
-                        <div class="alert alert-danger">Attention : Une fois supprimée, le sous thème sera supprimé définitivement</div>
+                        <div class="alert alert-danger">Attention : Une fois supprimée, le formulaire sera supprimé définitivement</div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
@@ -38,15 +60,15 @@
 {% endblock modal %}
 
 {%block panel_heading %}
-    <h1>Administration des sous-thèmes</H1>
+    <h1>Administration des formulaires</H1>
     {%endblock panel_heading %}
 
 {%block content %}
 
     <div class="row">
         <div class="col-md-7">
-            <a  class="btn btn-success"  href="{{ path('soustheme_new') }}" title="Nouveau sous thème">
-                <i class="fa fa-plus"> Nouveau sous thème</i> 
+            <a  class="btn btn-success"  href="{{ path('soustheme_new') }}" title="Nouveau formulaire">
+                <i class="fa fa-plus"> Nouveau formulaire</i> 
             </a>
         </div>
     </div>
@@ -60,7 +82,7 @@
                             <th width="5%">Actions</th>
                             <th class="th-text" nowrap>Id</th>
                             <th class="th-text" nowrap>Thème</th>
-                            <th class="th-text" nowrap>Sous thème</th>
+                            <th class="th-text" nowrap>Formulaire</th>
                             <th class="th-text" nowrap>Destinataire</th>
                             <th class="th-text" nowrap>Objet</th>
                         </tr>
@@ -69,13 +91,20 @@
                         {% set i = 1 %}
                         {% for entity in entities %}
                             <tr>
-                                <td width="10%" class="text-center">
-                                    {% if is_granted('ROLE_ADMIN') %}
-                                        <a  class="btn btn-warning" href="{{ path('soustheme_edit', { 'id': entity.id }) }}" title="Modifier le sous thème">
+                                <td width="10%" class="text-center" nowrap>
+                                    {% if is_granted('ROLE_ADMINDIE') %}
+                                        <a  class="btn btn-info" href="{{ path('soustheme_show', { 'id': entity.id }) }}" title="Voir le formulaire">
+                                            <i class="fa fa-eye"></i> 
+                                      </a>
+                                        <a  class="btn btn-warning" href="{{ path('soustheme_edit', { 'id': entity.id }) }}" title="Modifier le formulaire">
                                             <i class="fa fa-edit"></i> 
                                         </a>
-                                        <a class="btn btn-danger" data-toggle="modal" href="#sup-{{ entity.id }}" title="Supprimer le sous thème">
+                                        <a class="btn btn-danger" data-toggle="modal" href="#sup-{{ entity.id }}" title="Supprimer le formulaire">
                                             <i class="fa fa-trash-o"></i>
+                                        </a>
+                                    {% else %}
+                                        <a  class="btn btn-info" href="{{ path('soustheme_show', { 'id': entity.id }) }}" title="Voir le formulaire">
+                                            <i class="fa fa-eye"></i> 
                                         </a>
                                     {%  endif  %}
                                 </td>

@@ -18,9 +18,15 @@ aeag_sqe:
     resource: "@AeagSqeBundle/Resources/config/routing.yml"
     prefix:   /sqe
     
-AeagDieBundle:
+Aeag_die:
     resource: "@AeagDieBundle/Resources/config/routing.yml"
     prefix:   /die
+    
+
+    
+Aeag_dies:
+    resource: "@AeagDieBundle/Resources/config/routing/dies.yml"
+    prefix:   /dies
     
 aeag_edl:
     resource: "@AeagEdlBundle/Resources/config/routing.yml"

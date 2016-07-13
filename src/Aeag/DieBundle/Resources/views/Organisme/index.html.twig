@@ -1,10 +1,32 @@
 {% extends 'AeagDieBundle::layout.html.twig' %}
 
-{% block navbar %}{% endblock navbar %}
+{% block menu %}
+
+    <li><a href="{{ path('aeag_die') }}"><i class="fa fa-home"></i>&nbsp; Accueil</a></li>
+
+   {%if app.session.get('menu') == 'referentiel'%}
+    <li  class="active">
+    {% else %}
+    <li>
+    {%endif%}
+    <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+        {%if app.session.get('menu') == 'referentiel'%}<span class="selected"></span>{%endif%}
+        Référentiel
+        <i class="fa fa-angle-down"></i>     
+    </a>
+    <ul class="dropdown-menu">
+               <li><a href="{{ path('organisme') }}">Organismes</a></li>
+                <li><a href="{{ path('theme') }}">Thèmes</a></li>
+                <li><a href="{{ path('soustheme') }}">Formulaires</a></li>
+                <li><a href="{{ path('demande') }}">demandes</a></li>
+      </ul>
+</li>   
+
+{% endblock menu %}
 
 {% block breadcrumb %}
     <li>
-        <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+        <a href="{{ path('aeag_die') }}">Accueil</a> 
     </li>
      <li class="active">
         Organisme
@@ -66,13 +88,20 @@
                     <tbody>
                     {% for entity in entities %}
                        <tr>
-                             <td width="10%" align="right">
-                                 {% if is_granted('ROLE_ADMIN') %}
+                             <td width="10%" align="right" nowrap>
+                                 {% if is_granted('ROLE_ADMINDIE') %}
+                                           <a  class="btn btn-info" href="{{ path('organisme_show', { 'id': entity.id }) }}" title="Voir l'organisme">
+                                               <i class="fa fa-eye"></i> 
+                                           </a>
                                             <a  class="btn btn-warning" href="{{ path('organisme_edit', { 'id': entity.id }) }}" title="Modifier l'organisme">
                                                <i class="fa fa-edit"></i> 
                                            </a>
                                            <a class="btn btn-danger" data-toggle="modal" href="#sup-{{ entity.id }}" title="Supprimer l'organisme">
                                                <i class="fa fa-trash-o"></i>
+                                           </a>
+                                  {% else %}
+                                            <a  class="btn btn-info" href="{{ path('organisme_show', { 'id': entity.id }) }}" title="Voir l'organisme">
+                                               <i class="fa fa-eye"></i> 
                                            </a>
                                   {% endif %}
                            </td>

@@ -1,57 +1,136 @@
-<h1>Demande</h1>
+{% extends "AeagDieBundle::layout.html.twig" %}
 
-<table class="record_properties">
-    <tbody>
-        <tr>
-            <th>Id</th>
-            <td>{{ entity.id }}</td>
-        </tr>
-        <tr>
-            <th>Nom</th>
-            <td>{{ entity.nom }}</td>
-        </tr>
-        <tr>
-            <th>Prenom</th>
-            <td>{{ entity.prenom }}</td>
-        </tr>
-        <tr>
-            <th>Email</th>
-            <td>{{ entity.email }}</td>
-        </tr>
-        <tr>
-            <th>Objet</th>
-            <td>{{ entity.objet }}</td>
-        </tr>
-        <tr>
-            <th>Corps</th>
-            <td>{{ entity.corps }}</td>
-        </tr>
-        <tr>
-            <th>Datecreation</th>
-            <td>{{ entity.dateCreation|date('Y-m-d H:i:s') }}</td>
-        </tr>
-        <tr>
-            <th>Dateecheance</th>
-            <td>{{ entity.dateEcheance|date('Y-m-d H:i:s') }}</td>
-        </tr>
-    </tbody>
-</table>
+{% block breadcrumb %}
+    <li>
+        <a href="{{ path('aeag_die') }}">Accueil</a> 
+    </li>
+    <li>
+        <a href="{{ path('demande') }}">Demande</a> 
+    </li>
+    <li class="active">
+        {{ entity.id }}
+    </li>
+{% endblock breadcrumb %} 
 
-<ul class="record_actions">
-    <li>
-        <a href="{{ path('demande') }}">
-            Back to the list
-        </a>
-    </li>
-    <li>
-        <a href="{{ path('demande_edit', { 'id': entity.id }) }}">
-            Edit
-        </a>
-    </li>
-    <li>
-        <form action="{{ path('demande_delete', { 'id': entity.id }) }}" method="post">
-            {{ form_widget(delete_form) }}
-            <button type="submit">Delete</button>
-        </form>
-    </li>
-</ul>
+{%block panel_heading %}
+    <h3 class="page-title text-center">
+        Demande : {{ entity.id }}
+    </h3>
+{%endblock panel_heading %}
+
+
+{% block content %}
+
+    <table class="table  table-striped table-condensed table-responsive" cellspacing="0" width="580px" align="center">
+
+        <caption><h5 class="alertDie alert-info" align="center">Informations personnelles </h5></caption>
+        <tbody>
+            <tr>
+
+                <td align="left" width="15%">Nom</td>
+                <td width="85%">
+                    <div class="col-xs-12 input-group">
+                        {{ entity.nom }}
+                    </div>
+                </td>
+
+            </tr>
+            <tr>
+
+                <td  align="left" width="15%" >Prénom</td>
+                <td width="85%">
+                    <div class="col-xs-12 input-group">
+                        {{ entity.prenom }}
+                    </div>
+                </td>
+            </tr>
+
+            <tr>
+
+                <td align="left"  width="15%">Organisme</td>
+                <td width="85%">
+                    <div class="col-xs-12 input-group">
+                        {{ entity.organisme }}
+                    </div>
+                </td>
+            </tr>
+            <tr>
+
+                <td align="left"  width="15%">Département</td>
+                <td width="85%">
+                    <div class="col-xs-12 input-group">
+                        {{ entity.dept }}
+                    </div>
+                </td>
+            </tr>
+            <tr>
+
+                <td align="left"  width="15%">Courriel</td>
+                <td width="85%">
+                    <div class="col-xs-12 input-group">
+                        {{ entity.email }}
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table class="table  table-striped table-condensed table-responsive" cellspacing="0" width="580px" align="center">
+
+        <caption><h5 class="alertDie alert-info" align="center">Message</h5></caption>
+        <tbody>
+            <tr>
+                <td align="left" width="15%">thème</td>
+                <td width="85%">
+                    <div class="col-xs-12 input-group">
+                        {{ entity.theme }}
+                    </div>
+                </td>
+            </tr>
+            <tr>
+
+                <td align="left">Objet</td>
+                <td width="85%">
+                    <div class="col-xs-12 input-group">
+                        {{ entity.objet }}
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td align="left" >Corps</td>
+                <td width="85%">
+                    <div class="col-xs-12 input-group">
+                        {{ entity.corps | nl2br }}
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td align="left" >Date création</td>
+                <td width="85%">
+                    <div class="col-xs-12 input-group">
+                        {{ entity.dateCreation|date('Y-m-d') }}
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td align="left" >Date échéance</td>
+                <td width="85%">
+                    <div class="col-xs-12 input-group">
+                        {{ entity.dateEcheance|date('Y-m-d') }}
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+</div>
+
+
+<div class="form-group">
+    <div class="col-xs-offset-4 col-xs-7">
+        <a class="btn btn-primary" href="{{ path('demande') }}"><i class="fa fa-power-off"></i> Retour</a>
+    </div>
+</div>
+
+{% endblock content %}
+
