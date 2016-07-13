@@ -1146,8 +1146,8 @@ class SuiviHydrobioController extends Controller {
                                 for ($i = 0; $i < count($autrePgCmdPrelevs); $i++) {
                                     $autreSuport = $autrePgCmdPrelevs[$i]['codeSupport'];
                                     if (( $autreSuport == '4' && $autreSuport == '69') ||
-                                        ($prelev->getCodeSupport()->getCodeSupport() == '69' && $autreSuport != '4') ||
-                                        ($prelev->getCodeSupport()->getCodeSupport() == '4' && $autreSuport != '69')){
+                                            ($prelev->getCodeSupport()->getCodeSupport() == '69' && $autreSuport != '4') ||
+                                            ($prelev->getCodeSupport()->getCodeSupport() == '4' && $autreSuport != '69')) {
                                         $autreDateDebut = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
                                         $autreDateDebut->sub(new \DateInterval('P7D'));
                                         $autreDateFin = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
@@ -1557,8 +1557,9 @@ class SuiviHydrobioController extends Controller {
                 $autrePgCmdPrelevs = $repoPgCmdPrelev->getAutrePrelevs($pgCmdPrelev);
                 for ($i = 0; $i < count($autrePgCmdPrelevs); $i++) {
                     $autreSuport = $autrePgCmdPrelevs[$i]['codeSupport'];
-                    if (($autreSuport != '10' && $autreSuport != '11') ||
-                            ($pgCmdPrelev->getCodeSupport()->getCodeSupport() == '69' && $autreSuport != '4')) {
+                    if (( $autreSuport == '4' && $autreSuport == '69') ||
+                            ($pgCmdPrelev->getCodeSupport()->getCodeSupport() == '69' && $autreSuport != '4') ||
+                            ($pgCmdPrelev->getCodeSupport()->getCodeSupport() == '4' && $autreSuport != '69')) {
                         $autreDateDebut = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
                         $autreDateDebut->sub(new \DateInterval('P7D'));
                         $autreDateFin = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
@@ -1904,12 +1905,12 @@ class SuiviHydrobioController extends Controller {
 
         $session->getFlashBag()->add('notice-success', 'le suivi du prélèvement du   : ' . $datePrel->format('d/m/Y') . ' a été supprimé !');
 
-        return $this->redirect($this->generateUrl('AeagSqeBundle_suiviHydrobio_lot_periode_stations', array('stationId' => $pgCmdPrelev->getStation()->getOuvFoncId(),
-                            'periodeAnId' => $periodeAnId)));
+//        return $this->redirect($this->generateUrl('AeagSqeBundle_suiviHydrobio_lot_periode_stations', array('stationId' => $pgCmdPrelev->getStation()->getOuvFoncId(),
+//                            'periodeAnId' => $periodeAnId)));
 
 
 //          \Symfony\Component\VarDumper\VarDumper::dump($tabDemande);
-//        return new Response ('');
+        return new Response ('');
     }
 
     public function lotPeriodeStationDemandeSuiviFichierDeposerAction($stationId = null, $suiviPrelId = null, $periodeAnId = null) {
@@ -2172,7 +2173,7 @@ class SuiviHydrobioController extends Controller {
                         $nbSupport = count($tabSupport);
                         $tabSupport[$nbSupport] = $pgCmdPrelev->getCodeSupport()->getCodeSupport();
                     }
-                    if (($pgCmdSuiviPrel->getStatutPrel() == 'N') or ( $pgCmdSuiviPrel->getStatutPrel() == 'F')  or ( $pgCmdSuiviPrel->getStatutPrel() == 'R')) {
+                    if (($pgCmdSuiviPrel->getStatutPrel() == 'N') or ( $pgCmdSuiviPrel->getStatutPrel() == 'F') or ( $pgCmdSuiviPrel->getStatutPrel() == 'R')) {
                         if ($pgCmdSuiviPrel->getFichierRps()) {
                             $pgCmdFichiersRps = $pgCmdSuiviPrel->getFichierRps();
                             $emSqe->remove($pgCmdFichiersRps);
@@ -2232,7 +2233,7 @@ class SuiviHydrobioController extends Controller {
             fclose($rapport);
         }
 
-         if ($erreur == 0) {
+        if ($erreur == 0) {
             $objetMessage = "fichier terrrain déposé ";
             $txtMessage = "Un ou plusieurs fichiers terrain ont été déposés sur le lot " . $pgProgLot->getNomLot() . " pour la période du " . $pgProgPeriode->getDateDeb()->format('d/m/Y') . " au " . $dateFin->format('d/m/Y');
             $mailer = $this->get('mailer');
@@ -2297,7 +2298,7 @@ class SuiviHydrobioController extends Controller {
                 $em->flush();
             }
         }
-        
+
         $tabRapport[$nbRapport] = "Nombre de fichiers intégrés : " . $nbCorrect;
         $nbRapport++;
         $tabRapport[$nbRapport] = "Nombre de fichiers incorrects : " . $nbIncorrect;
@@ -2561,12 +2562,14 @@ class SuiviHydrobioController extends Controller {
         $session->set('fonction', 'syntheseSupportStation');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
+        $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
         $repoPgSandreSupport = $emSqe->getRepository('AeagSqeBundle:PgSandreSupports');
         $repoPgRefStationMesure = $emSqe->getRepository('AeagSqeBundle:PgRefStationMesure');
         $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
         $repoPgRefReseauMesure = $emSqe->getRepository('AeagSqeBundle:PgRefReseauMesure');
         $repoPgProgLotStationAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotStationAn');
 
+        $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgSandreSupport = $repoPgSandreSupport->getPgSandreSupportsByCodeSupport($codeSupport);
         $pgRefStationMesure = $repoPgRefStationMesure->getPgRefStationMesureByOuvFoncId($stationId);
         $pgCmdSuiviPrel = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelById($suiviPrelId);
@@ -2593,15 +2596,36 @@ class SuiviHydrobioController extends Controller {
         $form->handleRequest($request);
 
         if ($form->isValid()) {
+            $date = date("d/m/Y");
+            $heure = date("H:i");
             $avis = $_POST['avis'];
-            if ($avis == 'D') {
-                if ($pgCmdSuiviPrelActuel->getCommentaire()) {
-                    $commentaire = $pgCmdSuiviPrelActuel->getCommentaire() . CHR(13) . CHR(10) . $_POST['commentaire'];
+            if ($pgCmdSuiviPrelActuel->getCommentaire()) {
+                $commentaire = $pgCmdSuiviPrelActuel->getCommentaire() . CHR(13) . CHR(10);
+                $commentaire .= 'Déposé le ' . $date . ' à ' . $heure . ' par ' . $pgProgWebUser->getnom();
+                if ($_POST['commentaire'] != '') {
+                    $commentaire .= ' : ' . CHR(13) . CHR(10);
+                    $commentaire .= '      ' . $_POST['commentaire'];
                 } else {
-                    $commentaire = $_POST['commentaire'];
+                    if ($avis == 'F') {
+                        $commentaire .= ' : Favorable';
+                    } else {
+                        $commentaire .= ' : Défavorable';
+                    }
                 }
-                $pgCmdSuiviPrel->setCommentaire($commentaire);
+            } else {
+                $commentaire = 'Déposé le ' . $date . ' à ' . $heure . ' par ' . $pgProgWebUser->getnom();
+                if ($_POST['commentaire'] != '') {
+                    $commentaire .= ' : ' . CHR(13) . CHR(10);
+                    $commentaire .= '      ' . $_POST['commentaire'];
+                } else {
+                    if ($avis == 'F') {
+                        $commentaire .= ' : Favorable';
+                    } else {
+                        $commentaire .= ' : Défavorable';
+                    }
+                }
             }
+            $pgCmdSuiviPrel->setCommentaire($commentaire);
             $pgCmdSuiviPrel->setAvis($avis);
             $emSqe->persist($pgCmdSuiviPrel);
             $emSqe->flush();

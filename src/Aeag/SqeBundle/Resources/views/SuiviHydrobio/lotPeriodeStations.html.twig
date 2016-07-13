@@ -168,7 +168,7 @@
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
-                                        <a  id="idSupprimerGroupe"  class="btn btn-danger"  href="{{ path('AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_supprimer', { 'suiviPrelId': cmdPrelev.suiviPrels.0.suiviPrel.id, 'periodeAnId': periodeAn.id }) }}" title="Supprimer">
+                                        <a  id="idSup-{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}"  class="btn btn-danger"  href="#" title="Supprimer">
                                             <i class="fa fa-trash-o"> Supprimer</i>
                                         </a>
                                     </div>
@@ -498,6 +498,26 @@
                         }
                         });
                         });
+                        
+                        $(document).on('click','#idSup-{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}',function(e){
+                                e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                                $('#sup-{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}').hide();
+                                 var url = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_supprimer",{"suiviPrelId":  "par1", "periodeAnId": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                 url = url.replace("par1", {{ cmdPrelev.suiviPrels.0.suiviPrel.id }});
+                                 url = url.replace("par2", {{ periodeAn.id }});
+                                url = url.replace("amp;","");
+                                $.ajax({
+                                url: url,
+                                type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+                                success: function(html) { // Je récupère la réponse du fichier PHP
+                                          var url1 = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_stations",{"periodeAnId": "par1"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                          url1 = url1.replace("par1", {{ periodeAn.id }});
+                                          url1 = url1.replace("amp;", "");
+                                          window.location.replace(url1);
+                                         $('#modalTraitementEncours').modal('toggle');
+                                     }
+                                });
+                             });
 
                         $(document).on('click','#idDeposerSuivi{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}',function(e){
                         e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire

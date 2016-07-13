@@ -196,6 +196,7 @@ class SaisieDonneesController extends Controller {
         $repoPgCmdAnalyse = $emSqe->getRepository('AeagSqeBundle:PgCmdAnalyse');
         $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
         $repoPgProgLotGrparAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotGrparAn');
+        $repoPgRefStationMesure = $emSqe->getRepository('AeagSqeBundle:PgRefStationMesure');
 
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
 
@@ -240,11 +241,15 @@ class SaisieDonneesController extends Controller {
                 }
             }
             if (!$trouve) {
-                $tabStations[$i] = $pgProgLotPeriodeProg->getStationAn()->getStation();
+                $pgRefStationMesure = $repoPgRefStationMesure->getPgRefStationMesureByOuvFoncId($pgProgLotPeriodeProg->getStationAn()->getStation()->getOuvFoncId());
+                $tabStations[$i] = $pgRefStationMesure;
                 $i++;
             }
         }
         asort($tabStations);
+        
+//          \Symfony\Component\VarDumper\VarDumper::dump($tabStations);
+//          return new Response ('');
 
         $chemin = '/base/extranet/Transfert/Sqe/csv';
         $fichier = 'Saisie-des-donnees-periode-' . $pgProgLotPeriodeAn->getId() . '-' . $pgProgLotPeriodeAn->getPeriode()->getTypePeriode()->getCodeTypePeriode() . '-' . $pgProgLotPeriodeAn->getPeriode()->getNumPeriode() . '.csv';
@@ -269,8 +274,12 @@ class SaisieDonneesController extends Controller {
 
         for ($i = 0; $i < count($tabStations); $i++) {
             $station = $tabStations[$i];
-            $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($pgCmdDemande->getPrestataire(), $pgCmdDemande, $station, $pgProgLotPeriodeAn->getPeriode());
+            //$pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($pgCmdDemande->getPrestataire(), $pgCmdDemande, $station, $pgProgLotPeriodeAn->getPeriode());
+            $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByDemandeStationPeriode($pgCmdDemande, $station, $pgProgLotPeriodeAn->getPeriode());
             asort($pgCmdPrelevs);
+//            echo('prestataire : ' . $pgCmdDemande->getPrestataire()->getAdrCorid() . ' demande : ' .  $pgCmdDemande->getId() . ' station : ' . $station->getOuvFoncid() . ' periode : ' . $pgProgLotPeriodeAn->getPeriode()->getid() );
+//            \Symfony\Component\VarDumper\VarDumper::dump($pgCmdPrelevs);
+//            return new Response ('');
             $fichierRps = null;
             $donneesBrutes = array();
             foreach ($pgCmdPrelevs as $pgCmdPrelev) {
