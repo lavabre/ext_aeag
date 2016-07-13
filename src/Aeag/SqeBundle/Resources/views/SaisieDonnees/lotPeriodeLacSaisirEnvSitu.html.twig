@@ -133,28 +133,44 @@
                     </div>
 
                     {% if autreDemandes | length %}
-                        <div class="form-group form-inline">
-                            <label class="col-md-offset-3 col-xs-2 control-label">Analyse</label>
-                            <label class="col-xs-2 control-label">Support</label>
-                            <label class="col-xs-2 control-label">Profondeur (m)</label>
-                        </div>
-                        {% for autreDemande in autreDemandes %}
+                        <div class="row">
+                            <div class="col-md-offset-3 col-xs-5">
+                         <table class="table table-bordered table-condensed">
+                             <thead>
+                                    <th>Non réalisé</th>
+                                    <th>Analyse</th>
+                                    <th>Support</th>
+                                    <th>Profondeur (m)</th>
+                         </thead>
+                         <tbody>
+                      {% for autreDemande in autreDemandes %}
                             {% for autrePrelev  in  autreDemande.prelevs %}
-                                <div class="form-group form-inline">
-                                    <div class="col-md-offset-3 col-xs-2  input-group">
+                                <tr>
+                                    <td>
+                                        <div class="checkbox">
+                                            <label>
+                                              <input type="checkbox" id="nonRealise_{{ autrePrelev.prelevPc.zoneVerticale.codeZone }}_{{ autrePrelev.prelev.codeSupport.codeSupport }}" name="nonRealise_{{ autrePrelev.prelevPc.zoneVerticale.codeZone }}_{{ autrePrelev.prelev.codeSupport.codeSupport }}"   class="form-control" placeholder="Non réalisé" value="N">
+                                            </label>
+                                       </div>
+                                    </td>
+                                    <td>
                                         {{ autrePrelev.prelevPc.zoneVerticale.nomZone }}
-                                    </div>
-                                    <div class="col-xs-2  input-group">
-                                        {% if autrePrelev.prelev.codeSupport %}
+                                    </td>
+                                    <td>
+                                         {% if autrePrelev.prelev.codeSupport %}
                                             {{ autrePrelev.prelev.codeSupport.nomSupport }}
                                         {% endif %}
-                                    </div>
-                                    <div class="col-xs-2  input-group">
-                                        <input type="text" id="profAna_{{ autrePrelev.prelevPc.zoneVerticale.codeZone }}_{{ autrePrelev.prelev.codeSupport.codeSupport }}" name="profAna_{{ autrePrelev.prelevPc.zoneVerticale.codeZone }}_{{ autrePrelev.prelev.codeSupport.codeSupport }}" required="false" class="form-control number text-right" placeholder="Profondeur de l'analyse" value="{{ autrePrelev.prelevPc.profondeur  }}">
-                                    </div>
-                                </div>
-                            {% endfor %}
-                        {% endfor %}
+                                    </td>
+                                    <td>
+                                         <input type="text" id="profAna_{{ autrePrelev.prelevPc.zoneVerticale.codeZone }}_{{ autrePrelev.prelev.codeSupport.codeSupport }}" name="profAna_{{ autrePrelev.prelevPc.zoneVerticale.codeZone }}_{{ autrePrelev.prelev.codeSupport.codeSupport }}" required="required" class="form-control  number text-right" placeholder="Profondeur de l'analyse" value="{{ autrePrelev.prelevPc.profondeur  }}">
+                                    </td>
+                                </tr>
+                              {% endfor %}
+                         {% endfor %}
+                                      </tbody>
+                                  </table>
+                              </div>
+                        </div>
                     {% endif %}
 
                     {% set groupeSelectionne = null %}
@@ -612,6 +628,28 @@
                                                     jQuery(document).ready(function() {
 
 
+                                                    {% for autreDemande in autreDemandes %}
+                                                          {% for autrePrelev  in  autreDemande.prelevs %}
+                                                              if ($("#profAna_{{ autrePrelev.prelevPc.zoneVerticale.codeZone }}_{{ autrePrelev.prelev.codeSupport.codeSupport }}").val() == ""){
+                                                                  $('#nonRealise_{{ autrePrelev.prelevPc.zoneVerticale.codeZone }}_{{ autrePrelev.prelev.codeSupport.codeSupport }}').selected(true);
+                                                                  $("#profAna_{{ autrePrelev.prelevPc.zoneVerticale.codeZone }}_{{ autrePrelev.prelev.codeSupport.codeSupport }}").removeAttr("required");
+                                                                  $("#profAna_{{ autrePrelev.prelevPc.zoneVerticale.codeZone }}_{{ autrePrelev.prelev.codeSupport.codeSupport }}").removeAttr( "aria-required" );
+                                                              }
+
+                                                               $(document).on('click','#nonRealise_{{ autrePrelev.prelevPc.zoneVerticale.codeZone }}_{{ autrePrelev.prelev.codeSupport.codeSupport }}',function(e){
+                                                               if ($('#nonRealise_{{ autrePrelev.prelevPc.zoneVerticale.codeZone }}_{{ autrePrelev.prelev.codeSupport.codeSupport }}').val() == 'N'){
+                                                                   $('#nonRealise_{{ autrePrelev.prelevPc.zoneVerticale.codeZone }}_{{ autrePrelev.prelev.codeSupport.codeSupport }}').val('O');
+                                                                   $("#profAna_{{ autrePrelev.prelevPc.zoneVerticale.codeZone }}_{{ autrePrelev.prelev.codeSupport.codeSupport }}").removeAttr("required");
+                                                                   $("#profAna_{{ autrePrelev.prelevPc.zoneVerticale.codeZone }}_{{ autrePrelev.prelev.codeSupport.codeSupport }}").removeAttr( "aria-required" );
+                                                                   }else{
+                                                                   $('#nonRealise_{{ autrePrelev.prelevPc.zoneVerticale.codeZone }}_{{ autrePrelev.prelev.codeSupport.codeSupport }}').val('N');
+                                                                   $("#profAna_{{ autrePrelev.prelevPc.zoneVerticale.codeZone }}_{{ autrePrelev.prelev.codeSupport.codeSupport }}").attr("required", "true");
+                                                                    $("#profAna_{{ autrePrelev.prelevPc.zoneVerticale.codeZone }}_{{ autrePrelev.prelev.codeSupport.codeSupport }}").attr( "aria-required", "true" );
+                                                                   }
+                                                                });
+                                                          {% endfor %}
+                                                    {% endfor %}
+                                                    
                                                     $(document).on('click','#idCommentaire{{ cmdPrelev.id }}',function(e){
                                                     e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
                                                     $('#modal-commentaire').modal('toggle');
