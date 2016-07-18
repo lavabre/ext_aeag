@@ -1077,3 +1077,11 @@ h3 {
     margin-left: 0px;
     margin-right: 0px;
 }
+
+.modal-body {
+    padding: 15px;
+    position: relative;
+    max-height: calc(100vh - 210px);
+    overflow-y: auto;
+   
+}
