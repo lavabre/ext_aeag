@@ -288,6 +288,7 @@ class SuiviHydrobioController extends Controller {
 //                                    }
                                 }
                                 $nbSuiviPrels++;
+                                break;
                             }
                         }
                         if (count($tabSuiviPrels) > 0) {
@@ -1715,7 +1716,7 @@ class SuiviHydrobioController extends Controller {
                 }
                 $emSqe->persist($pgCmdPrelev);
                 $emSqe->flush();
-                $session->getFlashBag()->add('notice-success', 'le suivi du ' . $datePrel->format('d/m/Y') . ' a été créé !');
+                $session->getFlashBag()->add('notice-success', 'le suivi du ' . $datePrel->format('d/m/Y') . ' a été créé sur la station : ' . $pgCmdPrelev->getStation()->getCode() . ' !');
                 if ($nbMessages == 0) {
                     $contenu = 'ok ';
                     $tabMessage[$nbMessages][0] = $contenu;
@@ -1793,7 +1794,7 @@ class SuiviHydrobioController extends Controller {
             }
             $emSqe->persist($pgCmdPrelev);
             $emSqe->flush();
-            $session->getFlashBag()->add('notice-success', 'le suivi du ' . $datePrel->format('d/m/Y') . ' a été modifié !');
+            $session->getFlashBag()->add('notice-success', 'le suivi du ' . $datePrel->format('d/m/Y') . ' a été modifié sur la station : ' . $pgCmdPrelev->getStation()->getCode() . ' !');
 
             return $this->redirect($this->generateUrl('AeagSqeBundle_suiviHydrobio_lot_periode_stations', array('stationId' => $pgCmdPrelev->getStation()->getOuvFoncId(),
                                 'periodeAnId' => $periodeAnId)));
@@ -1932,7 +1933,7 @@ class SuiviHydrobioController extends Controller {
         $emSqe->remove($pgCmdSuiviPrel);
         $emSqe->flush();
 
-        $session->getFlashBag()->add('notice-success', 'le suivi du prélèvement du   : ' . $datePrel->format('d/m/Y') . ' a été supprimé !');
+        $session->getFlashBag()->add('notice-success', 'le suivi du prélèvement du   : ' . $datePrel->format('d/m/Y') . ' a été supprimé sur la station : ' . $pgCmdPrelev->getStation()->getCode() . ' !');
 
 //        return $this->redirect($this->generateUrl('AeagSqeBundle_suiviHydrobio_lot_periode_stations', array('stationId' => $pgCmdPrelev->getStation()->getOuvFoncId(),
 //                            'periodeAnId' => $periodeAnId)));
@@ -2447,6 +2448,33 @@ class SuiviHydrobioController extends Controller {
         exit();
     }
 
+    public function prelevSuiviPrelsAction($prelevId = null) {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+
+        $session = $this->get('session');
+        $session->set('menu', 'syntheseHydrobio');
+        $session->set('controller', 'SuiviHydrobio');
+        $session->set('fonction', 'prelevSuiviPrels');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
+        $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
+
+        $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevById($prelevId);
+        $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelevOrderId($pgCmdPrelev);
+        $tabCmdPrelevs = array();
+        $tabCmdPrelevs['cmdPrelev'] = $pgCmdPrelev;
+        $tabCmdPrelevs['suiviPrels'] = $pgCmdSuiviPrels;
+
+//         \Symfony\Component\VarDumper\VarDumper::dump($tabCmdPrelevs);
+//        return new Response('');
+
+        return $this->render('AeagSqeBundle:SuiviHydrobio:prelevSuiviPrels.html.twig', array('cmdPrelev' => $tabCmdPrelevs));
+    }
+
     public function syntheseAction() {
         $user = $this->getUser();
         if (!$user) {
@@ -2484,89 +2512,69 @@ class SuiviHydrobioController extends Controller {
         $repoPgSandreSupport = $emSqe->getRepository('AeagSqeBundle:PgSandreSupports');
         $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
         $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
+        $repoPgRefStationMesure = $emSqe->getRepository('AeagSqeBundle:PgRefStationMesure');
         $repoPgRefReseauMesure = $emSqe->getRepository('AeagSqeBundle:PgRefReseauMesure');
         $repoPgProgLotStationAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotStationAn');
 
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgSandreSupport = $repoPgSandreSupport->getPgSandreSupportsByCodeSupport($codeSupport);
 
-        $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevBySupport($pgSandreSupport);
+        $tabResultats = $repoPgCmdPrelev->getPgCmdPrelevBySyntheseSupport($pgSandreSupport);
         $tabStations = array();
         $i = 0;
-        foreach ($pgCmdPrelevs as $pgCmdPrelev) {
-            if ($pgCmdPrelev->getDemande()->getLotan()->getPhase()->getCodePhase() != 'P50') {
-                if (!$user->hasRole('ROLE_ADMINSQE')) {
-                    $pgProgWebUserZgeorefs = $repoPgProgWebUserZgeoref->getPgProgWebuserZgeorefByWebuser($pgProgWebUser);
-                    $trouve = false;
-                    foreach ($pgProgWebUserZgeorefs as $pgProgWebUserZgeoref) {
-                        $pgProgZoneGeoref = $pgProgWebUserZgeoref->getZgeoref();
-                        $pgProgZgeorefStations = $repoPgProgZgeorefStation->getpgProgZgeorefStationByZgeoref($pgProgZoneGeoref);
-                        foreach ($pgProgZgeorefStations as $pgProgZgeorefStation) {
-                            if ($pgCmdPrelev->getStation()->getOuvFoncId() == $pgProgZgeorefStation->getStationMesure()->getOuvFoncId()) {
-                                $trouve = true;
-                                break;
-                            }
-                        }
-                        if ($trouve) {
+        for ($nbStations = 0; $nbStations < count($tabResultats); $nbStations++) {
+            $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevById($tabResultats[$nbStations]['prelevId']);
+            $pgCmdSuiviPrelDernier = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelById($tabResultats[$nbStations]['suiviPrelId']);
+            $pgRefStationMesure = $repoPgRefStationMesure->getPgRefStationMesureByOuvFoncId($tabResultats[$nbStations]['ouvFoncId']);
+            if (!$user->hasRole('ROLE_ADMINSQE')) {
+                $pgProgWebUserZgeorefs = $repoPgProgWebUserZgeoref->getPgProgWebuserZgeorefByWebuser($pgProgWebUser);
+                $trouve = false;
+                foreach ($pgProgWebUserZgeorefs as $pgProgWebUserZgeoref) {
+                    $pgProgZoneGeoref = $pgProgWebUserZgeoref->getZgeoref();
+                    $pgProgZgeorefStations = $repoPgProgZgeorefStation->getpgProgZgeorefStationByZgeoref($pgProgZoneGeoref);
+                    foreach ($pgProgZgeorefStations as $pgProgZgeorefStation) {
+                        if ($pgRefStationMesure->getOuvFoncId() == $pgProgZgeorefStation->getStationMesure()->getOuvFoncId()) {
+                            $trouve = true;
                             break;
                         }
                     }
-                } else {
-                    $trouve = true;
-                }
-                if ($trouve) {
-                    $pgProgLot = $pgCmdPrelev->getDemande()->getLotan()->getLot();
-                    $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
-                    if (substr($pgProgTypeMilieu->getCodeMilieu(), 1, 2) === 'HB' or $pgProgTypeMilieu->getCodeMilieu() === 'RHM') {
-                        $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelevOrderId($pgCmdPrelev);
-                        if ($pgCmdSuiviPrels) {
-                            $tabStations[$i]['station'] = $pgCmdPrelev->getStation();
-                            $tabStations[$i]['lien'] = '/sqe_fiches_stations/' . str_replace('/', '-', $pgCmdPrelev->getStation()->getCode()) . '.pdf';
-                            $pgProgLotStationAn = $repoPgProgLotStationAn->getPgProgLotStationAnByLotAnStation($pgCmdPrelev->getDemande()->getLotan(), $pgCmdPrelev->getStation());
-                            $pgRefReseauMesure = $repoPgRefReseauMesure->getPgRefReseauMesureByGroupementId($pgProgLotStationAn->getRsxId());
-                            if ($pgRefReseauMesure) {
-                                $tabStations[$i]['reseau'] = $pgRefReseauMesure;
-                            } else {
-                                $tabStations[$i]['reseau'] = null;
-                            }
-                            $tabStations[$i]['cmdDemande'] = $pgCmdPrelev->getDemande();
-                            $tabStations[$i]['cmdPrelevs'] = null;
-                            $tabCmdPrelevs = array();
-                            $nbCmdPrelevs = 0;
-                            $tabCmdPrelevs[$nbCmdPrelevs]['cmdPrelev'] = $pgCmdPrelev;
-                            $tabCmdPrelevs[$nbCmdPrelevs]['maj'] = 'N';
-                            $tabSuiviPrels = array();
-                            $nbSuiviPrels = 0;
-                            foreach ($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
-                                $tabSuiviPrels[$nbSuiviPrels]['suiviPrel'] = $pgCmdSuiviPrel;
-                                $dateLimite = null;
-                                if ($pgCmdSuiviPrel->getFichierRps()) {
-                                    if ($pgCmdSuiviPrel->getFichierRps()->getDateDepot()) {
-                                        $dateDepot = $pgCmdSuiviPrel->getFichierRps()->getDateDepot();
-                                        $delai = 21;
-                                        $dateLimite = $dateDepot->add(new \DateInterval('P' . $delai . 'D'));
-                                    }
-                                }
-                                $tabSuiviPrels[$nbSuiviPrels]['dateLimite'] = $dateLimite;
-                                $nbSuiviPrels++;
-                                break;
-                            }
-                            $tabCmdPrelevs[$nbCmdPrelevs]['suiviPrels'] = $tabSuiviPrels;
-                            $tabAutrePrelevs = $repoPgCmdPrelev->getAutrePrelevs($pgCmdPrelev);
-                            if (count($tabAutrePrelevs) > 0) {
-                                $tabCmdPrelevs[$nbCmdPrelevs]['autrePrelevs'] = $tabAutrePrelevs;
-                            } else {
-                                $tabCmdPrelevs[$nbCmdPrelevs]['autrePrelevs'] = null;
-                            }
-                            $tabStations[$i]['cmdPrelevs'] = $tabCmdPrelevs;
-                            $i++;
-//                        if ($pgCmdPrelev->getStation()->getCode() == '05155600'){
-//                             return $this->render('AeagSqeBundle:SuiviHydrobio:debug.html.twig', array('support' => $pgSandreSupport, 'stations' => $tabStations,));
-//                        }
-                        }
+                    if ($trouve) {
+                        break;
                     }
                 }
+            } else {
+                $trouve = true;
             }
+            if ($trouve) {
+                if ($pgCmdSuiviPrelDernier) {
+                    $tabStations[$i]['station']['ouvFoncId'] = $pgRefStationMesure->getOuvFoncId();
+                    $tabStations[$i]['station']['code'] = $pgRefStationMesure->getCode();
+                    $tabStations[$i]['station']['libelle'] = $pgRefStationMesure->getLibelle();
+                    $tabStations[$i]['lien'] = '/sqe_fiches_stations/' . str_replace('/', '-', $pgRefStationMesure->getCode()) . '.pdf';
+                    $pgProgLotStationAn = $repoPgProgLotStationAn->getPgProgLotStationAnByLotAnStation($pgCmdPrelev->getDemande()->getLotan(), $pgRefStationMesure);
+                    $pgRefReseauMesure = $repoPgRefReseauMesure->getPgRefReseauMesureByGroupementId($pgProgLotStationAn->getRsxId());
+                    if ($pgRefReseauMesure) {
+                        $tabStations[$i]['reseau'] = $pgRefReseauMesure->getnomRsx();
+                    } else {
+                        $tabStations[$i]['reseau'] = null;
+                    }
+                    $tabStations[$i]['cmdDemande'] = $pgCmdPrelev->getDemande();
+                    $dateLimite = null;
+                    if ($pgCmdSuiviPrelDernier->getFichierRps()) {
+                        if ($pgCmdSuiviPrelDernier->getFichierRps()->getDateDepot()) {
+                            $dateDepot = $pgCmdSuiviPrelDernier->getFichierRps()->getDateDepot();
+                            $delai = 21;
+                            $dateLimite = $dateDepot->add(new \DateInterval('P' . $delai . 'D'));
+                        }
+                    }
+                    $tabStations[$i]['dateLimite'] = $dateLimite;
+                    $tabStations[$i]['cmdPrelev'] = $pgCmdPrelev;
+                    $tabStations[$i]['suiviPrel'] = $pgCmdSuiviPrelDernier;
+                    $i++;
+                }
+            }
+//                }
+//            }
         }
 
 //         \Symfony\Component\VarDumper\VarDumper::dump($tabStations);

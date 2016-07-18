@@ -100,6 +100,12 @@ AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_fichier_telecharge
     requirements:
          methods:  GET|POST
          
+AeagSqeBundle_suiviHydrobio_prelev_suiviprels:
+    path:  /prelev/suiviprels/{prelevId}
+    defaults: { _controller: AeagSqeBundle:SuiviHydrobio:prelevSuiviPrels, prelevId : null}
+    requirements:
+        methods:  GET|POST
+         
 AeagSqeBundle_suiviHydrobio_synthese:
     path:  /synthese    
     defaults: { _controller: AeagSqeBundle:SuiviHydrobio:synthese}
