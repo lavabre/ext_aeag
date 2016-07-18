@@ -1,9 +1,10 @@
-body {
+/*body {
     margin-top: 0px;
     margin-left: 10px;
+    margin : 5px 5px 5px 5px;
     height: auto;
     
-}
+}*/
 
 .page-header {
     padding-bottom: 0px;
@@ -11,7 +12,7 @@ body {
     border-bottom: 1px solid #36648b;
     background-image : url('../../images/bandeauAeag.jpg'); 
     background-repeat:no-repeat;
-    background-size: 1920px 90px;
+    background-size: 100% 90px;
     background-color: #36648b;
     color : #fcfcfc;
     min-height: 90px;
@@ -135,6 +136,7 @@ img#logo
 .container {
     padding-right: 0px;
     padding-left: 0px;
+    width: 95%;
 }
 
 .container-fluid {
@@ -877,7 +879,7 @@ fieldset[disabled] .btn-turquoise.active {
     background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.9) 25%, rgba(255,255,255,0.9) 75%, rgba(255,255,255,0) 100%);
 }
 
-@media (min-width: 1270px) {
+/*@media (min-width: 1270px) {
     body {
     width: 1255px;
     height: auto;
@@ -895,7 +897,7 @@ fieldset[disabled] .btn-turquoise.active {
    .container {
     width: 1850px;
     }
-}
+}*/
 
 h3 {
     margin: 0px 0px 0px;
@@ -1069,4 +1071,9 @@ h3 {
 .error
 {
     color: red;
+}
+
+.row {
+    margin-left: 0px;
+    margin-right: 0px;
 }
