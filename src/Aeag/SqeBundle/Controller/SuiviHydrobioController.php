@@ -1951,6 +1951,7 @@ class SuiviHydrobioController extends Controller {
         $session->set('menu', 'suiviHydrobio');
         $session->set('controller', 'SuiviHydrobio');
         $session->set('fonction', 'lotPeriodeStationDemandeSuiviFichierDeposer');
+        $em = $this->get('doctrine')->getManager();
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
         $repoPgRefStationMesure = $emSqe->getRepository('AeagSqeBundle:PgRefStationMesure');
@@ -1958,6 +1959,7 @@ class SuiviHydrobioController extends Controller {
         $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
         $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
+        $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
 
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgRefStationMesure = $repoPgRefStationMesure->getPgRefStationMesureByOuvFoncId($stationId);
@@ -1968,6 +1970,15 @@ class SuiviHydrobioController extends Controller {
         $pgProgLotAn = $pgCmdDemande->getLotan();
         $pgProgLot = $pgProgLotAn->getLot();
         $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R10');
+        $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($periodeAnId);
+        $pgProgPeriode = $pgProgLotPeriodeAn->getPeriode();
+        if ($pgProgLot->getDelaiPrel()) {
+            $dateFin = clone($pgProgPeriode->getDateDeb());
+            $delai = $pgProgLot->getDelaiPrel();
+            $dateFin->add(new \DateInterval('P' . $delai . 'D'));
+        } else {
+            $dateFin = $pgProgPeriode->getDateFin();
+        }
 
 // Récupération des valeurs du fichier
 
