@@ -341,8 +341,8 @@
                 {
                 language:  'fr',
                 format: 'dd/mm/yyyy hh:ii',
-                startDate: "{{ periodeAn.periode.dateDeb | date("d/m/Y") }}",
-                endDate: "{{  dateFin | date("d/m/Y hh:ii") }}",
+                startDate: "{{ periodeAn.periode.dateDeb| date_modify("+6 hour") | date("d/m/Y H:i") }}",
+                endDate: "{{  dateFin | date_modify("+23 hour") | date("d/m/Y H:i") }}",
                 clearBtn: true,
                 autoclose: true   
                 }
@@ -359,8 +359,8 @@
                 });
 
                 $('#idInitDatePrel').on('click',function(){
-                $('#datePrel').datetimepicker('setStartDate', '{{ periodeAn.periode.dateDeb | date("d/m/Y hh:ii") }}');
-                $('#datePrel').datetimepicker('setEndDate', '{{  dateFin | date("d/m/Y hh:ii") }}');
+                $('#datePrel').datetimepicker('setStartDate', '{{ periodeAn.periode.dateDeb | date_modify("+6 hour") | date("d/m/Y H:i") }}');
+                $('#datePrel').datetimepicker('setEndDate', '{{  dateFin | date_modify("+23 hour") | date("d/m/Y H:i")  }}');
                 $('#idInitDatePrel').hide()
                 $('#idForcerDatePrel').show()
                 }); 
