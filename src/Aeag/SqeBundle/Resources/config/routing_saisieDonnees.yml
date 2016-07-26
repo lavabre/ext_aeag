@@ -63,6 +63,28 @@ AeagSqeBundle_saisieDonnees_lot_periode_telecharger:
     defaults: { _controller: AeagSqeBundle:SaisieDonnees:lotPeriodeTelecharger, periodeAnId : null}
     requirements:
          methods:  GET|POST
+         
+AeagSqeBundle_saisieDonnees_lot_periode_stations_integrer:
+    path: /integrer/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SaisieDonnees:lotPeriodeStationsIntegrer, periodeAnId : null}
+    
+AeagSqeBundle_saisieDonnees_lot_periode_stations_integrer_fichier:
+    path:  /integrer/fichier/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SaisieDonnees:lotPeriodeStationsIntegrerFichier, periodeAnId : null }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_saisieDonnees_lot_periode_stations_supprimer_fichier:
+    path:  /integrer/supprimer/fichier/{periodeAnId}/{fichier}
+    defaults: { _controller: AeagSqeBundle:SaisieDonnees:lotPeriodeStationsSupprimerFichier, periodeAnId : null, fichier : null }
+    requirements:
+        methods:  GET|POST
+         
+AeagSqeBundle_saisieDonnees_lot_periode_stations_telecharger_rapport:
+    path:  /rapport/telecharger/{periodeAnId}/{fichier}
+    defaults: { _controller: AeagSqeBundle:SaisieDonnees:lotPeriodeStationsTelechargerRapport, periodeAnId : null, fichier : null}
+    requirements:
+         methods:  GET|POST
         
         
     

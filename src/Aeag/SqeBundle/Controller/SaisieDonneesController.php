@@ -507,13 +507,22 @@ class SaisieDonneesController extends Controller {
 //        \Symfony\Component\VarDumper\VarDumper::dump($tabStations);
 //        return new Response('');
 
+         $dateDepot = new \DateTime();
+        $chemin = '/base/extranet/Transfert/Sqe/csv';
+        $fichier = $user->getId() . '_' . $dateDepot->format('Y-m-d-H') . '_rapport.csv';
+        if (file_exists($chemin . '/' . $fichier)) {
+            $rapport = $fichier;
+        } else {
+            $rapport = null;
+        }
 
         return $this->render('AeagSqeBundle:SaisieDonnees:lotPeriodeStations.html.twig', array(
                     'pgProgWebUser' => $pgProgWebUser,
                     'typeMilieu' => $pgProgTypeMilieu,
                     'lotan' => $pgProgLotAn,
                     'periodeAn' => $pgProgLotPeriodeAn,
-                    'stations' => $tabStations));
+                    'stations' => $tabStations,
+                    'rapport' => $rapport));
     }
 
     public function lotPeriodeStationSaisirCommentaireAction($periodeAnId = null, $prelevId = null, Request $request) {
@@ -1932,6 +1941,514 @@ class SaisieDonneesController extends Controller {
         \header('Content-Type', 'text/' . $ext);
         \header('Content-disposition: attachment; filename="' . $fichier . '"');
         \header('Content-Length: ' . filesize($chemin . '/' . $fichier));
+        readfile($chemin . '/' . $fichier);
+        exit();
+    }
+    
+    public function lotPeriodeStationsIntegrerAction($periodeAnId = null, Request $request) {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'saisieDonnees');
+        $session->set('controller', 'SaisieDonnees');
+        $session->set('fonction', 'lotPeriodeStationsIntegrer');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+
+        return $this->render('AeagSqeBundle:SaisieDonnees:lotPeriodeStationsIntegrer.html.twig', array(
+                    'periodeAnId' => $periodeAnId
+        ));
+
+
+
+//          \Symfony\Component\VarDumper\VarDumper::dump($tabDemande);
+//        return new Response ('');
+    }
+
+    public function lotPeriodeStationsIntegrerFichierAction($periodeAnId = null) {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'saisieDonnees');
+        $session->set('controller', 'SaisieDonnees');
+        $session->set('fonction', 'lotPeriodeStationsIntegrerFichier');
+        $em = $this->get('doctrine')->getManager();
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
+        $repoPgRefStationMesure = $emSqe->getRepository('AeagSqeBundle:PgRefStationMesure');
+        $repoPgSandreSupports = $emSqe->getRepository('AeagSqeBundle:PgSandreSupports');
+        $repoPgProgLotPeriodeProg = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeProg');
+        $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
+        $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
+        $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
+        $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
+
+        $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($periodeAnId);
+        $pgProgLotAn = $pgProgLotPeriodeAn->getLotAn();
+        $pgProgLot = $pgProgLotAn->getLot();
+        $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
+        $pgProgPeriode = $pgProgLotPeriodeAn->getPeriode();
+        if ($pgProgLotPeriodeAn->getCodeStatut()->getCodeStatut() != 'DEL' and $pgProgLotPeriodeAn->getCodeStatut()->getCodeStatut() != 'INV') {
+            $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByPeriodeAn($pgProgLotPeriodeAn);
+            $tabStations = array();
+            $nbStations = 0;
+            $j = 0;
+            foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
+                $trouve = false;
+                if (count($tabStations) > 0) {
+                    for ($k = 0; $k < count($tabStations); $k++) {
+                        if ($tabStations[$k]['station']->getOuvFoncid() == $pgProgLotPeriodeProg->getStationAn()->getStation()->getOuvFoncid()) {
+                            $trouve = true;
+                            break;
+                        }
+                    }
+                }
+                if (!$trouve) {
+                    $tabStations[$j]['station'] = $pgProgLotPeriodeProg->getStationAn()->getStation();
+                   $nbStations++;
+                    $j++;
+                }
+            }
+        }
+
+//        \Symfony\Component\VarDumper\VarDumper::dump($tabStations);
+//        return new Response ('');   
+// Récupération des valeurs du fichier
+
+        $name = $_FILES['file']['name'];
+        $tmpName = $_FILES['file']['tmp_name'];
+        $error = $_FILES['file']['error'];
+        $size = $_FILES['file']['size'] / 1024;
+        $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+        $response = null;
+
+        switch ($error) {
+            case UPLOAD_ERR_OK:
+                $valid = true;
+//validate file size
+                if ($size / 1024 / 1024 > 2) {
+                    $valid = false;
+                    $response = 'La taille du fichier est plus grande que la taille autorisée.';
+                }
+//upload file
+                if ($valid) {
+// Enregistrement du fichier sur le serveur
+                    $pathBase = '/base/extranet/Transfert/Sqe/csv';
+                    if (!is_dir($pathBase)) {
+                        if (!mkdir($pathBase, 0777, true)) {
+                            $session->getFlashBag()->add('notice-error', 'Le répertoire : ' . $pathBase . ' n\'a pas pu être créé');
+                            ;
+                        }
+                    }
+                    move_uploaded_file($_FILES['file']['tmp_name'], $pathBase . '/' . $name);
+
+                    $dateDepot = new \DateTime();
+                    $response = $name . ' déposé le ' . $dateDepot->format('d/m/Y');
+                    break;
+                }
+            case UPLOAD_ERR_INI_SIZE:
+                $response = 'La taille (' . $size . ' octets' . ') du fichier téléchargé excède la taille de upload_max_filesize dans php.ini.';
+                $valid = false;
+                break;
+            case UPLOAD_ERR_FORM_SIZE:
+                $response = 'La taille (' . $size . ') du fichier téléchargé excède la taille de MAX_FILE_SIZE qui a été spécifié dans le formulaire HTML.';
+                $valid = false;
+                break;
+            case UPLOAD_ERR_PARTIAL:
+                $response = 'Le fichier n\'a été que partiellement téléchargé.';
+                $valid = false;
+                break;
+            case UPLOAD_ERR_NO_FILE:
+                $response = 'Aucun fichier sélectionné.';
+                $valid = false;
+                break;
+            case UPLOAD_ERR_NO_TMP_DIR:
+                $response = 'Manquantes dans un dossier temporaire. Introduit en PHP 4.3.10 et PHP 5.0.3.';
+                $valid = false;
+                break;
+            case UPLOAD_ERR_CANT_WRITE:
+                $response = 'Impossible d\'écrire le fichier sur le disque. Introduit en PHP 5.1.0.';
+                $valid = false;
+                break;
+            case UPLOAD_ERR_EXTENSION:
+                $response = 'Le téléchargement du fichier arrêté par extension. Introduit en PHP 5.2.0.';
+                $valid = false;
+                break;
+            default:
+                $response = 'erreur inconnue';
+                $valid = false;
+                break;
+        }
+
+        if ($valid) {
+            $fichierIn = fopen($pathBase . '/' . $name, "r");
+            $fichierOut = fopen($pathBase . '/' . 'trans-' . $user->getId() . '.csv', "w+");
+            $rapport = fopen($pathBase . '/' . $user->getId() . '_' . $dateDepot->format('Y-m-d-H') . '_rapport.csv', "w+");
+            $contenu = 'rapport d\'intégration du fichier : ' . $name . ' déposé le ' . $dateDepot->format('d/m/Y') . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+            fputs($rapport, $contenu);
+            $erreur = 0;
+            $ligne = 0;
+            while (($n = fgets($fichierIn, 1024)) !== false) {
+                $n = str_replace(CHR(10), "", $n);
+                $n = str_replace(CHR(13), "\r\n", $n);
+                fputs($fichierOut, $n);
+            }
+            fclose($fichierIn);
+            fclose($fichierOut);
+            $ligne = 0;
+            $fichier = fopen($pathBase . '/' . 'trans-' . $user->getId() . '.csv', "r");
+            $tab = fgetcsv($fichier, 1024, ';', '\'');
+            while (($tab = fgetcsv($fichier, 1024, ';', '\'')) !== false) {
+//            while (!feof($fichier)) {
+//                $tab = fgetcsv($fichier, 1024, ';');
+                if (count($tab) > 1) {
+                    $err = false;
+                    $ligne++;
+                    $codeStation = $tab[0];
+                    $prelevs = array();
+                    $pgRefStationMesure = $repoPgRefStationMesure->getPgRefStationMesureByCode($codeStation);
+                    if (!$pgRefStationMesure) {
+                        $err = true;
+                        $contenu = 'ligne  ' . $ligne . '  :  code station inconnu (' . $tab[0] . ')' . CHR(13) . CHR(10);
+                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                        fputs($rapport, $contenu);
+                    } else {
+                        $trouve = false;
+                        if (count($tabStations) > 0) {
+                            for ($i = 0; $i < count($tabStations); $i++) {
+                                if ($tabStations[$i]['station'] == $pgRefStationMesure) {
+                                    $trouve = true;
+                                    $prelevs = $tabStations[$i]['prelevs'];
+                                    break;
+                                }
+                            }
+                        }
+                        if (!$trouve) {
+                            $err = true;
+                            $contenu = 'ligne  ' . $ligne . '  :  code station  (' . $codeStation . ') non référencé dans la liste' . CHR(13) . CHR(10);
+                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                            fputs($rapport, $contenu);
+                        }
+                    }
+
+                    $codeSupport = $tab[1];
+                    $pgSandreSupports = $repoPgSandreSupports->getPgSandreSupportsByCodeSupport($codeSupport);
+                    if (!$pgSandreSupports) {
+                        $err = true;
+                        $contenu = 'ligne  ' . $ligne . '  :  code support inconnu (' . $codeSupport . ')' . CHR(13) . CHR(10);
+                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                        fputs($rapport, $contenu);
+                    }
+
+                    $statutPrel = $tab[2];
+                    if ($statutPrel != 'P' and $statutPrel != 'F' and $statutPrel != 'N' and $statutPrel != 'R') {
+                        $err = true;
+                        $contenu = 'ligne  ' . $ligne . '  :  code statut inconnu (\'' . $statutPrel . '\')' . CHR(13) . CHR(10);
+                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                        fputs($rapport, $contenu);
+                    }
+
+                    $dateActuel = new \DateTime();
+                    $dateActuel->add(new \DateInterval('P15D'));
+                    $date = $tab[3];
+                    $tabDate = explode(' ', $date);
+                    if (count($tabDate) != 2) {
+                        $err = true;
+                        $contenu = 'ligne  ' . $ligne . '  :  date heure incorrecte (' . $date . ')' . CHR(13) . CHR(10);
+                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                        fputs($rapport, $contenu);
+                    } else {
+                        list( $jour, $mois, $annee, $heure, $min ) = sscanf($date, "%d/%d/%d %d:%d");
+                        $datePrel = new \DateTime($annee . '-' . $mois . '-' . $jour . ' ' . $heure . ':' . $min . ':00');
+
+                        if (!$datePrel) {
+                            $err = true;
+                            $contenu = 'ligne  ' . $ligne . '  :  date heure incorrecte (' . $date . ')' . CHR(13) . CHR(10);
+                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                            fputs($rapport, $contenu);
+                        }
+                        if ($pgProgLot->getDelaiPrel()) {
+                            $dateFin = clone($pgProgLotPeriodeAn->getPeriode()->getDateDeb());
+                            $delai = $pgProgLot->getDelaiPrel();
+                            $dateFin->add(new \DateInterval('P' . $delai . 'D'));
+                        } else {
+                            $dateFin = $pgProgLotPeriodeAn->getPeriode()->getDateFin();
+                        }
+                        if ($statutPrel == 'P') {
+                            if ($datePrel < $dateActuel or $datePrel > $dateFin) {
+                                $contenu = 'ligne  ' . $ligne . '  :  Avertissement date  (' . $datePrel->format('d/m/Y H:i') . ') non comprise entre ' . $dateActuel->format('d/m/Y H:i') . ' et ' . $dateFin->format('d/m/Y H:i') . CHR(13) . CHR(10);
+                                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                fputs($rapport, $contenu);
+                            }
+                        }
+                        $dateDebut = clone($pgProgLotPeriodeAn->getPeriode()->getDateDeb());
+                        $dateActuel = new \DateTime();
+                        if ($statutPrel != 'P') {
+                            if ($datePrel < $dateDebut or $datePrel > $dateActuel) {
+                                if (!$user->hasRole('ROLE_ADMINSQE')) {
+                                    $err = true;
+                                }
+                                $contenu = 'ligne  ' . $ligne . '  :   date  (' . $datePrel->format('d/m/Y H:i') . ') non comprise entre ' . $dateDebut->format('d/m/Y H:i') . ' et ' . $dateActuel->format('d/m/Y H:i') . CHR(13) . CHR(10);
+                                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                fputs($rapport, $contenu);
+                            }
+                        }
+                    }
+
+                    $commentaire = $tab[4];
+                    if ($statutPrel == 'P') {
+                        if (!$commentaire or $commentaire == '') {
+                            $contenu = 'ligne  ' . $ligne . '  :  Avertissement commentaire renseigner l’équipe et le contact (portable)  ' . CHR(13) . CHR(10);
+                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                            fputs($rapport, $contenu);
+                        }
+                    }
+                    if ($statutPrel == 'N' or $statutPrel == 'R') {
+                        if (!$commentaire or $commentaire == '') {
+                            $err = true;
+                            $contenu = 'ligne  ' . $ligne . '  :  commentaire obligatoire indiquer pourquoi   ' . CHR(13) . CHR(10);
+                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                            fputs($rapport, $contenu);
+                        }
+                    }
+
+                    $trouve = false;
+                    $prelev = null;
+                    if (count($prelevs) > 0) {
+                        for ($j = 0; $j < count($prelevs); $j++) {
+                            $prelev = $prelevs[$j]['cmdPrelev'];
+                            if ($prelev->getCodeSupport()->getCodeSupport() != '10' && $prelev->getCodeSupport()->getCodeSupport() != '11') {
+                                $autrePgCmdPrelevs = $repoPgCmdPrelev->getAutrePrelevs($prelev);
+                                for ($i = 0; $i < count($autrePgCmdPrelevs); $i++) {
+                                    $autreSuport = $autrePgCmdPrelevs[$i]['codeSupport'];
+                                    if (( $autreSuport == '4' && $autreSuport == '69') ||
+                                            ($prelev->getCodeSupport()->getCodeSupport() == '69' && $autreSuport != '4') ||
+                                            ($prelev->getCodeSupport()->getCodeSupport() == '4' && $autreSuport != '69')) {
+                                        $autreDateDebut = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
+                                        $autreDateDebut->sub(new \DateInterval('P7D'));
+                                        $autreDateFin = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
+                                        $autreDateFin->add(new \DateInterval('P7D'));
+                                        if ($datePrel >= $autreDateDebut and $datePrel <= $autreDateFin) {
+                                            if (!$user->hasRole('ROLE_ADMINSQE')) {
+                                                $err = true;
+                                            }
+                                            $contenu = 'ligne  ' . $ligne . '  : Date  (' . $datePrel->format('d/m/Y H:i') . ') doit être inférieure à ' . $autreDateDebut->format('d/m/Y H:i') . ' ou supérieure à  ' . $autreDateFin->format('d/m/Y H:i');
+                                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                            fputs($rapport, $contenu);
+                                        }
+                                    }
+                                }
+                            }
+                            if ($prelev->getCodeSupport()->getCodeSupport() == $codeSupport) {
+                                $trouve = true;
+                                $suiviPrels = $prelevs[$j]['cmdSuiviPrelevs'];
+                                $suiviPrelActuel = null;
+                                for ($k = 0; $k < count($suiviPrels); $k++) {
+                                    if ($k == 0) {
+                                        $suiviPrelActuel = $suiviPrels[$k];
+                                    }
+                                    $suiviPrel = $suiviPrels[$k];
+                                    if ($suiviPrel->getDatePrel() == $datePrel and
+                                            $suiviPrel->getStatutPrel() == $statutPrel and
+                                            $suiviPrel->getCommentaire() == $commentaire) {
+                                        $err = true;
+                                        $contenu = 'ligne  ' . $ligne . '  :  suivi déja intégré ' . CHR(13) . CHR(10);
+                                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                        fputs($rapport, $contenu);
+                                        $k = count($suiviPrels) + 1;
+                                    }
+                                }
+                                $nbStations = 0;
+                                for ($k = 0; $k < count($suiviPrels); $k++) {
+                                    $suiviPrel = $suiviPrels[$k];
+                                    if ($suiviPrel->getDatePrel() == $datePrel and
+                                            $suiviPrel->getCommentaire() == $commentaire) {
+                                        $nbStations++;
+                                    }
+                                }
+                                if ($pgCmdPrelev->getCodeSupport()->getCodeSupport() == '13' || $pgCmdPrelev->getCodeSupport()->getCodeSupport() == '11') {
+                                    if ($nbStations > 4) {
+                                        $err = true;
+                                        $contenu = 'ligne  ' . $ligne . '  :  4 stations maxi le même jour pour un même commentaire ' . CHR(13) . CHR(10);
+                                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                        fputs($rapport, $contenu);
+                                    }
+                                }
+                                if ($pgCmdPrelev->getCodeSupport()->getCodeSupport() == '10') {
+                                    if ($nbStations > 6) {
+                                        $err = true;
+                                        $contenu = 'ligne  ' . $ligne . '  :  4 stations maxi le même jour pour un même commentaire ' . CHR(13) . CHR(10);
+                                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                        fputs($rapport, $contenu);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (!$trouve) {
+                        $err = true;
+                        $contenu = 'ligne  ' . $ligne . '  :  code support ne correspond pas à celui du prélèvement associé à la station ' . CHR(13) . CHR(10);
+                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                        fputs($rapport, $contenu);
+                    } else {
+                        if ($suiviPrelActuel) {
+                            if ($suiviPrelActuel->getStatutPrel() == 'E' and $statutPrel == 'P') {
+                                $err = true;
+                                $contenu = 'ligne  ' . $ligne . '  :  code statut ne peut être à \'P\' ' . CHR(13) . CHR(10);
+                                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                fputs($rapport, $contenu);
+                            }
+                            if ($suiviPrelActuel->getStatutPrel() == 'P' and $statutPrel == 'P') {
+                                if ($suiviPrelActuel->getdatePrel() != $datePrel) {
+                                    $contenu = 'ligne  ' . $ligne . '  :  Attention modification de la date de prélevement ' . CHR(13) . CHR(10);
+                                    $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                    fputs($rapport, $contenu);
+                                }
+                            }
+                            if ($suiviPrelActuel->getStatutPrel() == 'P' and $statutPrel == 'E') {
+                                if ($suiviPrelActuel->getdatePrel() != $datePrel and ( !$commentaire or $commentaire == '')) {
+                                    $contenu = 'ligne  ' . $ligne . '  :  commentaire obligatoire  ' . CHR(13) . CHR(10);
+                                    $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                    fputs($rapport, $contenu);
+                                }
+                            }
+                        }
+                    }
+
+                    if ($err) {
+                        $erreur++;
+                    } else {
+                        if ($user->hasRole('ROLE_ADMINSQE')) {
+                            $pgProgWebUsers = $repoPgProgWebUsers->getPgProgWebusersByPrestataire($pgCmdPrelev->getPrestaPrel());
+                            if (count($pgProgWebUsers) > 0) {
+                                $pgProgWebUser = $pgProgWebUsers[0];
+                            } else {
+                                $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
+                            }
+                        } else {
+                            $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
+                        }
+                        $pgCmdSuiviPrel = new PgCmdSuiviPrel();
+                        $pgCmdSuiviPrel->setPrelev($prelev);
+                        $pgCmdSuiviPrel->setUser($pgProgWebUser);
+                        $pgCmdSuiviPrel->setDatePrel($datePrel);
+                        $pgCmdSuiviPrel->setStatutPrel($statutPrel);
+                        $pgCmdSuiviPrel->setCommentaire(utf8_encode($commentaire));
+                        $pgCmdSuiviPrel->setValidation('E');
+                        $emSqe->persist($pgCmdSuiviPrel);
+                        if ($pgCmdSuiviPrel->getStatutPrel() == 'N' or $pgCmdSuiviPrel->getStatutPrel() == 'R') {
+                            $pgCmdPrelev->setDatePrelev($datePrel);
+                            $pgCmdPrelev->setRealise('N');
+                        }
+                        $emSqe->persist($pgCmdPrelev);
+                        $emSqe->flush();
+                    }
+                }
+            }
+            $contenu = CHR(13) . CHR(10) . 'nombre de lignes traitées  : ' . $ligne . CHR(13) . CHR(10);
+            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+            fputs($rapport, $contenu);
+            $contenu = 'nombre de lignes en erreur  : ' . $erreur . CHR(13) . CHR(10);
+            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+            fputs($rapport, $contenu);
+            fclose($rapport);
+            fclose($fichier);
+            unlink($pathBase . '/' . $name);
+            unlink($pathBase . '/trans-' . $user->getId() . '.csv');
+
+            // envoi mail  aux presta connecte 
+            $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
+            if ($pgProgWebUser) {
+                $objetMessage = "fichier de suivi ";
+                $txtMessage = "Un fichier de suivi a été déposé sur le lot " . $pgProgLot->getNomLot() . " pour la période du " . $pgProgPeriode->getDateDeb()->format('d/m/Y') . " au " . $dateFin->format('d/m/Y');
+                $mailer = $this->get('mailer');
+
+                $txtMessage.= '<br/><br/>Veullez trouver en pièce jointe le rapport d\'intégration';
+                $htmlMessage = "<html><head></head><body>";
+                $htmlMessage .= "Bonjour, <br/><br/>";
+                $htmlMessage .= $txtMessage;
+                $htmlMessage .= "<br/><br/>Cordialement, <br/>L'équipe SQE";
+                $htmlMessage .= "</body></html>";
+                $mail = \Swift_Message::newInstance('Wonderful Subject')
+                        ->setSubject($objetMessage)
+                        ->setFrom('automate@eau-adour-garonne.fr')
+                        ->setTo($pgProgWebUser->getMail())
+                        ->setBody($htmlMessage, 'text/html');
+
+                $mail->attach(\Swift_Attachment::fromPath($pathBase . '/' . '/' . $user->getId() . '_' . $dateDepot->format('Y-m-d-H') . '_rapport.csv'));
+                $mailer->send($mail);
+                $message = 'un email  vous a été envoyé avec en pièce jointe le fichier rapport du dépôt ';
+                $notification = new Notification();
+                $notification->setRecepteur($user->getId());
+                $notification->setEmetteur($user->getId());
+                $notification->setNouveau(true);
+                $notification->setIteration(2);
+                $notification->setMessage($message);
+                $em->persist($notification);
+                $em->flush();
+            }
+        }
+
+        $tabMessage = array();
+        $tabMessage[0] = $name;
+        $tabMessage[1] = 'rapport_' . $name;
+        $tabMessage[2] = $response;
+
+//$session->getFlashBag()->add('notice-warning', $response);
+
+        return new Response(json_encode($tabMessage));
+    }
+    
+    public function lotPeriodeStationsSupprimerFichierAction($periodeAnId = null, $fichier = null) {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'suiviHydrobio');
+        $session->set('controller', 'SuiviHydrobio');
+        $session->set('fonction', 'lotPeriodeStationsSupprimerFichier');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        $pathBase = '/base/extranet/Transfert/Sqe/csv';
+
+        $fic = $pathBase . '/' . $fichier;
+
+        unlink($fic);
+
+        $dateDepot = new \DateTime();
+        $response = $fichier . ' supprimé le ' . $dateDepot->format('d/m/Y');
+
+        return new Response($response);
+    }
+    
+     public function lotPeriodeStationsTelechargerRapportAction($periodeAnId = null, $fichier = null) {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'saisieDonnees');
+        $session->set('controller', 'SaisieDonnees');
+        $session->set('fonction', 'lotPeriodeStationsTelechargerRapport');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        $chemin = '/base/extranet/Transfert/Sqe/csv';
+        $ext = strtolower(pathinfo($fichier, PATHINFO_EXTENSION));
+
+        header('Content-Type', 'application/' . $ext);
+        header('Content-disposition: attachment; filename="' . $fichier . '"');
+        header('Content-Length: ' . filesize($chemin . '/' . $fichier));
         readfile($chemin . '/' . $fichier);
         exit();
     }
