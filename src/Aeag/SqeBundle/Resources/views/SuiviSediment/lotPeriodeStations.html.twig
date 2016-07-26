@@ -219,7 +219,11 @@
                                                     <a id="idVoirSuivi-{{ cmdPrelev.cmdPrelev.id }}" class="btn btn-primary" href="#" title="consulter l'historique">
                                                         <i class="fa fa-archive"></i> 
                                                     </a>
-
+                                                  {%if cmdPrelev.commentaire | length%}
+                                                            <a id="idCommentaireSuivi{{ cmdPrelev.cmdPrelev.id }}" class="btn btn-info" href="#" title="dernier commentaire">
+                                                                <i class="fa fa-comment-o"></i> 
+                                                            </a>
+                                                   {% endif %}
                                                     {% if cmdPrelev.suiviPrels.0.suiviPrel.statutPrel  == 'F' %}
                                                         {% if  not cmdPrelev.suiviPrels.0.suiviPrel.fichierRps %}
                                                             {% if is_granted('ROLE_PRESTASQE') %}
@@ -315,7 +319,7 @@
                     </tbody>
                 </table>
 
-                <div class="row">
+                <div class="row responsive">
                     <div class="col-md-12 pull-right text-info">
                         <ul class="list-inline">
                             <li><span class="label label-success">Accepté</span></li>
@@ -379,6 +383,18 @@
                     }
                     });
                     });
+                    
+                     $(document).on('click','#idCommentaireSuivi{{ cmdPrelev.cmdPrelev.id }}',function(e){
+                    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                    $('#modalTraitementEncours').modal('toggle');
+                    var html = 'Dernier commentaire du suivi de la station  {{ station.station.code }}  sur le support : {{ cmdPrelev.cmdPrelev.codeSupport.nomSupport }}';
+                    $('#labelModalArchive').html(html);
+                    var html = '{{ cmdPrelev.commentaire }}';
+                    $('#bodyModalArchive').empty().append(html);
+                    $('#modalArchive').modal('show');
+                    $('#modalTraitementEncours').modal('hide');
+                   });
+
 
 
 

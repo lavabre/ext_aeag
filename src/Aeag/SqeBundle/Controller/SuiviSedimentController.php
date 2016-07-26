@@ -229,6 +229,7 @@ class SuiviSedimentController extends Controller {
                         if ($pgCmdPrelev->getCodeSupport()->getCodeSupport() == '6') {
                             $tabCmdPrelevs[$nbCmdPrelevs]['cmdPrelev'] = $pgCmdPrelev;
                             $tabCmdPrelevs[$nbCmdPrelevs]['maj'] = 'N';
+                            $tabCmdPrelevs[$nbCmdPrelevs]['commentaire'] = null;
                             $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelevOrderId($pgCmdPrelev);
                             $tabSuiviPrels = array();
                             $nbSuiviPrels = 0;
@@ -240,6 +241,11 @@ class SuiviSedimentController extends Controller {
                                 foreach ($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
                                     $tabSuiviPrels[$nbSuiviPrels]['suiviPrel'] = $pgCmdSuiviPrel;
                                     $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'N';
+                                    if ($pgCmdSuiviPrel->getCommentaire()) {
+                                        if ($tabCmdPrelevs[$nbCmdPrelevs]['commentaire'] == null) {
+                                            $tabCmdPrelevs[$nbCmdPrelevs]['commentaire'] = $pgCmdSuiviPrel->getCommentaire();
+                                        }
+                                    }
                                     if ($user->hasRole('ROLE_ADMINSQE') or ( $pgCmdSuiviPrel->getUser()->getPrestataire() == $pgCmdDemande->getPrestataire())) {
                                         if ($pgCmdSuiviPrel->getStatutPrel() != 'F' or ( $pgCmdSuiviPrel->getStatutPrel() == 'F' and $pgCmdSuiviPrel->getValidation() != 'A')) {
                                             $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'O';
