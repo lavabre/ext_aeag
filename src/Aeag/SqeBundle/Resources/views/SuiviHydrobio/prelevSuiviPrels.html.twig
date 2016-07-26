@@ -4,6 +4,7 @@
             <table class="table table-bordered  table-advance table-condensed table-responsive table-striped" id="idTablePrelevSuiviPrels">
                 <thead>
                     <tr>
+                        <th>N°ordre</th>
                         <th>Date</th>
                         <th>Statut</th>
                         <th>validation</th>
@@ -16,12 +17,14 @@
                         {% for suiviPrel  in cmdPrelev.suiviPrels %}
                             {% if suiviPrel %}
                                 <tr>
+                                     <td>
+                                        {{ suiviPrel.id }}
+                                    </td>
                                     <td>
                                         <span class="hidden">{{ suiviPrel.datePrel | date("Y/m/d H:i") }}</span>
                                         {{ suiviPrel.datePrel | date("d/m/Y") }}
                                     </td>
-                                    <td>
-                                        {{ suiviPrel.id }} 
+                                     <td>
                                         {% if suiviPrel.statutPrel == 'P' %}
                                             Prévisionnel
                                         {% elseif suiviPrel.statutPrel == 'F' %}
