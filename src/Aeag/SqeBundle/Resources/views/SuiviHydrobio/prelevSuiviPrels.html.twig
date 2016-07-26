@@ -20,7 +20,8 @@
                                         <span class="hidden">{{ suiviPrel.datePrel | date("Y/m/d H:i") }}</span>
                                         {{ suiviPrel.datePrel | date("d/m/Y") }}
                                     </td>
-                                    <td> 
+                                    <td>
+                                        {{ suiviPrel.id }} 
                                         {% if suiviPrel.statutPrel == 'P' %}
                                             Prévisionnel
                                         {% elseif suiviPrel.statutPrel == 'F' %}
@@ -74,7 +75,7 @@
     jQuery(document).ready(function () {
         $('#idTablePrelevSuiviPrels').DataTable(
                 {"stateSave": false,
-                    "order": [[0, "desc"]],
+                    {#"order": [[0, "desc"]],#}
                     "language": {
                         "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
                     },

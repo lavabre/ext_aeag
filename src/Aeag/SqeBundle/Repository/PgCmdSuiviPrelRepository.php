@@ -66,7 +66,7 @@ class PgCmdSuiviPrelRepository extends EntityRepository {
         $query = "select c";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdSuiviPrel c";
         $query = $query . " where c.prelev = " . $pgCmdPrelev->getId() ;
-        $query = $query .  " order by c.id desc, c.datePrel desc";
+        $query = $query .  " order by c.id desc";
         $qb = $this->_em->createQuery($query);
         //print_r($query);
         return $qb->getResult();
