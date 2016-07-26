@@ -1,0 +1,123 @@
+<form class="form-horizontal" id="idForm" role="form" action="#" class="form-horizontal" method="post" {{ form_enctype(form) }}>
+
+    <div class="form-group">
+        <label class="col-xs-3 control-label">Date :</label>
+        {%if form_errors(form.datePrel) %}
+            <div class="col-xs-8 input-group has-error has-feedback">
+            {% else %}
+                <div class="col-xs-8 input-group">
+                {% endif %}
+                {{ form_widget(form.datePrel, { 'attr': {'class': 'form-control ', 'placeholder': 'Date', 'readonly': 'readonly'} }) }}
+            </div>
+        </div> 
+
+        <div class="form-group">
+            <label class="col-xs-3 control-label">Statut :</label>
+            {%if form_errors(form.statutPrel) %}
+                <div class="col-xs-8 input-group has-error has-feedback">
+                {% else %}
+                    <div class="col-xs-8 input-group">
+                    {% endif %}
+                    {{ form_widget(form.statutPrel, { 'attr': {'class': 'form-control ', 'placeholder': 'Statut', 'readonly': 'readonly'} }) }}
+                </div>
+            </div> 
+
+            {% if is_granted("ROLE_ADMINSQE") %}
+                <div class="form-group">
+                    <label class="col-xs-3 control-label">Validation :</label>
+                    {%if form_errors(form.validation) %}
+                        <div class="col-xs-8 input-group has-error has-feedback">
+                        {% else %}
+                            <div class="col-xs-8 input-group">
+                            {% endif %}
+                            {{ form_widget(form.validation, { 'attr': {'class': 'form-control ', 'placeholder': 'validation'} }) }}
+                        </div>
+                    </div> 
+                {% endif %}
+
+                <div class="form-group">
+                    <label class="col-xs-3 control-label">Commentaire : </label>
+                    {%if form_errors(form.commentaire) %}
+                        <div class="col-xs-8 input-group has-error has-feedback">
+                        {% else %}
+                            <div class="col-xs-8 input-group">
+                            {% endif %}
+                            {{ form_widget(form.commentaire, { 'attr': {'class': 'form-control ', 'placeholder': 'Commentaire',} }) }}
+                        </div>
+                    </div> 
+
+                    <div class="form-group">
+                        <div class="col-xs-offset-4 col-xs-8">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
+                            <button id="btValiderModal-{{ suiviPrel.id }}" type="button" class="btn btn-success"><i class="fa fa-check"></i>Valider</button>
+                        </div>
+                    </div>        
+
+                    <div class="hide">
+                        {{ form_rest(form) }}
+                    </div>  
+                    </form>      
+
+                    <script type="text/javascript" language="javascript">
+
+                        jQuery(document).ready(function () {
+
+
+                            if ($('#statutPrel').val() != 'N') {
+                                $('#commentaire').removeAttr('required');
+                            } else {
+                                $('#commentaire').attr('required', '');
+                            }
+                            ;
+
+                            $(document).on('change', '#statutPrel', function (e) {
+                                e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                                if ($('#statutPrel').val() != 'N') {
+                                    $('#commentaire').removeAttr('required');
+                                } else {
+                                    $('#commentaire').attr('required', '');
+                                }
+                                ;
+                            });
+                            
+                                 $(document).on('click', '#btValiderModal-{{ suiviPrel.id }}', function (e) {
+                                        erreur = false;
+                                       if ( $('#avis').val() == 'D' && $('#commentaire').val() == '')
+                                       {
+                                           alert("Veuillez saisir un commentaire svp");
+                                           erreur = true;
+                                       }
+
+                                   if (!erreur){
+                                        e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                                           $('#idProgress').show();
+                                           var $this = $('#idForm');
+                                           var url = '{{ path("AeagSqeBundle_suiviEau_synthese_support_station_valider",{"codeSupport": "par1", "stationId": "par2", "suiviPrelId":  "par3",  "tr": "par4"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                           url = url.replace("par1", {{ support.codeSupport }});
+                                           url = url.replace("par2", {{ station.ouvFoncId }});
+                                           url = url.replace("par3", {{ suiviPrel.id }});
+                                           url = url.replace("par4", {{ tr }});
+                                           url = url.replace("amp;","");
+                                           $.ajax({
+                                           url: url,
+                                                   type: 'post',
+                                                   data: $this.serialize(),
+                                                   //Traitements AJAX
+                                                   success: function(html) { // Je récupère la réponse du fichier PHP
+                                                      $('#idTd1-{{ tr}}').empty().append(html).show();
+                                                      $('#idProgress').hide();
+                                                       $('#modalNouveauSuivi').modal('hide');
+                                                    },
+                                                   error: function(messages) { // Je récupère la réponse du fichier PHP
+                                                       $('#idMessage').empty().append('erreur ajax').show();
+                                                          $('#idProgress').hide();
+                                                       },
+                                               });
+                                       }
+
+                            });
+
+
+                        });
+
+                    </script>

@@ -1,0 +1,41 @@
+<div class="modal-dialog" >
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">{{evenement.datePrel | date('H:i')}} {{evenement.prelev.station.libelle}} - {{evenement.prelev.codeSupport.nomSupport}} - {{evenement.prelev.prestaPrel.nomCorres}}</h4>
+        </div>
+        <div class="modal-body">
+            <p>Date de prélèvement: {{evenement.datePrel | date('d/m/Y H:i')}}<br/>
+            {% if evenement.statutPrel == 'P' %}
+                {% set statut = 'Prévisionnel' %}
+            {% elseif evenement.statutPrel == 'F' %}
+                {% set statut = 'Effectué' %}
+            {% elseif evenement.statutPrel == 'N' %}
+                {% set statut = 'Non effectué' %}
+            {% elseif evenement.statutPrel == 'V' %}
+                {% set statut = 'Validé' %}
+            {% elseif evenement.statutPrel == 'R' %}
+                {% set statut = 'Refusé' %}
+            {% endif %}
+                
+            Statut: {{statut}}<br/>
+            
+            {% if evenement.validation == 'E' %}
+                {% set validation = 'En attente' %}
+            {% elseif evenement.validation == 'R' %}
+                {% set validation = 'Refusé' %}
+            {% elseif evenement.validation == 'A' %}
+                {% set validation = 'Accepté' %}
+            {% endif %}
+            Validation: {{validation}}<br/>
+            Station: {{evenement.prelev.station.libelle}}<br/>
+            Support: {{evenement.prelev.codeSupport.nomSupport}}<br/>
+            Prestataire: {{evenement.prelev.prestaPrel.nomCorres}}<br/>
+            <br/>
+            Commentaire: {{evenement.commentaire}}</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->

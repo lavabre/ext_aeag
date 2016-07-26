@@ -72,6 +72,9 @@
                                             {% if app.session.get('suiviSED') %}
                                             <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ path('AeagSqeBundle_suiviSediment_index')}}" title="Suivi hydrobio"><i class="fa fa-calendar fa-3x"></i> Suivi Sédiment</a></li>
                                             {% endif %}
+                                            {% if  not app.session.get('evolution')%}
+                                                <li class="list-group-item list-group-item-info"><a class="btn btn-primary"  href="{{ path('AeagSqeBundle_suiviEau_index')}}"><i class="fa fa-calendar fa-3x"></i> Suivi Eau</a></li>
+                                             {% endif %}
                                     </ul>
                                 </div>
                             </div>
@@ -147,6 +150,9 @@
                                             {% if app.session.get('suiviSED') %}
                                             <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ path('AeagSqeBundle_suiviSediment_index')}}" title="Suivi hydrobio"><i class="fa fa-calendar fa-3x"></i> Suivi Sédiment</a></li>
                                             {% endif %}
+                                            {% if  not app.session.get('evolution')%}
+                                                <li class="list-group-item list-group-item-info"><a class="btn btn-primary"  href="{{ path('AeagSqeBundle_suiviEau_index')}}"><i class="fa fa-calendar fa-3x"></i> Suivi Eau</a></li>
+                                             {% endif %}
                                     </ul>
                                 </div>
                             </div>

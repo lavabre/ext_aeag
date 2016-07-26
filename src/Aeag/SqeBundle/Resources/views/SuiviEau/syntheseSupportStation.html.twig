@@ -1,0 +1,125 @@
+<form class="form-horizontal" id="idFormNewSuivi" role="form" action="#" class="form-horizontal" method="post" {{ form_enctype(form) }}>
+
+    {% if dateLimite %}
+        <div class="form-group">
+            <label class="col-xs-offset-3 col-xs-5 text-center text-exception">date Limite  : {{ dateLimite | date("d/m/Y") }}</label>
+        </div> 
+    {% endif %}
+
+    <div class="form-group">
+        <label class="col-xs-3 control-label">Avis :</label>
+        {%if form_errors(form.avis) %}
+            <div class="col-xs-8 input-group has-error has-feedback">
+            {% else %}
+                <div class="col-xs-8 input-group">
+                {% endif %}
+                {{ form_widget(form.avis, { 'attr': {'class': 'form-control ', 'placeholder': 'avis'} }) }}
+            </div>
+        </div> 
+
+        <div class="form-group">
+            <label class="col-xs-3 control-label">Commentaire : </label>
+            {%if form_errors(form.commentaireActuel) %}
+                <div class="col-xs-8 input-group has-error has-feedback">
+                {% else %}
+                    <div class="col-xs-8 input-group">
+                    {% endif %}
+                    {{ form_widget(form.commentaireActuel, { 'attr': {'class': 'form-control ', 'placeholder': 'Commentaire'} }) }}
+                </div>
+            </div> 
+
+            <div id="idCommentaire" class="form-group">
+                <label class="col-xs-3 control-label">Ajouter un commentaire : </label>
+                {%if form_errors(form.commentaire) %}
+                    <div class="col-xs-8 input-group has-error has-feedback">
+                    {% else %}
+                        <div class="col-xs-8 input-group">
+                        {% endif %}
+                        {{ form_widget(form.commentaire, { 'attr': {'class': 'form-control ', 'placeholder': 'Commentaire'} }) }}
+                    </div>
+                </div> 
+
+                <div id="idMessage" class="col-xs-offset-3 col-xs-5 alert alert-warning text-danger text-left" role="alert"></div>
+                <div id="idProgress" class="col-xs-offset-3 col-xs-5 alert alert-info"><progress></progress></div>
+
+                <div class="form-group">
+                    <div class="col-xs-offset-4 col-xs-8">
+                        <button id="btAnnuler" type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
+                        <button id="btValider" type="button" class="btn btn-success"><i class="fa fa-check"></i>Valider</button>
+                    </div>
+                </div>   
+
+
+
+                <div class="hide">
+                    {{ form_rest(form) }}
+                </div>  
+                </form>      
+                <script type="text/javascript" language="javascript">
+
+                    jQuery(document).ready(function () {
+
+                        $('#idProgress').hide();
+                        $('#idMessage').hide();
+                        $('#btFermer').hide();
+
+                        if ($('#avis').val() != 'D') {
+                            $('#commentaire').removeAttr('required');
+                            $('#idCommentaire').hide();
+                        } else {
+                            $('#commentaire').prop('required', true);
+                            $('#idCommentaire').show();
+                        }
+                        ;
+
+
+                        $(document).on('change', '#avis', function (e) {
+                            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                            if ($('#avis').val() != 'D') {
+                                $('#commentaire').removeAttr('required');
+                                $('#idCommentaire').hide();
+                            } else {
+                                $('#commentaire').prop('required', true);
+                                $('#idCommentaire').show();
+                            }
+                            ;
+                        });
+
+                        $('#btValider').click(function (e) {
+                            erreur = false;
+                            if ($('#avis').val() == 'D' && $('#commentaire').val() == '')
+                            {
+                                alert("Veuillez saisir un commentaire svp");
+                                erreur = true;
+                            }
+
+                            if (!erreur){
+                            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                                    $('#idProgress').show();
+                                    var $this = $('#idFormNewSuivi');
+                                    var url = '{{ path("AeagSqeBundle_suiviEau_synthese_support_station",{"codeSupport": "par1", "stationId": "par2", "suiviPrelId":  "par3",  "tr": "par4"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                    url = url.replace("par1", {{ support.codeSupport }});
+                                    url = url.replace("par2", {{ station.ouvFoncId }});
+                                    url = url.replace("par3", {{ suiviPrel.id }});
+                                    url = url.replace("par4", {{ tr }});
+                                    url = url.replace("amp;", "");
+                            $.ajax({
+                                url: url,
+                                type: 'post',
+                                data: $this.serialize(),
+                                //Traitements AJAX
+                                success: function (html) { // Je récupère la réponse du fichier PHP
+                                    $('#idTd-{{ tr}}').empty().append(html).show();
+                                    $('#idProgress').hide();
+                                    $('#modalNouveauSuivi').modal('hide');
+                                },
+                                error: function (messages) { // Je récupère la réponse du fichier PHP
+                                    $('#idMessage').empty().append('erreur ajax').show();
+                                    $('#idProgress').hide();
+                                }
+                            });
+                            }
+                        });
+                    });
+
+                </script>

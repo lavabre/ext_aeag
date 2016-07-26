@@ -1,0 +1,75 @@
+{% extends "AeagSqeBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+    <li>
+        <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+    </li>
+    <li class="active">
+        Qualification suivis Hydrobio
+    </li>
+{% endblock breadcrumb %} 
+
+{%block panel_heading %}
+    <h3 class="page-title text-center">
+        Liste des supports
+    </h3>
+{%endblock panel_heading %}
+
+{%block content %}
+   <div class="row responsive">
+        <div class="col-xm-12">
+            <div class="small ">     
+                <table class="table table-bordered table-condensed table-advance table-responsive table-striped" id="idTable_support">
+                    <thead>
+                        <tr>
+                            <th width="1%">Actions</th>
+                            <th>Support</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {%if supports | length%} 
+                            {% for support in supports %}
+                                {% if support.codeSupport == '3'%}
+                                    <tr>
+                                        <td>
+                                            <a id="id_{{support.codeSupport}}" class="btn btn-primary btn-demandes" href="{{path('AeagSqeBundle_suiviEau_synthese_support',{ 'codeSupport': support.codeSupport })}}" title="Qualification">
+                                                <i class="fa fa-eye"></i> 
+                                            </a>
+                                        </td>
+                                        <td>{{support.nomSupport}}</td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{%endblock content %}    
+
+{% block scripts %}
+
+    $(document).ready(function() {
+    $('#modalTraitementEncours').modal('hide');
+    var table = $('#idTable_support').DataTable(
+    {"stateSave": true,
+    "order": [[ 1, "desc" ]],
+    "language": {
+    "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
+    },
+    "aLengthMenu": [
+    [10, 25, 50, 100, -1],
+    [10, 25, 50, 100, "Tous"]
+    ],
+    "iDisplayLength": -1
+    }
+    );
+
+
+    $(".btn-demandes").click(function() {
+    $('#modalTraitementEncours').modal();
+    });
+    });
+
+{%endblock scripts %}    

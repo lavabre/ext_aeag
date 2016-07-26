@@ -19,15 +19,15 @@ use Aeag\AeagBundle\Controller\AeagController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 
-class SuiviHydrobioController extends Controller {
+class SuiviEauController extends Controller {
 
     public function indexAction() {
 
         $user = $this->getUser();
 
         $session = $this->get('session');
-        $session->set('menu', 'suiviHydrobio');
-        $session->set('controller', 'SuiviHydrobio');
+        $session->set('menu', 'suiviEau');
+        $session->set('controller', 'SuiviEau');
         $session->set('fonction', 'index');
         $em = $this->get('doctrine')->getManager();
         $emSqe = $this->get('doctrine')->getManager('sqe');
@@ -60,15 +60,24 @@ class SuiviHydrobioController extends Controller {
         foreach ($pgProgLotAns as $pgProgLotAn) {
             $pgProgLot = $pgProgLotAn->getLot();
             $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
-            if (substr($pgProgTypeMilieu->getCodeMilieu(), 1, 2) === 'HB' or $pgProgTypeMilieu->getCodeMilieu() === 'RHM') {
-                $pgProgLotPeriodeAns = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnByLotan($pgProgLotAn);
-                if (count($pgProgLotPeriodeAns) > 0) {
+            $pgProgLotPeriodeAns = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnByLotan($pgProgLotAn);
+            if (count($pgProgLotPeriodeAns) > 0) {
+                $trouve = false;
+                foreach ($pgProgLotPeriodeAns as $pgProgLotPeriodeAn) {
+                    $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByPeriodeAn($pgProgLotPeriodeAn);
+                    if (count($pgProgLotPeriodeProgs) > 0) {
+                        $trouve = true;
+                        break;
+                    }
+                }
+                if ($trouve) {
                     $trouve = false;
-                    foreach ($pgProgLotPeriodeAns as $pgProgLotPeriodeAn) {
-                        $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByPeriodeAn($pgProgLotPeriodeAn);
-                        if (count($pgProgLotPeriodeProgs) > 0) {
-                            $trouve = true;
-                            break;
+                    foreach ($pgProgLot->getGrparRef() as $pgProgGrpParamRef) {
+                        if ($pgProgGrpParamRef->getSupport()) {
+                            if ($pgProgGrpParamRef->getSupport()->getCodeSupport() == '3') {
+                                $trouve = true;
+                                break;
+                            }
                         }
                     }
                     if ($trouve) {
@@ -80,7 +89,7 @@ class SuiviHydrobioController extends Controller {
         }
 
 
-        return $this->render('AeagSqeBundle:SuiviHydrobio:index.html.twig', array('user' => $user,
+        return $this->render('AeagSqeBundle:SuiviEau:index.html.twig', array('user' => $user,
                     'lotans' => $tabProglotAns));
     }
 
@@ -90,8 +99,8 @@ class SuiviHydrobioController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'suiviHydrobio');
-        $session->set('controller', 'SuiviHydrobio');
+        $session->set('menu', 'suiviEau');
+        $session->set('controller', 'SuiviEau');
         $session->set('fonction', 'lotPeriodes');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
@@ -144,10 +153,10 @@ class SuiviHydrobioController extends Controller {
         }
 
         if (count($tabPeriodeAns) == 1) {
-            return $this->redirect($this->generateUrl('AeagSqeBundle_suiviHydrobio_lot_periode_stations', array('periodeAnId' => $tabPeriodeAns[0]['pgProgLotPeriodeAn']->getId())));
+            return $this->redirect($this->generateUrl('AeagSqeBundle_suiviEau_lot_periode_stations', array('periodeAnId' => $tabPeriodeAns[0]['pgProgLotPeriodeAn']->getId())));
         }
 
-        return $this->render('AeagSqeBundle:SuiviHydrobio:lotPeriodes.html.twig', array(
+        return $this->render('AeagSqeBundle:SuiviEau:lotPeriodes.html.twig', array(
                     'user' => $pgProgWebUser,
                     'lotan' => $pgProgLotAn,
                     'periodeAns' => $tabPeriodeAns));
@@ -158,8 +167,8 @@ class SuiviHydrobioController extends Controller {
         $user = $this->getUser();
 
         $session = $this->get('session');
-        $session->set('menu', 'suiviHydrobio');
-        $session->set('controller', 'SuiviHydrobio');
+        $session->set('menu', 'suiviEau');
+        $session->set('controller', 'SuiviEau');
         $session->set('fonction', 'lotPeriodeStations');
         $em = $this->get('doctrine')->getManager();
         $emSqe = $this->get('doctrine')->getManager('sqe');
@@ -282,11 +291,6 @@ class SuiviHydrobioController extends Controller {
                                         }
                                     }
                                 }
-                                if ($pgProgLotStationAn->getStation()->getCode() == '05105950') {
-//                                        \Symfony\Component\VarDumper\VarDumper::dump($tabSuiviPrels[$nbSuiviPrels]['suiviPrel']);
-//                                        return new Response('');
-//                                    }
-                                }
                                 $nbSuiviPrels++;
                                 break;
                             }
@@ -332,7 +336,7 @@ class SuiviHydrobioController extends Controller {
 //        \Symfony\Component\VarDumper\VarDumper::dump($tabStations);
 //        return new Response ('');   
 
-        return $this->render('AeagSqeBundle:SuiviHydrobio:lotPeriodeStations.html.twig', array(
+        return $this->render('AeagSqeBundle:SuiviEau:lotPeriodeStations.html.twig', array(
                     'user' => $pgProgWebUser,
                     'lotan' => $pgProgLotAn,
                     'periodeAn' => $pgProgLotPeriodeAn,
@@ -349,12 +353,12 @@ class SuiviHydrobioController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'suiviHydrobio');
-        $session->set('controller', 'SuiviHydrobio');
+        $session->set('menu', 'suiviEau');
+        $session->set('controller', 'SuiviEau');
         $session->set('fonction', 'lotPeriodeStationsIntegrer');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
-        return $this->render('AeagSqeBundle:SuiviHydrobio:lotPeriodeStationsImporter.html.twig', array(
+        return $this->render('AeagSqeBundle:SuiviEau:lotPeriodeStationsImporter.html.twig', array(
                     'periodeAnId' => $periodeAnId,
                     'rapport' => null));
 
@@ -371,8 +375,8 @@ class SuiviHydrobioController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'suiviHydrobio');
-        $session->set('controller', 'SuiviHydrobio');
+        $session->set('menu', 'suiviEau');
+        $session->set('controller', 'SuiviEau');
         $session->set('fonction', 'lotPeriodeStationsIntegrerFichier');
         $em = $this->get('doctrine')->getManager();
         $emSqe = $this->get('doctrine')->getManager('sqe');
@@ -386,7 +390,6 @@ class SuiviHydrobioController extends Controller {
         $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
         $repoPgProgWebUserTypmil = $emSqe->getRepository('AeagSqeBundle:PgProgWebuserTypmil');
-        $repoPgProgWebUserZgeoref = $emSqe->getRepository('AeagSqeBundle:PgProgWebuserZgeoref');
         $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
 
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
@@ -769,48 +772,6 @@ class SuiviHydrobioController extends Controller {
             $objetMessage = "fichier terrrain déposé ";
             $txtMessage = "Un ou plusieurs fichiers terrain ont été déposés sur le lot " . $pgProgLot->getNomLot() . " pour la période du " . $pgProgPeriode->getDateDeb()->format('d/m/Y') . " au " . $dateFin->format('d/m/Y');
             $mailer = $this->get('mailer');
-            // envoi mail  aux XHBIO
-            $pgProgWebusers = $repoPgProgWebUsers->getPgProgWebusersByTypeUser('XHBIO');
-            foreach ($pgProgWebusers as $destinataire) {
-                if ($destinataire->getCodeSupport()) {
-                    $trouve = false;
-                    if (count($tabSupport) > 0) {
-                        for ($nbSupport = 0; $nbSupport < count($tabSupport); $nbSupport++) {
-                            if ($tabSupport[$nbSupport] == $destinataire->getCodeSupport()) {
-                                $trouve = true;
-                                break;
-                            }
-                        }
-                    }
-                } else {
-                    $trouve = true;
-                }
-                if ($trouve) {
-                    $trouve = false;
-                    $pgProgWebUserZgeorefs = $repoPgProgWebUserZgeoref->getPgProgWebuserZgeorefByWebuser($destinataire);
-                    foreach ($pgProgWebUserZgeorefs as $pgProgWebUserZgeoref) {
-                        if ($pgProgWebUserZgeoref->getZgeoref()->getId() == $pgProgLot->getZgeoref()->getId()) {
-                            $trouve = true;
-                        }
-                    }
-                    if ($trouve) {
-                        // Envoi d'un mail
-                        if ($this->get('aeag_sqe.message')->envoiMessage($emSqe, $mailer, $txtMessage, $destinataire, $objetMessage)) {
-                            $message = 'un email  vous a été envoyé par ' . $pgProgWebUser->getNom() . ' suite à l\'intégration de plusieurs fichiers de terrain ' . CHR(13) . CHR(10) . ' sur le lot ' . $pgProgLot->getNomLot() . ' pour la période du ' . $pgProgPeriode->getDateDeb()->format('d/m/Y') . ' au ' . $dateFin->format('d/m/Y');
-                            $notification = new Notification();
-                            $notification->setRecepteur($destinataire->getExtId());
-                            $notification->setEmetteur($user->getId());
-                            $notification->setNouveau(true);
-                            $notification->setIteration(2);
-                            $notification->setMessage($message);
-                            $em->persist($notification);
-                            $em->flush();
-                        } else {
-                            $session->getFlashBag()->add('notice-warning', 'Le dépôt a été traité, mais l\'email n\'a pas pu être envoyé à ' . $destinataire->getNom());
-                        }
-                    }
-                }
-            }
             // envoi mail  aux presta connecte 
             $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
             if ($pgProgWebUser) {
@@ -870,8 +831,8 @@ class SuiviHydrobioController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'suiviHydrobio');
-        $session->set('controller', 'SuiviHydrobio');
+        $session->set('menu', 'suiviEau');
+        $session->set('controller', 'SuiviEau');
         $session->set('fonction', 'lotPeriodeStationsSupprimerFichier');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
@@ -894,13 +855,13 @@ class SuiviHydrobioController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'suiviHydrobio');
-        $session->set('controller', 'SuiviHydrobio');
+        $session->set('menu', 'suiviEau');
+        $session->set('controller', 'SuiviEau');
         $session->set('fonction', 'lotPeriodeStationsIntegrer');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
 
-        return $this->render('AeagSqeBundle:SuiviHydrobio:lotPeriodeStationsIntegrer.html.twig', array(
+        return $this->render('AeagSqeBundle:SuiviEau:lotPeriodeStationsIntegrer.html.twig', array(
                     'periodeAnId' => $periodeAnId
         ));
 
@@ -917,8 +878,8 @@ class SuiviHydrobioController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'suiviHydrobio');
-        $session->set('controller', 'SuiviHydrobio');
+        $session->set('menu', 'suiviEau');
+        $session->set('controller', 'SuiviEau');
         $session->set('fonction', 'lotPeriodeStationsIntegrerFichier');
         $em = $this->get('doctrine')->getManager();
         $emSqe = $this->get('doctrine')->getManager('sqe');
@@ -1102,6 +1063,13 @@ class SuiviHydrobioController extends Controller {
                         $contenu = 'ligne  ' . $ligne . '  :  code support inconnu (' . $codeSupport . ')' . CHR(13) . CHR(10);
                         $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                         fputs($rapport, $contenu);
+                    } else {
+                        if ($codeSupport != '3') {
+                            $err = true;
+                            $contenu = 'ligne  ' . $ligne . '  :  code support  erroné (' . $codeSupport . ')' . CHR(13) . CHR(10);
+                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                            fputs($rapport, $contenu);
+                        }
                     }
 
                     $statutPrel = $tab[2];
@@ -1181,28 +1149,6 @@ class SuiviHydrobioController extends Controller {
                     if (count($prelevs) > 0) {
                         for ($j = 0; $j < count($prelevs); $j++) {
                             $prelev = $prelevs[$j]['cmdPrelev'];
-                            if ($prelev->getCodeSupport()->getCodeSupport() != '10' && $prelev->getCodeSupport()->getCodeSupport() != '11') {
-                                $autrePgCmdPrelevs = $repoPgCmdPrelev->getAutrePrelevs($prelev);
-                                for ($i = 0; $i < count($autrePgCmdPrelevs); $i++) {
-                                    $autreSuport = $autrePgCmdPrelevs[$i]['codeSupport'];
-                                    if (( $autreSuport == '4' && $autreSuport == '69') ||
-                                            ($prelev->getCodeSupport()->getCodeSupport() == '69' && $autreSuport != '4') ||
-                                            ($prelev->getCodeSupport()->getCodeSupport() == '4' && $autreSuport != '69')) {
-                                        $autreDateDebut = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
-                                        $autreDateDebut->sub(new \DateInterval('P7D'));
-                                        $autreDateFin = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
-                                        $autreDateFin->add(new \DateInterval('P7D'));
-                                        if ($datePrel >= $autreDateDebut and $datePrel <= $autreDateFin) {
-                                            if (!$user->hasRole('ROLE_ADMINSQE')) {
-                                                $err = true;
-                                            }
-                                            $contenu = 'ligne  ' . $ligne . '  : Date  (' . $datePrel->format('d/m/Y H:i') . ') doit être inférieure à ' . $autreDateDebut->format('d/m/Y H:i') . ' ou supérieure à  ' . $autreDateFin->format('d/m/Y H:i');
-                                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                                            fputs($rapport, $contenu);
-                                        }
-                                    }
-                                }
-                            }
                             if ($prelev->getCodeSupport()->getCodeSupport() == $codeSupport) {
                                 $trouve = true;
                                 $suiviPrels = $prelevs[$j]['cmdSuiviPrelevs'];
@@ -1230,16 +1176,8 @@ class SuiviHydrobioController extends Controller {
                                         $nbStations++;
                                     }
                                 }
-                                if ($pgCmdPrelev->getCodeSupport()->getCodeSupport() == '13' || $pgCmdPrelev->getCodeSupport()->getCodeSupport() == '11') {
+                                if ($pgCmdPrelev->getCodeSupport()->getCodeSupport() == '3') {
                                     if ($nbStations > 4) {
-                                        $err = true;
-                                        $contenu = 'ligne  ' . $ligne . '  :  4 stations maxi le même jour pour un même commentaire ' . CHR(13) . CHR(10);
-                                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                                        fputs($rapport, $contenu);
-                                    }
-                                }
-                                if ($pgCmdPrelev->getCodeSupport()->getCodeSupport() == '10') {
-                                    if ($nbStations > 6) {
                                         $err = true;
                                         $contenu = 'ligne  ' . $ligne . '  :  4 stations maxi le même jour pour un même commentaire ' . CHR(13) . CHR(10);
                                         $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
@@ -1370,8 +1308,8 @@ class SuiviHydrobioController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'suiviHydrobio');
-        $session->set('controller', 'SuiviHydrobio');
+        $session->set('menu', 'suiviEau');
+        $session->set('controller', 'SuiviEau');
         $session->set('fonction', 'lotPeriodeStationsSupprimerFichier');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
@@ -1394,8 +1332,8 @@ class SuiviHydrobioController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'suiviHydrobio');
-        $session->set('controller', 'SuiviHydrobio');
+        $session->set('menu', 'suiviEau');
+        $session->set('controller', 'SuiviEau');
         $session->set('fonction', 'lotPeriodeStationsTelechargerRapport');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
@@ -1415,8 +1353,8 @@ class SuiviHydrobioController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'suiviHydrobio');
-        $session->set('controller', 'SuiviHydrobio');
+        $session->set('menu', 'suiviEau');
+        $session->set('controller', 'SuiviEau');
         $session->set('fonction', 'lotPeriodeStationDemande');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
@@ -1503,7 +1441,7 @@ class SuiviHydrobioController extends Controller {
 //       \Symfony\Component\VarDumper\VarDumper::dump($tabDemande);
 //        return new Response('');
 
-        return $this->render('AeagSqeBundle:SuiviHydrobio:lotPeriodeStationDemande.html.twig', array(
+        return $this->render('AeagSqeBundle:SuiviEau:lotPeriodeStationDemande.html.twig', array(
                     'user' => $pgProgWebUser,
                     'lotan' => $pgProgLotAn,
                     'station' => $pgRefStationMesure,
@@ -1519,8 +1457,8 @@ class SuiviHydrobioController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'suiviHydrobio');
-        $session->set('controller', 'SuiviHydrobio');
+        $session->set('menu', 'suiviEau');
+        $session->set('controller', 'SuiviEau');
         $session->set('fonction', 'lotPeriodeStationDemandeSuiviNew');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
@@ -1593,29 +1531,6 @@ class SuiviHydrobioController extends Controller {
                 }
             }
 
-            if ($pgCmdPrelev->getCodeSupport()->getCodeSupport() != '10' && $pgCmdPrelev->getCodeSupport()->getCodeSupport() != '11') {
-                $autrePgCmdPrelevs = $repoPgCmdPrelev->getAutrePrelevs($pgCmdPrelev);
-                for ($i = 0; $i < count($autrePgCmdPrelevs); $i++) {
-                    $autreSuport = $autrePgCmdPrelevs[$i]['codeSupport'];
-                    if (( $autreSuport == '4' && $autreSuport == '69') ||
-                            ($pgCmdPrelev->getCodeSupport()->getCodeSupport() == '69' && $autreSuport != '4') ||
-                            ($pgCmdPrelev->getCodeSupport()->getCodeSupport() == '4' && $autreSuport != '69')) {
-                        $autreDateDebut = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
-                        $autreDateDebut->sub(new \DateInterval('P7D'));
-                        $autreDateFin = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
-                        $autreDateFin->add(new \DateInterval('P7D'));
-                        if ($pgCmdSuiviPrel->getDatePrel() >= $autreDateDebut and $pgCmdSuiviPrel->getDatePrel() <= $autreDateFin) {
-                            if (!$user->hasRole('ROLE_ADMINSQE')) {
-                                $err = true;
-                            }
-                            $contenu = 'Date  (' . $pgCmdSuiviPrel->getDatePrel()->format('d/m/Y H:i') . ') doit être inférieure à ' . $autreDateDebut->format('d/m/Y H:i') . ' ou supérieure à  ' . $autreDateFin->format('d/m/Y H:i');
-                            $tabMessage[$nbMessages][0] = 'ko';
-                            $tabMessage[$nbMessages][1] = $contenu;
-                            $nbMessages++;
-                        }
-                    }
-                }
-            }
 
 
 
@@ -1659,7 +1574,7 @@ class SuiviHydrobioController extends Controller {
                     $nbStations++;
                 }
             }
-            if ($pgCmdPrelev->getCodeSupport()->getCodeSupport() == '13' || $pgCmdPrelev->getCodeSupport()->getCodeSupport() == '11') {
+            if ($pgCmdPrelev->getCodeSupport()->getCodeSupport() == '3') {
                 if ($nbStations > 4) {
                     $err = true;
                     $contenu = '4 stations maxi le même jour pour un même commentaire' . CHR(13) . CHR(10);
@@ -1668,15 +1583,7 @@ class SuiviHydrobioController extends Controller {
                     $nbMessages++;
                 }
             }
-            if ($pgCmdPrelev->getCodeSupport()->getCodeSupport() == '10') {
-                if ($nbStations > 6) {
-                    $err = true;
-                    $contenu = '6 stations maxi le même jour pour un même commentaire' . CHR(13) . CHR(10);
-                    $tabMessage[$nbMessages][0] = 'ko';
-                    $tabMessage[$nbMessages][1] = $contenu;
-                    $nbMessages++;
-                }
-            }
+
 
             if ($pgCmdSuiviPrelActuel) {
                 if ($pgCmdSuiviPrelActuel->getStatutPrel() == 'E' and $pgCmdSuiviPrel->getStatutPrel() == 'P') {
@@ -1737,7 +1644,7 @@ class SuiviHydrobioController extends Controller {
             }
         }
 
-        return $this->render('AeagSqeBundle:SuiviHydrobio:lotPeriodeStationDemandeSuiviNew.html.twig', array(
+        return $this->render('AeagSqeBundle:SuiviEau:lotPeriodeStationDemandeSuiviNew.html.twig', array(
                     'prelev' => $pgCmdPrelev,
                     'periodeAnId' => $periodeAnId,
                     'periodeAn' => $pgProgLotPeriodeAn,
@@ -1758,8 +1665,8 @@ class SuiviHydrobioController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'suiviHydrobio');
-        $session->set('controller', 'SuiviHydrobio');
+        $session->set('menu', 'suiviEau');
+        $session->set('controller', 'SuiviEau');
         $session->set('fonction', 'lotPeriodeStationDemandeSuiviMaj');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
@@ -1806,11 +1713,11 @@ class SuiviHydrobioController extends Controller {
             $emSqe->flush();
             $session->getFlashBag()->add('notice-success', 'le suivi du ' . $datePrel->format('d/m/Y') . ' a été modifié sur la station : ' . $pgCmdPrelev->getStation()->getCode() . ' !');
 
-            return $this->redirect($this->generateUrl('AeagSqeBundle_suiviHydrobio_lot_periode_stations', array('stationId' => $pgCmdPrelev->getStation()->getOuvFoncId(),
+            return $this->redirect($this->generateUrl('AeagSqeBundle_suiviEau_lot_periode_stations', array('stationId' => $pgCmdPrelev->getStation()->getOuvFoncId(),
                                 'periodeAnId' => $periodeAnId)));
         }
 
-        return $this->render('AeagSqeBundle:SuiviHydrobio:lotPeriodeStationDemandeSuiviMaj.html.twig', array(
+        return $this->render('AeagSqeBundle:SuiviEau:lotPeriodeStationDemandeSuiviMaj.html.twig', array(
                     'prelev' => $pgCmdPrelev,
                     'periodeAnId' => $periodeAnId,
                     'periodeAn' => $pgProgLotPeriodeAn,
@@ -1832,8 +1739,8 @@ class SuiviHydrobioController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'suiviHydrobio');
-        $session->set('controller', 'SuiviHydrobio');
+        $session->set('menu', 'suiviEau');
+        $session->set('controller', 'SuiviEau');
         $session->set('fonction', 'lotPeriodeStationDemandeSuiviVoir');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
@@ -1852,7 +1759,7 @@ class SuiviHydrobioController extends Controller {
         $pgCmdPrelev = $pgCmdSuiviPrel->getPrelev();
         $form = $this->createForm(new PgCmdSuiviPrelVoirType($user), $pgCmdSuiviPrel);
 
-        return $this->render('AeagSqeBundle:SuiviHydrobio:lotPeriodeStationDemandeSuiviVoir.html.twig', array(
+        return $this->render('AeagSqeBundle:SuiviEau:lotPeriodeStationDemandeSuiviVoir.html.twig', array(
                     'prelev' => $pgCmdPrelev,
                     'periodeAnId' => $periodeAnId,
                     'suiviPrel' => $pgCmdSuiviPrel,
@@ -1873,8 +1780,8 @@ class SuiviHydrobioController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'suiviHydrobio');
-        $session->set('controller', 'SuiviHydrobio');
+        $session->set('menu', 'suiviEau');
+        $session->set('controller', 'SuiviEau');
         $session->set('fonction', 'lotPeriodeStationDemandeSuiviDeposer');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
@@ -1885,7 +1792,7 @@ class SuiviHydrobioController extends Controller {
         $pgCmdPrelev = $pgCmdSuiviPrel->getPrelev();
 
 
-        return $this->render('AeagSqeBundle:SuiviHydrobio:lotPeriodeStationDemandeSuiviDeposer.html.twig', array(
+        return $this->render('AeagSqeBundle:SuiviEau:lotPeriodeStationDemandeSuiviDeposer.html.twig', array(
                     'prelev' => $pgCmdPrelev,
                     'stationId' => $stationId,
                     'periodeAnId' => $periodeAnId,
@@ -1905,8 +1812,8 @@ class SuiviHydrobioController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'suiviHydrobio');
-        $session->set('controller', 'SuiviHydrobio');
+        $session->set('menu', 'suiviEau');
+        $session->set('controller', 'SuiviEau');
         $session->set('fonction', 'lotPeriodeStationDemandeSuiviSupprimer');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
@@ -1945,7 +1852,7 @@ class SuiviHydrobioController extends Controller {
 
         $session->getFlashBag()->add('notice-success', 'le suivi du prélèvement du   : ' . $datePrel->format('d/m/Y') . ' a été supprimé sur la station : ' . $pgCmdPrelev->getStation()->getCode() . ' !');
 
-//        return $this->redirect($this->generateUrl('AeagSqeBundle_suiviHydrobio_lot_periode_stations', array('stationId' => $pgCmdPrelev->getStation()->getOuvFoncId(),
+//        return $this->redirect($this->generateUrl('AeagSqeBundle_suiviEau_lot_periode_stations', array('stationId' => $pgCmdPrelev->getStation()->getOuvFoncId(),
 //                            'periodeAnId' => $periodeAnId)));
 //          \Symfony\Component\VarDumper\VarDumper::dump($tabDemande);
         return new Response('');
@@ -1958,8 +1865,8 @@ class SuiviHydrobioController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'suiviHydrobio');
-        $session->set('controller', 'SuiviHydrobio');
+        $session->set('menu', 'suiviEau');
+        $session->set('controller', 'SuiviEau');
         $session->set('fonction', 'lotPeriodeStationDemandeSuiviFichierDeposer');
         $em = $this->get('doctrine')->getManager();
         $emSqe = $this->get('doctrine')->getManager('sqe');
@@ -2286,48 +2193,7 @@ class SuiviHydrobioController extends Controller {
             $objetMessage = "fichier terrrain déposé ";
             $txtMessage = "Un ou plusieurs fichiers terrain ont été déposés sur le lot " . $pgProgLot->getNomLot() . " pour la période du " . $pgProgPeriode->getDateDeb()->format('d/m/Y') . " au " . $dateFin->format('d/m/Y');
             $mailer = $this->get('mailer');
-            // envoi mail  aux XHBIO
-            $pgProgWebusers = $repoPgProgWebUsers->getPgProgWebusersByTypeUser('XHBIO');
-            foreach ($pgProgWebusers as $destinataire) {
-                if ($destinataire->getCodeSupport()) {
-                    $trouve = false;
-                    if (count($tabSupport) > 0) {
-                        for ($nbSupport = 0; $nbSupport < count($tabSupport); $nbSupport++) {
-                            if ($tabSupport[$nbSupport] == $destinataire->getCodeSupport()) {
-                                $trouve = true;
-                                break;
-                            }
-                        }
-                    }
-                } else {
-                    $trouve = true;
-                }
-                if ($trouve) {
-                    $trouve = false;
-                    $pgProgWebUserZgeorefs = $repoPgProgWebUserZgeoref->getPgProgWebuserZgeorefByWebuser($destinataire);
-                    foreach ($pgProgWebUserZgeorefs as $pgProgWebUserZgeoref) {
-                        if ($pgProgWebUserZgeoref->getZgeoref()->getId() == $pgProgLot->getZgeoref()->getId()) {
-                            $trouve = true;
-                        }
-                    }
-                    if ($trouve) {
-                        // Envoi d'un mail
-                        if ($this->get('aeag_sqe.message')->envoiMessage($emSqe, $mailer, $txtMessage, $destinataire, $objetMessage)) {
-                            $message = 'un email  vous a été envoyé par ' . $pgProgWebUser->getNom() . ' suite à l\'intégration de plusieurs fichiers de terrain ' . CHR(13) . CHR(10) . ' sur le lot ' . $pgProgLot->getNomLot() . ' pour la période du ' . $pgProgPeriode->getDateDeb()->format('d/m/Y') . ' au ' . $dateFin->format('d/m/Y');
-                            $notification = new Notification();
-                            $notification->setRecepteur($destinataire->getExtId());
-                            $notification->setEmetteur($user->getId());
-                            $notification->setNouveau(true);
-                            $notification->setIteration(2);
-                            $notification->setMessage($message);
-                            $em->persist($notification);
-                            $em->flush();
-                        } else {
-                            $session->getFlashBag()->add('notice-warning', 'Le dépôt a été traité, mais l\'email n\'a pas pu être envoyé à ' . $destinataire->getNom());
-                        }
-                    }
-                }
-            }
+
             // envoi mail  aux presta connecte 
             $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
             if ($pgProgWebUser) {
@@ -2387,8 +2253,8 @@ class SuiviHydrobioController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'suiviHydrobio');
-        $session->set('controller', 'SuiviHydrobio');
+        $session->set('menu', 'suiviEau');
+        $session->set('controller', 'SuiviEau');
         $session->set('fonction', 'lotPeriodeStationDemandeSuiviFichierSupprimer');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
@@ -2447,8 +2313,8 @@ class SuiviHydrobioController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'suiviHydrobio');
-        $session->set('controller', 'SuiviHydrobio');
+        $session->set('menu', 'suiviEau');
+        $session->set('controller', 'SuiviEau');
         $session->set('fonction', 'lotPeriodeStationDemandeSuiviFichierTelecharger');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
@@ -2486,7 +2352,7 @@ class SuiviHydrobioController extends Controller {
 
         $session = $this->get('session');
         $session->set('menu', 'syntheseHydrobio');
-        $session->set('controller', 'SuiviHydrobio');
+        $session->set('controller', 'SuiviEau');
         $session->set('fonction', 'prelevSuiviPrels');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
@@ -2502,7 +2368,7 @@ class SuiviHydrobioController extends Controller {
 //         \Symfony\Component\VarDumper\VarDumper::dump($tabCmdPrelevs);
 //        return new Response('');
 
-        return $this->render('AeagSqeBundle:SuiviHydrobio:prelevSuiviPrels.html.twig', array('cmdPrelev' => $tabCmdPrelevs));
+        return $this->render('AeagSqeBundle:SuiviEau:prelevSuiviPrels.html.twig', array('cmdPrelev' => $tabCmdPrelevs));
     }
 
     public function syntheseAction() {
@@ -2513,7 +2379,7 @@ class SuiviHydrobioController extends Controller {
 
         $session = $this->get('session');
         $session->set('menu', 'syntheseHydrobio');
-        $session->set('controller', 'SuiviHydrobio');
+        $session->set('controller', 'SuiviEau');
         $session->set('fonction', 'synthese');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
@@ -2521,7 +2387,7 @@ class SuiviHydrobioController extends Controller {
 
         $pgSandreSupports = $repoPgSandreSupport->getPgSandreSupports();
 
-        return $this->render('AeagSqeBundle:SuiviHydrobio:synthese.html.twig', array('supports' => $pgSandreSupports));
+        return $this->render('AeagSqeBundle:SuiviEau:synthese.html.twig', array('supports' => $pgSandreSupports));
     }
 
     public function syntheseSupportAction($codeSupport = null) {
@@ -2532,7 +2398,7 @@ class SuiviHydrobioController extends Controller {
 
         $session = $this->get('session');
         $session->set('menu', 'syntheseHydrobio');
-        $session->set('controller', 'SuiviHydrobio');
+        $session->set('controller', 'SuiviEau');
         $session->set('fonction', 'syntheseSupport');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
@@ -2610,7 +2476,7 @@ class SuiviHydrobioController extends Controller {
 //         \Symfony\Component\VarDumper\VarDumper::dump($tabStations);
 //        return new Response('');
 
-        return $this->render('AeagSqeBundle:SuiviHydrobio:syntheseSupport.html.twig', array('pgProgWebUser' => $pgProgWebUser,
+        return $this->render('AeagSqeBundle:SuiviEau:syntheseSupport.html.twig', array('pgProgWebUser' => $pgProgWebUser,
                     'support' => $pgSandreSupport,
                     'stations' => $tabStations,));
     }
@@ -2623,7 +2489,7 @@ class SuiviHydrobioController extends Controller {
         }
         $session = $this->get('session');
         $session->set('menu', 'syntheseHydrobio');
-        $session->set('controller', 'SuiviHydrobio');
+        $session->set('controller', 'SuiviEau');
         $session->set('fonction', 'syntheseSupportStation');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
@@ -2694,7 +2560,7 @@ class SuiviHydrobioController extends Controller {
             $pgCmdSuiviPrel->setAvis($avis);
             $emSqe->persist($pgCmdSuiviPrel);
             $emSqe->flush();
-            return $this->render('AeagSqeBundle:SuiviHydrobio:syntheseSupportStationMaj.html.twig', array('support' => $pgSandreSupport,
+            return $this->render('AeagSqeBundle:SuiviEau:syntheseSupportStationMaj.html.twig', array('support' => $pgSandreSupport,
                         'station' => $pgRefStationMesure,
                         'lien' => $lien,
                         'reseau' => $reseau,
@@ -2704,7 +2570,7 @@ class SuiviHydrobioController extends Controller {
                         'nb' => $tr));
         }
 
-        return $this->render('AeagSqeBundle:SuiviHydrobio:syntheseSupportStation.html.twig', array('support' => $pgSandreSupport,
+        return $this->render('AeagSqeBundle:SuiviEau:syntheseSupportStation.html.twig', array('support' => $pgSandreSupport,
                     'station' => $pgRefStationMesure,
                     'lien' => $lien,
                     'reseau' => $reseau,
@@ -2729,7 +2595,7 @@ class SuiviHydrobioController extends Controller {
         }
         $session = $this->get('session');
         $session->set('menu', 'syntheseHydrobio');
-        $session->set('controller', 'SuiviHydrobio');
+        $session->set('controller', 'SuiviEau');
         $session->set('fonction', 'syntheseSupportStation');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
@@ -2782,7 +2648,7 @@ class SuiviHydrobioController extends Controller {
             $emSqe->persist($pgCmdPrelev);
             $emSqe->flush();
 //            $session->getFlashBag()->add('notice-success', 'le suivi du ' . $datePrel->format('d/m/Y') . ' a été modifié !');
-            return $this->render('AeagSqeBundle:SuiviHydrobio:syntheseSupportStationValiderRetour.html.twig', array(
+            return $this->render('AeagSqeBundle:SuiviEau:syntheseSupportStationValiderRetour.html.twig', array(
                         'pgProgWebUser' => $pgProgWebUser,
                         'support' => $pgSandreSupport,
                         'station' => $pgRefStationMesure,
@@ -2794,7 +2660,7 @@ class SuiviHydrobioController extends Controller {
                         'nb' => $tr));
         }
 
-        return $this->render('AeagSqeBundle:SuiviHydrobio:syntheseSupportStationValider.html.twig', array(
+        return $this->render('AeagSqeBundle:SuiviEau:syntheseSupportStationValider.html.twig', array(
                     'support' => $pgSandreSupport,
                     'station' => $pgRefStationMesure,
                     'lien' => $lien,
@@ -2828,7 +2694,7 @@ class SuiviHydrobioController extends Controller {
         // Récupération des prestataires
         $pgRefCorresPresta = $repoPgCmdSuiviPrel->getPrestatairesFromSuiviPrel();
 
-        return $this->render('AeagSqeBundle:SuiviHydrobio:planning.html.twig', array('stations' => $pgRefStationMesure, 'supports' => $pgSandreSupport, 'prestataires' => $pgRefCorresPresta));
+        return $this->render('AeagSqeBundle:SuiviEau:planning.html.twig', array('stations' => $pgRefStationMesure, 'supports' => $pgSandreSupport, 'prestataires' => $pgRefCorresPresta));
     }
 
     public function planningTableAction() {
@@ -2860,7 +2726,7 @@ class SuiviHydrobioController extends Controller {
             $evenements[$day] = $repoPgCmdSuiviPrel->getEvenements($date, $support, $station, $presta);
         }
 
-        return $this->render('AeagSqeBundle:SuiviHydrobio:planningTable.html.twig', array("joursSemaine" => $joursSemaine, "evenements" => $evenements));
+        return $this->render('AeagSqeBundle:SuiviEau:planningTable.html.twig', array("joursSemaine" => $joursSemaine, "evenements" => $evenements));
     }
 
     public function planningModalAction() {
@@ -2873,7 +2739,7 @@ class SuiviHydrobioController extends Controller {
         $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
         $pgCmdSuiviPrel = $repoPgCmdSuiviPrel->findOneById($evt);
 
-        return $this->render('AeagSqeBundle:SuiviHydrobio:planningModal.html.twig', array('evenement' => $pgCmdSuiviPrel));
+        return $this->render('AeagSqeBundle:SuiviEau:planningModal.html.twig', array('evenement' => $pgCmdSuiviPrel));
     }
 
     protected function dateFR($time) {
