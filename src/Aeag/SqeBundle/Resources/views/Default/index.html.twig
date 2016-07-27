@@ -28,7 +28,8 @@
                                     <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ path('Aeag_sqe_programmation_lots', {'action': 'V'}) }}" title="Consulter"><i class="fa fa-eye fa-3x"></i> Consulter</a></li>
                                     <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ path('Aeag_sqe_programmation_lots', {'action': 'P'}) }}" title="Programmer"><i class="fa fa-edit fa-3x"></i> Programmer</a></li>
                                     {%if   is_granted('ROLE_ADMINSQE') and not app.session.get('evolution')%}
-                                        <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ path('AeagSqeBundle_suiviHydrobio_planning') }}" title="Planning"><i class="fa fa-calendar fa-3x"></i> Planning</a></li>
+                                        <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ path('AeagSqeBundle_planning_index', {'typeMilieu': 'HB'}) }}" title="Planning Hydrobio"><i class="fa fa-calendar fa-3x"></i> Planning Hydrobio</a></li>
+                                        <li class="list-group-item list-group-item-info"><a class="btn btn-primary" href="{{ path('AeagSqeBundle_planning_index', {'typeMilieu': 'PC'}) }}" title="Planning Analyses"><i class="fa fa-calendar fa-3x"></i> Planning Analyses</a></li>
                                     {% endif %}   
                                 </ul>
                             </div>
@@ -41,6 +42,9 @@
                             <div class="panel-body">
                                 <ul class="list-group">
                                     <li class="list-group-item  list-group-item-info"><a class="btn btn-primary" href="{{ path('AeagSqeBundle_echangefichiers_index')}}" title="Echange de fichiers"><i class="fa fa-download fa-3x"></i> Echange de fichiers</a></li>
+                                    {%if   is_granted('ROLE_ADMINSQE') and not app.session.get('evolution')%}
+                                        <li class="list-group-item  list-group-item-info"><a class="btn btn-primary" href="{{ path('AeagSqeBundle_exportdonneesbrutes_index')}}" title="Export des Données Brutes"><i class="fa fa-upload fa-3x"></i> Export des Données Brutes</a></li>    
+                                    {% endif %} 
                                 </ul>
                             </div>
                         </div>
