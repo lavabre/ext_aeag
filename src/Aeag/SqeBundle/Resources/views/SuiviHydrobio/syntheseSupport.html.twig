@@ -89,8 +89,8 @@
                         {%if stations | length%} 
                             {% for station in stations %}
                                 {% set nb = nb + 1%}
-                                <tr>
-                                    <td  id="idTd1-{{nb}}" width="15%" class="text-center" nowrap>
+                                   <tr> 
+                                      <td  id="idTd1-{{nb}}" width="15%" class="text-center" nowrap>
                                         {%if station.cmdPrelev | length%}
                                             <a id="idVoirSuivi-{{ station.cmdPrelev.id }}" class="btn btn-primary" href="#" title="consulter l'historique">
                                                 <i class="fa fa-archive"></i> 
@@ -138,15 +138,27 @@
                                                   </td>
                                             {%if station.suiviPrel | length%}
                                                 {% if station.suiviPrel.avis == 'F' %}
-                                                    <td id="idTd-{{nb}}" class="success text-center">
-                                                        Favorable 
-                                                    </td>
-                                                {% elseif station.suiviPrel.avis == 'D' %}
-                                                    <td id="idTd-{{nb}}" class="danger text-center">
-                                                        Défavorable
-                                                    </td>
-                                                {% else %}
-                                                    <td id="idTd-{{nb}}"></td>
+                                                       <td id="idTd-{{nb}}" class="success">
+                                                           {% if station.suiviPrel.validAuto == 'O' %}
+                                                               Favorable (auto)
+                                                           {% elseif  station.suiviPrel.validAuto == 'N' %}
+                                                                Favorable (manu)
+                                                           {% else %}
+                                                                Favorable
+                                                           {% endif %}
+                                                       </td>
+                                                   {% elseif station.suiviPrel.avis == 'D' %}
+                                                       <td id="idTd-{{nb}}" class="danger">
+                                                             {% if station.suiviPrel.validAuto == 'O' %}
+                                                               Défavorable (auto)
+                                                           {% elseif  station.suiviPrel.validAuto == 'N' %}
+                                                                Défavorable (manu)
+                                                           {% else %}
+                                                                Défavorable
+                                                           {% endif %}
+                                                        </td>
+                                                    {% else %}
+                                                         <td id="idTd-{{nb}}"> </td>
                                                 {% endif %}
                                             {% else %}
                                                 <td id="idTd-{{nb}}"> </td>
@@ -202,7 +214,7 @@
                                         </table>
 
                                         <div class="row">
-                                            <div class="col-md-12 pull-right text-info">
+                                            <div class="col-md-offset-9 col-md-3 pull-right text-info">
                                                 <ul class="list-inline">
                                                     <li><span class="label label-success">Accepté</span></li>
                                                     <li><span class="label label-warning">En attente</span></li>

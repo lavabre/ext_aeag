@@ -58,7 +58,7 @@ class PgProgLotAnRepository extends EntityRepository {
         //print_r($query);
         return $qb->getResult();
     }
-    
+
     public function getPgProgLotAnByAnneeLot($annee, $pgProgLot) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotAn p";
@@ -76,7 +76,7 @@ class PgProgLotAnRepository extends EntityRepository {
         $query = $query . " and p.version = " . $version;
         $query = $query . " order by p.anneeProg, p.version";
         $qb = $this->_em->createQuery($query);
-       // print_r($query);
+        // print_r($query);
         return $qb->getResult();
     }
 
@@ -87,7 +87,7 @@ class PgProgLotAnRepository extends EntityRepository {
         $query = $query . " and p.lot = " . $pgProgLot->getId();
         $query = $query . " and p.version = " . $version;
         $qb = $this->_em->createQuery($query);
-       //print_r($query);
+        //print_r($query);
         return $qb->getOneOrNullResult();
     }
 
@@ -100,9 +100,9 @@ class PgProgLotAnRepository extends EntityRepository {
         //print_r($query);
         return $qb->getSingleScalarResult();
     }
-    
+
     public function getPgProgLotAnByPresta($user) {
-        
+
         $query = "select distinct lotan";
         $query .= " from Aeag\SqeBundle\Entity\PgProgLotParamAn paran, Aeag\SqeBundle\Entity\PgRefCorresPresta presta, Aeag\SqeBundle\Entity\PgProgWebusers users, Aeag\SqeBundle\Entity\PgProgLotGrparAn gran, Aeag\SqeBundle\Entity\PgProgLotAn lotan, Aeag\SqeBundle\Entity\PgProgLot lot, Aeag\SqeBundle\Entity\PgCmdDemande dmd, Aeag\SqeBundle\Entity\PgProgLotPeriodeAn pean";
         $query .= " where paran.prestataire = presta.adrCorId";
@@ -116,15 +116,15 @@ class PgProgLotAnRepository extends EntityRepository {
         $query .= " and lotan.codeStatut <> 'INV'";
         $query .= " and lotan.phase >= 5 and lotan.phase <= 8";
         $query .= " and pean.codeStatut <> 'INV'";
-                
+
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('aeagUser', $user->getId()); // Id de l'utilisateur 
         //print_r($query);
         return $qb->getResult();
     }
-    
-     public function getPgProgLotAnSuiviSedimentByPresta($user) {
-        
+
+    public function getPgProgLotAnSuiviSedimentByPresta($user) {
+
         $query = "select distinct lotan";
         $query .= " from Aeag\SqeBundle\Entity\PgProgLotParamAn paran, ";
         $query .= "Aeag\SqeBundle\Entity\PgRefCorresPresta presta, ";
@@ -148,13 +148,13 @@ class PgProgLotAnRepository extends EntityRepository {
         $query .= " and lotan.codeStatut <> 'INV'";
         $query .= " and lotan.phase >= 5 and lotan.phase <= 8";
         $query .= " and pean.codeStatut <> 'INV'";
-                
+
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('aeagUser', $user->getId()); // Id de l'utilisateur 
         //print_r($query);
         return $qb->getResult();
     }
-    
+
     public function getPgProgLotAnByAdmin() {
         $query = "select distinct lotan";
         $query .= " from Aeag\SqeBundle\Entity\PgProgLotAn lotan, Aeag\SqeBundle\Entity\PgProgLot lot, Aeag\SqeBundle\Entity\PgCmdDemande dmd, Aeag\SqeBundle\Entity\PgProgLotPeriodeAn pean";
@@ -164,28 +164,27 @@ class PgProgLotAnRepository extends EntityRepository {
         $query .= " and lotan.codeStatut <> 'INV'";
         $query .= " and lotan.phase >= 5 and lotan.phase <= 8";
         $query .= " and pean.codeStatut <> 'INV'";
-        
+
         $qb = $this->_em->createQuery($query);
-        
+
         return $qb->getResult();
     }
-    
-      
-     public function getPgProgLotAnByAdmin1() {
+
+    public function getPgProgLotAnByAdmin1() {
         $query = "select distinct lotan";
         $query .= " from Aeag\SqeBundle\Entity\PgProgLotAn lotan, Aeag\SqeBundle\Entity\PgProgLot lot, Aeag\SqeBundle\Entity\PgCmdDemande dmd, Aeag\SqeBundle\Entity\PgProgLotPeriodeAn pean";
         $query .= " where lotan.lot = lot.id";
         $query .= " and dmd.lotan = lotan.id";
         $query .= " and pean.lotan = lotan.id";
         $query .= " and lotan.codeStatut <> 'INV'";
-       // $query .= " and lotan.phase >= 5 and lotan.phase <= 8";
+        // $query .= " and lotan.phase >= 5 and lotan.phase <= 8";
         $query .= " and pean.codeStatut <> 'INV'";
-        
+
         $qb = $this->_em->createQuery($query);
-        
+
         return $qb->getResult();
     }
-    
+
     public function getPgProgLotAnByProg($user) {
         $query = "select distinct lotan";
         $query .= " from Aeag\SqeBundle\Entity\PgProgMarcheUser mu, Aeag\SqeBundle\Entity\PgProgWebusers users, Aeag\SqeBundle\Entity\PgProgLotAn lotan, Aeag\SqeBundle\Entity\PgProgLot lot, Aeag\SqeBundle\Entity\PgCmdDemande dmd, Aeag\SqeBundle\Entity\PgProgLotPeriodeAn pean";
@@ -198,12 +197,11 @@ class PgProgLotAnRepository extends EntityRepository {
         $query .= " and lotan.phase >= 5 and lotan.phase <= 8";
         $query .= " and users.extId = :aeagUser";
         $query .= " and pean.codeStatut <> 'INV'";
-        
+
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('aeagUser', $user->getId()); // Id de l'utilisateur 
-        
+
         return $qb->getResult();
     }
-   
 
 }

@@ -1761,6 +1761,7 @@ class SuiviHydrobioController extends Controller {
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
         $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
 
+        $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($periodeAnId);
         $pgProgLotAn = $pgProgLotPeriodeAn->getLotAn();
         $pgProgLot = $pgProgLotAn->getLot();
@@ -1785,6 +1786,17 @@ class SuiviHydrobioController extends Controller {
 
         if ($form->isValid()) {
             $datePrel = $pgCmdSuiviPrel->getDatePrel();
+            $commentaireAvis = $pgCmdSuiviPrel->getCommentaireAvis();
+            if ($commentaireAvis) {
+                if (substr($commentaireAvis, 0, 8) != 'Déposé') {
+                    $date = date("d/m/Y");
+                    $heure = date("H:i");
+                    $commentaireAvisNew = 'Déposé le ' . $date . ' à ' . $heure . ' par ' . $pgProgWebUser->getnom();
+                    $commentaireAvisNew .= ' : ' . CHR(13) . CHR(10);
+                    $commentaireAvisNew .= '      ' . $commentaireAvis;
+                    $pgCmdSuiviPrel->setCommentaireAvis($commentaireAvisNew);
+                }
+            }
             $emSqe->persist($pgCmdSuiviPrel);
             if ($pgCmdSuiviPrel->getStatutPrel() == 'F' and $pgCmdSuiviPrel->getValidation() == 'A') {
                 $pgCmdPrelev->setDatePrelev($datePrel);
@@ -2658,33 +2670,29 @@ class SuiviHydrobioController extends Controller {
             $date = date("d/m/Y");
             $heure = date("H:i");
             $avis = $_POST['avis'];
-            if ($pgCmdSuiviPrelActuel->getCommentaire()) {
-                $commentaire = $pgCmdSuiviPrelActuel->getCommentaire() . CHR(13) . CHR(10);
-                $commentaire .= 'Déposé le ' . $date . ' à ' . $heure . ' par ' . $pgProgWebUser->getnom();
-                if ($_POST['commentaire'] != '') {
-                    $commentaire .= ' : ' . CHR(13) . CHR(10);
-                    $commentaire .= '      ' . $_POST['commentaire'];
-                } else {
-                    if ($avis == 'F') {
-                        $commentaire .= ' : Favorable';
-                    } else {
-                        $commentaire .= ' : Défavorable';
-                    }
-                }
+            $commentaireAvis = 'Déposé le ' . $date . ' à ' . $heure . ' par ' . $pgProgWebUser->getnom();
+            if ($_POST['commentaireAvis'] != '') {
+                $commentaireAvis .= ' : ' . CHR(13) . CHR(10);
+                $commentaireAvis .= '      ' . $_POST['commentaireAvis'];
             } else {
-                $commentaire = 'Déposé le ' . $date . ' à ' . $heure . ' par ' . $pgProgWebUser->getnom();
-                if ($_POST['commentaire'] != '') {
-                    $commentaire .= ' : ' . CHR(13) . CHR(10);
-                    $commentaire .= '      ' . $_POST['commentaire'];
+                if ($avis == 'F') {
+                    $commentaireAvis .= ' : Favorable';
                 } else {
-                    if ($avis == 'F') {
-                        $commentaire .= ' : Favorable';
-                    } else {
-                        $commentaire .= ' : Défavorable';
-                    }
+                    $commentaireAvis .= ' : Défavorable';
                 }
             }
-            $pgCmdSuiviPrel->setCommentaire($commentaire);
+            if ($avis == 'F') {
+                if ($pgCmdSuiviPrelActuel->getCommentaire()) {
+                    $commentaire = $pgCmdSuiviPrelActuel->getCommentaire();
+                    $commentaire .= CHR(13) . CHR(10) . $commentaireAvis;
+                } else {
+                    $commentaire = $commentaireAvis;
+                }
+                $pgCmdSuiviPrel->setCommentaire($commentaire);
+            }
+
+            $pgCmdSuiviPrelActuel->setValidAuto('N');
+            $pgCmdSuiviPrel->setCommentaireAvis($commentaireAvis);
             $pgCmdSuiviPrel->setAvis($avis);
             $emSqe->persist($pgCmdSuiviPrel);
             $emSqe->flush();
@@ -2762,6 +2770,7 @@ class SuiviHydrobioController extends Controller {
 
         if ($form->isValid()) {
             $datePrel = $pgCmdSuiviPrel->getDatePrel();
+            $pgCmdSuiviPrel->setValidAuto('N');
             $emSqe->persist($pgCmdSuiviPrel);
             if ($pgCmdSuiviPrel->getStatutPrel() == 'F' and $pgCmdSuiviPrel->getValidation() == 'A') {
                 $pgCmdPrelev->setDatePrelev($datePrel);

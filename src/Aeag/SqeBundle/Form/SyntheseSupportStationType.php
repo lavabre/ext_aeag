@@ -25,7 +25,7 @@ class SyntheseSupportStationType extends AbstractType {
                     'data' => $pgCmdSuiviPrel->getCommentaire(),
                     'required' => false,
                      'disabled' => true))
-                ->add('commentaire', 'textarea', array(
+                ->add('commentaireAvis', 'textarea', array(
                     'label' => 'Commentaire',
                     'required' => true))
         ;

@@ -2,7 +2,7 @@
 
     {% if dateLimite %}
         <div class="form-group">
-            <label class="col-xs-offset-3 col-xs-5 text-center text-exception">date Limite  : {{ dateLimite | date("d/m/Y") }}</label>
+            <label class="col-xs-offset-3 col-xs-5 text-center text-exception">date Limite  : {{ dateLimite | date("d/m/Y") }}  {{ suiviPrel.id }}</label>
         </div> 
     {% endif %}
 
@@ -30,12 +30,12 @@
 
             <div id="idCommentaire" class="form-group">
                 <label class="col-xs-3 control-label">Ajouter un commentaire : </label>
-                {%if form_errors(form.commentaire) %}
+                {%if form_errors(form.commentaireAvis) %}
                     <div class="col-xs-8 input-group has-error has-feedback">
                     {% else %}
                         <div class="col-xs-8 input-group">
                         {% endif %}
-                        {{ form_widget(form.commentaire, { 'attr': {'class': 'form-control ', 'placeholder': 'Commentaire'} }) }}
+                        {{ form_widget(form.commentaireAvis, { 'attr': {'class': 'form-control ', 'placeholder': 'Commentaire'} }) }}
                     </div>
                 </div> 
 
@@ -64,11 +64,11 @@
                         $('#btFermer').hide();
 
                         if ($('#avis').val() != 'D') {
-                            $('#commentaire').removeAttr('required');
-                            $('#idCommentaire').hide();
+                            $('#commentaireAvis').removeAttr('required');
+                            $('#idCommentaireAvis').hide();
                         } else {
-                            $('#commentaire').prop('required', true);
-                            $('#idCommentaire').show();
+                            $('#commentaireAvis').prop('required', true);
+                            $('#idCommentaireAvis').show();
                         }
                         ;
 
@@ -76,18 +76,18 @@
                         $(document).on('change', '#avis', function (e) {
                             e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
                             if ($('#avis').val() != 'D') {
-                                $('#commentaire').removeAttr('required');
-                                $('#idCommentaire').hide();
+                                $('#commentaireAvis').removeAttr('required');
+                                $('#idCommentaireAvis').hide();
                             } else {
-                                $('#commentaire').prop('required', true);
-                                $('#idCommentaire').show();
+                                $('#commentaireAvis').prop('required', true);
+                                $('#idCommentaireAvis').show();
                             }
                             ;
                         });
 
                         $('#btValider').click(function (e) {
                             erreur = false;
-                            if ($('#avis').val() == 'D' && $('#commentaire').val() == '')
+                            if ($('#avis').val() == 'D' && $('#commentaireAvis').val() == '')
                             {
                                 alert("Veuillez saisir un commentaire svp");
                                 erreur = true;
