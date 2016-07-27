@@ -58,6 +58,8 @@ parameters:
     secret: ThisTokenIsNotSoSecretChangeIt
     
     repertoire_echange : /base/extranet/Transfert/Sqe/Echanges/
+    repertoire_exportdb : /base/extranet/Transfert/Sqe/Export_Db/
+    
     router.request_context.host: ext.eau-adour-garonne.fr
     router.request_context.scheme: http
     router.request_context.base_url: 

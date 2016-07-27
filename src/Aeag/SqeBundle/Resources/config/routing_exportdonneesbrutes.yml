@@ -1,0 +1,3 @@
+AeagSqeBundle_exportdonneesbrutes_index:
+    path:  /
+    defaults: { _controller: AeagSqeBundle:ExportDonneesBrutes:index }

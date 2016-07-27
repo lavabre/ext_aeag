@@ -130,14 +130,3 @@ AeagSqeBundle_suiviHydrobio_synthese_support_station_valider:
     requirements:
          methods:  GET|POST
          
-AeagSqeBundle_suiviHydrobio_planning:
-    path:  /planning
-    defaults: { _controller: AeagSqeBundle:SuiviHydrobio:planning }
-    
-AeagSqeBundle_suiviHydrobio_planning_table:
-    path:  /planning/table
-    defaults: { _controller: AeagSqeBundle:SuiviHydrobio:planningTable }
-    
-AeagSqeBundle_suiviHydrobio_planning_modal:
-    path:  /planning/modal
-    defaults: { _controller: AeagSqeBundle:SuiviHydrobio:planningModal }

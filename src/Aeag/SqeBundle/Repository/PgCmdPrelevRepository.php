@@ -200,6 +200,11 @@ class PgCmdPrelevRepository extends EntityRepository {
     public function getDonneesBrutes($pgCmdFichierRps) {
         return array_merge($this->getDonneesBrutesAnalyse($pgCmdFichierRps), $this->getDonneesBrutesMesureEnv($pgCmdFichierRps));
     }
+    
+    public function getDonneesBrutesExport($zgeoref, $codemilieu, $datedeb, $datefin) {
+        return array_merge($this->getDonneesBrutesAnalyseExport($zgeoref, $codemilieu, $datedeb, $datefin), $this->getDonneesBrutesMesureEnvExport($zgeoref, $codemilieu, $datedeb, $datefin));
+        //return $this->getDonneesBrutesMesureEnvExport($zgeoref, $codemilieu, $datedeb, $datefin);
+    }
 
     public function getDonneesBrutesAnalyse($pgCmdFichierRps) {
         
@@ -236,6 +241,49 @@ class PgCmdPrelevRepository extends EntityRepository {
         $stmt->execute();
         return $stmt->fetchAll();
     }
+    
+    public function getDonneesBrutesAnalyseExport($zgeoref, $codemilieu, $datedeb, $datefin) {
+        
+        $query = 'select dmd.annee_prog as "Année", msr.code as "Code Station", msr.libelle as "Nom Station", msr.code_masdo as "Code masse d\'eau", 
+                    prlv.code_prelev_cmd as "Code du prelevement", presta.code_siret as "Siret Préleveur", presta.nom_corres as "Nom Préleveur", 
+                    prlv.date_prelev as "Date-heure du prélèvement", ana.code_parametre as "Code du paramètre", param.libelle_court as "Libellé court paramètre",
+                    param.nom_parametre as "Nom paramètre", case when prlvpc.zone_verticale = \'9\' then \'6\' else prlvpc.zone_verticale end as "Zone verticale", prlvpc.profondeur as "Profondeur", prlv.code_support as "Code Support", 
+                    sup.nom_support as "Nom Support", ana.code_fraction as "Code Fraction", frac.nom_fraction as "Nom Fraction", ana.code_methode as "Code Méthode", meth.nom_methode as "Nom Méthode",
+                    ana.code_remarque as "Code Remarque", ana.resultat as "Resultat", \'\' as "Valeur textuelle", ana.code_unite as "Code Unite", unit.nom_unite as "Libellé Unite",
+                    unit.symbole as "Symbole Unité", ana.lq_ana as "LQ", presta2.code_siret as "Siret Labo", presta2.nom_corres as "Nom Labo", resmes.code_aeag_rsx as "Code Réseau", 
+                    resmes.nom_rsx as "Nom Réseau", prod.code_siret as "Siret Prod", prod.nom_corres as "Nom Prod", \'\' as "Commentaire"
+                    from pg_cmd_prelev prlv
+                    join pg_cmd_demande dmd on prlv.demande_id = dmd.id
+                    join pg_ref_station_mesure msr on msr.ouv_fonc_id = prlv.station_id
+                    join pg_ref_corres_presta presta on presta.adr_cor_id = prlv.presta_prel_id
+                    join pg_cmd_analyse ana on ana.prelev_id = prlv.id
+                    join pg_sandre_parametres param on ana.code_parametre = param.code_parametre
+                    join pg_cmd_prelev_pc prlvpc on prlvpc.prelev_id = prlv.id
+                    join pg_sandre_supports sup on sup.code_support = prlv.code_support
+                    join pg_sandre_fractions frac on frac.code_fraction = ana.code_fraction
+                    left join pg_sandre_methodes meth on meth.code_methode = ana.code_methode
+                    join pg_sandre_unites unit on unit.code_unite = ana.code_unite
+                    join pg_ref_corres_presta presta2 on presta2.adr_cor_id = dmd.prestataire_id
+                    join pg_prog_lot_station_an station on station.lotan_id = dmd.lotan_id and station.station_id = prlv.station_id
+                    join pg_ref_reseau_mesure resmes on resmes.groupement_id = station.rsx_id
+                    join pg_prog_lot_an lotan on dmd.lotan_id = lotan.id
+                    join pg_prog_lot lot on lot.id = lotan.lot_id
+                    join pg_prog_marche marche on marche.id = lot.marche_id
+                    join pg_ref_corres_producteur prod on prod.adr_cor_id = marche.resp_adr_cor_id
+                    where lot.zgeo_ref_id = :zgeoref
+                    and lot.code_milieu = :codemilieu
+                    and (prlv.date_prelev >= :datedeb
+                    and prlv.date_prelev <= :datefin)';
+                    //limit 50000';
+        
+        $stmt = $this->_em->getConnection()->prepare($query);
+        $stmt->bindValue('zgeoref', $zgeoref);
+        $stmt->bindValue('codemilieu', $codemilieu);
+        $stmt->bindValue('datedeb', $datedeb);
+        $stmt->bindValue('datefin', $datefin);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
 
     public function getDonneesBrutesMesureEnv($pgCmdFichierRps) {
         $query = '(select dmd.annee_prog as "Année", msr.code as "Code Station", msr.libelle as "Nom Station", msr.code_masdo as "Code masse d\'eau", 
@@ -267,6 +315,47 @@ class PgCmdPrelevRepository extends EntityRepository {
         
         $stmt = $this->_em->getConnection()->prepare($query);
         $stmt->bindValue('fichier', $pgCmdFichierRps->getId());
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+    
+    public function getDonneesBrutesMesureEnvExport($zgeoref, $codemilieu, $datedeb, $datefin) {
+        $query = 'select dmd.annee_prog as "Année", msr.code as "Code Station", msr.libelle as "Nom Station", msr.code_masdo as "Code masse d\'eau", 
+                    prlv.code_prelev_cmd as "Code du prelevement", presta.code_siret as "Siret Préleveur", presta.nom_corres as "Nom Préleveur", 
+                    prlv.date_prelev as "Date-heure du prélèvement", mesenv.code_parametre as "Code du paramètre", param.libelle_court as "Libellé court paramètre",
+                    param.nom_parametre as "Nom paramètre", case when prlvpc.zone_verticale = \'9\' then \'6\' else prlvpc.zone_verticale end as "Zone verticale", prlvpc.profondeur as "Profondeur", prlv.code_support as "Code Support", 
+                    sup.nom_support as "Nom Support", \'\' as "Code Fraction", \'\' as "Nom Fraction", \'\' as "Code Méthode", \'\' as "Nom Méthode",
+                    mesenv.code_remarque as "Code Remarque", mesenv.resultat as "Resultat", \'\' as "Valeur textuelle", mesenv.code_unite as "Code Unite", unit.nom_unite as "Libellé Unite",
+                    unit.symbole as "Symbole Unité", 0 as "LQ", presta2.code_siret as "Siret Labo", presta2.nom_corres as "Nom Labo", resmes.code_aeag_rsx as "Code Réseau", 
+                    resmes.nom_rsx as "Nom Réseau", prod.code_siret as "Siret Prod", prod.nom_corres as "Nom Prod", \'\' as "Commentaire"
+                    from pg_cmd_prelev prlv
+                    join pg_cmd_demande dmd on prlv.demande_id = dmd.id
+                    join pg_ref_station_mesure msr on msr.ouv_fonc_id = prlv.station_id
+                    join pg_ref_corres_presta presta on presta.adr_cor_id = prlv.presta_prel_id
+                    join pg_cmd_mesure_env mesenv on mesenv.prelev_id = prlv.id
+                    join pg_sandre_parametres param on param.code_parametre = mesenv.code_parametre
+                    join pg_cmd_prelev_pc prlvpc on prlvpc.prelev_id = prlv.id
+                    join pg_sandre_supports sup on sup.code_support = prlv.code_support
+                    left join pg_sandre_methodes meth on meth.code_methode = mesenv.code_methode
+                    join pg_sandre_unites unit on unit.code_unite = mesenv.code_unite
+                    join pg_ref_corres_presta presta2 on presta2.adr_cor_id = dmd.prestataire_id
+                    join pg_prog_lot_station_an station on station.lotan_id = dmd.lotan_id and station.station_id = prlv.station_id
+                    join pg_ref_reseau_mesure resmes on resmes.groupement_id = station.rsx_id
+                    join pg_prog_lot_an lotan on dmd.lotan_id = lotan.id
+                    join pg_prog_lot lot on lot.id = lotan.lot_id
+                    join pg_prog_marche marche on marche.id = lot.marche_id
+                    join pg_ref_corres_producteur prod on prod.adr_cor_id = marche.resp_adr_cor_id
+                    where lot.zgeo_ref_id = :zgeoref
+                    and lot.code_milieu = :codemilieu
+                    and (prlv.date_prelev >= :datedeb
+                    and prlv.date_prelev <= :datefin)';
+                    //limit 50000';
+        
+        $stmt = $this->_em->getConnection()->prepare($query);
+        $stmt->bindValue('zgeoref', $zgeoref);
+        $stmt->bindValue('codemilieu', $codemilieu);
+        $stmt->bindValue('datedeb', $datedeb);
+        $stmt->bindValue('datefin', $datefin);
         $stmt->execute();
         return $stmt->fetchAll();
     }

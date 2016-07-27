@@ -1,0 +1,100 @@
+{% extends "AeagSqeBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+    <li>
+        <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+    </li>
+    <li class="active">
+        Export des données brutes
+    </li>
+{% endblock breadcrumb %} 
+
+{%block panel_heading %}
+    <h3 class="page-title">
+        Export des données brutes
+    </h3>
+{%endblock panel_heading %}
+
+{%block content %}
+    <form class="form"  id="idForm" role="form" action="{{path('AeagSqeBundle_exportdonneesbrutes_index')}}" method="post">
+        <div class="form-group">
+            <label class="col-xs-3 control-label">Zone géographique</label>
+            <div class="col-xs-8 input-group">
+                <select name="zgeoref" id="zgeoref" class="form-control">
+                    {% for zgeoRef in webUser.zgeoRef %}
+                        <option value="{{zgeoRef.id}}"
+                        {%if zgeorefVal != '' and zgeorefVal == zgeoRef.id%}
+                            selected="selected"
+                        {%endif%}
+                        >{{zgeoRef.nomZoneGeo}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>     
+        <div class="form-group">
+            <label class="col-xs-3 control-label">Code Milieu</label>
+            <div class="col-xs-8 input-group">
+                <select id="codemilieu" name="codemilieu" class="form-control">
+                    {% for typeMilieu in typesMilieux %}
+                        <option value="{{typeMilieu.codeMilieu}}"
+                        {%if codemilieuVal != '' and codemilieuVal == typeMilieu.codeMilieu%}
+                            selected="selected"
+                        {%endif%}
+                        >{{typeMilieu.nomMilieu}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>     
+        
+        <div class="form-group">
+            <label class="col-xs-3 control-label">Date de début</label>
+             <div class="col-xs-8 input-group" >
+                 <input name="datedeb" id="datedeb" class="form-control datetime-calendar-form" type="date" placeholder = "Date de début" value="{{datedeb}}"/>
+            </div>         
+        </div> 
+        <div class="form-group">
+             <label class="col-xs-3 control-label">Date de fin</label>
+             <div class="col-xs-8 input-group" >
+                 <input name="datefin" id="datefin" class="form-control datetime-calendar-form" type="date" placeholder = "Date de fin" value="{{datefin}}"/>
+            </div>         
+        </div> 
+        <button type="submit" id="btn-submit" class="btn btn-default">Exporter</button>
+    </form>
+{%endblock content %}    
+
+{% block scripts %}
+    var dateJour = new Date();
+
+    $('#datedeb').datepicker({
+        allowInputToggle: false,
+        format: 'dd/mm/yyyy',
+        autoclose: true,
+        defaultDate: $('#datedeb').val(),
+    });
+    
+    var month = dateJour.getMonth()+1;
+    if (month < 10) {
+        month = '0'+month;
+    }
+    var day = dateJour.getDate();
+    if (day < 10) {
+        day = '0'+day;
+    }
+    
+    $('#datefin').datepicker({
+        allowInputToggle: false,
+        format: 'dd/mm/yyyy',
+        autoclose: true,
+        startDate: $('#datedeb').val(),
+        defaultDate: $('#datefin').val()
+    });
+    
+    $('#datedeb').datepicker().on('changeDate', function(ev){
+        $('#datefin').datepicker('setStartDate',$('#datedeb').val() ) ;
+    });
+    
+    $('#btn-submit').click(function(){
+        $('#modalTraitementEncours').modal();
+    });
+    
+{%endblock scripts %}    

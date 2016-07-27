@@ -39,4 +39,11 @@ aeag_sqe_suiviSediment:
 aeag_sqe_suiviEau:
     resource: "@AeagSqeBundle/Resources/config/routing_suiviEau.yml"
     prefix:   /suiviEau 
+aeag_sqe_planning:
+    resource: "@AeagSqeBundle/Resources/config/routing_planning.yml"
+    prefix:   /planning  
+    
+aeag_sqe_exportDonneesBrutes:
+    resource: "@AeagSqeBundle/Resources/config/routing_exportdonneesbrutes.yml"
+    prefix:   /exportdonneesbrutes    
  

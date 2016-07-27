@@ -31,7 +31,7 @@
 <script>
     $('.evenement').click(function () {
         var idEvt = $(this).find('.id_evt').html();
-        $.ajax({url: "{{ path('AeagSqeBundle_suiviHydrobio_planning_modal') }}",
+        $.ajax({url: "{{ path('AeagSqeBundle_planning_modal', {'typeMilieu': typemilieuVal}) }}",
             method: "GET",
             data: {evt: idEvt},
             success: function (result) {
