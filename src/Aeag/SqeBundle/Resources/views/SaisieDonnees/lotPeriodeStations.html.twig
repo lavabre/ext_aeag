@@ -75,9 +75,10 @@
 {%block content %}
 
     {% if is_granted('ROLE_PRESTASQE') %}
-        <div class="row">
+        {% if  not app.session.get('evolution')%}
+        <div class="row responsive">
              <a id="idIntegrerFichier" class="btn btn-primary"  title="Intégrer un fichier de suivi">
-                    <i class="fa fa-download"> Intégrer un fichier de suivi</i> 
+                    <i class="fa fa-download"> Intégrer un fichier de données</i> 
                 </a>
                 {% if rapport %}
                     <a  class="btn btn-info"  href="{{path("AeagSqeBundle_saisieDonnees_lot_periode_stations_telecharger_rapport",{"periodeAnId": periodeAn.id ,"fichier": rapport})}}" title="Rapport d'integration du fichier de suivi">
@@ -86,6 +87,7 @@
                 {% endif %}
             </div>
         </div>
+       {% endif %}
     {% endif %}
 
     <div class="row responsive">

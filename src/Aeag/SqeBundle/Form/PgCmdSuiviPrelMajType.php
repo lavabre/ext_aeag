@@ -40,6 +40,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'data' => $pgCmdSuiviPrelActuel->getValidation(),
                                         ))
                                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => false))
+                                        ->add('commentaireAvis', 'textarea', array('label' => 'CommentaireAvis', 'required' => false))
                                 ;
                                 break;
                             case 'R' :
@@ -58,6 +59,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'required' => false,
                                         ))
                                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
+                                       ->add('commentaireAvis', 'textarea', array('label' => 'CommentaireAvis', 'required' => false))
                                 ;
                                 break;
                             case 'A' :
@@ -76,6 +78,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'required' => false,
                                         ))
                                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => false))
+                                        ->add('commentaireAvis', 'textarea', array('label' => 'CommentaireAvis', 'required' => false))
                                 ;
                                 break;
                         }
@@ -98,6 +101,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'required' => false,
                                         ))
                                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => false))
+                                        ->add('commentaireAvis', 'textarea', array('label' => 'CommentaireAvis', 'required' => false))
                                 ;
                                 break;
                             case 'R' :
@@ -116,6 +120,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'required' => false,
                                         ))
                                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
+                                        ->add('commentaireAvis', 'textarea', array('label' => 'CommentaireAvis', 'required' => false))
                                 ;
                                 break;
                             case 'A' :
@@ -135,6 +140,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'required' => false,
                                         ))
                                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => false))
+                                        ->add('commentaireAvis', 'textarea', array('label' => 'CommentaireAvis', 'required' => false))
                                 ;
                                 break;
                         }
@@ -157,6 +163,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'required' => false,
                                         ))
                                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
+                                        ->add('commentaireAvis', 'textarea', array('label' => 'CommentaireAvis', 'required' => false))
                                 ;
                                 break;
                             case 'R' :
@@ -175,6 +182,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'required' => false,
                                         ))
                                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
+                                        ->add('commentaireAvis', 'textarea', array('label' => 'CommentaireAvis', 'required' => false))
                                 ;
                                 break;
                             case 'A' :
@@ -194,6 +202,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'required' => false,
                                         ))
                                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
+                                        ->add('commentaireAvis', 'textarea', array('label' => 'CommentaireAvis', 'required' => false))
                                 ;
                                 break;
                         }
@@ -216,6 +225,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'required' => false,
                                         ))
                                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
+                                        ->add('commentaireAvis', 'textarea', array('label' => 'CommentaireAvis', 'required' => false))
                                 ;
                                 break;
                             case 'R' :
@@ -234,6 +244,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'required' => false,
                                         ))
                                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
+                                        ->add('commentaireAvis', 'textarea', array('label' => 'CommentaireAvis', 'required' => false))
                                 ;
                                 break;
                             case 'A' :
@@ -253,6 +264,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'required' => false,
                                         ))
                                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
+                                        ->add('commentaireAvis', 'textarea', array('label' => 'CommentaireAvis', 'required' => false))
                                 ;
                                 break;
                         }
@@ -275,6 +287,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
                                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => false))
+                                        ->add('commentaireAvis', 'textarea', array('label' => 'CommentaireAvis', 'required' => false))
                                 ;
                                 break;
                             case 'R' :
@@ -289,6 +302,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
                                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
+                                        ->add('commentaireAvis', 'textarea', array('label' => 'CommentaireAvis', 'required' => false))
                                 ;
                                 break;
                             case 'A' :
@@ -303,6 +317,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
                                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => false))
+                                        ->add('commentaireAvis', 'textarea', array('label' => 'CommentaireAvis', 'required' => false))
                                 ;
                                 break;
                         }
@@ -321,6 +336,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
                                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => false))
+                                        ->add('commentaireAvis', 'textarea', array('label' => 'CommentaireAvis', 'required' => false))
                                 ;
                                 break;
                             case 'R' :
@@ -335,6 +351,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
                                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
+                                        ->add('commentaireAvis', 'textarea', array('label' => 'CommentaireAvis', 'required' => false))
                                 ;
                                 break;
                             case 'A' :
@@ -350,6 +367,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
                                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => false))
+                                        ->add('commentaireAvis', 'textarea', array('label' => 'CommentaireAvis', 'required' => false))
                                 ;
                                 break;
                         }
@@ -368,6 +386,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
                                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
+                                        ->add('commentaireAvis', 'textarea', array('label' => 'CommentaireAvis', 'required' => false))
                                 ;
                                 break;
                             case 'R' :
@@ -382,6 +401,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
                                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
+                                        ->add('commentaireAvis', 'textarea', array('label' => 'CommentaireAvis', 'required' => false))
                                 ;
                                 break;
                             case 'A' :
@@ -397,6 +417,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
                                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
+                                        ->add('commentaireAvis', 'textarea', array('label' => 'CommentaireAvis', 'required' => false))
                                 ;
                                 break;
                         }
@@ -415,6 +436,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
                                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
+                                        ->add('commentaireAvis', 'textarea', array('label' => 'CommentaireAvis', 'required' => false))
                                 ;
                                 break;
                             case 'R' :
@@ -429,6 +451,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
                                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
+                                        ->add('commentaireAvis', 'textarea', array('label' => 'CommentaireAvis', 'required' => false))
                                 ;
                                 break;
                             case 'A' :
@@ -444,6 +467,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
                                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
+                                        ->add('commentaireAvis', 'textarea', array('label' => 'CommentaireAvis', 'required' => false))
                                 ;
                                 break;
                         }
@@ -465,6 +489,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                             'required' => false,
                         ))
                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => false))
+                        ->add('commentaireAvis', 'textarea', array('label' => 'CommentaireAvis', 'required' => false))
                 ;
             } else {
                 $builder
@@ -476,6 +501,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                             'required' => true,
                         ))
                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => false))
+                        ->add('commentaireAvis', 'textarea', array('label' => 'CommentaireAvis', 'required' => false))
                 ;
             }
         }

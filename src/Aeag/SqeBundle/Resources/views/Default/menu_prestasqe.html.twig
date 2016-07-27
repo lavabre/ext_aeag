@@ -80,7 +80,9 @@
                     <li><a href="{{ path('AeagSqeBundle_suiviSediment_index')}}">Suivi Sédiment</a></li>
                  {% endif  %}
                  {% if  not app.session.get('evolution')%}
-                    <li><a href="{{ path('AeagSqeBundle_suiviEau_index')}}">Suivi Eau</a></li>
+                    {% if app.session.get('suiviEau') %}
+                           <li><a href="{{ path('AeagSqeBundle_suiviEau_index')}}">Suivi Eau</a></li>
+                    {% endif %}
                  {% endif %}
          </ul>
     </li>

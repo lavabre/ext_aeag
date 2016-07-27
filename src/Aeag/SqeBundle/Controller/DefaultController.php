@@ -85,8 +85,9 @@ class DefaultController extends Controller {
 
         $suiviHb = false;
         $suiviQHb = false;
-        $suiviSED = true;
+        $suiviSED = false;
         $suiviDonnees = false;
+        $suiviEau = false;
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         if ($pgProgWebUser) {
             if ($pgProgWebUser->getTypeUser() == 'PREST' or $pgProgWebUser->getTypeUser() == 'PROG') {
@@ -103,6 +104,19 @@ class DefaultController extends Controller {
                             $suiviSED = true;
                         }
                     }
+                    $pgSandreSupports = $repoPgProgWebUsers->getSuppportByPrestataire($pgProgWebUser->getPrestataire());
+                    $supportSED = false;
+                    $supportEau = false;
+                    foreach ($pgSandreSupports as $pgSandreSupport) {
+                        if ($pgSandreSupport->getCodeSupport() == '6') {
+                            $supportSED = true;
+                        }
+                        if ($pgSandreSupport->getCodeSupport() == '3') {
+                            $supportEau = true;
+                        }
+                    }
+                    $suiviSED = $supportSED;
+                    $suiviEau = $supportEau;
                 }
             }
             if ($pgProgWebUser->getTypeUser() == 'XHBIO') {
@@ -114,12 +128,14 @@ class DefaultController extends Controller {
             $suiviQHb = true;
             $suiviDonnees = true;
             $suiviSED = true;
+            $suiviEau = true;
         }
 
         $session->set('suiviHb', $suiviHb);
         $session->set('suiviQHb', $suiviQHb);
         $session->set('suiviDonnees', $suiviDonnees);
-        $session->set('suiviSED', $suiviHb);
+        $session->set('suiviSED', $suiviSED);
+        $session->set('suiviEau', $suiviEau);
 
         return $this->render('AeagSqeBundle:Default:index.html.twig', array('suiviHb' => $suiviHb, 'suiviDonnees' => $suiviDonnees));
     }

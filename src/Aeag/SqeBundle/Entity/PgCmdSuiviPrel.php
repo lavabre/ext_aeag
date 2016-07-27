@@ -89,6 +89,20 @@ class PgCmdSuiviPrel {
     private $avis;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="comment_avis", type="string", length=2000, nullable=true)
+     */
+    private $commentaireAvis;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="valid_auto", type="string", length=1, nullable=true)
+     */
+    private $validAuto;
+
+    /**
      * Get id
      *
      * @return string
@@ -243,6 +257,22 @@ class PgCmdSuiviPrel {
 
     function setAvis($avis) {
         $this->avis = $avis;
+    }
+
+    function getCommentaireAvis() {
+        return $this->commentaireAvis;
+    }
+
+    function getValidAuto() {
+        return $this->validAuto;
+    }
+
+    function setCommentaireAvis($commentaireAvis) {
+        $this->commentaireAvis = $commentaireAvis;
+    }
+
+    function setValidAuto($validAuto) {
+        $this->validAuto = $validAuto;
     }
 
 }

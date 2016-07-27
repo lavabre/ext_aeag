@@ -45,6 +45,19 @@
                             {{ form_widget(form.commentaire, { 'attr': {'class': 'form-control ', 'placeholder': 'Commentaire',} }) }}
                         </div>
                     </div> 
+                        
+                    {% if is_granted("ROLE_ADMINSQE") %}
+                        <div class="form-group">
+                            <label class="col-xs-3 control-label">Avis : </label>
+                            {%if form_errors(form.commentaireAvis) %}
+                                <div class="col-xs-8 input-group has-error has-feedback">
+                                {% else %}
+                                    <div class="col-xs-8 input-group">
+                                    {% endif %}
+                                    {{ form_widget(form.commentaireAvis, { 'attr': {'class': 'form-control ', 'placeholder': 'Avis',} }) }}
+                                </div>
+                         </div> 
+                    {% endif %}
 
                     <div class="form-group">
                         <div class="col-xs-offset-4 col-xs-8">
