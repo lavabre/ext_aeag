@@ -1,0 +1,44 @@
+<table class="table">
+    <theading>
+        <tr>
+            {% for jourSemaine in joursSemaine %}
+                <th>{{jourSemaine}}</th>
+                {%endfor%}
+        </tr>
+    </theading>
+    <tbody>
+        <tr>
+            {% for i in 1..7 %}
+                <td>
+                    {% for evenement in evenements[i]%}
+                        {% if evenement | length %}
+                            <div class="alert aeag-alert-{{evenement.prelev.prestaPrel.couleur}} evenement" role="alert">
+                                <strong>{{evenement.datePrel | date('H:i')}}</strong>
+                                {{evenement.prelev.station.libelle}} - {{evenement.prelev.codeSupport.nomSupport}} - {{evenement.prelev.prestaPrel.nomCorres}}
+                                <div style='display:none' >
+                                    <span class='id_evt'>{{evenement.id}}</span>
+                                </div>
+                            </div>
+                        {%endif%}    
+                    {%endfor%}
+                </td>
+            {%endfor%}
+        </tr>
+    </tbody>
+</table>
+<div class="modal fade" tabindex="-1" role="dialog" id='modal-planning'>
+</div><!-- /.modal -->
+<script>
+    $('.evenement').click(function () {
+        var idEvt = $(this).find('.id_evt').html();
+        $.ajax({url: "{{ path('AeagSqeBundle_suiviEau_planning_modal') }}",
+            method: "GET",
+            data: {evt: idEvt},
+            success: function (result) {
+                $("#modal-planning").html(result);
+                $("#modal-planning").modal();
+            }
+        });
+    });
+
+</script>

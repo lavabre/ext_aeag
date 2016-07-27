@@ -64,8 +64,19 @@ class SuiviSedimentController extends Controller {
                         }
                     }
                     if ($trouve) {
-                        $tabProglotAns[$i] = $pgProgLotAn;
-                        $i++;
+                        $trouve = false;
+                        foreach ($pgProgLot->getGrparRef() as $pgProgGrpParamRef) {
+                            if ($pgProgGrpParamRef->getSupport()) {
+                                if ($pgProgGrpParamRef->getSupport()->getCodeSupport() == '6') {
+                                    $trouve = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if ($trouve) {
+                            $tabProglotAns[$i] = $pgProgLotAn;
+                            $i++;
+                        }
                     }
                 }
             }
@@ -218,6 +229,7 @@ class SuiviSedimentController extends Controller {
                         if ($pgCmdPrelev->getCodeSupport()->getCodeSupport() == '6') {
                             $tabCmdPrelevs[$nbCmdPrelevs]['cmdPrelev'] = $pgCmdPrelev;
                             $tabCmdPrelevs[$nbCmdPrelevs]['maj'] = 'N';
+                            $tabCmdPrelevs[$nbCmdPrelevs]['commentaire'] = null;
                             $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelevOrderId($pgCmdPrelev);
                             $tabSuiviPrels = array();
                             $nbSuiviPrels = 0;
@@ -229,6 +241,11 @@ class SuiviSedimentController extends Controller {
                                 foreach ($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
                                     $tabSuiviPrels[$nbSuiviPrels]['suiviPrel'] = $pgCmdSuiviPrel;
                                     $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'N';
+                                    if ($pgCmdSuiviPrel->getCommentaire()) {
+                                        if ($tabCmdPrelevs[$nbCmdPrelevs]['commentaire'] == null) {
+                                            $tabCmdPrelevs[$nbCmdPrelevs]['commentaire'] = $pgCmdSuiviPrel->getCommentaire();
+                                        }
+                                    }
                                     if ($user->hasRole('ROLE_ADMINSQE') or ( $pgCmdSuiviPrel->getUser()->getPrestataire() == $pgCmdDemande->getPrestataire())) {
                                         if ($pgCmdSuiviPrel->getStatutPrel() != 'F' or ( $pgCmdSuiviPrel->getStatutPrel() == 'F' and $pgCmdSuiviPrel->getValidation() != 'A')) {
                                             $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'O';
@@ -910,24 +927,6 @@ class SuiviSedimentController extends Controller {
                     $prelev = null;
                     for ($j = 0; $j < count($prelevs); $j++) {
                         $prelev = $prelevs[$j]['cmdPrelev'];
-                        if ($prelev->getCodeSupport()->getCodeSupport() != '10' && $prelev->getCodeSupport()->getCodeSupport() != '11') {
-                            $autrePgCmdPrelevs = $repoPgCmdPrelev->getAutrePrelevs($prelev);
-                            for ($i = 0; $i < count($autrePgCmdPrelevs); $i++) {
-                                $autreSuport = $autrePgCmdPrelevs[$i]['codeSupport'];
-                                if ($autreSuport != '10' && $autreSuport != '11') {
-                                    $autreDateDebut = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
-                                    $autreDateDebut->sub(new \DateInterval('P7D'));
-                                    $autreDateFin = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
-                                    $autreDateFin->add(new \DateInterval('P7D'));
-                                    if ($datePrel >= $autreDateDebut and $datePrel <= $autreDateFin) {
-                                        $err = true;
-                                        $contenu = 'ligne  ' . $ligne . '  : Date  (' . $datePrel->format('d/m/Y H:i') . ') doit être inférieure à ' . $autreDateDebut->format('d/m/Y H:i') . ' ou supérieure à  ' . $autreDateFin->format('d/m/Y H:i');
-                                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                                        fputs($rapport, $contenu);
-                                    }
-                                }
-                            }
-                        }
                         if ($prelev->getCodeSupport()->getCodeSupport() == $codeSupport) {
                             $trouve = true;
                             $suiviPrels = $prelevs[$j]['cmdSuiviPrelevs'];
@@ -1253,28 +1252,6 @@ class SuiviSedimentController extends Controller {
                     $nbMessages++;
                 }
             }
-
-            if ($pgCmdPrelev->getCodeSupport()->getCodeSupport() != '10' && $pgCmdPrelev->getCodeSupport()->getCodeSupport() != '11') {
-                $autrePgCmdPrelevs = $repoPgCmdPrelev->getAutrePrelevs($pgCmdPrelev);
-                for ($i = 0; $i < count($autrePgCmdPrelevs); $i++) {
-                    $autreSuport = $autrePgCmdPrelevs[$i]['codeSupport'];
-                    if ($autreSuport != '10' & $autreSuport != '11') {
-                        $autreDateDebut = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
-                        $autreDateDebut->sub(new \DateInterval('P7D'));
-                        $autreDateFin = new \DateTime($autrePgCmdPrelevs[$i]['datePrel']);
-                        $autreDateFin->add(new \DateInterval('P7D'));
-                        if ($pgCmdSuiviPrel->getDatePrel() >= $autreDateDebut and $pgCmdSuiviPrel->getDatePrel() <= $autreDateFin) {
-                            $err = true;
-                            $contenu = 'Date  (' . $pgCmdSuiviPrel->getDatePrel()->format('d/m/Y H:i') . ') doit être inférieure à ' . $autreDateDebut->format('d/m/Y H:i') . ' ou supérieure à  ' . $autreDateFin->format('d/m/Y H:i');
-                            $tabMessage[$nbMessages][0] = 'ko';
-                            $tabMessage[$nbMessages][1] = $contenu;
-                            $nbMessages++;
-                        }
-                    }
-                }
-            }
-
-
 
             if ($pgCmdSuiviPrel->getStatutPrel() == 'P') {
                 if (!$pgCmdSuiviPrel->getCommentaire() or $pgCmdSuiviPrel->getCommentaire() == '') {

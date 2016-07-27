@@ -5,7 +5,7 @@
  {% if suiviPrel.statutPrel  == 'F' %}
      {% if   suiviPrel.fichierRps %}
          {% if suiviPrel.fichierRps.nomFichier %}
-         <a id="idTelechargerSuivi-{{ suiviPrel.id }}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_fichier_telecharger',{'suiviPrelId': suiviPrel.id })}}" title="Télécharger le fichier terrain">
+         <a id="idTelechargerSuivi-{{ suiviPrel.id }}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_suiviEau_lot_periode_station_demande_suivi_fichier_telecharger',{'suiviPrelId': suiviPrel.id })}}" title="Télécharger le fichier terrain">
              <i class="fa fa-upload"></i> 
          </a>
          {% endif %}

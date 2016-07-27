@@ -1,0 +1,99 @@
+<div class="row responsive">
+    <div class="col-xm-12">
+        <div class="small ">          
+            <table class="table table-bordered  table-advance table-condensed table-responsive table-striped" id="idTablePrelevSuiviPrels">
+                <thead>
+                    <tr>
+                        <th>N°ordre</th>
+                        <th>Date</th>
+                        <th>Statut</th>
+                        <th>validation</th>
+                        <th>Commentaire</th>
+                        <th>Fichier joint</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {%if cmdPrelev.suiviPrels | length%} 
+                        {% for suiviPrel  in cmdPrelev.suiviPrels %}
+                            {% if suiviPrel %}
+                                <tr>
+                                     <td>
+                                        {{ suiviPrel.id }}
+                                    </td>
+                                    <td>
+                                        <span class="hidden">{{ suiviPrel.datePrel | date("Y/m/d H:i") }}</span>
+                                        {{ suiviPrel.datePrel | date("d/m/Y") }}
+                                    </td>
+                                     <td> 
+                                        {% if suiviPrel.statutPrel == 'P' %}
+                                            Prévisionnel
+                                        {% elseif suiviPrel.statutPrel == 'F' %}
+                                            Effectué
+                                        {% elseif suiviPrel.statutPrel == 'N' %}
+                                            Non effectué
+                                        {% elseif suiviPrel.statutPrel == 'A' %}
+                                            Analyses effectuées
+                                        {% elseif suiviPrel.statutPrel == 'V' %}
+                                            Validé
+                                        {% elseif suiviPrel.statutPrel == 'R' %}
+                                            Réfusé
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if suiviPrel.validation == 'E' %}
+                                            En attente
+                                        {% elseif suiviPrel.validation == 'R' %}
+                                            Refusé
+                                        {% elseif suiviPrel.validation == 'A' %}
+                                            Accepté
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {{ suiviPrel.commentaire | nl2br }}
+                                    </td>
+                                    <td>
+                                        {% if suiviPrel.statutPrel  == 'F' %}
+                                            {% if suiviPrel.fichierRps %}
+                                                {% if suiviPrel.fichierRps.nomFichier %}
+                                                    <a id="idTelechargerSuivi-{{ suiviPrel.id }}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_suiviEau_lot_periode_station_demande_suivi_fichier_telecharger',{'suiviPrelId': suiviPrel.id })}}" title="Télécharger le fichier terrain">
+                                                        <i class="fa fa-upload"></i> 
+                                                    </a>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript" language="javascript">
+
+    jQuery(document).ready(function () {
+        $('#idTablePrelevSuiviPrels').DataTable(
+                {"stateSave": false,
+                   "order": [[0, "desc"]],
+                    "language": {
+                        "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
+                    },
+                    "aLengthMenu": [
+                        [10, 25, 50, 100, -1],
+                        [10, 25, 50, 100, "Tous"]
+                    ],
+                    "iDisplayLength": 10
+                }
+        );
+
+        $("#idTablePrelevSuiviPrels").draggable({
+            handle: ".modal-header"
+        });
+    });
+
+</script>
+

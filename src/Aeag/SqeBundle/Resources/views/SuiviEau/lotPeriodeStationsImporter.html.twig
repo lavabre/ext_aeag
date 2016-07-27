@@ -1,0 +1,178 @@
+         
+<div class="form-group">
+    <label class="col-xs-3 control-label" for="file">Fichier zip à importer</label>
+    <div id="idSelection" class="col-xs-7">
+        <form method="POST" enctype="multipart/form-data" action="#" id="idFormFichierIntegrer">
+            <input class="form-control" type="file" id="file" name="file" >
+        </form> 
+    </div>
+    <div class="col-xs-1">
+        <button type="button" id="idImporter" class="btn btn-success" >Importer</button> 
+        <button type="button" id="idImportSupprimer" class="btn btn-danger" >Supprimer</button> 
+       </div>
+</div>
+<br><br>
+<div class="form-group text-center">
+    <div class="col-xs-offset-2 col-xs-8 info alert-info text-info text-center">
+        seul l'extension zip est acceptée et la taille du fichier doit ête inférieure à 100 MB. 
+    </div>
+</div>
+
+<div class="form-group">
+    <div id="idImportMessage" class="col-xs-offset-3 col-xs-5 alert alert-warning text-danger text-center" role="alert"></div>
+    <div id="idImportProgress" class="col-xs-offset-3 col-xs-5 alert alert-info"><progress></progress></div>
+    </br></br>
+</div>
+
+
+
+
+<script type="text/javascript" language="javascript">
+
+    jQuery(document).ready(function () {
+
+
+        $('#idImportProgress').hide();
+        $('#idImportSupprimer').hide();
+        $('#idImportMessage').hide();
+        $('#idImportRapport').hide();
+        
+        $('#idAnnuler').on('click', function (e) {
+            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+            if ($("#file").val() == '' ){
+                    $('#importerFichier').modal('hide');
+            }else{
+                    var url1 = '{{ path("AeagSqeBundle_suiviEau_lot_periode_stations",{"periodeAnId": "par1"}) }}', // Le nom du fichier indiqué dans le formulaire
+                    url1 = url1.replace("par1", {{ periodeAnId }});
+                    url1 = url1.replace("amp;", "");
+                    window.location.replace(url1);
+                };
+        });
+
+        $('#idImporter').on('click', function (e) {
+            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+            $('#idImportProgress').show();
+            var url = '{{ path("AeagSqeBundle_suiviEau_lot_periode_stations_importer_fichier",{"periodeAnId": "par1"}) }}', // Le nom du fichier indiqué dans le formulaire
+                    url = url.replace("par1", {{ periodeAnId }});
+                    url = url.replace("amp;", "");
+            var formulaire = new FormData($('form')[0]);
+            $.ajax({
+                url: url,
+                type: 'post',
+                xhr: function () { // xhr qui traite la barre de progression
+                    myXhr = $.ajaxSettings.xhr();
+                    if (myXhr.upload) { // vérifie si l'upload existe
+                        myXhr.upload.addEventListener('progress', afficherAvancement, false); // Pour ajouter l'évènement progress sur l'upload de fichier
+                    }
+                    return myXhr;
+                },
+                //Traitements AJAX
+                success: function (reponses) { // Je récupère la réponse du fichier PHP
+                    tabReponse = JSON.parse(reponses)
+                    fichier = tabReponse[0];
+                    rapport = tabReponse[1];
+                    tabMessages = tabReponse[2];
+                    tabRapports = tabReponse[3];
+                    ficRapport = tabReponse[4];
+                   var erreur = false;
+                   var nbMessage = 0;
+                    var html = "<ul>";
+                   for (var ii = 0; ii < tabMessages.length; ii++){
+                            var typeMessage = tabMessages[ii][0];
+                            if (typeMessage == 'ko'){
+                              erreur = true;
+                            }
+                            var message = tabMessages[ii][1];
+                           if (message){
+                                    nbMessage = nbMessage + 1;
+                                    html = html + '<li>' + message + '</li>';
+                            }
+                    }
+                    html = html + '<ul>';
+                    if (nbMessage > 0){
+                            $('#idImportMessage').show();
+                            $('#idImportMessage').empty().append(html).show();
+                     }else{
+                            var html = "</br>";
+                            for (var ii = 0; ii < tabRapports.length; ii++){
+                                    var rapport = tabRapports[ii];
+                                    html = html + rapport + "</br>" ;
+                             }
+                             erreur = true;
+                            $('#idImportMessage').show();
+                            $('#idImportMessage').empty().append(html).show();
+                            var urlRapport = '{{ path("AeagSqeBundle_suiviEau_lot_periode_stations_telecharger_rapport",{"periodeAnId": "par1", "fichier": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
+                            urlRapport = urlRapport.replace("par1", {{ periodeAnId }});
+                            urlRapport = urlRapport.replace("par2", ficRapport);
+                            urlRapport = urlRapport.replace("amp;", "");
+                            html =  '<a  class="btn btn-info"  href="' + urlRapport + '" title="Rapport d\'integration du fichier de suivi">';
+                            html = html + '<i class="fa fa-book"> Rapport d\'integration</i></a>';
+                            $('#idImportRapport').empty().append(html).show();
+                    }
+                    $('#idImportProgress').hide();
+                   if (!erreur){
+                            var url1 = '{{ path("AeagSqeBundle_suiviEau_lot_periode_stations",{"periodeAnId": "par1"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                    url1 = url1.replace("par1", {{ periodeAnId }});
+                                    url1 = url1.replace("amp;", "");
+                            window.location.replace(url1);
+                   };          
+                },
+                error: function (html) { // Je récupère la réponse du fichier PHP
+                    $('#idImportMessage').show();
+                    $('#idImportMessage').empty().append(html).show();
+                    $('#idImportProgress').hide();
+                },
+                data: formulaire,
+                cache: false,
+                contentType: false,
+                processData: false
+            });
+        });
+
+        $('#idImportSupprimer').on('click', function (e) {
+            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+            $('#idProgress').show();
+            var url = '{{ path("AeagSqeBundle_suiviEau_lot_periode_stations_supprimer_import",{ "periodeAnId": "par1", "fichier": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
+                    url = url.replace("par1", {{ periodeAnId }});
+                    url = url.replace("par2", fichier);
+            url = url.replace("amp;", "");
+            $.ajax({
+                url: url,
+                type: 'post',
+                xhr: function () { // xhr qui traite la barre de progression
+                    myXhr = $.ajaxSettings.xhr();
+                    if (myXhr.upload) { // vérifie si l'upload existe
+                        myXhr.upload.addEventListener('progress', afficherAvancement, false); // Pour ajouter l'évènement progress sur l'upload de fichier
+                    }
+                    return myXhr;
+                },
+                //Traitements AJAX
+                success: function (html) { // Je récupère la réponse du fichier PHP
+                    $('#idMessage').show();
+                    $('#idMessage').empty().append(html).show();
+                    $('#idProgress').hide();
+                    $('#idDeposer').show();
+                    $('#idSupprimer').hide();
+                },
+                error: function (html) { // Je récupère la réponse du fichier PHP
+    {#$('#idResultat').empty().append('erreur lors du dépot');#}
+                        $('#idProgress').hide();
+                        $('#idDeposer').hide();
+                        $('#idSupprimer').show();
+                        $('#idMessage').empty().append(html).show();
+                    },
+                    cache: false,
+                });
+            });
+
+
+            function afficherAvancement(e) {
+                if (e.lengthComputable) {
+                    $('progress').attr({value: e.loaded, max: e.total});
+                }
+            }
+
+
+        });
+
+</script>

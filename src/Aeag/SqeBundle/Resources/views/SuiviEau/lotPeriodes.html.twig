@@ -5,10 +5,10 @@
         <a href="{{ path('aeag_homepage') }}">Accueil</a> 
     </li>
     <li>
-           <a href="{{ path('AeagSqeBundle_suiviHydrobio_index') }}">Suivi Hydrobio</a> 
+           <a href="{{ path('AeagSqeBundle_suiviEau_index') }}">Suivi Eau</a> 
     </li>
     <li>
-           <a href="{{ path('AeagSqeBundle_suiviHydrobio_index') }}">Lots</a> 
+           <a href="{{ path('AeagSqeBundle_suiviEau_index') }}">Lots</a> 
     </li>
     <li class="active">
           Périodes
@@ -46,7 +46,7 @@
                     {% for periodeAn in periodeAns %}
                           <tr>
                             <td align="center" nowrap> 
-                                 <a id="id_{{ periodeAn.pgProgLotPeriodeAn.id }}" class="btn btn-primary" href="{{path('AeagSqeBundle_suiviHydrobio_lot_periode_stations',{ 'periodeAnId': periodeAn.pgProgLotPeriodeAn.id })}}" title="Stations">
+                                 <a id="id_{{ periodeAn.pgProgLotPeriodeAn.id }}" class="btn btn-primary" href="{{path('AeagSqeBundle_suiviEau_lot_periode_stations',{ 'periodeAnId': periodeAn.pgProgLotPeriodeAn.id })}}" title="Stations">
                                     <i class="fa fa-eye"></i> 
                                 </a>
                             </td>

@@ -1,0 +1,143 @@
+AeagSqeBundle_suiviEau_index:
+    path:  /lots
+    defaults: { _controller: AeagSqeBundle:SuiviEau:index }
+    
+AeagSqeBundle_suiviEau_lot_periodes:
+    path:  /periodes/{lotanId}
+    defaults: { _controller: AeagSqeBundle:SuiviEau:lotPeriodes, lotanId : null}    
+
+AeagSqeBundle_suiviEau_lot_periode_stations:
+    path: /stations/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SuiviEau:lotPeriodeStations, periodeAnId : null}
+    
+AeagSqeBundle_suiviEau_lot_periode_stations_integrer:
+    path: /integrer/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SuiviEau:lotPeriodeStationsIntegrer, periodeAnId : null}
+    
+AeagSqeBundle_suiviEau_lot_periode_stations_integrer_fichier:
+    path:  /integrer/fichier/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SuiviEau:lotPeriodeStationsIntegrerFichier, periodeAnId : null }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_suiviEau_lot_periode_stations_supprimer_fichier:
+    path:  /integrer/supprimer/fichier/{periodeAnId}/{fichier}
+    defaults: { _controller: AeagSqeBundle:SuiviEau:lotPeriodeStationsSupprimerFichier, periodeAnId : null, fichier : null }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_suiviEau_lot_periode_stations_telecharger_rapport:
+    path:  /rapport/telecharger/{periodeAnId}/{fichier}
+    defaults: { _controller: AeagSqeBundle:SuiviEau:lotPeriodeStationsTelechargerRapport, periodeAnId : null, fichier : null}
+    requirements:
+         methods:  GET|POST
+         
+AeagSqeBundle_suiviEau_lot_periode_stations_importer:
+    path: /importer/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SuiviEau:lotPeriodeStationsImporter, periodeAnId : null}
+    
+AeagSqeBundle_suiviEau_lot_periode_stations_importer_fichier:
+    path:  /importer/fichier/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SuiviEau:lotPeriodeStationsImporterFichier, periodeAnId : null }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_suiviEau_lot_periode_stations_supprimer_import:
+    path:  /importer/supprimet/fichier/{periodeAnId}/{fichier}
+    defaults: { _controller: AeagSqeBundle:SuiviEau:lotPeriodeStationsSupprimerImport, periodeAnId : null, fichier : null }
+    requirements:
+        methods:  GET|POST   
+    
+AeagSqeBundle_suiviEau_lot_periode_station_demande:
+    path:  /demande/{stationId}/{periodeAnId}/{cmdDemandeId}
+    defaults: { _controller: AeagSqeBundle:SuiviEau:lotPeriodeStationDemande, stationId : null, periodeAnId : null, cmdDemandeId : null}
+
+AeagSqeBundle_suiviEau_lot_periode_station_demande_suivi_new:
+    path:  /new/{prelevId}/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SuiviEau:lotPeriodeStationDemandeSuiviNew, prelevId : null, periodeAnId : null}
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_suiviEau_lot_periode_station_demande_suivi_maj:
+    path:  /maj/{suiviPrelId}/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SuiviEau:lotPeriodeStationDemandeSuiviMaj, suiviPrelId : null, periodeAnId : null}
+    requirements:
+         methods:  GET|POST
+         
+AeagSqeBundle_suiviEau_lot_periode_station_demande_suivi_voir:
+    path:  /voir/{suiviPrelId}/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SuiviEau:lotPeriodeStationDemandeSuiviVoir, suiviPrelId : null, periodeAnId : null}
+    requirements:
+         methods:  GET|POST
+         
+AeagSqeBundle_suiviEau_lot_periode_station_demande_suivi_deposer:
+    path:  /deposer/{stationId}/{suiviPrelId}/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SuiviEau:lotPeriodeStationDemandeSuiviDeposer,  stationId : null, suiviPrelId : null, periodeAnId : null}
+    requirements:
+         methods:  GET|POST
+   
+AeagSqeBundle_suiviEau_lot_periode_station_demande_suivi_supprimer:
+    path:  /supprimer/{suiviPrelId}/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SuiviEau:lotPeriodeStationDemandeSuiviSupprimer, suiviPrelId : null, periodeAnId : null}
+    requirements:
+        methods:  GET|POST
+  
+AeagSqeBundle_suiviEau_lot_periode_station_demande_suivi_fichier_deposer:
+    path:  /fichier/deposer/{stationId}/{suiviPrelId}/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SuiviEau:lotPeriodeStationDemandeSuiviFichierDeposer,  stationId : null,  suiviPrelId : null, periodeAnId : null }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_suiviEau_lot_periode_station_demande_suivi_fichier_supprimer:
+    path:  /fichier/supprimer/{suiviPrelId}/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SuiviEau:lotPeriodeStationDemandeSuiviFichierSupprimer, suiviPrelId : null, periodeAnId : null }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_suiviEau_lot_periode_station_demande_suivi_fichier_telecharger:
+    path:  /fichier/telecharger/{suiviPrelId}
+    defaults: { _controller: AeagSqeBundle:SuiviEau:lotPeriodeStationDemandeSuiviFichierTelecharger, suiviPrelId : null}
+    requirements:
+         methods:  GET|POST
+         
+AeagSqeBundle_suiviEau_prelev_suiviprels:
+    path:  /prelev/suiviprels/{prelevId}
+    defaults: { _controller: AeagSqeBundle:SuiviEau:prelevSuiviPrels, prelevId : null}
+    requirements:
+        methods:  GET|POST
+         
+AeagSqeBundle_suiviEau_synthese:
+    path:  /synthese    
+    defaults: { _controller: AeagSqeBundle:SuiviEau:synthese}
+    requirements:
+         methods:  GET|POST
+         
+AeagSqeBundle_suiviEau_synthese_support:
+    path:  /synthese/support/{codeSupport}   
+    defaults: { _controller: AeagSqeBundle:SuiviEau:syntheseSupport, codeSupport: null}
+    requirements:
+         methods:  GET|POST
+         
+AeagSqeBundle_suiviEau_synthese_support_station:
+    path:  /synthese/support/station/{codeSupport}/{stationId}/{suiviPrelId}/{tr}
+    defaults: { _controller: AeagSqeBundle:SuiviEau:syntheseSupportStation, codeSupport: null, stationId : null, suiviPrelId : null, tr: null }
+    requirements:
+         methods:  GET|POST
+         
+AeagSqeBundle_suiviEau_synthese_support_station_valider:
+    path:  /synthese/support/station/valider/{codeSupport}/{stationId}/{suiviPrelId}/{tr}
+    defaults: { _controller: AeagSqeBundle:SuiviEau:syntheseSupportStationvalider, codeSupport: null, stationId : null, suiviPrelId : null, tr: null }
+    requirements:
+         methods:  GET|POST
+         
+AeagSqeBundle_suiviEau_planning:
+    path:  /planning
+    defaults: { _controller: AeagSqeBundle:SuiviEau:planning }
+    
+AeagSqeBundle_suiviEau_planning_table:
+    path:  /planning/table
+    defaults: { _controller: AeagSqeBundle:SuiviEau:planningTable }
+    
+AeagSqeBundle_suiviEau_planning_modal:
+    path:  /planning/modal
+    defaults: { _controller: AeagSqeBundle:SuiviEau:planningModal }

@@ -66,10 +66,23 @@ class PgCmdSuiviPrelRepository extends EntityRepository {
         $query = "select c";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdSuiviPrel c";
         $query = $query . " where c.prelev = " . $pgCmdPrelev->getId() ;
-        $query = $query .  " order by c.id desc, c.datePrel desc";
+        $query = $query .  " order by c.id desc";
         $qb = $this->_em->createQuery($query);
         //print_r($query);
         return $qb->getResult();
+    }
+    
+     /**
+     * @return array
+     */
+    public function getPgCmdSuiviPrelByPrelevMaxId($pgCmdPrelev) {
+        $query = "select c";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdSuiviPrel c";
+         $query = $query . " where c.id in (select max(s.id) from Aeag\SqeBundle\Entity\PgCmdSuiviPrel s";
+        $query = $query . " where s.prelev = " . $pgCmdPrelev->getId()  . ")";
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+       return $qb->getOneOrNullResult();
     }
     
      /**

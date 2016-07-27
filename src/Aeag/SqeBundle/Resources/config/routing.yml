@@ -36,6 +36,9 @@ aeag_sqe_suiviSediment:
     resource: "@AeagSqeBundle/Resources/config/routing_suiviSediment.yml"
     prefix:   /suiviSediment 
     
+aeag_sqe_suiviEau:
+    resource: "@AeagSqeBundle/Resources/config/routing_suiviEau.yml"
+    prefix:   /suiviEau 
 aeag_sqe_planning:
     resource: "@AeagSqeBundle/Resources/config/routing_planning.yml"
     prefix:   /planning  

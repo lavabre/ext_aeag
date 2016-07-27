@@ -5,7 +5,7 @@
         <a href="{{ path('aeag_homepage') }}">Accueil</a> 
     </li>
     <li>
-        <a href="{{ path('AeagSqeBundle_suiviHydrobio_synthese') }}">Qualification suivis Hydrobio</a> 
+        <a href="{{ path('AeagSqeBundle_suiviEau_synthese') }}">Qualification suivis Eau</a> 
     </li>
     <li class="active">
         Support
@@ -99,7 +99,7 @@
                                             {% if station.suiviPrel.statutPrel  == 'F' %}
                                                 {% if   station.suiviPrel.fichierRps %}
                                                     {% if station.suiviPrel.fichierRps.nomFichier %}
-                                                        <a id="idTelechargerSuivi-{{ station.suiviPrel.id }}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_fichier_telecharger',{'suiviPrelId': station.suiviPrel.id })}}" title="Télécharger le fichier terrain">
+                                                        <a id="idTelechargerSuivi-{{ station.suiviPrel.id }}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_suiviEau_lot_periode_station_demande_suivi_fichier_telecharger',{'suiviPrelId': station.suiviPrel.id })}}" title="Télécharger le fichier terrain">
                                                             <i class="fa fa-upload"></i> 
                                                         </a>
                                                     {% endif %}
@@ -272,7 +272,7 @@
                                                     $(document).on('click','#idVoirSuivi-{{ station.cmdPrelev.id }}',function(e){
                                                     e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
                                                     $('#modalTraitementEncours').modal('toggle');
-                                                    var url = '{{ path("AeagSqeBundle_suiviHydrobio_prelev_suiviprels",{"prelevId": "par1"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                                    var url = '{{ path("AeagSqeBundle_suiviEau_prelev_suiviprels",{"prelevId": "par1"}) }}', // Le nom du fichier indiqué dans le formulaire
                                                     url = url.replace("par1", {{ station.cmdPrelev.id }});
                                                     url = url.replace("amp;","");
                                                     $.ajax({
@@ -291,7 +291,7 @@
                                                  $(document).on('click','#idValider-{{ station.suiviPrel.id }}',function(e){
                                                     e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
                                                     $('#modalTraitementEncours').modal('toggle');
-                                                    var url = '{{ path("AeagSqeBundle_suiviHydrobio_synthese_support_station_valider",{"codeSupport": "par1", "stationId": "par2", "suiviPrelId":  "par3", "tr": "par4"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                                    var url = '{{ path("AeagSqeBundle_suiviEau_synthese_support_station_valider",{"codeSupport": "par1", "stationId": "par2", "suiviPrelId":  "par3", "tr": "par4"}) }}', // Le nom du fichier indiqué dans le formulaire
                                                     url = url.replace("par1", {{ support.codeSupport }});
                                                     url = url.replace("par2", {{station.station.ouvFoncId }});
                                                     url = url.replace("par3", {{ station.suiviPrel.id }});
@@ -313,7 +313,7 @@
                                                     $(document).on('click','#idAvis-{{ station.suiviPrel.id }}',function(e){
                                                     e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
                                                     $('#modalTraitementEncours').modal('toggle');
-                                                    var url = '{{ path("AeagSqeBundle_suiviHydrobio_synthese_support_station",{"codeSupport": "par1", "stationId": "par2", "suiviPrelId":  "par3", "tr": "par4"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                                    var url = '{{ path("AeagSqeBundle_suiviEau_synthese_support_station",{"codeSupport": "par1", "stationId": "par2", "suiviPrelId":  "par3", "tr": "par4"}) }}', // Le nom du fichier indiqué dans le formulaire
                                                     url = url.replace("par1", {{ support.codeSupport }});
                                                     url = url.replace("par2", {{station.station.ouvFoncId }});
                                                     url = url.replace("par3", {{ station.suiviPrel.id }});

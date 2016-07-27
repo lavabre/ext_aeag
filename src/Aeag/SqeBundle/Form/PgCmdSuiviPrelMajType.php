@@ -124,7 +124,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'format' => 'dd/MM/yyyy HH:mm',
                                             'required' => true,
                                             'data' => $pgCmdSuiviPrelActuel->getDatePrel(),
-                                            'disabled' => true))
+                                            ))
                                         ->add('statutPrel', 'choice', array(
                                             'choices' => array('F' => 'Effectué', 'N' => 'Non effectué', 'R' => 'Reporté'),
                                             'required' => true,
@@ -183,7 +183,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'format' => 'dd/MM/yyyy HH:mm',
                                             'data' => $pgCmdSuiviPrelActuel->getDatePrel(),
                                             'required' => true,
-                                            'disabled' => true))
+                                            ))
                                         ->add('statutPrel', 'choice', array(
                                             'choices' => array('F' => 'Effectué', 'N' => 'Non effectué', 'R' => 'Reporté'),
                                             'required' => true,
@@ -242,7 +242,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'format' => 'dd/MM/yyyy HH:mm',
                                             'data' => $pgCmdSuiviPrelActuel->getDatePrel(),
                                             'required' => true,
-                                            'disabled' => true))
+                                            ))
                                         ->add('statutPrel', 'choice', array(
                                             'choices' => array('F' => 'Effectué', 'N' => 'Non effectué', 'R' => 'Reporté'),
                                             'required' => true,
@@ -343,7 +343,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'format' => 'dd/MM/yyyy HH:mm',
                                             'required' => true,
                                             'data' => $pgCmdSuiviPrelActuel->getDatePrel(),
-                                            'disabled' => true))
+                                            ))
                                         ->add('statutPrel', 'choice', array(
                                             'choices' => array('F' => 'Effectué', 'N' => 'Non effectué', 'R' => 'Reporté'),
                                             'required' => true,
@@ -390,7 +390,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'format' => 'dd/MM/yyyy HH:mm',
                                             'data' => $pgCmdSuiviPrelActuel->getDatePrel(),
                                             'required' => true,
-                                            'disabled' => true))
+                                           ))
                                         ->add('statutPrel', 'choice', array(
                                             'choices' => array('F' => 'Effectué', 'N' => 'Non effectué', 'R' => 'Reporté'),
                                             'required' => true,
@@ -437,7 +437,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'format' => 'dd/MM/yyyy HH:mm',
                                             'data' => $pgCmdSuiviPrelActuel->getDatePrel(),
                                             'required' => true,
-                                            'disabled' => true))
+                                            ))
                                         ->add('statutPrel', 'choice', array(
                                             'choices' => array('F' => 'Effectué', 'N' => 'Non effectué', 'R' => 'Reporté'),
                                             'required' => true,

@@ -92,7 +92,7 @@
                                         e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
                                            $('#idProgress').show();
                                            var $this = $('#idForm');
-                                           var url = '{{ path("AeagSqeBundle_suiviHydrobio_synthese_support_station_valider",{"codeSupport": "par1", "stationId": "par2", "suiviPrelId":  "par3",  "tr": "par4"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                           var url = '{{ path("AeagSqeBundle_suiviEau_synthese_support_station_valider",{"codeSupport": "par1", "stationId": "par2", "suiviPrelId":  "par3",  "tr": "par4"}) }}', // Le nom du fichier indiqué dans le formulaire
                                            url = url.replace("par1", {{ support.codeSupport }});
                                            url = url.replace("par2", {{ station.ouvFoncId }});
                                            url = url.replace("par3", {{ suiviPrel.id }});

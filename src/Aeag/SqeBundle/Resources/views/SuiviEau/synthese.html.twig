@@ -29,10 +29,10 @@
                     <tbody>
                         {%if supports | length%} 
                             {% for support in supports %}
-                                {% if support.codeSupport == '4' or support.codeSupport == '10' or support.codeSupport == '11' or support.codeSupport == '13' or support.codeSupport == '27'  %}
+                                {% if support.codeSupport == '3'%}
                                     <tr>
                                         <td>
-                                            <a id="id_{{support.codeSupport}}" class="btn btn-primary btn-demandes" href="{{path('AeagSqeBundle_suiviHydrobio_synthese_support',{ 'codeSupport': support.codeSupport })}}" title="Qualification">
+                                            <a id="id_{{support.codeSupport}}" class="btn btn-primary btn-demandes" href="{{path('AeagSqeBundle_suiviEau_synthese_support',{ 'codeSupport': support.codeSupport })}}" title="Qualification">
                                                 <i class="fa fa-eye"></i> 
                                             </a>
                                         </td>

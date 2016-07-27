@@ -679,9 +679,9 @@
                                                     $('#datePrel').datetimepicker(
                                                     {
                                                     language:  'fr',
-                                                    format: 'dd/mm/yyyy hh:ii',
-                                                    startDate: "{{ periodeAn.periode.dateDeb | date("d/m/Y hh:ii") }}",
-                                                    endDate: "{{  dateFin | date("d/m/Y hh:ii") }}",
+                                                   format: 'dd/mm/yyyy hh:ii',
+                                                    startDate: "{{ periodeAn.periode.dateDeb| date_modify("+6 hour") | date("d/m/Y H:i") }}",
+                                                    endDate: "{{  dateFin | date_modify("+23 hour") | date("d/m/Y H:i") }}",
                                                     autoclose: true   
                                                     }
                                                     );
