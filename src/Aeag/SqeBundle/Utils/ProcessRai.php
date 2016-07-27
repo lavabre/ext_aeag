@@ -160,6 +160,16 @@ class ProcessRai {
         if (!file_exists($pathBase)) {
             mkdir($pathBase);
         }
+
+        $this->createFileDonneesBrutes($fullFileName, $donneesBrutes);
+
+        // Mettre à jour la table pgCmdFichierRps avec le lien vers le fichier des données brutes
+        $pgCmdFichierRps->setNomFichierDonneesBrutes($nomFichierRps);
+        $em->persist($pgCmdFichierRps);
+        $em->flush();
+    }
+
+    public function createFileDonneesBrutes($fullFileName, $donneesBrutes) {
         $fichier_csv = fopen($fullFileName, 'w+');
 
         // Chaque ligne du tableau correspond a une ligne du fichier csv
@@ -182,11 +192,6 @@ class ProcessRai {
         }
 
         fclose($fichier_csv);
-
-        // Mettre à jour la table pgCmdFichierRps avec le lien vers le fichier des données brutes
-        $pgCmdFichierRps->setNomFichierDonneesBrutes($nomFichierRps);
-        $em->persist($pgCmdFichierRps);
-        $em->flush();
     }
 
 }

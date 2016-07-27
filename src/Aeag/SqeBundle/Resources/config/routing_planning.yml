@@ -1,0 +1,11 @@
+AeagSqeBundle_planning_index:
+    path:  /{typeMilieu}
+    defaults: { _controller: AeagSqeBundle:Planning:index, typeMilieu: null }
+    
+AeagSqeBundle_planning_table:
+    path:  /{typeMilieu}/table
+    defaults: { _controller: AeagSqeBundle:Planning:table, typeMilieu: null }
+    
+AeagSqeBundle_planning_modal:
+    path:  /{typeMilieu}/modal
+    defaults: { _controller: AeagSqeBundle:Planning:modal, typeMilieu: null }

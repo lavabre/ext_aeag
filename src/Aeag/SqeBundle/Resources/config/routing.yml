@@ -35,4 +35,12 @@ aeag_sqe_SaisieDonnees:
 aeag_sqe_suiviSediment:
     resource: "@AeagSqeBundle/Resources/config/routing_suiviSediment.yml"
     prefix:   /suiviSediment 
+    
+aeag_sqe_planning:
+    resource: "@AeagSqeBundle/Resources/config/routing_planning.yml"
+    prefix:   /planning  
+    
+aeag_sqe_exportDonneesBrutes:
+    resource: "@AeagSqeBundle/Resources/config/routing_exportdonneesbrutes.yml"
+    prefix:   /exportdonneesbrutes    
  

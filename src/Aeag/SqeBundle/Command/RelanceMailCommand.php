@@ -24,11 +24,22 @@ class RelanceMailCommand extends AeagCommand {
 
         // ANALYSE
         // Envoi des mails a J-7
-        $this->sendEmailJ7();
+        //$this->sendEmailJ7();
         
         // Envoi des mails a J+1
-        $this->sendEmailJ1();
-
+        //$this->sendEmailJ1();
+        
+        // HYDROBIO
+        // TODO A terminer
+        //$this->sendEmailHbP();
+        
+        // TODO A terminer
+        //$this->sendEmailHbF();
+        
+        $this->updateHbP();
+        
+        // TODO A terminer
+        //$this->updateHbF();
 
         $date = new \DateTime();
         $this->output->writeln($date->format('d/m/Y H:i:s') . '- Relance mail : Fin');
@@ -83,6 +94,65 @@ class RelanceMailCommand extends AeagCommand {
             $date = new \DateTime();
             $this->output->writeln($date->format('d/m/Y H:i:s') . '- Relance Mail : Le destinataire est null pour la DAI ' . $pgCmdDemande->getId());
         }
+    }
+    
+    protected function sendEmailHbP() {
+        // TODO Modifier la requete
+        $pgCmdDemandes = $this->repoPgCmdDemande->getPgCmdDemandeForRelance1JAprs();
+        $this->output->writeln(count($pgCmdDemandes));
+        foreach ($pgCmdDemandes as $pgCmdDemande) {
+            $this->output->writeln($pgCmdDemande->getPeriode()->getDateDeb());
+            $destinataires = array();
+            $destinataires[] = $this->repoPgProgWebUsers->findOneByPrestataire($pgCmdDemande->getLotan()->getLot()->getTitulaire());
+
+            $objetMessage = "Relance SQE - RAI : Dépot de fichier non effectué " . $pgCmdDemande->getLotan()->getLot()->getNomLot();
+            $txtMessage = "Lot : " . $pgCmdDemande->getLotan()->getLot()->getNomLot() . "<br/>";
+            $txtMessage .= "Période : " . $pgCmdDemande->getPeriode()->getLabelPeriode() . "<br/>";
+            $txtMessage .= "Les résultats à la demande ".$pgCmdDemande->getId()." du lot ".$pgCmdDemande->getLotan()->getLot()->getNomLot()." n'ont pas été déposé. Vous encourez des pénalités. <br/>";
+            foreach ($destinataires as $destinataire) {
+                $this->sendEmail($pgCmdDemande, $destinataire, $txtMessage, $objetMessage);
+            }
+        }
+    }
+        
+        
+    protected function sendEmailHbF() {
+        // TODO Modifier la requete
+        $pgCmdDemandes = $this->repoPgCmdDemande->getPgCmdDemandeForRelance1JAprs();
+        $this->output->writeln(count($pgCmdDemandes));
+        foreach ($pgCmdDemandes as $pgCmdDemande) {
+            $this->output->writeln($pgCmdDemande->getPeriode()->getDateDeb());
+            $destinataires = array();
+            $destinataires[] = $this->repoPgProgWebUsers->findOneByPrestataire($pgCmdDemande->getLotan()->getLot()->getTitulaire());
+
+            $objetMessage = "Relance SQE - RAI : Dépot de fichier non effectué " . $pgCmdDemande->getLotan()->getLot()->getNomLot();
+            $txtMessage = "Lot : " . $pgCmdDemande->getLotan()->getLot()->getNomLot() . "<br/>";
+            $txtMessage .= "Période : " . $pgCmdDemande->getPeriode()->getLabelPeriode() . "<br/>";
+            $txtMessage .= "Les résultats à la demande ".$pgCmdDemande->getId()." du lot ".$pgCmdDemande->getLotan()->getLot()->getNomLot()." n'ont pas été déposé. Vous encourez des pénalités. <br/>";
+            foreach ($destinataires as $destinataire) {
+                $this->sendEmail($pgCmdDemande, $destinataire, $txtMessage, $objetMessage);
+            }
+        }
+    }
+
+    protected function updateHbP() {
+        $pgCmdSuiviPrels = $this->repoPgCmdSuiviPrel->getSuiviPrelP15j();
+        foreach($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
+            $this->output->writeln($pgCmdSuiviPrel->getDatePrel());
+            $pgCmdSuiviPrel->setValidation('A');
+            $this->emSqe->persist($pgCmdSuiviPrel);
+        }
+        $this->emSqe->flush();
+    }
+
+    protected function updateHbF() {
+        // TODO Modifier la requete
+        $pgCmdSuiviPrels = $this->repoPgCmdSuiviPrel;
+        foreach($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
+            $pgCmdSuiviPrel->setValidation('A');
+            $this->emSqe->persist($pgCmdSuiviPrel);
+        }
+        $this->emSqe->flush();
     }
 
 }

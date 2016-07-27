@@ -28,9 +28,10 @@
                 {% set validation = 'Accepté' %}
             {% endif %}
             Validation: {{validation}}<br/>
-            Station: {{evenement.prelev.station.libelle}}<br/>
+            Station: {{evenement.prelev.station.code}} - {{evenement.prelev.station.libelle}}<br/>
             Support: {{evenement.prelev.codeSupport.nomSupport}}<br/>
             Prestataire: {{evenement.prelev.prestaPrel.nomCorres}}<br/>
+            Lot: {{evenement.prelev.demande.lotan.lot.nomLot}}<br/>
             <br/>
             Commentaire: {{evenement.commentaire}}</p>
         </div>

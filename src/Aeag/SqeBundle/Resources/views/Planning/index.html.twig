@@ -1,0 +1,212 @@
+{% extends "AeagSqeBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+    <li>
+        <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+    </li>
+    <li class="active">
+        Planning
+    </li>
+{% endblock breadcrumb %} 
+
+{%block panel_heading %}
+    <h3 class="page-title text-center">
+        Planning
+    </h3>
+{%endblock panel_heading %}
+
+{%block content %}
+    <div id="planning-frame">
+        <div class="row">
+            <div class="col-md-4"></div>
+            <div class="col-md-8">
+                <form class="form-inline">
+                     <div class="form-group">
+                        <label for="semaine-select"> Semaine </label>
+                        <select class="form-control" id="semaine-select" name="semaine-select">
+                            {% for semaine in semaines %}
+                                <option value="{{semaine}}"
+                                        {% if ( semaine == "now"|date("W")) %}
+                                            selected ='selected'
+                                        {%endif%}
+                                        >{{semaine}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="annee-select"> Annee </label>
+                        <select class="form-control" id="annee-select" name="annee-select">
+                            {% for annee in annees %}
+                                <option value="{{annee}}"
+                                         {% if ( annee == "now"|date("Y")) %}
+                                            selected ='selected'
+                                        {%endif%}
+                                        >{{annee}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">&nbsp;</div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">&nbsp;</div>
+        </div>
+        <div class="row">
+            <div class="col-md-1">
+                <a id="previous-week" class="btn btn-default" href="#" role="button"><i class="fa fa-angle-left"></i> Précédent</a>
+            </div>
+            <div class="col-md-3"></div>
+            <div class="col-md-4">
+                <form class="form">
+                    <div class="form-group">
+                        <select class="form-control" id="station-select" name="station-select">
+                            <option value="">-- station --</option>
+                            {% for station in stations %}
+                                <option value="{{station.ouvFoncId}}">{{station.code}} - {{station.libelle}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                       <select class="form-control" id="support-select" name="support-select">
+                            <option value="">-- support --</option>
+                            {% for support in supports %}
+                                <option value="{{support.codeSupport}}">{{support.codeSupport}} - {{support.nomSupport}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                         <select class="form-control" id="presta-select" name="presta-select">
+                            <option value="">-- prestataire --</option>
+                            {% for prestataire in prestataires %}
+                                <option value="{{prestataire.adrCorId}}">{{prestataire.nomCorres}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                         <select class="form-control" id="typemilieu-select" name="presta-select">
+                            <option value="{{typemilieuVal}}">-- type milieu --</option>
+                            {% for typemilieu in typesmilieu %}
+                                <option value="{{typemilieu.codeMilieu}}">{{typemilieu.nomMilieu}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-3"></div>
+            <div class="col-md-1">
+                <a id="next-week" class="btn btn-default" href="#" role="button">Suivant <i class="fa fa-angle-right"></i></a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">&nbsp;</div>
+        </div>
+        <div id="planning-grid">
+        </div>
+    </div>                
+                   
+
+{%endblock content %}    
+
+{% block scripts %}
+
+    //var semaine = {{ "now"|date("W") }};
+    var semaine = $('#semaine-select').val();
+    //var annee = {{ "now"|date("Y") }};
+    var annee = $('#annee-select').val();
+    var station = $('#station-select').val();
+    var support = $('#support-select').val();
+    var presta = $('#presta-select').val();
+    var typemilieu = $('#typemilieu-select').val();
+    getPlanning(semaine, annee, station, support, presta, typemilieu);
+    
+    function getPlanning(semaine, annee, station, support, presta, typemilieu) {
+        $.ajax({url: "{{ path('AeagSqeBundle_planning_table', {'typeMilieu': typemilieuVal}) }}", 
+                method: "GET",
+                data: { semaine: semaine, annee: annee, station: station, support: support, presta: presta, typemilieu: typemilieu},
+                success: function (result) {
+                    $('#semaine-select').val(semaine);
+                    $("#annee-select").val(annee);
+                    $("#planning-grid").html(result);
+                    //$("#num-semaine").html(semaine);
+                    //$("#num-annee").html(annee);
+                }
+        });
+    }
+    
+    $('#previous-week').click(function (){
+        var semaine = $('#semaine-select').val();
+        var annee = $("#annee-select").val();
+        //var semaine = $("#num-semaine").html();
+        //var annee = $("#num-annee").html();
+        if (semaine == '1') {
+            semaine = '53';
+            annee = parseInt(annee) - 1;
+        } else {
+            semaine = parseInt(semaine)-1;
+        }
+        
+        var station = $('#station-select').val();
+        var support = $('#support-select').val();
+        var presta = $('#presta-select').val();
+        var typemilieu = $('#typemilieu-select').val();
+        getPlanning(semaine, annee, station, support, presta, typemilieu);
+    });
+
+    $('#next-week').click(function (){
+        var semaine = $('#semaine-select').val();
+        var annee = $("#annee-select").val();
+        //var semaine = $("#num-semaine").html();
+        //var annee = $("#num-annee").html();
+        if (semaine == '53') {
+            semaine = 1;
+            annee = parseInt(annee) + 1;
+        } else {
+            semaine = parseInt(semaine)+1;
+        }
+        var station = $('#station-select').val();
+        var support = $('#support-select').val();
+        var presta = $('#presta-select').val();
+        var typemilieu = $('#typemilieu-select').val();
+        getPlanning(semaine, annee, station, support, presta, typemilieu);
+    });
+
+    $('#semaine-select').change(function (){
+        submitPlanning();
+    });
+    
+    $('#annee-select').change(function (){
+        submitPlanning();
+    });
+    
+    $('#station-select').change(function (){
+        submitPlanning();
+    });
+
+    $('#support-select').change(function (){
+        submitPlanning();
+    });
+
+    $('#presta-select').change(function (){
+        submitPlanning();
+    });
+    
+    $('#typemilieu-select').change(function (){
+        submitPlanning();
+    });
+    
+    function submitPlanning() {
+        //var semaine = $("#num-semaine").html();
+        //var annee = $("#num-annee").html();
+        var semaine = $('#semaine-select').val();
+        var annee = $("#annee-select").val();
+        var station = $('#station-select').val();
+        var support = $('#support-select').val();
+        var presta = $('#presta-select').val();
+        var typemilieu = $('#typemilieu-select').val();
+        getPlanning(semaine, annee, station, support, presta, typemilieu);
+    };
+
+{%endblock scripts %}    

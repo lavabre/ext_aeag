@@ -20,6 +20,7 @@ class AeagCommand extends ContainerAwareCommand {
     protected $repoPgTmpValidEdilabo;
     protected $repoPgLogValidEdilabo;
     protected $repoPgCmdDemande;
+    protected $repoPgCmdSuiviPrel;
     protected $repoPgRefCorresPresta;
     protected $repoPgProgLotLqParam;
     protected $repoPgProgUnitesPossiblesParam;
@@ -34,6 +35,8 @@ class AeagCommand extends ContainerAwareCommand {
     protected $repoPgProgSuiviPhases;
     protected $repoPgCmdMesureEnv;
     protected $repoPgCmdAnalyse;
+    protected $repoPgProgZoneGeoRef;
+    protected $repoPgProgTypeMilieu;
     protected $detectionCodeRemarqueComplet;
     protected $detectionCodeRemarqueMoitie;
     
@@ -77,6 +80,9 @@ class AeagCommand extends ContainerAwareCommand {
         $this->repoPgSandreMethodes = $this->emSqe->getRepository('AeagSqeBundle:PgSandreMethodes');
         $this->repoPgCmdMesureEnv = $this->emSqe->getRepository('AeagSqeBundle:PgCmdMesureEnv');
         $this->repoPgCmdAnalyse = $this->emSqe->getRepository('AeagSqeBundle:PgCmdAnalyse');
+        $this->repoPgCmdSuiviPrel = $this->emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
+        $this->repoPgProgZoneGeoRef = $this->emSqe->getRepository('AeagSqeBundle:PgProgZoneGeoRef');
+        $this->repoPgProgTypeMilieu = $this->emSqe->getRepository('AeagSqeBundle:PgProgTypeMilieu');
 
         // Chargement des fichiers csv dans des tableaux 
         $cheminCourant = __DIR__ . '/../../../../';

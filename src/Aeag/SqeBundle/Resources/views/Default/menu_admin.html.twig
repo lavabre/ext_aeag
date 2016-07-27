@@ -26,7 +26,8 @@
         <li><a href="{{ path('Aeag_sqe_programmation_lots', {'action': 'P'}) }}">Programmer</a></li>
         <li><a href="{{ path('Aeag_sqe_programmation_lots', {'action': 'V'}) }}">Consulter</a></li>
         {% if  not app.session.get('evolution')%}
-            <li><a href="{{ path('AeagSqeBundle_suiviHydrobio_planning') }}">Planning</a></li>
+            <li><a href="{{ path('AeagSqeBundle_planning_index', {'typeMilieu': 'HB'}) }}">Planning Hydrobio</a></li>
+            <li><a href="{{ path('AeagSqeBundle_planning_index', {'typeMilieu': 'PC'}) }}">Planning Analyses</a></li>
         {%endif%}
         
     </ul>
@@ -85,11 +86,23 @@
 </li>   
 
 {%if app.session.get('menu') == 'echangeFichier'%}
-    <li class="active">
+    <li  class="active">
     {% else %}
-    <li> 
-    {%endif%}
-    <a href="{{ path('AeagSqeBundle_echangefichiers_index')}}">Echange de fichiers</a>
+    <li>
+    {% endif %}   
+    <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+        {%if app.session.get('menu') == 'echangeFichier'%}<span class="selected"></span>{%endif%}
+        Echange de fichiers
+        <i class="fa fa-angle-down"></i>     
+    </a>
+
+    <ul class="dropdown-menu">
+        <li><a href="{{ path('AeagSqeBundle_echangefichiers_index')}}">Echange de fichiers</a></li>
+        {% if  not app.session.get('evolution')%}
+            <li><a href="{{ path('AeagSqeBundle_exportdonneesbrutes_index')}}">Export données brutes</a></li>
+        {%endif%}
+        
+    </ul>
 </li>
 
 
