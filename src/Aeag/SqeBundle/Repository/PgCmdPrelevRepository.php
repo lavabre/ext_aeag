@@ -201,9 +201,8 @@ class PgCmdPrelevRepository extends EntityRepository {
         return array_merge($this->getDonneesBrutesAnalyse($pgCmdFichierRps), $this->getDonneesBrutesMesureEnv($pgCmdFichierRps));
     }
     
-    public function getDonneesBrutesExport($zgeoref, $codemilieu, $datedeb, $datefin) {
-        return array_merge($this->getDonneesBrutesAnalyseExport($zgeoref, $codemilieu, $datedeb, $datefin), $this->getDonneesBrutesMesureEnvExport($zgeoref, $codemilieu, $datedeb, $datefin));
-        //return $this->getDonneesBrutesMesureEnvExport($zgeoref, $codemilieu, $datedeb, $datefin);
+    public function getDonneesBrutesExport($zgeorefs, $codemilieu, $datedeb, $datefin) {
+        return array_merge($this->getDonneesBrutesAnalyseExport($zgeorefs, $codemilieu, $datedeb, $datefin), $this->getDonneesBrutesMesureEnvExport($zgeorefs, $codemilieu, $datedeb, $datefin));
     }
 
     public function getDonneesBrutesAnalyse($pgCmdFichierRps) {
@@ -242,8 +241,8 @@ class PgCmdPrelevRepository extends EntityRepository {
         return $stmt->fetchAll();
     }
     
-    public function getDonneesBrutesAnalyseExport($zgeoref, $codemilieu, $datedeb, $datefin) {
-        
+    public function getDonneesBrutesAnalyseExport($zgeorefs, $codemilieu, $datedeb, $datefin) {
+        $zgeorefs = implode(',', $zgeorefs);
         $query = 'select dmd.annee_prog as "Année", msr.code as "Code Station", msr.libelle as "Nom Station", msr.code_masdo as "Code masse d\'eau", 
                     prlv.code_prelev_cmd as "Code du prelevement", presta.code_siret as "Siret Préleveur", presta.nom_corres as "Nom Préleveur", 
                     prlv.date_prelev as "Date-heure du prélèvement", ana.code_parametre as "Code du paramètre", param.libelle_court as "Libellé court paramètre",
@@ -270,14 +269,13 @@ class PgCmdPrelevRepository extends EntityRepository {
                     join pg_prog_lot lot on lot.id = lotan.lot_id
                     join pg_prog_marche marche on marche.id = lot.marche_id
                     join pg_ref_corres_producteur prod on prod.adr_cor_id = marche.resp_adr_cor_id
-                    where lot.zgeo_ref_id = :zgeoref
+                    where lot.zgeo_ref_id IN ('.$zgeorefs.')
                     and lot.code_milieu = :codemilieu
                     and (prlv.date_prelev >= :datedeb
                     and prlv.date_prelev <= :datefin)';
                     //limit 50000';
         
         $stmt = $this->_em->getConnection()->prepare($query);
-        $stmt->bindValue('zgeoref', $zgeoref);
         $stmt->bindValue('codemilieu', $codemilieu);
         $stmt->bindValue('datedeb', $datedeb);
         $stmt->bindValue('datefin', $datefin);
@@ -319,7 +317,8 @@ class PgCmdPrelevRepository extends EntityRepository {
         return $stmt->fetchAll();
     }
     
-    public function getDonneesBrutesMesureEnvExport($zgeoref, $codemilieu, $datedeb, $datefin) {
+    public function getDonneesBrutesMesureEnvExport($zgeorefs, $codemilieu, $datedeb, $datefin) {
+        $zgeorefs = implode(',', $zgeorefs);
         $query = 'select dmd.annee_prog as "Année", msr.code as "Code Station", msr.libelle as "Nom Station", msr.code_masdo as "Code masse d\'eau", 
                     prlv.code_prelev_cmd as "Code du prelevement", presta.code_siret as "Siret Préleveur", presta.nom_corres as "Nom Préleveur", 
                     prlv.date_prelev as "Date-heure du prélèvement", mesenv.code_parametre as "Code du paramètre", param.libelle_court as "Libellé court paramètre",
@@ -345,14 +344,13 @@ class PgCmdPrelevRepository extends EntityRepository {
                     join pg_prog_lot lot on lot.id = lotan.lot_id
                     join pg_prog_marche marche on marche.id = lot.marche_id
                     join pg_ref_corres_producteur prod on prod.adr_cor_id = marche.resp_adr_cor_id
-                    where lot.zgeo_ref_id = :zgeoref
+                    where lot.zgeo_ref_id IN ('.$zgeorefs.')
                     and lot.code_milieu = :codemilieu
                     and (prlv.date_prelev >= :datedeb
                     and prlv.date_prelev <= :datefin)';
                     //limit 50000';
         
         $stmt = $this->_em->getConnection()->prepare($query);
-        $stmt->bindValue('zgeoref', $zgeoref);
         $stmt->bindValue('codemilieu', $codemilieu);
         $stmt->bindValue('datedeb', $datedeb);
         $stmt->bindValue('datefin', $datefin);

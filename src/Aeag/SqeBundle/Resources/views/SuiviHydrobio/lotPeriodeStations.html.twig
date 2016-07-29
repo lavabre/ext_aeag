@@ -435,7 +435,7 @@
                     $('#modalTraitementEncours').modal('toggle');
                     var html = 'Dernier commentaire du suivi de la station  {{ station.station.code }}  sur le support : {{ cmdPrelev.cmdPrelev.codeSupport.nomSupport }}';
                     $('#labelModalArchive').html(html);
-                    var html = '{{ cmdPrelev.commentaire }}';
+                    var html = '{{ cmdPrelev.commentaire|escape('js') }}';
                     $('#bodyModalArchive').empty().append(html);
                     $('#modalArchive').modal('show');
                     $('#modalTraitementEncours').modal('hide');

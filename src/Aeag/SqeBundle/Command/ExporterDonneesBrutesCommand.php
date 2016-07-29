@@ -13,9 +13,9 @@ class ExporterDonneesBrutesCommand extends AeagCommand {
         $this
                 ->setName('rai:export_db')
                 ->setDescription('Export des données brutes')
-                ->addArgument('zgeoref',
+                ->addArgument('zgeorefs',
                 InputArgument::REQUIRED,
-                        'zgeoref')
+                        'zgeorefs')
                 ->addArgument('codemilieu',
                 InputArgument::REQUIRED,
                         'codemilieu')
@@ -34,45 +34,54 @@ class ExporterDonneesBrutesCommand extends AeagCommand {
     protected function execute(InputInterface $input, OutputInterface $output) {
 
         parent::execute($input, $output);
-        
+
         // Récupération des parametres
         // Zone géo, code milieu, date début, date fin, utilisateur
-        $zgeoref = $this->input->getArgument('zgeoref');
+        $zgeorefs = $this->input->getArgument('zgeorefs');
         $codemilieu = $this->input->getArgument('codemilieu');
         $datedeb = $this->input->getArgument('datedeb');
         $datefin = $this->input->getArgument('datefin');
         $user = $this->input->getArgument('user');
         
-        $pgProgZoneGeoRef = $this->repoPgProgZoneGeoRef->findOneById($zgeoref);
-        $pgProgTypeMilieu = $this->repoPgProgTypeMilieu->findOneByCodeMilieu($codemilieu);
-        $donneesBrutes = $this->repoPgCmdPrelev->getDonneesBrutesExport($zgeoref, $codemilieu, $datedeb, $datefin);
+        $zgeorefs = explode(',', $zgeorefs);
         
-        $pathBase = '/base/extranet/Transfert/Sqe/Export_Db/';
-        $nomFichierCsv = $codemilieu.'_'.$zgeoref.'_'.str_replace('/', '', $datedeb).'_'.str_replace('/', '', $datefin).'.csv';
+        $pgProgZoneGeoRefs = array();
+        foreach($zgeorefs as $zgeoref) {
+            $pgProgZoneGeoRefs[] = $this->repoPgProgZoneGeoRef->findOneById($zgeoref);
+        }
+
+        $pgProgTypeMilieu = $this->repoPgProgTypeMilieu->findOneByCodeMilieu($codemilieu);
+        $donneesBrutes = $this->repoPgCmdPrelev->getDonneesBrutesExport($zgeorefs, $codemilieu, $datedeb, $datefin);
+        
+        $pathBase = $this->getContainer()->getParameter('repertoire_exportdb');
+        $nomFichierCsv = $codemilieu.'_'.$zgeoref.'_'.str_replace('/', '', $datedeb).'_'.str_replace('/', '', $datefin).'_'.time().'.csv';
         $fullFileName = $pathBase.$nomFichierCsv;
         // Construction du fichier csv
         $this->getContainer()->get('aeag_sqe.process_rai')->createFileDonneesBrutes($fullFileName, $donneesBrutes);
-        
         // Rajouter un fichier pdf et générer une archive zip au lieu d'un csv
         $nomFichierPdf = $this->getContainer()->getParameter('repertoire_echange').'AvertissementDonneesBrutes.pdf';
         $files = array($fullFileName, $nomFichierPdf);
-        $nomArchive = str_replace('.csv', '.zip', $fullFileName);
-        if ($this->createZip($files, $nomArchive)) {
-            
+        $nomArchive = str_replace('.csv', '.zip', $nomFichierCsv);
+        $fullNomArchive = $pathBase.$nomArchive;
+        if ($this->createZip($files, $fullNomArchive)) {
             // Suppression du fichier csv
             unlink($fullFileName);
             
             // Envoi du mail
-            $destinataire = $this->repoPgProgWebUsers->findOneByExtId($user->getId());
-
+            $tabZgeoRefs = array();
+            foreach($pgProgZoneGeoRefs as $pgProgZoneGeoRef) {
+                $tabZgeoRefs[] = $pgProgZoneGeoRef->getNomZoneGeo();
+            }
+            $strZgeoRefs = implode(',', $tabZgeoRefs);
+            $destinataire = $this->repoPgProgWebUsers->findOneByExtId($user);
+            $url = $this->getContainer()->get('router')->generate('AeagSqeBundle_exportdonneesbrutes_telecharger', array("nomFichier" => $nomArchive), UrlGeneratorInterface::ABSOLUTE_URL);
             $objetMessage = "SQE - RAI : Fichier csv de l'export des données brutes disponible ";
             $txtMessage = "Le fichier csv de l'export des données brutes est disponible. <br/><br/>";
-            $txtMessage .= "Zone géographique : " . $pgProgZoneGeoRef->getNomZoneGeo() . "<br/>";
+            $txtMessage .= "Zone géographique : " . $strZgeoRefs . "<br/>";
             $txtMessage .= "Code Milieu : " . $pgProgTypeMilieu->getNomMilieu()  . "<br/>";
             $txtMessage .= "Date début : " . $datedeb . "<br/>";
             $txtMessage .= "Date fin : " . $datefin . "<br/><br/>";
-            $txtMessage .= 'Vous pouvez récupérer le fichier csv à l\'adresse suivante: <a href="'.$fullFileName.'">'.$nomFichierCsv.'</a><br/>';
-
+            $txtMessage .= 'Vous pouvez récupérer le fichier csv à l\'adresse suivante: <a href="'.$url.'">'.$nomArchive.'</a><br/>';
             $mailer = $this->getContainer()->get('mailer');
             $this->getContainer()->get('aeag_sqe.message')->createMail($this->em, $mailer, $txtMessage, $destinataire, $objetMessage);
         }

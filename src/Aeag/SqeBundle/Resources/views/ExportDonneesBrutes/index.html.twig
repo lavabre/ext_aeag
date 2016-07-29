@@ -17,21 +17,7 @@
 
 {%block content %}
     <form class="form"  id="idForm" role="form" action="{{path('AeagSqeBundle_exportdonneesbrutes_index')}}" method="post">
-        <div class="form-group">
-            <label class="col-xs-3 control-label">Zone géographique</label>
-            <div class="col-xs-8 input-group">
-                <select name="zgeoref" id="zgeoref" class="form-control">
-                    {% for zgeoRef in webUser.zgeoRef %}
-                        <option value="{{zgeoRef.id}}"
-                        {%if zgeorefVal != '' and zgeorefVal == zgeoRef.id%}
-                            selected="selected"
-                        {%endif%}
-                        >{{zgeoRef.nomZoneGeo}}</option>
-                    {% endfor %}
-                </select>
-            </div>
-        </div>     
-        <div class="form-group">
+         <div class="form-group">
             <label class="col-xs-3 control-label">Code Milieu</label>
             <div class="col-xs-8 input-group">
                 <select id="codemilieu" name="codemilieu" class="form-control">
@@ -45,7 +31,13 @@
                 </select>
             </div>
         </div>     
-        
+        <div class="form-group">
+            <label class="col-xs-3 control-label">Zone géographique</label>
+            <div class="col-xs-8 input-group">
+                <select name="zgeorefs[]" id="zgeorefs" class="form-control" multiple>
+                </select>
+            </div>
+        </div>     
         <div class="form-group">
             <label class="col-xs-3 control-label">Date de début</label>
              <div class="col-xs-8 input-group" >
@@ -96,5 +88,38 @@
     $('#btn-submit').click(function(){
         $('#modalTraitementEncours').modal();
     });
+    
+    getGeoRefValues($('#codemilieu').val());
+    
+    $('#codemilieu').change(function(){
+        getGeoRefValues($(this).val());
+    });
+    
+    function getGeoRefValues(codemilieu) {
+        var zgeorefVals = '{{ zgeorefVals }}';
+        var zgeorefTab = zgeorefVals.split(',');
+    
+        $.ajax({url: "{{ path('AeagSqeBundle_exportdonneesbrutes_zonegeo') }}", 
+                method: "GET",
+                data: { codemilieu: codemilieu, user: {{ webUser.id }}},
+                success: function (results) {
+                    window.console.log(results);
+                    var tabs = JSON.parse(results);
+                    var html = '';
+                    for (var tab in tabs) {
+                        html += '<option id="opt_'+tab+'" value="'+tab+'">'+tabs[tab]+'</option>';
+                    }
+                    $('#zgeorefs').empty().html(html);
+                    for (var tab in tabs) {
+                        for(i = 0; i < zgeorefTab.length; i++) {
+                            if (tab == zgeorefTab[i]) {
+                                $('#opt_'+tab).attr('selected','selected');
+                            }
+                        }
+                    }
+                    
+                }
+        });
+    }
     
 {%endblock scripts %}    

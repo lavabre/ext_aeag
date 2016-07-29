@@ -97,20 +97,17 @@ class RelanceMailCommand extends AeagCommand {
     }
     
     protected function sendEmailHbP() {
-        // TODO Modifier la requete
-        $pgCmdDemandes = $this->repoPgCmdDemande->getPgCmdDemandeForRelance1JAprs();
-        $this->output->writeln(count($pgCmdDemandes));
-        foreach ($pgCmdDemandes as $pgCmdDemande) {
-            $this->output->writeln($pgCmdDemande->getPeriode()->getDateDeb());
+        $pgCmdSuiviPrels = $this->repoPgCmdSuiviPrel->getSuiviPrelP(15);
+        foreach($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
             $destinataires = array();
-            $destinataires[] = $this->repoPgProgWebUsers->findOneByPrestataire($pgCmdDemande->getLotan()->getLot()->getTitulaire());
+            $destinataires[] = $this->repoPgProgWebUsers->findOneByPrestataire($pgCmdSuiviPrel->getPrelev()->getDemande()->getLotan()->getLot()->getTitulaire());
 
-            $objetMessage = "Relance SQE - RAI : Dépot de fichier non effectué " . $pgCmdDemande->getLotan()->getLot()->getNomLot();
-            $txtMessage = "Lot : " . $pgCmdDemande->getLotan()->getLot()->getNomLot() . "<br/>";
-            $txtMessage .= "Période : " . $pgCmdDemande->getPeriode()->getLabelPeriode() . "<br/>";
-            $txtMessage .= "Les résultats à la demande ".$pgCmdDemande->getId()." du lot ".$pgCmdDemande->getLotan()->getLot()->getNomLot()." n'ont pas été déposé. Vous encourez des pénalités. <br/>";
+            $objetMessage = "Relance SQE - RAI : Dépot de fichier non effectué " . $pgCmdSuiviPrel->getPrelev()->getDemande()->getLotan()->getLot()->getNomLot();
+            $txtMessage = "Lot : " . $pgCmdSuiviPrel->getPrelev()->getDemande()->getLotan()->getLot()->getNomLot() . "<br/>";
+            $txtMessage .= "Période : " . $pgCmdSuiviPrel->getPrelev()->getDemande()->getPeriode()->getLabelPeriode() . "<br/>";
+            $txtMessage .= "Les résultats à la demande ".$pgCmdSuiviPrel->getPrelev()->getDemande()->getId()." du lot ".$pgCmdSuiviPrel->getPrelev()->getDemande()->getLotan()->getLot()->getNomLot()." n'ont pas été déposé. Vous encourez des pénalités. <br/>";
             foreach ($destinataires as $destinataire) {
-                $this->sendEmail($pgCmdDemande, $destinataire, $txtMessage, $objetMessage);
+                $this->sendEmail($pgCmdSuiviPrel->getPrelev()->getDemande(), $destinataire, $txtMessage, $objetMessage);
             }
         }
     }
@@ -136,7 +133,7 @@ class RelanceMailCommand extends AeagCommand {
     }
 
     protected function updateHbP() {
-        $pgCmdSuiviPrels = $this->repoPgCmdSuiviPrel->getSuiviPrelP15j();
+        $pgCmdSuiviPrels = $this->repoPgCmdSuiviPrel->getSuiviPrelP(15);
         foreach($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
             $this->output->writeln($pgCmdSuiviPrel->getDatePrel());
             $pgCmdSuiviPrel->setValidation('A');

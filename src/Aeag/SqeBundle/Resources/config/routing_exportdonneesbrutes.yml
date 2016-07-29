@@ -1,3 +1,11 @@
 AeagSqeBundle_exportdonneesbrutes_index:
     path:  /
     defaults: { _controller: AeagSqeBundle:ExportDonneesBrutes:index }
+    
+AeagSqeBundle_exportdonneesbrutes_zonegeo:
+    path:  /zonegeo
+    defaults: { _controller: AeagSqeBundle:ExportDonneesBrutes:zonegeo }
+    
+AeagSqeBundle_exportdonneesbrutes_telecharger:
+    path:  /telecharger/{nomFichier}
+    defaults: { _controller: AeagSqeBundle:ExportDonneesBrutes:telecharger, typeMilieu: null }

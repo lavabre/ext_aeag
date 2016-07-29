@@ -224,17 +224,7 @@ class PgCmdSuiviPrelRepository extends EntityRepository {
         
     }
     
-    
-    public function getSuiviPrelP15j() {
-        /*
-         *select suivi2.* from pg_cmd_suivi_prel suivi2 where suivi2.id IN (
-            select max(suivi.id)
-            from pg_cmd_suivi_prel suivi
-            group by suivi.prelev_id
-            order by suivi.prelev_id)
-            and statut_prel = 'P'
-            and date_prel < now() 
-         */
+    public function getSuiviPrelP($days) {
         $query = "select suivi2";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdSuiviPrel suivi2";
         $query .= " where suivi2 IN (";
@@ -243,7 +233,7 @@ class PgCmdSuiviPrelRepository extends EntityRepository {
         $query .= " join Aeag\SqeBundle\Entity\PgCmdPrelev p with suivi.prelev = p.id ";
         $query .= " group by p.id)";
         $query .= " and suivi2.statutPrel = 'P'";
-        $query .= " and DATE_ADD(suivi2.datePrel, 15, 'day') < CURRENT_TIMESTAMP()";
+        $query .= " and DATE_ADD(suivi2.datePrel, ".$days.", 'day') < CURRENT_TIMESTAMP()";
         
         $qb = $this->_em->createQuery($query);
         
