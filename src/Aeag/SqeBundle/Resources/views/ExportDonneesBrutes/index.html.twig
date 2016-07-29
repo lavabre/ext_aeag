@@ -18,7 +18,7 @@
 {%block content %}
     <form class="form"  id="idForm" role="form" action="{{path('AeagSqeBundle_exportdonneesbrutes_index')}}" method="post">
          <div class="form-group">
-            <label class="col-xs-3 control-label">Code Milieu</label>
+            <label class="col-xs-3 control-label">Type de milieu</label>
             <div class="col-xs-8 input-group">
                 <select id="codemilieu" name="codemilieu" class="form-control">
                     {% for typeMilieu in typesMilieux %}
@@ -32,25 +32,27 @@
             </div>
         </div>     
         <div class="form-group">
-            <label class="col-xs-3 control-label">Zone géographique</label>
+            <label class="col-xs-3 control-label">Zone(s) géographique(s) *</label>
             <div class="col-xs-8 input-group">
                 <select name="zgeorefs[]" id="zgeorefs" class="form-control" multiple>
                 </select>
             </div>
-        </div>     
-        <div class="form-group">
-            <label class="col-xs-3 control-label">Date de début</label>
-             <div class="col-xs-8 input-group" >
-                 <input name="datedeb" id="datedeb" class="form-control datetime-calendar-form" type="date" placeholder = "Date de début" value="{{datedeb}}"/>
-            </div>         
-        </div> 
-        <div class="form-group">
-             <label class="col-xs-3 control-label">Date de fin</label>
-             <div class="col-xs-8 input-group" >
-                 <input name="datefin" id="datefin" class="form-control datetime-calendar-form" type="date" placeholder = "Date de fin" value="{{datefin}}"/>
-            </div>         
-        </div> 
+        </div>
+        <div class="form-group">        
+            <div class="form-group row">
+                <label for="datedeb" class="control-label col-xs-3">Prélèvements effectués entre le </label>
+                <div class="col-xs-2">
+                    <input name="datedeb" id="datedeb" class="form-control datetime-calendar-form" type="date" placeholder = "Date de début" value="{{datedeb}}"/>       
+                </div>
+                <label for="datefin" class="control-label col-xs-1">et le </label>
+                <div class="col-xs-2">
+                    <input name="datefin" id="datefin" class="form-control datetime-calendar-form" type="date" placeholder = "Date de fin" value="{{datefin}}"/>      
+                </div>
+            </div> 
+        </div>
         <button type="submit" id="btn-submit" class="btn btn-default">Exporter</button>
+        <br/><br/><i>(*) Utiliser la touche Ctrl pour en sélectionner plusieurs</i><br/>
+        
     </form>
 {%endblock content %}    
 
@@ -86,7 +88,12 @@
     });
     
     $('#btn-submit').click(function(){
-        $('#modalTraitementEncours').modal();
+        if ($('#zgeorefs').val() == null) {
+            alert('Veuillez saisir au moins une zone géographique');
+            return;
+        } else {
+            $('#modalTraitementEncours').modal();
+        }
     });
     
     getGeoRefValues($('#codemilieu').val());
@@ -121,5 +128,6 @@
                 }
         });
     }
+    
     
 {%endblock scripts %}    

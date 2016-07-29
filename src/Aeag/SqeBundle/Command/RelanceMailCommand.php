@@ -30,13 +30,12 @@ class RelanceMailCommand extends AeagCommand {
         //$this->sendEmailJ1();
         
         // HYDROBIO
-        // TODO A terminer
         //$this->sendEmailHbP();
         
         // TODO A terminer
         //$this->sendEmailHbF();
         
-        $this->updateHbP();
+        //Z$this->updateHbP();
         
         // TODO A terminer
         //$this->updateHbF();
@@ -97,7 +96,7 @@ class RelanceMailCommand extends AeagCommand {
     }
     
     protected function sendEmailHbP() {
-        $pgCmdSuiviPrels = $this->repoPgCmdSuiviPrel->getSuiviPrelP(15);
+        $pgCmdSuiviPrels = $this->repoPgCmdSuiviPrel->getSuiviPrelPByDays(15);
         foreach($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
             $destinataires = array();
             $destinataires[] = $this->repoPgProgWebUsers->findOneByPrestataire($pgCmdSuiviPrel->getPrelev()->getDemande()->getLotan()->getLot()->getTitulaire());
@@ -115,7 +114,7 @@ class RelanceMailCommand extends AeagCommand {
         
     protected function sendEmailHbF() {
         // TODO Modifier la requete
-        $pgCmdDemandes = $this->repoPgCmdDemande->getPgCmdDemandeForRelance1JAprs();
+        $pgCmdDemandes = $this->repoPgCmdSuiviPrel->getSuiviPrelFWithoutRpsByDays(15);
         $this->output->writeln(count($pgCmdDemandes));
         foreach ($pgCmdDemandes as $pgCmdDemande) {
             $this->output->writeln($pgCmdDemande->getPeriode()->getDateDeb());
@@ -133,7 +132,7 @@ class RelanceMailCommand extends AeagCommand {
     }
 
     protected function updateHbP() {
-        $pgCmdSuiviPrels = $this->repoPgCmdSuiviPrel->getSuiviPrelP(15);
+        $pgCmdSuiviPrels = $this->repoPgCmdSuiviPrel->getSuiviPrelPByDays(15);
         foreach($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
             $this->output->writeln($pgCmdSuiviPrel->getDatePrel());
             $pgCmdSuiviPrel->setValidation('A');
@@ -144,7 +143,7 @@ class RelanceMailCommand extends AeagCommand {
 
     protected function updateHbF() {
         // TODO Modifier la requete
-        $pgCmdSuiviPrels = $this->repoPgCmdSuiviPrel;
+        $pgCmdSuiviPrels = $this->repoPgCmdSuiviPrel->getSuiviPrelFWithRpsByDays(21);
         foreach($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
             $pgCmdSuiviPrel->setValidation('A');
             $this->emSqe->persist($pgCmdSuiviPrel);

@@ -224,7 +224,7 @@ class PgCmdSuiviPrelRepository extends EntityRepository {
         
     }
     
-    public function getSuiviPrelP($days) {
+    public function getSuiviPrelPByDays($days) {
         $query = "select suivi2";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdSuiviPrel suivi2";
         $query .= " where suivi2 IN (";
@@ -240,5 +240,46 @@ class PgCmdSuiviPrelRepository extends EntityRepository {
         return $qb->getResult();
         
     }
+    
+    public function getSuiviPrelFWithoutRpsByDays($days) {
+        $query = "select suivi2";
+        $query .= " from Aeag\SqeBundle\Entity\PgCmdSuiviPrel suivi2";
+        $query .= " join Aeag\SqeBundle\Entity\PgCmdPrelev p2 with suivi2.prelev = p2.id ";
+        $query .= " join Aeag\SqeBundle\Entity\PgCmdDemande dmd with p2.demande = dmd.id ";
+        $query .= " left join Aeag\SqeBundle\Entity\PgCmdFichiersRps rps with dmd.id = rps.demande where rps.demande is null";
+        $query .= " where suivi2 IN (";
+        $query .= " select max(suivi)";
+        $query .= " from Aeag\SqeBundle\Entity\PgCmdSuiviPrel suivi";
+        $query .= " join Aeag\SqeBundle\Entity\PgCmdPrelev p with suivi.prelev = p.id ";
+        $query .= " group by p.id)";
+        $query .= " and suivi2.statutPrel = 'F'";
+        $query .= " and DATE_ADD(suivi2.datePrel, ".$days.", 'day') < CURRENT_TIMESTAMP()";
+        
+        $qb = $this->_em->createQuery($query);
+        
+        return $qb->getResult();
+        
+    }
+    
+    public function getSuiviPrelFWithRpsByDays($days) {
+        $query = "select suivi2";
+        $query .= " from Aeag\SqeBundle\Entity\PgCmdSuiviPrel suivi2";
+        $query .= " join Aeag\SqeBundle\Entity\PgCmdPrelev p2 with suivi2.prelev = p2.id ";
+        $query .= " join Aeag\SqeBundle\Entity\PgCmdDemande dmd with p2.demande = dmd.id ";
+        $query .= " join Aeag\SqeBundle\Entity\PgCmdFichiersRps rps with dmd.id = rps.demande";
+        $query .= " where suivi2 IN (";
+        $query .= " select max(suivi)";
+        $query .= " from Aeag\SqeBundle\Entity\PgCmdSuiviPrel suivi";
+        $query .= " join Aeag\SqeBundle\Entity\PgCmdPrelev p with suivi.prelev = p.id ";
+        $query .= " group by p.id)";
+        $query .= " and suivi2.statutPrel = 'F'";
+        $query .= " and DATE_ADD(suivi2.datePrel, ".$days.", 'day') < CURRENT_TIMESTAMP()";
+        
+        $qb = $this->_em->createQuery($query);
+        
+        return $qb->getResult();
+        
+    }
+    
     
 }
