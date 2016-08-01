@@ -380,8 +380,9 @@ class SuiviHydrobioController extends Controller {
         $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
         $repoPgProgWebUserTypmil = $emSqe->getRepository('AeagSqeBundle:PgProgWebuserTypmil');
-        $repoPgProgWebUserZgeoref = $emSqe->getRepository('AeagSqeBundle:PgProgWebuserZgeoref');
+        $repoPgProgWebuserZgeoref = $emSqe->getRepository('AeagSqeBundle:PgProgWebuserZgeoref');
         $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
+        $repoPgCmdDwnldUsrRps = $emSqe->getRepository('AeagSqeBundle:PgCmdDwnldUsrRps');
 
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgProgWebUserTypmils = $repoPgProgWebUserTypmil->getPgProgWebuserTypmilByWebuser($pgProgWebUser);
@@ -618,10 +619,10 @@ class SuiviHydrobioController extends Controller {
                                     $nbCorrect = $nbCorrect - 1;
                                     $nbIncorrect = $nbIncorrect + 1;
                                 } else {
-                                    if (strpos($tabFichiers[$nb], 'ft') !== false) {
+                                    if (strpos(strtoupper($tabFichiers[$nb]), 'FT') !== false) {
                                         $NbFt++;
                                     }
-                                    if (strpos($tabFichiers[$nb], 'photo') !== false) {
+                                    if (strpos(strtoupper($tabFichiers[$nb]), 'PHOTO') !== false) {
                                         $NbPhoto++;
                                     }
                                 }
@@ -691,6 +692,10 @@ class SuiviHydrobioController extends Controller {
                                 if (($pgCmdSuiviPrel->getStatutPrel() == 'N') or ( $pgCmdSuiviPrel->getStatutPrel() == 'F') or ( $pgCmdSuiviPrel->getStatutPrel() == 'R')) {
                                     if ($pgCmdSuiviPrel->getFichierRps()) {
                                         $pgCmdFichiersRps = $pgCmdSuiviPrel->getFichierRps();
+                                        $pgCmdDwnldUsrRpss = $repoPgCmdDwnldUsrRps->getPgCmdDwnldUsrRpsByFichierReponse($pgCmdFichiersRps);
+                                        foreach ($pgCmdDwnldUsrRpss as $pgCmdDwnldUsrRps) {
+                                            $emSqe->remove($pgCmdDwnldUsrRps);
+                                        }
                                         $emSqe->remove($pgCmdFichiersRps);
                                     }
                                     $pgCmdFichiersRps = new PgCmdFichiersRps();
@@ -757,6 +762,8 @@ class SuiviHydrobioController extends Controller {
                 fputs($rapport, $contenu);
             }
             fclose($rapport);
+        } else {
+            $erreur = 1;
         }
 
         if ($erreur == 0) {
@@ -781,9 +788,9 @@ class SuiviHydrobioController extends Controller {
                 }
                 if ($trouve) {
                     $trouve = false;
-                    $pgProgWebUserZgeorefs = $repoPgProgWebUserZgeoref->getPgProgWebuserZgeorefByWebuser($destinataire);
-                    foreach ($pgProgWebUserZgeorefs as $pgProgWebUserZgeoref) {
-                        if ($pgProgWebUserZgeoref->getZgeoref()->getId() == $pgProgLot->getZgeoref()->getId()) {
+                    $pgProgWebuserZgeorefs = $repoPgProgWebuserZgeoref->getPgProgWebuserZgeorefByWebuser($destinataire);
+                    foreach ($pgProgWebuserZgeorefs as $pgProgWebuserZgeoref) {
+                        if ($pgProgWebuserZgeoref->getZgeoref()->getId() == $pgProgLot->getZgeoref()->getId()) {
                             $trouve = true;
                         }
                     }
@@ -961,6 +968,7 @@ class SuiviHydrobioController extends Controller {
                             $nbCmdPrelevs++;
                         }
                         $tabStations[$j]['prelevs'] = $tabCmdPrelevs;
+                        $tabStations[$j]['fichiers'] = array();
                     }
                     $nbStations++;
                     $j++;
@@ -1976,6 +1984,8 @@ class SuiviHydrobioController extends Controller {
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
         $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
         $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
+        $repoPgProgWebuserZgeoref = $emSqe->getRepository('AeagSqeBundle:PgProgWebuserZgeoref');
+        $repoPgCmdDwnldUsrRps = $emSqe->getRepository('AeagSqeBundle:PgCmdDwnldUsrRps');
 
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgRefStationMesure = $repoPgRefStationMesure->getPgRefStationMesureByOuvFoncId($stationId);
@@ -2125,25 +2135,9 @@ class SuiviHydrobioController extends Controller {
             $tabFichiers = array();
             $nbFichier = 0;
             foreach ($liste as $nomFichier) {
-//$tabNomFichier = explode('-', $nomFichier);
-                $trouve = false;
-                if (strpos($nomFichier, $pgRefStationMesure->getCode()) !== false) {
-                    $trouve = true;
-                    break;
-                }
-                if (!$trouve) {
-                    if (filesize($pathBase . '/' . $nomFichier) > 0) {
-                        $contenu = 'pas de station à raccorder au fichier ' . $nomFichier . CHR(13) . CHR(10) . CHR(13) . CHR(10);
-                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                        fputs($rapport, $contenu);
-                        $nbIncorrect++;
-//$erreur = 1;
-                    }
-                } else {
-                    $tabFichiers[$nbFichier] = $nomFichier;
-                    $nbFichier++;
-                    $nbCorrect++;
-                }
+                $tabFichiers[$nbFichier] = $nomFichier;
+                $nbFichier++;
+                $nbCorrect++;
             }
 
             if (count($tabFichiers) > 0) {
@@ -2158,6 +2152,16 @@ class SuiviHydrobioController extends Controller {
                     $NbFt = 0;
                     $NbPhoto = 0;
                     for ($nb = 0; $nb < count($tabFichiers); $nb++) {
+                        if (strpos($tabFichiers[$nb], $pgRefStationMesure->getCode()) === false) {
+                            if (filesize($pathBase . '/' . $tabFichiers[$nb]) > 0) {
+                                $contenu = 'pas de station ' . $pgRefStationMesure->getCode() . ' à raccorder au fichier ' . $tabFichiers[$nb] . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                fputs($rapport, $contenu);
+                                $erreur = 1;
+                                $nbCorrect = $nbCorrect - 1;
+                                $nbIncorrect = $nbIncorrect + 1;
+                            }
+                        }
 //$tabNomFichier = explode('-', $tabFichiers[$nb]);
 //if ($tabNomFichier[1] != 'ft' && $tabNomFichier[1] != 'photo1' && $tabNomFichier[1] != 'photo2') {
                         if ((strpos(strtoupper($tabFichiers[$nb]), 'FT') === false) && (strpos(strtoupper($tabFichiers[$nb]), 'PHOTO') === false)) {
@@ -2168,10 +2172,10 @@ class SuiviHydrobioController extends Controller {
                             $nbCorrect = $nbCorrect - 1;
                             $nbIncorrect = $nbIncorrect + 1;
                         } else {
-                            if (strpos($tabFichiers[$nb], 'ft') === true) {
+                            if (strpos(strtoupper($tabFichiers[$nb]), 'FT') !== false) {
                                 $NbFt++;
                             }
-                            if (strpos($tabFichiers[$nb], 'photo') === true) {
+                            if (strpos(strtoupper($tabFichiers[$nb]), 'PHOTO') !== false) {
                                 $NbPhoto++;
                             }
                         }
@@ -2231,6 +2235,10 @@ class SuiviHydrobioController extends Controller {
                     if (($pgCmdSuiviPrel->getStatutPrel() == 'N') or ( $pgCmdSuiviPrel->getStatutPrel() == 'F') or ( $pgCmdSuiviPrel->getStatutPrel() == 'R')) {
                         if ($pgCmdSuiviPrel->getFichierRps()) {
                             $pgCmdFichiersRps = $pgCmdSuiviPrel->getFichierRps();
+                            $pgCmdDwnldUsrRpss = $repoPgCmdDwnldUsrRps->getPgCmdDwnldUsrRpsByFichierReponse($pgCmdFichiersRps);
+                            foreach ($pgCmdDwnldUsrRpss as $pgCmdDwnldUsrRps) {
+                                $emSqe->remove($pgCmdDwnldUsrRps);
+                            }
                             $emSqe->remove($pgCmdFichiersRps);
                         }
                         $pgCmdFichiersRps = new PgCmdFichiersRps();
@@ -2286,7 +2294,10 @@ class SuiviHydrobioController extends Controller {
                 fputs($rapport, $contenu);
             }
             fclose($rapport);
+        } else {
+            $erreur = 1;
         }
+
 
         if ($erreur == 0) {
             $objetMessage = "fichier terrrain déposé ";
@@ -2310,9 +2321,9 @@ class SuiviHydrobioController extends Controller {
                 }
                 if ($trouve) {
                     $trouve = false;
-                    $pgProgWebUserZgeorefs = $repoPgProgWebUserZgeoref->getPgProgWebuserZgeorefByWebuser($destinataire);
-                    foreach ($pgProgWebUserZgeorefs as $pgProgWebUserZgeoref) {
-                        if ($pgProgWebUserZgeoref->getZgeoref()->getId() == $pgProgLot->getZgeoref()->getId()) {
+                    $pgProgWebuserZgeorefs = $repoPgProgWebuserZgeoref->getPgProgWebuserZgeorefByWebuser($destinataire);
+                    foreach ($pgProgWebuserZgeorefs as $pgProgWebuserZgeoref) {
+                        if ($pgProgWebuserZgeoref->getZgeoref()->getId() == $pgProgLot->getZgeoref()->getId()) {
                             $trouve = true;
                         }
                     }
@@ -2543,7 +2554,7 @@ class SuiviHydrobioController extends Controller {
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
-        $repoPgProgWebUserZgeoref = $emSqe->getRepository('AeagSqeBundle:PgProgWebuserZgeoref');
+        $repoPgProgWebuserZgeoref = $emSqe->getRepository('AeagSqeBundle:PgProgWebuserZgeoref');
         $repoPgProgZgeorefStation = $emSqe->getRepository('AeagSqeBundle:PgProgZgeorefStation');
         $repoPgSandreSupport = $emSqe->getRepository('AeagSqeBundle:PgSandreSupports');
         $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
@@ -2563,10 +2574,10 @@ class SuiviHydrobioController extends Controller {
             $pgCmdSuiviPrelDernier = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelById($tabResultats[$nbStations]['suiviPrelId']);
             $pgRefStationMesure = $repoPgRefStationMesure->getPgRefStationMesureByOuvFoncId($tabResultats[$nbStations]['ouvFoncId']);
             if (!$user->hasRole('ROLE_ADMINSQE')) {
-                $pgProgWebUserZgeorefs = $repoPgProgWebUserZgeoref->getPgProgWebuserZgeorefByWebuser($pgProgWebUser);
+                $pgProgWebuserZgeorefs = $repoPgProgWebuserZgeoref->getPgProgWebuserZgeorefByWebuser($pgProgWebUser);
                 $trouve = false;
-                foreach ($pgProgWebUserZgeorefs as $pgProgWebUserZgeoref) {
-                    $pgProgZoneGeoref = $pgProgWebUserZgeoref->getZgeoref();
+                foreach ($pgProgWebuserZgeorefs as $pgProgWebuserZgeoref) {
+                    $pgProgZoneGeoref = $pgProgWebuserZgeoref->getZgeoref();
                     $pgProgZgeorefStations = $repoPgProgZgeorefStation->getpgProgZgeorefStationByZgeoref($pgProgZoneGeoref);
                     foreach ($pgProgZgeorefStations as $pgProgZgeorefStation) {
                         if ($pgRefStationMesure->getOuvFoncId() == $pgProgZgeorefStation->getStationMesure()->getOuvFoncId()) {
