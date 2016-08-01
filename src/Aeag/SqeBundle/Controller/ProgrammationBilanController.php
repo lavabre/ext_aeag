@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Aeag\SqeBundle\Entity\PgProgLotPeriodeAn;
 use Aeag\SqeBundle\Entity\PgProgLotPeriodeProg;
+use Aeag\SqeBundle\Entity\PgProgSuiviPhases;
 use Aeag\AeagBundle\Controller\AeagController;
 
 class ProgrammationBilanController extends Controller {
@@ -14,7 +15,7 @@ class ProgrammationBilanController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -95,6 +96,17 @@ class ProgrammationBilanController extends Controller {
                 $pgProgLotAn->setUtilModif($pgProgWebuser);
             }
             $emSqe->persist($pgProgLotAn);
+
+            $pgProgSuiviPhases = new PgProgSuiviPhases();
+            $pgProgSuiviPhases->setTypeObjet('LOT');
+            $pgProgSuiviPhases->setObjId($pgProgLotAn->getId());
+            $pgProgSuiviPhases->setDatePhase(new \DateTime());
+            $pgProgSuiviPhases->setPhase($pgProgPhase);
+            if ($pgProgWebuser) {
+                $pgProgSuiviPhases->setUser($pgProgWebuser);
+            }
+            $emSqe->persist($pgProgSuiviPhases);
+
             $emSqe->flush();
         }
 
@@ -114,7 +126,7 @@ class ProgrammationBilanController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -225,7 +237,7 @@ class ProgrammationBilanController extends Controller {
                                     }
                                     if (!$trouve) {
                                         $j = count($tabProgIgnores[$l]['periode']);
-                                         $tabProgIgnores[$l]['periode'][$j] = $pgProglotPeriodeProg;
+                                        $tabProgIgnores[$l]['periode'][$j] = $pgProglotPeriodeProg;
                                         $tabProgIgnores[$l]['nb'] = $tabProgIgnores[$l]['nb'] + 1;
                                     }
                                 }
@@ -257,7 +269,7 @@ class ProgrammationBilanController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -299,7 +311,7 @@ class ProgrammationBilanController extends Controller {
             foreach ($pgProglotPeriodeProgsByStationGroupe as $pgProglotPeriodeProg) {
                 if ($delai) {
                     $dateFin = clone($pgProglotPeriodeProg->getPeriodan()->getPeriode()->getDateDeb());
-                     $dateFin->add(new \DateInterval('P' . $delai . 'D'));
+                    $dateFin->add(new \DateInterval('P' . $delai . 'D'));
                 } else {
                     $dateFin = $pgProglotPeriodeProg->getPeriodan()->getPeriode()->getDateFin();
                 }
@@ -354,7 +366,7 @@ class ProgrammationBilanController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -708,7 +720,7 @@ class ProgrammationBilanController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -750,7 +762,7 @@ class ProgrammationBilanController extends Controller {
                 $trouve = false;
                 if ($delai) {
                     $dateFin = clone($pgProglotPeriodeProg->getPeriodan()->getPeriode()->getDateDeb());
-                     $dateFin->add(new \DateInterval('P' . $delai . 'D'));
+                    $dateFin->add(new \DateInterval('P' . $delai . 'D'));
                 } else {
                     $dateFin = $pgProglotPeriodeProg->getPeriodan()->getPeriode()->getDateFin();
                 }
@@ -797,7 +809,7 @@ class ProgrammationBilanController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -824,12 +836,12 @@ class ProgrammationBilanController extends Controller {
         $pgProgLotGrparAns = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotan($pgProgLotAn);
         $pgProgLotStationAns = $repoPgProgLotStationAn->getPgProgLotStationAnBylotan($pgProgLotAn);
         $pgProgLotPeriodeAns = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnByLotan($pgProgLotAn);
-        
+
         $tabPeriodes = array();
         $i = 0;
         foreach ($pgProgLotPeriodeAns as $pgProgLotPeriodeAn) {
             $tabPeriodes[$i]["periode"] = $pgProgLotPeriodeAn;
-            
+
             if ($pgProgLot->getDelaiPrel()) {
                 $dateFin = clone($pgProgLotPeriodeAn->getPeriode()->getDateDeb());
                 $delai = $pgProgLot->getDelaiPrel();
@@ -838,8 +850,8 @@ class ProgrammationBilanController extends Controller {
                 $dateFin = $pgProgLotPeriodeAn->getPeriode()->getDateFin();
             }
             $pgProgLotPeriodeAn->getPeriode()->setDateFin($dateFin);
-            
-            
+
+
             $pgProglotPeriodeProgsByPeriode = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByPeriodeAn($pgProgLotPeriodeAn);
             $tabProgs = array();
             $tabProgCompls = array();
@@ -909,7 +921,7 @@ class ProgrammationBilanController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');

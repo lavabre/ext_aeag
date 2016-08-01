@@ -990,8 +990,12 @@ class SuiviHydrobioController extends Controller {
         switch ($error) {
             case UPLOAD_ERR_OK:
                 $valid = true;
+                if (!in_array($ext, array('csv'))) {
+                    $valid = false;
+                    $response = 'extension du fichier incorrecte.';
+                }
 //validate file size
-                if ($size / 1024 / 1024 > 2) {
+                if ($size > 10485760) {
                     $valid = false;
                     $response = 'La taille du fichier est plus grande que la taille autorisée.';
                 }
@@ -1006,11 +1010,10 @@ class SuiviHydrobioController extends Controller {
                         }
                     }
                     move_uploaded_file($_FILES['file']['tmp_name'], $pathBase . '/' . $name);
-
                     $dateDepot = new \DateTime();
                     $response = $name . ' déposé le ' . $dateDepot->format('d/m/Y');
-                    break;
                 }
+                break;
             case UPLOAD_ERR_INI_SIZE:
                 $response = 'La taille (' . $size . ' octets' . ') du fichier téléchargé excède la taille de upload_max_filesize dans php.ini.';
                 $valid = false;

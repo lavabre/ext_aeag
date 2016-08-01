@@ -255,11 +255,11 @@ class SuiviEauController extends Controller {
                                 $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'N';
                                 $tabSuiviPrels[$nbSuiviPrels]['avisSaisie'] = 'N';
                                 if ($pgCmdSuiviPrel->getCommentaire()) {
-                                        if ($tabCmdPrelevs[$nbCmdPrelevs]['commentaire'] == null) {
-                                            $tabCmdPrelevs[$nbCmdPrelevs]['commentaire'] = $pgCmdSuiviPrel->getCommentaire();
-                                        }
+                                    if ($tabCmdPrelevs[$nbCmdPrelevs]['commentaire'] == null) {
+                                        $tabCmdPrelevs[$nbCmdPrelevs]['commentaire'] = $pgCmdSuiviPrel->getCommentaire();
                                     }
-                                 if ($user->hasRole('ROLE_ADMINSQE') or ( $pgCmdPrelev->getPrestaPrel() == $pgCmdDemande->getPrestataire())) {
+                                }
+                                if ($user->hasRole('ROLE_ADMINSQE') or ( $pgCmdPrelev->getPrestaPrel() == $pgCmdDemande->getPrestataire())) {
                                     if ($pgCmdSuiviPrel->getStatutPrel() != 'F' or ( $pgCmdSuiviPrel->getStatutPrel() == 'F' and $pgCmdSuiviPrel->getValidation() != 'A')) {
                                         $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'O';
                                         $tabCmdPrelevs[$nbCmdPrelevs]['maj'] = 'O';
@@ -280,7 +280,7 @@ class SuiviEauController extends Controller {
                                     $pos = explode(' ', $tabCommentaires[$nbLignes]);
                                     //echo ('ligne : ' . $nbLignes . '  pos : ' . $pos[0] .  ' ligne : ' . $tabCommentaires[$nbLignes] . '</br>');
                                     if ($pos[0] == 'Déposé' and $pos[1] = 'le' and $pos[3] == 'à' and $pos[5] == 'par' and $pos[7] == ':') {
-                                       $commentaireBis = null;
+                                        $commentaireBis = null;
                                         for ($nbLignesBis = 0; $nbLignesBis < $nbLignes; $nbLignesBis++) {
                                             $commentaireBis .= $tabCommentaires[$nbLignesBis] . CHR(13) . CHR(10);
                                         }
@@ -948,8 +948,12 @@ class SuiviEauController extends Controller {
         switch ($error) {
             case UPLOAD_ERR_OK:
                 $valid = true;
+                if (!in_array($ext, array('csv'))) {
+                    $valid = false;
+                    $response = 'extension du fichier incorrecte.';
+                }
 //validate file size
-                if ($size / 1024 / 1024 > 2) {
+                if ($size > 10485760) {
                     $valid = false;
                     $response = 'La taille du fichier est plus grande que la taille autorisée.';
                 }
@@ -967,8 +971,8 @@ class SuiviEauController extends Controller {
 
                     $dateDepot = new \DateTime();
                     $response = $name . ' déposé le ' . $dateDepot->format('d/m/Y');
-                    break;
                 }
+                break;
             case UPLOAD_ERR_INI_SIZE:
                 $response = 'La taille (' . $size . ' octets' . ') du fichier téléchargé excède la taille de upload_max_filesize dans php.ini.';
                 $valid = false;
@@ -1876,6 +1880,8 @@ class SuiviEauController extends Controller {
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
         $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
         $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
+        $repoPgProgWebuserZgeoref = $emSqe->getRepository('AeagSqeBundle:PgProgWebuserZgeoref');
+        $repoPgCmdDwnldUsrRps = $emSqe->getRepository('AeagSqeBundle:PgCmdDwnldUsrRps');
 
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgRefStationMesure = $repoPgRefStationMesure->getPgRefStationMesureByOuvFoncId($stationId);
@@ -2025,25 +2031,9 @@ class SuiviEauController extends Controller {
             $tabFichiers = array();
             $nbFichier = 0;
             foreach ($liste as $nomFichier) {
-//$tabNomFichier = explode('-', $nomFichier);
-                $trouve = false;
-                if (strpos($nomFichier, $pgRefStationMesure->getCode()) !== false) {
-                    $trouve = true;
-                    break;
-                }
-                if (!$trouve) {
-                    if (filesize($pathBase . '/' . $nomFichier) > 0) {
-                        $contenu = 'pas de station à raccorder au fichier ' . $nomFichier . CHR(13) . CHR(10) . CHR(13) . CHR(10);
-                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                        fputs($rapport, $contenu);
-                        $nbIncorrect++;
-//$erreur = 1;
-                    }
-                } else {
-                    $tabFichiers[$nbFichier] = $nomFichier;
-                    $nbFichier++;
-                    $nbCorrect++;
-                }
+                $tabFichiers[$nbFichier] = $nomFichier;
+                $nbFichier++;
+                $nbCorrect++;
             }
 
             if (count($tabFichiers) > 0) {
@@ -2058,6 +2048,16 @@ class SuiviEauController extends Controller {
                     $NbFt = 0;
                     $NbPhoto = 0;
                     for ($nb = 0; $nb < count($tabFichiers); $nb++) {
+                        if (strpos($tabFichiers[$nb], $pgRefStationMesure->getCode()) === false) {
+                            if (filesize($pathBase . '/' . $tabFichiers[$nb]) > 0) {
+                                $contenu = 'pas de station ' . $pgRefStationMesure->getCode() . ' à raccorder au fichier ' . $tabFichiers[$nb] . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                fputs($rapport, $contenu);
+                                $erreur = 1;
+                                $nbCorrect = $nbCorrect - 1;
+                                $nbIncorrect = $nbIncorrect + 1;
+                            }
+                        }
 //$tabNomFichier = explode('-', $tabFichiers[$nb]);
 //if ($tabNomFichier[1] != 'ft' && $tabNomFichier[1] != 'photo1' && $tabNomFichier[1] != 'photo2') {
                         if ((strpos(strtoupper($tabFichiers[$nb]), 'FT') === false) && (strpos(strtoupper($tabFichiers[$nb]), 'PHOTO') === false)) {
@@ -2068,10 +2068,10 @@ class SuiviEauController extends Controller {
                             $nbCorrect = $nbCorrect - 1;
                             $nbIncorrect = $nbIncorrect + 1;
                         } else {
-                            if (strpos($tabFichiers[$nb], 'ft') === true) {
+                            if (strpos(strtoupper($tabFichiers[$nb]), 'FT') !== false) {
                                 $NbFt++;
                             }
-                            if (strpos($tabFichiers[$nb], 'photo') === true) {
+                            if (strpos(strtoupper($tabFichiers[$nb]), 'PHOTO') !== false) {
                                 $NbPhoto++;
                             }
                         }
@@ -2084,6 +2084,7 @@ class SuiviEauController extends Controller {
                     }
                 }
             }
+
             if ($erreur == 0) {
                 $tabSupport = array();
                 $nbSupport = 0;
@@ -2131,6 +2132,10 @@ class SuiviEauController extends Controller {
                     if (($pgCmdSuiviPrel->getStatutPrel() == 'N') or ( $pgCmdSuiviPrel->getStatutPrel() == 'F') or ( $pgCmdSuiviPrel->getStatutPrel() == 'R')) {
                         if ($pgCmdSuiviPrel->getFichierRps()) {
                             $pgCmdFichiersRps = $pgCmdSuiviPrel->getFichierRps();
+                            $pgCmdDwnldUsrRpss = $repoPgCmdDwnldUsrRps->getPgCmdDwnldUsrRpsByFichierReponse($pgCmdFichiersRps);
+                            foreach ($pgCmdDwnldUsrRpss as $pgCmdDwnldUsrRps) {
+                                $emSqe->remove($pgCmdDwnldUsrRps);
+                            }
                             $emSqe->remove($pgCmdFichiersRps);
                         }
                         $pgCmdFichiersRps = new PgCmdFichiersRps();
@@ -2186,6 +2191,8 @@ class SuiviEauController extends Controller {
                 fputs($rapport, $contenu);
             }
             fclose($rapport);
+        } else {
+            $erreur = 1;
         }
 
         if ($erreur == 0) {
@@ -2402,7 +2409,7 @@ class SuiviEauController extends Controller {
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
-        $repoPgProgWebUserZgeoref = $emSqe->getRepository('AeagSqeBundle:PgProgWebuserZgeoref');
+        $repoPgProgWebuserZgeoref = $emSqe->getRepository('AeagSqeBundle:PgProgWebuserZgeoref');
         $repoPgProgZgeorefStation = $emSqe->getRepository('AeagSqeBundle:PgProgZgeorefStation');
         $repoPgSandreSupport = $emSqe->getRepository('AeagSqeBundle:PgSandreSupports');
         $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
@@ -2422,10 +2429,10 @@ class SuiviEauController extends Controller {
             $pgCmdSuiviPrelDernier = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelById($tabResultats[$nbStations]['suiviPrelId']);
             $pgRefStationMesure = $repoPgRefStationMesure->getPgRefStationMesureByOuvFoncId($tabResultats[$nbStations]['ouvFoncId']);
             if (!$user->hasRole('ROLE_ADMINSQE')) {
-                $pgProgWebUserZgeorefs = $repoPgProgWebUserZgeoref->getPgProgWebuserZgeorefByWebuser($pgProgWebUser);
+                $pgProgWebuserZgeorefs = $repoPgProgWebuserZgeoref->getPgProgWebuserZgeorefByWebuser($pgProgWebUser);
                 $trouve = false;
-                foreach ($pgProgWebUserZgeorefs as $pgProgWebUserZgeoref) {
-                    $pgProgZoneGeoref = $pgProgWebUserZgeoref->getZgeoref();
+                foreach ($pgProgWebuserZgeorefs as $pgProgWebuserZgeoref) {
+                    $pgProgZoneGeoref = $pgProgWebuserZgeoref->getZgeoref();
                     $pgProgZgeorefStations = $repoPgProgZgeorefStation->getpgProgZgeorefStationByZgeoref($pgProgZoneGeoref);
                     foreach ($pgProgZgeorefStations as $pgProgZgeorefStation) {
                         if ($pgRefStationMesure->getOuvFoncId() == $pgProgZgeorefStation->getStationMesure()->getOuvFoncId()) {

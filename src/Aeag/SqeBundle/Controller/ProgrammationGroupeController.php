@@ -12,6 +12,7 @@ use Aeag\SqeBundle\Entity\PgProgLotAn;
 use Aeag\SqeBundle\Entity\PgProgLotGrparAn;
 use Aeag\SqeBundle\Entity\PgProgLotStationAn;
 use Aeag\SqeBundle\Entity\PgProgLotParamAn;
+use Aeag\SqeBundle\Entity\PgProgSuiviPhases;
 use Aeag\AeagBundle\Controller\AeagController;
 use Aeag\SqeBundle\Controller\ProgrammationBilanController;
 
@@ -21,7 +22,7 @@ class ProgrammationGroupeController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -524,7 +525,7 @@ class ProgrammationGroupeController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -681,7 +682,7 @@ class ProgrammationGroupeController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -739,7 +740,7 @@ class ProgrammationGroupeController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -795,7 +796,7 @@ class ProgrammationGroupeController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -873,7 +874,7 @@ class ProgrammationGroupeController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -1062,7 +1063,7 @@ class ProgrammationGroupeController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -1161,7 +1162,7 @@ class ProgrammationGroupeController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -1354,7 +1355,7 @@ class ProgrammationGroupeController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -1477,7 +1478,7 @@ class ProgrammationGroupeController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -1682,6 +1683,17 @@ class ProgrammationGroupeController extends Controller {
                 $pgProgLotAn->setUtilModif($pgProgWebuser);
             }
             $emSqe->persist($pgProgLotAn);
+
+            $pgProgSuiviPhases = new PgProgSuiviPhases();
+            $pgProgSuiviPhases->setTypeObjet('LOT');
+            $pgProgSuiviPhases->setObjId($pgProgLotAn->getId());
+            $pgProgSuiviPhases->setDatePhase(new \DateTime());
+            $pgProgSuiviPhases->setPhase($pgProgPhase);
+            if ($pgProgWebuser) {
+                $pgProgSuiviPhases->setUser($pgProgWebuser);
+            }
+            $emSqe->persist($pgProgSuiviPhases);
+
             $emSqe->flush();
         }
 

@@ -11,6 +11,7 @@ use Aeag\SqeBundle\Entity\PgProgWebUsers;
 use Aeag\SqeBundle\Entity\PgProgMarcheUser;
 use Aeag\SqeBundle\Entity\PgProgMarche;
 use Aeag\SqeBundle\Entity\PgProgLot;
+use Aeag\SqeBundle\Entity\PgProgSuiviPhases;
 use Aeag\AeagBundle\Entity\Notification;
 use Aeag\AeagBundle\Entity\Message;
 use Aeag\AeagBundle\Controller\AeagController;
@@ -1734,6 +1735,16 @@ class ProgrammationLotController extends Controller {
         }
         $emSqe->persist($pgProgLotAn);
 
+        $pgProgSuiviPhases = new PgProgSuiviPhases();
+        $pgProgSuiviPhases->setTypeObjet('LOT');
+        $pgProgSuiviPhases->setObjId($pgProgLotAn->getId());
+        $pgProgSuiviPhases->setDatePhase(new \DateTime());
+        $pgProgSuiviPhases->setPhase($pgProgPhase);
+        if ($pgProgWebuser) {
+            $pgProgSuiviPhases->setUser($pgProgWebuser);
+        }
+        $emSqe->persist($pgProgSuiviPhases);
+
         if (!$this->get('security.authorization_checker')->isGranted('ROLE_ADMINSQE') and $this->get('security.authorization_checker')->isGranted('ROLE_PROGSQE')) {
             $notification = new Notification();
             $notification->setRecepteur($user->getId());
@@ -1838,6 +1849,17 @@ class ProgrammationLotController extends Controller {
             $pgProgLotAn->setUtilModif($pgProgWebuser);
         }
         $emSqe->persist($pgProgLotAn);
+
+        $pgProgSuiviPhases = new PgProgSuiviPhases();
+        $pgProgSuiviPhases->setTypeObjet('LOT');
+        $pgProgSuiviPhases->setObjId($pgProgLotAn->getId());
+        $pgProgSuiviPhases->setDatePhase(new \DateTime());
+        $pgProgSuiviPhases->setPhase($pgProgPhase);
+        if ($pgProgWebuser) {
+            $pgProgSuiviPhases->setUser($pgProgWebuser);
+        }
+        $emSqe->persist($pgProgSuiviPhases);
+
         $emSqe->flush();
 
         // $session->set('critPhase', $pgProgPhase->getId());
@@ -1893,6 +1915,17 @@ class ProgrammationLotController extends Controller {
             $pgProgLotAn->setUtilModif($emetteur);
         }
         $emSqe->persist($pgProgLotAn);
+
+        $pgProgSuiviPhases = new PgProgSuiviPhases();
+        $pgProgSuiviPhases->setTypeObjet('LOT');
+        $pgProgSuiviPhases->setObjId($pgProgLotAn->getId());
+        $pgProgSuiviPhases->setDatePhase(new \DateTime());
+        $pgProgSuiviPhases->setPhase($pgProgPhase);
+        if ($emetteur) {
+            $pgProgSuiviPhases->setUser($emetteur);
+        }
+        $emSqe->persist($pgProgSuiviPhases);
+
         $emSqe->flush();
 
         $message = new Message();
@@ -1992,6 +2025,17 @@ class ProgrammationLotController extends Controller {
             $pgProgLotAn->setUtilModif($emetteur);
         }
         $emSqe->persist($pgProgLotAn);
+
+        $pgProgSuiviPhases = new PgProgSuiviPhases();
+        $pgProgSuiviPhases->setTypeObjet('LOT');
+        $pgProgSuiviPhases->setObjId($pgProgLotAn->getId());
+        $pgProgSuiviPhases->setDatePhase(new \DateTime());
+        $pgProgSuiviPhases->setPhase($pgProgPhase);
+        if ($emetteur) {
+            $pgProgSuiviPhases->setUser($emetteur);
+        }
+        $emSqe->persist($pgProgSuiviPhases);
+
         $emSqe->flush();
 
         $message = new Message();
@@ -2092,6 +2136,17 @@ class ProgrammationLotController extends Controller {
             $pgProgLotAn->setUtilModif($emetteur);
         }
         $emSqe->persist($pgProgLotAn);
+
+        $pgProgSuiviPhases = new PgProgSuiviPhases();
+        $pgProgSuiviPhases->setTypeObjet('LOT');
+        $pgProgSuiviPhases->setObjId($pgProgLotAn->getId());
+        $pgProgSuiviPhases->setDatePhase(new \DateTime());
+        $pgProgSuiviPhases->setPhase($pgProgPhase);
+        if ($emetteur) {
+            $pgProgSuiviPhases->setUser($emetteur);
+        }
+        $emSqe->persist($pgProgSuiviPhases);
+
         $emSqe->flush();
 
         // $session->set('critPhase', $pgProgPhase->getId());
@@ -2314,6 +2369,16 @@ class ProgrammationLotController extends Controller {
         $pgProgLotAn->setDateModif($now);
         $pgProgLotAn->setUtilModif($pgProgWebuser);
         $emSqe->persist($pgProgLotAn);
+
+        $pgProgSuiviPhases = new PgProgSuiviPhases();
+        $pgProgSuiviPhases->setTypeObjet('LOT');
+        $pgProgSuiviPhases->setObjId($pgProgLotAn->getId());
+        $pgProgSuiviPhases->setDatePhase(new \DateTime());
+        $pgProgSuiviPhases->setPhase($pgProgPhase);
+        if ($pgProgWebuser) {
+            $pgProgSuiviPhases->setUser($pgProgWebuser);
+        }
+        $emSqe->persist($pgProgSuiviPhases);
 
         $emSqe->flush();
         $this->get('session')->getFlashBag()->add('notice-error', "la programmation " . $pgProgLotAnBis->getAnneeProg() . " version " . $pgProgLotAnBis->getVersion() . " du lot " . $pgProgLotAnBis->getLot()->getNomLot() . PHP_EOL . " a été créée.");

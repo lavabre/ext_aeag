@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Aeag\SqeBundle\Entity\PgProgLotPeriodeAn;
 use Aeag\SqeBundle\Entity\PgProgLotPeriodeProg;
+use Aeag\SqeBundle\Entity\PgProgSuiviPhases;
 use Aeag\SqeBundle\Controller\ProgrammationBilanController;
 
 class ProgrammationPeriodeController extends Controller {
@@ -1490,6 +1491,17 @@ class ProgrammationPeriodeController extends Controller {
             $pgProgLotAn->setUtilModif($pgProgWebuser);
         }
         $emSqe->persist($pgProgLotAn);
+        
+          $pgProgSuiviPhases = new PgProgSuiviPhases();
+            $pgProgSuiviPhases->setTypeObjet('LOT');
+            $pgProgSuiviPhases->setObjId($pgProgLotAn->getId());
+            $pgProgSuiviPhases->setDatePhase(new \DateTime());
+            $pgProgSuiviPhases->setPhase($pgProgPhase);
+            if ($pgProgWebuser) {
+                $pgProgSuiviPhases->setUser($pgProgWebuser);
+            }
+            $emSqe->persist($pgProgSuiviPhases);
+        
         $emSqe->flush();
         return $this->render('AeagSqeBundle:Programmation:Periode\valider.html.twig', array(
                     'action' => $action,

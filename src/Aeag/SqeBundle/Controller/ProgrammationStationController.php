@@ -12,6 +12,7 @@ use Aeag\SqeBundle\Entity\PgProgLotAn;
 use Aeag\SqeBundle\Entity\PgProgLotGrparAn;
 use Aeag\SqeBundle\Entity\PgProgLotStationAn;
 use Aeag\SqeBundle\Entity\PgProgLotPeriodeProg;
+use Aeag\SqeBundle\Entity\PgProgSuiviPhases;
 use Aeag\SqeBundle\Controller\ProgrammationBilanController;
 
 class ProgrammationStationController extends Controller {
@@ -19,8 +20,8 @@ class ProgrammationStationController extends Controller {
     public function indexAction() {
 
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -152,6 +153,17 @@ class ProgrammationStationController extends Controller {
                     $pgProgLotAn->setUtilModif($pgProgWebuser);
                 }
                 $emSqe->persist($pgProgLotAn);
+
+                $pgProgSuiviPhases = new PgProgSuiviPhases();
+                $pgProgSuiviPhases->setTypeObjet('LOT');
+                $pgProgSuiviPhases->setObjId($pgProgLotAn->getId());
+                $pgProgSuiviPhases->setDatePhase(new \DateTime());
+                $pgProgSuiviPhases->setPhase($pgProgPhase);
+                if ($pgProgWebuser) {
+                    $pgProgSuiviPhases->setUser($pgProgWebuser);
+                }
+                $emSqe->persist($pgProgSuiviPhases);
+
                 $emSqe->flush();
             }
         } else {
@@ -292,7 +304,7 @@ class ProgrammationStationController extends Controller {
 //            $commune = $repoCommune->getCommuneByCommune($inseeCommune);
 //            $tabStations[$i]['commune']['libelle'] = $commune->getlibelle();
                 $tabStations[$i]['commune']['libelle'] = $stationGeo->getNomCommune();
-                $tabStations[$i]['lien'] = '/sqe_fiches_stations/' . str_replace('/','-',$stationGeo->getCode()) . '.pdf';
+                $tabStations[$i]['lien'] = '/sqe_fiches_stations/' . str_replace('/', '-', $stationGeo->getCode()) . '.pdf';
 //                if ($stationGeo->getType() == 'STQ') {
 //                    $tabStations[$i]['lien'] = 'http://adour-garonne.eaufrance.fr/station/' . $stationGeo->getCode() . '/print';
 //                }
@@ -348,7 +360,7 @@ class ProgrammationStationController extends Controller {
 //            $commune = $repoCommune->getCommuneByCommune($inseeCommune);
 //            $tabStations[$i]['commune']['libelle'] = $commune->getlibelle();
                 $tabStations[$i]['commune']['libelle'] = $stationGeo->getNomCommune();
-               $tabStations[$i]['lien'] = '/sqe_fiches_stations/' . str_replace('/','-',$stationGeo->getCode()) . '.pdf';
+                $tabStations[$i]['lien'] = '/sqe_fiches_stations/' . str_replace('/', '-', $stationGeo->getCode()) . '.pdf';
 //                if ($stationGeo->getType() == 'STQ') {
 //                    $tabStations[$i]['lien'] = 'http://adour-garonne.eaufrance.fr/station/' . $stationGeo->getCode() . '/print';
 //                }
@@ -386,7 +398,7 @@ class ProgrammationStationController extends Controller {
                 }
                 //$tabStations[$i]['reseaux'] = $tabReseaux;
                 // autres lots
-               $pgProgLotStationAnAutres = $repoPgProgLotStationAn->getPgProgLotStationAnByStation($stationGeo);
+                $pgProgLotStationAnAutres = $repoPgProgLotStationAn->getPgProgLotStationAnByStation($stationGeo);
                 $tabStations[$i]['autreLot'] = null;
                 $tabStations[$i]['lienAutreLot'] = null;
                 foreach ($pgProgLotStationAnAutres as $pgProgLotStationAnAutre) {
@@ -424,8 +436,8 @@ class ProgrammationStationController extends Controller {
     public function allStationsAction() {
 
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -537,6 +549,17 @@ class ProgrammationStationController extends Controller {
                     $pgProgLotAn->setUtilModif($pgProgWebuser);
                 }
                 $emSqe->persist($pgProgLotAn);
+
+                $pgProgSuiviPhases = new PgProgSuiviPhases();
+                $pgProgSuiviPhases->setTypeObjet('LOT');
+                $pgProgSuiviPhases->setObjId($pgProgLotAn->getId());
+                $pgProgSuiviPhases->setDatePhase(new \DateTime());
+                $pgProgSuiviPhases->setPhase($pgProgPhase);
+                if ($pgProgWebuser) {
+                    $pgProgSuiviPhases->setUser($pgProgWebuser);
+                }
+                $emSqe->persist($pgProgSuiviPhases);
+
                 $emSqe->flush();
             }
         } else {
@@ -667,7 +690,7 @@ class ProgrammationStationController extends Controller {
 //            $commune = $repoCommune->getCommuneByCommune($inseeCommune);
 //            $tabStations[$i]['commune']['libelle'] = $commune->getlibelle();
             $tabStations[$i]['commune']['libelle'] = $stationGeo->getNomCommune();
-            $tabStations[$i]['lien'] = '/sqe_fiches_stations/' . str_replace('/','-',$stationGeo->getCode()) . '.pdf';
+            $tabStations[$i]['lien'] = '/sqe_fiches_stations/' . str_replace('/', '-', $stationGeo->getCode()) . '.pdf';
 //            if ($stationGeo->getType() == 'STQ') {
 //                $tabStations[$i]['lien'] = 'http://adour-garonne.eaufrance.fr/station/' . $stationGeo->getCode() . '/print';
 //            }
@@ -705,23 +728,23 @@ class ProgrammationStationController extends Controller {
             }
             //$tabStations[$i]['reseaux'] = $tabReseaux;
             // autres lots
-             $pgProgLotStationAnAutres = $repoPgProgLotStationAn->getPgProgLotStationAnByStation($stationGeo);
-                $tabStations[$i]['autreLot'] = null;
-                $tabStations[$i]['lienAutreLot'] = null;
-                foreach ($pgProgLotStationAnAutres as $pgProgLotStationAnAutre) {
-                    if ($pgProgLotStationAnAutre->getLotan()->getid() != $pgProgLotAn->getid()) {
-                        if ($pgProgLotStationAnAutre->getLotan()->getAnneeProg() == $pgProgLotAn->getAnneeProg()) {
-                            if ($pgProgLotStationAnAutre->getLotan()->getPhase()->getCodePhase() >= 'P25') {
-                                if ($pgProgLotStationAnAutre->getLotan()->getLot()->getId() != $pgProgLotAn->getLot()->getId()) {
-                                    if ($pgProgLotStationAnAutre->getLotan()->getLot()->getCodeMilieu() == $pgProgLotAn->getLot()->getCodeMilieu()) {
-                                        $tabStations[$i]['autreLot'] = $pgProgLotStationAnAutre->getLotan();
-                                        $tabStations[$i]['lienAutreLot'] = 'http://ext.eau-adour-garonne.fr/sqe/programmation/bilan/?action=V&maj=V&lotan=' . $pgProgLotStationAnAutre->getLotan()->getid();
-                                    }
+            $pgProgLotStationAnAutres = $repoPgProgLotStationAn->getPgProgLotStationAnByStation($stationGeo);
+            $tabStations[$i]['autreLot'] = null;
+            $tabStations[$i]['lienAutreLot'] = null;
+            foreach ($pgProgLotStationAnAutres as $pgProgLotStationAnAutre) {
+                if ($pgProgLotStationAnAutre->getLotan()->getid() != $pgProgLotAn->getid()) {
+                    if ($pgProgLotStationAnAutre->getLotan()->getAnneeProg() == $pgProgLotAn->getAnneeProg()) {
+                        if ($pgProgLotStationAnAutre->getLotan()->getPhase()->getCodePhase() >= 'P25') {
+                            if ($pgProgLotStationAnAutre->getLotan()->getLot()->getId() != $pgProgLotAn->getLot()->getId()) {
+                                if ($pgProgLotStationAnAutre->getLotan()->getLot()->getCodeMilieu() == $pgProgLotAn->getLot()->getCodeMilieu()) {
+                                    $tabStations[$i]['autreLot'] = $pgProgLotStationAnAutre->getLotan();
+                                    $tabStations[$i]['lienAutreLot'] = 'http://ext.eau-adour-garonne.fr/sqe/programmation/bilan/?action=V&maj=V&lotan=' . $pgProgLotStationAnAutre->getLotan()->getid();
                                 }
                             }
                         }
                     }
                 }
+            }
             $i++;
         }
 
@@ -744,8 +767,8 @@ class ProgrammationStationController extends Controller {
     public function resultatAction() {
 
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -903,6 +926,17 @@ class ProgrammationStationController extends Controller {
                 $pgProgLotAn->setUtilModif($pgProgWebuser);
             }
             $emSqe->persist($pgProgLotAn);
+
+            $pgProgSuiviPhases = new PgProgSuiviPhases();
+            $pgProgSuiviPhases->setTypeObjet('LOT');
+            $pgProgSuiviPhases->setObjId($pgProgLotAn->getId());
+            $pgProgSuiviPhases->setDatePhase(new \DateTime());
+            $pgProgSuiviPhases->setPhase($pgProgPhase);
+            if ($pgProgWebuser) {
+                $pgProgSuiviPhases->setUser($pgProgWebuser);
+            }
+            $emSqe->persist($pgProgSuiviPhases);
+
             $emSqe->flush();
         }
 
