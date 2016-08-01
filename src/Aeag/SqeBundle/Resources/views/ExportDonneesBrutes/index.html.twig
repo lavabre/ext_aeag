@@ -114,7 +114,8 @@
                     var tabs = JSON.parse(results);
                     var html = '';
                     for (var tab in tabs) {
-                        html += '<option id="opt_'+tab+'" value="'+tab+'">'+tabs[tab]+'</option>';
+                        {#html += '<option id="opt_'+tab+'" value="'+tab+'">'+tabs[tab]+'</option>';#}
+                        html += "<option id=\'opt_" + tab + "\' value=\'"+tab+"\'>"+tabs[tab]+"</option>";
                     }
                     $('#zgeorefs').empty().html(html);
                     for (var tab in tabs) {
