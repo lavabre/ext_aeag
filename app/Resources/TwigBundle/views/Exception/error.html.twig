@@ -89,22 +89,22 @@
                                               </p>
                                               <br /><br />
                                              {% endif %}
-                                             
+                                             <img style="position: absolute; left: 50%; top: 50%; margin-left: -185px; margin-top: -190px;" alt="Page Not Found (404)." src="{{ asset('bundles/aeagaeag/images//404.jpg') }}">
                                               <p>
                                                     Route : {{app.request.attributes.get("_route")}} </br>
+                                                    Url : {{ app.request.requestUri }} </br>
                                                     Menu :  {{ app.session.get('menu') }} </br>
                                                     Controller : {{ app.session.get('controller') }} </br>
                                                     Fonction : {{ app.session.get('fonction') }} </br>
                                                 </p>
-                                                </br></br>
+                                                </br></br></br></br></br></br></br></br>
                                              
                                               <div class="col-md-offset-3 col-md-9 pull-right">
                                                         <a class="btn btn-danger" href="{{ app.session.get('retourErreur') }}"><i class="fa fa-power-off"></i> Retour</a>
                                               </div>
                                         </div>
                                       </div>
-
-                                {% endblock content %}
+                                      {% endblock content %}
                            </div>
                         </div>
                    </div>
