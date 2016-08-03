@@ -126,9 +126,9 @@ class SaisieDonneesController extends Controller {
                                         }
                                     }
                                 }
-                            }
-                            if ($nbPrelevs == $nbPrelevCorrects and $nbPrelevs > 0) {
-                                $nbStationCorrectes++;
+                                if ($nbPrelevs == $nbPrelevCorrects and $nbPrelevs > 0) {
+                                    $nbStationCorrectes++;
+                                }
                             }
                         }
                     }
@@ -202,12 +202,12 @@ class SaisieDonneesController extends Controller {
             }
         }
 
-         $pgCmdDemandes  = array();
-         if ($user->hasRole('ROLE_ADMINSQE')) {
-             $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandesByLotanPeriode($pgProgLotAn, $pgProgLotPeriodeAn->getPeriode());
-         }else{
-              $pgCmdDemandes[0] = $repoPgCmdDemande->getPgCmdDemandeByLotanPrestatairePeriode($pgProgLotAn, $userPrestataire, $pgProgLotPeriodeAn->getPeriode());
-         }
+        $pgCmdDemandes = array();
+        if ($user->hasRole('ROLE_ADMINSQE')) {
+            $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandesByLotanPeriode($pgProgLotAn, $pgProgLotPeriodeAn->getPeriode());
+        } else {
+            $pgCmdDemandes[0] = $repoPgCmdDemande->getPgCmdDemandeByLotanPrestatairePeriode($pgProgLotAn, $userPrestataire, $pgProgLotPeriodeAn->getPeriode());
+        }
 
 
         $tabStations = array();
@@ -258,33 +258,33 @@ class SaisieDonneesController extends Controller {
 
         for ($i = 0; $i < count($tabStations); $i++) {
             $station = $tabStations[$i];
-            foreach($pgCmdDemandes as $pgCmdDemande){
-            //$pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($pgCmdDemande->getPrestataire(), $pgCmdDemande, $station, $pgProgLotPeriodeAn->getPeriode());
-            $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByDemandeStationPeriode($pgCmdDemande, $station, $pgProgLotPeriodeAn->getPeriode());
-            asort($pgCmdPrelevs);
+            foreach ($pgCmdDemandes as $pgCmdDemande) {
+                //$pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($pgCmdDemande->getPrestataire(), $pgCmdDemande, $station, $pgProgLotPeriodeAn->getPeriode());
+                $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByDemandeStationPeriode($pgCmdDemande, $station, $pgProgLotPeriodeAn->getPeriode());
+                asort($pgCmdPrelevs);
 //            echo('prestataire : ' . $pgCmdDemande->getPrestataire()->getAdrCorid() . ' demande : ' .  $pgCmdDemande->getId() . ' station : ' . $station->getOuvFoncid() . ' periode : ' . $pgProgLotPeriodeAn->getPeriode()->getid() );
 //            \Symfony\Component\VarDumper\VarDumper::dump($pgCmdPrelevs);
 //            return new Response ('');
-            $fichierRps = null;
-            $donneesBrutes = array();
-            foreach ($pgCmdPrelevs as $pgCmdPrelev) {
-                if ($pgCmdPrelev) {
-                    if ($pgCmdPrelev->getFichierRps()) {
-                        if ($fichierRps != $pgCmdPrelev->getFichierRps()) {
-                            //echo ('station : ' . $station->getCode() . ' prelev : ' . $pgCmdPrelev->getId() . ' fichierRps : ' .  $pgCmdPrelev->getFichierRps()->getId() . ' </br>');
-                            $donneesBrutes = $repoPgCmdPrelev->getDonneesBrutes($pgCmdPrelev->getFichierRps());
-                            foreach ($donneesBrutes as $ligne) {
-                                foreach ($ligne as $j => $value) {
-                                    $ligne[$j] = \iconv("UTF-8", "Windows-1252//TRANSLIT", $ligne[$j]);
+                $fichierRps = null;
+                $donneesBrutes = array();
+                foreach ($pgCmdPrelevs as $pgCmdPrelev) {
+                    if ($pgCmdPrelev) {
+                        if ($pgCmdPrelev->getFichierRps()) {
+                            if ($fichierRps != $pgCmdPrelev->getFichierRps()) {
+                                //echo ('station : ' . $station->getCode() . ' prelev : ' . $pgCmdPrelev->getId() . ' fichierRps : ' .  $pgCmdPrelev->getFichierRps()->getId() . ' </br>');
+                                $donneesBrutes = $repoPgCmdPrelev->getDonneesBrutes($pgCmdPrelev->getFichierRps());
+                                foreach ($donneesBrutes as $ligne) {
+                                    foreach ($ligne as $j => $value) {
+                                        $ligne[$j] = \iconv("UTF-8", "Windows-1252//TRANSLIT", $ligne[$j]);
+                                    }
+                                    fputcsv($fichier_csv, $ligne, ';');
                                 }
-                                fputcsv($fichier_csv, $ligne, ';');
+                                $fichierRps = $pgCmdPrelev->getFichierRps();
                             }
-                            $fichierRps = $pgCmdPrelev->getFichierRps();
                         }
                     }
                 }
             }
-        }
         }
         fclose($fichier_csv);
 
