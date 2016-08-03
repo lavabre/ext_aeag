@@ -287,6 +287,7 @@
                             <th>Version</th>
                             <th>marché</th>
                             <th>Zone géographique</th>
+                            <th>Milieu</th>
                             <th>Type de milieu</th>
                             <th>Mandataire</th>
                             <th>Etat</th>
@@ -311,12 +312,31 @@
                                             {% endif %}
                                         </td>
                                         <td>{{ entity.lot.nomLot }}</td>
-                                        <td>1</td>
+                                        <td>
+                                            {% if entity.lotAn | length %}
+                                                 {{ entity.lotAn.version }}
+                                            {% else %}
+                                                 1
+                                            {% endif %}
+                                        </td>
                                         <td>{{ entity.lot.marche.nomMarche }}</td>
                                         <td>{{ entity.lot.zgeoRef.nomZoneGeo }}</td>
                                         <td>{% if entity.typeMilieu | length %}
+                                                    {% if  entity.typeMilieu.categorieMilieu == "R" %}
+                                                         Rivières
+                                                    {% elseif entity.typeMilieu.categorieMilieu == "G" %}
+                                                         Eaux souterraines
+                                                    {% elseif entity.typeMilieu.categorieMilieu == "L" %}
+                                                          Plans d'eau
+                                                    {% else %}
+                                                          Autres
+                                                   {% endif %}
+                                              {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if entity.typeMilieu | length %}
                                             {{ entity.typeMilieu.nomMilieu }}
-                                        {% endif %}
+                                           {% endif %}
                                         </td>
                                         <td>{%if entity.lot.titulaire %}
                                         {{ entity.lot.titulaire.nomCorres }}
@@ -403,13 +423,27 @@
                                     <td>{{ entity.lotAn.version }}</td>
                                     <td>{{ entity.lot.marche.nomMarche }}</td>
                                     <td>{{ entity.lot.zgeoRef.nomZoneGeo }}</td>
+                                    <td>
+                                        {% if entity.typeMilieu | length %}
+                                                  {% if  entity.typeMilieu.categorieMilieu == "R" %}
+                                                       Rivières
+                                                  {% elseif entity.typeMilieu.categorieMilieu == "G" %}
+                                                       Eaux souterraines
+                                                  {% elseif entity.typeMilieu.categorieMilieu == "L" %}
+                                                        Plans d'eau
+                                                  {% else %}
+                                                        Autres
+                                                 {% endif %}
+                                            {% endif %}
+                                    </td>
                                     <td>{% if entity.typeMilieu | length %}
-                                        {{ entity.typeMilieu.nomMilieu }}
+                                             {{ entity.typeMilieu.nomMilieu }}
                                         {% endif %}
                                     </td>
-                                    <td>{%if entity.lot.titulaire %}
-                                    {{ entity.lot.titulaire.nomCorres }}
-                                    {% endif %}
+                                    <td>
+                                        {%if entity.lot.titulaire %}
+                                        {{ entity.lot.titulaire.nomCorres }}
+                                        {% endif %}
                                     </td>
                                     <td>{{entity.lotAn.phase.libellePhase}} </td>
                                     <td>{{entity.lotAn.codeStatut.libelleStatut}} le {{ entity.lotAn.dateModif | date("d/m/Y H:i:")}} par {{ entity.lotAn.utilModif.nom}} </td>
@@ -509,35 +543,22 @@
              
         {% endfor %}
 
-                            // DataTable
-                            var table = $('#idTable').DataTable(
-                            {"stateSave": true,
-                             "order": [[ 1, "desc" ]],
-                            "oLanguage": {
-                            "sSearch": "Filtre",
-                            "sFirst": "1ere page",
-                            "sLast": "Dernière page",
-                            "sNext": "Prochaine page",
-                            "sPrevious": "Page précédente",
-                            "EmptyTable": "Pas de données",
-                            "sInfo": "Nombre d'enregistrements :  _TOTAL_",
-                            "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
-                            "sZeroRecords": "Pas d'enregistrement à afficher",
-                            "sInfoEmpty": "Pas d'enregistrement à afficher",
-                            "sInfoThousands": " ",
-                            "sLengthMenu": 'Afficher <select>' +
-                                '<option value="10">10</option>' +
-                                '<option value="20">20</option>' +
-                                '<option value="30">30</option>' +
-                                '<option value="40">40</option>' +
-                                '<option value="50">50</option>' +
-                                '<option value="-1">Tous</option>' +
-                                '</select> enregistrements',
-                            "sPaginationType": "full_numbers"
-                            }
-                            }
-                            );
-
+        // DataTable
+          var table = $('#idTable').DataTable(
+            {"stateSave": true,
+             "order": [[ 1, "desc" ]],
+              "language": {
+                                 "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
+                             },
+             "aLengthMenu": [
+                                        [10, 25, 50, 100, -1],
+                                        [10, 25, 50, 100, "Tous"]
+                                    ],
+              "iDisplayLength": 10
+            }
+            );
+     {#                       
+       
                             $("#idTable thead td").each( function ( i ) {
 
                             if (i != 0){
@@ -553,6 +574,6 @@
                             select.append( '<option value="'+d+'">'+d+'</option>' )
                             } );
                             };
-                            } ); 
+                            } ); #}
 
  {% endblock scripts %}
