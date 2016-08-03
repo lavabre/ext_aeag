@@ -3,7 +3,7 @@
         <table class="table table-bordered table-condensed table-advance" id="idTable_periode">
             <thead id="idTheadPeriodes">
                 <tr>
-                   <th width="10%">Periodes / Groupes de paramètres</th>
+                   <th width="10%">Periodes</th>
                     {% for groupe in grparAns %}
                         <th width="1%" id="idThGroupe_{{ groupe.id }}" nowrap>{{ groupe.grparRef.libelleGrp }}</th>
                     {% endfor %}

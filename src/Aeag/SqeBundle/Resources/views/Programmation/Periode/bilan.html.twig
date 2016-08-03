@@ -10,7 +10,7 @@
             {% endif %}
             html = html + '{{ ctrlStation.station.code}}&nbsp;&nbsp;{{ ctrlStation.station.libelle}}';
             html = html + '</td>';
-            html = html + '</tr>';
+             html = html + '</tr>';
         {% endfor %}
         html = html + '</table>';
         $('#idTdCtrlStations').empty().append(html);

@@ -9,6 +9,7 @@
                     </a>
                 </td>
                 <td nowrap>{{ stationAn.station.station.code}}&nbsp;&nbsp;{{ stationAn.station.station.libelle}}</td>
+                 <td nowrap>{{ stationAn.reseau.nomRsx }}</td>
                  {% for periode in stationAn.periodes %}
                     <td id="idTd_{{ stationAn.station.id }}_{{ periode.periode.id }}">
                         <div id="idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}" class="text-center">

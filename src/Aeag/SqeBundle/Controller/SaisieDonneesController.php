@@ -202,7 +202,12 @@ class SaisieDonneesController extends Controller {
             }
         }
 
-        $pgCmdDemande = $repoPgCmdDemande->getPgCmdDemandeByLotanPrestatairePeriode($pgProgLotAn, $userPrestataire, $pgProgLotPeriodeAn->getPeriode());
+         $pgCmdDemandes  = array();
+         if ($user->hasRole('ROLE_ADMINSQE')) {
+             $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandesByLotanPeriode($pgProgLotAn, $pgProgLotPeriodeAn->getPeriode());
+         }else{
+              $pgCmdDemandes[0] = $repoPgCmdDemande->getPgCmdDemandeByLotanPrestatairePeriode($pgProgLotAn, $userPrestataire, $pgProgLotPeriodeAn->getPeriode());
+         }
 
 
         $tabStations = array();
@@ -253,6 +258,7 @@ class SaisieDonneesController extends Controller {
 
         for ($i = 0; $i < count($tabStations); $i++) {
             $station = $tabStations[$i];
+            foreach($pgCmdDemandes as $pgCmdDemande){
             //$pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($pgCmdDemande->getPrestataire(), $pgCmdDemande, $station, $pgProgLotPeriodeAn->getPeriode());
             $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByDemandeStationPeriode($pgCmdDemande, $station, $pgProgLotPeriodeAn->getPeriode());
             asort($pgCmdPrelevs);
@@ -278,6 +284,7 @@ class SaisieDonneesController extends Controller {
                     }
                 }
             }
+        }
         }
         fclose($fichier_csv);
 
@@ -482,7 +489,7 @@ class SaisieDonneesController extends Controller {
             }
         }
 
-
+//
 //        \Symfony\Component\VarDumper\VarDumper::dump($tabStations);
 //        return new Response('');
 
