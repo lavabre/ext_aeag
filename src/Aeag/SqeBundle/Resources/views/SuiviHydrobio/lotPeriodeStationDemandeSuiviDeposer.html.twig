@@ -44,6 +44,18 @@
                     $('#idImportSupprimer').hide();
                     $('#idImportMessage').hide();
                     $('#idImportRapport').hide();
+                    
+                   $('#idAnnuler{{ suiviPrel.id }}').on('click', function (e) {
+                        e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                        if ($("#file").val() == '' ){
+                                $('#maj-{{ suiviPrel.id }}').modal('hide');
+                        }else{
+                                var url1 = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_stations",{"periodeAnId": "par1"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                url1 = url1.replace("par1", {{ periodeAnId }});
+                                url1 = url1.replace("amp;", "");
+                                window.location.replace(url1);
+                            };
+                    });
              
                     $('#idDeposer').on('click', function (e) {
                          e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire

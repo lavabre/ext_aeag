@@ -846,7 +846,7 @@ class SuiviHydrobioController extends Controller {
         $tabRapport[$nbRapport] = "Nombre de fichiers incorrects : " . $nbIncorrect;
         $nbRapport++;
         $tabRapport[$nbRapport] = "</br><h5><div class='text-center'>Voir le rapport d'integration </div></h5>";
-        if ($nbIncorrect == 0 or $valid) {
+        if ($nbIncorrect == 0 and $valid) {
             $this->rmAllDir($pathBase);
         }
 
@@ -2011,11 +2011,6 @@ class SuiviHydrobioController extends Controller {
 
 // Récupération des valeurs du fichier
 
-        $name = $_FILES['file']['name'];
-        $tmpName = $_FILES['file']['tmp_name'];
-        $error = $_FILES['file']['error'];
-        $size = $_FILES['file']['size'];
-        $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
         $response = null;
         $tabMessage = array();
         $nbMessages = 0;
@@ -2023,100 +2018,117 @@ class SuiviHydrobioController extends Controller {
         $nbRapport = 0;
         $nbCorrect = 0;
         $nbIncorrect = 0;
-
-        $dateDepot = new \DateTime();
-        $pathBase = '/base/extranet/Transfert/Sqe/csv-' . $dateDepot->format('Y-m-d-H-i-s');
-        $pathRapport = '/base/extranet/Transfert/Sqe/csv';
-        $ficRapport = $user->getId() . '_' . $dateDepot->format('Y-m-d-H') . '_rapport.csv';
-        if (!is_dir($pathBase)) {
-            if (!mkdir($pathBase, 0777, true)) {
-                $session->getFlashBag()->add('notice-error', 'Le répertoire : ' . $pathBase . ' n\'a pas pu être créé');
-                ;
+        $valid = true;
+        $name = 'inconu';
+        
+         $dateDepot = new \DateTime();
+            $pathBase = '/base/extranet/Transfert/Sqe/csv-' . $dateDepot->format('Y-m-d-H-i-s');
+            $pathRapport = '/base/extranet/Transfert/Sqe/csv';
+            $ficRapport = $user->getId() . '_' . $dateDepot->format('Y-m-d-H') . '_rapport.csv';
+            if (!is_dir($pathBase)) {
+                if (!mkdir($pathBase, 0777, true)) {
+                    $session->getFlashBag()->add('notice-error', 'Le répertoire : ' . $pathBase . ' n\'a pas pu être créé');
+                    ;
+                }
             }
-        }
 
-        switch ($error) {
-            case UPLOAD_ERR_OK:
-                $valid = true;
-                if (!in_array($ext, array('zip'))) {
-                    $valid = false;
-                    $response = 'extension du fichier incorrecte.';
-                    $tabMessage[$nbMessages][0] = 'ko';
-                    $tabMessage[$nbMessages][1] = $response;
-                    $nbMessages++;
-                }
+        if (!file_exists($_FILES['file']['tmp_name'])) {
+            $response = 'Aucun fichier sélectionné.';
+            $tabMessage[$nbMessages][0] = 'ko';
+            $tabMessage[$nbMessages][1] = $response;
+            $nbMessages++;
+            $valid = false;
+        } else {
+
+            $name = $_FILES['file']['name'];
+            $tmpName = $_FILES['file']['tmp_name'];
+            $error = $_FILES['file']['error'];
+            $size = $_FILES['file']['size'];
+            $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+
+            switch ($error) {
+                case UPLOAD_ERR_OK:
+                    $valid = true;
+                    if (!in_array($ext, array('zip'))) {
+                        $valid = false;
+                        $response = 'extension du fichier incorrecte.';
+                        $tabMessage[$nbMessages][0] = 'ko';
+                        $tabMessage[$nbMessages][1] = $response;
+                        $nbMessages++;
+                    }
 //validate file size
-                if ($size > 10485760) {
-                    $valid = false;
-                    $response = 'La taille du fichier (' . $size / 1024 . ') est plus grande que la taille autorisée.';
-                    $tabMessage[$nbMessages][0] = 'ko';
-                    $tabMessage[$nbMessages][1] = $response;
-                    $nbMessages++;
-                }
+                    if ($size > 10485760) {
+                        $valid = false;
+                        $response = 'La taille du fichier (' . $size / 1024 . ') est plus grande que la taille autorisée.';
+                        $tabMessage[$nbMessages][0] = 'ko';
+                        $tabMessage[$nbMessages][1] = $response;
+                        $nbMessages++;
+                    }
 //upload file
-                if ($valid) {
+                    if ($valid) {
 
 // Enregistrement du fichier sur le serveur
-                    move_uploaded_file($_FILES['file']['tmp_name'], $pathBase . '/' . $name);
-                    $response = $name . ' déposé le ' . $dateDepot->format('d/m/Y');
+                        move_uploaded_file($_FILES['file']['tmp_name'], $pathBase . '/' . $name);
+                        $response = $name . ' déposé le ' . $dateDepot->format('d/m/Y');
+                        break;
+                    }
+                case UPLOAD_ERR_INI_SIZE:
+                    $response = 'La taille (' . $size . ' octets' . ') du fichier téléchargé excède la taille de upload_max_filesize dans php.ini.';
+                    $tabMessage[$nbMessages][0] = 'ko';
+                    $tabMessage[$nbMessages][1] = $response;
+                    $nbMessages++;
+                    $valid = false;
                     break;
-                }
-            case UPLOAD_ERR_INI_SIZE:
-                $response = 'La taille (' . $size . ' octets' . ') du fichier téléchargé excède la taille de upload_max_filesize dans php.ini.';
-                $tabMessage[$nbMessages][0] = 'ko';
-                $tabMessage[$nbMessages][1] = $response;
-                $nbMessages++;
-                $valid = false;
-                break;
-            case UPLOAD_ERR_FORM_SIZE:
-                $response = 'La taille (' . $size . ') du fichier téléchargé excède la taille de MAX_FILE_SIZE qui a été spécifié dans le formulaire HTML.';
-                $tabMessage[$nbMessages][0] = 'ko';
-                $tabMessage[$nbMessages][1] = $response;
-                $nbMessages++;
-                $valid = false;
-                break;
-            case UPLOAD_ERR_PARTIAL:
-                $response = 'Le fichier n\'a été que partiellement téléchargé.';
-                $tabMessage[$nbMessages][0] = 'ko';
-                $tabMessage[$nbMessages][1] = $response;
-                $nbMessages++;
-                $valid = false;
-                break;
-            case UPLOAD_ERR_NO_FILE:
-                $response = 'Aucun fichier sélectionné.';
-                $tabMessage[$nbMessages][0] = 'ko';
-                $tabMessage[$nbMessages][1] = $response;
-                $nbMessages++;
-                $valid = false;
-                break;
-            case UPLOAD_ERR_NO_TMP_DIR:
-                $response = 'Manquantes dans un dossier temporaire. Introduit en PHP 4.3.10 et PHP 5.0.3.';
-                $tabMessage[$nbMessages][0] = 'ko';
-                $tabMessage[$nbMessages][1] = $response;
-                $nbMessages++;
-                $valid = false;
-                break;
-            case UPLOAD_ERR_CANT_WRITE:
-                $response = 'Impossible d\'écrire le fichier sur le disque. Introduit en PHP 5.1.0.';
-                $tabMessage[$nbMessages][0] = 'ko';
-                $tabMessage[$nbMessages][1] = $response;
-                $nbMessages++;
-                $valid = false;
-                break;
-            case UPLOAD_ERR_EXTENSION:
-                $response = 'Le téléchargement du fichier arrêté par extension. Introduit en PHP 5.2.0.';
-                $tabMessage[$nbMessages][0] = 'ko';
-                $tabMessage[$nbMessages][1] = $response;
-                $nbMessages++;
-                $valid = false;
-                break;
-            default:
-                $response = 'erreur inconnue';
-                $tabMessage[$nbMessages][0] = 'ko';
-                $tabMessage[$nbMessages][1] = $response;
-                $nbMessages++;
-                $valid = false;
-                break;
+                case UPLOAD_ERR_FORM_SIZE:
+                    $response = 'La taille (' . $size . ') du fichier téléchargé excède la taille de MAX_FILE_SIZE qui a été spécifié dans le formulaire HTML.';
+                    $tabMessage[$nbMessages][0] = 'ko';
+                    $tabMessage[$nbMessages][1] = $response;
+                    $nbMessages++;
+                    $valid = false;
+                    break;
+                case UPLOAD_ERR_PARTIAL:
+                    $response = 'Le fichier n\'a été que partiellement téléchargé.';
+                    $tabMessage[$nbMessages][0] = 'ko';
+                    $tabMessage[$nbMessages][1] = $response;
+                    $nbMessages++;
+                    $valid = false;
+                    break;
+                case UPLOAD_ERR_NO_FILE:
+                    $response = 'Aucun fichier sélectionné.';
+                    $tabMessage[$nbMessages][0] = 'ko';
+                    $tabMessage[$nbMessages][1] = $response;
+                    $nbMessages++;
+                    $valid = false;
+                    break;
+                case UPLOAD_ERR_NO_TMP_DIR:
+                    $response = 'Manquantes dans un dossier temporaire. Introduit en PHP 4.3.10 et PHP 5.0.3.';
+                    $tabMessage[$nbMessages][0] = 'ko';
+                    $tabMessage[$nbMessages][1] = $response;
+                    $nbMessages++;
+                    $valid = false;
+                    break;
+                case UPLOAD_ERR_CANT_WRITE:
+                    $response = 'Impossible d\'écrire le fichier sur le disque. Introduit en PHP 5.1.0.';
+                    $tabMessage[$nbMessages][0] = 'ko';
+                    $tabMessage[$nbMessages][1] = $response;
+                    $nbMessages++;
+                    $valid = false;
+                    break;
+                case UPLOAD_ERR_EXTENSION:
+                    $response = 'Le téléchargement du fichier arrêté par extension. Introduit en PHP 5.2.0.';
+                    $tabMessage[$nbMessages][0] = 'ko';
+                    $tabMessage[$nbMessages][1] = $response;
+                    $nbMessages++;
+                    $valid = false;
+                    break;
+                default:
+                    $response = 'erreur inconnue';
+                    $tabMessage[$nbMessages][0] = 'ko';
+                    $tabMessage[$nbMessages][1] = $response;
+                    $nbMessages++;
+                    $valid = false;
+                    break;
+            }
         }
 
         if ($valid) {
@@ -2382,7 +2394,7 @@ class SuiviHydrobioController extends Controller {
         $tabRapport[$nbRapport] = "Nombre de fichiers incorrects : " . $nbIncorrect;
         $nbRapport++;
         $tabRapport[$nbRapport] = "</br><h5><div class='text-center'>Voir le rapport d'integration </div></h5>";
-        if ($nbIncorrect == 0 or $valid) {
+        if ($nbIncorrect == 0 and $valid) {
             $this->rmAllDir($pathBase);
         }
 
