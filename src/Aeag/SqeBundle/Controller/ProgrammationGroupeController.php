@@ -889,6 +889,7 @@ class ProgrammationGroupeController extends Controller {
         $repoPgProgGrparRefLstParam = $emSqe->getRepository('AeagSqeBundle:PgProgGrparRefLstParam');
         $repoPgRefCorresPresta = $emSqe->getRepository('AeagSqeBundle:PgRefCorresPresta');
         $repoPgProgGrparObligSupport = $emSqe->getRepository('AeagSqeBundle:PgProgGrparObligSupport');
+        $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
 
         //recupération des parametres
         $request = $this->container->get('request');
@@ -1019,6 +1020,13 @@ class ProgrammationGroupeController extends Controller {
                             $pgProgLotGrparAn->setPrestaDft($preleveur);
                         }
                         $emSqe->persist($pgProgLotGrparAn);
+                        // corerction APPLI-6503
+                        if ($pgProgLotGrparAn->getValide() == 'N') {
+                            $pgProgPhases = $repoPgProgPhases->getPgProgPhasesByCodePhase('P10');
+                            $pgProgLotAn->setPhase($pgProgPhases);
+                        }
+                        $emSqe->persist($pgProgLotAn);
+                        // fin correction APPLI-6503
                         $emSqe->flush();
                         $session->getFlashBag()->add('notice-success', 'Le groupe  : ' . $pgProgLotGrparAn->getGrparRef()->getLibelleGrp() . ' a été ajouté à la programmation : ' . $pgProgLotGrparAn->getLotan()->getAnneeProg() . ' version :  ' . $pgProgLotGrparAn->getLotan()->getVersion() . ' du lot : ' . $pgProgLotGrparAn->getLotan()->getLot()->getNomLot() . ' !');
                         $support = $pgProgLotGrparAn->getGrparRef()->getSupport();
