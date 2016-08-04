@@ -227,6 +227,10 @@ class PgCmdSuiviPrelRepository extends EntityRepository {
     public function getSuiviPrelPByDays($days) {
         $query = "select suivi2";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdSuiviPrel suivi2";
+        $query .= " join Aeag\SqeBundle\Entity\PgCmdPrelev p2 with suivi2.prelev = p2.id ";
+        $query .= " join Aeag\SqeBundle\Entity\PgCmdDemande dmd with p2.demande = dmd.id ";
+        $query .= " join Aeag\SqeBundle\Entity\PgProgLotAn lotan with dmd.lotan = lotan.id";
+        $query .= " join Aeag\SqeBundle\Entity\PgProgLot lot with lotan.lot = lot.id";
         $query .= " where suivi2 IN (";
         $query .= " select max(suivi)";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdSuiviPrel suivi";
@@ -234,26 +238,100 @@ class PgCmdSuiviPrelRepository extends EntityRepository {
         $query .= " group by p.id)";
         $query .= " and suivi2.statutPrel = 'P'";
         $query .= " and DATE_ADD(suivi2.datePrel, ".$days.", 'day') < CURRENT_TIMESTAMP()";
+        $query .= " order by lot.id";
         
         $qb = $this->_em->createQuery($query);
         
         return $qb->getResult();
-        
     }
     
-    public function getSuiviPrelFWithoutRpsByDays($days) {
+    public function getSuiviPrelPByDaysAndLot($days, $lot) {
         $query = "select suivi2";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdSuiviPrel suivi2";
         $query .= " join Aeag\SqeBundle\Entity\PgCmdPrelev p2 with suivi2.prelev = p2.id ";
         $query .= " join Aeag\SqeBundle\Entity\PgCmdDemande dmd with p2.demande = dmd.id ";
-        $query .= " left join Aeag\SqeBundle\Entity\PgCmdFichiersRps rps with dmd.id = rps.demande where rps.demande is null";
+        $query .= " join Aeag\SqeBundle\Entity\PgProgLotAn lotan with dmd.lotan = lotan.id";
+        $query .= " join Aeag\SqeBundle\Entity\PgProgLot lot with lotan.lot = lot.id";
         $query .= " where suivi2 IN (";
+        $query .= " select max(suivi)";
+        $query .= " from Aeag\SqeBundle\Entity\PgCmdSuiviPrel suivi";
+        $query .= " join Aeag\SqeBundle\Entity\PgCmdPrelev p with suivi.prelev = p.id ";
+        $query .= " group by p.id)";
+        $query .= " and suivi2.statutPrel = 'P'";
+        $query .= " and DATE_ADD(suivi2.datePrel, ".$days.", 'day') < CURRENT_TIMESTAMP()";
+        $query .= " and lot = :lot";
+        $query .= " order by lot.id";
+        
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('lot', $lot);
+        
+        return $qb->getResult();
+    }
+    
+    public function getLotPByDays($days) {
+        $query = "select lot";
+        $query .= " from Aeag\SqeBundle\Entity\PgCmdSuiviPrel suivi2";
+        $query .= " join Aeag\SqeBundle\Entity\PgCmdPrelev p2 with suivi2.prelev = p2.id ";
+        $query .= " join Aeag\SqeBundle\Entity\PgCmdDemande dmd with p2.demande = dmd.id ";
+        $query .= " join Aeag\SqeBundle\Entity\PgProgLotAn lotan with dmd.lotan = lotan.id";
+        $query .= " join Aeag\SqeBundle\Entity\PgProgLot lot with lotan.lot = lot.id";
+        $query .= " where suivi2 IN (";
+        $query .= " select max(suivi)";
+        $query .= " from Aeag\SqeBundle\Entity\PgCmdSuiviPrel suivi";
+        $query .= " join Aeag\SqeBundle\Entity\PgCmdPrelev p with suivi.prelev = p.id ";
+        $query .= " group by p.id)";
+        $query .= " and suivi2.statutPrel = 'P'";
+        $query .= " and DATE_ADD(suivi2.datePrel, ".$days.", 'day') < CURRENT_TIMESTAMP()";
+        $query .= " group by lot";
+        $query .= " order by lot.id";
+        
+        $qb = $this->_em->createQuery($query);
+        
+        return $qb->getResult();
+    }
+    
+    public function getSuiviPrelFWithoutRpsByDaysAndLot($days, $lot) {
+        $query = "select suivi2";
+        $query .= " from Aeag\SqeBundle\Entity\PgCmdSuiviPrel suivi2";
+        $query .= " join Aeag\SqeBundle\Entity\PgCmdPrelev p2 with suivi2.prelev = p2.id ";
+        $query .= " join Aeag\SqeBundle\Entity\PgCmdDemande dmd with p2.demande = dmd.id ";
+        $query .= " join Aeag\SqeBundle\Entity\PgProgLotAn lotan with dmd.lotan = lotan.id";
+        $query .= " join Aeag\SqeBundle\Entity\PgProgLot lot with lotan.lot = lot.id";
+        $query .= " left join Aeag\SqeBundle\Entity\PgCmdFichiersRps rps with dmd.id = rps.demande where rps.demande is null";
+        $query .= " and suivi2 IN (";
         $query .= " select max(suivi)";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdSuiviPrel suivi";
         $query .= " join Aeag\SqeBundle\Entity\PgCmdPrelev p with suivi.prelev = p.id ";
         $query .= " group by p.id)";
         $query .= " and suivi2.statutPrel = 'F'";
         $query .= " and DATE_ADD(suivi2.datePrel, ".$days.", 'day') < CURRENT_TIMESTAMP()";
+        $query .= " and lot = :lot";
+        $query .= " order by lot.id";
+        
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('lot', $lot);
+        
+        return $qb->getResult();
+        
+    }
+    
+    public function getLotFWithoutRpsByDays($days) {
+        $query = "select lot";
+        $query .= " from Aeag\SqeBundle\Entity\PgCmdSuiviPrel suivi2";
+        $query .= " join Aeag\SqeBundle\Entity\PgCmdPrelev p2 with suivi2.prelev = p2.id ";
+        $query .= " join Aeag\SqeBundle\Entity\PgCmdDemande dmd with p2.demande = dmd.id ";
+        $query .= " join Aeag\SqeBundle\Entity\PgProgLotAn lotan with dmd.lotan = lotan.id";
+        $query .= " join Aeag\SqeBundle\Entity\PgProgLot lot with lotan.lot = lot.id";
+        $query .= " left join Aeag\SqeBundle\Entity\PgCmdFichiersRps rps with dmd.id = rps.demande where rps.demande is null";
+        $query .= " and suivi2 IN (";
+        $query .= " select max(suivi)";
+        $query .= " from Aeag\SqeBundle\Entity\PgCmdSuiviPrel suivi";
+        $query .= " join Aeag\SqeBundle\Entity\PgCmdPrelev p with suivi.prelev = p.id ";
+        $query .= " group by p.id)";
+        $query .= " and suivi2.statutPrel = 'F'";
+        $query .= " and DATE_ADD(suivi2.datePrel, ".$days.", 'day') < CURRENT_TIMESTAMP()";
+        $query .= " group by lot";
+        $query .= " order by lot.id";
         
         $qb = $this->_em->createQuery($query);
         
@@ -273,6 +351,7 @@ class PgCmdSuiviPrelRepository extends EntityRepository {
         $query .= " join Aeag\SqeBundle\Entity\PgCmdPrelev p with suivi.prelev = p.id ";
         $query .= " group by p.id)";
         $query .= " and suivi2.statutPrel = 'F'";
+        $query .= " and (suivi2.avis = 'F' or suivi2.avis IS NULL)";
         $query .= " and DATE_ADD(suivi2.datePrel, ".$days.", 'day') < CURRENT_TIMESTAMP()";
         
         $qb = $this->_em->createQuery($query);
