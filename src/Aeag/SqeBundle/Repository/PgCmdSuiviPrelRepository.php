@@ -249,6 +249,7 @@ class PgCmdSuiviPrelRepository extends EntityRepository {
         $query = "select suivi2";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdSuiviPrel suivi2";
         $query .= " join Aeag\SqeBundle\Entity\PgCmdPrelev p2 with suivi2.prelev = p2.id ";
+        $query .= " join Aeag\SqeBundle\Entity\PgRefStationMesure station with p2.station = station.ouvFoncId ";
         $query .= " join Aeag\SqeBundle\Entity\PgCmdDemande dmd with p2.demande = dmd.id ";
         $query .= " join Aeag\SqeBundle\Entity\PgProgLotAn lotan with dmd.lotan = lotan.id";
         $query .= " join Aeag\SqeBundle\Entity\PgProgLot lot with lotan.lot = lot.id";
@@ -260,7 +261,7 @@ class PgCmdSuiviPrelRepository extends EntityRepository {
         $query .= " and suivi2.statutPrel = 'P'";
         $query .= " and DATE_ADD(suivi2.datePrel, ".$days.", 'day') < CURRENT_TIMESTAMP()";
         $query .= " and lot = :lot";
-        $query .= " order by lot.id";
+        $query .= " order by lot.id, station.code";
         
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('lot', $lot);
@@ -294,6 +295,7 @@ class PgCmdSuiviPrelRepository extends EntityRepository {
         $query = "select suivi2";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdSuiviPrel suivi2";
         $query .= " join Aeag\SqeBundle\Entity\PgCmdPrelev p2 with suivi2.prelev = p2.id ";
+        $query .= " join Aeag\SqeBundle\Entity\PgRefStationMesure station with p2.station = station.ouvFoncId ";
         $query .= " join Aeag\SqeBundle\Entity\PgCmdDemande dmd with p2.demande = dmd.id ";
         $query .= " join Aeag\SqeBundle\Entity\PgProgLotAn lotan with dmd.lotan = lotan.id";
         $query .= " join Aeag\SqeBundle\Entity\PgProgLot lot with lotan.lot = lot.id";
@@ -306,7 +308,7 @@ class PgCmdSuiviPrelRepository extends EntityRepository {
         $query .= " and suivi2.statutPrel = 'F'";
         $query .= " and DATE_ADD(suivi2.datePrel, ".$days.", 'day') < CURRENT_TIMESTAMP()";
         $query .= " and lot = :lot";
-        $query .= " order by lot.id";
+        $query .= " order by lot.id, station.code";
         
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('lot', $lot);

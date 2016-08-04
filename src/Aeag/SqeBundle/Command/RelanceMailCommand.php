@@ -20,7 +20,7 @@ class RelanceMailCommand extends AeagCommand {
         parent::execute($input, $output);
 
         $date = new \DateTime();
-        $this->output->writeln($date->format('d/m/Y H:i:s') . '- Relance mail : Début');
+        $this->output->writeln($date->format('d/m/Y H:i:s') . ' - Relance mail : Début');
 
         // ANALYSE
         // Envoi des mails a J-7
@@ -35,19 +35,19 @@ class RelanceMailCommand extends AeagCommand {
         $this->sendEmailHbF();
         
         // Mise a jour auto
-        $this->updateHbP();
+        //$this->updateHbP();
         
-        $this->updateHbF();
+        //$this->updateHbF();
 
         $date = new \DateTime();
-        $this->output->writeln($date->format('d/m/Y H:i:s') . '- Relance mail : Fin');
+        $this->output->writeln($date->format('d/m/Y H:i:s') . ' - Relance mail : Fin');
     }
     
     protected function sendEmailJ7() {
         $pgCmdDemandes = $this->repoPgCmdDemande->getPgCmdDemandeForRelance7JAvt();
         $this->output->writeln(count($pgCmdDemandes));
         $date = new \DateTime();
-        $this->output->writeln($date->format('d/m/Y H:i:s') .'Début sendEmailJ7');
+        $this->output->writeln($date->format('d/m/Y H:i:s') .' - Début relance analyses (code_milieu like ‘%PC’) à J-7');
         foreach ($pgCmdDemandes as $pgCmdDemande) {
             $this->output->writeln($pgCmdDemande->getPeriode()->getDateDeb());
             $destinataires = array();
@@ -62,14 +62,14 @@ class RelanceMailCommand extends AeagCommand {
             }
         }
         $date = new \DateTime();
-        $this->output->writeln($date->format('d/m/Y H:i:s') .'Fin sendEmailJ7');
+        $this->output->writeln($date->format('d/m/Y H:i:s') .' - Fin relance analyses (code_milieu like ‘%PC’) à J-7');
     }
     
     protected function sendEmailJ1() {
         $pgCmdDemandes = $this->repoPgCmdDemande->getPgCmdDemandeForRelance1JAprs();
 
         $date = new \DateTime();
-        $this->output->writeln($date->format('d/m/Y H:i:s') .'Début sendEmailJ1');
+        $this->output->writeln($date->format('d/m/Y H:i:s') .' - Début relance analyses (code_milieu like ‘%PC’) à J+1');
         foreach ($pgCmdDemandes as $pgCmdDemande) {
             $this->output->writeln($pgCmdDemande->getPeriode()->getDateDeb());
             $destinataires = array();
@@ -84,13 +84,13 @@ class RelanceMailCommand extends AeagCommand {
             }
         }
         $date = new \DateTime();
-        $this->output->writeln($date->format('d/m/Y H:i:s') .'Fin sendEmailJ1');
+        $this->output->writeln($date->format('d/m/Y H:i:s') .' - Fin relance analyses (code_milieu like ‘%PC’) à J+1');
     }
     
     protected function sendEmailHbP() {
         $pgProgLots =$this->repoPgCmdSuiviPrel->getLotPByDays(15);
         $date = new \DateTime();
-        $this->output->writeln($date->format('d/m/Y H:i:s') .'Début sendEmailHbP');
+        $this->output->writeln($date->format('d/m/Y H:i:s') .' - Début relance suivis hydrobio (code_milieu like ‘%HB’) P');
         foreach($pgProgLots as $pgProgLot) {
             $pgCmdSuiviPrels = $this->repoPgCmdSuiviPrel->getSuiviPrelPByDaysAndLot(15, $pgProgLot);
             
@@ -100,7 +100,7 @@ class RelanceMailCommand extends AeagCommand {
             $listeStationLibs = '<ul>';
             $listeStationCodes = array();
             foreach($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
-                $listeStationLibs .= '<li>'.$pgCmdSuiviPrel->getPrelev()->getStation()->getLibelle().'</li>';
+                $listeStationLibs .= '<li>'.$pgCmdSuiviPrel->getPrelev()->getStation()->getCode().' - '.$pgCmdSuiviPrel->getPrelev()->getStation()->getLibelle().'</li>';
                 $listeStationCodes[] = $pgCmdSuiviPrel->getPrelev()->getStation()->getCode();
             }
             $listeStationLibs .= '</ul>';
@@ -111,19 +111,19 @@ class RelanceMailCommand extends AeagCommand {
             $txtMessage .= "<br/>Vous n'avez pas renseigné le prélèvement Effectué de la station ni déposé les fichiers associés.<br/>";
             foreach ($destinataires as $destinataire) {
                 $date = new \DateTime();
-                $this->output->writeln($date->format('d/m/Y H:i:s') .'Send Mail Suivi - Lot '.$pgProgLot->getId().' - Stations '.implode(', ', $listeStationCodes));
+                $this->output->writeln($date->format('d/m/Y H:i:s') .' - Send Mail Suivi HB P - Lot '.$pgProgLot->getId().' - Stations '.implode(', ', $listeStationCodes).'- Utilisateur '.$destinataire->getLogin());
                 $this->sendEmail($destinataire, $txtMessage, $objetMessage);
             }
         }
         $date = new \DateTime();
-        $this->output->writeln($date->format('d/m/Y H:i:s') .'Fin sendEmailHbP');
+        $this->output->writeln($date->format('d/m/Y H:i:s') .' - Fin relance suivis hydrobio (code_milieu like ‘%HB’) P');
     }
         
     protected function sendEmailHbF() {
         $pgProgLots = $this->repoPgCmdSuiviPrel->getLotFWithoutRpsByDays(15);
         
         $date = new \DateTime();
-        $this->output->writeln($date->format('d/m/Y H:i:s') .'Début sendEmailHbF');
+        $this->output->writeln($date->format('d/m/Y H:i:s') .' - Début relance suivis hydrobio (code_milieu like ‘%HB’) F');
         foreach($pgProgLots as $pgProgLot) {
             $pgCmdSuiviPrels = $this->repoPgCmdSuiviPrel->getSuiviPrelFWithoutRpsByDaysAndLot(15, $pgProgLot);
             
@@ -146,12 +146,12 @@ class RelanceMailCommand extends AeagCommand {
             $txtMessage .= "Vous n'avez pas déposé les fichiers associés pour ces stations.<br/>";
             foreach ($destinataires as $destinataire) {
                 $date = new \DateTime();
-                $this->output->writeln($date->format('d/m/Y H:i:s') .'Send Mail Suivi - Lot '.$pgProgLot->getId().' - Stations '.implode(', ', $listeStationCodes));
+                $this->output->writeln($date->format('d/m/Y H:i:s') .' - Send Mail Suivi HB F - Lot '.$pgProgLot->getId().' - Stations '.implode(', ', $listeStationCodes).' - Utilisateur '.$destinataire->getLogin());
                 $this->sendEmail($destinataire, $txtMessage, $objetMessage);
             }
         }
         $date = new \DateTime();
-        $this->output->writeln($date->format('d/m/Y H:i:s') .'Fin sendEmailHbF');
+        $this->output->writeln($date->format('d/m/Y H:i:s') .' - Fin relance suivis hydrobio (code_milieu like ‘%HB’) F');
     }
     
     protected function sendEmail($destinataire, $txtMessage, $objetMessage) {
@@ -161,11 +161,11 @@ class RelanceMailCommand extends AeagCommand {
                 $this->_addLog('warning', null, null, "Erreur lors de l\'envoi de mail dans le process de verification des RAIs", null, $destinataire);
             } else {
                 $date = new \DateTime();
-                $this->output->writeln($date->format('d/m/Y H:i:s') . '- Relance Mail : Un email a été envoyé à ' . $destinataire->getMail());
+                $this->output->writeln($date->format('d/m/Y H:i:s') . ' - Relance Mail : Un email a été envoyé à ' . $destinataire->getMail());
             }
         } else {
             $date = new \DateTime();
-            $this->output->writeln($date->format('d/m/Y H:i:s') . '- Relance Mail : Le destinataire est null');
+            $this->output->writeln($date->format('d/m/Y H:i:s') . ' - Relance Mail : Le destinataire est null');
         }
     }
 
@@ -173,7 +173,7 @@ class RelanceMailCommand extends AeagCommand {
         $pgCmdSuiviPrels = $this->repoPgCmdSuiviPrel->getSuiviPrelPByDays(15);
         foreach($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
             $date = new \DateTime();
-            $this->output->writeln($date->format('d/m/Y H:i:s') .'- '. $pgCmdSuiviPrel->getId().' - HBP - Mise à jour validation a A');
+            $this->output->writeln($date->format('d/m/Y H:i:s') .' - '. $pgCmdSuiviPrel->getId().' - HBP - Mise à jour validation a A');
             $pgCmdSuiviPrel->setValidation('A');
             $pgCmdSuiviPrel->setValidAuto('O');
             $this->emSqe->persist($pgCmdSuiviPrel);
@@ -185,7 +185,7 @@ class RelanceMailCommand extends AeagCommand {
         $pgCmdSuiviPrels = $this->repoPgCmdSuiviPrel->getSuiviPrelFWithRpsByDays(21);
         foreach($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
             $date = new \DateTime();
-            $this->output->writeln($date->format('d/m/Y H:i:s') .'- '. $pgCmdSuiviPrel->getId().' - HBF - Mise à jour validation a A');
+            $this->output->writeln($date->format('d/m/Y H:i:s') .' - '. $pgCmdSuiviPrel->getId().' - HBF - Mise à jour validation a A');
             $pgCmdSuiviPrel->setValidation('A');
             $pgCmdSuiviPrel->setValidAuto('O');
             $this->emSqe->persist($pgCmdSuiviPrel);
