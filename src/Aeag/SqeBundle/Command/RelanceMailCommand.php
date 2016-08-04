@@ -45,18 +45,21 @@ class RelanceMailCommand extends AeagCommand {
     
     protected function sendEmailJ7() {
         $pgCmdDemandes = $this->repoPgCmdDemande->getPgCmdDemandeForRelance7JAvt();
-        $this->output->writeln(count($pgCmdDemandes));
         $date = new \DateTime();
         $this->output->writeln($date->format('d/m/Y H:i:s') .' - Début relance analyses (code_milieu like ‘%PC’) à J-7');
         foreach ($pgCmdDemandes as $pgCmdDemande) {
             $this->output->writeln($pgCmdDemande->getPeriode()->getDateDeb());
+            $dateLimite = $pgCmdDemande->getPeriode()->getDateDeb();
+            $interval = $pgCmdDemande->getLotan()->getLot()->getDelaiLot() + $pgCmdDemande->getLotan()->getLot()->getDelaiPrel();
+            $dateLimite->add(new \DateInterval('P'.$interval.'D'));
             $destinataires = array();
             $destinataires[] = $this->repoPgProgWebUsers->findOneByPrestataire($pgCmdDemande->getLotan()->getLot()->getTitulaire());
 
             $objetMessage = "Relance SQE - RAI : Dépot de fichier en attente " . $pgCmdDemande->getLotan()->getLot()->getNomLot();
             $txtMessage = "Lot : " . $pgCmdDemande->getLotan()->getLot()->getNomLot() . "<br/>";
             $txtMessage .= "Période : " . $pgCmdDemande->getPeriode()->getLabelPeriode() . "<br/>";
-            $txtMessage .= "Vous êtes censé déposer les résultats de la demande " . $pgCmdDemande->getId() . " du lot " . $pgCmdDemande->getLotan()->getLot()->getNomLot() . " avant <br/>";
+            $txtMessage .= "Vous êtes censé déposer les résultats de la demande " . $pgCmdDemande->getId() . " du lot " . $pgCmdDemande->getLotan()->getLot()->getNomLot() . " avant le ".$dateLimite->format('d-m-Y')."<br/>";
+            $txtMessage .= "Il vous reste 7 jours pour déposer vos résultats, cf. Article 6.2 du CCTP. <br/>";
             foreach ($destinataires as $destinataire) {
                 if (!is_null($destinataire)) {
                     $this->sendEmail($destinataire, $txtMessage, $objetMessage);
@@ -80,7 +83,7 @@ class RelanceMailCommand extends AeagCommand {
             $objetMessage = "Relance SQE - RAI : Dépot de fichier non effectué " . $pgCmdDemande->getLotan()->getLot()->getNomLot();
             $txtMessage = "Lot : " . $pgCmdDemande->getLotan()->getLot()->getNomLot() . "<br/>";
             $txtMessage .= "Période : " . $pgCmdDemande->getPeriode()->getLabelPeriode() . "<br/>";
-            $txtMessage .= "Les résultats à la demande ".$pgCmdDemande->getId()." du lot ".$pgCmdDemande->getLotan()->getLot()->getNomLot()." n'ont pas été déposé. Vous encourez des pénalités. <br/>";
+            $txtMessage .= "Les résultats à la demande ".$pgCmdDemande->getId()." du lot ".$pgCmdDemande->getLotan()->getLot()->getNomLot()." n'ont pas été déposé. Vous encourez des pénalités. (Retard dans la remise des résultats, pénalités encourues cf. CCAP 17.1) <br/>";
             foreach ($destinataires as $destinataire) {
                 if (!is_null($destinataire)) {
                     $this->sendEmail($destinataire, $txtMessage, $objetMessage);
@@ -112,7 +115,7 @@ class RelanceMailCommand extends AeagCommand {
             $objetMessage = "Relance SQE : Lot ".$pgProgLot->getNomLot()." - Stations non réalisée à ce jour";
             $txtMessage = "Lot : " . $pgProgLot->getNomLot() . "<br/>";
             $txtMessage .= "Stations : <br/>" . $listeStationLibs . "<br/>";
-            $txtMessage .= "<br/>Vous n'avez pas renseigné le prélèvement Effectué de la station ni déposé les fichiers associés.<br/>";
+            $txtMessage .= "<br/>Vous n'avez pas renseigné le prélèvement de la station comme \"Effectué\" ni déposé les fichiers associés.<br/>";
             foreach ($destinataires as $destinataire) {
                 if (!is_null($destinataire)) {
                     $date = new \DateTime();
@@ -149,7 +152,7 @@ class RelanceMailCommand extends AeagCommand {
             $objetMessage = "Relance SQE : Lot ".$pgProgLot->getNomLot()." - Absence de documents de terrain ";
             $txtMessage = "Lot : " . $pgProgLot->getNomLot() . "<br/>";
             $txtMessage .= "Stations : </br>" . $listeStationLibs . "<br/>";
-            $txtMessage .= "Vous n'avez pas déposé les fichiers associés pour ces stations.<br/>";
+            $txtMessage .= "Vous n'avez pas déposé les fichiers associés pour ces stations, le CCTP cf. article 4.1.4 n’est pas respecté à ce jour. <br/>";
             foreach ($destinataires as $destinataire) {
                 if (!is_null($destinataire)) {
                     $date = new \DateTime();
