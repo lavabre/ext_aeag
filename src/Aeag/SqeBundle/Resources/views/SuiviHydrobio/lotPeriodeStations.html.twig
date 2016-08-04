@@ -78,7 +78,7 @@
                                                 {# <a id="idAnnuler" class="btn btn-danger"  href="#" title="Annuler">
                                                     <i class="fa fa-undo"> Annuler</i> 
                                                  </a>#}
-                                                <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
+                                                <button id="idAnnuler{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}" type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
                                             </div>
                                         </div>        
                                     </div>
@@ -182,8 +182,8 @@
     {% if is_granted('ROLE_PRESTASQE') %}
         <div class="row">
             <div class="col-md-offset-3 col-md-7">
-                <a id="idImporterFichier" class="btn btn-primary"  title="Intégrer plusieurs fichiers de suivi">
-                    <i class="fa fa-download"> Intégrer plusieurs fichiers de terrain</i> 
+                <a id="idImporterFichier" class="btn btn-primary"  title="Intégrer fichier zip (terrain + photos) ">
+                    <i class="fa fa-download"> Intégrer fichier zip (terrain + photos) </i> 
                 </a>
                 ou
                 <a id="idIntegrerFichier" class="btn btn-primary"  title="Intégrer un fichier de suivi">

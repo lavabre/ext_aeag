@@ -233,6 +233,7 @@
                     <th>Version</th>
                     <th>marché</th>
                     <th>Zone géographique</th>
+                    <th>Milieu</th>
                     <th>Type de milieu</th>
                     <th>Mandataire</th>
                     <th>Etat</th>
@@ -349,6 +350,18 @@
                                         <td>{{ entity.lotAn.version }}</td>
                                         <td>{{ entity.lot.marche.nomMarche }}</td>
                                         <td>{{ entity.lot.zgeoRef.nomZoneGeo }}</td>
+                                        <td>{% if entity.typeMilieu | length %}
+                                                    {% if  entity.typeMilieu.categorieMilieu == "R" %}
+                                                         Rivières
+                                                    {% elseif entity.typeMilieu.categorieMilieu == "G" %}
+                                                         Eaux souterraines
+                                                    {% elseif entity.typeMilieu.categorieMilieu == "L" %}
+                                                          Plans d'eau
+                                                    {% else %}
+                                                          Autres
+                                                   {% endif %}
+                                              {% endif %}
+                                        </td>
                                         <td>{% if entity.typeMilieu | length %}
                                             {{ entity.typeMilieu.nomMilieu }}
                                             {% endif %}

@@ -1,149 +1,152 @@
 <div class="modal-header">
-     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-     <h4 class="modal-title" id="ModalLabel_Valider">
-         Liste des stations disponibles pour la duplication de la programmation de la station {{ stationAn.station.code}}&nbsp;&nbsp;{{ stationAn.station.libelle}}
-     </h4>
- </div>
- <div class="modal-body-sqe">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title" id="ModalLabel_Valider">
+        Liste des stations disponibles pour la duplication de la programmation de la station {{ stationAn.station.code}}&nbsp;&nbsp;{{ stationAn.station.libelle}}
+    </h4>
+</div>
+<div class="modal-body-sqe">
     <div class="row">
         <div class="col-md-offset-1 col-md10 text-center" id="idNbCocher">
-          <p class="btn btn-primary"></p>
+            <p class="btn btn-primary"></p>
         </div>
-   </div>
+    </div>
     <div class="row">
-     <div class="col-md-offset-1 col-md-10">
-         <div class="small">
-             <table class="table table-bordered table-condensed table-advance" id="idTableDupliquerStation">
-                 <thead>
-                     <tr>
-                         <th width="1%" align="center">
-                           <a class="btn btn-success" id="idCocherToutesLesStationsDisponibles_{{ stationAn.id }}"  href="#"><i class="fa fa-check fa-lg"></i></a>
-                         </th>
-                         <th>Station</th>
-                     </tr>
-                 </thead>
-                 <tbody id="idListeStationsSelectionnes">
-                     {% for stationAnAutre in stationAns %}
-                         {% if stationAnAutre.station.id != stationAn.id %}
-                             {% set nbGroupes = 0 %}
-                             {% for periode in stationAnAutre.periodes %}
-                                 {% if periode.nbGroupe > 0 %}
-                                     {% set nbGroupes = nbGroupes + periode.nbGroupe %}
-                                 {% endif %}
-                             {% endfor %}
-                             {% if  nbGroupes > 0 %}
-                                 <tr id="trDupliquerStation_{{ stationAnAutre.station.id }}" class="danger">
-                               {% else %}
-                                  <tr id="trDupliquerStation_{{ stationAnAutre.station.id }}">
-                               {% endif %}
-                                 <td align="center">
-                                     <div class="checbox">
-                                         <input type="checkbox" id="checkDupliquerStation_{{ stationAnAutre.station.id }}" name="checkDupliquerStation[]" value="{{ stationAnAutre.station.id }}" >
-                                         <input type="hidden" id="nbGroupes_{{ stationAnAutre.station.id }}"  value="{{ nbGroupes }}" >
-                                     </div>
-                                 </td> 
-                                 <td nowrap>{{ stationAnAutre.station.station.code}}&nbsp;&nbsp;{{ stationAnAutre.station.station.libelle}}</td>
-                             </tr>
-                         {% endif %}
-                     {% endfor %}
-                 </tbody>
-             </table>
-         </div>
-     </div>
- </div>
- </div>
- <div class="modal-footer">
-     <button id="idValiderDupliquerStation_{{ stationAn.id }}" type="submit" class="btn btn-success">
-         <i class="fa fa-check"> Valider</i>
-     </button>
-     <button id="idAnnulerDupliquerStation_{{ stationAn.id }}" type="button" class="btn btn-default" data-dismiss="modal">
-         <i class="fa fa-undo"> Annuler</i>
-     </button>
- </div>
+        <div class="col-md-offset-1 col-md-10">
+            <div class="small">
+                <table class="table table-bordered table-condensed table-advance" id="idTableDupliquerStation">
+                    <thead>
+                        <tr>
+                            <th width="1%" align="center">
+                                <a class="btn btn-success" id="idCocherToutesLesStationsDisponibles_{{ stationAn.id }}"  href="#"><i class="fa fa-check fa-lg"></i></a>
+                            </th>
+                            <th>Station</th>
+                            <th>Réseau</th>
+                        </tr>
+                    </thead>
+                    <tbody id="idListeStationsSelectionnes">
+                        {% for stationAnAutre in stationAns %}
+                            {% if stationAnAutre.station.id != stationAn.id %}
+                                {% set nbGroupes = 0 %}
+                                {% for periode in stationAnAutre.periodes %}
+                                    {% if periode.nbGroupe > 0 %}
+                                        {% set nbGroupes = nbGroupes + periode.nbGroupe %}
+                                    {% endif %}
+                                {% endfor %}
+                                {% if  nbGroupes > 0 %}
+                                    <tr id="trDupliquerStation_{{ stationAnAutre.station.id }}" class="danger">
+                                    {% else %}
+                                    <tr id="trDupliquerStation_{{ stationAnAutre.station.id }}">
+                                    {% endif %}
+                                    <td align="center">
+                                        <div class="checbox">
+                                            <input type="checkbox" id="checkDupliquerStation_{{ stationAnAutre.station.id }}" name="checkDupliquerStation[]" value="{{ stationAnAutre.station.id }}" >
+                                            <input type="hidden" id="nbGroupes_{{ stationAnAutre.station.id }}"  value="{{ nbGroupes }}" >
+                                        </div>
+                                    </td> 
+                                    <td nowrap>{{ stationAnAutre.station.station.code}}&nbsp;&nbsp;{{ stationAnAutre.station.station.libelle}}</td>
+                                    <td nowrap>{{ stationAnAutre.reseau.nomRsx }}</td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button id="idValiderDupliquerStation_{{ stationAn.id }}" type="submit" class="btn btn-success">
+        <i class="fa fa-check"> Valider</i>
+    </button>
+    <button id="idAnnulerDupliquerStation_{{ stationAn.id }}" type="button" class="btn btn-default" data-dismiss="modal">
+        <i class="fa fa-undo"> Annuler</i>
+    </button>
+</div>
 
 <script>
-    
-   
-     // Table TableDupliquerStation
+
+
+    // Table TableDupliquerStation
     var table_TableDupliquerStation = $('#idTableDupliquerStation').DataTable(
-                                        {    "ordering": false,
-                                        "scrollCollapse": true,
-                                        "oLanguage": {
-                                                "sSearch": "Filtre",
-                                                "sFirst": "1ere page",
-                                                "sLast": "Dernière page",
-                                                "sNext": "Prochaine page",
-                                                "sPrevious": "Page précédente",
-                                                "EmptyTable": "Pas de données",
-                                                "sInfo": "Nombre d'enregistrements :  _TOTAL_",
-                                                "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
-                                                "sZeroRecords": "Pas d'enregistrement à afficher",
-                                                "sInfoEmpty": "Pas d'enregistrement à afficher",
-                                                "sInfoThousands": " ",
-                                                "sLengthMenu": 'Afficher <select>' +
-                                                    '<option value="10">10</option>' +
-                                                    '<option value="20">20</option>' +
-                                                    '<option value="30">30</option>' +
-                                                    '<option value="40">40</option>' +
-                                                    '<option value="50">50</option>' +
-                                                    '<option value="-1">Tous</option>' +
-                                                    '</select> enregistrements',
-                                                "sPaginationType": "full_numbers"
-                                                }
-                                        }
-                                    );     
-    
+            {"ordering": false,
+                "scrollCollapse": true,
+                "oLanguage": {
+                    "sSearch": "Filtre",
+                    "sFirst": "1ere page",
+                    "sLast": "Dernière page",
+                    "sNext": "Prochaine page",
+                    "sPrevious": "Page précédente",
+                    "EmptyTable": "Pas de données",
+                    "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+                    "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+                    "sZeroRecords": "Pas d'enregistrement à afficher",
+                    "sInfoEmpty": "Pas d'enregistrement à afficher",
+                    "sInfoThousands": " ",
+                    "sLengthMenu": 'Afficher <select>' +
+                            '<option value="10">10</option>' +
+                            '<option value="20">20</option>' +
+                            '<option value="30">30</option>' +
+                            '<option value="40">40</option>' +
+                            '<option value="50">50</option>' +
+                            '<option value="-1">Tous</option>' +
+                            '</select> enregistrements',
+                    "sPaginationType": "full_numbers"
+                }
+            }
+    );
+
+
     {# initialiser la liste des stations disponibles pour dupliquer #}
     {% for stationAnAutre in stationAns %}
         {% if stationAnAutre.station.id != stationAn.id %}
-              $('#checkDupliquerStation_{{ stationAnAutre.station.id }}').prop( "checked", false );
+            $('#checkDupliquerStation_{{ stationAnAutre.station.id }}').prop("checked", false);
         {% endif %}
     {% endfor %}
-    
-   {# {# tout cocher ou tout decocher #}
-       {# var cocherToutesLesStationsDisponibles = false;
-    $(document).on('click','#idCocherToutesLesStationsDisponibles_{{ stationAn.id }}',function(e){
-        var info = table_TableDupliquerStation.page.info();
-        var nbRecords = $('#idTableDupliquerStation_length option:selected').val();
-        var filtre = $('#idTableDupliquerStation_filter input').val();
-           if (filtre != ''){
-                var initval = '';
-                 table_TableDupliquerStation.search(initval).draw();
-             };
-         table_TableDupliquerStation.page.len( -1 ).draw();
-        if (cocherToutesLesStationsDisponibles == true){
-          cocherToutesLesStationsDisponibles = false;
-          $('#idCocherToutesLesStationsDisponibles_{{ stationAn.id }}').removeClass('btn-danger').addClass('btn-success');
-          $('#idCocherToutesLesStationsDisponibles_{{ stationAn.id }} i').removeClass('fa-eraser').addClass('fa-check ');
-           {% for stationAnAutre in stationAns %}
-              $('#checkDupliquerStation_{{ stationAnAutre.station.id }}').prop( "checked", false );
-          {% endfor %}
-        }else{
-          cocherToutesLesStationsDisponibles = true;
-          $('#idCocherToutesLesStationsDisponibles_{{ stationAn.id }}').removeClass('btn-success').addClass('btn-danger');
-          $('#idCocherToutesLesStationsDisponibles_{{ stationAn.id }} i').removeClass("fa-check").addClass('fa-eraser');
-          {% for stationAnAutre in stationAns %}
-               $('#checkDupliquerStation_{{ stationAnAutre.station.id }}').prop( "checked", true );
-               if ($('#nbGroupes_{{ stationAnAutre.station.id }}').val() > 0){
-                   $('#modalConfirmerDupliquerStation_{{ stationAnAutre.station.id }}').modal();
-               };
-          {% endfor %}
-        };
+
+    {# {# tout cocher ou tout decocher #}
+    {# var cocherToutesLesStationsDisponibles = false;
+ $(document).on('click','#idCocherToutesLesStationsDisponibles_{{ stationAn.id }}',function(e){
+     var info = table_TableDupliquerStation.page.info();
+     var nbRecords = $('#idTableDupliquerStation_length option:selected').val();
+     var filtre = $('#idTableDupliquerStation_filter input').val();
         if (filtre != ''){
-            table_TableDupliquerStation.search(filtre).draw();
-        };
-        table_TableDupliquerStation.page.len( nbRecords ).draw();
-   });
-  #}
-    
-      
+             var initval = '';
+              table_TableDupliquerStation.search(initval).draw();
+          };
+      table_TableDupliquerStation.page.len( -1 ).draw();
+     if (cocherToutesLesStationsDisponibles == true){
+       cocherToutesLesStationsDisponibles = false;
+       $('#idCocherToutesLesStationsDisponibles_{{ stationAn.id }}').removeClass('btn-danger').addClass('btn-success');
+       $('#idCocherToutesLesStationsDisponibles_{{ stationAn.id }} i').removeClass('fa-eraser').addClass('fa-check ');
+        {% for stationAnAutre in stationAns %}
+           $('#checkDupliquerStation_{{ stationAnAutre.station.id }}').prop( "checked", false );
+       {% endfor %}
+     }else{
+       cocherToutesLesStationsDisponibles = true;
+       $('#idCocherToutesLesStationsDisponibles_{{ stationAn.id }}').removeClass('btn-success').addClass('btn-danger');
+       $('#idCocherToutesLesStationsDisponibles_{{ stationAn.id }} i').removeClass("fa-check").addClass('fa-eraser');
+       {% for stationAnAutre in stationAns %}
+            $('#checkDupliquerStation_{{ stationAnAutre.station.id }}').prop( "checked", true );
+            if ($('#nbGroupes_{{ stationAnAutre.station.id }}').val() > 0){
+                $('#modalConfirmerDupliquerStation_{{ stationAnAutre.station.id }}').modal();
+            };
+       {% endfor %}
+     };
+     if (filtre != ''){
+         table_TableDupliquerStation.search(filtre).draw();
+     };
+     table_TableDupliquerStation.page.len( nbRecords ).draw();
+});
+#}
+
+
     {# dupliquer la station sur les autres stations séléctionnées #}
 
     {% for stationAnAutre in stationAns %}
-        $(document).on('click', '#checkDupliquerStation_{{ stationAnAutre.station.id }}',function(e){
+        $(document).on('click', '#checkDupliquerStation_{{ stationAnAutre.station.id }}', function (e) {
             nbcocher();
-             if ($('#checkDupliquerStation_{{ stationAnAutre.station.id }}').is(':checked')){
-                 if ($('#nbGroupes_{{ stationAnAutre.station.id }}').val() > 0){
+            if ($('#checkDupliquerStation_{{ stationAnAutre.station.id }}').is(':checked')) {
+                if ($('#nbGroupes_{{ stationAnAutre.station.id }}').val() > 0) {
                     var html = '<div class="modal-header">';
                     html = html + '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>';
                     html = html + '<h4 class="modal-title">Dupliquation de la programmation de la station ' + '{{ stationAn.station.code}}' + ' vers la station ' + '{{ stationAnAutre.station.station.code }}' + '</h4>';
@@ -154,53 +157,57 @@
                     html = html + '<div class="alert alert-danger">Attention : Une fois dupliquée, la programmation des périodes de la station ' + '{{ stationAnAutre.station.station.code }}' + ' sera perdue</div>';
                     html = html + '</div>';
                     html = html + '<div class="modal-footer">';
-                    html = html + '<a  id="idConfirmerDupliquerStation_' + {{ stationAnAutre.station.id }} + '" class="btn btn-success"  href="#" title="Dupliquer">';
+                    html = html + '<a  id="idConfirmerDupliquerStation_' + {{ stationAnAutre.station.id }} +'" class="btn btn-success"  href="#" title="Dupliquer">';
                     html = html + '<i class="fa fa-eraser"> Ecraser</i>';
                     html = html + '</a>';
-                    html = html + '<a  id="idAnnulerDupliquerStation_' + {{ stationAnAutre.station.id }} + '" class="btn btn-defaut"  href="#" title="Annuler">';
+                    html = html + '<a  id="idAnnulerDupliquerStation_' + {{ stationAnAutre.station.id }} +'" class="btn btn-defaut"  href="#" title="Annuler">';
                     html = html + '<i class="fa fa-undo"> Annuler</i>';
                     html = html + '</a>';
-                 
+
                     html = html + '</div>';
                     html = html + '</div>';
                     $('#modalContentConfirmerDupliquerStation').empty().append(html);
                     $('#modalConfirmerDupliquerStation').modal();
-                  };
-                 };
-             });
+                }
+                ;
+            }
+            ;
+        });
 
-         $(document).on('click', '#idAnnulerDupliquerStation_{{ stationAnAutre.station.id }}',function(e){
-             $('#checkDupliquerStation_{{ stationAnAutre.station.id }}').prop( "checked", false );
-             $('#modalConfirmerDupliquerStation').modal('hide');
-         });
+        $(document).on('click', '#idAnnulerDupliquerStation_{{ stationAnAutre.station.id }}', function (e) {
+            $('#checkDupliquerStation_{{ stationAnAutre.station.id }}').prop("checked", false);
+            $('#modalConfirmerDupliquerStation').modal('hide');
+        });
 
-         $(document).on('click', '#idConfirmerDupliquerStation_{{ stationAnAutre.station.id }}',function(e){
-             $('#modalConfirmerDupliquerStation').modal('hide');
-         });
+        $(document).on('click', '#idConfirmerDupliquerStation_{{ stationAnAutre.station.id }}', function (e) {
+            $('#modalConfirmerDupliquerStation').modal('hide');
+        });
 
 
     {% endfor %}
-    
-      /* Nombre de stations cocheées*/
-   var nbcocher = function() {
-     var info = table_TableDupliquerStation.page.info();
-     var nbRecords = $('#idTableDupliquerStation_length option:selected').val();
-     var filtre = $('#idTableDupliquerStation_filter input').val();
-        if (filtre != ''){
-             var initval = '';
-             table_TableDupliquerStation.search(initval).draw();
-      };
-     table_TableDupliquerStation.page.len( -1 ).draw();
-   var n = $( "#idTableDupliquerStation input:checked" ).length;
-   html = "Stations cochées  : <span class='badge'>" + n  + "</span>"; 
-   $("#idNbCocher p").html(html);
-   if (filtre != ''){
-        table_TableDupliquerStation.search(filtre).draw();
-    };
-   table_TableDupliquerStation.page.len( nbRecords ).draw();
-    table_TableDupliquerStation.page(info.page).draw(false);
-  };
-  nbcocher();
-   
-    
+
+        /* Nombre de stations cocheées*/
+        var nbcocher = function () {
+            var info = table_TableDupliquerStation.page.info();
+            var nbRecords = $('#idTableDupliquerStation_length option:selected').val();
+            var filtre = $('#idTableDupliquerStation_filter input').val();
+            if (filtre != '') {
+                var initval = '';
+                table_TableDupliquerStation.search(initval).draw();
+            }
+            ;
+            table_TableDupliquerStation.page.len(-1).draw();
+            var n = $("#idTableDupliquerStation input:checked").length;
+            html = "Stations cochées  : <span class='badge'>" + n + "</span>";
+            $("#idNbCocher p").html(html);
+            if (filtre != '') {
+                table_TableDupliquerStation.search(filtre).draw();
+            }
+            ;
+            table_TableDupliquerStation.page.len(nbRecords).draw();
+            table_TableDupliquerStation.page(info.page).draw(false);
+        };
+        nbcocher();
+
+
 </script>

@@ -27,17 +27,17 @@
                               <thead>
                                   <tr>
                                       <th>Stations</th>
+                                      <th>Réseaux</th>
                                   </tr>
                               </thead>
                               <tbody>
-                                  <tr>
-                                      <td>
-                                       {% for prog in periodeAn.progs %}
-                                                    {{ prog.stationAn.station.code}}&nbsp;&nbsp;{{ prog.stationAn.station.libelle}}</br>
-                                        {% endfor %}
-                                      </td>
-                                  </tr>
-                              </tbody>
+                                        {% for prog in periodeAn.progs %}
+                                           <tr>
+                                                <td>{{ prog.prog.stationAn.station.code}}&nbsp;&nbsp;{{ prog.prog.stationAn.station.libelle}}</td>
+                                                <td nowrap>{{ prog.reseau.nomRsx }}</td>
+                                           </tr>
+                                         {% endfor %}
+                               </tbody>
                           </table>
                       </div>
                   </div>
@@ -71,19 +71,17 @@
                               <thead>
                                   <tr>
                                       <th>Stations</th>
+                                      <th>Réseaux</th>
                                   </tr>
                               </thead>
                               <tbody>
-                                  <tr>
-                                      <td>
-                                      {% for prog in periodeAn.progCompls %}
-                                            {% if periodeAn.groupe.grparRef.codeGrp == prog.grparAn.grparRef.codeGrp %}
-                                                   {{ prog.stationAn.station.code}}&nbsp;&nbsp;{{ prog.stationAn.station.libelle}}</br>
-                                            {% endif %}
-                                        {% endfor %}
-                                      </td>
-                                  </tr>
-                              </tbody>
+                                   {% for prog in periodeAn.progCompls %}
+                                           <tr>
+                                                <td>{{ prog.prog.stationAn.station.code}}&nbsp;&nbsp;{{ prog.prog.stationAn.station.libelle}}</td>
+                                                <td nowrap>{{ prog.reseau.nomRsx }}</td>
+                                           </tr>
+                                         {% endfor %}
+                               </tbody>
                           </table>
                       </div>
                   </div>

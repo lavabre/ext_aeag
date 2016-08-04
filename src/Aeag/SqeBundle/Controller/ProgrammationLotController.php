@@ -11,6 +11,7 @@ use Aeag\SqeBundle\Entity\PgProgWebUsers;
 use Aeag\SqeBundle\Entity\PgProgMarcheUser;
 use Aeag\SqeBundle\Entity\PgProgMarche;
 use Aeag\SqeBundle\Entity\PgProgLot;
+use Aeag\SqeBundle\Entity\PgProgSuiviPhases;
 use Aeag\AeagBundle\Entity\Notification;
 use Aeag\AeagBundle\Entity\Message;
 use Aeag\AeagBundle\Controller\AeagController;
@@ -1717,7 +1718,9 @@ class ProgrammationLotController extends Controller {
         $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
         $repoPgProgStatut = $emSqe->getRepository('AeagSqeBundle:PgProgStatut');
         $repoPgProgWebusers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
+        $repoPgProgWebuserTypmil = $emSqe->getRepository('AeagSqeBundle:PgProgWebuserTypmil');
         $repoUsers = $em->getRepository('AeagUserBundle:User');
+
 
         $pgProgLotAn = $repoPgProgLotAn->getPgProgLotAnById($lotAnId);
 
@@ -1734,6 +1737,16 @@ class ProgrammationLotController extends Controller {
         }
         $emSqe->persist($pgProgLotAn);
 
+        $pgProgSuiviPhases = new PgProgSuiviPhases();
+        $pgProgSuiviPhases->setTypeObjet('LOT');
+        $pgProgSuiviPhases->setObjId($pgProgLotAn->getId());
+        $pgProgSuiviPhases->setDatePhase(new \DateTime());
+        $pgProgSuiviPhases->setPhase($pgProgPhase);
+        if ($pgProgWebuser) {
+            $pgProgSuiviPhases->setUser($pgProgWebuser);
+        }
+        $emSqe->persist($pgProgSuiviPhases);
+
         if (!$this->get('security.authorization_checker')->isGranted('ROLE_ADMINSQE') and $this->get('security.authorization_checker')->isGranted('ROLE_PROGSQE')) {
             $notification = new Notification();
             $notification->setRecepteur($user->getId());
@@ -1747,42 +1760,53 @@ class ProgrammationLotController extends Controller {
         $userAdmins = $repoUsers->getUsersByRole('ROLE_ADMINSQE');
         $emetteur = $user;
         foreach ($userAdmins as $userAdmin) {
-            $message = new Message();
-            $message->setRecepteur($userAdmin->getId());
-            $message->setEmetteur($user->getid());
-            $message->setNouveau(true);
-            $message->setIteration(2);
-            $texte = "Bonjour ," . PHP_EOL;
-            $texte = $texte . "La programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL;
-            $texte = $texte . " a été soumise à la validation par " . $pgProgWebuser->getNom() . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y') . PHP_EOL;
-            $texte = $texte . " " . PHP_EOL;
-            $texte = $texte . "Cordialement.";
-            $message->setMessage($texte);
-            $em->persist($message);
+            $pgProgWebuser = $repoPgProgWebusers->getPgProgWebusersByExtid($userAdmin->getd());
+            $pgProgWebuserTypmils = $repoPgProgWebuserTypmil->getPgProgWebuserTypmilByWebuser($pgProgWebuser);
+            $trouve = false;
+            foreach ($pgProgWebuserTypmils as $pgProgWebuserTypmil) {
+                if ($pgProgLotAn->getLot()->getCodeMilieu()->getCodeMilieu() == $pgProgWebuserTypmil->getTypmil()->getCodeMilieu()) {
+                    $trouve = true;
+                    break;
+                }
+            }
+            if ($trouve) {
+                $message = new Message();
+                $message->setRecepteur($userAdmin->getId());
+                $message->setEmetteur($user->getid());
+                $message->setNouveau(true);
+                $message->setIteration(2);
+                $texte = "Bonjour ," . PHP_EOL;
+                $texte = $texte . "La programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL;
+                $texte = $texte . " a été soumise à la validation par " . $pgProgWebuser->getNom() . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y') . PHP_EOL;
+                $texte = $texte . " " . PHP_EOL;
+                $texte = $texte . "Cordialement.";
+                $message->setMessage($texte);
+                $em->persist($message);
 
-            $notification = new Notification();
-            $notification->setRecepteur($userAdmin->getId());
-            $notification->setEmetteur($user->getId());
-            $notification->setNouveau(true);
-            $notification->setIteration(2);
-            $notification->setMessage("la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été soumise à la validation par " . $pgProgWebuser->getNom() . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y'));
-            $em->persist($notification);
-            // Récupération du service.
-            $mailer = $this->get('mailer');
-            $dest = $userAdmin->getEmail() . ";";
-            $destinataires = explode(";", $dest);
+                $notification = new Notification();
+                $notification->setRecepteur($userAdmin->getId());
+                $notification->setEmetteur($user->getId());
+                $notification->setNouveau(true);
+                $notification->setIteration(2);
+                $notification->setMessage("la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été soumise à la validation par " . $pgProgWebuser->getNom() . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y'));
+                $em->persist($notification);
+                // Récupération du service.
+                $mailer = $this->get('mailer');
+                $dest = $userAdmin->getEmail() . ";";
+                $destinataires = explode(";", $dest);
 // Création de l'e-mail : le service mailer utilise SwiftMailer, donc nous créons une instance de Swift_Message.
-            $mail = \Swift_Message::newInstance('Wonderful Subject')
-                    ->setSubject('Programmation ' . $pgProgLotAn->getAnneeProg() . ' version ' . $pgProgLotAn->getVersion() . ' du lot  ' . $pgProgLotAn->getLot()->getNomLot() . '  soumise à validation')
-                    ->setFrom('automate@eau-adour-garonne.fr')
-                    ->setTo($userAdmin->getEmail())
-                    ->setBody($this->renderView('AeagSqeBundle:Programmation:Lot/prevaliderEmail.txt.twig', array(
-                        'emetteur' => $pgProgWebuser,
-                        'lotan' => $pgProgLotAn,
-            )));
+                $mail = \Swift_Message::newInstance('Wonderful Subject')
+                        ->setSubject('Programmation ' . $pgProgLotAn->getAnneeProg() . ' version ' . $pgProgLotAn->getVersion() . ' du lot  ' . $pgProgLotAn->getLot()->getNomLot() . '  soumise à validation')
+                        ->setFrom('automate@eau-adour-garonne.fr')
+                        ->setTo($userAdmin->getEmail())
+                        ->setBody($this->renderView('AeagSqeBundle:Programmation:Lot/prevaliderEmail.txt.twig', array(
+                            'emetteur' => $pgProgWebuser,
+                            'lotan' => $pgProgLotAn,
+                )));
 
 // Retour au service mailer, nous utilisons sa méthode « send() » pour envoyer notre $message.
-            $mailer->send($mail);
+                $mailer->send($mail);
+            }
         }
 
         $em->flush();
@@ -1838,6 +1862,17 @@ class ProgrammationLotController extends Controller {
             $pgProgLotAn->setUtilModif($pgProgWebuser);
         }
         $emSqe->persist($pgProgLotAn);
+
+        $pgProgSuiviPhases = new PgProgSuiviPhases();
+        $pgProgSuiviPhases->setTypeObjet('LOT');
+        $pgProgSuiviPhases->setObjId($pgProgLotAn->getId());
+        $pgProgSuiviPhases->setDatePhase(new \DateTime());
+        $pgProgSuiviPhases->setPhase($pgProgPhase);
+        if ($pgProgWebuser) {
+            $pgProgSuiviPhases->setUser($pgProgWebuser);
+        }
+        $emSqe->persist($pgProgSuiviPhases);
+
         $emSqe->flush();
 
         // $session->set('critPhase', $pgProgPhase->getId());
@@ -1893,6 +1928,17 @@ class ProgrammationLotController extends Controller {
             $pgProgLotAn->setUtilModif($emetteur);
         }
         $emSqe->persist($pgProgLotAn);
+
+        $pgProgSuiviPhases = new PgProgSuiviPhases();
+        $pgProgSuiviPhases->setTypeObjet('LOT');
+        $pgProgSuiviPhases->setObjId($pgProgLotAn->getId());
+        $pgProgSuiviPhases->setDatePhase(new \DateTime());
+        $pgProgSuiviPhases->setPhase($pgProgPhase);
+        if ($emetteur) {
+            $pgProgSuiviPhases->setUser($emetteur);
+        }
+        $emSqe->persist($pgProgSuiviPhases);
+
         $emSqe->flush();
 
         $message = new Message();
@@ -1992,6 +2038,17 @@ class ProgrammationLotController extends Controller {
             $pgProgLotAn->setUtilModif($emetteur);
         }
         $emSqe->persist($pgProgLotAn);
+
+        $pgProgSuiviPhases = new PgProgSuiviPhases();
+        $pgProgSuiviPhases->setTypeObjet('LOT');
+        $pgProgSuiviPhases->setObjId($pgProgLotAn->getId());
+        $pgProgSuiviPhases->setDatePhase(new \DateTime());
+        $pgProgSuiviPhases->setPhase($pgProgPhase);
+        if ($emetteur) {
+            $pgProgSuiviPhases->setUser($emetteur);
+        }
+        $emSqe->persist($pgProgSuiviPhases);
+
         $emSqe->flush();
 
         $message = new Message();
@@ -2092,6 +2149,17 @@ class ProgrammationLotController extends Controller {
             $pgProgLotAn->setUtilModif($emetteur);
         }
         $emSqe->persist($pgProgLotAn);
+
+        $pgProgSuiviPhases = new PgProgSuiviPhases();
+        $pgProgSuiviPhases->setTypeObjet('LOT');
+        $pgProgSuiviPhases->setObjId($pgProgLotAn->getId());
+        $pgProgSuiviPhases->setDatePhase(new \DateTime());
+        $pgProgSuiviPhases->setPhase($pgProgPhase);
+        if ($emetteur) {
+            $pgProgSuiviPhases->setUser($emetteur);
+        }
+        $emSqe->persist($pgProgSuiviPhases);
+
         $emSqe->flush();
 
         // $session->set('critPhase', $pgProgPhase->getId());
@@ -2314,6 +2382,16 @@ class ProgrammationLotController extends Controller {
         $pgProgLotAn->setDateModif($now);
         $pgProgLotAn->setUtilModif($pgProgWebuser);
         $emSqe->persist($pgProgLotAn);
+
+        $pgProgSuiviPhases = new PgProgSuiviPhases();
+        $pgProgSuiviPhases->setTypeObjet('LOT');
+        $pgProgSuiviPhases->setObjId($pgProgLotAn->getId());
+        $pgProgSuiviPhases->setDatePhase(new \DateTime());
+        $pgProgSuiviPhases->setPhase($pgProgPhase);
+        if ($pgProgWebuser) {
+            $pgProgSuiviPhases->setUser($pgProgWebuser);
+        }
+        $emSqe->persist($pgProgSuiviPhases);
 
         $emSqe->flush();
         $this->get('session')->getFlashBag()->add('notice-error', "la programmation " . $pgProgLotAnBis->getAnneeProg() . " version " . $pgProgLotAnBis->getVersion() . " du lot " . $pgProgLotAnBis->getLot()->getNomLot() . PHP_EOL . " a été créée.");

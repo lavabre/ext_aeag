@@ -6,14 +6,15 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Aeag\SqeBundle\Entity\PgProgLotPeriodeAn;
 use Aeag\SqeBundle\Entity\PgProgLotPeriodeProg;
+use Aeag\SqeBundle\Entity\PgProgSuiviPhases;
 use Aeag\SqeBundle\Controller\ProgrammationBilanController;
 
 class ProgrammationPeriodeController extends Controller {
 
     public function indexAction() {
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -50,6 +51,7 @@ class ProgrammationPeriodeController extends Controller {
         $repoPgProgGrparObligSupport = $emSqe->getRepository('AeagSqeBundle:PgProgGrparObligSupport');
         $repoPgSandreSupport = $emSqe->getRepository('AeagSqeBundle:PgSandreSupports');
         $repoPgProgStatut = $emSqe->getRepository('AeagSqeBundle:PgProgStatut');
+        $repoPgRefReseauMesure = $emSqe->getRepository('AeagSqeBundle:PgRefReseauMesure');
 
 
         $pgProgLotAn = $repoPgProgLotAn->getPgProgLotAnById($pgProgLotAnId);
@@ -109,6 +111,12 @@ class ProgrammationPeriodeController extends Controller {
         $i = 0;
         foreach ($pgProgLotStationAns as $pgProgLotStationAn) {
             $tabStations[$i]["station"] = $pgProgLotStationAn;
+            if ($pgProgLotStationAn->getRsxId()) {
+                $pgRefReseauMesure = $repoPgRefReseauMesure->getPgRefReseauMesureByGroupementId($pgProgLotStationAn->getRsxId());
+            } else {
+                $pgRefReseauMesure = null;
+            }
+            $tabStations[$i]["reseau"] = $pgRefReseauMesure;
             $tabPeriodes = array();
             $j = 0;
 //print_r('nb pgProgLotPeriodeAns : ' . count($pgProgLotPeriodeAns));
@@ -257,8 +265,8 @@ class ProgrammationPeriodeController extends Controller {
     public function filtrerSemainesAction() {
 
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -333,8 +341,8 @@ class ProgrammationPeriodeController extends Controller {
     public function semainesSelectionneesAction() {
 
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -424,8 +432,8 @@ class ProgrammationPeriodeController extends Controller {
     public function filtrerAction() {
 
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -614,8 +622,8 @@ class ProgrammationPeriodeController extends Controller {
 
     public function dupliquerStationAction($stationId = null) {
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -636,6 +644,7 @@ class ProgrammationPeriodeController extends Controller {
         $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
         $repoPgProgLotPeriodeProg = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeProg');
         $repoPgRefSitePrelevement = $emSqe->getRepository('AeagSqeBundle:PgRefSitePrelevement');
+        $repoPgRefReseauMesure = $emSqe->getRepository('AeagSqeBundle:PgRefReseauMesure');
 
 //recupération des parametres
         $request = $this->container->get('request');
@@ -681,6 +690,12 @@ class ProgrammationPeriodeController extends Controller {
             }
             if ($site == 'ok') {
                 $tabStations[$i]["station"] = $pgProgLotStationAn;
+                if ($pgProgLotStationAn->getRsxId()) {
+                    $pgRefReseauMesure = $repoPgRefReseauMesure->getPgRefReseauMesureByGroupementId($pgProgLotStationAn->getRsxId());
+                } else {
+                    $pgRefReseauMesure = null;
+                }
+                $tabStations[$i]["reseau"] = $pgRefReseauMesure;
                 $tabPeriodes = array();
                 $j = 0;
 //print_r('nb pgProgLotPeriodeAns : ' . count($pgProgLotPeriodeAns));
@@ -778,8 +793,8 @@ class ProgrammationPeriodeController extends Controller {
     public function validerDupliquerStationAction($stationId = null) {
 
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -802,7 +817,7 @@ class ProgrammationPeriodeController extends Controller {
         $repoPgProgPeriodes = $emSqe->getRepository('AeagSqeBundle:PgProgPeriodes');
         $repoPgProgGrparObligSupport = $emSqe->getRepository('AeagSqeBundle:PgProgGrparObligSupport');
         $repoPgSandreSupport = $emSqe->getRepository('AeagSqeBundle:PgSandreSupports');
-
+  
 //recupération des parametres
         $request = $this->container->get('request');
         $pgProgLotAnId = $request->get('lotan');
@@ -893,8 +908,8 @@ class ProgrammationPeriodeController extends Controller {
     public function validerDupliquerStationSurAutreStationAction($stationId = null, $autreStationId = null) {
 
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -911,7 +926,7 @@ class ProgrammationPeriodeController extends Controller {
 
         $repoPgProgLotAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotAn');
         $repoPgProgLotGrparAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotGrparAn');
-        $repoPgProgLotParamAn= $emSqe->getRepository('AeagSqeBundle:PgProgLotParamAn');
+        $repoPgProgLotParamAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotParamAn');
         $repoPgProgLotStationAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotStationAn');
         $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
         $repoPgProgLotPeriodeProg = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeProg');
@@ -968,19 +983,18 @@ class ProgrammationPeriodeController extends Controller {
                     if ($pgProgLotGrparAnAutre->getGrparRef()->gettypeGrp() == 'ENV' or $pgProgLotGrparAnAutre->getGrparRef()->getTypeGrp() == 'SIT') {
                         $pgProgLotParamAnAutres = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAnAutre);
                         foreach ($pgProgLotParamAnAutres as $pgProgLotParamAnAutre) {
-                             $prestaAutre = $pgProgLotParamAnAutre->getPrestataire();
-                              break;
+                            $prestaAutre = $pgProgLotParamAnAutre->getPrestataire();
+                            break;
                         }
                     }
-                    if ($prestaSelectionne->getAdrCorId() != $prestaAutre->getAdrCorId() ){
+                    if ($prestaSelectionne->getAdrCorId() != $prestaAutre->getAdrCorId()) {
                         $pgProgLotPeriodeProgSelectionne->setStatut('I');
-                    }else{
+                    } else {
                         $pgProgLotPeriodeProgSelectionne->setStatut('C');
                     }
-                }else{
+                } else {
                     $pgProgLotPeriodeProgSelectionne->setStatut('C');
                 }
-                   
             }
             $emSqe->persist($pgProgLotPeriodeProgSelectionne);
         }
@@ -1084,8 +1098,8 @@ class ProgrammationPeriodeController extends Controller {
     public function initialiserAction($stationId = null) {
 
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -1229,8 +1243,8 @@ class ProgrammationPeriodeController extends Controller {
 
     public function programmerAction($stationId = null, $periodeId = null) {
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -1401,8 +1415,8 @@ class ProgrammationPeriodeController extends Controller {
         $logger = $this->get('logger');
 
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -1428,6 +1442,7 @@ class ProgrammationPeriodeController extends Controller {
         $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
         $repoPgProgWebusers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
         $repoPgProgStatut = $emSqe->getRepository('AeagSqeBundle:PgProgStatut');
+        $repoPgRefReseauMesure = $emSqe->getRepository('AeagSqeBundle:PgRefReseauMesure');
 
         //recupération des parametres
         $request = $this->container->get('request');
@@ -1465,7 +1480,7 @@ class ProgrammationPeriodeController extends Controller {
         $tabStations = Array();
         $tabGrparAns = Array();
 
-        $this->createProgrammation($emSqe, $optionGroupes, $repoPgProgLotStationAn, $repoPgProgLotPeriodeProg, $repoPgProgLotPeriodeAn, $repoPgProgLotGrparAn, $pgProgLotStationAn, $pgProgPeriode, $pgProgLotGrparAns, $pgProgLotAn, $pgProgLotPeriodeAns, $selAutrePeriodeAns, $selGroupes, $tabStations, $tabGrparAns, $logger);
+        $this->createProgrammation($emSqe, $optionGroupes, $repoPgProgLotStationAn, $repoPgRefReseauMesure, $repoPgProgLotPeriodeProg, $repoPgProgLotPeriodeAn, $repoPgProgLotGrparAn, $pgProgLotStationAn, $pgProgPeriode, $pgProgLotGrparAns, $pgProgLotAn, $pgProgLotPeriodeAns, $selAutrePeriodeAns, $selGroupes, $tabStations, $tabGrparAns, $logger);
 
 
         // Update PgProgLotAn
@@ -1490,6 +1505,17 @@ class ProgrammationPeriodeController extends Controller {
             $pgProgLotAn->setUtilModif($pgProgWebuser);
         }
         $emSqe->persist($pgProgLotAn);
+
+        $pgProgSuiviPhases = new PgProgSuiviPhases();
+        $pgProgSuiviPhases->setTypeObjet('LOT');
+        $pgProgSuiviPhases->setObjId($pgProgLotAn->getId());
+        $pgProgSuiviPhases->setDatePhase(new \DateTime());
+        $pgProgSuiviPhases->setPhase($pgProgPhase);
+        if ($pgProgWebuser) {
+            $pgProgSuiviPhases->setUser($pgProgWebuser);
+        }
+        $emSqe->persist($pgProgSuiviPhases);
+
         $emSqe->flush();
         return $this->render('AeagSqeBundle:Programmation:Periode\valider.html.twig', array(
                     'action' => $action,
@@ -1501,7 +1527,7 @@ class ProgrammationPeriodeController extends Controller {
         ));
     }
 
-    private function createProgrammation($emSqe, $optionGroupes, $repoPgProgLotStationAn, $repoPgProgLotPeriodeProg, $repoPgProgLotPeriodeAn, $repoPgProgLotGrparAn, $pgProgLotStationAn, $pgProgPeriode, $pgProgLotGrparAns, $pgProgLotAn, $pgProgLotPeriodeAns, $selAutrePeriodeAns, $selGroupes, &$tabStations, &$tabGrparAns, $logger) {
+    private function createProgrammation($emSqe, $optionGroupes, $repoPgProgLotStationAn, $repoPgRefReseauMesure, $repoPgProgLotPeriodeProg, $repoPgProgLotPeriodeAn, $repoPgProgLotGrparAn, $pgProgLotStationAn, $pgProgPeriode, $pgProgLotGrparAns, $pgProgLotAn, $pgProgLotPeriodeAns, $selAutrePeriodeAns, $selGroupes, &$tabStations, &$tabGrparAns, $logger) {
 
         if (!$optionGroupes) {
             $optionGroupes = 'N';
@@ -1578,7 +1604,7 @@ class ProgrammationPeriodeController extends Controller {
                         $autrePeriodeAns = array($autrePeriodeAn);
                         $autreTabStations = array();
                         $autreTabGrparAns = array();
-                        $this->createProgrammation($emSqe, $optionGroupes, $repoPgProgLotStationAn, $repoPgProgLotPeriodeProg, $repoPgProgLotPeriodeAn, $repoPgProgLotGrparAn, $pgProgLotStationAn, $autrePeriodeAn->getPeriode(), $pgProgLotGrparAns, $pgProgLotAn, $autrePeriodeAns, array(), $selGroupes, $autreTabStations, $autreTabGrparAns, $logger);
+                        $this->createProgrammation($emSqe, $optionGroupes, $repoPgProgLotStationAn, $repoPgRefReseauMesure, $repoPgProgLotPeriodeProg, $repoPgProgLotPeriodeAn, $repoPgProgLotGrparAn, $pgProgLotStationAn, $autrePeriodeAn->getPeriode(), $pgProgLotGrparAns, $pgProgLotAn, $autrePeriodeAns, array(), $selGroupes, $autreTabStations, $autreTabGrparAns, $logger);
                     }
                 }
             }
@@ -1597,6 +1623,12 @@ class ProgrammationPeriodeController extends Controller {
         //$tabStations = array();
         $i = 0;
         $tabStations[$i]["station"] = $pgProgLotStationAn;
+           if ($pgProgLotStationAn->getRsxId()) {
+                $pgRefReseauMesure = $repoPgRefReseauMesure->getPgRefReseauMesureByGroupementId($pgProgLotStationAn->getRsxId());
+            } else {
+                $pgRefReseauMesure = null;
+            }
+            $tabStations[$i]["reseau"] = $pgRefReseauMesure;
         $tabPeriodes = array();
         $j = 0;
 
@@ -1686,8 +1718,8 @@ class ProgrammationPeriodeController extends Controller {
     public function autreProgrammationAction($stationId = null, $periodeId = null, $groupeId = null) {
 
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -1765,8 +1797,8 @@ class ProgrammationPeriodeController extends Controller {
     public function bilanAction() {
 
         $user = $this->getUser();
-         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -1785,6 +1817,7 @@ class ProgrammationPeriodeController extends Controller {
         $repoPgSandreSupport = $emSqe->getRepository('AeagSqeBundle:PgSandreSupports');
         $repoPgProgStatut = $emSqe->getRepository('AeagSqeBundle:PgProgStatut');
         $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
+        $repoPgRefReseauMesure = $emSqe->getRepository('AeagSqeBundle:PgRefReseauMesure');
 
 //recupération des parametres
         $request = $this->container->get('request');
@@ -1823,6 +1856,12 @@ class ProgrammationPeriodeController extends Controller {
         foreach ($pgProgLotStationAns as $pgProgLotStationAn) {
             $tabCtrlStations[$i]["ordre"] = $pgProgLotStationAn->getStation()->getCode();
             $tabCtrlStations[$i]["station"] = $pgProgLotStationAn->getStation();
+            if ($pgProgLotStationAn->getRsxId()) {
+                $pgRefReseauMesure = $repoPgRefReseauMesure->getPgRefReseauMesureByGroupementId($pgProgLotStationAn->getRsxId());
+            } else {
+                $pgRefReseauMesure = null;
+            }
+            $tabCtrlStations[$i]["reseau"] = $pgRefReseauMesure;
             $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByStationAn($pgProgLotStationAn);
             if (count($pgProgLotPeriodeProgs)) {
                 $tabCtrlStations[$i]["renseigner"] = "O";

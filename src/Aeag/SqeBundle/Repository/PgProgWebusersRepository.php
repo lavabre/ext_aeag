@@ -91,19 +91,28 @@ class PgProgWebusersRepository extends EntityRepository {
     }
     
         public function getSuppportByPrestataire($pgRefCorresPresta) {
+//          $query = "select distinct sup";
+//          $query .= " from Aeag\SqeBundle\Entity\PgProgLotParamAn pan,";
+//          $query .= "         Aeag\SqeBundle\Entity\\PgProgLotGrparAn gran,";
+//          $query .= "         Aeag\SqeBundle\Entity\PgProgGrpParamRef gref,";
+//          $query .= "         Aeag\SqeBundle\Entity\PgProgLotAn lan,";
+//          $query .= "         Aeag\SqeBundle\Entity\PgSandreSupports sup";
+//          $query .= " where lan.phase > 6"; 
+//          $query .= " and gran.id = pan.grparan";
+//          $query .= " and gref.id = gran.grparRef";
+//          $query .= " and lan.id = gran.lotan";
+//           $query .= " and sup.codeSupport = gref.support";
+//          $query .= " and gref.support is not null";
+//          $query .= " and pan.prestataire = :prestataire";
+            
           $query = "select distinct sup";
-          $query .= " from Aeag\SqeBundle\Entity\PgProgLotParamAn pan,";
-          $query .= "         Aeag\SqeBundle\Entity\\PgProgLotGrparAn gran,";
-          $query .= "         Aeag\SqeBundle\Entity\PgProgGrpParamRef gref,";
-          $query .= "         Aeag\SqeBundle\Entity\PgProgLotAn lan,";
+          $query .= " from Aeag\SqeBundle\Entity\PgCmdPrelev prel,";
+          $query .= "         Aeag\SqeBundle\Entity\\PgCmdDemande dem,";
           $query .= "         Aeag\SqeBundle\Entity\PgSandreSupports sup";
-          $query .= " where lan.phase > 6"; 
-          $query .= " and gran.id = pan.grparan";
-          $query .= " and gref.id = gran.grparRef";
-          $query .= " and lan.id = gran.lotan";
-           $query .= " and sup.codeSupport = gref.support";
-          $query .= " and gref.support is not null";
-          $query .= " and pan.prestataire = :prestataire";
+          $query .= " where dem.id =  prel.demande"; 
+          $query .= " and sup.codeSupport = prel.codeSupport";
+          $query .= " and prel.codeSupport is not null";
+          $query .= " and dem.prestataire = :prestataire";
         
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('prestataire', $pgRefCorresPresta->getAdrCorId()); 

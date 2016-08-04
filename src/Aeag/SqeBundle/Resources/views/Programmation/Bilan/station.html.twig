@@ -3,7 +3,8 @@
         <table class="table table-bordered table-condensed table-advance" id="idTable_station">
             <thead id="idTheadStations">
                 <tr>
-                   <th width="10%">Stations / Groupes de paramètres</th>
+                   <th width="10%">Stations</th>
+                    <th width="10%">Réseaux</th>
                     {% for groupe in grparAns %}
                         <th width="1%" id="idThGroupe_{{ groupe.id }}" nowrap>{{ groupe.grparRef.libelleGrp }}</th>
                     {% endfor %}
@@ -15,6 +16,7 @@
                         {% if stationAn.renseigner == "O" %}
                              <tr  id='idStation_{{ stationAn.station.id }}' name='idStation_{{ stationAn.station.id }}' width="10%">
                                 <td nowrap>{{ stationAn.station.station.code}}&nbsp;&nbsp;{{ stationAn.station.station.libelle}}</td>
+                                 <td nowrap>{{ stationAn.reseau.nomRsx }}</td>
                                 {% for groupe in grparAns %}
                                      <td id="idTd_{{ stationAn.station.id }}_{{ groupe.id }}">
                                         <div class="text-center" id="idDiv_{{ stationAn.station.id }}_{{ groupe.id }}">

@@ -12,6 +12,7 @@ use Aeag\SqeBundle\Entity\PgProgLotAn;
 use Aeag\SqeBundle\Entity\PgProgLotGrparAn;
 use Aeag\SqeBundle\Entity\PgProgLotStationAn;
 use Aeag\SqeBundle\Entity\PgProgLotParamAn;
+use Aeag\SqeBundle\Entity\PgProgSuiviPhases;
 use Aeag\AeagBundle\Controller\AeagController;
 use Aeag\SqeBundle\Controller\ProgrammationBilanController;
 
@@ -21,7 +22,7 @@ class ProgrammationGroupeController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -524,7 +525,7 @@ class ProgrammationGroupeController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -681,7 +682,7 @@ class ProgrammationGroupeController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -739,7 +740,7 @@ class ProgrammationGroupeController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -795,7 +796,7 @@ class ProgrammationGroupeController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -873,7 +874,7 @@ class ProgrammationGroupeController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -888,6 +889,7 @@ class ProgrammationGroupeController extends Controller {
         $repoPgProgGrparRefLstParam = $emSqe->getRepository('AeagSqeBundle:PgProgGrparRefLstParam');
         $repoPgRefCorresPresta = $emSqe->getRepository('AeagSqeBundle:PgRefCorresPresta');
         $repoPgProgGrparObligSupport = $emSqe->getRepository('AeagSqeBundle:PgProgGrparObligSupport');
+        $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
 
         //recupération des parametres
         $request = $this->container->get('request');
@@ -1018,6 +1020,13 @@ class ProgrammationGroupeController extends Controller {
                             $pgProgLotGrparAn->setPrestaDft($preleveur);
                         }
                         $emSqe->persist($pgProgLotGrparAn);
+                        // corerction APPLI-6503
+                        if ($pgProgLotGrparAn->getValide() == 'N') {
+                            $pgProgPhases = $repoPgProgPhases->getPgProgPhasesByCodePhase('P10');
+                            $pgProgLotAn->setPhase($pgProgPhases);
+                        }
+                        $emSqe->persist($pgProgLotAn);
+                        // fin correction APPLI-6503
                         $emSqe->flush();
                         $session->getFlashBag()->add('notice-success', 'Le groupe  : ' . $pgProgLotGrparAn->getGrparRef()->getLibelleGrp() . ' a été ajouté à la programmation : ' . $pgProgLotGrparAn->getLotan()->getAnneeProg() . ' version :  ' . $pgProgLotGrparAn->getLotan()->getVersion() . ' du lot : ' . $pgProgLotGrparAn->getLotan()->getLot()->getNomLot() . ' !');
                         $support = $pgProgLotGrparAn->getGrparRef()->getSupport();
@@ -1062,7 +1071,7 @@ class ProgrammationGroupeController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -1161,7 +1170,7 @@ class ProgrammationGroupeController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -1354,7 +1363,7 @@ class ProgrammationGroupeController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -1477,7 +1486,7 @@ class ProgrammationGroupeController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'programmation');
@@ -1682,6 +1691,17 @@ class ProgrammationGroupeController extends Controller {
                 $pgProgLotAn->setUtilModif($pgProgWebuser);
             }
             $emSqe->persist($pgProgLotAn);
+
+            $pgProgSuiviPhases = new PgProgSuiviPhases();
+            $pgProgSuiviPhases->setTypeObjet('LOT');
+            $pgProgSuiviPhases->setObjId($pgProgLotAn->getId());
+            $pgProgSuiviPhases->setDatePhase(new \DateTime());
+            $pgProgSuiviPhases->setPhase($pgProgPhase);
+            if ($pgProgWebuser) {
+                $pgProgSuiviPhases->setUser($pgProgWebuser);
+            }
+            $emSqe->persist($pgProgSuiviPhases);
+
             $emSqe->flush();
         }
 

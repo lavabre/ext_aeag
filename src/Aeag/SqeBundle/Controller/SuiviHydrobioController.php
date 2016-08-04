@@ -380,8 +380,9 @@ class SuiviHydrobioController extends Controller {
         $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
         $repoPgProgWebUserTypmil = $emSqe->getRepository('AeagSqeBundle:PgProgWebuserTypmil');
-        $repoPgProgWebUserZgeoref = $emSqe->getRepository('AeagSqeBundle:PgProgWebuserZgeoref');
+        $repoPgProgWebuserZgeoref = $emSqe->getRepository('AeagSqeBundle:PgProgWebuserZgeoref');
         $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
+        $repoPgCmdDwnldUsrRps = $emSqe->getRepository('AeagSqeBundle:PgCmdDwnldUsrRps');
 
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgProgWebUserTypmils = $repoPgProgWebUserTypmil->getPgProgWebuserTypmilByWebuser($pgProgWebUser);
@@ -618,10 +619,10 @@ class SuiviHydrobioController extends Controller {
                                     $nbCorrect = $nbCorrect - 1;
                                     $nbIncorrect = $nbIncorrect + 1;
                                 } else {
-                                    if (strpos($tabFichiers[$nb], 'ft') !== false) {
+                                    if (strpos(strtoupper($tabFichiers[$nb]), 'FT') !== false) {
                                         $NbFt++;
                                     }
-                                    if (strpos($tabFichiers[$nb], 'photo') !== false) {
+                                    if (strpos(strtoupper($tabFichiers[$nb]), 'PHOTO') !== false) {
                                         $NbPhoto++;
                                     }
                                 }
@@ -691,6 +692,10 @@ class SuiviHydrobioController extends Controller {
                                 if (($pgCmdSuiviPrel->getStatutPrel() == 'N') or ( $pgCmdSuiviPrel->getStatutPrel() == 'F') or ( $pgCmdSuiviPrel->getStatutPrel() == 'R')) {
                                     if ($pgCmdSuiviPrel->getFichierRps()) {
                                         $pgCmdFichiersRps = $pgCmdSuiviPrel->getFichierRps();
+                                        $pgCmdDwnldUsrRpss = $repoPgCmdDwnldUsrRps->getPgCmdDwnldUsrRpsByFichierReponse($pgCmdFichiersRps);
+                                        foreach ($pgCmdDwnldUsrRpss as $pgCmdDwnldUsrRps) {
+                                            $emSqe->remove($pgCmdDwnldUsrRps);
+                                        }
                                         $emSqe->remove($pgCmdFichiersRps);
                                     }
                                     $pgCmdFichiersRps = new PgCmdFichiersRps();
@@ -757,6 +762,8 @@ class SuiviHydrobioController extends Controller {
                 fputs($rapport, $contenu);
             }
             fclose($rapport);
+        } else {
+            $erreur = 1;
         }
 
         if ($erreur == 0) {
@@ -781,9 +788,9 @@ class SuiviHydrobioController extends Controller {
                 }
                 if ($trouve) {
                     $trouve = false;
-                    $pgProgWebUserZgeorefs = $repoPgProgWebUserZgeoref->getPgProgWebuserZgeorefByWebuser($destinataire);
-                    foreach ($pgProgWebUserZgeorefs as $pgProgWebUserZgeoref) {
-                        if ($pgProgWebUserZgeoref->getZgeoref()->getId() == $pgProgLot->getZgeoref()->getId()) {
+                    $pgProgWebuserZgeorefs = $repoPgProgWebuserZgeoref->getPgProgWebuserZgeorefByWebuser($destinataire);
+                    foreach ($pgProgWebuserZgeorefs as $pgProgWebuserZgeoref) {
+                        if ($pgProgWebuserZgeoref->getZgeoref()->getId() == $pgProgLot->getZgeoref()->getId()) {
                             $trouve = true;
                         }
                     }
@@ -839,7 +846,7 @@ class SuiviHydrobioController extends Controller {
         $tabRapport[$nbRapport] = "Nombre de fichiers incorrects : " . $nbIncorrect;
         $nbRapport++;
         $tabRapport[$nbRapport] = "</br><h5><div class='text-center'>Voir le rapport d'integration </div></h5>";
-        if ($nbIncorrect == 0 or $valid) {
+        if ($nbIncorrect == 0 and $valid) {
             $this->rmAllDir($pathBase);
         }
 
@@ -961,6 +968,7 @@ class SuiviHydrobioController extends Controller {
                             $nbCmdPrelevs++;
                         }
                         $tabStations[$j]['prelevs'] = $tabCmdPrelevs;
+                        $tabStations[$j]['fichiers'] = array();
                     }
                     $nbStations++;
                     $j++;
@@ -982,8 +990,12 @@ class SuiviHydrobioController extends Controller {
         switch ($error) {
             case UPLOAD_ERR_OK:
                 $valid = true;
+                if (!in_array($ext, array('csv'))) {
+                    $valid = false;
+                    $response = 'extension du fichier incorrecte.';
+                }
 //validate file size
-                if ($size / 1024 / 1024 > 2) {
+                if ($size > 10485760) {
                     $valid = false;
                     $response = 'La taille du fichier est plus grande que la taille autorisée.';
                 }
@@ -998,11 +1010,10 @@ class SuiviHydrobioController extends Controller {
                         }
                     }
                     move_uploaded_file($_FILES['file']['tmp_name'], $pathBase . '/' . $name);
-
                     $dateDepot = new \DateTime();
                     $response = $name . ' déposé le ' . $dateDepot->format('d/m/Y');
-                    break;
                 }
+                break;
             case UPLOAD_ERR_INI_SIZE:
                 $response = 'La taille (' . $size . ' octets' . ') du fichier téléchargé excède la taille de upload_max_filesize dans php.ini.';
                 $valid = false;
@@ -1976,6 +1987,8 @@ class SuiviHydrobioController extends Controller {
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
         $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
         $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
+        $repoPgProgWebuserZgeoref = $emSqe->getRepository('AeagSqeBundle:PgProgWebuserZgeoref');
+        $repoPgCmdDwnldUsrRps = $emSqe->getRepository('AeagSqeBundle:PgCmdDwnldUsrRps');
 
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgRefStationMesure = $repoPgRefStationMesure->getPgRefStationMesureByOuvFoncId($stationId);
@@ -1998,11 +2011,6 @@ class SuiviHydrobioController extends Controller {
 
 // Récupération des valeurs du fichier
 
-        $name = $_FILES['file']['name'];
-        $tmpName = $_FILES['file']['tmp_name'];
-        $error = $_FILES['file']['error'];
-        $size = $_FILES['file']['size'];
-        $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
         $response = null;
         $tabMessage = array();
         $nbMessages = 0;
@@ -2010,100 +2018,117 @@ class SuiviHydrobioController extends Controller {
         $nbRapport = 0;
         $nbCorrect = 0;
         $nbIncorrect = 0;
-
-        $dateDepot = new \DateTime();
-        $pathBase = '/base/extranet/Transfert/Sqe/csv-' . $dateDepot->format('Y-m-d-H-i-s');
-        $pathRapport = '/base/extranet/Transfert/Sqe/csv';
-        $ficRapport = $user->getId() . '_' . $dateDepot->format('Y-m-d-H') . '_rapport.csv';
-        if (!is_dir($pathBase)) {
-            if (!mkdir($pathBase, 0777, true)) {
-                $session->getFlashBag()->add('notice-error', 'Le répertoire : ' . $pathBase . ' n\'a pas pu être créé');
-                ;
+        $valid = true;
+        $name = 'inconu';
+        
+         $dateDepot = new \DateTime();
+            $pathBase = '/base/extranet/Transfert/Sqe/csv-' . $dateDepot->format('Y-m-d-H-i-s');
+            $pathRapport = '/base/extranet/Transfert/Sqe/csv';
+            $ficRapport = $user->getId() . '_' . $dateDepot->format('Y-m-d-H') . '_rapport.csv';
+            if (!is_dir($pathBase)) {
+                if (!mkdir($pathBase, 0777, true)) {
+                    $session->getFlashBag()->add('notice-error', 'Le répertoire : ' . $pathBase . ' n\'a pas pu être créé');
+                    ;
+                }
             }
-        }
 
-        switch ($error) {
-            case UPLOAD_ERR_OK:
-                $valid = true;
-                if (!in_array($ext, array('zip'))) {
-                    $valid = false;
-                    $response = 'extension du fichier incorrecte.';
-                    $tabMessage[$nbMessages][0] = 'ko';
-                    $tabMessage[$nbMessages][1] = $response;
-                    $nbMessages++;
-                }
+        if (!file_exists($_FILES['file']['tmp_name'])) {
+            $response = 'Aucun fichier sélectionné.';
+            $tabMessage[$nbMessages][0] = 'ko';
+            $tabMessage[$nbMessages][1] = $response;
+            $nbMessages++;
+            $valid = false;
+        } else {
+
+            $name = $_FILES['file']['name'];
+            $tmpName = $_FILES['file']['tmp_name'];
+            $error = $_FILES['file']['error'];
+            $size = $_FILES['file']['size'];
+            $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+
+            switch ($error) {
+                case UPLOAD_ERR_OK:
+                    $valid = true;
+                    if (!in_array($ext, array('zip'))) {
+                        $valid = false;
+                        $response = 'extension du fichier incorrecte.';
+                        $tabMessage[$nbMessages][0] = 'ko';
+                        $tabMessage[$nbMessages][1] = $response;
+                        $nbMessages++;
+                    }
 //validate file size
-                if ($size > 10485760) {
-                    $valid = false;
-                    $response = 'La taille du fichier (' . $size / 1024 . ') est plus grande que la taille autorisée.';
-                    $tabMessage[$nbMessages][0] = 'ko';
-                    $tabMessage[$nbMessages][1] = $response;
-                    $nbMessages++;
-                }
+                    if ($size > 10485760) {
+                        $valid = false;
+                        $response = 'La taille du fichier (' . $size / 1024 . ') est plus grande que la taille autorisée.';
+                        $tabMessage[$nbMessages][0] = 'ko';
+                        $tabMessage[$nbMessages][1] = $response;
+                        $nbMessages++;
+                    }
 //upload file
-                if ($valid) {
+                    if ($valid) {
 
 // Enregistrement du fichier sur le serveur
-                    move_uploaded_file($_FILES['file']['tmp_name'], $pathBase . '/' . $name);
-                    $response = $name . ' déposé le ' . $dateDepot->format('d/m/Y');
+                        move_uploaded_file($_FILES['file']['tmp_name'], $pathBase . '/' . $name);
+                        $response = $name . ' déposé le ' . $dateDepot->format('d/m/Y');
+                        break;
+                    }
+                case UPLOAD_ERR_INI_SIZE:
+                    $response = 'La taille (' . $size . ' octets' . ') du fichier téléchargé excède la taille de upload_max_filesize dans php.ini.';
+                    $tabMessage[$nbMessages][0] = 'ko';
+                    $tabMessage[$nbMessages][1] = $response;
+                    $nbMessages++;
+                    $valid = false;
                     break;
-                }
-            case UPLOAD_ERR_INI_SIZE:
-                $response = 'La taille (' . $size . ' octets' . ') du fichier téléchargé excède la taille de upload_max_filesize dans php.ini.';
-                $tabMessage[$nbMessages][0] = 'ko';
-                $tabMessage[$nbMessages][1] = $response;
-                $nbMessages++;
-                $valid = false;
-                break;
-            case UPLOAD_ERR_FORM_SIZE:
-                $response = 'La taille (' . $size . ') du fichier téléchargé excède la taille de MAX_FILE_SIZE qui a été spécifié dans le formulaire HTML.';
-                $tabMessage[$nbMessages][0] = 'ko';
-                $tabMessage[$nbMessages][1] = $response;
-                $nbMessages++;
-                $valid = false;
-                break;
-            case UPLOAD_ERR_PARTIAL:
-                $response = 'Le fichier n\'a été que partiellement téléchargé.';
-                $tabMessage[$nbMessages][0] = 'ko';
-                $tabMessage[$nbMessages][1] = $response;
-                $nbMessages++;
-                $valid = false;
-                break;
-            case UPLOAD_ERR_NO_FILE:
-                $response = 'Aucun fichier sélectionné.';
-                $tabMessage[$nbMessages][0] = 'ko';
-                $tabMessage[$nbMessages][1] = $response;
-                $nbMessages++;
-                $valid = false;
-                break;
-            case UPLOAD_ERR_NO_TMP_DIR:
-                $response = 'Manquantes dans un dossier temporaire. Introduit en PHP 4.3.10 et PHP 5.0.3.';
-                $tabMessage[$nbMessages][0] = 'ko';
-                $tabMessage[$nbMessages][1] = $response;
-                $nbMessages++;
-                $valid = false;
-                break;
-            case UPLOAD_ERR_CANT_WRITE:
-                $response = 'Impossible d\'écrire le fichier sur le disque. Introduit en PHP 5.1.0.';
-                $tabMessage[$nbMessages][0] = 'ko';
-                $tabMessage[$nbMessages][1] = $response;
-                $nbMessages++;
-                $valid = false;
-                break;
-            case UPLOAD_ERR_EXTENSION:
-                $response = 'Le téléchargement du fichier arrêté par extension. Introduit en PHP 5.2.0.';
-                $tabMessage[$nbMessages][0] = 'ko';
-                $tabMessage[$nbMessages][1] = $response;
-                $nbMessages++;
-                $valid = false;
-                break;
-            default:
-                $response = 'erreur inconnue';
-                $tabMessage[$nbMessages][0] = 'ko';
-                $tabMessage[$nbMessages][1] = $response;
-                $nbMessages++;
-                $valid = false;
-                break;
+                case UPLOAD_ERR_FORM_SIZE:
+                    $response = 'La taille (' . $size . ') du fichier téléchargé excède la taille de MAX_FILE_SIZE qui a été spécifié dans le formulaire HTML.';
+                    $tabMessage[$nbMessages][0] = 'ko';
+                    $tabMessage[$nbMessages][1] = $response;
+                    $nbMessages++;
+                    $valid = false;
+                    break;
+                case UPLOAD_ERR_PARTIAL:
+                    $response = 'Le fichier n\'a été que partiellement téléchargé.';
+                    $tabMessage[$nbMessages][0] = 'ko';
+                    $tabMessage[$nbMessages][1] = $response;
+                    $nbMessages++;
+                    $valid = false;
+                    break;
+                case UPLOAD_ERR_NO_FILE:
+                    $response = 'Aucun fichier sélectionné.';
+                    $tabMessage[$nbMessages][0] = 'ko';
+                    $tabMessage[$nbMessages][1] = $response;
+                    $nbMessages++;
+                    $valid = false;
+                    break;
+                case UPLOAD_ERR_NO_TMP_DIR:
+                    $response = 'Manquantes dans un dossier temporaire. Introduit en PHP 4.3.10 et PHP 5.0.3.';
+                    $tabMessage[$nbMessages][0] = 'ko';
+                    $tabMessage[$nbMessages][1] = $response;
+                    $nbMessages++;
+                    $valid = false;
+                    break;
+                case UPLOAD_ERR_CANT_WRITE:
+                    $response = 'Impossible d\'écrire le fichier sur le disque. Introduit en PHP 5.1.0.';
+                    $tabMessage[$nbMessages][0] = 'ko';
+                    $tabMessage[$nbMessages][1] = $response;
+                    $nbMessages++;
+                    $valid = false;
+                    break;
+                case UPLOAD_ERR_EXTENSION:
+                    $response = 'Le téléchargement du fichier arrêté par extension. Introduit en PHP 5.2.0.';
+                    $tabMessage[$nbMessages][0] = 'ko';
+                    $tabMessage[$nbMessages][1] = $response;
+                    $nbMessages++;
+                    $valid = false;
+                    break;
+                default:
+                    $response = 'erreur inconnue';
+                    $tabMessage[$nbMessages][0] = 'ko';
+                    $tabMessage[$nbMessages][1] = $response;
+                    $nbMessages++;
+                    $valid = false;
+                    break;
+            }
         }
 
         if ($valid) {
@@ -2125,25 +2150,9 @@ class SuiviHydrobioController extends Controller {
             $tabFichiers = array();
             $nbFichier = 0;
             foreach ($liste as $nomFichier) {
-//$tabNomFichier = explode('-', $nomFichier);
-                $trouve = false;
-                if (strpos($nomFichier, $pgRefStationMesure->getCode()) !== false) {
-                    $trouve = true;
-                    break;
-                }
-                if (!$trouve) {
-                    if (filesize($pathBase . '/' . $nomFichier) > 0) {
-                        $contenu = 'pas de station à raccorder au fichier ' . $nomFichier . CHR(13) . CHR(10) . CHR(13) . CHR(10);
-                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                        fputs($rapport, $contenu);
-                        $nbIncorrect++;
-//$erreur = 1;
-                    }
-                } else {
-                    $tabFichiers[$nbFichier] = $nomFichier;
-                    $nbFichier++;
-                    $nbCorrect++;
-                }
+                $tabFichiers[$nbFichier] = $nomFichier;
+                $nbFichier++;
+                $nbCorrect++;
             }
 
             if (count($tabFichiers) > 0) {
@@ -2158,6 +2167,16 @@ class SuiviHydrobioController extends Controller {
                     $NbFt = 0;
                     $NbPhoto = 0;
                     for ($nb = 0; $nb < count($tabFichiers); $nb++) {
+                        if (strpos($tabFichiers[$nb], $pgRefStationMesure->getCode()) === false) {
+                            if (filesize($pathBase . '/' . $tabFichiers[$nb]) > 0) {
+                                $contenu = 'pas de station ' . $pgRefStationMesure->getCode() . ' à raccorder au fichier ' . $tabFichiers[$nb] . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+                                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                fputs($rapport, $contenu);
+                                $erreur = 1;
+                                $nbCorrect = $nbCorrect - 1;
+                                $nbIncorrect = $nbIncorrect + 1;
+                            }
+                        }
 //$tabNomFichier = explode('-', $tabFichiers[$nb]);
 //if ($tabNomFichier[1] != 'ft' && $tabNomFichier[1] != 'photo1' && $tabNomFichier[1] != 'photo2') {
                         if ((strpos(strtoupper($tabFichiers[$nb]), 'FT') === false) && (strpos(strtoupper($tabFichiers[$nb]), 'PHOTO') === false)) {
@@ -2168,10 +2187,10 @@ class SuiviHydrobioController extends Controller {
                             $nbCorrect = $nbCorrect - 1;
                             $nbIncorrect = $nbIncorrect + 1;
                         } else {
-                            if (strpos($tabFichiers[$nb], 'ft') === true) {
+                            if (strpos(strtoupper($tabFichiers[$nb]), 'FT') !== false) {
                                 $NbFt++;
                             }
-                            if (strpos($tabFichiers[$nb], 'photo') === true) {
+                            if (strpos(strtoupper($tabFichiers[$nb]), 'PHOTO') !== false) {
                                 $NbPhoto++;
                             }
                         }
@@ -2231,6 +2250,10 @@ class SuiviHydrobioController extends Controller {
                     if (($pgCmdSuiviPrel->getStatutPrel() == 'N') or ( $pgCmdSuiviPrel->getStatutPrel() == 'F') or ( $pgCmdSuiviPrel->getStatutPrel() == 'R')) {
                         if ($pgCmdSuiviPrel->getFichierRps()) {
                             $pgCmdFichiersRps = $pgCmdSuiviPrel->getFichierRps();
+                            $pgCmdDwnldUsrRpss = $repoPgCmdDwnldUsrRps->getPgCmdDwnldUsrRpsByFichierReponse($pgCmdFichiersRps);
+                            foreach ($pgCmdDwnldUsrRpss as $pgCmdDwnldUsrRps) {
+                                $emSqe->remove($pgCmdDwnldUsrRps);
+                            }
                             $emSqe->remove($pgCmdFichiersRps);
                         }
                         $pgCmdFichiersRps = new PgCmdFichiersRps();
@@ -2286,7 +2309,10 @@ class SuiviHydrobioController extends Controller {
                 fputs($rapport, $contenu);
             }
             fclose($rapport);
+        } else {
+            $erreur = 1;
         }
+
 
         if ($erreur == 0) {
             $objetMessage = "fichier terrrain déposé ";
@@ -2310,9 +2336,9 @@ class SuiviHydrobioController extends Controller {
                 }
                 if ($trouve) {
                     $trouve = false;
-                    $pgProgWebUserZgeorefs = $repoPgProgWebUserZgeoref->getPgProgWebuserZgeorefByWebuser($destinataire);
-                    foreach ($pgProgWebUserZgeorefs as $pgProgWebUserZgeoref) {
-                        if ($pgProgWebUserZgeoref->getZgeoref()->getId() == $pgProgLot->getZgeoref()->getId()) {
+                    $pgProgWebuserZgeorefs = $repoPgProgWebuserZgeoref->getPgProgWebuserZgeorefByWebuser($destinataire);
+                    foreach ($pgProgWebuserZgeorefs as $pgProgWebuserZgeoref) {
+                        if ($pgProgWebuserZgeoref->getZgeoref()->getId() == $pgProgLot->getZgeoref()->getId()) {
                             $trouve = true;
                         }
                     }
@@ -2368,7 +2394,7 @@ class SuiviHydrobioController extends Controller {
         $tabRapport[$nbRapport] = "Nombre de fichiers incorrects : " . $nbIncorrect;
         $nbRapport++;
         $tabRapport[$nbRapport] = "</br><h5><div class='text-center'>Voir le rapport d'integration </div></h5>";
-        if ($nbIncorrect == 0 or $valid) {
+        if ($nbIncorrect == 0 and $valid) {
             $this->rmAllDir($pathBase);
         }
 
@@ -2543,7 +2569,7 @@ class SuiviHydrobioController extends Controller {
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
-        $repoPgProgWebUserZgeoref = $emSqe->getRepository('AeagSqeBundle:PgProgWebuserZgeoref');
+        $repoPgProgWebuserZgeoref = $emSqe->getRepository('AeagSqeBundle:PgProgWebuserZgeoref');
         $repoPgProgZgeorefStation = $emSqe->getRepository('AeagSqeBundle:PgProgZgeorefStation');
         $repoPgSandreSupport = $emSqe->getRepository('AeagSqeBundle:PgSandreSupports');
         $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
@@ -2563,10 +2589,10 @@ class SuiviHydrobioController extends Controller {
             $pgCmdSuiviPrelDernier = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelById($tabResultats[$nbStations]['suiviPrelId']);
             $pgRefStationMesure = $repoPgRefStationMesure->getPgRefStationMesureByOuvFoncId($tabResultats[$nbStations]['ouvFoncId']);
             if (!$user->hasRole('ROLE_ADMINSQE')) {
-                $pgProgWebUserZgeorefs = $repoPgProgWebUserZgeoref->getPgProgWebuserZgeorefByWebuser($pgProgWebUser);
+                $pgProgWebuserZgeorefs = $repoPgProgWebuserZgeoref->getPgProgWebuserZgeorefByWebuser($pgProgWebUser);
                 $trouve = false;
-                foreach ($pgProgWebUserZgeorefs as $pgProgWebUserZgeoref) {
-                    $pgProgZoneGeoref = $pgProgWebUserZgeoref->getZgeoref();
+                foreach ($pgProgWebuserZgeorefs as $pgProgWebuserZgeoref) {
+                    $pgProgZoneGeoref = $pgProgWebuserZgeoref->getZgeoref();
                     $pgProgZgeorefStations = $repoPgProgZgeorefStation->getpgProgZgeorefStationByZgeoref($pgProgZoneGeoref);
                     foreach ($pgProgZgeorefStations as $pgProgZgeorefStation) {
                         if ($pgRefStationMesure->getOuvFoncId() == $pgProgZgeorefStation->getStationMesure()->getOuvFoncId()) {
