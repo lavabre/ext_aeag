@@ -35,9 +35,9 @@ class RelanceMailCommand extends AeagCommand {
         $this->sendEmailHbF();
         
         // Mise a jour auto
-        //$this->updateHbP();
+        $this->updateHbP();
         
-        //$this->updateHbF();
+        $this->updateHbF();
 
         $date = new \DateTime();
         $this->output->writeln($date->format('d/m/Y H:i:s') . ' - Relance mail : Fin');
@@ -171,26 +171,34 @@ class RelanceMailCommand extends AeagCommand {
 
     protected function updateHbP() {
         $pgCmdSuiviPrels = $this->repoPgCmdSuiviPrel->getSuiviPrelPByDays(15);
+        $date = new \DateTime();
+        $this->output->writeln($date->format('d/m/Y H:i:s') .' - Début validation auto HB P');
         foreach($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
             $date = new \DateTime();
-            $this->output->writeln($date->format('d/m/Y H:i:s') .' - '. $pgCmdSuiviPrel->getId().' - HBP - Mise à jour validation a A');
+            $this->output->writeln($date->format('d/m/Y H:i:s') .' - Mise à jour validation a A HB P - Lot '.$pgCmdSuiviPrel->getPrelev()->getDemande()->getLotan()->getLot()->getNomLot().' - Station '.$pgCmdSuiviPrel->getPrelev()->getStation()->getCode());
             $pgCmdSuiviPrel->setValidation('A');
             $pgCmdSuiviPrel->setValidAuto('O');
             $this->emSqe->persist($pgCmdSuiviPrel);
         }
         $this->emSqe->flush();
+        $date = new \DateTime();
+        $this->output->writeln($date->format('d/m/Y H:i:s') .' - Fin validation auto HB P');
     }
 
     protected function updateHbF() {
         $pgCmdSuiviPrels = $this->repoPgCmdSuiviPrel->getSuiviPrelFWithRpsByDays(21);
+        $date = new \DateTime();
+        $this->output->writeln($date->format('d/m/Y H:i:s') .' - Début validation auto HB F');
         foreach($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
             $date = new \DateTime();
-            $this->output->writeln($date->format('d/m/Y H:i:s') .' - '. $pgCmdSuiviPrel->getId().' - HBF - Mise à jour validation a A');
+            $this->output->writeln($date->format('d/m/Y H:i:s') .' - Mise à jour validation a A HB F - Lot '.$pgCmdSuiviPrel->getPrelev()->getDemande()->getLotan()->getLot()->getNomLot().' - Station '.$pgCmdSuiviPrel->getPrelev()->getStation()->getCode());
             $pgCmdSuiviPrel->setValidation('A');
             $pgCmdSuiviPrel->setValidAuto('O');
             $this->emSqe->persist($pgCmdSuiviPrel);
         }
         $this->emSqe->flush();
+        $date = new \DateTime();
+        $this->output->writeln($date->format('d/m/Y H:i:s') .' - Fin validation auto HB F');
     }
 
 }
