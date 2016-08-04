@@ -58,7 +58,9 @@ class RelanceMailCommand extends AeagCommand {
             $txtMessage .= "Période : " . $pgCmdDemande->getPeriode()->getLabelPeriode() . "<br/>";
             $txtMessage .= "Vous êtes censé déposer les résultats de la demande " . $pgCmdDemande->getId() . " du lot " . $pgCmdDemande->getLotan()->getLot()->getNomLot() . " avant <br/>";
             foreach ($destinataires as $destinataire) {
-                $this->sendEmail($destinataire, $txtMessage, $objetMessage);
+                if (!is_null($destinataire)) {
+                    $this->sendEmail($destinataire, $txtMessage, $objetMessage);
+                }
             }
         }
         $date = new \DateTime();
@@ -80,7 +82,9 @@ class RelanceMailCommand extends AeagCommand {
             $txtMessage .= "Période : " . $pgCmdDemande->getPeriode()->getLabelPeriode() . "<br/>";
             $txtMessage .= "Les résultats à la demande ".$pgCmdDemande->getId()." du lot ".$pgCmdDemande->getLotan()->getLot()->getNomLot()." n'ont pas été déposé. Vous encourez des pénalités. <br/>";
             foreach ($destinataires as $destinataire) {
-                $this->sendEmail($destinataire, $txtMessage, $objetMessage);
+                if (!is_null($destinataire)) {
+                    $this->sendEmail($destinataire, $txtMessage, $objetMessage);
+                }
             }
         }
         $date = new \DateTime();
@@ -110,9 +114,11 @@ class RelanceMailCommand extends AeagCommand {
             $txtMessage .= "Stations : <br/>" . $listeStationLibs . "<br/>";
             $txtMessage .= "<br/>Vous n'avez pas renseigné le prélèvement Effectué de la station ni déposé les fichiers associés.<br/>";
             foreach ($destinataires as $destinataire) {
-                $date = new \DateTime();
-                $this->output->writeln($date->format('d/m/Y H:i:s') .' - Send Mail Suivi HB P - Lot '.$pgProgLot->getId().' - Stations '.implode(', ', $listeStationCodes).'- Utilisateur '.$destinataire->getLogin());
-                $this->sendEmail($destinataire, $txtMessage, $objetMessage);
+                if (!is_null($destinataire)) {
+                    $date = new \DateTime();
+                    $this->output->writeln($date->format('d/m/Y H:i:s') .' - Send Mail Suivi HB P - Lot '.$pgProgLot->getId().' - Stations '.implode(', ', $listeStationCodes).'- Utilisateur '.$destinataire->getLogin());
+                    $this->sendEmail($destinataire, $txtMessage, $objetMessage);
+                }
             }
         }
         $date = new \DateTime();
@@ -145,9 +151,11 @@ class RelanceMailCommand extends AeagCommand {
             $txtMessage .= "Stations : </br>" . $listeStationLibs . "<br/>";
             $txtMessage .= "Vous n'avez pas déposé les fichiers associés pour ces stations.<br/>";
             foreach ($destinataires as $destinataire) {
-                $date = new \DateTime();
-                $this->output->writeln($date->format('d/m/Y H:i:s') .' - Send Mail Suivi HB F - Lot '.$pgProgLot->getId().' - Stations '.implode(', ', $listeStationCodes).' - Utilisateur '.$destinataire->getLogin());
-                $this->sendEmail($destinataire, $txtMessage, $objetMessage);
+                if (!is_null($destinataire)) {
+                    $date = new \DateTime();
+                    $this->output->writeln($date->format('d/m/Y H:i:s') .' - Send Mail Suivi HB F - Lot '.$pgProgLot->getId().' - Stations '.implode(', ', $listeStationCodes).' - Utilisateur '.$destinataire->getLogin());
+                    $this->sendEmail($destinataire, $txtMessage, $objetMessage);
+                }
             }
         }
         $date = new \DateTime();
