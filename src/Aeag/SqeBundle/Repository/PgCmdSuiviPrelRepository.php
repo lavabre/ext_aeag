@@ -238,7 +238,7 @@ class PgCmdSuiviPrelRepository extends EntityRepository {
         $query .= " join Aeag\SqeBundle\Entity\PgCmdPrelev p with suivi.prelev = p.id ";
         $query .= " group by p.id)";
         $query .= " and suivi2.statutPrel = 'P'";
-        $query .= " and DATEDIFF(DATE_ADD(suivi2.datePrel, ".$days.", 'day'),CURRENT_TIMESTAMP()) = 0";
+        $query .= " and DATE_DIFF(DATE_ADD(suivi2.datePrel, ".$days.", 'day'),CURRENT_TIMESTAMP()) = 0";
         $query .= " and mil.codeMilieu like '%HB'";
         $query .= " order by lot.id";
         
@@ -262,7 +262,7 @@ class PgCmdSuiviPrelRepository extends EntityRepository {
         $query .= " join Aeag\SqeBundle\Entity\PgCmdPrelev p with suivi.prelev = p.id ";
         $query .= " group by p.id)";
         $query .= " and suivi2.statutPrel = 'P'";
-        $query .= " and DATEDIFF(DATE_ADD(suivi2.datePrel, ".$days.", 'day'),CURRENT_TIMESTAMP()) = 0";
+        $query .= " and DATE_DIFF(DATE_ADD(suivi2.datePrel, ".$days.", 'day'),CURRENT_TIMESTAMP()) = 0";
         $query .= " and mil.codeMilieu like '%HB'";
         $query .= " and lot = :lot";
         $query .= " order by lot.id, station.code";
@@ -287,7 +287,7 @@ class PgCmdSuiviPrelRepository extends EntityRepository {
         $query .= " join Aeag\SqeBundle\Entity\PgCmdPrelev p with suivi.prelev = p.id ";
         $query .= " group by p.id)";
         $query .= " and suivi2.statutPrel = 'P'";
-        $query .= " and DATEDIFF(DATE_ADD(suivi2.datePrel, ".$days.", 'day'),CURRENT_TIMESTAMP()) = 0";
+        $query .= " and DATE_DIFF(DATE_ADD(suivi2.datePrel, ".$days.", 'day'),CURRENT_TIMESTAMP()) = 0";
         $query .= " and mil.codeMilieu like '%HB'";
         $query .= " group by lot";
         $query .= " order by lot.id";
@@ -313,7 +313,7 @@ class PgCmdSuiviPrelRepository extends EntityRepository {
         $query .= " join Aeag\SqeBundle\Entity\PgCmdPrelev p with suivi.prelev = p.id ";
         $query .= " group by p.id)";
         $query .= " and suivi2.statutPrel = 'F'";
-        $query .= " and DATEDIFF(DATE_ADD(suivi2.datePrel, ".$days.", 'day'),CURRENT_TIMESTAMP()) = 0";
+        $query .= " and DATE_DIFF(DATE_ADD(suivi2.datePrel, ".$days.", 'day'),CURRENT_TIMESTAMP()) = 0";
         $query .= " and mil.codeMilieu like '%HB'";
         $query .= " and lot = :lot";
         $query .= " order by lot.id, station.code";
@@ -340,7 +340,7 @@ class PgCmdSuiviPrelRepository extends EntityRepository {
         $query .= " join Aeag\SqeBundle\Entity\PgCmdPrelev p with suivi.prelev = p.id ";
         $query .= " group by p.id)";
         $query .= " and suivi2.statutPrel = 'F'";
-        $query .= " and DATEDIFF(DATE_ADD(suivi2.datePrel, ".$days.", 'day'),CURRENT_TIMESTAMP()) = 0";
+        $query .= " and DATE_DIFF(DATE_ADD(suivi2.datePrel, ".$days.", 'day'),CURRENT_TIMESTAMP()) = 0";
         $query .= " and mil.codeMilieu like '%HB'";
         $query .= " group by lot";
         $query .= " order by lot.id";
@@ -367,7 +367,7 @@ class PgCmdSuiviPrelRepository extends EntityRepository {
         $query .= " group by p.id)";
         $query .= " and suivi2.statutPrel = 'F'";
         $query .= " and (suivi2.avis = 'F' or suivi2.avis IS NULL)";
-        $query .= " and DATEDIFF(DATE_ADD(suivi2.datePrel, ".$days.", 'day'),CURRENT_TIMESTAMP()) = 0";
+        $query .= " and DATE_DIFF(DATE_ADD(suivi2.datePrel, ".$days.", 'day'),CURRENT_TIMESTAMP()) = 0";
         $query .= " and mil.codeMilieu like '%HB'";
         
         $qb = $this->_em->createQuery($query);
