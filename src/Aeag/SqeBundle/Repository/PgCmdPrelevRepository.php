@@ -201,7 +201,7 @@ class PgCmdPrelevRepository extends EntityRepository {
         $query = "select count(p)";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdPrelev p,  Aeag\SqeBundle\Entity\PgCmdDemande dmd, Aeag\SqeBundle\Entity\PgProgLotAn lotan, Aeag\SqeBundle\Entity\PgProgLotPeriodeAn pean";
         $query .= " where p.demande = dmd.id";
-//        $query .= " and p.fichierRps > 0";
+        $query .= " and p.fichierRps > 0";
         $query .= " and lotan = dmd.lotan";
         $query .= " and lotan = pean.lotan";
         $query .= " and pean.periode = dmd.periode";
