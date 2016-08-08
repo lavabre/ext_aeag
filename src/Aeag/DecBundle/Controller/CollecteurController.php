@@ -1295,7 +1295,7 @@ class CollecteurController extends Controller {
                 } else {
                     $tab[$i]['producteurSiret'] = null;
                     $tab[$i]['producteurLibelle'] = null;
-                     $tab[$i]['producteurCodePostal'] = null;
+                    $tab[$i]['producteurCodePostal'] = null;
                 }
                 $tab[$i]['declarationProducteurQuantiteReel'] = $declaration->getDeclarationProducteur()->getQuantiteReel();
                 $tab[$i]['declarationProducteurQuantiteRet'] = $declaration->getDeclarationProducteur()->getQuantiteRet();
@@ -2306,16 +2306,16 @@ class CollecteurController extends Controller {
                                     if (strlen($tab[14]) == 14) {
                                         $centreDepots = $repoOuvrage->getOuvragesBySiretType($tab[14], 'ODEC');
                                         if ($centreDepots) {
-                                            $centreDepot = null;
+                                            $centreDepot = $centreDepots[0];
+                                        } else {
+                                            $centreDepot = $repoOuvrage->getOuvrageByNumeroType($tab[14], 'ODEC');
                                         }
-                                    } else {
-                                        $centreDepot = $repoOuvrage->getOuvrageByNumeroType($tab[14], 'ODEC');
-                                    }
-                                    if ($centreDepot) {
-                                        $declarationDetail->setCentreDepot($centreDepot->getid());
-                                    } else {
-                                        $err = true;
-                                        $message = "dans le fichier CSV : centre de d'entreposage " . $tab[14] . " incorrect à la ligne " . $ligne . " \n";
+                                        if ($centreDepot) {
+                                            $declarationDetail->setCentreDepot($centreDepot->getid());
+                                        } else {
+                                            $err = true;
+                                            $message = "dans le fichier CSV : centre d'entreposage " . $tab[14] . " incorrect à la ligne " . $ligne . " \n";
+                                        }
                                     }
                                 }
                             }
