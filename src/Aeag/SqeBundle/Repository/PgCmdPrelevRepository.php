@@ -196,6 +196,40 @@ class PgCmdPrelevRepository extends EntityRepository {
 
         return $qb->getResult();
     }
+    
+     public function getCountPgCmdPrelevByLotan($pgProgLotAn) {
+        $query = "select count(p)";
+        $query .= " from Aeag\SqeBundle\Entity\PgCmdPrelev p,  Aeag\SqeBundle\Entity\PgCmdDemande dmd, Aeag\SqeBundle\Entity\PgProgLotAn lotan, Aeag\SqeBundle\Entity\PgProgLotPeriodeAn pean";
+        $query .= " where p.demande = dmd.id";
+//        $query .= " and p.fichierRps > 0";
+        $query .= " and lotan = dmd.lotan";
+        $query .= " and lotan = pean.lotan";
+        $query .= " and pean.periode = dmd.periode";
+        $query .= " and pean.codeStatut <> 'INV'";
+        $query .= " and lotan.id = :lotan";
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('lotan', $pgProgLotAn->getid());
+        //print_r($query);
+         return $qb->getSingleScalarResult();
+    }
+    
+     public function getCountPgCmdPrelevByLotanPhase($pgProgLotAn, $pgProgPhase) {
+        $query = "select count(dmd)";
+        $query .= " from Aeag\SqeBundle\Entity\PgCmdPrelev p,  Aeag\SqeBundle\Entity\PgCmdDemande dmd, Aeag\SqeBundle\Entity\PgProgLotAn lotan, Aeag\SqeBundle\Entity\PgProgLotPeriodeAn pean";
+         $query .= " where p.demande = dmd.id";
+//         $query .= " and p.fichierRps > 0";
+        $query .= " and lotan = dmd.lotan";
+        $query .= " and lotan = pean.lotan";
+        $query .= " and pean.periode = dmd.periode";
+        $query .= " and pean.codeStatut <> 'INV'";
+        $query .= " and lotan.id = :lotan";
+        $query .= " and p.phaseDmd = :phase";
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('lotan', $pgProgLotAn->getId());
+         $qb->setParameter('phase', $pgProgPhase->getId());
+        //print_r($query);
+         return $qb->getSingleScalarResult();
+    }
 
     public function getDonneesBrutes($pgCmdFichierRps) {
         return array_merge($this->getDonneesBrutesAnalyse($pgCmdFichierRps), $this->getDonneesBrutesMesureEnv($pgCmdFichierRps));

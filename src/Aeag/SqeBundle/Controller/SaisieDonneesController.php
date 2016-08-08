@@ -30,6 +30,13 @@ class SaisieDonneesController extends Controller {
 
 // Récupération des programmations
         $repoPgProgLotAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotAn');
+        $repoPgProgLotStationAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotStationAn');
+        $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
+        $repoPgProgLotPeriodeProg = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeProg');
+        $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
+        $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
+        $repoProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
+
         if ($user->hasRole('ROLE_ADMINSQE')) {
             $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByAdmin();
         } else if ($user->hasRole('ROLE_PRESTASQE')) {
@@ -38,8 +45,26 @@ class SaisieDonneesController extends Controller {
             $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByProg($user);
         }
 
+        $pgProgPhase = $repoProgPhases->getPgProgPhasesByCodePhase('M40');
+
+        $tabProgLotAns = array();
+        $i = 0;
+        foreach ($pgProgLotAns as $pgProgLotAn) {
+            $tabProgLotAns[$i]['lotan'] = $pgProgLotAn;
+            $nbPrelevs = $repoPgCmdPrelev->getCountPgCmdPrelevByLotan($pgProgLotAn);
+            $nbPrelevCorrectes = $repoPgCmdPrelev->getCountPgCmdPrelevByLotanPhase($pgProgLotAn, $pgProgPhase);
+            $tabProgLotAns[$i]['nbDemandes'] = $nbPrelevs;
+            $tabProgLotAns[$i]['nbDemandeCorrectes'] = $nbPrelevCorrectes;
+//            if ($pgProgLotAn->getid() == 327){
+//            echo('lot : ' . $pgProgLotAn->getLot()->getNomLot() . ' demandes : ' . $tabProgLotAns[$i]['nbDemandes'] . ' correctes : ' . $tabProgLotAns[$i]['nbDemandeCorrectes'] . '</br>');
+//            }
+            $i++;
+        }
+        
+       // return new Response(' ');
+
         return $this->render('AeagSqeBundle:SaisieDonnees:index.html.twig', array('user' => $user,
-                    'lotans' => $pgProgLotAns));
+                    'lotans' => $tabProgLotAns));
     }
 
     public function lotPeriodesAction($lotanId) {

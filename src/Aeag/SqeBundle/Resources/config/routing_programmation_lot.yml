@@ -10,6 +10,12 @@ AeagSqeBundle_programmation_lot_filtre:
     requirements:
         methods:  GET|POST
         
+AeagSqeBundle_programmation_lot_consulter:
+    path:  /consulter/{action}
+    defaults: { _controller: AeagSqeBundle:ProgrammationLot:consulter, action : null }
+    requirements:
+        methods:  GET|POST
+        
 AeagSqeBundle_programmation_lot_soumettre:
     path:  /soumettre/{lotAnId}/{action}
     defaults: { _controller: AeagSqeBundle:ProgrammationLot:soumettre, lotAnId : null, action : null }

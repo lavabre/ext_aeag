@@ -179,6 +179,7 @@ class ProgrammationLotController extends Controller {
         if (!$this->get('security.authorization_checker')->isGranted('ROLE_ADMINSQE')) {
             $pgProgWebuser = $repoPgProgWebusers->getPgProgWebusersByLoginPassword($user->getUsername(), $user->getPassword());
             $critWebuser = $pgProgWebuser->getId();
+            $session->set('critWebuser', $critWebuser);
         } else {
             $critWebuser = null;
         }
@@ -257,6 +258,7 @@ class ProgrammationLotController extends Controller {
         $session->set('fonction', 'filtres');
         $em = $this->get('doctrine')->getManager();
         $emSqe = $this->get('doctrine')->getManager('sqe');
+
 
         if (is_object($user)) {
             if ($action == 'V' && !$this->get('security.authorization_checker')->isGranted('ROLE_SQE')) {
@@ -378,8 +380,12 @@ class ProgrammationLotController extends Controller {
         if ($critWebuser) {
             $session->set('critWebuser', $critWebuser);
         } else {
-            $critWebuser = null;
-            $session->remove('critWebuser');
+            if ($session->get('critWebuser')) {
+                $critWebuser = $session->get('critWebuser');
+            } else {
+                $critWebuser = null;
+                $session->remove('critWebuser');
+            }
         }
         if ($critMarche) {
             $session->set('critMarche', $critMarche);
@@ -672,7 +678,7 @@ class ProgrammationLotController extends Controller {
         ));
     }
 
-    public function resultatsAction($action = null, Request $request) {
+    public function consulterAction($action = null, Request $request) {
 
         $user = $this->getUser();
         if (!$user) {
@@ -693,10 +699,7 @@ class ProgrammationLotController extends Controller {
             if ($action == 'V' && !$this->get('security.authorization_checker')->isGranted('ROLE_SQE')) {
                 return $this->render('AeagSqeBundle:Default:interdit.html.twig');
             }
-            if ($action == 'P' && !$this->get('security.authorization_checker')->isGranted('ROLE_PROGSQE')) {
-                return $this->render('AeagSqeBundle:Default:interdit.html.twig');
-            }
-            if ($action != 'P' && $action != 'V') {
+            if ($action != 'V') {
                 return $this->render('AeagSqeBundle:Default:interdit.html.twig');
             }
         }
@@ -868,8 +871,13 @@ class ProgrammationLotController extends Controller {
             if ($critWebuser) {
                 $session->set('critWebuser', $critWebuser);
             } else {
-                $critWebuser = null;
-                $session->remove('critWebuser');
+                if ($session->get('critWebuser')) {
+                    $critWebuser = $session->get('critWebuser');
+                    $selWebuser = $repoPgProgWebusers->getPgProgWebusersById($critWebuser);
+                } else {
+                    $critWebuser = null;
+                    $session->remove('critWebuser');
+                }
             }
             if ($critMarche) {
                 $session->set('critMarche', $critMarche);
@@ -1229,6 +1237,596 @@ class ProgrammationLotController extends Controller {
                     'marches' => $tabMarches,
                     'titulaires' => $tabTitulaires,
                     'zoneGeoRefs' => $tabZoneGeoRefs,
+                    'typeMilieux' => $tabTypeMilieux,
+                    'lots' => $tabLots,
+                    'phases' => $tabPhases
+        ));
+    }
+
+    public function resultatsAction($action = null, Request $request) {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'programmation');
+        $session->set('controller', 'programmationLot');
+        $session->set('fonction', 'resultats');
+        $em = $this->get('doctrine')->getManager();
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        if (is_object($user)) {
+
+            $mes = AeagController::notificationAction($user, $em, $session);
+            $mes1 = AeagController::messageAction($user, $em, $session);
+
+            if ($action == 'V' && !$this->get('security.authorization_checker')->isGranted('ROLE_SQE')) {
+                return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            }
+            if ($action == 'P' && !$this->get('security.authorization_checker')->isGranted('ROLE_PROGSQE')) {
+                return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            }
+            if ($action != 'P' && $action != 'V') {
+                return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            }
+        }
+
+        $repoPgProgWebusers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
+        $repoPgProgMarche = $emSqe->getRepository('AeagSqeBundle:PgProgMarche');
+        $repoPgProgMarcheUser = $emSqe->getRepository('AeagSqeBundle:PgProgMarcheUser');
+        $repoPgRefCorresPresta = $emSqe->getRepository('AeagSqeBundle:PgRefCorresPresta');
+        $repoPgProgZoneGeoRef = $emSqe->getRepository('AeagSqeBundle:PgProgZoneGeoRef');
+        $repoPgProgTypeMilieu = $emSqe->getRepository('AeagSqeBundle:PgProgTypeMilieu');
+        $repoPgProgLot = $emSqe->getRepository('AeagSqeBundle:PgProgLot');
+        $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
+        $repoPgProgLotAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotAn');
+        $repoPgProgLotGrparAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotGrparAn');
+        $repoPgProgLotStationAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotStationAn');
+
+        $tabWebusers = array();
+        $tabMarches = array();
+        $tabTitulaires = array();
+        $tabZoneGeoRefs = array();
+        $tabTypeMilieux = array();
+        $tabLots = array();
+        $tabPhases = array();
+
+        $nbWebusers = 0;
+        $nbMarches = 0;
+        $nbTitulaires = 0;
+        $nbZoneGeoRefs = 0;
+        $nbTypeMilieux = 0;
+        $nbLots = 0;
+        $nbPhases = 0;
+
+
+        $webusers = $repoPgProgWebusers->getPgProgWebusers();
+        foreach ($webusers as $webuser) {
+            $tabWebusers[$nbWebusers] = $webuser;
+            $nbWebusers++;
+        }
+
+        $marches = $repoPgProgMarche->getPgProgMarches();
+        foreach ($marches as $marche) {
+            $tabMarches[$nbMarches] = $marche;
+            $nbMarches++;
+        }
+
+        $titulaires = $repoPgRefCorresPresta->getPgRefCorresPrestas();
+        foreach ($titulaires as $titulaire) {
+            $tabTitulaires[$nbTitulaires] = $titulaire;
+            $nbTitulaires++;
+        }
+
+        $zoneGeoRefs = $repoPgProgZoneGeoRef->getPgProgZoneGeoRefs();
+        foreach ($zoneGeoRefs as $zoneGeoRef) {
+            $tabZoneGeoRefs[$nbZoneGeoRefs] = $zoneGeoRef;
+            $nbZoneGeoRefs++;
+        }
+
+        $typeMilieux = $repoPgProgTypeMilieu->getPgProgTypeMilieux();
+        foreach ($typeMilieux as $typeMilieu) {
+            $tabTypeMilieux[$nbTypeMilieux] = $typeMilieu;
+            $nbTypeMilieux++;
+        }
+
+        $lots = $repoPgProgLot->getPgProgLots();
+        foreach ($lots as $lot) {
+            $tabLots[$nbLots] = $lot;
+            $nbLots++;
+        }
+
+        $phases = $repoPgProgPhases->getPgProgPhases();
+        foreach ($phases as $phase) {
+            $tabPhases[$nbPhases] = $phase;
+            $nbPhases++;
+        }
+
+        $criteres = new Criteres();
+
+        $form = $this->createForm(new CriteresType(), $criteres);
+
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+
+            $critAnnee = $criteres->getAnnee();
+            $specialUser = null;
+            $critWebuser = null;
+            if ($action == 'P') {
+                if (!$this->get('security.authorization_checker')->isGranted('ROLE_PROGSQE')) {
+                    $pgProgWebuser = $repoPgProgWebusers->getPgProgWebusersByLoginPassword($user->getUsername(), $user->getPassword());
+                    if ($pgProgWebuser) {
+                        $critWebuser = $pgProgWebuser->getId();
+                    } else {
+                        $critWebuser = null;
+                    }
+                } else {
+                    $pgProgWebuser = $repoPgProgWebusers->getPgProgWebusersByLoginPassword($user->getUsername(), $user->getPassword());
+                    if ($pgProgWebuser) {
+                        if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMINSQE')) {
+                            $specialUser = $pgProgWebuser;
+                        }
+                        if (!$criteres->getWebuser()) {
+                            if (!$this->get('security.authorization_checker')->isGranted('ROLE_ADMINSQE')) {
+                                $critWebuser = $pgProgWebuser->getid();
+                            } else {
+                                $critWebuser = null;
+                            }
+                        } else {
+                            $critWebuser = $criteres->getWebuser();
+                        }
+                    }
+                }
+                if ($critWebuser) {
+                    $selWebuser = $repoPgProgWebusers->getPgProgWebusersById($critWebuser);
+                } else {
+                    $selWebuser = null;
+                }
+            } else {
+                $critWebuser = null;
+                $selWebuser = null;
+            }
+            $session->set('specialUser', $specialUser);
+            $critMarche = $criteres->getMarche();
+            if ($critMarche) {
+                $selMarche = $repoPgProgMarche->getPgProgMarcheById($critMarche);
+            } else {
+                $selMarche = null;
+            }
+            $critTitulaire = $criteres->getTitulaire();
+            if ($critTitulaire) {
+                $selTitulaire = $repoPgRefCorresPresta->getPgRefCorresPrestaByAdrCorId($critTitulaire);
+            } else {
+                $selTitulaire = null;
+            }
+            $critZoneGeoRef = $criteres->getZoneGeoRef();
+            if ($critZoneGeoRef) {
+                $selZoneGeoRef = $repoPgProgZoneGeoRef->getPgProgZoneGeoRefById($critZoneGeoRef);
+            } else {
+                $selZoneGeoRef = null;
+            }
+            
+            if ($criteres->getCatMilieu()){
+                $selMilieu = $criteres->getCatMilieu();
+            }else{
+                $selMilieu = null;
+            }
+            
+            if ($criteres->getCatMilieu() and ! $criteres->getTypeMilieu()) {
+                $critTypeMilieu = $criteres->getCatMilieu();
+            } else {
+                $critTypeMilieu = $criteres->getTypeMilieu();
+            }
+            if ($critTypeMilieu) {
+                $selTypeMilieu = $repoPgProgTypeMilieu->getPgProgTypeMilieuByCodeMilieu($critTypeMilieu);
+            } else {
+                $selTypeMilieu = null;
+            }
+            $critLot = $criteres->getLot();
+            if ($critLot) {
+                $selLot = $repoPgProgLot->getPgProgLotById($critLot);
+            } else {
+                $selLot = null;
+            }
+            $critPhase = $criteres->getPhase();
+            if ($critPhase) {
+                $selPhase = $repoPgProgPhases->getPgProgPhasesById($critPhase);
+            } else {
+                $selPhase = null;
+            }
+
+
+
+            if ($critAnnee) {
+                $session->set('critAnnee', $critAnnee);
+            } else {
+                $critAnnee = null;
+                $session->remove('critAnnee');
+            }
+
+
+            if ($critWebuser) {
+                $session->set('critWebuser', $critWebuser);
+            } else {
+                if ($session->get('critWebuser')) {
+                    $critWebuser = $session->get('critWebuser');
+                    $selWebuser = $repoPgProgWebusers->getPgProgWebusersById($critWebuser);
+                } else {
+                    $critWebuser = null;
+                    $session->remove('critWebuser');
+                }
+            }
+            if ($critMarche) {
+                $session->set('critMarche', $critMarche);
+            } else {
+                $critMarche = null;
+                $session->remove('critMarche');
+            }
+            if ($critTitulaire) {
+                $session->set('critTitulaire', $critTitulaire);
+            } else {
+                $critTitulaire = null;
+                $session->remove('critTitulaire');
+            }
+            if ($critZoneGeoRef) {
+                $session->set('critZoneGeoRef', $critZoneGeoRef);
+            } else {
+                $critZoneGeoRef = null;
+                $session->remove('critZoneGeoRef');
+            }
+            if ($critTypeMilieu) {
+                $session->set('critTypeMilieu', $critTypeMilieu);
+            } else {
+                $critTypeMilieu = null;
+                $session->remove('critTypeMilieu');
+            }
+            if ($critLot) {
+                $session->set('critLot', $critLot);
+            } else {
+                $critLot = null;
+                $session->remove('critLot');
+            }
+            if ($critPhase) {
+                $session->set('critPhase', $critPhase);
+            } else {
+                $critPhase = null;
+                $session->remove('critPhase');
+            }
+
+
+            // les marche de l'année sélectionnée
+            if ($critAnnee) {
+                $tabMarcheBis = array();
+                $i = 0;
+                foreach ($tabMarches as $marche) {
+                    $tabMarcheBis[$i] = $marche;
+                    $i++;
+                }
+                $tabMarches = array();
+                $i = 0;
+                if (count($tabMarcheBis) > 0) {
+                    foreach ($tabMarcheBis as $marche) {
+                        $marchAnnee = $marche->getAnneeDeb();
+                        $marcheDuree = $marche->getDuree() - 1;
+                        if ($marchAnnee == $critAnnee) {
+                            $tabMarches[$i] = $marche;
+                            $i++;
+                        } else {
+                            for ($j = 1; $j <= $marcheDuree; $j++) {
+                                if ($marchAnnee + $j == $critAnnee) {
+                                    $tabMarches[$i] = $marche;
+                                    $i++;
+                                    $J = $marcheDuree + 1;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            // les marche de l'utilisateur sélectionnée
+            if ($critWebuser) {
+                $tabMarcheBis = array();
+                $i = 0;
+                foreach ($tabMarches as $marche) {
+                    $tabMarcheBis[$i] = $marche;
+                    $i++;
+                }
+                $tabMarches = array();
+                $i = 0;
+                if (count($tabMarcheBis) > 0) {
+                    foreach ($tabMarcheBis as $marche) {
+                        $pgprogmarcheUsers = $repoPgProgMarcheUser->getPgProgMarcheUserByMarche($marche);
+                        foreach ($pgprogmarcheUsers as $pgprogmarcheUser) {
+                            if ($pgprogmarcheUser->getWebuser()->getId() == $critWebuser) {
+                                $tabMarches[$i] = $marche;
+                                $i++;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // le marché séléctionne
+            if ($critMarche) {
+                $tabMarcheBis = array();
+                $i = 0;
+                foreach ($tabMarches as $marche) {
+                    $tabMarcheBis[$i] = $marche;
+                    $i++;
+                }
+                $tabMarches = array();
+                $i = 0;
+                foreach ($tabMarcheBis as $marche) {
+                    if ($marche->getId() == $critMarche) {
+                        $tabMarches[$i] = $marche;
+                        $i++;
+                    }
+                }
+            }
+
+
+            // les lots séléctionnées suivant les marches
+            $tabLotBis = array();
+            $i = 0;
+            foreach ($tabLots as $lot) {
+                $tabLotBis[$i] = $lot;
+                $i++;
+            }
+            $tabLots = array();
+            $i = 0;
+            foreach ($tabLotBis as $lot) {
+                foreach ($tabMarches as $marche) {
+                    if ($lot->getMarche()->getid() == $marche->getId()) {
+                        $tabLots[$i] = $lot;
+                        $i++;
+                    }
+                }
+            }
+
+
+            // les lots séléctionnées suivant la phase
+            if ($critPhase) {
+                $tabLotBis = array();
+                $i = 0;
+                foreach ($tabLots as $lot) {
+                    $tabLotBis[$i] = $lot;
+                    $i++;
+                }
+                $tabLots = array();
+                $i = 0;
+                foreach ($tabLotBis as $lot) {
+                    $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByLot($lot);
+                    if (count($pgProgLotAns > 0)) {
+                        $trouve = false;
+                        foreach ($pgProgLotAns as $pgProgLotAn) {
+                            if ($pgProgLotAn->getPhase()->getId() == intval($critPhase)) {
+                                $tabLots[$i] = $lot;
+                                $i++;
+                            }
+                        }
+                    } else {
+                        $tabLots[$i] = $lot;
+                        $i++;
+                    }
+                }
+            }
+
+
+            // les lots séléctionées suivant les titulaires
+
+            if ($critTitulaire) {
+                $tabLotBis = array();
+                $i = 0;
+                foreach ($tabLots as $lot) {
+                    $tabLotBis[$i] = $lot;
+                    $i++;
+                }
+                $tabLots = array();
+                $i = 0;
+                foreach ($tabLotBis as $lot) {
+                    if ($lot->getTitulaire()) {
+                        if ($lot->getTitulaire()->getAdrCorId() == $critTitulaire) {
+                            $tabLots[$i] = $lot;
+                            $i++;
+                        }
+                    }
+                }
+            }
+
+
+            // les lots séléctionées suivant les zones géographiques
+            if ($critZoneGeoRef) {
+                $tabLotBis = array();
+                $i = 0;
+                foreach ($tabLots as $lot) {
+                    $tabLotBis[$i] = $lot;
+                    $i++;
+                }
+                $tabLots = array();
+                $i = 0;
+                foreach ($tabLotBis as $lot) {
+                    if ($lot->getZgeoRef()) {
+                        if ($lot->getZgeoRef()->getId() == $critZoneGeoRef) {
+                            $tabLots[$i] = $lot;
+                            $i++;
+                        }
+                    }
+                }
+            }
+
+
+            // les lots séléctionées suivant les types de milieu
+            if ($critTypeMilieu) {
+                $tabLotBis = array();
+                $i = 0;
+                foreach ($tabLots as $lot) {
+                    $tabLotBis[$i] = $lot;
+                    $i++;
+                }
+                $tabLots = array();
+                $i = 0;
+                foreach ($tabLotBis as $lot) {
+                    if (strlen($critTypeMilieu) == 1) {
+                     //   echo('lot : ' . $lot->getCodeMilieu()->getCodeMilieu() . ' -> ' . substr($lot->getCodeMilieu()->getCodeMilieu(),0,1) . '</br>');
+                        if (substr($lot->getCodeMilieu()->getCodeMilieu(),0,1) == $critTypeMilieu) {
+                            $tabLots[$i] = $lot;
+                            $i++;
+                        }
+                    } else {
+                        if ($lot->getCodeMilieu()->getCodeMilieu() == $critTypeMilieu) {
+                            $tabLots[$i] = $lot;
+                            $i++;
+                        }
+                    }
+                }
+            }
+
+           // return new Response('type milieu : ' . $critTypeMilieu . ' nb lot : ' . count($tabLots));
+
+            //  lot séléctioné
+            if ($critLot) {
+                $tabLotBis = array();
+                $i = 0;
+                foreach ($tabLots as $lot) {
+                    $tabLotBis[$i] = $lot;
+                    $i++;
+                }
+                $tabLots = array();
+                $i = 0;
+                foreach ($tabLotBis as $lot) {
+                    if ($lot->getId() == $critLot) {
+                        $tabLots[$i] = $lot;
+                        $i++;
+                    }
+                }
+            }
+
+
+            // les lots séléctionées suivant l'année selectionnée
+            if ($critAnnee) {
+                $tabLotBis = array();
+                $i = 0;
+                foreach ($tabLots as $lot) {
+                    $tabLotBis[$i] = $lot;
+                    $i++;
+                }
+                $tabLots = array();
+                $i = 0;
+                foreach ($tabLotBis as $lot) {
+                    $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByLot($lot);
+                    if (count($pgProgLotAns) > 0) {
+                        $trouve = false;
+                        foreach ($pgProgLotAns as $pgProgLotAn) {
+                            if ($pgProgLotAn->getAnneeProg() == $critAnnee) {
+                                $trouve = true;
+                            }
+                            if ($trouve) {
+                                $trouve = false;
+                                for ($j = 0; $j < count($tabLots); $j++) {
+                                    if ($tabLots[$j]->getId() == $lot->getId()) {
+                                        $trouve = true;
+                                    }
+                                }
+                                if (!$trouve) {
+                                    $tabLots[$i] = $lot;
+                                    $i++;
+                                }
+                            }
+                        }
+                    } else {
+                        $tabLots[$i] = $lot;
+                        $i++;
+                    }
+                }
+            }
+
+
+
+            $tabLotBis = array();
+            $i = 0;
+            foreach ($tabLots as $lot) {
+                $tabLotBis[$i] = $lot;
+                $i++;
+            }
+
+            $tabLots = array();
+            $i = 0;
+            foreach ($tabLotBis as $lot) {
+                $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByLot($lot);
+                if ($pgProgLotAns) {
+                    foreach ($pgProgLotAns as $pgProgLotAn) {
+                        $tabLots[$i]['lot'] = $lot;
+                        $typeMilieu = $lot->getCodeMilieu();
+                        $tabLots[$i]['typeMilieu'] = $typeMilieu;
+                        $tabLots[$i]['lotAn'] = $pgProgLotAn;
+                        $tabLots[$i]['tri'] = $lot->getId() . '000' . $pgProgLotAn->getVersion();
+                        $i++;
+                    }
+                } else {
+                    $tabLots[$i]['lot'] = $lot;
+                    $typeMilieu = $lot->getCodeMilieu();
+                    $tabLots[$i]['typeMilieu'] = $typeMilieu;
+                    $tabLots[$i]['lotAn'] = null;
+                    $tabLots[$i]['tri'] = $lot->getId() . '0000';
+                    $i++;
+                }
+            }
+
+
+            $session->set('niveau1', $this->generateUrl('Aeag_sqe_programmation_lots', array('action' => $action)));
+            $session->set('niveau2', '');
+
+            if (count($tabLots) == 0) {
+                $session->getFlashBag()->add('notice-warning', 'aucune programmation de prévue pour cette sélection');
+                return $this->redirect($this->generateUrl('Aeag_sqe_programmation_lots', array('action' => $action)));
+            }
+
+            if ($session->has('messageErreur')) {
+                $session->remove('messageErreur');
+            }
+
+            if (count($tabLots) == 1) {
+                $session->set('critMarche', $tabLots[0]['lot']->getMarche()->getId());
+                $session->set('critMarche', $tabLots[0]['lot']->getMarche()->getId());
+                if ($tabLots[0]['lot']->getTitulaire()) {
+                    $session->set('critTitulaire', $tabLots[0]['lot']->getTitulaire()->getAdrCorId());
+                }
+                $session->set('critZoneGeoRef', $tabLots[0]['lot']->getZGeoRef()->getId());
+                $session->set('critTypeMilieu', $tabLots[0]['lot']->getCodeMilieu()->getCodeMilieu());
+                $session->set('critLot', $tabLots[0]['lot']->getId());
+                //return $this->forward('AeagSqeBundle:Programmation:criteresResultatUnique');
+                return $this->redirect($this->generateUrl('AeagSqeBundle_programmation_lot_resultat_unique', array('action' => $action)));
+            } else {
+                usort($tabLots, create_function('$a,$b', 'return $a[\'tri\']-$b[\'tri\'];'));
+                return $this->render('AeagSqeBundle:Programmation:Lot/resultats.html.twig', array(
+                            'specialUser' => $specialUser,
+                            'action' => $action,
+                            'entities' => $tabLots,
+                            'critAnnee' => $critAnnee,
+                            'critPhase' => $selPhase,
+                            'critWebuser' => $selWebuser,
+                            'critMarche' => $selMarche,
+                            'critTitulaire' => $selTitulaire,
+                            'critZoneGeoRef' => $selZoneGeoRef,
+                            'critMilieu' => $selMilieu,
+                            'critTypeMilieu' => $selTypeMilieu,
+                            'critLot' => $selLot));
+            }
+        }
+
+
+
+        return $this->render('AeagSqeBundle:Programmation:Lot/index.html.twig', array(
+                    'form' => $form->createView(),
+                    'action' => $action,
+                    'marches' => $tabMarches,
+                    'titulaires' => $tabTitulaires,
+                    'zoneGeoRefs' => $tabZoneGeoRefs,
+                    'Milieu' => $selMilieu,
                     'typeMilieux' => $tabTypeMilieux,
                     'lots' => $tabLots,
                     'phases' => $tabPhases

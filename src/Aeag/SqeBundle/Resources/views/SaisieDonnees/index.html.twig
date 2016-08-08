@@ -37,27 +37,31 @@
                     <tbody>
                         {%if lotans | length%} 
                             {% for lotan in lotans %}
-                                <tr>
+                                {% if  lotan.nbDemandes > 0 and lotan.nbDemandeCorrectes == lotan.nbDemandes %}
+                                    <tr class="success">
+                                    {% else %}
+                                    <tr> 
+                                    {% endif %}
                                     <td>
-                                        <a id="id_{{lotan.id}}" class="btn btn-primary btn-demandes" href="{{path('AeagSqeBundle_saisieDonnees_lot_periodes',{ 'lotanId': lotan.id })}}" title="Périodes">
+                                        <a id="id_{{ lotan.lotan.id}}" class="btn btn-primary btn-demandes" href="{{path('AeagSqeBundle_saisieDonnees_lot_periodes',{ 'lotanId': lotan.lotan.id })}}" title="Périodes">
                                             <i class="fa fa-eye"></i> 
                                         </a>
                                     </td>
-                                    <td>{{lotan.lot.nomLot}}</td>
-                                    <td>{{ lotan.anneeProg }}</td>
-                                    <td>{{ lotan.version }}</td>
-                                    <td>{{ lotan.lot.marche.nomMarche }}</td>
-                                    <td>{{ lotan.lot.zgeoRef.nomZoneGeo }}</td>
-                                    <td>{% if lotan.lot.codeMilieu| length %}
-                                        {{ lotan.lot.codeMilieu.nomMilieu }}
+                                    <td>{{lotan.lotan.lot.nomLot}}</td>
+                                    <td>{{ lotan.lotan.anneeProg }}</td>
+                                    <td>{{ lotan.lotan.version }}</td>
+                                    <td>{{ lotan.lotan.lot.marche.nomMarche }}</td>
+                                    <td>{{ lotan.lotan.lot.zgeoRef.nomZoneGeo }}</td>
+                                    <td>{% if lotan.lotan.lot.codeMilieu| length %}
+                                        {{ lotan.lotan.lot.codeMilieu.nomMilieu }}
                                         {% endif %}
                                         </td>
-                                        <td>{%if lotan.lot.titulaire %}
-                                            {{ lotan.lot.titulaire.nomCorres }}
+                                        <td>{%if lotan.lotan.lot.titulaire %}
+                                            {{ lotan.lotan.lot.titulaire.nomCorres }}
                                             {% endif %}
                                             </td>
-                                            <td>{{lotan.phase.libellePhase}} </td>
-                                            <td>{{lotan.codeStatut.libelleStatut}} le {{ lotan.dateModif | date("d/m/Y H:i:")}} par {{ lotan.utilModif.nom}} </td>
+                                            <td>{{lotan.lotan.phase.libellePhase}} </td>
+                                            <td>{{lotan.lotan.codeStatut.libelleStatut}} le {{ lotan.lotan.dateModif | date("d/m/Y H:i:")}} par {{ lotan.lotan.utilModif.nom}} </td>
                                         </tr>
                                         {% endfor %}
                                             {% endif %}
@@ -66,6 +70,16 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="row">
+                                <div class="col-md-12 pull-right text-info">
+                                    <ul class="list-inline">
+                                        <li><span class="label label-success">Correct</span></li>
+                                            {# <li><span class="label label-danger"><i class="fa fa-exclamation-triangle"> En cours de développement</i></span></li>#}
+                                    </ul>  
+                                </div>
+                            </div>                                     
+
                             {%endblock content %}    
 
                                 {% block scripts %}
