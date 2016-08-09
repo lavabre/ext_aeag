@@ -45,12 +45,20 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
             $this->getContainer()->get('aeag_sqe.process_rai')->exportCsvDonneesBrutes($this->emSqe, $chemin, $pgCmdFichierRps, $donneesBrutes);
 
             // Envoi de mail au producteur et au titulaire
-            // TODO A Modifier
-            // TODO FAire un distinct sur le tableau de destinataires
             $destinataires = array();
-            $destinataires[] = $this->repoPgProgWebUsers->findOneByPrestataire($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getTitulaire());
-            $destinataires[] = $this->repoPgProgWebUsers->findOneByProducteur($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getRespAdrCor());
-
+            $prestataire = $this->repoPgProgWebUsers->findOneByPrestataire($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getTitulaire());
+            $producteur = $this->repoPgProgWebUsers->findOneByProducteur($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getRespAdrCor());
+            $destinataires[] = $prestataire;
+            if ($prestataire->getId() != $producteur->getId()) {
+                $destinataires[] = $producteur;
+            }
+            
+            // Récupérer le code milieu de la RAI
+            $admins = $this->repoPgProgWebuserTypmil->findByTypmil($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getCodeMilieu());
+            foreach ($admins as $admin) {
+                $destinataires[] = $admin->getWebuser();
+            }
+                    
             $objetMessage = "SQE - RAI : Fichier csv des données brutes disponible pour le lot " . $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getNomLot();
             $urlDb = $this->getContainer()->get('router')->generate('AeagSqeBundle_echangefichiers_reponses_telecharger', array("reponseId" => $pgCmdFichierRps->getId(), "typeFichier" => "DB"), UrlGeneratorInterface::ABSOLUTE_URL);
             $urlCr = $this->getContainer()->get('router')->generate('AeagSqeBundle_echangefichiers_reponses_telecharger', array("reponseId" => $pgCmdFichierRps->getId(), "typeFichier" => "CR"), UrlGeneratorInterface::ABSOLUTE_URL);
@@ -58,6 +66,8 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
             $txtMessage .= "Période : " . $pgCmdFichierRps->getDemande()->getPeriode()->getLabelPeriode() . "<br/>";
             $txtMessage .= 'Vous pouvez récupérer le fichier csv à l\'adresse suivante: <a href="' . $urlDb . '">' . $pgCmdFichierRps->getNomFichierDonneesBrutes() . '</a><br/>';
             $txtMessage .= 'Le fichier de compte rendu est, quand à lui, disponible ici: <a href="' . $urlCr . '">' . $pgCmdFichierRps->getNomFichierCompteRendu() . '</a>';
+            $txtMessage .= '<br/><br/>Merci de nous faire parvenir vos remarques ou corrections éventuelles.';
+            
             foreach ($destinataires as $destinataire) {
                 if (!is_null($destinataire)) {
                     $mailer = $this->getContainer()->get('mailer');
