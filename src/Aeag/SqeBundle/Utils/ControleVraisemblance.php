@@ -75,9 +75,9 @@ class ControleVraisemblance {
         $codeParamsBacterio = array(
             1447, 1448, 1449, 1451, 5479, 6455
         );
-        if (($codeRq == 3 && !in_array($codeParametre, $codeParamsBacterio)) || $codeRq == 7) {
+        if (($codeRq == 3 && !in_array($codeParametre, $codeParamsBacterio)) || $codeRq == 7 || $codeRq == 2) {
             //$this->_addLog('error', $demandeId, $reponseId, "Code Remarque > 3 ou == 7 impossible pour ce paramètre", $codePrelevement, $codeParametre);
-            return array("error", "Code Remarque > 3 ou == 7 impossible pour ce paramètre");
+            return array("error", "Code Remarque > 3 ou == 7 ou == 2 impossible pour ce paramètre");
         }
         return true;
     }
