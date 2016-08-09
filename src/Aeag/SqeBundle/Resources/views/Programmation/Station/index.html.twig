@@ -134,6 +134,11 @@
         {# <a class="btn btn-primary pull-right" href="{{ path('AeagDecBundle_admin_pdfListeDechets') }}" title="Imprimer la lister"> 
                 <i class="fa fa-print"> Imprimer la liste</i>
          </a>#}
+        {%if stations | length%}  
+          <a id="idTelechargerStations" class="btn btn-success btn-telecharger btn-xs  pull-right" href="{{ path('AeagSqeBundle_programmation_station_telecharger', { 'lotan': lotan.id,}) }}" title="Télécharger les stations">
+                <i class="fa fa-upload"></i> 
+            </a>
+         {% endif %}
     </h3>
 {%endblock panel_heading %}
 
@@ -243,10 +248,14 @@
                                                        {{ station.station.code }}
                                                    </a>
                                                </td>
-                                                {% if station.autreLot | length %}
+                                                {% if station.autreLots | length %}
                                                     <td id="idTd_{{ station.station.ouvFoncId }}" class="warning">
-                                                        {{ station.station.libelle }}
-                                                        <a  href="{{ station.lienAutreLot }}" target="_blank" title="Voir cette porgrammation">&nbsp;(existe sur la programmtion  {{ station.autreLot.anneeProg }} version {{ station.autreLot.version }} du lot : {{ station.autreLot.lot.nomLot }}&nbsp;<i class="fa fa-folder-open fa-lg fa-fw"></i>)</a>
+                                                        {{ station.station.libelle }}</br>Existe sur la(les) programation(s) suivante(s) :</br>
+                                                        <ul>
+                                                        {% for autreLot in station.autreLots %}
+                                                            <li><a  href="{{ autreLot.lien  }}" target="_blank" title="Voir cette porgrammation">&nbsp; {{ autreLot.lot.anneeProg }} version {{ autreLot.lot.version }} du lot : {{ autreLot.lot.lot.nomLot }}&nbsp;<i class="fa fa-folder-open fa-lg fa-fw"></i></a></li>
+                                                        {% endfor %}
+                                                        </ul>
                                                      </td>
                                                 {% else %}
                                                     <td>{{ station.station.libelle }}</td>
@@ -287,10 +296,15 @@
                                                         {{ station.station.code }}
                                                     </a>
                                                 </td>
-                                               {% if station.autreLot | length %}
+                                              {% if station.autreLots | length %}
                                                     <td id="idTd_{{ station.station.ouvFoncId }}" class="warning">
-                                                         {{ station.station.libelle }}</br>(existe sur la programmtion  {{ station.autreLot.anneeProg }} version {{ station.autreLot.version }} du lot : {{ station.autreLot.lot.nomLot }})
-                                                    </td>
+                                                        {{ station.station.libelle }}</br>Existe sur la(les) programation(s) suivante(s) :</br>
+                                                        <ul>
+                                                        {% for autreLot in station.autreLots %}
+                                                            <li><a  href="{{ autreLot.lien  }}" target="_blank" title="Voir cette porgrammation">&nbsp; {{ autreLot.lot.anneeProg }} version {{ autreLot.lot.version }} du lot : {{ autreLot.lot.lot.nomLot }}&nbsp;<i class="fa fa-folder-open fa-lg fa-fw"></i></a></li>
+                                                        {% endfor %}
+                                                        </ul>
+                                                     </td>
                                                 {% else %}
                                                     <td>{{ station.station.libelle }}</td>
                                                 {% endif %}

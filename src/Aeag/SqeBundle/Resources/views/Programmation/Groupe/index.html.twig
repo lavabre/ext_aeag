@@ -124,6 +124,11 @@
               {# <a class="btn btn-primary pull-right" href="{{ path('AeagDecBundle_admin_pdfListeDechets') }}" title="Imprimer la lister"> 
                       <i class="fa fa-print"> Imprimer la liste</i>
                </a>#}
+              {%if groupes | length%}  
+                <a id="idTelechargerGroupess" class="btn btn-success btn-telecharger btn-xs  pull-right" href="{{ path('AeagSqeBundle_programmation_groupe_telecharger', { 'lotan': lotan.id,}) }}" title="Télécharger les groupes de paramètres">
+                      <i class="fa fa-upload"></i> 
+                  </a>
+               {% endif %}
             </h3>
 {%endblock panel_heading %}
        

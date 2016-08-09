@@ -59,6 +59,12 @@ AeagSqeBundle_programmation_groupe_resultat:
     requirements:
         methods:  GET|POST
         
+AeagSqeBundle_programmation_groupe_telecharger:
+    path:  /telecharger/{lotan}
+    defaults: { _controller: AeagSqeBundle:ProgrammationGroupe:telecharger, lotan:null}
+    requirements:
+        methods:  GET|POST
+        
 
 
     

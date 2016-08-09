@@ -17,6 +17,11 @@ AeagSqeBundle_programmation_station_resultat:
     requirements:
         methods:  GET|POST
         
-
+AeagSqeBundle_programmation_station_telecharger:
+    path:  /telecharger/{lotan}
+    defaults: { _controller: AeagSqeBundle:ProgrammationStation:telecharger, lotan:null}
+    requirements:
+        methods:  GET|POST
         
+     
 

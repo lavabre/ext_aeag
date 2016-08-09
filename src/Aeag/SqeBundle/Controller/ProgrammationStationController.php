@@ -235,6 +235,7 @@ class ProgrammationStationController extends Controller {
 
         $pgProgLotStationAns = $repoPgProgLotStationAn->getPgProgLotStationAnBylotan($pgProgLotAn);
         if ($pgProgLotStationAns) {
+            asort($pgProgLotStationAns);
             $tabSelReseaux = array();
             $i = 0;
             foreach ($pgProgLotStationAns as $pgProgLotStationAn) {
@@ -289,6 +290,7 @@ class ProgrammationStationController extends Controller {
 
 // recuperation des stations a partir de la zone geographique du lot
         $pgProgZgeorefStations = $repoPgProgZgeorefStation->getpgProgZgeorefStationByZgeoref($pgProgZoneGeoRef);
+        asort($pgProgZgeorefStations);
         $tabStations = array();
         $i = 0;
         if (count($pgProgLotStationAns) > 0) {
@@ -331,20 +333,24 @@ class ProgrammationStationController extends Controller {
                     }
                 }
                 $pgProgLotStationAnAutres = $repoPgProgLotStationAn->getPgProgLotStationAnByStation($stationGeo);
-                $tabStations[$i]['autreLot'] = null;
-                $tabStations[$i]['lienAutreLot'] = null;
+                asort($pgProgLotStationAnAutres);
+                $tabStations[$i]['autreLots'] = null;
+                $j = 0;
+                $tabLots = array();
                 foreach ($pgProgLotStationAnAutres as $pgProgLotStationAnAutre) {
                     if ($pgProgLotStationAnAutre->getLotan()->getid() != $pgProgLotAn->getid()) {
                         if ($pgProgLotStationAnAutre->getLotan()->getAnneeProg() == $pgProgLotAn->getAnneeProg()) {
                             if ($pgProgLotStationAnAutre->getLotan()->getPhase()->getCodePhase() >= 'P25') {
                                 if ($pgProgLotStationAnAutre->getLotan()->getLot()->getId() != $pgProgLotAn->getLot()->getId()) {
-                                    $tabStations[$i]['autreLot'] = $pgProgLotStationAnAutre->getLotan();
-                                    $tabStations[$i]['lienAutreLot'] = 'http://ext.eau-adour-garonne.fr/sqe/programmation/bilan/?action=V&maj=V&lotan=' . $pgProgLotStationAnAutre->getLotan()->getid();
+                                    $tabLots[$j]['lot'] = $pgProgLotStationAnAutre->getLotan();
+                                    $tabLots[$j]['lien'] = 'http://ext.eau-adour-garonne.fr/sqe/programmation/bilan/?action=V&maj=V&lotan=' . $pgProgLotStationAnAutre->getLotan()->getid();
+                                    $j++;
                                 }
                             }
                         }
                     }
                 }
+                $tabStations[$i]['autreLots'] = $tabLots;
                 $i++;
             }
         } else {
@@ -399,22 +405,26 @@ class ProgrammationStationController extends Controller {
                 //$tabStations[$i]['reseaux'] = $tabReseaux;
                 // autres lots
                 $pgProgLotStationAnAutres = $repoPgProgLotStationAn->getPgProgLotStationAnByStation($stationGeo);
-                $tabStations[$i]['autreLot'] = null;
-                $tabStations[$i]['lienAutreLot'] = null;
+                asort($pgProgLotStationAnAutres);
+                $tabStations[$i]['autreLots'] = null;
+                $j = 0;
+                $tabLots = array();
                 foreach ($pgProgLotStationAnAutres as $pgProgLotStationAnAutre) {
                     if ($pgProgLotStationAnAutre->getLotan()->getid() != $pgProgLotAn->getid()) {
                         if ($pgProgLotStationAnAutre->getLotan()->getAnneeProg() == $pgProgLotAn->getAnneeProg()) {
                             if ($pgProgLotStationAnAutre->getLotan()->getPhase()->getCodePhase() >= 'P25') {
                                 if ($pgProgLotStationAnAutre->getLotan()->getLot()->getId() != $pgProgLotAn->getLot()->getId()) {
                                     if ($pgProgLotStationAnAutre->getLotan()->getLot()->getCodeMilieu() == $pgProgLotAn->getLot()->getCodeMilieu()) {
-                                        $tabStations[$i]['autreLot'] = $pgProgLotStationAnAutre->getLotan();
-                                        $tabStations[$i]['lienAutreLot'] = 'http://ext.eau-adour-garonne.fr/sqe/programmation/bilan/?action=V&maj=V&lotan=' . $pgProgLotStationAnAutre->getLotan()->getid();
+                                        $tabLots[$j]['lot'] = $pgProgLotStationAnAutre->getLotan();
+                                        $tabLots[$j]['lien'] = 'http://ext.eau-adour-garonne.fr/sqe/programmation/bilan/?action=V&maj=V&lotan=' . $pgProgLotStationAnAutre->getLotan()->getid();
+                                        $j++;
                                     }
                                 }
                             }
                         }
                     }
                 }
+                 $tabStations[$i]['autreLots'] = $tabLots;
                 $i++;
             }
         }
@@ -952,6 +962,99 @@ class ProgrammationStationController extends Controller {
         } else {
             return $this->redirect($this->generateUrl('AeagSqeBundle_programmation_groupes', array('action' => $action, 'maj' => $maj, 'lotan' => $pgProgLotAnId)));
         }
+    }
+
+    public function telechargerAction($lotan = null) {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'programmation');
+        $session->set('controller', 'ProgrammationStation');
+        $session->set('fonction', 'telecharger');
+
+        //recupération des parametres
+        $pgProgLotAnId = $lotan;
+
+        $em = $this->get('doctrine')->getManager();
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+        $repoPgProgLotAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotAn');
+        $repoPgRefReseauMesure = $emSqe->getRepository('AeagSqeBundle:PgRefReseauMesure');
+        $repoPgProgLotStationAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotStationAn');
+      
+        $pgProgLotAn = $repoPgProgLotAn->getPgProgLotAnById($pgProgLotAnId);
+        $pgProgLot = $pgProgLotAn->getLot();
+        $pgProgLotStationAns = $repoPgProgLotStationAn->getPgProgLotStationAnBylotan($pgProgLotAn);
+        asort($pgProgLotStationAns);
+        $tabStations = array();
+        $i = 0;
+        foreach ($pgProgLotStationAns as $pgProgLotStationAn) {
+            $stationGeo = $pgProgLotStationAn->getStation();
+            $tabStations[$i]['station']['ouvFoncId'] = $stationGeo->getOuvfoncId();
+            $tabStations[$i]['station']['code'] = $stationGeo->getCode();
+            $tabStations[$i]['station']['libelle'] = $stationGeo->getLibelle();
+            $tabStations[$i]['station']['codeMasdo'] = $stationGeo->getCodeMasdo();
+            $tabStations[$i]['station']['nomCoursEau'] = $stationGeo->getNomCoursEau();
+            $tabStations[$i]['lotStationAn'] = null;
+            $tabStations[$i]['commune']['libelle'] = $stationGeo->getNomCommune();
+            $tabStations[$i]['lien'] = '/sqe_fiches_stations/' . str_replace('/', '-', $stationGeo->getCode()) . '.pdf';
+            $reseau = $repoPgRefReseauMesure->getPgRefReseauMesureByGroupementId($pgProgLotStationAn->getRsxId());
+            $tabStations[$i]['reseau'] = $reseau;
+            $pgProgLotStationAnAutres = $repoPgProgLotStationAn->getPgProgLotStationAnByStation($stationGeo);
+            $tabStations[$i]['autreLot'] = null;
+            $i++;
+        }
+
+        $chemin = '/base/extranet/Transfert/Sqe/csv';
+        $fichier = 'Stations-programmation-' . $pgProgLotAn->getAnneeProg() . '-' . $pgProgLotAnId . '.csv';
+        $fullFileName = $chemin . '/' . $fichier;
+        $ext = strtolower(pathinfo($fullFileName, PATHINFO_EXTENSION));
+        if (file_exists($fullFileName)) {
+            unlink($fullFileName);
+        }
+        $fichier_csv = fopen($fullFileName, 'w+');
+        // Entete
+        $ligne = array('Programmation', 'Version', 'Lot', 'Station', 'Libellé', 'Commune', 'Masse d\'eau', 'Rivière', 'Réseaux');
+        for ($i = 0; $i < count($ligne); $i++) {
+            $ligne[$i] = \iconv("UTF-8", "Windows-1252//TRANSLIT", $ligne[$i]);
+        }
+        fputcsv($fichier_csv, $ligne, ';');
+
+        for ($i = 0; $i < count($tabStations); $i++) {
+            $ligne = array($pgProgLotAn->getAnneeProg(),
+                                $pgProgLotAn->getversion(),
+                                $pgProgLotAn->getLot()->getNomLot(),
+                                $tabStations[$i]['station']['code'],
+                                $tabStations[$i]['station']['libelle'] , 
+                                $tabStations[$i]['commune']['libelle'], 
+                                $tabStations[$i]['station']['codeMasdo'] , 
+                                $tabStations[$i]['station']['nomCoursEau'], 
+                                $tabStations[$i]['reseau']->getNomRsx()
+                                );
+            for ($j = 0; $j < count($ligne); $j++) {
+                $ligne[$j] = \iconv("UTF-8", "Windows-1252//TRANSLIT", $ligne[$j]);
+            }
+            fputcsv($fichier_csv, $ligne, ';');
+        }
+
+        fclose($fichier_csv);
+
+//        \Symfony\Component\VarDumper\VarDumper::dump($tabStations);
+//        return new Response ('');
+//         return new Response ('fichier : ' . $chemin . '/' . $fichier . ' ext : ' . $ext. ' size : ' . filesize($chemin . '/' . $fichier));
+
+        \header("Cache-Control: no-cahe, must-revalidate");
+        \header('Content-Type', 'text/' . $ext);
+        \header('Content-disposition: attachment; filename="' . $fichier . '"');
+        \header('Expires: 0');
+        \header('Content-Length: ' . filesize($chemin . '/' . $fichier));
+        readfile($chemin . '/' . $fichier);
+        exit();
+//
+//        \Symfony\Component\VarDumper\VarDumper::dump($tabStations);
+//        return new Response('');
     }
 
 }
