@@ -127,7 +127,7 @@
                                                         station.suiviPrel.validation  == 'E'  and
                                                         station.suiviPrel.fichierRps | length %}
                                             {% if  station.dateLimite %}
-                                                </br>
+                                                <br/>
                                                 <div class="danger text-info">date limite : {{ station.dateLimite | date("d/m/Y") }}</div>
                                             {% endif %}
                                         {% endif %}
@@ -292,7 +292,7 @@
                                                     type: 'get', // La méthode indiquée dans le formulaire (get ou post)
                                                     success: function(html) { // Je récupère la réponse du fichier PHP
                                                     $('#bodyModalArchive').empty().append(html);
-                                                    var html = 'Historique des suivis de la station  {{ station.station.code }} </br>sur le support : {{ station.cmdPrelev.codeSupport.nomSupport }}';
+                                                    var html = 'Historique des suivis de la station  {{ station.station.code }} <br/>sur le support : {{ station.cmdPrelev.codeSupport.nomSupport }}';
                                                     $('#labelModalArchive').html(html);
                                                     $('#modalArchive').modal('show');
                                                     $('#modalTraitementEncours').modal('hide');
@@ -314,7 +314,7 @@
                                                     type: 'post', // La méthode indiquée dans le formulaire (get ou post)
                                                     success: function(html) { // Je récupère la réponse du fichier PHP
                                                     $('#idModalContentNouveauSuivi').empty().append(html);
-                                                    var html = 'Avis sur le suivi Hydrobio de la station  {{ station.station.code }}</br>sur le support :  {{ station.cmdPrelev.codeSupport.nomSupport }}';
+                                                    var html = 'Avis sur le suivi Hydrobio de la station  {{ station.station.code }}<br/>sur le support :  {{ station.cmdPrelev.codeSupport.nomSupport }}';
                                                     $('#labelModalNouveauSuivi').html(html);
                                                     $('#modalNouveauSuivi').modal('show');
                                                     $('#modalTraitementEncours').modal('hide');
@@ -336,7 +336,7 @@
                                                     type: 'get', // La méthode indiquée dans le formulaire (get ou post)
                                                     success: function(html) { // Je récupère la réponse du fichier PHP
                                                     $('#idModalContentNouveauSuivi').empty().append(html);
-                                                    var html = 'Avis sur le suivi Hydrobio de la station  {{ station.station.code }}</br>sur le support :  {{ station.cmdPrelev.codeSupport.nomSupport }}';
+                                                    var html = 'Avis sur le suivi Hydrobio de la station  {{ station.station.code }}<br/>sur le support :  {{ station.cmdPrelev.codeSupport.nomSupport }}';
                                                     $('#labelModalNouveauSuivi').html(html);
                                                     $('#modalNouveauSuivi').modal('show');
                                                     $('#modalTraitementEncours').modal('hide');

@@ -160,7 +160,7 @@
 
 {%block panel_heading %}
     <h3 class="page-title text-center">
-        Liste des stations entre le  {{ periodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;et&nbsp;&nbsp; {{ dateFin | date("d/m/Y") }}</br>
+        Liste des stations entre le  {{ periodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;et&nbsp;&nbsp; {{ dateFin | date("d/m/Y") }}<br/>
         {{ lotan.lot.nomLot }} - {{ lotan.anneeProg }}  - version :  {{ lotan.version }}
     </h3>
 {%endblock panel_heading %}
@@ -262,7 +262,7 @@
                                             <td>
                                                 {%if  cmdPrelev.autrePrelevs %}
                                                     {% for autrePrelev in cmdPrelev.autrePrelevs  %}
-                                                        {{ autrePrelev.datePrel | date("d/m/Y H:i") }} : {{ autrePrelev.support }} </br>
+                                                        {{ autrePrelev.datePrel | date("d/m/Y H:i") }} : {{ autrePrelev.support }} <br/>
                                                     {% endfor %}
                                                 {% endif %}
                                             </td>
@@ -376,7 +376,7 @@
                     type: 'get', // La méthode indiquée dans le formulaire (get ou post)
                     success: function(html) { // Je récupère la réponse du fichier PHP
                     $('#bodyModalArchive').empty().append(html);
-                    var html = 'Historique des suivis de la station  {{ station.station.code }} </br>sur le support : {{  cmdPrelev.cmdPrelev.codeSupport.nomSupport }}';
+                    var html = 'Historique des suivis de la station  {{ station.station.code }} <br/>sur le support : {{  cmdPrelev.cmdPrelev.codeSupport.nomSupport }}';
                     $('#labelModalArchive').html(html);
                     $('#modalArchive').modal('show');
                     $('#modalTraitementEncours').modal('hide');
@@ -410,7 +410,7 @@
                     type: 'get', // La méthode indiquée dans le formulaire (get ou post)
                     success: function(html) { // Je récupère la réponse du fichier PHP
                     $('#idModalContentNouveauSuivi').empty().append(html);
-                    var html = 'Suivi Sediment de la station  {{ station.station.code }}</br>sur le support :  {{ cmdPrelev.cmdPrelev.codeSupport.nomSupport }}';
+                    var html = 'Suivi Sediment de la station  {{ station.station.code }}<br/>sur le support :  {{ cmdPrelev.cmdPrelev.codeSupport.nomSupport }}';
                     $('#labelModalNouveauSuivi').html(html);
                     $('#modalNouveauSuivi').modal('show');
                     $('#modalTraitementEncours').modal('hide');
@@ -432,7 +432,7 @@
                         type: 'get', // La méthode indiquée dans le formulaire (get ou post)
                         success: function(html) { // Je récupère la réponse du fichier PHP
                         $('#idModalContentNouveauSuivi').empty().append(html);
-                        var html = 'Validation du suivi Sediment de la station  {{ station.station.code }}</br>sur le support :  {{ cmdPrelev.cmdPrelev.codeSupport.nomSupport }}';
+                        var html = 'Validation du suivi Sediment de la station  {{ station.station.code }}<br/>sur le support :  {{ cmdPrelev.cmdPrelev.codeSupport.nomSupport }}';
                         $('#labelModalNouveauSuivi').html(html);
                         $('#modalNouveauSuivi').modal('show');
                         $('#modalTraitementEncours').modal('hide');

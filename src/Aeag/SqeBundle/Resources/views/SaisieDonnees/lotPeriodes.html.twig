@@ -87,9 +87,9 @@
                                             {{ periodeAn.pgProgLotPeriodeAn.periode.labelPeriode }} (du {{ periodeAn.pgProgLotPeriodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;au&nbsp;&nbsp; {{ periodeAn.dateFin | date("d/m/Y") }})
                                         {% endif %}
                                     </td>
-                                    <td class="text-center">{{ periodeAn.nbStationCorrectes }}/{{ periodeAn.nbStations }}{#</br>
+                                    <td class="text-center">{{ periodeAn.nbStationCorrectes }}/{{ periodeAn.nbStations }}{#<br/>
                                            {% for station in periodeAn.stations %}
-                                               {{ station.code }} {{ station.libelle }}</br>
+                                               {{ station.code }} {{ station.libelle }}<br/>
                                            {% endfor %}#}
                                     </td>
                                 </tr>

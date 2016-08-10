@@ -173,7 +173,7 @@
 
 {%block panel_heading %}
     <h3 class="page-title text-center">
-        Liste des stations entre le  {{ periodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;et&nbsp;&nbsp; {{ dateFin | date("d/m/Y") }}</br>
+        Liste des stations entre le  {{ periodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;et&nbsp;&nbsp; {{ dateFin | date("d/m/Y") }}<br/>
         {{ lotan.lot.nomLot }} - {{ lotan.anneeProg }}  - version :  {{ lotan.version }}
     </h3>
 {%endblock panel_heading %}
@@ -275,7 +275,7 @@
                                             <td>
                                                 {%if  cmdPrelev.autrePrelevs %}
                                                     {#      {% for autrePrelev in cmdPrelev.autrePrelevs  %}#}
-                                                    {{ cmdPrelev.autrePrelevs.0.datePrel | date("d/m/Y H:i") }} : {{ cmdPrelev.autrePrelevs.0.support }} </br>
+                                                    {{ cmdPrelev.autrePrelevs.0.datePrel | date("d/m/Y H:i") }} : {{ cmdPrelev.autrePrelevs.0.support }} <br/>
                                                     {#    {% endfor %}#}
                                                 {% endif %}
                                             </td>

@@ -217,6 +217,13 @@
         {# <a class="btn btn-primary pull-right" href="{{ path('AeagDecBundle_admin_pdfListeDechets') }}" title="Imprimer la lister"> 
                 <i class="fa fa-print"> Imprimer la liste</i>
          </a>#}
+        {% if  not app.session.get('evolution')%}
+            {%if stationAns | length%}  
+                <a id="idTelechargerPeriodes" class="btn btn-success btn-telecharger btn-sm  pull-right" href="{{ path('AeagSqeBundle_programmation_periode_telecharger', { 'lotan': lotan.id,}) }}" title="Télécharger les périodes">
+                    <i class="fa fa-upload"></i> 
+                </a>
+            {% endif %}
+        {% endif %}
     </h3>
 {%endblock panel_heading %}
 
@@ -425,372 +432,373 @@
         <div id="idResultatDupliquerStation"></div>
         <div id="idResultatInitialiserStation"></div>
         <div id="idResultatBilan"></div>
-    {% endblock content %}
+    </div>
+{% endblock content %}
 
-    {% block scripts %}
+{% block scripts %}
 
-        jQuery(document).ready(function() {
+    jQuery(document).ready(function() {
 
-        // Table periode
+    // Table periode
 
-        var table_periode = $('#idTable_periodes').DataTable(
-        {  "ordering": false,
-        "scrollCollapse": true,
-        "oLanguage": {
-        "sSearch": "Filtre",
-        "sFirst": "1ere page",
-        "sLast": "Dernière page",
-        "sNext": "Prochaine page",
-        "sPrevious": "Page précédente",
-        "EmptyTable": "Pas de données",
-        "sInfo": "Nombre d'enregistrements :  _TOTAL_",
-        "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
-        "sZeroRecords": "Pas d'enregistrement à afficher",
-        "sInfoEmpty": "Pas d'enregistrement à afficher",
-        "sInfoThousands": " ",
-        "sLengthMenu": 'Afficher <select>' +
-            '<option value="10">10</option>' +
-            '<option value="20">20</option>' +
-            '<option value="30">30</option>' +
-            '<option value="40">40</option>' +
-            '<option value="50">50</option>' +
-            '<option value="-1">Tous</option>' +
-            '</select> enregistrements',
-        "sPaginationType": "full_numbers"
-        }
-        }
-        );
-
-
-
-        // table station
-        var table_station = $('#idTable_station').DataTable(
-        {"stateSave": true,
-        "order": [[ 1, "asc" ]],
-        "oLanguage": {
-        "sSearch": "Filtre",
-        "sFirst": "1ere page",
-        "sLast": "Dernière page",
-        "sNext": "Prochaine page",
-        "sPrevious": "Page précédente",
-        "EmptyTable": "Pas de données",
-        "sInfo": "Nombre d'enregistrements :  _TOTAL_",
-        "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
-        "sZeroRecords": "Pas d'enregistrement à afficher",
-        "sInfoEmpty": "Pas d'enregistrement à afficher",
-        "sInfoThousands": " ",
-        "sLengthMenu": 'Afficher <select>' +
-            '<option value="10">10</option>' +
-            '<option value="20">20</option>' +
-            '<option value="30">30</option>' +
-            '<option value="40">40</option>' +
-            '<option value="50">50</option>' +
-            '<option value="-1">Tous</option>' +
-            '</select> enregistrements',
-        "sPaginationType": "full_numbers"
-        }
-        }
-        );
+    var table_periode = $('#idTable_periodes').DataTable(
+    {  "ordering": false,
+    "scrollCollapse": true,
+    "oLanguage": {
+    "sSearch": "Filtre",
+    "sFirst": "1ere page",
+    "sLast": "Dernière page",
+    "sNext": "Prochaine page",
+    "sPrevious": "Page précédente",
+    "EmptyTable": "Pas de données",
+    "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+    "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+    "sZeroRecords": "Pas d'enregistrement à afficher",
+    "sInfoEmpty": "Pas d'enregistrement à afficher",
+    "sInfoThousands": " ",
+    "sLengthMenu": 'Afficher <select>' +
+        '<option value="10">10</option>' +
+        '<option value="20">20</option>' +
+        '<option value="30">30</option>' +
+        '<option value="40">40</option>' +
+        '<option value="50">50</option>' +
+        '<option value="-1">Tous</option>' +
+        '</select> enregistrements',
+    "sPaginationType": "full_numbers"
+    }
+    }
+    );
 
 
 
+    // table station
+    var table_station = $('#idTable_station').DataTable(
+    {"stateSave": true,
+    "order": [[ 1, "asc" ]],
+    "oLanguage": {
+    "sSearch": "Filtre",
+    "sFirst": "1ere page",
+    "sLast": "Dernière page",
+    "sNext": "Prochaine page",
+    "sPrevious": "Page précédente",
+    "EmptyTable": "Pas de données",
+    "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+    "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+    "sZeroRecords": "Pas d'enregistrement à afficher",
+    "sInfoEmpty": "Pas d'enregistrement à afficher",
+    "sInfoThousands": " ",
+    "sLengthMenu": 'Afficher <select>' +
+        '<option value="10">10</option>' +
+        '<option value="20">20</option>' +
+        '<option value="30">30</option>' +
+        '<option value="40">40</option>' +
+        '<option value="50">50</option>' +
+        '<option value="-1">Tous</option>' +
+        '</select> enregistrements',
+    "sPaginationType": "full_numbers"
+    }
+    }
+    );
 
-        $('#idCache').hide();
-        $('#idModalProgrammer').modal('hide');
-
-        // traitement sur les periodes
-
-        $(document).on('click', '#idSelectionPeriodes',function(e){
-        {%if stationAns | length%}  
-            var nbRecords = $('#idTable_periodes_length option:selected').val();
-            table_periode.page.len( -1 ).draw();
-            {% for periode in periodes %}
-                $('#checkPeriode_{{  periode.id }}').prop( "checked", false );
-                {% for periodeSelectionnee in stationAns.0.periodes %}
-                    {% if periode.id == periodeSelectionnee.periode.id %}
-                        $('#checkPeriode_{{  periode.id }}').prop( "checked", true );
-                    {% endif %}
-                {% endfor %}
-            {% endfor %}
-            table_periode.page.len( nbRecords ).draw();
-        {% endif %}
-        });
 
 
-        {#  filtrer les semaines  #}
 
-        var cocher = true;
-        $(document).on('click','#cocherToutLesPeriodes',function(e){
+    $('#idCache').hide();
+    $('#idModalProgrammer').modal('hide');
+
+    // traitement sur les periodes
+
+    $(document).on('click', '#idSelectionPeriodes',function(e){
+    {%if stationAns | length%}  
         var nbRecords = $('#idTable_periodes_length option:selected').val();
         table_periode.page.len( -1 ).draw();
-        if (cocher == true){
-        cocher = false;
-        $('#cocherToutLesPeriodes').removeClass('btn-danger').addClass('btn-success');
-        $('#cocherToutLesPeriodes i').removeClass('fa-eraser').addClass('fa-check ');
         {% for periode in periodes %}
             $('#checkPeriode_{{  periode.id }}').prop( "checked", false );
-        {% endfor %}
-        }else{
-        cocher = true;
-        $('#cocherToutLesPeriodes').removeClass('btn-success').addClass('btn-danger');
-        $('#cocherToutLesPeriodes i').removeClass("fa-check").addClass('fa-eraser');
-        {% for periode in periodes %}
-            $('#checkPeriode_{{  periode.id }}').prop( "checked", true );
-        {% endfor %}
-        };
-        table_periode.page.len( nbRecords ).draw();
-        });
-
-
-        $(document).on('click', '#idValiderSelectionPeriode',function(e){
-        $('#modalTraitementEncours').modal('toggle');
-        e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-        var nbRecords = $('#idTable_periodes_length option:selected').val();
-        table_periode.page.len( -1 ).draw();
-        var $this = $('#idForm_periode'); // L'objet jQuery du formulaire
-        var url = '{{ path("AeagSqeBundle_programmation_periode_filtrer",{"action": "par1","maj":"par2","lotan":"par3"}) }}', // Le nom du fichier indiqué dans le formulaire
-        url = url.replace("par1", '{{ action }}');
-        url = url.replace("par2", '{{ maj }}');
-        url = url.replace("amp;","");
-        url = url.replace("par3", '{{ lotan.id }}');
-        url = url.replace("amp;","");
-        $.ajax({
-        url: url,
-        type: 'post', // La méthode indiquée dans le formulaire (get ou post)
-        data: $this.serialize(),
-        success: function(html) { // Je récupère la réponse du fichier PHP
-        $('#idtableau_station').empty().append(html);
-        {%if stationAns | length%}  
-            {% for periode in periodes %}
-                $('#checkPeriode_{{  periode.id }}').prop( "checked", false );
-                {% for periodeSelectionnee in stationAns.0.periodes %}
-                    {% if periode.id == periodeSelectionnee.periode.id %}
-                        $('#checkPeriode_{{  periode.id }}').prop( "checked", true );
-                    {% endif %}
-                {% endfor %}
+            {% for periodeSelectionnee in stationAns.0.periodes %}
+                {% if periode.id == periodeSelectionnee.periode.id %}
+                    $('#checkPeriode_{{  periode.id }}').prop( "checked", true );
+                {% endif %}
             {% endfor %}
-        {% endif %}
-        $('#modalTraitementEncours').modal('hide');
-        $('#modal_periode').modal('hide');
-        }
-        });
+        {% endfor %}
         table_periode.page.len( nbRecords ).draw();
-        $('#idAttente').hide();
-        });
+    {% endif %}
+    });
+
+
+    {#  filtrer les semaines  #}
+
+    var cocher = true;
+    $(document).on('click','#cocherToutLesPeriodes',function(e){
+    var nbRecords = $('#idTable_periodes_length option:selected').val();
+    table_periode.page.len( -1 ).draw();
+    if (cocher == true){
+    cocher = false;
+    $('#cocherToutLesPeriodes').removeClass('btn-danger').addClass('btn-success');
+    $('#cocherToutLesPeriodes i').removeClass('fa-eraser').addClass('fa-check ');
+    {% for periode in periodes %}
+        $('#checkPeriode_{{  periode.id }}').prop( "checked", false );
+    {% endfor %}
+    }else{
+    cocher = true;
+    $('#cocherToutLesPeriodes').removeClass('btn-success').addClass('btn-danger');
+    $('#cocherToutLesPeriodes i').removeClass("fa-check").addClass('fa-eraser');
+    {% for periode in periodes %}
+        $('#checkPeriode_{{  periode.id }}').prop( "checked", true );
+    {% endfor %}
+    };
+    table_periode.page.len( nbRecords ).draw();
+    });
+
+
+    $(document).on('click', '#idValiderSelectionPeriode',function(e){
+    $('#modalTraitementEncours').modal('toggle');
+    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+    var nbRecords = $('#idTable_periodes_length option:selected').val();
+    table_periode.page.len( -1 ).draw();
+    var $this = $('#idForm_periode'); // L'objet jQuery du formulaire
+    var url = '{{ path("AeagSqeBundle_programmation_periode_filtrer",{"action": "par1","maj":"par2","lotan":"par3"}) }}', // Le nom du fichier indiqué dans le formulaire
+    url = url.replace("par1", '{{ action }}');
+    url = url.replace("par2", '{{ maj }}');
+    url = url.replace("amp;","");
+    url = url.replace("par3", '{{ lotan.id }}');
+    url = url.replace("amp;","");
+    $.ajax({
+    url: url,
+    type: 'post', // La méthode indiquée dans le formulaire (get ou post)
+    data: $this.serialize(),
+    success: function(html) { // Je récupère la réponse du fichier PHP
+    $('#idtableau_station').empty().append(html);
+    {%if stationAns | length%}  
+        {% for periode in periodes %}
+            $('#checkPeriode_{{  periode.id }}').prop( "checked", false );
+            {% for periodeSelectionnee in stationAns.0.periodes %}
+                {% if periode.id == periodeSelectionnee.periode.id %}
+                    $('#checkPeriode_{{  periode.id }}').prop( "checked", true );
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+    {% endif %}
+    $('#modalTraitementEncours').modal('hide');
+    $('#modal_periode').modal('hide');
+    }
+    });
+    table_periode.page.len( nbRecords ).draw();
+    $('#idAttente').hide();
+    });
 
 
 
-        {# Dupliquer la programmation sur les autres stations #}
+    {# Dupliquer la programmation sur les autres stations #}
 
-        {% if stationAns |length %}
-            {% for stationAn in stationAns %}
-                $(document).on('click','#idDupliquerStation_{{ stationAn.station.id }}',function(e){
-                e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                $('#modalTraitementEncours').modal('toggle');
-                var url = '{{ path("AeagSqeBundle_programmation_periode_dupliquer_station",{"stationId":  "par1","action": "par2","maj":"par3","lotan":"par4"}) }}', // Le nom du fichier indiqué dans le formulaire
+    {% if stationAns |length %}
+        {% for stationAn in stationAns %}
+            $(document).on('click','#idDupliquerStation_{{ stationAn.station.id }}',function(e){
+            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+            $('#modalTraitementEncours').modal('toggle');
+            var url = '{{ path("AeagSqeBundle_programmation_periode_dupliquer_station",{"stationId":  "par1","action": "par2","maj":"par3","lotan":"par4"}) }}', // Le nom du fichier indiqué dans le formulaire
+            url = url.replace("par1", {{ stationAn.station.id }});
+            url = url.replace("par2", '{{ action }}');
+            url = url.replace("amp;","");
+            url = url.replace("par3", '{{ maj }}');
+            url = url.replace("amp;","");
+            url = url.replace("par4", '{{ lotan.id }}');
+            url = url.replace("amp;","");
+            var nbRecords = $('#idTable_station_length option:selected').val();
+            table_station.page.len( -1 ).draw();
+            $.ajax({
+            url: url,
+            type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+            success: function(html) { // Je récupère la réponse du fichier PHP
+            $('#idModalContentDupliquerStation').empty().append(html);
+            $('#modalDupliquerStation').modal();
+            $('#modalDupliquerStation').show();
+            $('#modalTraitementEncours').modal('hide');
+            }
+            });
+            table_station.page.len( nbRecords ).draw();
+            });
+
+
+            {# tout cocher ou tout decocher #}
+            var cocherToutesLesStationsDisponibles = false;
+            $(document).on('click','#idCocherToutesLesStationsDisponibles_{{ stationAn.station.id }}',function(e){
+            var info = table_TableDupliquerStation.page.info();
+            var nbRecords = $('#idTableDupliquerStation_length option:selected').val();
+            var filtre = $('#idTableDupliquerStation_filter input').val();
+            if (filtre != ''){
+            var initval = '';
+            table_TableDupliquerStation.search(initval).draw();
+            };
+            table_TableDupliquerStation.page.len( -1 ).draw();
+            if (cocherToutesLesStationsDisponibles == true){
+            cocherToutesLesStationsDisponibles = false;
+            $('#idCocherToutesLesStationsDisponibles_{{ stationAn.station.id }}').removeClass('btn-danger').addClass('btn-success');
+            $('#idCocherToutesLesStationsDisponibles_{{ stationAn.station.id }} i').removeClass('fa-eraser').addClass('fa-check ');
+            {% for stationAnAutre in stationAns %}
+                $('#checkDupliquerStation_{{ stationAnAutre.station.id }}').prop( "checked", false );
+            {% endfor %}
+            }else{
+            cocherToutesLesStationsDisponibles = true;
+            $('#idCocherToutesLesStationsDisponibles_{{ stationAn.station.id }}').removeClass('btn-success').addClass('btn-danger');
+            $('#idCocherToutesLesStationsDisponibles_{{ stationAn.station.id }} i').removeClass("fa-check").addClass('fa-eraser');
+            {% for stationAnAutre in stationAns %}
+                $('#checkDupliquerStation_{{ stationAnAutre.station.id }}').prop( "checked", true );
+                if ($('#nbGroupes_{{ stationAnAutre.station.id }}').val() > 0){
+                $('#modalConfirmerDupliquerStation_{{ stationAnAutre.station.id }}').modal();
+                };
+            {% endfor %}
+            };
+            if (filtre != ''){
+            table_TableDupliquerStation.search(filtre).draw();
+            };
+            table_TableDupliquerStation.page.len( nbRecords ).draw();
+            nbcocher();
+            });
+
+
+            {# dupliquer la station sur les autres stations séléctionnées #}
+            {#        $(document).on('click', '#idValiderDupliquerStation_{{ stationAn.station.id }}',function(e){
+                       $('#modalTraitementEncours').modal('toggle');
+                       e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                       table_TableDupliquerStation.page.len( -1 ).draw();
+                       var $this = $('#idFormDupliquerStation'); // L'objet jQuery du formulaire
+                       var url = '{{ path("AeagSqeBundle_programmation_periode_valider_dupliquer_station",{"stationId":  "par1" }) }}';
+                       url = url.replace("par1", {{ stationAn.station.id }});
+                       $.ajax({
+                           url: url,
+                           type: 'post', // La méthode indiquée dans le formulaire (get ou post)
+                           data: $this.serialize(),
+                           success: function(html) { // Je récupère la réponse du fichier PHP
+                                table_station.page.len( -1 ).draw();
+                                $('#idResultatDupliquerStation').empty().append(html);
+                                table_station.page.len( 10 ).draw();
+                                $('#modalTraitementEncours').modal('hide');
+                                url = '{{ path('AeagSqeBundle_programmation_periodes') }}';
+                                document.location.href=url;
+                           }
+                       });
+                       table_TableDupliquerStation.page.len( 10 ).draw();
+                       $('#modalDupliquerStation').modal('hide');
+                   });#}
+
+            {# dupliquer la station sur les autres stations séléctionnées #}
+            $(document).on('click', '#idValiderDupliquerStation_{{ stationAn.station.id }}',function(e){
+            $('#modaProgression').modal('toggle');
+            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+            var info = table_TableDupliquerStation.page.info();
+            var nbRecords = $('#idTableDupliquerStation_length option:selected').val();
+            var filtre = $('#idTableDupliquerStation_filter input').val();
+            if (filtre != ''){
+            var initval = '';
+            table_TableDupliquerStation.search(initval).draw();
+            };
+            table_TableDupliquerStation.page.len( -1 ).draw();
+            var nbStations  = 0;
+            var nbAutreStations = 0;
+            {% for stationAnAutre in stationAns %}
+                if ($('#checkDupliquerStation_{{ stationAnAutre.station.id }}').is(':checked')){
+                nbStations  =  nbStations + 1;
+                };
+            {% endfor %}
+
+            {% for stationAnAutre in stationAns %}
+                if ($('#checkDupliquerStation_{{ stationAnAutre.station.id }}').is(':checked')){
+                var $this = $('#idFormDupliquerStation'); // L'objet jQuery du formulaire
+                var url = '{{ path("AeagSqeBundle_programmation_periode_valider_dupliquer_station_sur_autre_station",{"stationId":  "par1", "autreStationId": "par2","action": "par3","maj":"par4","lotan":"par5"}) }}', // Le nom du fichier indiqué dans le formulaire
                 url = url.replace("par1", {{ stationAn.station.id }});
-                url = url.replace("par2", '{{ action }}');
+                url = url.replace("par2", {{ stationAnAutre.station.id }});
                 url = url.replace("amp;","");
-                url = url.replace("par3", '{{ maj }}');
+                url = url.replace("par3", '{{ action }}');
                 url = url.replace("amp;","");
-                url = url.replace("par4", '{{ lotan.id }}');
+                url = url.replace("par4", '{{ maj }}');
                 url = url.replace("amp;","");
-                var nbRecords = $('#idTable_station_length option:selected').val();
-                table_station.page.len( -1 ).draw();
-                $.ajax({
-                url: url,
-                type: 'get', // La méthode indiquée dans le formulaire (get ou post)
-                success: function(html) { // Je récupère la réponse du fichier PHP
-                $('#idModalContentDupliquerStation').empty().append(html);
-                $('#modalDupliquerStation').modal();
-                $('#modalDupliquerStation').show();
-                $('#modalTraitementEncours').modal('hide');
-                }
-                });
-                table_station.page.len( nbRecords ).draw();
-                });
-
-
-                {# tout cocher ou tout decocher #}
-                var cocherToutesLesStationsDisponibles = false;
-                $(document).on('click','#idCocherToutesLesStationsDisponibles_{{ stationAn.station.id }}',function(e){
-                var info = table_TableDupliquerStation.page.info();
-                var nbRecords = $('#idTableDupliquerStation_length option:selected').val();
-                var filtre = $('#idTableDupliquerStation_filter input').val();
-                if (filtre != ''){
-                var initval = '';
-                table_TableDupliquerStation.search(initval).draw();
-                };
-                table_TableDupliquerStation.page.len( -1 ).draw();
-                if (cocherToutesLesStationsDisponibles == true){
-                cocherToutesLesStationsDisponibles = false;
-                $('#idCocherToutesLesStationsDisponibles_{{ stationAn.station.id }}').removeClass('btn-danger').addClass('btn-success');
-                $('#idCocherToutesLesStationsDisponibles_{{ stationAn.station.id }} i').removeClass('fa-eraser').addClass('fa-check ');
-                {% for stationAnAutre in stationAns %}
-                    $('#checkDupliquerStation_{{ stationAnAutre.station.id }}').prop( "checked", false );
-                {% endfor %}
-                }else{
-                cocherToutesLesStationsDisponibles = true;
-                $('#idCocherToutesLesStationsDisponibles_{{ stationAn.station.id }}').removeClass('btn-success').addClass('btn-danger');
-                $('#idCocherToutesLesStationsDisponibles_{{ stationAn.station.id }} i').removeClass("fa-check").addClass('fa-eraser');
-                {% for stationAnAutre in stationAns %}
-                    $('#checkDupliquerStation_{{ stationAnAutre.station.id }}').prop( "checked", true );
-                    if ($('#nbGroupes_{{ stationAnAutre.station.id }}').val() > 0){
-                    $('#modalConfirmerDupliquerStation_{{ stationAnAutre.station.id }}').modal();
-                    };
-                {% endfor %}
-                };
-                if (filtre != ''){
-                table_TableDupliquerStation.search(filtre).draw();
-                };
-                table_TableDupliquerStation.page.len( nbRecords ).draw();
-                nbcocher();
-                });
-
-
-                {# dupliquer la station sur les autres stations séléctionnées #}
-                {#        $(document).on('click', '#idValiderDupliquerStation_{{ stationAn.station.id }}',function(e){
-                           $('#modalTraitementEncours').modal('toggle');
-                           e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                           table_TableDupliquerStation.page.len( -1 ).draw();
-                           var $this = $('#idFormDupliquerStation'); // L'objet jQuery du formulaire
-                           var url = '{{ path("AeagSqeBundle_programmation_periode_valider_dupliquer_station",{"stationId":  "par1" }) }}';
-                           url = url.replace("par1", {{ stationAn.station.id }});
-                           $.ajax({
-                               url: url,
-                               type: 'post', // La méthode indiquée dans le formulaire (get ou post)
-                               data: $this.serialize(),
-                               success: function(html) { // Je récupère la réponse du fichier PHP
-                                    table_station.page.len( -1 ).draw();
-                                    $('#idResultatDupliquerStation').empty().append(html);
-                                    table_station.page.len( 10 ).draw();
-                                    $('#modalTraitementEncours').modal('hide');
-                                    url = '{{ path('AeagSqeBundle_programmation_periodes') }}';
-                                    document.location.href=url;
-                               }
-                           });
-                           table_TableDupliquerStation.page.len( 10 ).draw();
-                           $('#modalDupliquerStation').modal('hide');
-                       });#}
-
-                {# dupliquer la station sur les autres stations séléctionnées #}
-                $(document).on('click', '#idValiderDupliquerStation_{{ stationAn.station.id }}',function(e){
-                $('#modaProgression').modal('toggle');
-                e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                var info = table_TableDupliquerStation.page.info();
-                var nbRecords = $('#idTableDupliquerStation_length option:selected').val();
-                var filtre = $('#idTableDupliquerStation_filter input').val();
-                if (filtre != ''){
-                var initval = '';
-                table_TableDupliquerStation.search(initval).draw();
-                };
-                table_TableDupliquerStation.page.len( -1 ).draw();
-                var nbStations  = 0;
-                var nbAutreStations = 0;
-                {% for stationAnAutre in stationAns %}
-                    if ($('#checkDupliquerStation_{{ stationAnAutre.station.id }}').is(':checked')){
-                    nbStations  =  nbStations + 1;
-                    };
-                {% endfor %}
-
-                {% for stationAnAutre in stationAns %}
-                    if ($('#checkDupliquerStation_{{ stationAnAutre.station.id }}').is(':checked')){
-                    var $this = $('#idFormDupliquerStation'); // L'objet jQuery du formulaire
-                    var url = '{{ path("AeagSqeBundle_programmation_periode_valider_dupliquer_station_sur_autre_station",{"stationId":  "par1", "autreStationId": "par2","action": "par3","maj":"par4","lotan":"par5"}) }}', // Le nom du fichier indiqué dans le formulaire
-                    url = url.replace("par1", {{ stationAn.station.id }});
-                    url = url.replace("par2", {{ stationAnAutre.station.id }});
-                    url = url.replace("amp;","");
-                    url = url.replace("par3", '{{ action }}');
-                    url = url.replace("amp;","");
-                    url = url.replace("par4", '{{ maj }}');
-                    url = url.replace("amp;","");
-                    url = url.replace("par5", '{{ lotan.id }}');
-                    url = url.replace("amp;","");
-                    $.ajax({
-                    url: url,
-                    type: 'post', // La méthode indiquée dans le formulaire (get ou post)
-                    success: function(data) { // Je récupère la réponse du fichier PHP
-                    table_station.page.len( -1 ).draw();
-                    $('#idResultatDupliquerStation').empty().append(data);
-                    table_station.page.len( 10 ).draw();
-                    nbAutreStations = nbAutreStations + 1;
-                    html = '<div class="progress-bar progress-bar-success progress-bar-striped"';
-                                 html = html  +  ' role="progressbar"';
-                                 html = html + ' aria-valuenow="' +  nbAutreStations + '"';
-                                 html = html + ' aria-valuemin="0"';
-                                 html = html + ' aria-valuemax="' +  nbStations + '"';
-                                 html = html + 'style="min-width: 2em;';
-                                 html = html + ' width: ' + ((nbAutreStations/ nbStations)*100) + '%;">';
-                                 html = html + nbAutreStations  + '/' + nbStations;
-                                 html = html + '</div>';
-                    $('#idProgress').empty().append(html);
-                    if (  nbAutreStations >=  nbStations) {
-                    $('#modaProgression').modal('hide');
-                    }
-                    }
-                    });
-                    };
-
-                {% endfor %}
-                if (filtre != ''){
-                table_TableDupliquerStation.search(filtre).draw();
-                };
-                table_TableDupliquerStation.page.len( nbRecords ).draw();
-                $('#modalDupliquerStation').modal('hide');
-                });
-
-                {# Initialiser la programmation de la station #}
-
-                $(document).on('click','#idInitialiserStation_{{ stationAn.station.id }}',function(e){
-                e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                var html = '<div class="modal-header">';
-                    html = html + '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>';
-                    html = html + '<h4 class="modal-title">Initialisation de la programmation de la station {{ stationAn.station.station.code}} </h4>';
-                    html = html + '</div>';
-                html = html + '<div class="modal-body">';
-                    html = html + '<h4>Cliquer sur "Initialiser" pour initialiser la station</h4>';
-                    html = html + '<br/><br/>';
-                    html = html + '<div class="alert alert-danger">Attention : Une fois initialisée, la programmation des périodes de la station sera perdue</div>';
-                    html = html + '</div>';
-                html = html + '<div class="modal-footer">';
-                    html = html + '<a  id="idValiderInitialiserStation_{{ stationAn.station.id }}" class="btn btn-danger"  href="#" title="Initialiser">';
-                        html = html + '<i class="fa fa-eraser"> Initaliser</i>';
-                        html = html + '</a>';
-                    html = html + '<button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>';
-                    html = html + '</div>';
-                $('#idModalContentInitialiserStation').empty().append(html);
-                $('#modalInitialiserStation').modal();
-                $('#modalInitialiserStation').show();
-                });
-
-                {# valider Initialisation des périodes de la station #}
-                $(document).on('click', '#idValiderInitialiserStation_{{ stationAn.station.id }}',function(e){
-                $('#modalTraitementEncours').modal('toggle');
-                e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                var $this = $('#idForm_dupliquerStation_{{ stationAn.station.id }}'); // L'objet jQuery du formulaire
-                var url = '{{ path("AeagSqeBundle_programmation_periode_initialiser",{"stationId":  "par1","action": "par2","maj":"par3","lotan":"par4"}) }}', // Le nom du fichier indiqué dans le formulaire
-                url = url.replace("par1", {{ stationAn.station.id }});
-                url = url.replace("par2", '{{ action }}');
-                url = url.replace("amp;","");
-                url = url.replace("par3", '{{ maj }}');
-                url = url.replace("amp;","");
-                url = url.replace("par4", '{{ lotan.id }}');
+                url = url.replace("par5", '{{ lotan.id }}');
                 url = url.replace("amp;","");
                 $.ajax({
                 url: url,
                 type: 'post', // La méthode indiquée dans le formulaire (get ou post)
-                data: $this.serialize(),
-                success: function(html) { // Je récupère la réponse du fichier PHP
-                $('#idResultatInitialiserStation').empty().append(html);
-                $('#modalInitialiserStation').modal('hide');
-                $('#modalTraitementEncours').modal('hide');
+                success: function(data) { // Je récupère la réponse du fichier PHP
+                table_station.page.len( -1 ).draw();
+                $('#idResultatDupliquerStation').empty().append(data);
+                table_station.page.len( 10 ).draw();
+                nbAutreStations = nbAutreStations + 1;
+                html = '<div class="progress-bar progress-bar-success progress-bar-striped"';
+                             html = html  +  ' role="progressbar"';
+                             html = html + ' aria-valuenow="' +  nbAutreStations + '"';
+                             html = html + ' aria-valuemin="0"';
+                             html = html + ' aria-valuemax="' +  nbStations + '"';
+                             html = html + 'style="min-width: 2em;';
+                             html = html + ' width: ' + ((nbAutreStations/ nbStations)*100) + '%;">';
+                             html = html + nbAutreStations  + '/' + nbStations;
+                             html = html + '</div>';
+                $('#idProgress').empty().append(html);
+                if (  nbAutreStations >=  nbStations) {
+                $('#modaProgression').modal('hide');
+                }
                 }
                 });
-                });
-
+                };
 
             {% endfor %}
-        {% endif %}
+            if (filtre != ''){
+            table_TableDupliquerStation.search(filtre).draw();
+            };
+            table_TableDupliquerStation.page.len( nbRecords ).draw();
+            $('#modalDupliquerStation').modal('hide');
+            });
+
+            {# Initialiser la programmation de la station #}
+
+            $(document).on('click','#idInitialiserStation_{{ stationAn.station.id }}',function(e){
+            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+            var html = '<div class="modal-header">';
+                html = html + '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>';
+                html = html + '<h4 class="modal-title">Initialisation de la programmation de la station {{ stationAn.station.station.code}} </h4>';
+                html = html + '</div>';
+            html = html + '<div class="modal-body">';
+                html = html + '<h4>Cliquer sur "Initialiser" pour initialiser la station</h4>';
+                html = html + '<br/><br/>';
+                html = html + '<div class="alert alert-danger">Attention : Une fois initialisée, la programmation des périodes de la station sera perdue</div>';
+                html = html + '</div>';
+            html = html + '<div class="modal-footer">';
+                html = html + '<a  id="idValiderInitialiserStation_{{ stationAn.station.id }}" class="btn btn-danger"  href="#" title="Initialiser">';
+                    html = html + '<i class="fa fa-eraser"> Initaliser</i>';
+                    html = html + '</a>';
+                html = html + '<button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>';
+                html = html + '</div>';
+            $('#idModalContentInitialiserStation').empty().append(html);
+            $('#modalInitialiserStation').modal();
+            $('#modalInitialiserStation').show();
+            });
+
+            {# valider Initialisation des périodes de la station #}
+            $(document).on('click', '#idValiderInitialiserStation_{{ stationAn.station.id }}',function(e){
+            $('#modalTraitementEncours').modal('toggle');
+            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+            var $this = $('#idForm_dupliquerStation_{{ stationAn.station.id }}'); // L'objet jQuery du formulaire
+            var url = '{{ path("AeagSqeBundle_programmation_periode_initialiser",{"stationId":  "par1","action": "par2","maj":"par3","lotan":"par4"}) }}', // Le nom du fichier indiqué dans le formulaire
+            url = url.replace("par1", {{ stationAn.station.id }});
+            url = url.replace("par2", '{{ action }}');
+            url = url.replace("amp;","");
+            url = url.replace("par3", '{{ maj }}');
+            url = url.replace("amp;","");
+            url = url.replace("par4", '{{ lotan.id }}');
+            url = url.replace("amp;","");
+            $.ajax({
+            url: url,
+            type: 'post', // La méthode indiquée dans le formulaire (get ou post)
+            data: $this.serialize(),
+            success: function(html) { // Je récupère la réponse du fichier PHP
+            $('#idResultatInitialiserStation').empty().append(html);
+            $('#modalInitialiserStation').modal('hide');
+            $('#modalTraitementEncours').modal('hide');
+            }
+            });
+            });
+
+
+        {% endfor %}
+    {% endif %}
 
 
 
@@ -798,167 +806,140 @@
 
 
 
-        {# validation de la programmtion #}
+    {# validation de la programmtion #}
 
-        $(document).on('click', '#idValider',function(e){
-        e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-        $('#modalTraitementEncours').modal('toggle');
-        var url = '{{ path("AeagSqeBundle_programmation_periode_bilan",{"action": "par1","maj":"pa2","lotan":"par3"}) }}', // Le nom du fichier indiqué dans le formulaire
-        url = url.replace("par1", '{{ action }}');
-        url = url.replace("par2", '{{ maj }}');
-        url = url.replace("amp;","");
-        url = url.replace("par3", '{{ lotan.id }}');
-        url = url.replace("amp;","");
-        $.ajax({
-        url: url,
-        type: 'get', // La méthode indiquée dans le formulaire (get ou post)
-        success: function(html) { // Je récupère la réponse du fichier PHP
-        $('#idResultatBilan').empty().append(html);
-        $('#modal_valider_programmation').modal();
-        $('#modalTraitementEncours').modal('hide');
-        }
-        });
-        });
+    $(document).on('click', '#idValider',function(e){
+    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+    $('#modalTraitementEncours').modal('toggle');
+    var url = '{{ path("AeagSqeBundle_programmation_periode_bilan",{"action": "par1","maj":"pa2","lotan":"par3"}) }}', // Le nom du fichier indiqué dans le formulaire
+    url = url.replace("par1", '{{ action }}');
+    url = url.replace("par2", '{{ maj }}');
+    url = url.replace("amp;","");
+    url = url.replace("par3", '{{ lotan.id }}');
+    url = url.replace("amp;","");
+    $.ajax({
+    url: url,
+    type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+    success: function(html) { // Je récupère la réponse du fichier PHP
+    $('#idResultatBilan').empty().append(html);
+    $('#modal_valider_programmation').modal();
+    $('#modalTraitementEncours').modal('hide');
+    }
+    });
+    });
 
-        $(document).on('click', '#idMenuStation',function(e){
-        e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-        $('#idSuivant').val('station');
-        $('#modalTraitementEncours').modal();
-        $('#idForm_validerProgrammation').submit();
-        });
+    $(document).on('click', '#idMenuStation',function(e){
+    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+    $('#idSuivant').val('station');
+    $('#modalTraitementEncours').modal();
+    $('#idForm_validerProgrammation').submit();
+    });
 
-        $(document).on('click', '#idMenuGroupe',function(e){
-        e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-        $('#idSuivant').val('groupe');
-        $('#modalTraitementEncours').modal();
-        $('#idForm_validerProgrammation').submit();
-        });
+    $(document).on('click', '#idMenuGroupe',function(e){
+    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+    $('#idSuivant').val('groupe');
+    $('#modalTraitementEncours').modal();
+    $('#idForm_validerProgrammation').submit();
+    });
 
-        $(document).on('click', '#idMenuPeriode',function(e){
-        e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-        $('#idSuivant').val('periode');
-        $('#modalTraitementEncours').modal();
-        $('#idForm_validerProgrammation').submit();
-        });
+    $(document).on('click', '#idMenuPeriode',function(e){
+    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+    $('#idSuivant').val('periode');
+    $('#modalTraitementEncours').modal();
+    $('#idForm_validerProgrammation').submit();
+    });
 
-        $(document).on('click', '#idMenuBilan',function(e){
-        e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-        $('#idSuivant').val('bilan');
-        $('#modalTraitementEncours').modal();
-        $('#idForm_validerProgrammation').submit();
-        });
+    $(document).on('click', '#idMenuBilan',function(e){
+    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+    $('#idSuivant').val('bilan');
+    $('#modalTraitementEncours').modal();
+    $('#idForm_validerProgrammation').submit();
+    });
 
-        $(document).on('click', '#idSuivantStation',function(e){
-        e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-        $('#idSuivant').val('station');
-        $('#modalTraitementEncours').modal();
-        $('#idForm_validerProgrammation').submit();
-        });
+    $(document).on('click', '#idSuivantStation',function(e){
+    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+    $('#idSuivant').val('station');
+    $('#modalTraitementEncours').modal();
+    $('#idForm_validerProgrammation').submit();
+    });
 
-        $(document).on('click', '#idSuivantGroupe',function(e){
-        e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-        $('#idSuivant').val('groupe');
-        $('#modalTraitementEncours').modal();
-        $('#idForm_validerProgrammation').submit();
-        });
+    $(document).on('click', '#idSuivantGroupe',function(e){
+    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+    $('#idSuivant').val('groupe');
+    $('#modalTraitementEncours').modal();
+    $('#idForm_validerProgrammation').submit();
+    });
 
-        $(document).on('click', '#idSuivantPeriode',function(e){
-        e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-        $('#idSuivant').val('periode');
-        $('#modalTraitementEncours').modal();
-        $('#idForm_validerProgrammation').submit();
-        });
+    $(document).on('click', '#idSuivantPeriode',function(e){
+    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+    $('#idSuivant').val('periode');
+    $('#modalTraitementEncours').modal();
+    $('#idForm_validerProgrammation').submit();
+    });
 
-        $(document).on('click', '#idSuivantBilan',function(e){
-        e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-        $('#idSuivant').val('bilan');
-        $('#modalTraitementEncours').modal();
-        $('#idForm_validerProgrammation').submit();
-        });
+    $(document).on('click', '#idSuivantBilan',function(e){
+    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+    $('#idSuivant').val('bilan');
+    $('#modalTraitementEncours').modal();
+    $('#idForm_validerProgrammation').submit();
+    });
 
-        $(document).on('click', '#idValiderProgrammation',function(e){
-        $('#modal_valider_programmation').modal('hide');
-        $('#modalTraitementEncours').modal();
-        $('#idForm').submit();
-        });
+    $(document).on('click', '#idValiderProgrammation',function(e){
+    $('#modal_valider_programmation').modal('hide');
+    $('#modalTraitementEncours').modal();
+    $('#idForm').submit();
+    });
 
 
-        {#  traitement sur chaque periode de chaque station   #}
-        var info = table_station.page.info();
-        var nbRecords = $('#idTable_station_length option:selected').val();
-        var filtre = $('#idTable_station_filter input').val();
-        if (filtre != ''){
-        var initval = '';
-        table_station.search(initval).draw();
-        };
-        table_station.page.len( -1 ).draw();
-        {% if stationAns |length %}
-            {% for stationAn in stationAns %}
-                {% for stationAnAutre in stationAns %}
-                    {% if stationAnAutre.station.id != stationAn.station.id %}
-                        {% set nbGroupes = 0 %}
-                        {% for periode in stationAnAutre.periodes %}
-                            {% if periode.nbGroupe > 0 %}
-                                {% set nbGroupes = nbGroupes + periode.nbGroupe %}
-                            {% endif %}
-                        {% endfor %}
-                        {% if  nbGroupes > 0 %}
-                            $('#trDupliquerStation_{{ stationAn.station.id }}_{{ stationAnAutre.station.id }}').addClass("danger");
-                            $('#nbGroupes_{{ stationAn.station.id }}_{{ stationAnAutre.station.id }}').val({{ nbGroupes }})
-                        {% else %}
-                            $('#trDupliquerStation_{{ stationAn.station.id }}_{{ stationAnAutre.station.id }}').removeClass("danger");
-                            $('#nbGroupes_{{ stationAn.station.id }}_{{ stationAnAutre.station.id }}').val(0)
+    {#  traitement sur chaque periode de chaque station   #}
+    var info = table_station.page.info();
+    var nbRecords = $('#idTable_station_length option:selected').val();
+    var filtre = $('#idTable_station_filter input').val();
+    if (filtre != ''){
+    var initval = '';
+    table_station.search(initval).draw();
+    };
+    table_station.page.len( -1 ).draw();
+    {% if stationAns |length %}
+        {% for stationAn in stationAns %}
+            {% for stationAnAutre in stationAns %}
+                {% if stationAnAutre.station.id != stationAn.station.id %}
+                    {% set nbGroupes = 0 %}
+                    {% for periode in stationAnAutre.periodes %}
+                        {% if periode.nbGroupe > 0 %}
+                            {% set nbGroupes = nbGroupes + periode.nbGroupe %}
                         {% endif %}
+                    {% endfor %}
+                    {% if  nbGroupes > 0 %}
+                        $('#trDupliquerStation_{{ stationAn.station.id }}_{{ stationAnAutre.station.id }}').addClass("danger");
+                        $('#nbGroupes_{{ stationAn.station.id }}_{{ stationAnAutre.station.id }}').val({{ nbGroupes }})
+                    {% else %}
+                        $('#trDupliquerStation_{{ stationAn.station.id }}_{{ stationAnAutre.station.id }}').removeClass("danger");
+                        $('#nbGroupes_{{ stationAn.station.id }}_{{ stationAnAutre.station.id }}').val(0)
                     {% endif %}
-                {% endfor %}
-                {% for periode in stationAn.periodes %}
+                {% endif %}
+            {% endfor %}
+            {% for periode in stationAn.periodes %}
 
-                    {% if periode.statut | length %}
-                        {% if periode.statut.codeStatut == 'INV' %}
+                {% if periode.statut | length %}
+                    {% if periode.statut.codeStatut == 'INV' %}
 
-                            {% if periode.nbGroupe > 0 %}
+                        {% if periode.nbGroupe > 0 %}
+                            $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').addClass("danger");
+                            $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').addClass('btn-danger');
+                            $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
+                        {% else %}
+                            {% if periode.autreProgrammation == 0 %}
+                                $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("danger");
+                                $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass('btn-danger');
+                                $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().hide();
+                            {% else %}
                                 $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').addClass("danger");
                                 $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').addClass('btn-danger');
-                                $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
-                            {% else %}
-                                {% if periode.autreProgrammation == 0 %}
-                                    $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("danger");
-                                    $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass('btn-danger');
-                                    $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().hide();
-                                {% else %}
-                                    $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').addClass("danger");
-                                    $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').addClass('btn-danger');
-                                    $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().append({{ periode.autreProgrammation }} + '/' + {{ grparAns | length }} );
-                                {% endif %}
+                                $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().append({{ periode.autreProgrammation }} + '/' + {{ grparAns | length }} );
                             {% endif %}
+                        {% endif %}
 
-                        {% else %}
-                            {% if periode.nbGroupe > 0 %}
-                                {% if periode.autreStatut == 'N' %}
-                                    $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("warning").removeClass("info").removeClass("primary").addClass("success");
-                                    $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("btn-default").removeClass("btn-warning").removeClass("btn-info").removeClass("btn-primary").addClass('btn-success');
-                                    $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
-                                {% elseif periode.autreStatut == 'C'%}
-                                    $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("warning").addClass("info").removeClass("primary").removeClass("success");
-                                    $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("btn-default").removeClass("btn-warning").addClass("btn-info").removeClass("btn-primary").removeClass('btn-success');
-                                    $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
-                                {% elseif periode.autreStatut == 'I'%}
-                                    $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("warning").removeClass("info").addClass("primary").removeClass("success");
-                                    $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("btn-default").removeClass("btn-warning").removeClass("btn-info").addClass("btn-primary").removeClass('btn-success');
-                                    $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
-                                {% endif %}
-                            {% else %}
-                                {% if periode.autreProgrammation == 0 %}
-                                    $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("warning").removeClass("info").removeClass("primary").removeClass("success");
-                                    $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').addClass("btn-default").removeClass("btn-warning").removeClass("btn-info").removeClass("btn-primary").removeClass('btn-success');
-                                    $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty();
-                                {% else %}
-                                    $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').addClass("warning").removeClass("info").removeClass("primary").removeClass("success");
-                                    $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("btn-default").addClass("btn-warning").removeClass("btn-info").removeClass("btn-primary").removeClass('btn-success');
-                                    $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().append({{ periode.autreProgrammation }} + '/' + {{ grparAns | length }} ).show();
-                                {% endif %}
-                            {% endif %}
-                        {%endif %}
                     {% else %}
                         {% if periode.nbGroupe > 0 %}
                             {% if periode.autreStatut == 'N' %}
@@ -985,67 +966,94 @@
                                 $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().append({{ periode.autreProgrammation }} + '/' + {{ grparAns | length }} ).show();
                             {% endif %}
                         {% endif %}
+                    {%endif %}
+                {% else %}
+                    {% if periode.nbGroupe > 0 %}
+                        {% if periode.autreStatut == 'N' %}
+                            $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("warning").removeClass("info").removeClass("primary").addClass("success");
+                            $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("btn-default").removeClass("btn-warning").removeClass("btn-info").removeClass("btn-primary").addClass('btn-success');
+                            $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
+                        {% elseif periode.autreStatut == 'C'%}
+                            $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("warning").addClass("info").removeClass("primary").removeClass("success");
+                            $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("btn-default").removeClass("btn-warning").addClass("btn-info").removeClass("btn-primary").removeClass('btn-success');
+                            $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
+                        {% elseif periode.autreStatut == 'I'%}
+                            $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("warning").removeClass("info").addClass("primary").removeClass("success");
+                            $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("btn-default").removeClass("btn-warning").removeClass("btn-info").addClass("btn-primary").removeClass('btn-success');
+                            $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
+                        {% endif %}
+                    {% else %}
+                        {% if periode.autreProgrammation == 0 %}
+                            $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("warning").removeClass("info").removeClass("primary").removeClass("success");
+                            $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').addClass("btn-default").removeClass("btn-warning").removeClass("btn-info").removeClass("btn-primary").removeClass('btn-success');
+                            $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty();
+                        {% else %}
+                            $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').addClass("warning").removeClass("info").removeClass("primary").removeClass("success");
+                            $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("btn-default").addClass("btn-warning").removeClass("btn-info").removeClass("btn-primary").removeClass('btn-success');
+                            $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().append({{ periode.autreProgrammation }} + '/' + {{ grparAns | length }} ).show();
+                        {% endif %}
                     {% endif %}
+                {% endif %}
 
-                    {#   traitement sur un période sélectionner   #}
-                    $(document).on('click', '#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}', function(e){
-                    $('#modalTraitementEncours').modal('toggle');
-                    var url = '{{ path("AeagSqeBundle_programmation_periode_programmer",{"stationId":  "par1", "periodeId" : "par2","action": "par3","maj":"par4","lotan":"par5"}) }}', // Le nom du fichier indiqué dans le formulaire
-                    url = url.replace("par1", {{ stationAn.station.id }});
-                    url = url.replace("par2", {{ periode.periode.id }});
-                    url = url.replace("amp;","");
-                    url = url.replace("par3", '{{ action }}');
-                    url = url.replace("amp;","");
-                    url = url.replace("par4", '{{ maj }}');
-                    url = url.replace("amp;","");
-                    url = url.replace("par5", '{{ lotan.id }}');
-                    url = url.replace("amp;","");
-                    $.ajax({
-                    url: url,
-                    type: 'get', // La méthode indiquée dans le formulaire (get ou post)
-                    success: function(html) { // Je récupère la réponse du fichier PHP
-                    $('#idModalProgrammer').modal(); 
-                    $('#idModalContentProgrammer').empty().append(html);
-                    $('#modalTraitementEncours').modal('hide');
-                    }
-                    });
+                {#   traitement sur un période sélectionner   #}
+                $(document).on('click', '#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}', function(e){
+                $('#modalTraitementEncours').modal('toggle');
+                var url = '{{ path("AeagSqeBundle_programmation_periode_programmer",{"stationId":  "par1", "periodeId" : "par2","action": "par3","maj":"par4","lotan":"par5"}) }}', // Le nom du fichier indiqué dans le formulaire
+                url = url.replace("par1", {{ stationAn.station.id }});
+                url = url.replace("par2", {{ periode.periode.id }});
+                url = url.replace("amp;","");
+                url = url.replace("par3", '{{ action }}');
+                url = url.replace("amp;","");
+                url = url.replace("par4", '{{ maj }}');
+                url = url.replace("amp;","");
+                url = url.replace("par5", '{{ lotan.id }}');
+                url = url.replace("amp;","");
+                $.ajax({
+                url: url,
+                type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+                success: function(html) { // Je récupère la réponse du fichier PHP
+                $('#idModalProgrammer').modal(); 
+                $('#idModalContentProgrammer').empty().append(html);
+                $('#modalTraitementEncours').modal('hide');
+                }
+                });
 
-                    });
+                });
 
-                {% endfor %}
             {% endfor %}
-        {% endif %}
-        if (filtre != ''){
+        {% endfor %}
+    {% endif %}
+    if (filtre != ''){
 
-        table_station.search(filtre).draw();
-        };
-        table_station.page.len( nbRecords ).draw();
+    table_station.search(filtre).draw();
+    };
+    table_station.page.len( nbRecords ).draw();
 
-        $("#modal_valider_programmation").draggable({
-        handle: ".modal-header"
-        });    
+    $("#modal_valider_programmation").draggable({
+    handle: ".modal-header"
+    });    
 
-        $("#modalDupliquerStation").draggable({
-        handle: ".modal-header"
-        });    
+    $("#modalDupliquerStation").draggable({
+    handle: ".modal-header"
+    });    
 
-        $("#modalConfirmerDupliquerStation").draggable({
-        handle: ".modal-header"
-        });    
+    $("#modalConfirmerDupliquerStation").draggable({
+    handle: ".modal-header"
+    });    
 
-        $("#modalInitialiserStation").draggable({
-        handle: ".modal-header"
-        });    
+    $("#modalInitialiserStation").draggable({
+    handle: ".modal-header"
+    });    
 
-        $("#modal_periode").draggable({
-        handle: ".modal-header"
-        });    
+    $("#modal_periode").draggable({
+    handle: ".modal-header"
+    });    
 
-        $("#idModalProgrammer").draggable({
-        handle: ".modal-header"
-        });    
+    $("#idModalProgrammer").draggable({
+    handle: ".modal-header"
+    });    
 
 
-        });
+    });
 
-    {% endblock scripts %}
+{% endblock scripts %}
