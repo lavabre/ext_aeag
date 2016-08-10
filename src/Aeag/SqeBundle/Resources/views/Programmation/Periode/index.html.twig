@@ -219,7 +219,7 @@
          </a>#}
         {% if  not app.session.get('evolution')%}
             {%if stationAns | length%}  
-                <a id="idTelechargerPeriodes" class="btn btn-success btn-telecharger btn-sm  pull-right" href="{{ path('AeagSqeBundle_programmation_periode_telecharger', { 'lotan': lotan.id,}) }}" title="Télécharger les périodes">
+                <a id="idTelechargerPeriodes" class="btn btn-success btn-telecharger btn-sm  pull-right" href="#" title="Télécharger les périodes">
                     <i class="fa fa-upload"></i> 
                 </a>
             {% endif %}
@@ -440,7 +440,6 @@
     jQuery(document).ready(function() {
 
     // Table periode
-
     var table_periode = $('#idTable_periodes').DataTable(
     {  "ordering": false,
     "scrollCollapse": true,
@@ -505,6 +504,16 @@
 
     $('#idCache').hide();
     $('#idModalProgrammer').modal('hide');
+    
+    // generation fichier csv
+      $(document).on('click','#idTelechargerPeriodes',function(e){
+            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+             $('#modalTraitementEncours').modal('toggle');
+             var url = '{{ path("AeagSqeBundle_programmation_periode_telecharger",{"lotan": "par1"}) }}', // Le nom du fichier indiqué dans le formulaire
+            url = url.replace("par1", {{ lotan.id }}); 
+             url = url.replace("amp;","");
+            window.location.replace(url);
+            });
 
     // traitement sur les periodes
 

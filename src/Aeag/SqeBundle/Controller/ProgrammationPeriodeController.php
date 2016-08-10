@@ -817,7 +817,7 @@ class ProgrammationPeriodeController extends Controller {
         $repoPgProgPeriodes = $emSqe->getRepository('AeagSqeBundle:PgProgPeriodes');
         $repoPgProgGrparObligSupport = $emSqe->getRepository('AeagSqeBundle:PgProgGrparObligSupport');
         $repoPgSandreSupport = $emSqe->getRepository('AeagSqeBundle:PgSandreSupports');
-  
+
 //recupération des parametres
         $request = $this->container->get('request');
         $pgProgLotAnId = $request->get('lotan');
@@ -1623,12 +1623,12 @@ class ProgrammationPeriodeController extends Controller {
         //$tabStations = array();
         $i = 0;
         $tabStations[$i]["station"] = $pgProgLotStationAn;
-           if ($pgProgLotStationAn->getRsxId()) {
-                $pgRefReseauMesure = $repoPgRefReseauMesure->getPgRefReseauMesureByGroupementId($pgProgLotStationAn->getRsxId());
-            } else {
-                $pgRefReseauMesure = null;
-            }
-            $tabStations[$i]["reseau"] = $pgRefReseauMesure;
+        if ($pgProgLotStationAn->getRsxId()) {
+            $pgRefReseauMesure = $repoPgRefReseauMesure->getPgRefReseauMesureByGroupementId($pgProgLotStationAn->getRsxId());
+        } else {
+            $pgRefReseauMesure = null;
+        }
+        $tabStations[$i]["reseau"] = $pgRefReseauMesure;
         $tabPeriodes = array();
         $j = 0;
 
@@ -1900,7 +1900,7 @@ class ProgrammationPeriodeController extends Controller {
                     'ctrlGroupes' => $tabCtrlGroupes,
         ));
     }
-    
+
     public function telechargerAction($lotan = null) {
 
         $user = $this->getUser();
@@ -1923,7 +1923,7 @@ class ProgrammationPeriodeController extends Controller {
         $repoPgProgLotPeriodeProg = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeProg');
         $repoPgProgPeriodes = $emSqe->getRepository('AeagSqeBundle:PgProgPeriodes');
         $repoPgRefReseauMesure = $emSqe->getRepository('AeagSqeBundle:PgRefReseauMesure');
-        
+
         $repoPgProgLotGrparAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotGrparAn');
         $repoPgProgLotParamAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotParamAn');
         $repoPgProgGrpParamRef = $emSqe->getRepository('AeagSqeBundle:PgProgGrpParamRef');
@@ -1931,23 +1931,27 @@ class ProgrammationPeriodeController extends Controller {
         $repoPgSandreUnites = $emSqe->getRepository('AeagSqeBundle:PgSandreUnites');
 
 
-        
-         $pgProgLotAn = $repoPgProgLotAn->getPgProgLotAnById($pgProgLotAnId);
-         $pgProgLot = $pgProgLotAn->getLot();
-         $annee = $pgProgLotAn->getAnneeProg();
+
+        $pgProgLotAn = $repoPgProgLotAn->getPgProgLotAnById($pgProgLotAnId);
+        $pgProgLot = $pgProgLotAn->getLot();
+        $annee = $pgProgLotAn->getAnneeProg();
         $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
         $pgProgLotGrparAns = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotan($pgProgLotAn);
         $pgProgLotStationAns = $repoPgProgLotStationAn->getPgProgLotStationAnBylotan($pgProgLotAn);
         $pgProgPeriodes = $repoPgProgPeriodes->getPgProgPeriodesByAnneeTypePeriode($annee, $pgProgTypeMilieu->getTypePeriode());
         $pgProgLotPeriodeAns = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnByLotan($pgProgLotAn);
-        
-        
         asort($pgProgLotStationAns);
-
+        asort($pgProgLotPeriodeAns);
         $tabStations = array();
         $i = 0;
         foreach ($pgProgLotStationAns as $pgProgLotStationAn) {
-            $tabStations[$i]["station"] = $pgProgLotStationAn;
+            $stationGeo = $pgProgLotStationAn->getStation();
+            $tabStations[$i]['station']['ouvFoncId'] = $stationGeo->getOuvfoncId();
+            $tabStations[$i]['station']['code'] = $stationGeo->getCode();
+            $tabStations[$i]['station']['libelle'] = $stationGeo->getLibelle();
+            $tabStations[$i]['station']['codeMasdo'] = $stationGeo->getCodeMasdo();
+            $tabStations[$i]['station']['nomCoursEau'] = $stationGeo->getNomCoursEau();
+            $tabStations[$i]['commune']['libelle'] = $stationGeo->getNomCommune();
             if ($pgProgLotStationAn->getRsxId()) {
                 $pgRefReseauMesure = $repoPgRefReseauMesure->getPgRefReseauMesureByGroupementId($pgProgLotStationAn->getRsxId());
             } else {
@@ -1964,15 +1968,19 @@ class ProgrammationPeriodeController extends Controller {
                     $tabPeriodes[$j]["periode"] = $pgProgLotPeriodeAn->getPeriode();
                     $tabPeriodes[$j]["statut"] = $pgProgLotPeriodeAn->getCodeStatut();
                     $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByStationAnPeriodeAn($pgProgLotStationAn, $pgProgLotPeriodeAn);
+                    asort($pgProgLotPeriodeProgs);
                     $tabPeriodes[$j]["nbGroupe"] = count($pgProgLotPeriodeProgs);
 //print_r('stationan : ' . $pgProgLotStationAn->getid() . ' peridean : ' . $pgProgLotPeriodeAn->getid() .   'nb pgProgLotPeriodeProgs : ' . count($pgProgLotPeriodeProgs). '    ');
                     $tabGroupes = array();
                     $k = 0;
-                    $trouveCompl = false;
-                    $trouveStatut = "N";
                     foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
                         $tabGroupes[$k]['groupe'] = $pgProgLotPeriodeProg->getGrparAn();
                         $tabGroupes[$k]['statut'] = 'I';
+                        if ($tabGroupes[$k]['groupe']->getGrparRef()->getSupport()) {
+                            $tabGroupes[$k]['support'] = $tabGroupes[$k]['groupe']->getGrparRef()->getSupport()->getNomSupport();
+                        } else {
+                            $tabGroupes[$k]['support'] = null;
+                        }
                         $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotPeriodeProg->getGrparAn());
                         asort($pgProgLotParamAns);
                         $tabParametres = array();
@@ -1994,7 +2002,7 @@ class ProgrammationPeriodeController extends Controller {
                             $p++;
                         }
                         $tabGroupes[$k]['parametres'] = $tabParametres;
-                         $k++;
+                        $k++;
                     }
                     $pgProgLotStationAnAutres = $repoPgProgLotStationAn->getPgProgLotStationAnByStation($pgProgLotStationAn->getStation());
                     foreach ($pgProgLotStationAnAutres as $pgProgLotStationAnAutre) {
@@ -2018,6 +2026,11 @@ class ProgrammationPeriodeController extends Controller {
                                                             if (!$trouve) {
                                                                 $tabGroupes[$k]['groupe'] = $pgProgLotGrparAn;
                                                                 $tabGroupes[$k]['statut'] = 'C';
+                                                                if ($tabGroupes[$k]['groupe']->getGrparRef()->getSupport()) {
+                                                                    $tabGroupes[$k]['support'] = $tabGroupes[$k]['groupe']->getGrparRef()->getSupport()->getNomSupport();
+                                                                } else {
+                                                                    $tabGroupes[$k]['support'] = null;
+                                                                }
                                                                 $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
                                                                 asort($pgProgLotParamAns);
                                                                 $tabParametres = array();
@@ -2039,7 +2052,7 @@ class ProgrammationPeriodeController extends Controller {
                                                                     $p++;
                                                                 }
                                                                 $tabGroupes[$k]['parametres'] = $tabParametres;
-                                                                 $k++;
+                                                                $k++;
                                                             }
                                                         }
                                                     }
@@ -2051,6 +2064,7 @@ class ProgrammationPeriodeController extends Controller {
                             }
                         }
                     }
+                    asort($tabGroupes);
                     $tabPeriodes[$j]["groupes"] = $tabGroupes;
                     $j++;
                 }
@@ -2060,14 +2074,14 @@ class ProgrammationPeriodeController extends Controller {
                     $tabPeriodes[$j]["periode"] = $pgProgPeriode;
                     $tabPeriodes[$j]["nbGroupe"] = 0;
                     $tabPeriodes[$j]["groupes"] = array();
-                    $tabPeriodes[$j]["autreProgrammation"] = 0;
                     $tabPeriodes[$j]["statut"] = null;
-                    $tabPeriodes[$j]["autreStatut"] = 'N';
-                    $tabGroupeAutres = array();
+                    $tabGroupes = array();
                     $k = 0;
                     $pgProgLotStationAnAutres = $repoPgProgLotStationAn->getPgProgLotStationAnByStation($pgProgLotStationAn->getStation());
+                    asort($pgProgLotStationAnAutres);
                     foreach ($pgProgLotStationAnAutres as $pgProgLotStationAnAutre) {
                         $pgProgLotPeriodeProgAutres = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByStationAn($pgProgLotStationAnAutre);
+                        asort($pgProgLotPeriodeProgAutres);
                         foreach ($pgProgLotPeriodeProgAutres as $pgProgLotPeriodeProgAutre) {
                             if ($pgProgLotPeriodeProgAutre->getPeriodan()->getCodeStatut()->getCodeStatut() != 'INV') {
                                 if ($pgProgLotPeriodeProgAutre->getPeriodan()->getPeriode()->getId() == $pgProgPeriode->getid()) {
@@ -2078,14 +2092,20 @@ class ProgrammationPeriodeController extends Controller {
                                                     foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
                                                         if ($pgProgLotPeriodeProgAutre->getGrparAn()->getGrparRef()->getId() == $pgProgLotGrparAn->getGrparRef()->getId()) {
                                                             $trouve = false;
-                                                            for ($l = 0; $l < count($tabGroupeAutres); $l++) {
-                                                                if ($pgProgLotGrparAn->getGrparRef()->getId() == $tabGroupeAutres[$l]) {
+                                                            for ($l = 0; $l < count($tabGroupes); $l++) {
+                                                                if ($pgProgLotGrparAn->getGrparRef()->getId() == $tabGroupeAutres[$l]['groupe']->getGrparRef()->getId()) {
                                                                     $trouve = true;
-                                                                    $l = count($tabGroupeAutres) + 1;
+                                                                    break;
                                                                 }
                                                             }
                                                             if (!$trouve) {
-                                                                $tabGroupeAutres[$k]['groupeCompl'] = $pgProgLotGrparAn;
+                                                                $tabGroupeAutres[$k]['groupe'] = $pgProgLotGrparAn;
+                                                                $tabGroupes[$k]['statut'] = 'C';
+                                                                if ($tabGroupes[$k]['groupe']->getGrparRef()->getSupport()) {
+                                                                    $tabGroupes[$k]['support'] = $tabGroupes[$k]['groupe']->getGrparRef()->getSupport()->getNomSupport();
+                                                                } else {
+                                                                    $tabGroupes[$k]['support'] = null;
+                                                                }
                                                                 $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
                                                                 asort($pgProgLotParamAns);
                                                                 $tabParametres = array();
@@ -2106,7 +2126,7 @@ class ProgrammationPeriodeController extends Controller {
                                                                     }
                                                                     $p++;
                                                                 }
-                                                                $tabGroupeAutres[$k]['parametresCompl'] = $tabParametres;
+                                                                $tabGroupes[$k]['parametres'] = $tabParametres;
                                                                 $k++;
                                                             }
                                                         }
@@ -2119,21 +2139,23 @@ class ProgrammationPeriodeController extends Controller {
                             }
                         }
                     }
-                    $tabPeriodes[$j]["autreProgrammation"] = $tabGroupeAutres;
+                    asort($tabGroupes);
+                    $tabPeriodes[$j]["groupes"] = $tabGroupes;
                     $j++;
                 }
             }
-            sort($tabPeriodes);
+             usort($tabPeriodes, create_function('$a,$b', 'return $a[\'ordre\']-$b[\'ordre\'];'));
             $tabStations[$i]["periodes"] = $tabPeriodes;
             $i++;
         }
-        
-         \Symfony\Component\VarDumper\VarDumper::dump($tabStations);
-         return new Response ('');
-        
-        
+
+
+//         \Symfony\Component\VarDumper\VarDumper::dump($tabStations);
+//         return new Response ('');
+
+
         $chemin = '/base/extranet/Transfert/Sqe/csv';
-        $fichier = 'groupes-parametres-programmation-' . $pgProgLotAn->getAnneeProg() . '-' . $pgProgLotAnId . '.csv';
+        $fichier = 'periodes-programmation-' . $pgProgLotAn->getAnneeProg() . '-' . $pgProgLotAnId . '.csv';
         $fullFileName = $chemin . '/' . $fichier;
         $ext = strtolower(pathinfo($fullFileName, PATHINFO_EXTENSION));
         if (file_exists($fullFileName)) {
@@ -2141,32 +2163,48 @@ class ProgrammationPeriodeController extends Controller {
         }
         $fichier_csv = fopen($fullFileName, 'w+');
         // Entete
-        $ligne = array('Programmation', 'Version', 'Lot', 'Groupe', 'Libellé', 'Type', 'Support', 'Prestataire', 'Parametre', 'libellé', 'Fraction', 'Unité', 'Prestataire');
+        $ligne = array('Programmation', 'Version', 'Lot',
+            'Station', 'Libellé', 'Commune', 'Masse d\'eau', 'Rivière', 'Réseau',
+            'Période', 'Date début', 'Date fin',
+            'Groupe', 'Libellé', 'Type', 'Support', 'Prestataire', 'Parametre', 'libellé', 'Fraction', 'Unité', 'Prestataire');
         for ($i = 0; $i < count($ligne); $i++) {
             $ligne[$i] = \iconv("UTF-8", "Windows-1252//TRANSLIT", $ligne[$i]);
         }
         fputcsv($fichier_csv, $ligne, ';');
 
-        for ($i = 0; $i < count($tabGroupes); $i++) {
-            for ($j = 0; $j < count($tabGroupes[$i]['parametres']); $j++) {
-                $ligne = array($pgProgLotAn->getAnneeProg(),
-                    $pgProgLotAn->getversion(),
-                    $pgProgLotAn->getLot()->getNomLot(),
-                    $tabGroupes[$i]['groupe']->getGrparRef()->getCodeGrp(),
-                    $tabGroupes[$i]['groupe']->getGrparRef()->getLibelleGrp(),
-                    $tabGroupes[$i]['groupe']->getGrparRef()->getTypeGrp(),
-                    $tabGroupes[$i]['support'],
-                    $tabGroupes[$i]['groupe']->getPrestaDft()->getNomCorres(),
-                    $tabGroupes[$i]['parametres'][$j]['parametre']->getCodeParametre()->getCodeParametre(),
-                    $tabGroupes[$i]['parametres'][$j]['parametre']->getCodeParametre()->getNomParametre(),
-                    $tabGroupes[$i]['parametres'][$j]['fraction'],
-                    $tabGroupes[$i]['parametres'][$j]['unite'],
-                    $tabGroupes[$i]['parametres'][$j]['parametre']->getPrestataire()->getNomCorres(),
-                );
-                for ($k = 0; $k < count($ligne); $k++) {
-                    $ligne[$k] = \iconv("UTF-8", "Windows-1252//TRANSLIT", $ligne[$k]);
+        for ($i = 0; $i < count($tabStations); $i++) {
+            for ($j = 0; $j < count($tabStations[$i]['periodes']); $j++) {
+                for ($k = 0; $k < count($tabStations[$i]['periodes'][$j]['groupes']); $k++) {
+                    for ($l = 0; $l < count($tabStations[$i]['periodes'][$j]['groupes'][$k]['parametres']); $l++) {
+                         $ligne = array($pgProgLotAn->getAnneeProg(),
+                            $pgProgLotAn->getversion(),
+                            $pgProgLotAn->getLot()->getNomLot(),
+                            $tabStations[$i]['station']['code'],
+                            $tabStations[$i]['station']['libelle'],
+                            $tabStations[$i]['commune']['libelle'],
+                            $tabStations[$i]['station']['codeMasdo'],
+                            $tabStations[$i]['station']['nomCoursEau'],
+                            $tabStations[$i]['reseau']->getNomRsx(),
+                            $tabStations[$i]['periodes'][$j]['periode']->getLabelPeriode(),
+                            $tabStations[$i]['periodes'][$j]['periode']->getDateDeb()->format('d/m/Y'),
+                            $tabStations[$i]['periodes'][$j]['periode']->getDateFin()->format('d/m/Y'),
+                            $tabStations[$i]['periodes'][$j]['groupes'][$k]['groupe']->getGrparRef()->getCodeGrp(),
+                            $tabStations[$i]['periodes'][$j]['groupes'][$k]['groupe']->getGrparRef()->getLibelleGrp(),
+                            $tabStations[$i]['periodes'][$j]['groupes'][$k]['groupe']->getGrparRef()->getTypeGrp(),
+                            $tabStations[$i]['periodes'][$j]['groupes'][$k]['support'],
+                            $tabStations[$i]['periodes'][$j]['groupes'][$k]['groupe']->getPrestaDft()->getNomCorres(),
+                            $tabStations[$i]['periodes'][$j]['groupes'][$k]['parametres'][$l]['parametre']->getCodeParametre()->getCodeParametre(),
+                            $tabStations[$i]['periodes'][$j]['groupes'][$k]['parametres'][$l]['parametre']->getCodeParametre()->getNomParametre(),
+                            $tabStations[$i]['periodes'][$j]['groupes'][$k]['parametres'][$l]['fraction'],
+                            $tabStations[$i]['periodes'][$j]['groupes'][$k]['parametres'][$l]['unite'],
+                            $tabStations[$i]['periodes'][$j]['groupes'][$k]['parametres'][$l]['parametre']->getPrestataire()->getNomCorres(),
+                        );
+                        for ($m = 0; $m < count($ligne); $m++) {
+                            $ligne[$m] = \iconv("UTF-8", "Windows-1252//TRANSLIT", $ligne[$m]);
+                        }
+                        fputcsv($fichier_csv, $ligne, ';');
+                    }
                 }
-                fputcsv($fichier_csv, $ligne, ';');
             }
         }
 
@@ -2184,6 +2222,5 @@ class ProgrammationPeriodeController extends Controller {
         readfile($chemin . '/' . $fichier);
         exit();
     }
-
 
 }

@@ -1016,7 +1016,7 @@ class ProgrammationStationController extends Controller {
         }
         $fichier_csv = fopen($fullFileName, 'w+');
         // Entete
-        $ligne = array('Programmation', 'Version', 'Lot', 'Station', 'Libellé', 'Commune', 'Masse d\'eau', 'Rivière', 'Réseaux');
+        $ligne = array('Programmation', 'Version', 'Lot', 'Station', 'Libellé', 'Commune', 'Masse d\'eau', 'Rivière', 'Réseau');
         for ($i = 0; $i < count($ligne); $i++) {
             $ligne[$i] = \iconv("UTF-8", "Windows-1252//TRANSLIT", $ligne[$i]);
         }

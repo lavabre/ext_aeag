@@ -41,6 +41,12 @@ AeagSqeBundle_programmation_bilan_periode_groupes:
     requirements:
         methods:  GET|POST
         
+AeagSqeBundle_programmation_bilan_telecharger:
+    path:  /telecharger/{lotan}
+    defaults: { _controller: AeagSqeBundle:ProgrammationBilan:telecharger, lotan:null}
+    requirements:
+        methods:  GET|POST
+        
 
 
     

@@ -61,6 +61,13 @@
         {# <a class="btn btn-primary pull-right" href="{{ path('AeagDecBundle_admin_pdfListeDechets') }}" title="Imprimer la lister"> 
                 <i class="fa fa-print"> Imprimer la liste</i>
          </a>#}
+         {% if  not app.session.get('evolution')%}
+            {%if controle.station.nb  > 0 or controle.groupe.nb > 0 or  controle.periode.nb  > 0 %}  
+                <a id="idTelechargerBilan" class="btn btn-success btn-telecharger btn-sm  pull-right" href="#" title="Télécharger le bilan">
+                    <i class="fa fa-upload"></i> 
+                </a>
+            {% endif %}
+        {% endif %}
     </h3>
 {%endblock panel_heading %}
 
@@ -408,6 +415,16 @@
                  click_tab_3 = true;
              }
        });
+       
+        // generation fichier zip
+      $(document).on('click','#idTelechargerBilan',function(e){
+            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+             $('#modalTraitementEncours').modal('toggle');
+             var url = '{{ path("AeagSqeBundle_programmation_bilan_telecharger",{"lotan": "par1"}) }}', // Le nom du fichier indiqué dans le formulaire
+            url = url.replace("par1", {{ lotan.id }}); 
+             url = url.replace("amp;","");
+            window.location.replace(url);
+            });
     
    });
 

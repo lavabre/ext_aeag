@@ -126,7 +126,7 @@
          </a>#}
         {% if  not app.session.get('evolution')%}
             {%if groupes | length%}  
-                <a id="idTelechargerGroupes" class="btn btn-success btn-telecharger btn-sm  pull-right" href="{{ path('AeagSqeBundle_programmation_groupe_telecharger', { 'lotan': lotan.id,}) }}" title="Télécharger les groupes de paramètres">
+                <a id="idTelechargerGroupes" class="btn btn-success btn-telecharger btn-sm  pull-right" href="#" title="Télécharger les groupes de paramètres">
                     <i class="fa fa-upload"></i> 
                 </a>
             {% endif %}
@@ -607,6 +607,17 @@
 
 
                                                                                                             {% block scripts %}
+
+                                                                                                                // generation fichier csv
+                                                                                                                $(document).on('click','#idTelechargerGroupes',function(e){
+                                                                                                                e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                                                                                                                $('#modalTraitementEncours').modal('toggle');
+                                                                                                                var url = '{{ path("AeagSqeBundle_programmation_groupe_telecharger",{"lotan": "par1"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                                                                                                url = url.replace("par1", {{ lotan.id }}); 
+                                                                                                                url = url.replace("amp;","");
+                                                                                                                window.location.replace(url);
+                                                                                                                });
+
 
                                                                                                                 $('#idGroupeSuivant').hide();
 

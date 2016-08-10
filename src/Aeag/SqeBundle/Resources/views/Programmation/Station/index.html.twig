@@ -136,7 +136,7 @@
          </a>#}
         {% if  not app.session.get('evolution')%}
             {%if stations | length%}  
-                <a id="idTelechargerStations" class="btn btn-success btn-telecharger btn-sm  pull-right" href="{{ path('AeagSqeBundle_programmation_station_telecharger', { 'lotan': lotan.id,}) }}" title="Télécharger les stations">
+                <a id="idTelechargerStations" class="btn btn-success btn-telecharger btn-sm  pull-right" href="#" title="Télécharger les stations">
                     <i class="fa fa-upload"></i> 
                 </a>
             {% endif %}
@@ -451,6 +451,16 @@
     $('#modalTraitementEncours').modal();
     $('#idForm').submit();
     } );
+
+    // generation fichier csv
+    $(document).on('click','#idTelechargerStations',function(e){
+    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+    $('#modalTraitementEncours').modal('toggle');
+    var url = '{{ path("AeagSqeBundle_programmation_station_telecharger",{"lotan": "par1"}) }}', // Le nom du fichier indiqué dans le formulaire
+    url = url.replace("par1", {{ lotan.id }}); 
+    url = url.replace("amp;","");
+    window.location.replace(url);
+    });
 
     $(document).on('click', '#idAllStations',function(e){
     $('#modalTraitementEncours').modal();
