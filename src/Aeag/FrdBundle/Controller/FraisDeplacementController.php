@@ -436,6 +436,13 @@ class FraisDeplacementController extends Controller {
                     ));
                     $erreurDate = $this->get('validator')->validateValue(false, $constraint);
                 }
+                 
+                if ($interval->format('%R%a') > 30) {
+                    $constraint = new True(array(
+                        'message' => 'La date de départ et la date de retour ne peut  être supérieure à 30 jours'
+                    ));
+                    $erreurDate = $this->get('validator')->validateValue(false, $constraint);
+                }
 
                 if ($interval->format('%R%a') == 0) {
                     $heureDepart = split("_", $fraisDeplacement->getHeureDepart());
