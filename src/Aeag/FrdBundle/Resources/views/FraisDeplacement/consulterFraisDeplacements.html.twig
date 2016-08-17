@@ -131,6 +131,15 @@
 
 {%block content %}
     <div  id="idMessage" class="row"></div>
+    
+      <div class="row">
+            <div class="col-md-6">
+                <a class="btn btn-success" href="{{ path('AeagFrdBundle_membre_fraisDeplacement') }}" title="Nouvelle demande"> 
+                   <i class="fa fa-plus"> Nouvelle demande</i>
+                </a>
+             </div>
+       </div>
+    
     <div class="row">
         <div class="col-xm-12">
             <div class="small ">
@@ -151,7 +160,7 @@
                         {%if entities | length > 0 %}
                             {% for entity in entities %}
                                 <tr id="idTr-{{ entity.0.id }}">
-                                    <td  nowrap id="idTd1-{{ entity.0.id }}">
+                                    <td  nowrap id="idTd1-{{ entity.0.id }}" width="1%">
                                         {% if entity.0.Phase.code > '30' %}
                                             <a class="btn btn-primary" href="{{ path('AeagFrdBundle_membre_viewFraisDeplacement', { 'id': entity.0.id }) }}" title="Voir">
                                                 <i class="fa fa-eye"></i>
@@ -167,11 +176,13 @@
                                                 <a class="btn btn-info" href="{{ path('AeagFrdBundle_declaration_pdf', { 'id': entity.0.id }) }}" title="Imprimer">
                                                     <i class="fa fa-print"></i>
                                                 </a>
+                                              {% if is_granted('ROLE_ADMINFRD') %}
                                                 <a class="btn btn-default" data-toggle="modal" href="#deval-{{entity.0.id}}" title="Repasser au statut précédent">
                                                     <i class="fa fa-refresh"></i>
                                                 </a>
+                                               {% endif %}
                                             {%endif%}
-                                            {%if entity.0.valider == 'N' %}
+                                            {%if entity.0.valider == 'N'  and is_granted('ROLE_ADMINFRD') %}
                                                 <a class="btn btn-success" data-toggle="modal" href="#val-{{entity.0.id}}" title="Courrier reçu">
                                                     <i class="fa fa-envelope"></i>
                                                 </a>
@@ -188,21 +199,21 @@
                                             </a>
                                         {%endif%}
                                     </td>
-                                    <td>{{ entity.0.id }}</td>
-                                    <td>
+                                    <td nowrap width="1%">{{ entity.0.id }}</td>
+                                    <td nowrap width="10%">
                                         {%if entity.2%}
                                             {{ entity.2.adr1 }}
                                         {%endif%}
-                                    <td>{{ entity.0.dateDepart | date("d/m/Y") }} &nbsp; {{ entity.0.heureDepart }}</td>
-                                    <td>{{ entity.0.dateRetour | date("d/m/Y") }} &nbsp; {{ entity.0.heureretour }}</td>
-                                    <td  id="idTd5-{{ entity.0.id }}">
+                                    <td nowrap width="5%">{{ entity.0.dateDepart | date("d/m/Y") }} &nbsp; {{ entity.0.heureDepart }}</td>
+                                    <td nowrap width="5%">{{ entity.0.dateRetour | date("d/m/Y") }} &nbsp; {{ entity.0.heureretour }}</td>
+                                    <td  id="idTd5-{{ entity.0.id }}" nowrap width="10%">
                                         {{ entity.0.phase.libelle }}
                                         {% if entity.0.phase.code == '60' %}
                                             ({{ entity.0.montRemtb | number_format(2,'.',' ') }} €)
                                         {% endif %}
                                     </td>
-                                    <td>{{ entity.0.objet }}</td>
-                                    <td>
+                                    <td nowrap width="10%">{{ entity.0.objet }}</td>
+                                    <td nowrap width="5%">
                                         {% if entity.0.phase.code >= '30' %}
                                             {% if  entity.0.dateCourrier %}
                                               {{ entity.0.dateCourrier | date("d/m/Y") }}
@@ -225,8 +236,10 @@
                 <li><a class="btn btn-info btn-xs" href="#" title="Valider"> <i class="fa fa-print"></i></a> Imprimer</li>
                 <li><a class="btn btn-warning btn-xs" href="#" title="Editerr"><i class="fa fa-edit"></i></a> Editer</li>
                 <li><a class="btn btn-danger btn-xs" href="#" title="Supprimer"><i class="fa fa-trash-o"></i></a> Supprimer</li>
-                <li><a class="btn btn-success btn-xs" href="#" title="Valider"><i class="fa fa-check"></i></a> Valider</li>
-                <li><a class="btn btn-default btn-xs" href="#" title="Dévalider"><i class="fa fa-refresh"></i></a> Dévalider</li>
+                {% if is_granted('ROLE_ADMINFRD') %}
+                    <li><a class="btn btn-success btn-xs" href="#" title="Valider"><i class="fa fa-check"></i></a> Valider</li>
+                    <li><a class="btn btn-default btn-xs" href="#" title="Dévalider"><i class="fa fa-refresh"></i></a> Dévalider</li>
+                {% endif %}
             </ul>  
         </div>
     </div>  

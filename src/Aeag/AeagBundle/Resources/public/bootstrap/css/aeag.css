@@ -110,7 +110,7 @@ img#logo
     background-color: #1E90FF;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 768px) {
   .navbar-default .navbar-nav .open .dropdown-menu > li > a {
     color: #F8F8FF;
   }
