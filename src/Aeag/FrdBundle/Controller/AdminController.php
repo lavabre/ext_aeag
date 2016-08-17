@@ -19,8 +19,7 @@ class AdminController extends Controller {
             return $this->render('AeagFrdBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->clear();
-        $session->set('menu', 'Frais');
+       $session->set('menu', 'Frais');
         $session->set('controller', 'Admin');
         $session->set('fonction', 'index');
         $em = $this->get('doctrine')->getManager();

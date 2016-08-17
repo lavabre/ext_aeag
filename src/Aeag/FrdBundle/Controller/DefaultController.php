@@ -66,10 +66,11 @@ class DefaultController extends Controller {
                 $nbAnnees++;
             }
         }
-//                                    \Symfony\Component\VarDumper\VarDumper::dump($tabAnnees);
-//                                    return new Response ('');   
         $session->set('annees', $tabAnnees);
 
+//                                    \Symfony\Component\VarDumper\VarDumper::dump($tabAnnees);
+//                                    return new Response ('');   
+        
         $message = $emFrd->getRepository('AeagFrdBundle:Parametre')->findOneBy(array('code' => 'LIB_MESSAGE'));
         if (strlen($message->getLibelle()) > 0) {
             $session->set('messageAdmin', $message->getLibelle());

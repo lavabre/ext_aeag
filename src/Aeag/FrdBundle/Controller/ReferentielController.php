@@ -54,7 +54,7 @@ class ReferentielController extends Controller {
 
         $parametre = new Parametre();
         $parametre->setCode('ANNEE');
-        $parametre->setLibelle(2013);
+        $parametre->setLibelle(2016);
         $emFrd->persist($parametre);
 
         $parametre = new Parametre();

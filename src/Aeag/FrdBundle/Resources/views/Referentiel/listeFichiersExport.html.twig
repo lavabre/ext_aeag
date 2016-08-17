@@ -34,7 +34,7 @@
                         </thead>
                         <tbody>
                            {% for fichier in fichiers %}
-                                {% if fichier.nom == 'frd_users.csv' %}
+                                {% if fichier.nom == 'frd_users.csv'%}
                                     <tr>
                                          <td>
                                             <a class="btn btn-primary" id="confirme_{{ fichier.indice }}" class="btn green" href="#">
@@ -163,12 +163,12 @@
  
        $('#idMessage1').hide();
             $('#idMessage2').hide();
-            $('#modalTraitementEncours').hide();
+        {#    $('#modalTraitementEncours').hide();#}
             {% for fichier in fichiers %}
                 $('#confirme_{{fichier.indice}}').click(function (e) {
                         e.preventDefault();
                         $('#idMessage1').show();
-                        $('#modalTraitementEncours').show();
+                        $('#modalTraitementEncours').modal('show');
                         $('#idMessage2').hide();
                         $('#ficent').val('{{fichier.nom}}');
                         $('form').submit();
@@ -178,7 +178,7 @@
 
             {% if message %}
                $('#idMessage1').hide(); 
-               $('#modalTraitementEncours').hide(); 
+               $('#modalTraitementEncours').modal('hide'); 
                $('#idMessage2').show();
             {%endif%}
   {% endblock scripts %}
