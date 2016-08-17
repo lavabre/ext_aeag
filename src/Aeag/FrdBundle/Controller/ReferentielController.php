@@ -7,6 +7,8 @@ use Aeag\FrdBundle\Entity\Phase;
 use Aeag\AeagBundle\Entity\Departement;
 use Aeag\FrdBundle\Entity\Finalite;
 use Aeag\FrdBundle\Entity\FraisDeplacement;
+use Aeag\FrdBundle\Entity\EtatFrais;
+use Aeag\FrdBundle\Entity\Mandatement;
 use Aeag\FrdBundle\Entity\SousTheme;
 use Aeag\FrdBundle\Entity\TypeMission;
 use Aeag\UserBundle\Entity\User;
@@ -229,6 +231,12 @@ class ReferentielController extends Controller {
             }
             if ($ficent == "frd_frais_deplacement.csv") {
                 $message = $this->chargeFraisDeplacementsRetourAction($ficent);
+            }
+            if ($ficent == "frd_etat_Frais.csv") {
+                $message = $this->chargeEtatFraisAction($ficent);
+            }
+            if ($ficent == "frd_mandatement.csv") {
+                $message = $this->chargeMandatementAction($ficent);
             }
         }
 
@@ -1096,6 +1104,367 @@ class ReferentielController extends Controller {
     }
 
     public function chargeFraisDeplacementsRetourAction($ficent = null) {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'referentiel');
+        $session->set('controller', 'Referentiel');
+        $session->set('fonction', 'chargeFraisDeplacementsRetour');
+        $em = $this->get('doctrine')->getManager();
+        $emFrd = $this->getDoctrine()->getManager('frd');
+
+        $parametre = $emFrd->getRepository('AeagFrdBundle:Parametre')->findOneBy(array('code' => 'REP_REFERENTIEL'));
+        $rep = $parametre->getLibelle();
+        $fichier = $rep . "/" . $ficent;
+
+        $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
+        $repoUsers = $em->getRepository('AeagUserBundle:User');
+        $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
+        $repoTypeMission = $emFrd->getRepository('AeagFrdBundle:TypeMission');
+        $repoFinalite = $emFrd->getRepository('AeagFrdBundle:Finalite');
+        $repoSousTheme = $emFrd->getRepository('AeagFrdBundle:SousTheme');
+        $repoDepartement = $em->getRepository('AeagAeagBundle:Departement');
+        $repoPhase = $this->getDoctrine()->getManager('frd')->getRepository('AeagFrdBundle:Phase');
+
+        $message = null;
+
+        //return new Response("fichier: " . $fichier->getFichier() );
+
+        if (file_exists($fichier)) {
+            $fic = fopen($fichier, "r");
+            $ajout = 0;
+            $modif = 0;
+            set_time_limit(10000); // temps dexecution du script le plus longtemps
+            $tab = fgetcsv($fic, 1024, '$');
+            //echo "Traitement en cours (attendez la fin du chargement)";
+            while (!feof($fic)) {
+                $tab = fgetcsv($fic, 1024, '$');
+
+                if (count($tab) > 1) {
+                    if (!(is_null($tab[0]))) {
+
+                        $Correspondant = $repoCorrespondant->getCorrespondantByCorId($tab[0]);
+
+                        if ($Correspondant) {
+
+//                            print_r('<pre>');
+//                            print_r('corid : ' . $tab[0] . ' date depart   ' . $tab[10] . ' ' . $tab[11] . ' ' . $tab[12] . ' ' . $tab[13] . ' ' . $tab[7]);
+//                            print_r('</pre>');
+
+                            $user = $repoUsers->getUserByCorrespondantUnique($Correspondant->getId());
+                            if ($user) {
+                                $dat1 = explode("/", $tab[10]);
+                                if (iconv_strlen($dat1[0]) < 2) {
+                                    if (iconv_strlen($dat1[0]) == 1) {
+                                        $dat1[0] = '0' . $dat1[0];
+                                    } else {
+                                        $dat1[0] = '01';
+                                    }
+                                }
+                                if (iconv_strlen($dat1[1]) < 2) {
+                                    if (iconv_strlen($dat1[1]) == 1) {
+                                        $dat1[1] = '0' . $dat1[1];
+                                    } else {
+                                        $dat1[1] = '01';
+                                    }
+                                }
+                                if (iconv_strlen($dat1[2]) < 4) {
+                                    if (iconv_strlen($dat1[3]) == 1) {
+                                        $dat1[2] = '1' . $dat1[2];
+                                    } elseif (iconv_strlen($dat1[3]) == 2) {
+                                        $dat1[2] = '20';
+                                    } else {
+                                        $dat1[2] = '201';
+                                    }
+                                }
+                                $dat2 = $dat1[0] . '-' . $dat1[1] . '-' . $dat1[2];
+
+                                if ($dat1[2] < 2013) {
+                                    $refuser = 'O';
+                                } else {
+                                    $refuser = 'N';
+                                }
+
+                                $tab[10] = new \DateTime($dat2);
+
+                                $heur1 = explode(":", $tab[11]);
+                                if (iconv_strlen($heur1[0]) < 2) {
+                                    if (iconv_strlen($heur1[0]) == 1) {
+                                        $heur1[0] = '0' . $heur1[0];
+                                    } else {
+                                        $heur1[0] = '00';
+                                    }
+                                }
+                                if (iconv_strlen($heur1[1]) < 2) {
+                                    if (iconv_strlen($heur1[1]) == 1) {
+                                        $heur1[1] = '0' . $heur1[1];
+                                    } else {
+                                        $heur1[1] = '00';
+                                    }
+                                }
+                                $tab[11] = $heur1[0] . ':' . $heur1[1];
+
+
+                                $dat1 = explode("/", $tab[12]);
+                                if (iconv_strlen($dat1[0]) < 2) {
+                                    if (iconv_strlen($dat1[0]) == 1) {
+                                        $dat1[0] = '0' . $dat1[0];
+                                    } else {
+                                        $dat1[0] = '01';
+                                    }
+                                }
+                                if (iconv_strlen($dat1[1]) < 2) {
+                                    if (iconv_strlen($dat1[1]) == 1) {
+                                        $dat1[1] = '0' . $dat1[1];
+                                    } else {
+                                        $dat1[1] = '01';
+                                    }
+                                }
+                                if (iconv_strlen($dat1[2]) < 4) {
+                                    if (iconv_strlen($dat1[3]) == 1) {
+                                        $dat1[2] = '1' . $dat1[2];
+                                    } elseif (iconv_strlen($dat1[3]) == 2) {
+                                        $dat1[2] = '20';
+                                    } else {
+                                        $dat1[2] = '201';
+                                    }
+                                }
+                                $dat2 = $dat1[0] . '-' . $dat1[1] . '-' . $dat1[2];
+                                $tab[12] = new \DateTime($dat2);
+
+                                $heur1 = explode(":", $tab[13]);
+                                if (iconv_strlen($heur1[0]) < 2) {
+                                    if (iconv_strlen($heur1[0]) == 1) {
+                                        $heur1[0] = '0' . $heur1[0];
+                                    } else {
+                                        $heur1[0] = '00';
+                                    }
+                                }
+                                if (iconv_strlen($heur1[1]) < 2) {
+                                    if (iconv_strlen($heur1[1]) == 1) {
+                                        $heur1[1] = '0' . $heur1[1];
+                                    } else {
+                                        $heur1[1] = '00';
+                                    }
+                                }
+                                $tab[13] = $heur1[0] . ':' . $heur1[1];
+
+                                $fraisDeplacements = $repoFraisDeplacement->getFraisDeplacementByUserDateDepart($user->getId(), $tab[10], $tab[11]);
+                                $fraistrouver = 0;
+                                foreach ($fraisDeplacements as $fraisDepl) {
+                                    $fraistrouver++;
+                                    $entity = $fraisDepl;
+                                    $modif = $modif + 1;
+                                    $entity->setValider('O');
+                                    $entity->setExporter('O');
+                                    //$entity->setObjet($this->wd_remove_accents($tab[9]));
+//                                    $entity->setDateDepart($tab[10]);
+//                                    $entity->setHeureDepart($tab[11]);
+//                                    $entity->setDateRetour($tab[12]);
+//                                    $entity->setHeureRetour($tab[13]);
+                                    //$typeMission = $repoTypeMission->getTypeMissionByCode($tab[14]);
+                                    //$entity->setTypeMission($typeMission);
+
+                                    if ($tab[4] != '') {
+                                        $entity->setExercice(intval($tab[4]));
+                                    }
+                                    if ($tab[5] != '') {
+                                        $entity->setNumMandat(intval($tab[5]));
+                                    }
+                                    if ($tab[6] != '') {
+                                        $entity->setNumBordereau(intval($tab[6]));
+                                    }
+
+
+                                    if ($tab[7] != '') {
+                                        if ($fraistrouver == 1) {
+                                            $dat1 = explode("/", $tab[7]);
+                                            if (iconv_strlen($dat1[0]) < 2) {
+                                                if (iconv_strlen($dat1[0]) == 1) {
+                                                    $dat1[0] = '0' . $dat1[0];
+                                                } else {
+                                                    $dat1[0] = '01';
+                                                }
+                                            }
+                                            if (iconv_strlen($dat1[1]) < 2) {
+                                                if (iconv_strlen($dat1[1]) == 1) {
+                                                    $dat1[1] = '0' . $dat1[1];
+                                                } else {
+                                                    $dat1[1] = '01';
+                                                }
+                                            }
+                                            if (iconv_strlen($dat1[2]) < 4) {
+                                                if (iconv_strlen($dat1[3]) == 1) {
+                                                    $dat1[2] = '1' . $dat1[2];
+                                                } elseif (iconv_strlen($dat1[3]) == 2) {
+                                                    $dat1[2] = '20';
+                                                } else {
+                                                    $dat1[2] = '201';
+                                                }
+                                            }
+                                            $dat2 = $dat1[0] . '-' . $dat1[1] . '-' . $dat1[2];
+                                            $tab[7] = new \DateTime($dat2);
+                                        }
+                                        $entity->setDatePaiement($tab[7]);
+                                    }
+                                    if ($tab[8] != '') {
+                                        $entity->setMontRemtb(floatval($tab[8]));
+                                    }
+
+                                    if ($tab[3] == '60') {
+                                        $phaseCode = '60';
+                                    } else {
+                                        $phaseCode = '40';
+                                    }
+                                    $phase = $repoPhase->getPhaseByCode($phaseCode);
+                                    $entity->setPhase($phase);
+                                    $now = date('Y-m-d');
+                                    $now = new \DateTime($now);
+                                    $entity->setDatePhase($now);
+
+                                    if ($refuser == 'N' and $fraistrouver == 1) {
+                                        $emFrd->persist($entity);
+                                    } else {
+                                        $modif = $modif - 1;
+                                    }
+                                }
+                            };
+                        };
+                    };
+                }
+            };
+
+            $emFrd->flush();
+            $message = $ajout . " Frais de déplacement créés et " . $modif . " Frais de déplacement mis à jour";
+        } else {
+            $message = "Fichier inexistant";
+        }
+
+        return $message;
+    }
+
+    public function chargeEtatFraisAction($ficent = null) {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'referentiel');
+        $session->set('controller', 'Referentiel');
+        $session->set('fonction', 'chargeFraisDeplacementsRetour');
+        $em = $this->get('doctrine')->getManager();
+        $emFrd = $this->getDoctrine()->getManager('frd');
+
+        $parametre = $emFrd->getRepository('AeagFrdBundle:Parametre')->findOneBy(array('code' => 'REP_REFERENTIEL'));
+        $rep = $parametre->getLibelle();
+        $fichier = $rep . "/" . $ficent;
+
+        $repoEtatFrais = $emFrd->getRepository('AeagFrdBundle:EtatFrais');
+
+        $message = null;
+
+        //return new Response("fichier: " . $fichier->getFichier() );
+
+        if (file_exists($fichier)) {
+            $fic = fopen($fichier, "r");
+            $ajout = 0;
+            $modif = 0;
+            set_time_limit(10000); // temps dexecution du script le plus longtemps
+            $tab = fgetcsv($fic, 1024, '$');
+            //echo "Traitement en cours (attendez la fin du chargement)";
+            while (!feof($fic)) {
+                $tab = fgetcsv($fic, 1024, '$');
+
+                if (count($tab) > 1) {
+                    if (!(is_null($tab[0]))) {
+
+                        $etatFrais = $repoEtatFrais->getEtatFraisById($tab[0]);
+
+                        if (!$etatFrais) {
+                            $entity = new EtatFrais();
+                            $ajout = $ajout + 1;
+                        } else {
+                            $entity = $etatFrais;
+                            $modif = $modif + 1;
+                        }
+
+                        $entity->setId($tab[0]);
+                        $entity->setAnnee($tab[1]);
+                        $entity->setNum($tab[2]);
+                        $entity->setPhase($tab[3]);
+                        $entity->setVersion($tab[4]);
+                        $entity->setCorId($tab[5]);
+                        $entity->setDombanqId($tab[6]);
+                        $entity->setService( \iconv("Windows-1252//TRANSLIT","UTF-8", $tab[7]));
+                        $entity->setFonction($tab[8]);
+                        $entity->setTypeContrat($tab[9]);
+                        $entity->setIndiceCateg($tab[10]);
+                        $entity->setResidFamil($tab[11]);
+                        $entity->setResidAdmin($tab[12]);
+                        $entity->setMajoration($tab[13]);
+                        $entity->setReducSncf($tab[14]);
+                        $entity->setCvVp($tab[15]);
+                        $entity->setKmAn($tab[16]);
+                        $entity->setKmEtfr($tab[17]);
+                        $entity->setObsGen(str_replace('&&&', '\n', $tab[18]));
+                        $entity->setObsSup(str_replace('&&&', '\n', $tab[19]));
+                        $entity->setMntRemb($tab[20]);
+                        $entity->setMntRegul($tab[21]);
+                        $entity->setMntARegul($tab[22]);
+                        $entity->setRegulVisee($tab[23]);
+                        $entity->setRegulEtfrId($tab[24]);
+                        $entity->setTrAdeduire($tab[25]);
+                        if ($tab[26] != '') {
+//                            echo('26 : ' . $tab[26] . '<br/>');
+                            $dat1 = explode("/", $tab[26]);
+                            if (iconv_strlen($dat1[0]) < 2) {
+                                if (iconv_strlen($dat1[0]) == 1) {
+                                    $dat1[0] = '0' . $dat1[0];
+                                } else {
+                                    $dat1[0] = '01';
+                                }
+                            }
+                            if (iconv_strlen($dat1[1]) < 2) {
+                                if (iconv_strlen($dat1[1]) == 1) {
+                                    $dat1[1] = '0' . $dat1[1];
+                                } else {
+                                    $dat1[1] = '01';
+                                }
+                            }
+                            if (iconv_strlen($dat1[2]) < 4) {
+                                if (iconv_strlen($dat1[3]) == 1) {
+                                    $dat1[2] = '1' . $dat1[2];
+                                } elseif (iconv_strlen($dat1[3]) == 2) {
+                                    $dat1[2] = '20';
+                                } else {
+                                    $dat1[2] = '201';
+                                }
+                            }
+                            $dat2 = $dat1[0] . '-' . $dat1[1] . '-' . $dat1[2];
+                            $tab[26] = new \DateTime($dat2);
+                            $entity->setTrDateArret($tab[26]);
+                        }
+
+                        $entity->setTypeEtatFrais($tab[27]);
+                        $emFrd->persist($entity);
+                    };
+                }
+            };
+
+            $emFrd->flush();
+            $message = $ajout . " Frais de déplacement créés et " . $modif . " Frais de déplacement mis à jour";
+        } else {
+            $message = "Fichier inexistant";
+        }
+
+        return $message;
+    }
+
+    public function chargeMandatementAction($ficent = null) {
 
         $user = $this->getUser();
         if (!$user) {
