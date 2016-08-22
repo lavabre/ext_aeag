@@ -2564,9 +2564,11 @@ class SuiviEauController extends Controller {
             }
             $pgCmdSuiviPrel->setCommentaire($commentaire);
             $pgCmdSuiviPrel->setAvis($avis);
+            $pgCmdSuiviPrel->setValidation('A'); 
+            $pgCmdSuiviPrel->setValidAuto('N');
             $emSqe->persist($pgCmdSuiviPrel);
             $emSqe->flush();
-            return $this->render('AeagSqeBundle:SuiviEau:syntheseSupportStationMaj.html.twig', array('support' => $pgSandreSupport,
+            return $this->render('AeagSqeBundle:SuiviEau:syntheseSupportStationValiderRetour.html.twig', array('support' => $pgSandreSupport,
                         'station' => $pgRefStationMesure,
                         'lien' => $lien,
                         'reseau' => $reseau,

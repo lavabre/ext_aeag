@@ -41,6 +41,11 @@ class FraisDeplacement {
     protected $user;
 
     /**
+     * @ORM\Column(name="etfr_id",type="integer"))
+     * */
+    protected $etfrId;
+
+    /**
      * @ORM\Column(name="valider", type="string", length=1, nullable=true)
      * @Assert\Choice(choices = {"O", "N"}, message="Cette valeur doit être l'un des choix proposés")
      */
@@ -467,6 +472,14 @@ class FraisDeplacement {
 
     public function setUser($user) {
         $this->user = $user;
+    }
+
+    function getEtfrId() {
+        return $this->etfrId;
+    }
+
+    function setEtfrId($etfrId) {
+        $this->etfrId = $etfrId;
     }
 
     public function getValider() {

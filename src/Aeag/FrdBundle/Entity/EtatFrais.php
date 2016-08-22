@@ -93,7 +93,7 @@ class EtatFrais {
     private $residAdmin;
 
     /**
-     * @ORM\Column(name="majoration", type="string", length=50)
+     * @ORM\Column(name="majoration", type="string", length=1)
      */
     private $majoration;
 
@@ -128,17 +128,17 @@ class EtatFrais {
     private $obsSup;
 
     /**
-     * @ORM\Column(name="mnt_remb",type="integer", nullable=true))
+     * @ORM\Column(name="mnt_remb",type="float", nullable=true))
      * */
     protected $mntRemb;
 
     /**
-     * @ORM\Column(name="mnt_regul",type="integer", nullable=true))
+     * @ORM\Column(name="mnt_regul",type="float", nullable=true))
      * */
     protected $mntRegul;
 
     /**
-     * @ORM\Column(name="mnt_a_regul",type="integer", nullable=true))
+     * @ORM\Column(name="mnt_a_regul",type="float", nullable=true))
      * */
     protected $mntARegul;
 
@@ -148,12 +148,12 @@ class EtatFrais {
     private $regulVisee;
 
     /**
-     * @ORM\Column(name="regul_etfr_id",type="integer", nullable=true))
+     * @ORM\Column(name="regul_etfr_id",type="float", nullable=true))
      * */
     protected $regulEtfrId;
 
     /**
-     * @ORM\Column(name="tr_a_deduire",type="integer", nullable=true))
+     * @ORM\Column(name="tr_a_deduire",type="float", nullable=true))
      * */
     protected $trAdeduire;
 

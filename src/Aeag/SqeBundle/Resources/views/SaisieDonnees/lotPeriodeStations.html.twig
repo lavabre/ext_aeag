@@ -111,7 +111,7 @@
                             {% for station in stations %}
                                 {% for demande in station.pgCmdDemandes %}
                                     {% for cmdPrelev in demande.pgCmdPrelevs %}
-                                        {% if cmdPrelev.nbParametresTerrain != 'O' or   cmdPrelev.nbParametresAnalyse != 'O'%}
+                                       {# {% if cmdPrelev.nbParametresTerrain != 'O' or   cmdPrelev.nbParametresAnalyse != 'O'%}#}
                                             {# {% if is_granted('ROLE_ADMINSQE')  or ( pgProgWebUser.prestataire == demande.prestataire )%}#}
                                             {% if station.passage == 0 %}
                                                 {% if cmdPrelev.devalider == 'O'%}
@@ -242,7 +242,7 @@
                                                     {% endif %}
                                                 </td>
                                             </tr>
-                                       {% endif %}
+                                     {#  {% endif %}#}
                                     {% endfor %}
                                 {% endfor %}
                             {% endfor %}

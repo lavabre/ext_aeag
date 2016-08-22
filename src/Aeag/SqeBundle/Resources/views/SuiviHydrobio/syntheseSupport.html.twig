@@ -89,7 +89,7 @@
                         {%if stations | length%} 
                             {% for station in stations %}
                                 {% set nb = nb + 1%}
-                                   <tr> 
+                                   <tr id="idTr-{{nb}}"> 
                                       <td  id="idTd1-{{nb}}" width="15%" class="text-center" nowrap>
                                         {%if station.cmdPrelev | length%}
                                             <a id="idVoirSuivi-{{ station.cmdPrelev.id }}" class="btn btn-primary" href="#" title="consulter l'historique">

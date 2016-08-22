@@ -28,15 +28,15 @@ class Mandatement {
 
     /**
      * @ORM\Id
-     * @ORM\Column(type="integer")
+     * @ORM\Column(name="etfr_id", type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\SequenceGenerator(sequenceName="fraisDeplacement_seq", initialValue=1, allocationSize=1)
      * ORM\GeneratedValue
      */
-    private $etfr_id;
+    private $etfrId;
 
     /**
-     * @ORM\Column(name="adrcor_id",type="integer", nullable=true))
+     * @ORM\Column(name="adrcor_id_benef",type="integer", nullable=true))
      * */
     protected $adrcorId;
 
@@ -66,12 +66,17 @@ class Mandatement {
     private $etatMandat;
 
     /**
-     * @ORM\Column(name="date_etat_frais" type="datetime", nullable=true)
+     * @ORM\Column(name="date_etat_frais", type="datetime", nullable=true)
      */
     protected $dateEtatFrais;
 
     /**
-     * @ORM\Column(name="date_paiement" type="datetime", nullable=true)
+     * @ORM\Column(name="date_mandatement", type="datetime", nullable=true)
+     */
+    protected $dateMandatement;
+
+    /**
+     * @ORM\Column(name="date_paiement", type="datetime", nullable=true)
      */
     protected $datePaiement;
 
@@ -105,8 +110,8 @@ class Mandatement {
      */
     private $texte6Mandat;
 
-    function getEtfr_id() {
-        return $this->etfr_id;
+    function getEtfrId() {
+        return $this->etfrId;
     }
 
     function getAdrcorId() {
@@ -137,6 +142,10 @@ class Mandatement {
         return $this->dateEtatFrais;
     }
 
+    function getDateMandatement() {
+        return $this->dateMandatement;
+    }
+
     function getDatePaiement() {
         return $this->datePaiement;
     }
@@ -165,8 +174,8 @@ class Mandatement {
         return $this->texte6Mandat;
     }
 
-    function setEtfr_id($etfr_id) {
-        $this->etfr_id = $etfr_id;
+    function setEtfrId($etfrId) {
+        $this->etfrId = $etfrId;
     }
 
     function setAdrcorId($adrcorId) {
@@ -195,6 +204,10 @@ class Mandatement {
 
     function setDateEtatFrais($dateEtatFrais) {
         $this->dateEtatFrais = $dateEtatFrais;
+    }
+
+    function setDateMandatement($dateMandatement) {
+        $this->dateMandatement = $dateMandatement;
     }
 
     function setDatePaiement($datePaiement) {

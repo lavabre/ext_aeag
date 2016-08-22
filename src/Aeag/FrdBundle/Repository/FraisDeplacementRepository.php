@@ -224,6 +224,22 @@ class FraisDeplacementRepository extends EntityRepository {
      *
      * @return array
      */
+    public function getNbFraisDeplacementEnCoursByUserPhase($userId, $phaseId, $annee) {
+
+        $query = "select count(f.id)";
+        $query = $query . " from Aeag\FrdBundle\Entity\FraisDeplacement f";
+        $query = $query . " where f.user = " . $userId;
+        $query = $query . " and f.phase <  '" . $phaseId . "'";
+        $query = $query . " and f.dateDepart >= '" . $annee->format('Ymd') . "'";
+        //print_r($query);
+        $qb = $this->_em->createQuery($query);
+        return $qb->getSingleScalarResult();
+    }
+    
+      /**
+     *
+     * @return array
+     */
     public function getFraisDeplacementByPhase($phaseId, $annee) {
 
         $query = "select f";
@@ -275,5 +291,34 @@ class FraisDeplacementRepository extends EntityRepository {
         $qb = $this->_em->createQuery($query);
         return $qb->getResult();
     }
+    
+      /**
+     *
+     * @return array
+     */
+    public function getNbFraisDeplacementByEtfrId($etfrId) {
 
+        $query = "select count(f.id)";
+        $query = $query . " from  Aeag\FrdBundle\Entity\FraisDeplacement f";
+        $query = $query . " where f.etfrId = " . $etfrId;
+      
+       //print_r($query);
+        $qb = $this->_em->createQuery($query);
+       return $qb->getSingleScalarResult();
+    }
+
+     /**
+     *
+     * @return array
+     */
+    public function getFraisDeplacementByEtfrId($etfrId) {
+
+        $query = "select f";
+        $query = $query . " from  Aeag\FrdBundle\Entity\FraisDeplacement f";
+        $query = $query . " where f.etfrId = " . $etfrId;
+      
+       //print_r($query);
+        $qb = $this->_em->createQuery($query);
+       return $qb->getResult();
+    }
 }

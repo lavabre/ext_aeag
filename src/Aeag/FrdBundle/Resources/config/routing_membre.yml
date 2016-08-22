@@ -4,6 +4,18 @@ AeagFrdBundle_membre:
     requirements:
         methods:  GET|POST
         
+AeagFrdBundle_membre_consulterEtatFraisParAnnee:
+    path:  /consulterEtatFraisParAnnee/{anneeSelect}
+    defaults: { _controller: AeagFrdBundle:FraisDeplacement:consulterEtatFraisParAnnee, anneeSelect:null }
+    requirements:
+        methods:  GET|POST
+        
+AeagFrdBundle_membre_consulterFraisDeplacementsParEtatFrais:
+    path:  /consulterFraisDeplacementsParEtatFrais/{etatFrais}
+    defaults: { _controller: AeagFrdBundle:FraisDeplacement:consulterFraisDeplacementsParEtatFrais, etatFrais:null }
+    requirements:
+        methods:  GET|POST
+        
 AeagFrdBundle_membre_consulterFraisDeplacementsParAnnee:
     path:  /consulterFraisDeplacementsParAnnee/{anneeSelect}
     defaults: { _controller: AeagFrdBundle:FraisDeplacement:consulterFraisDeplacementsParAnnee, anneeSelect:null }

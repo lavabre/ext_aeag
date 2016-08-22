@@ -24,8 +24,23 @@ class EtatFraisRepository extends EntityRepository {
     public function getListeEtatFraisAll() {
 
         $query = "select f";
-        $query = $query . "  Aeag\FrdBundle\Entity\EtatFrais f";
+        $query = $query . " from Aeag\FrdBundle\Entity\EtatFrais f";
         $query = $query . " order by f.annee, f.num";
+        //print_r($query);
+        $qb = $this->_em->createQuery($query);
+        return $qb->getResult();
+    }
+
+     /**
+     * @return array
+     */
+    public function getListeEtatFraisByCorrespondantAnnee($corId, $annee) {
+
+        $query = "select f";
+        $query = $query . " from  Aeag\FrdBundle\Entity\EtatFrais f";
+        $query = $query . " where f.corId = " . $corId;
+        $query = $query . " and f.annee = " . $annee;
+        $query = $query . " order by f.num";
         //print_r($query);
         $qb = $this->_em->createQuery($query);
         return $qb->getResult();

@@ -1413,8 +1413,13 @@ class ProgrammationLotController extends Controller {
             }else{
                 $selMilieu = null;
             }
+            if ($selMilieu){
+                    $session->set('selMilieu', $selMilieu);
+            } else {
+               $session->remove('selMilieu');
+            }
             
-            if ($criteres->getCatMilieu() and ! $criteres->getTypeMilieu()) {
+            if ($criteres->getCatMilieu() and !$criteres->getTypeMilieu()) {
                 $critTypeMilieu = $criteres->getCatMilieu();
             } else {
                 $critTypeMilieu = $criteres->getTypeMilieu();
@@ -1871,6 +1876,12 @@ class ProgrammationLotController extends Controller {
             $tabLots[$i]['lotAn'] = null;
             $critPhase = null;
         }
+        
+         if ($session->has('selMilieu')){
+                $selMilieu = $session->get('selMilieu');
+            }else{
+                $selMilieu = null;
+            }
 
         $session->set('niveau2', '');
 
@@ -1885,6 +1896,7 @@ class ProgrammationLotController extends Controller {
                     'critTitulaire' => $lot->getTitulaire(),
                     'critZoneGeoRef' => $lot->getZgeoRef(),
                     'critTypeMilieu' => $typeMilieu,
+                   'critMilieu' => $selMilieu,
                     'critLot' => $lot));
     }
 
@@ -2013,6 +2025,14 @@ class ProgrammationLotController extends Controller {
         } else {
             $critTypeMilieu = null;
         }
+        
+         
+            if ($session->has('selMilieu')){
+                $selMilieu = $session->get('selMilieu');
+            }else{
+                $selMilieu = null;
+            }
+       
 
         if ($session->has('critLot')) {
             $critLot = $repoPgProgLot->getPgProgLotById($session->get('critLot'));
@@ -2289,6 +2309,7 @@ class ProgrammationLotController extends Controller {
                         'critTitulaire' => $critTitulaire,
                         'critZoneGeoRef' => $critZoneGeoRef,
                         'critTypeMilieu' => $critTypeMilieu,
+                        'critMilieu' => $selMilieu,
                         'critLot' => $critLot));
         }
     }

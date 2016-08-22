@@ -2716,8 +2716,8 @@ class SuiviHydrobioController extends Controller {
                 }
                 $pgCmdSuiviPrel->setCommentaire($commentaire);
             }
-
-            $pgCmdSuiviPrelActuel->setValidAuto('N');
+            $pgCmdSuiviPrel->setValidation('A'); 
+            $pgCmdSuiviPrel->setValidAuto('N');
             $pgCmdSuiviPrel->setCommentaireAvis($commentaireAvis);
             $pgCmdSuiviPrel->setAvis($avis);
             $emSqe->persist($pgCmdSuiviPrel);
