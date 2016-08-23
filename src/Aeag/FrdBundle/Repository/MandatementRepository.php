@@ -36,12 +36,11 @@ class MandatementRepository extends EntityRepository {
      *
      * @return array
      */
-    public function getMandatementByEtfrId($etfrId, $adrcorId) {
+    public function getMandatementByEtfrId($etfrId) {
 
         $query = "select f";
         $query = $query . " from  Aeag\FrdBundle\Entity\Mandatement f";
         $query = $query . " where f.etfrId = " . $etfrId;
-        $query = $query . " and f.adrcorId = " . $adrcorId;
       
        //print_r($query);
         $qb = $this->_em->createQuery($query);

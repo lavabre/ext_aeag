@@ -45,6 +45,20 @@ class EtatFraisRepository extends EntityRepository {
         $qb = $this->_em->createQuery($query);
         return $qb->getResult();
     }
+    
+     /**
+     * @return array
+     */
+    public function getListeEtatFraisByAnnee($annee) {
+
+        $query = "select f";
+        $query = $query . " from  Aeag\FrdBundle\Entity\EtatFrais f";
+       $query = $query . " where f.annee = " . $annee;
+        $query = $query . " order by f.num";
+        //print_r($query);
+        $qb = $this->_em->createQuery($query);
+        return $qb->getResult();
+    }
 
       
      /**

@@ -1530,6 +1530,7 @@ class ReferentielController extends Controller {
         $rep = $parametre->getLibelle();
         $fichier = $rep . "/" . $ficent;
 
+        $repoEtatFrais = $emFrd->getRepository('AeagFrdBundle:EtatFrais');
         $repoMandatement = $emFrd->getRepository('AeagFrdBundle:Mandatement');
         $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
         $repoUsers = $em->getRepository('AeagUserBundle:User');
@@ -1549,165 +1550,159 @@ class ReferentielController extends Controller {
                 $tab = fgetcsv($fic, 1024, '$');
 
                 if (count($tab) > 1) {
-                    if (!(is_null($tab[1]))) {
 
-                        $Correspondant = $repoCorrespondant->getCorrespondantByCorId($tab[1]);
+                    $etatFrais = $repoEtatFrais->getEtatFraisById($tab[0]);
 
-                        if ($Correspondant) {
+                    if ($etatFrais) {
 
 //                            print_r('<pre>');
 //                            print_r( $tab[0] . '   ' . $tab[1] . ' ' . $tab[2] . ' ' . $tab[3] . ' ' . $tab[4] . ' ' . $tab[5]);
 //                            print_r('</pre>');
 
-                            $user = $repoUsers->getUserByCorrespondantUnique($Correspondant->getId());
-                            if ($user) {
+                        $mandatement = $repoMandatement->getMandatementByEtfrId($tab[0]);
 
-                                $mandatement = $repoMandatement->getMandatementByEtfrId($tab[0], $tab[1]);
+                        if (!$mandatement) {
+                            $entity = new Mandatement();
+                            $ajout = $ajout + 1;
+                        } else {
+                            $entity = $mandatement;
+                            $modif = $modif + 1;
+                        }
 
-                                if (!$mandatement) {
-                                    $entity = new Mandatement();
-                                    $ajout = $ajout + 1;
+                        $entity->setEtfrId($tab[0]);
+
+
+                        if ($tab[1] != '') {
+                            $entity->setAdrcorId(intval($tab[1]));
+                        }
+                        if ($tab[2] != '') {
+                            $entity->setNumOrdreOpbudg(intval($tab[2]));
+                        }
+                        if ($tab[3] != '') {
+                            $entity->setExercice(intval($tab[3]));
+                        }
+                        if ($tab[4] != '') {
+                            $entity->setNumMandat(intval($tab[4]));
+                        }
+                        if ($tab[5] != '') {
+                            $entity->setNumBordereau(intval($tab[5]));
+                        }
+                        if ($tab[6] != '') {
+                            $entity->setEtatMandat($tab[6]);
+                        }
+                        if ($tab[7] != '') {
+                            $dat1 = explode("/", $tab[7]);
+                            if (iconv_strlen($dat1[0]) < 2) {
+                                if (iconv_strlen($dat1[0]) == 1) {
+                                    $dat1[0] = '0' . $dat1[0];
                                 } else {
-                                    $entity = $mandatement;
-                                    $modif = $modif + 1;
+                                    $dat1[0] = '01';
                                 }
+                            }
+                            if (iconv_strlen($dat1[1]) < 2) {
+                                if (iconv_strlen($dat1[1]) == 1) {
+                                    $dat1[1] = '0' . $dat1[1];
+                                } else {
+                                    $dat1[1] = '01';
+                                }
+                            }
+                            if (iconv_strlen($dat1[2]) < 4) {
+                                if (iconv_strlen($dat1[3]) == 1) {
+                                    $dat1[2] = '1' . $dat1[2];
+                                } elseif (iconv_strlen($dat1[3]) == 2) {
+                                    $dat1[2] = '20';
+                                } else {
+                                    $dat1[2] = '201';
+                                }
+                            }
+                            $dat2 = $dat1[0] . '-' . $dat1[1] . '-' . $dat1[2];
+                            $tab[7] = new \DateTime($dat2);
+                            $entity->setDateEtatFrais($tab[7]);
+                        }
 
-                                $entity->setEtfrId($tab[0]);
+                        if ($tab[8] != '') {
+                            $dat1 = explode("/", $tab[8]);
+                            if (iconv_strlen($dat1[0]) < 2) {
+                                if (iconv_strlen($dat1[0]) == 1) {
+                                    $dat1[0] = '0' . $dat1[0];
+                                } else {
+                                    $dat1[0] = '01';
+                                }
+                            }
+                            if (iconv_strlen($dat1[1]) < 2) {
+                                if (iconv_strlen($dat1[1]) == 1) {
+                                    $dat1[1] = '0' . $dat1[1];
+                                } else {
+                                    $dat1[1] = '01';
+                                }
+                            }
+                            if (iconv_strlen($dat1[2]) < 4) {
+                                if (iconv_strlen($dat1[3]) == 1) {
+                                    $dat1[2] = '1' . $dat1[2];
+                                } elseif (iconv_strlen($dat1[3]) == 2) {
+                                    $dat1[2] = '20';
+                                } else {
+                                    $dat1[2] = '201';
+                                }
+                            }
+                            $dat2 = $dat1[0] . '-' . $dat1[1] . '-' . $dat1[2];
+                            $tab[8] = new \DateTime($dat2);
+                            $entity->setDateMandatement($tab[8]);
+                        }
 
-
-                                if ($tab[1] != '') {
-                                    $entity->setAdrcorId(intval($tab[1]));
+                        if ($tab[9] != '') {
+                            $dat1 = explode("/", $tab[9]);
+                            if (iconv_strlen($dat1[0]) < 2) {
+                                if (iconv_strlen($dat1[0]) == 1) {
+                                    $dat1[0] = '0' . $dat1[0];
+                                } else {
+                                    $dat1[0] = '01';
                                 }
-                                if ($tab[2] != '') {
-                                    $entity->setNumOrdreOpbudg(intval($tab[2]));
+                            }
+                            if (iconv_strlen($dat1[1]) < 2) {
+                                if (iconv_strlen($dat1[1]) == 1) {
+                                    $dat1[1] = '0' . $dat1[1];
+                                } else {
+                                    $dat1[1] = '01';
                                 }
-                                if ($tab[3] != '') {
-                                    $entity->setExercice(intval($tab[3]));
+                            }
+                            if (iconv_strlen($dat1[2]) < 4) {
+                                if (iconv_strlen($dat1[3]) == 1) {
+                                    $dat1[2] = '1' . $dat1[2];
+                                } elseif (iconv_strlen($dat1[3]) == 2) {
+                                    $dat1[2] = '20';
+                                } else {
+                                    $dat1[2] = '201';
                                 }
-                                if ($tab[4] != '') {
-                                    $entity->setNumMandat(intval($tab[4]));
-                                }
-                                if ($tab[5] != '') {
-                                    $entity->setNumBordereau(intval($tab[5]));
-                                }
-                                if ($tab[6] != '') {
-                                    $entity->setEtatMandat($tab[6]);
-                                }
-                                if ($tab[7] != '') {
-                                    $dat1 = explode("/", $tab[7]);
-                                    if (iconv_strlen($dat1[0]) < 2) {
-                                        if (iconv_strlen($dat1[0]) == 1) {
-                                            $dat1[0] = '0' . $dat1[0];
-                                        } else {
-                                            $dat1[0] = '01';
-                                        }
-                                    }
-                                    if (iconv_strlen($dat1[1]) < 2) {
-                                        if (iconv_strlen($dat1[1]) == 1) {
-                                            $dat1[1] = '0' . $dat1[1];
-                                        } else {
-                                            $dat1[1] = '01';
-                                        }
-                                    }
-                                    if (iconv_strlen($dat1[2]) < 4) {
-                                        if (iconv_strlen($dat1[3]) == 1) {
-                                            $dat1[2] = '1' . $dat1[2];
-                                        } elseif (iconv_strlen($dat1[3]) == 2) {
-                                            $dat1[2] = '20';
-                                        } else {
-                                            $dat1[2] = '201';
-                                        }
-                                    }
-                                    $dat2 = $dat1[0] . '-' . $dat1[1] . '-' . $dat1[2];
-                                    $tab[7] = new \DateTime($dat2);
-                                    $entity->setDateEtatFrais($tab[7]);
-                                }
-
-                                if ($tab[8] != '') {
-                                    $dat1 = explode("/", $tab[8]);
-                                    if (iconv_strlen($dat1[0]) < 2) {
-                                        if (iconv_strlen($dat1[0]) == 1) {
-                                            $dat1[0] = '0' . $dat1[0];
-                                        } else {
-                                            $dat1[0] = '01';
-                                        }
-                                    }
-                                    if (iconv_strlen($dat1[1]) < 2) {
-                                        if (iconv_strlen($dat1[1]) == 1) {
-                                            $dat1[1] = '0' . $dat1[1];
-                                        } else {
-                                            $dat1[1] = '01';
-                                        }
-                                    }
-                                    if (iconv_strlen($dat1[2]) < 4) {
-                                        if (iconv_strlen($dat1[3]) == 1) {
-                                            $dat1[2] = '1' . $dat1[2];
-                                        } elseif (iconv_strlen($dat1[3]) == 2) {
-                                            $dat1[2] = '20';
-                                        } else {
-                                            $dat1[2] = '201';
-                                        }
-                                    }
-                                    $dat2 = $dat1[0] . '-' . $dat1[1] . '-' . $dat1[2];
-                                    $tab[8] = new \DateTime($dat2);
-                                    $entity->setDateMandatement($tab[8]);
-                                }
-
-                                if ($tab[9] != '') {
-                                    $dat1 = explode("/", $tab[9]);
-                                    if (iconv_strlen($dat1[0]) < 2) {
-                                        if (iconv_strlen($dat1[0]) == 1) {
-                                            $dat1[0] = '0' . $dat1[0];
-                                        } else {
-                                            $dat1[0] = '01';
-                                        }
-                                    }
-                                    if (iconv_strlen($dat1[1]) < 2) {
-                                        if (iconv_strlen($dat1[1]) == 1) {
-                                            $dat1[1] = '0' . $dat1[1];
-                                        } else {
-                                            $dat1[1] = '01';
-                                        }
-                                    }
-                                    if (iconv_strlen($dat1[2]) < 4) {
-                                        if (iconv_strlen($dat1[3]) == 1) {
-                                            $dat1[2] = '1' . $dat1[2];
-                                        } elseif (iconv_strlen($dat1[3]) == 2) {
-                                            $dat1[2] = '20';
-                                        } else {
-                                            $dat1[2] = '201';
-                                        }
-                                    }
-                                    $dat2 = $dat1[0] . '-' . $dat1[1] . '-' . $dat1[2];
-                                    $tab[9] = new \DateTime($dat2);
-                                    $entity->setDatePaiement($tab[9]);
-                                }
+                            }
+                            $dat2 = $dat1[0] . '-' . $dat1[1] . '-' . $dat1[2];
+                            $tab[9] = new \DateTime($dat2);
+                            $entity->setDatePaiement($tab[9]);
+                        }
 
 
-                                if ($tab[10] != '') {
-                                    $entity->setTexte1Mandat($this->wd_remove_accents($tab[10]));
-                                }
-                                if ($tab[11] != '') {
-                                    $entity->setTexte2Mandat($this->wd_remove_accents($tab[11]));
-                                }
-                                if ($tab[12] != '') {
-                                    $entity->setTexte2Mandat($this->wd_remove_accents($tab[12]));
-                                }
-                                if ($tab[13] != '') {
-                                    $entity->setTexte3Mandat($this->wd_remove_accents($tab[13]));
-                                }
-                                if ($tab[14] != '') {
-                                    $entity->setTexte4Mandat($this->wd_remove_accents($tab[14]));
-                                }
-                                if ($tab[15] != '') {
-                                    $entity->setTexte5Mandat($this->wd_remove_accents($tab[15]));
-                                }
-                                if ($tab[16] != '') {
-                                    $entity->setTexte6Mandat($this->wd_remove_accents($tab[16]));
-                                }
-                                $emFrd->persist($entity);
-                            };
-                        };
+                        if ($tab[10] != '') {
+                            $entity->setTexte1Mandat($this->wd_remove_accents($tab[10]));
+                        }
+                        if ($tab[11] != '') {
+                            $entity->setTexte2Mandat($this->wd_remove_accents($tab[11]));
+                        }
+                        if ($tab[12] != '') {
+                            $entity->setTexte2Mandat($this->wd_remove_accents($tab[12]));
+                        }
+                        if ($tab[13] != '') {
+                            $entity->setTexte3Mandat($this->wd_remove_accents($tab[13]));
+                        }
+                        if ($tab[14] != '') {
+                            $entity->setTexte4Mandat($this->wd_remove_accents($tab[14]));
+                        }
+                        if ($tab[15] != '') {
+                            $entity->setTexte5Mandat($this->wd_remove_accents($tab[15]));
+                        }
+                        if ($tab[16] != '') {
+                            $entity->setTexte6Mandat($this->wd_remove_accents($tab[16]));
+                        }
+                        $emFrd->persist($entity);
                     };
                 }
             };
@@ -1784,6 +1779,154 @@ class ReferentielController extends Controller {
 
         return $this->render('AeagFrdBundle:Referentiel:consulterSousThemes.html.twig', array(
                     'entities' => $entities
+        ));
+    }
+
+    public function consulterEtatFraisParAnneeAction($anneeSelect = null) {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'Frais');
+        $session->set('controller', 'Admin');
+        $session->set('fonction', 'consulterEtatFraisParAnnee');
+        $em = $this->get('doctrine')->getManager();
+        $emFrd = $this->getDoctrine()->getManager('frd');
+
+        $repoEtatFrais = $emFrd->getRepository('AeagFrdBundle:EtatFrais');
+        $repoMandatement = $emFrd->getRepository('AeagFrdBundle:Mandatement');
+        $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
+        $repoPhase = $emFrd->getRepository('AeagFrdBundle:Phase');
+        $repoUsers = $em->getRepository('AeagUserBundle:User');
+        $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
+
+        $anneeSel = $anneeSelect;
+
+        $session->set('anneeSelect', $anneeSel);
+
+        $annee1 = $anneeSel . '-01-01';
+        $anneeDeb = new \DateTime($annee1);
+        $annee1 = $anneeSel . '-12-31';
+        $anneeFin = new \DateTime($annee1);
+
+        $phase = $repoPhase->getPhaseByCode('40');
+        $nbFraisDeplacementEnCours = $repoFraisDeplacement->getNbFraisDeplacementEnCoursByPhase($phase->getId(), $anneeDeb, $anneeFin);
+        $i = 0;
+        $entities = array();
+        if ($anneeSel == date_format($session->get('annee'), 'Y')) {
+            $etatFrais = new EtatFrais();
+            $phase = $repoPhase->getPhaseByCode('10');
+            $entities[$i]['etatFrais'] = $etatFrais;
+            $entities[$i]['correspondant'] = null;
+            $entities[$i]['mandatement'] = null;
+            $entities[$i]['phase'] = $phase;
+            $entities[$i]['nbFraisDeplacements'] = $nbFraisDeplacementEnCours;
+            $i++;
+        }
+        $etatsFrais = $repoEtatFrais->getListeEtatFraisByAnnee($anneeSel);
+        foreach ($etatsFrais as $etatFrais) {
+            $nbFraisDeplacements = $repoFraisDeplacement->getNbFraisDeplacementByEtfrId($etatFrais->getId());
+            if ($nbFraisDeplacements > 0) {
+                $entities[$i]['etatFrais'] = $etatFrais;
+                $correspondant = $repoCorrespondant->getCorrespondantByCorId($etatFrais->getCorId());
+                if ($correspondant) {
+                    $entities[$i]['correspondant'] = $correspondant;
+                } else {
+                    $entities[$i]['correspondant'] = null;
+                }
+                $mandatement = $repoMandatement->getMandatementByEtfrId($etatFrais->getId());
+                if ($mandatement) {
+                    $entities[$i]['mandatement'] = $mandatement;
+                } else {
+                    $entities[$i]['mandatement'] = null;
+                }
+                if ($etatFrais->getPhase() < '60') {
+                    $codePhase = '40';
+                } else {
+                    $codePhase = $etatFrais->getPhase();
+                }
+                $phase = $repoPhase->getPhaseByCode($codePhase);
+                $entities[$i]['phase'] = $phase;
+
+                $entities[$i]['nbFraisDeplacements'] = $nbFraisDeplacements;
+                $i++;
+            }
+        }
+        usort($entities, create_function('$a,$b', 'return $a[\'etatFrais\']->getNum()-$b[\'etatFrais\']->getNum();'));
+
+        $session->set('retour', $this->generateUrl('AeagFrdBundle_admin_consulterEtatFraisParAnnee', array('anneeSelect' => $session->get('anneeSelect'))));
+
+        return $this->render('AeagFrdBundle:EtatFrais:adminConsulterEtatFrais.html.twig', array(
+                    'user' => $user,
+                    'entities' => $entities,
+                    'annee' => $anneeSelect
+        ));
+    }
+
+    public function consulterFraisDeplacementsParEtatFraisAction($etatFraisId = null) {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'Frais');
+        $session->set('controller', 'Admin');
+        $session->set('fonction', 'consulterFraisDeplacementsParEtatFrais');
+        $em = $this->get('doctrine')->getManager();
+        $emFrd = $this->getDoctrine()->getManager('frd');
+
+        $repoEtatFrais = $emFrd->getRepository('AeagFrdBundle:EtatFrais');
+        $repoMandatement = $emFrd->getRepository('AeagFrdBundle:Mandatement');
+        $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
+        $repoPhase = $emFrd->getRepository('AeagFrdBundle:Phase');
+        $repoUsers = $em->getRepository('AeagUserBundle:User');
+        $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
+
+         if ($etatFraisId) {
+            $etatFrais = $repoEtatFrais->getEtatFraisById($etatFraisId);
+            $correspondant = $repoCorrespondant->getCorrespondantByCorId($etatFrais->getCorId());
+            $mandatement = $repoMandatement->getMandatementByEtfrId($etatFrais->getId());
+            $fraisDeplacements = $repoFraisDeplacement->getFraisDeplacementByEtfrId($etatFrais->getId());
+        } else {
+            $etatFrais = null;
+            $correspondant = null;
+            $mandatement = null;
+            $phase = $repoPhase->getPhaseByCode('40');
+            $annee1 = $session->get('anneeSelect') . '-01-01';
+            $anneeDeb = new \DateTime($annee1);
+            $annee1 = $session->get('anneeSelect') . '-12-31';
+            $anneeFin = new \DateTime($annee1);
+            $fraisDeplacements = $repoFraisDeplacement->getFraisDeplacementEnCoursByPhase( $phase->getId(), $anneeDeb, $anneeFin);
+        }
+
+        $i = 0;
+        $entities = array();
+        foreach ($fraisDeplacements as $fraisDeplacement) {
+            // print_r('frais : '. $fraisDeplacement->getid() );
+            $entities[$i][0] = $fraisDeplacement;
+            $user = $repoUsers->getUserById($fraisDeplacement->getUser());
+            $correspondant = $repoCorrespondant->getCorrespondantById($user->getCorrespondant());
+            $entities[$i][1] = $user;
+            if ($correspondant) {
+                $entities[$i][2] = $correspondant;
+            } else {
+                $entities[$i][2] = null;
+            }
+            $i++;
+        }
+
+        $session->set('retour1', $this->generateUrl('AeagFrdBundle_admin_consulterFraisDeplacementsParEtatFrais', array('etatFraisId' => $etatFraisId)));
+
+        return $this->render('AeagFrdBundle:EtatFrais:adminConsulterFraisDeplacementsParEtatFrais.html.twig', array(
+                    'user' => $user,
+                    'correspondant' => $correspondant,
+                    'etatFrais' => $etatFrais,
+                    'mandatement' => $mandatement,
+                    'entities' => $entities,
+                    'annee' => $session->get('anneeSelect')
         ));
     }
 

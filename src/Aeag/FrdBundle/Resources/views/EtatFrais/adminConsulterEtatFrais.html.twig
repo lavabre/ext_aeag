@@ -12,7 +12,7 @@
 
 {% block panel_heading %}
     <h3>
-        {{ entities | length }}  Etats  {% if annee != 9999 %} pour l'année {{ annee }} {% endif %}
+        {{ entities | length }}  Etats   {% if annee != 9999 %} pour l'année {{ annee }} {% endif %}
     </h3>
 {% endblock panel_heading %}
 
@@ -30,6 +30,7 @@
                         <tr>
                             <th>Actions</th>
                             <th>Numéro</th>
+                            <th>Nom</th>
                             <th>Statut</th>
                             <th>date de remboursement</th>
                             <th>Montant rembourser </th>
@@ -43,14 +44,9 @@
                                 <tr id="idTr-{{ entity.etatFrais.id }}">
                                     <td  nowrap id="idTd1-{{ entity.etatFrais.id }}" width="1%">
                                         {% if entity.nbFraisDeplacements > 0 %}
-                                            <a class="btn btn-primary" href="{{ path('AeagFrdBundle_membre_consulterFraisDeplacementsParEtatFrais', { 'etatFraisId': entity.etatFrais.id }) }}" title="Détails">
+                                            <a class="btn btn-primary" href="{{ path('AeagFrdBundle_admin_consulterFraisDeplacementsParEtatFrais', { 'etatFraisId': entity.etatFrais.id }) }}" title="Détails">
                                                 <i class="fa fa-eye"></i>
                                             </a>
-                                            {% if app.session.get('annee') | date("Y")  == app.session.get('anneeSelect') and entity.phase.code == '10'%}
-                                                <a class="btn btn-success" href="{{ path('AeagFrdBundle_membre_fraisDeplacement') }}" title="Nouvelle demande"> 
-                                                    <i class="fa fa-plus"></i>
-                                                </a>
-                                            {% endif %}
                                             {# <a class="btn btn-info" href="{{ path('AeagFrdBundle_declaration_pdf', { 'id': entity.etatFrais.id }) }}" title="Imprimer">
                                                  <i class="fa fa-print"></i>
                                              </a>#}
@@ -63,12 +59,19 @@
                                         {% endif %}
                                     </td>
                                     <td class="text-center" nowrap width="1%">{{ entity.etatFrais.num }}</td>
+                                     <td class="text-center" nowrap width="5%">
+                                        {% if entity.correspondant %}
+                                            {{ entity.correspondant.adr1 }} &nbsp; {{ entity.correspondant.adr1  }}
+                                        {% endif %}
+                                    </td>
                                     <td nowrap width="10%">
+                                        {% if entity.phase %}
                                         {% if entity.phase.code != '10' %}
                                             {{ entity.phase.libelle }}
                                         {% else %}
                                             En cours
                                         {% endif %}
+                                       {% endif %}
                                     </td>
                                     <td class="text-center" nowrap width="5%">
                                         {% if entity.mandatement %}

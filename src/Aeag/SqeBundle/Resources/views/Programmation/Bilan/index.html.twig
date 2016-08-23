@@ -61,14 +61,12 @@
         {# <a class="btn btn-primary pull-right" href="{{ path('AeagDecBundle_admin_pdfListeDechets') }}" title="Imprimer la lister"> 
                 <i class="fa fa-print"> Imprimer la liste</i>
          </a>#}
-         {% if  not app.session.get('evolution')%}
-            {%if controle.station.nb  > 0 or controle.groupe.nb > 0 or  controle.periode.nb  > 0 %}  
+             {%if controle.station.nb  > 0 or controle.groupe.nb > 0 or  controle.periode.nb  > 0 %}  
                 <a id="idTelechargerBilan" class="btn btn-success btn-telecharger btn-sm  pull-right" href="#" title="Télécharger le bilan">
                     <i class="fa fa-upload"></i> 
                 </a>
             {% endif %}
-        {% endif %}
-    </h3>
+     </h3>
 {%endblock panel_heading %}
 
 

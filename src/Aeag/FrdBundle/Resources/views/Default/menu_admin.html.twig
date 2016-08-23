@@ -18,7 +18,7 @@
             <ul class="dropdown-menu">
                {% for annee in app.session.get('annees') %}
                     <li>
-                        <a href="{{ path('AeagFrdBundle_admin_consulterFraisDeplacementsParAnnee', { 'anneeSelect': annee }) }}">
+                        <a href="{{ path('AeagFrdBundle_admin_consulterEtatFraisParAnnee', { 'anneeSelect': annee }) }}">
                                           {{ annee }}
                         </a>
                     </li>

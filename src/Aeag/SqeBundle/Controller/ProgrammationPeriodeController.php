@@ -1981,27 +1981,27 @@ class ProgrammationPeriodeController extends Controller {
                         } else {
                             $tabGroupes[$k]['support'] = null;
                         }
-                        $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotPeriodeProg->getGrparAn());
-                        asort($pgProgLotParamAns);
-                        $tabParametres = array();
-                        $p = 0;
-                        foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
-                            $tabParametres[$p]['parametre'] = $pgProgLotParamAn;
-                            if ($pgProgLotParamAn->getCodeFraction()) {
-                                $pgSandreFraction = $repoPgSandreFractions->getPgSandreFractionsByCodeFraction($pgProgLotParamAn->getCodeFraction());
-                                $tabParametres[$p]['fraction'] = $pgSandreFraction->getNomFraction();
-                            } else {
-                                $tabParametres[$p]['fraction'] = null;
-                            }
-                            if ($pgProgLotParamAn->getCodeUnite()) {
-                                $pgSandreUnite = $repoPgSandreUnites->getPgSandreUnitesByCodeUnite($pgProgLotParamAn->getCodeUnite());
-                                $tabParametres[$p]['unite'] = $pgSandreUnite->getNomUnite();
-                            } else {
-                                $tabParametres[$p]['unite'] = null;
-                            }
-                            $p++;
-                        }
-                        $tabGroupes[$k]['parametres'] = $tabParametres;
+//                        $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotPeriodeProg->getGrparAn());
+//                        asort($pgProgLotParamAns);
+//                        $tabParametres = array();
+//                        $p = 0;
+//                        foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
+//                            $tabParametres[$p]['parametre'] = $pgProgLotParamAn;
+//                            if ($pgProgLotParamAn->getCodeFraction()) {
+//                                $pgSandreFraction = $repoPgSandreFractions->getPgSandreFractionsByCodeFraction($pgProgLotParamAn->getCodeFraction());
+//                                $tabParametres[$p]['fraction'] = $pgSandreFraction->getNomFraction();
+//                            } else {
+//                                $tabParametres[$p]['fraction'] = null;
+//                            }
+//                            if ($pgProgLotParamAn->getCodeUnite()) {
+//                                $pgSandreUnite = $repoPgSandreUnites->getPgSandreUnitesByCodeUnite($pgProgLotParamAn->getCodeUnite());
+//                                $tabParametres[$p]['unite'] = $pgSandreUnite->getNomUnite();
+//                            } else {
+//                                $tabParametres[$p]['unite'] = null;
+//                            }
+//                            $p++;
+//                        }
+//                        $tabGroupes[$k]['parametres'] = $tabParametres;
                         $k++;
                     }
                     $pgProgLotStationAnAutres = $repoPgProgLotStationAn->getPgProgLotStationAnByStation($pgProgLotStationAn->getStation());
@@ -2031,27 +2031,27 @@ class ProgrammationPeriodeController extends Controller {
                                                                 } else {
                                                                     $tabGroupes[$k]['support'] = null;
                                                                 }
-                                                                $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
-                                                                asort($pgProgLotParamAns);
-                                                                $tabParametres = array();
-                                                                $p = 0;
-                                                                foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
-                                                                    $tabParametres[$p]['parametre'] = $pgProgLotParamAn;
-                                                                    if ($pgProgLotParamAn->getCodeFraction()) {
-                                                                        $pgSandreFraction = $repoPgSandreFractions->getPgSandreFractionsByCodeFraction($pgProgLotParamAn->getCodeFraction());
-                                                                        $tabParametres[$p]['fraction'] = $pgSandreFraction->getNomFraction();
-                                                                    } else {
-                                                                        $tabParametres[$p]['fraction'] = null;
-                                                                    }
-                                                                    if ($pgProgLotParamAn->getCodeUnite()) {
-                                                                        $pgSandreUnite = $repoPgSandreUnites->getPgSandreUnitesByCodeUnite($pgProgLotParamAn->getCodeUnite());
-                                                                        $tabParametres[$p]['unite'] = $pgSandreUnite->getNomUnite();
-                                                                    } else {
-                                                                        $tabParametres[$p]['unite'] = null;
-                                                                    }
-                                                                    $p++;
-                                                                }
-                                                                $tabGroupes[$k]['parametres'] = $tabParametres;
+//                                                                $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
+//                                                                asort($pgProgLotParamAns);
+//                                                                $tabParametres = array();
+//                                                                $p = 0;
+//                                                                foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
+//                                                                    $tabParametres[$p]['parametre'] = $pgProgLotParamAn;
+//                                                                    if ($pgProgLotParamAn->getCodeFraction()) {
+//                                                                        $pgSandreFraction = $repoPgSandreFractions->getPgSandreFractionsByCodeFraction($pgProgLotParamAn->getCodeFraction());
+//                                                                        $tabParametres[$p]['fraction'] = $pgSandreFraction->getNomFraction();
+//                                                                    } else {
+//                                                                        $tabParametres[$p]['fraction'] = null;
+//                                                                    }
+//                                                                    if ($pgProgLotParamAn->getCodeUnite()) {
+//                                                                        $pgSandreUnite = $repoPgSandreUnites->getPgSandreUnitesByCodeUnite($pgProgLotParamAn->getCodeUnite());
+//                                                                        $tabParametres[$p]['unite'] = $pgSandreUnite->getNomUnite();
+//                                                                    } else {
+//                                                                        $tabParametres[$p]['unite'] = null;
+//                                                                    }
+//                                                                    $p++;
+//                                                                }
+//                                                                $tabGroupes[$k]['parametres'] = $tabParametres;
                                                                 $k++;
                                                             }
                                                         }
@@ -2106,27 +2106,27 @@ class ProgrammationPeriodeController extends Controller {
                                                                 } else {
                                                                     $tabGroupes[$k]['support'] = null;
                                                                 }
-                                                                $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
-                                                                asort($pgProgLotParamAns);
-                                                                $tabParametres = array();
-                                                                $p = 0;
-                                                                foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
-                                                                    $tabParametres[$p]['parametre'] = $pgProgLotParamAn;
-                                                                    if ($pgProgLotParamAn->getCodeFraction()) {
-                                                                        $pgSandreFraction = $repoPgSandreFractions->getPgSandreFractionsByCodeFraction($pgProgLotParamAn->getCodeFraction());
-                                                                        $tabParametres[$p]['fraction'] = $pgSandreFraction->getNomFraction();
-                                                                    } else {
-                                                                        $tabParametres[$p]['fraction'] = null;
-                                                                    }
-                                                                    if ($pgProgLotParamAn->getCodeUnite()) {
-                                                                        $pgSandreUnite = $repoPgSandreUnites->getPgSandreUnitesByCodeUnite($pgProgLotParamAn->getCodeUnite());
-                                                                        $tabParametres[$p]['unite'] = $pgSandreUnite->getNomUnite();
-                                                                    } else {
-                                                                        $tabParametres[$p]['unite'] = null;
-                                                                    }
-                                                                    $p++;
-                                                                }
-                                                                $tabGroupes[$k]['parametres'] = $tabParametres;
+//                                                                $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
+//                                                                asort($pgProgLotParamAns);
+//                                                                $tabParametres = array();
+//                                                                $p = 0;
+//                                                                foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
+//                                                                    $tabParametres[$p]['parametre'] = $pgProgLotParamAn;
+//                                                                    if ($pgProgLotParamAn->getCodeFraction()) {
+//                                                                        $pgSandreFraction = $repoPgSandreFractions->getPgSandreFractionsByCodeFraction($pgProgLotParamAn->getCodeFraction());
+//                                                                        $tabParametres[$p]['fraction'] = $pgSandreFraction->getNomFraction();
+//                                                                    } else {
+//                                                                        $tabParametres[$p]['fraction'] = null;
+//                                                                    }
+//                                                                    if ($pgProgLotParamAn->getCodeUnite()) {
+//                                                                        $pgSandreUnite = $repoPgSandreUnites->getPgSandreUnitesByCodeUnite($pgProgLotParamAn->getCodeUnite());
+//                                                                        $tabParametres[$p]['unite'] = $pgSandreUnite->getNomUnite();
+//                                                                    } else {
+//                                                                        $tabParametres[$p]['unite'] = null;
+//                                                                    }
+//                                                                    $p++;
+//                                                                }
+//                                                                $tabGroupes[$k]['parametres'] = $tabParametres;
                                                                 $k++;
                                                             }
                                                         }
@@ -2166,7 +2166,8 @@ class ProgrammationPeriodeController extends Controller {
         $ligne = array('Programmation', 'Version', 'Lot',
             'Station', 'Libellé', 'Commune', 'Masse d\'eau', 'Rivière', 'Réseau',
             'Période', 'Date début', 'Date fin',
-            'Groupe', 'Libellé', 'Type', 'Support', 'Prestataire', 'Parametre', 'libellé', 'Fraction', 'Unité', 'Prestataire');
+            'Groupe', 'Libellé', 'Type', 'Support', 'Prestataire');
+//            'Parametre', 'libellé', 'Fraction', 'Unité', 'Prestataire');
         for ($i = 0; $i < count($ligne); $i++) {
             $ligne[$i] = \iconv("UTF-8", "Windows-1252//TRANSLIT", $ligne[$i]);
         }
@@ -2175,7 +2176,7 @@ class ProgrammationPeriodeController extends Controller {
         for ($i = 0; $i < count($tabStations); $i++) {
             for ($j = 0; $j < count($tabStations[$i]['periodes']); $j++) {
                 for ($k = 0; $k < count($tabStations[$i]['periodes'][$j]['groupes']); $k++) {
-                    for ($l = 0; $l < count($tabStations[$i]['periodes'][$j]['groupes'][$k]['parametres']); $l++) {
+//                    for ($l = 0; $l < count($tabStations[$i]['periodes'][$j]['groupes'][$k]['parametres']); $l++) {
                          $ligne = array($pgProgLotAn->getAnneeProg(),
                             $pgProgLotAn->getversion(),
                             $pgProgLotAn->getLot()->getNomLot(),
@@ -2193,17 +2194,17 @@ class ProgrammationPeriodeController extends Controller {
                             $tabStations[$i]['periodes'][$j]['groupes'][$k]['groupe']->getGrparRef()->getTypeGrp(),
                             $tabStations[$i]['periodes'][$j]['groupes'][$k]['support'],
                             $tabStations[$i]['periodes'][$j]['groupes'][$k]['groupe']->getPrestaDft()->getNomCorres(),
-                            $tabStations[$i]['periodes'][$j]['groupes'][$k]['parametres'][$l]['parametre']->getCodeParametre()->getCodeParametre(),
-                            $tabStations[$i]['periodes'][$j]['groupes'][$k]['parametres'][$l]['parametre']->getCodeParametre()->getNomParametre(),
-                            $tabStations[$i]['periodes'][$j]['groupes'][$k]['parametres'][$l]['fraction'],
-                            $tabStations[$i]['periodes'][$j]['groupes'][$k]['parametres'][$l]['unite'],
-                            $tabStations[$i]['periodes'][$j]['groupes'][$k]['parametres'][$l]['parametre']->getPrestataire()->getNomCorres(),
+//                            $tabStations[$i]['periodes'][$j]['groupes'][$k]['parametres'][$l]['parametre']->getCodeParametre()->getCodeParametre(),
+//                            $tabStations[$i]['periodes'][$j]['groupes'][$k]['parametres'][$l]['parametre']->getCodeParametre()->getNomParametre(),
+//                            $tabStations[$i]['periodes'][$j]['groupes'][$k]['parametres'][$l]['fraction'],
+//                            $tabStations[$i]['periodes'][$j]['groupes'][$k]['parametres'][$l]['unite'],
+//                            $tabStations[$i]['periodes'][$j]['groupes'][$k]['parametres'][$l]['parametre']->getPrestataire()->getNomCorres(),
                         );
                         for ($m = 0; $m < count($ligne); $m++) {
                             $ligne[$m] = \iconv("UTF-8", "Windows-1252//TRANSLIT", $ligne[$m]);
                         }
                         fputcsv($fichier_csv, $ligne, ';');
-                    }
+//                    }
                 }
             }
         }

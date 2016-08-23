@@ -11,8 +11,8 @@ AeagFrdBundle_membre_consulterEtatFraisParAnnee:
         methods:  GET|POST
         
 AeagFrdBundle_membre_consulterFraisDeplacementsParEtatFrais:
-    path:  /consulterFraisDeplacementsParEtatFrais/{etatFrais}
-    defaults: { _controller: AeagFrdBundle:FraisDeplacement:consulterFraisDeplacementsParEtatFrais, etatFrais:null }
+    path:  /consulterFraisDeplacementsParEtatFrais/{etatFraisId}
+    defaults: { _controller: AeagFrdBundle:FraisDeplacement:consulterFraisDeplacementsParEtatFrais, etatFraisId:null }
     requirements:
         methods:  GET|POST
         

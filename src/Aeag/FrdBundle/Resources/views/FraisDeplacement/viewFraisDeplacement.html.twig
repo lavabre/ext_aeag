@@ -4,15 +4,21 @@
        <li>
          <a href="{{ path('aeag_frd') }}">Accueil</a> 
        </li>
+       <li>
+         <a href="{{ app.session.get('retour') }}">Etats</a> 
+       </li>
+        <li>
+         <a href="{{ app.session.get('retour1') }}">Demandes</a> 
+       </li>
        <li class="active">
-          frais de déplacement n° {{entity.0.id}}
+          Demande
        </li>
 {% endblock breadcrumb %}
 
 
 {%block panel_heading %}
            <h3>
-               Consultation frais de déplacement n° {{entity.0.id}} de {{ entity.1.username }} {{ entity.1.prenom }}
+               Consultation de la demande n° {{entity.0.id}} de {{ entity.1.username }} {{ entity.1.prenom }}
                <a class="btn btn-primary pull-right" href="{{ path('AeagFrdBundle_declaration_pdf', { 'id': entity.0.id }) }}" title="Imprimer"> 
                    <i class="fa fa-print"> Imprimer</i>
                </a>
@@ -266,9 +272,9 @@
    </div>
  </div>
      
-    <div class="col-sm-offset-3 col-sm-9 pull-right">
-        <a class="btn btn-danger" href="{{ path('aeag_frd') }}">
-            <i class="fa fa-power-off"></i> Retour
+    <div class="col-sm-offset-5 col-sm-7 pull-right">
+        <a class="btn btn-danger" href="{{ app.session.get('retour1') }}">
+            <i class="fa fa-reply"></i> Retour
         </a>
      </div>
     

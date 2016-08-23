@@ -988,7 +988,7 @@ class ProgrammationBilanController extends Controller {
         return $this->render('AeagSqeBundle:Programmation:Bilan\periodeGroupe.html.twig', array(
                     'periodeAn' => $tabPeriodes));
     }
-
+    
     public function telechargerAction($lotan = null) {
 
         $user = $this->getUser();
@@ -1177,7 +1177,7 @@ class ProgrammationBilanController extends Controller {
         $ligne = array('Programmation', 'Version', 'Lot',
             'Station', 'Libellé', 'Commune', 'Masse d\'eau', 'Rivière', 'Réseau',
             'Groupe', 'Libellé', 'Type', 'Support', 'Prestataire',
-            'Parametre', 'libellé', 'Fraction', 'Unité', 'Prestataire',
+//            'Parametre', 'libellé', 'Fraction', 'Unité', 'Prestataire',
             'Période', 'Date début', 'Date fin'
         );
         for ($i = 0; $i < count($ligne); $i++) {
@@ -1187,7 +1187,7 @@ class ProgrammationBilanController extends Controller {
 
         for ($i = 0; $i < count($tabStations); $i++) {
             for ($j = 0; $j < count($tabStations[$i]['progs']); $j++) {
-                for ($k = 0; $k < count($tabStations[$i]['progs'][$j]['parametres']); $k++) {
+//                for ($k = 0; $k < count($tabStations[$i]['progs'][$j]['parametres']); $k++) {
                     for ($l = 0; $l < count($tabStations[$i]['progs'][$j]['periode']); $l++) {
                         $ligne = array($pgProgLotAn->getAnneeProg(),
                             $pgProgLotAn->getversion(),
@@ -1203,11 +1203,11 @@ class ProgrammationBilanController extends Controller {
                             $tabStations[$i]['progs'][$j]['groupe']->getGrparRef()->getTypeGrp(),
                             $tabStations[$i]['progs'][$j]['support'],
                             $tabStations[$i]['progs'][$j]['groupe']->getPrestaDft()->getNomCorres(),
-                            $tabStations[$i]['progs'][$j]['parametres'][$k]['parametre']->getCodeParametre()->getCodeParametre(),
-                            $tabStations[$i]['progs'][$j]['parametres'][$k]['parametre']->getCodeParametre()->getNomParametre(),
-                            $tabStations[$i]['progs'][$j]['parametres'][$k]['fraction'],
-                            $tabStations[$i]['progs'][$j]['parametres'][$k]['unite'],
-                            $tabStations[$i]['progs'][$j]['parametres'][$k]['parametre']->getPrestataire()->getNomCorres(),
+//                            $tabStations[$i]['progs'][$j]['parametres'][$k]['parametre']->getCodeParametre()->getCodeParametre(),
+//                            $tabStations[$i]['progs'][$j]['parametres'][$k]['parametre']->getCodeParametre()->getNomParametre(),
+//                            $tabStations[$i]['progs'][$j]['parametres'][$k]['fraction'],
+//                            $tabStations[$i]['progs'][$j]['parametres'][$k]['unite'],
+//                            $tabStations[$i]['progs'][$j]['parametres'][$k]['parametre']->getPrestataire()->getNomCorres(),
                             $tabStations[$i]['progs'][$j]['periode'][$l]->getLabelPeriode(),
                             $tabStations[$i]['progs'][$j]['periode'][$l]->getDateDeb()->format('d/m/Y'),
                             $tabStations[$i]['progs'][$j]['periode'][$l]->getDateFin()->format('d/m/Y'),
@@ -1217,7 +1217,7 @@ class ProgrammationBilanController extends Controller {
                         }
                         fputcsv($fichier_csv, $ligne, ';');
                     }
-                }
+//                }
             }
         }
 
@@ -1334,7 +1334,7 @@ class ProgrammationBilanController extends Controller {
         $ligne = array('Programmation', 'Version', 'Lot',
             'Période', 'Date début', 'Date fin',
             'Groupe', 'Libellé', 'Type', 'Support', 'Prestataire',
-            'Parametre', 'libellé', 'Fraction', 'Unité', 'Prestataire',
+//            'Parametre', 'libellé', 'Fraction', 'Unité', 'Prestataire',
             'Station', 'Libellé', 'Commune', 'Masse d\'eau', 'Rivière', 'Réseau',
         );
         for ($i = 0; $i < count($ligne); $i++) {
@@ -1344,7 +1344,7 @@ class ProgrammationBilanController extends Controller {
 
         for ($i = 0; $i < count($tabPeriodes); $i++) {
             for ($j = 0; $j < count($tabPeriodes[$i]['periodes']['groupes']); $j++) {
-                for ($k = 0; $k < count($tabPeriodes[$i]['periodes']['groupes'][$j]['parametres']); $k++) {
+//                for ($k = 0; $k < count($tabPeriodes[$i]['periodes']['groupes'][$j]['parametres']); $k++) {
                     for ($l = 0; $l < count($tabPeriodes[$i]['periodes']['groupes'][$j]['stations']); $l++) {
                         $ligne = array($pgProgLotAn->getAnneeProg(),
                             $pgProgLotAn->getversion(),
@@ -1357,11 +1357,11 @@ class ProgrammationBilanController extends Controller {
                             $tabPeriodes[$i]['periodes']['groupes'][$j]['groupe']->getGrparRef()->getTypeGrp(),
                             $tabPeriodes[$i]['periodes']['groupes'][$j]['support'],
                             $tabPeriodes[$i]['periodes']['groupes'][$j]['groupe']->getPrestaDft()->getNomCorres(),
-                            $tabPeriodes[$i]['periodes']['groupes'][$j]['parametres'][$k]['parametre']->getCodeParametre()->getCodeParametre(),
-                            $tabPeriodes[$i]['periodes']['groupes'][$j]['parametres'][$k]['parametre']->getCodeParametre()->getNomParametre(),
-                            $tabPeriodes[$i]['periodes']['groupes'][$j]['parametres'][$k]['fraction'],
-                            $tabPeriodes[$i]['periodes']['groupes'][$j]['parametres'][$k]['unite'],
-                            $tabPeriodes[$i]['periodes']['groupes'][$j]['parametres'][$k]['parametre']->getPrestataire()->getNomCorres(),
+//                            $tabPeriodes[$i]['periodes']['groupes'][$j]['parametres'][$k]['parametre']->getCodeParametre()->getCodeParametre(),
+//                            $tabPeriodes[$i]['periodes']['groupes'][$j]['parametres'][$k]['parametre']->getCodeParametre()->getNomParametre(),
+//                            $tabPeriodes[$i]['periodes']['groupes'][$j]['parametres'][$k]['fraction'],
+//                            $tabPeriodes[$i]['periodes']['groupes'][$j]['parametres'][$k]['unite'],
+//                            $tabPeriodes[$i]['periodes']['groupes'][$j]['parametres'][$k]['parametre']->getPrestataire()->getNomCorres(),
                             $tabPeriodes[$i]['periodes']['groupes'][$j]['stations'][$l]['code'],
                             $tabPeriodes[$i]['periodes']['groupes'][$j]['stations'][$l]['libelle'],
                             $tabPeriodes[$i]['periodes']['groupes'][$j]['stations'][$l]['commune'],
@@ -1374,7 +1374,7 @@ class ProgrammationBilanController extends Controller {
                         }
                         fputcsv($fichier_csv, $ligne, ';');
                     }
-                }
+//                }
             }
         }
 
@@ -1421,6 +1421,7 @@ class ProgrammationBilanController extends Controller {
             }
         }
 
+        
         $tabPrestas = array();
         $k = 0;
         for ($i = 0; $i < count($tabPrestaDftAll); $i++) {
@@ -1437,6 +1438,10 @@ class ProgrammationBilanController extends Controller {
                 $k++;
             }
         }
+        
+//           \Symfony\Component\VarDumper\VarDumper::dump($tabPrestas);
+//        return new Response ('');
+        
 
         $tabMessage = array();
         $tabPrestataires = array();
@@ -1448,6 +1453,7 @@ class ProgrammationBilanController extends Controller {
             $tabPrestataires[$i]["prestataire"] = $prestataire;
             $tabPrestataires[$i]["type"] = $tabPrestas[$k]["type"];
             $tabPrestataires[$i]["renseigner"] = "N";
+            $tabPrestataires[$i]["groupes"] = null;
             if ($pgProgLotPresta) {
                 if (count($pgProgLotPresta) == 1) {
                     $tabPrestataires[$i]["typePresta"] = $pgProgLotPresta[0]->getTypePresta();
@@ -1459,13 +1465,15 @@ class ProgrammationBilanController extends Controller {
             }
             $i++;
         }
-        for ($i = 0; $i < count($tabPrestataires); $i++) {
+        
+         for ($i = 0; $i < count($tabPrestataires); $i++) {
             $prestataire = $tabPrestataires[$i]["prestataire"];
             $j = 0;
             $tabGroupes = array();
-            foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
-                $pgProgLotGrparAnsByPrestataires = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotAnPrestaDftGrpparref($pgProgLotAn, $prestataire, $pgProgLotGrparAn->getGrparRef());
-                foreach ($pgProgLotGrparAnsByPrestataires as $pgProgLotGrparAnByPrestataire) {
+//            foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
+//                echo ('$pgProgLotAn : ' . $pgProgLotAn->getId() . ' $prestataire :  ' . $prestataire->getadrCorId() . '<br/>');
+                $pgProgLotGrparAnsByPrestataires = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotAnPrestaDft($pgProgLotAn, $prestataire);
+               foreach ($pgProgLotGrparAnsByPrestataires as $pgProgLotGrparAnByPrestataire) {
                     $tabGroupes[$j]["groupe"] = $pgProgLotGrparAnByPrestataire;
                     if ($tabGroupes[$j]["groupe"]->getGrparRef()->getSupport()) {
                         $tabGroupes[$j]['support'] = $tabGroupes[$j]["groupe"]->getGrparRef()->getSupport()->getNomSupport();
@@ -1538,10 +1546,12 @@ class ProgrammationBilanController extends Controller {
                     $tabGroupes[$j]["stations"] = $tabStations;
                     $j++;
                 }
-            }
+//            }
+//               \Symfony\Component\VarDumper\VarDumper::dump($tabGroupes);
+//        return new Response ('');
+     
             $tabPrestataires[$i]["groupes"] = $tabGroupes;
-            $i++;
-        }
+         }
 
         $chemin = '/base/extranet/Transfert/Sqe/csv';
         $fichier = 'bilan-prestataires-programmation-' . $pgProgLotAn->getAnneeProg() . '-' . $pgProgLotAnId . '.csv';
@@ -1555,7 +1565,7 @@ class ProgrammationBilanController extends Controller {
         $ligne = array('Programmation', 'Version', 'Lot',
             'Prestataire code', 'Prestataire nom',
             'Groupe', 'Libellé', 'Type', 'Support', 'Prestataire',
-            'Parametre', 'libellé', 'Fraction', 'Unité', 'Prestataire',
+//            'Parametre', 'libellé', 'Fraction', 'Unité', 'Prestataire',
             'Station', 'Libellé', 'Commune', 'Masse d\'eau', 'Rivière', 'Réseau',
             'Période', 'Date début', 'Date fin',
         );
@@ -1563,10 +1573,13 @@ class ProgrammationBilanController extends Controller {
             $ligne[$i] = \iconv("UTF-8", "Windows-1252//TRANSLIT", $ligne[$i]);
         }
         fputcsv($fichier_csv, $ligne, ';');
-
+        
+//        \Symfony\Component\VarDumper\VarDumper::dump($tabPrestataires);
+//        return new Response ('');
+        
         for ($i = 0; $i < count($tabPrestataires); $i++) {
             for ($j = 0; $j < count($tabPrestataires[$i]['groupes']); $j++) {
-                for ($k = 0; $k < count($tabPrestataires[$i]['groupes'][$j]['parametres']); $k++) {
+//                for ($k = 0; $k < count($tabPrestataires[$i]['groupes'][$j]['parametres']); $k++) {
                     for ($l = 0; $l < count($tabPrestataires[$i]['groupes'][$j]['stations']); $l++) {
                         for ($m = 0; $m < count($tabPrestataires[$i]['groupes'][$j]['stations'][$l]['periodes']); $m++) {
                             $ligne = array($pgProgLotAn->getAnneeProg(),
@@ -1579,11 +1592,11 @@ class ProgrammationBilanController extends Controller {
                                 $tabPrestataires[$i]['groupes'][$j]['groupe']->getGrparRef()->getTypeGrp(),
                                 $tabPrestataires[$i]['groupes'][$j]['support'],
                                 $tabPrestataires[$i]['groupes'][$j]['groupe']->getPrestaDft()->getNomCorres(),
-                                $tabPrestataires[$i]['groupes'][$j]['parametres'][$k]['parametre']->getCodeParametre()->getCodeParametre(),
-                                $tabPrestataires[$i]['groupes'][$j]['parametres'][$k]['parametre']->getCodeParametre()->getNomParametre(),
-                                $tabPrestataires[$i]['groupes'][$j]['parametres'][$k]['fraction'],
-                                $tabPrestataires[$i]['groupes'][$j]['parametres'][$k]['unite'],
-                                $tabPrestataires[$i]['groupes'][$j]['parametres'][$k]['parametre']->getPrestataire()->getNomCorres(),
+//                                $tabPrestataires[$i]['groupes'][$j]['parametres'][$k]['parametre']->getCodeParametre()->getCodeParametre(),
+//                                $tabPrestataires[$i]['groupes'][$j]['parametres'][$k]['parametre']->getCodeParametre()->getNomParametre(),
+//                                $tabPrestataires[$i]['groupes'][$j]['parametres'][$k]['fraction'],
+//                                $tabPrestataires[$i]['groupes'][$j]['parametres'][$k]['unite'],
+//                                $tabPrestataires[$i]['groupes'][$j]['parametres'][$k]['parametre']->getPrestataire()->getNomCorres(),
                                 $tabPrestataires[$i]['groupes'][$j]['stations'][$l]['station']->getCode(),
                                 $tabPrestataires[$i]['groupes'][$j]['stations'][$l]['station']->getLibelle(),
                                 $tabPrestataires[$i]['groupes'][$j]['stations'][$l]['station']->getNomCommune(),
@@ -1600,7 +1613,7 @@ class ProgrammationBilanController extends Controller {
                             fputcsv($fichier_csv, $ligne, ';');
                         }
                     }
-                }
+//                }
             }
         }
 

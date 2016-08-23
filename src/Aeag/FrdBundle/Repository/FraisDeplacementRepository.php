@@ -11,7 +11,6 @@ namespace Aeag\FrdBundle\Repository;
 use Doctrine\ORM\EntityRepository;
 use DoctrineExtensions\Query\Postgresql;
 
-
 /**
  * Class FraisDeplacementRepository
  * @package Aeag\FrdBundle\Repository
@@ -48,8 +47,8 @@ class FraisDeplacementRepository extends EntityRepository {
         $qb = $this->_em->createQuery($query);
         return $qb->getResult();
     }
-    
-     /**
+
+    /**
      *
      * @return array
      */
@@ -58,29 +57,29 @@ class FraisDeplacementRepository extends EntityRepository {
         $query = "select f";
         $query = $query . " from  Aeag\FrdBundle\Entity\FraisDeplacement f";
         $query = $query . " where f.id = " . $id;
-      
-       //print_r($query);
+
+        //print_r($query);
         $qb = $this->_em->createQuery($query);
         return $qb->getOneOrNullResult();
     }
-    
-     /**
+
+    /**
      *
      * @return array
      */
-    public function getFraisDeplacementByIdUser($id,$userId) {
+    public function getFraisDeplacementByIdUser($id, $userId) {
 
         $query = "select f";
         $query = $query . " from  Aeag\FrdBundle\Entity\FraisDeplacement f";
         $query = $query . " where f.id = " . $id;
         $query = $query . " and f.user = " . $userId;
-      
+
         //print_r($query);
         $qb = $this->_em->createQuery($query);
         return $qb->getOneOrNullResult();
     }
-    
-      /**
+
+    /**
      *
      * @return array
      */
@@ -88,84 +87,82 @@ class FraisDeplacementRepository extends EntityRepository {
 
         $query = "select f";
         $query = $query . " from  Aeag\FrdBundle\Entity\FraisDeplacement f";
-        $query = $query . " where f.dateDepart >= '" .$annee->format('Ymd') . "'";
-      
-       //print_r($query);
+        $query = $query . " where f.dateDepart >= '" . $annee->format('Ymd') . "'";
+
+        //print_r($query);
         $qb = $this->_em->createQuery($query);
         return $qb->getResult();
     }
-    
-       /**
+
+    /**
      *
      * @return array
      */
     public function getFraisDeplacementByAnnee($anneeDeb, $anneeFin) {
-        
-      
+
+
         $query = "select f";
         $query = $query . " from  Aeag\FrdBundle\Entity\FraisDeplacement f";
-        $query = $query . " where f.dateDepart >= '" .$anneeDeb->format('Ymd') . "'";
-        $query = $query . " and f.dateDepart <= '" .$anneeFin->format('Ymd') . "'";
-      
+        $query = $query . " where f.dateDepart >= '" . $anneeDeb->format('Ymd') . "'";
+        $query = $query . " and f.dateDepart <= '" . $anneeFin->format('Ymd') . "'";
+
         //print_r($query);
         $qb = $this->_em->createQuery($query);
-         return $qb->getResult();
+        return $qb->getResult();
     }
-    
-        /**
+
+    /**
      *
      * @return array
      */
     public function getFraisDeplacementByUserAnnee($userId, $anneeDeb, $anneeFin) {
-        
-      
+
+
         $query = "select f";
         $query = $query . " from  Aeag\FrdBundle\Entity\FraisDeplacement f";
-         $query = $query . " where f.user = " . $userId;
-        $query = $query . " and f.dateDepart >= '" .$anneeDeb->format('Ymd') . "'";
-        $query = $query . " and f.dateDepart <= '" .$anneeFin->format('Ymd') . "'";
-      
+        $query = $query . " where f.user = " . $userId;
+        $query = $query . " and f.dateDepart >= '" . $anneeDeb->format('Ymd') . "'";
+        $query = $query . " and f.dateDepart <= '" . $anneeFin->format('Ymd') . "'";
+
         //print_r($query);
         $qb = $this->_em->createQuery($query);
-         return $qb->getResult();
+        return $qb->getResult();
     }
-    
-    
-        /**
+
+    /**
      *
      * @return array
      */
     public function getAnnees() {
-        
-      
+
+
         $query = "select distinct f.dateDepart";
         $query = $query . " from  Aeag\FrdBundle\Entity\FraisDeplacement f";
-        $query = $query . " order by f.dateDepart" ;
-      
-       //print_r($query);
+        $query = $query . " order by f.dateDepart";
+
+        //print_r($query);
         $qb = $this->_em->createQuery($query);
         return $qb->getResult();
     }
-    
-         /**
+
+    /**
      *
      * @return array
      */
     public function getUserAnnees($userId) {
-        
-      
+
+
         $query = "select distinct f.dateDepart";
         $query = $query . " from  Aeag\FrdBundle\Entity\FraisDeplacement f";
         $query = $query . " where f.user = " . $userId;
-        $query = $query . " order by f.dateDepart" ;
-      
-       //print_r($query);
+        $query = $query . " order by f.dateDepart";
+
+        //print_r($query);
         $qb = $this->_em->createQuery($query);
         return $qb->getResult();
     }
-    
-    
-     /**
+
+    /**
      *
      * @return array
      */
@@ -177,7 +174,7 @@ class FraisDeplacementRepository extends EntityRepository {
         $query = $query . " and f.dateDepart = '" . $dateDepart->format('Y-m-d') . "'";
         $query = $query . " and f.heureDepart = '" . $heureDepart . "'";
         $query = $query . " order by f.dateDepart desc , f.heureDepart desc , f.dateRetour, f.heureRetour";
-      
+
         //print_r($query);
         $qb = $this->_em->createQuery($query);
         return $qb->getResult();
@@ -197,13 +194,13 @@ class FraisDeplacementRepository extends EntityRepository {
         $query = $query . " and f.dateRetour = '" . $dateRetour->format('Y-m-d') . "'";
         $query = $query . " and f.heureRetour = '" . $heureRetour . "'";
         $query = $query . " order by f.dateDepart desc , f.heureDepart desc , f.dateRetour, f.heureRetour";
-      
+
         //print_r($query);
         $qb = $this->_em->createQuery($query);
         return $qb->getResult();
     }
-    
-     /**
+
+    /**
      *
      * @return array
      */
@@ -219,24 +216,77 @@ class FraisDeplacementRepository extends EntityRepository {
         $qb = $this->_em->createQuery($query);
         return $qb->getResult();
     }
-    
-      /**
+
+    /**
      *
      * @return array
      */
-    public function getNbFraisDeplacementEnCoursByUserPhase($userId, $phaseId, $annee) {
+    public function getNbFraisDeplacementEnCoursByUserPhase($userId, $phaseId, $anneeDeb, $anneeFin) {
 
         $query = "select count(f.id)";
         $query = $query . " from Aeag\FrdBundle\Entity\FraisDeplacement f";
         $query = $query . " where f.user = " . $userId;
-        $query = $query . " and f.phase <  '" . $phaseId . "'";
-        $query = $query . " and f.dateDepart >= '" . $annee->format('Ymd') . "'";
+        $query = $query . " and f.phase <=  '" . $phaseId . "'";
+        $query = $query . " and f.dateDepart >= '" . $anneeDeb->format('Ymd') . "'";
+        $query = $query . " and f.dateRetour <= '" . $anneeFin->format('Ymd') . "'";
         //print_r($query);
         $qb = $this->_em->createQuery($query);
         return $qb->getSingleScalarResult();
     }
     
-      /**
+     /**
+     *
+     * @return array
+     */
+    public function getFraisDeplacementEnCoursByUserPhase($userId, $phaseId, $anneeDeb, $anneeFin) {
+
+        $query = "select f";
+        $query = $query . " from Aeag\FrdBundle\Entity\FraisDeplacement f";
+        $query = $query . " where f.user = " . $userId;
+        $query = $query . " and f.phase <=  '" . $phaseId . "'";
+        $query = $query . " and  f.dateDepart >= '" . $anneeDeb->format('Ymd') . "'";
+        $query = $query . " and f.dateRetour <= '" . $anneeFin->format('Ymd') . "'";
+        $query = $query . " order by f.dateDepart desc , f.heureDepart desc , f.dateRetour, f.heureRetour";
+       // print_r($query);
+        $qb = $this->_em->createQuery($query);
+       return $qb->getResult();
+    }
+    
+    /**
+     *
+     * @return array
+     */
+    public function getNbFraisDeplacementEnCoursByPhase($phaseId, $anneeDeb, $anneeFin) {
+
+        $query = "select count(f.id)";
+        $query = $query . " from Aeag\FrdBundle\Entity\FraisDeplacement f";
+       $query = $query . " where f.phase <=  '" . $phaseId . "'";
+        $query = $query . " and f.dateDepart >= '" . $anneeDeb->format('Ymd') . "'";
+        $query = $query . " and f.dateRetour <= '" . $anneeFin->format('Ymd') . "'";
+        //print_r($query);
+        $qb = $this->_em->createQuery($query);
+        return $qb->getSingleScalarResult();
+    }
+    
+     /**
+     *
+     * @return array
+     */
+    public function getFraisDeplacementEnCoursByPhase($phaseId, $anneeDeb, $anneeFin) {
+
+        $query = "select f";
+        $query = $query . " from Aeag\FrdBundle\Entity\FraisDeplacement f";
+       $query = $query . " where f.phase <=  '" . $phaseId . "'";
+        $query = $query . " and  f.dateDepart >= '" . $anneeDeb->format('Ymd') . "'";
+        $query = $query . " and f.dateRetour <= '" . $anneeFin->format('Ymd') . "'";
+        $query = $query . " order by f.dateDepart desc , f.heureDepart desc , f.dateRetour, f.heureRetour";
+       // print_r($query);
+        $qb = $this->_em->createQuery($query);
+       return $qb->getResult();
+    }
+
+
+    /**
      *
      * @return array
      */
@@ -252,8 +302,8 @@ class FraisDeplacementRepository extends EntityRepository {
         $qb = $this->_em->createQuery($query);
         return $qb->getResult();
     }
-    
-      /**
+
+    /**
      *
      * @return array
      */
@@ -272,8 +322,8 @@ class FraisDeplacementRepository extends EntityRepository {
         $qb = $this->_em->createQuery($query);
         return $qb->getResult();
     }
-    
-       /**
+
+    /**
      *
      * @return array
      */
@@ -291,8 +341,8 @@ class FraisDeplacementRepository extends EntityRepository {
         $qb = $this->_em->createQuery($query);
         return $qb->getResult();
     }
-    
-      /**
+
+    /**
      *
      * @return array
      */
@@ -301,13 +351,13 @@ class FraisDeplacementRepository extends EntityRepository {
         $query = "select count(f.id)";
         $query = $query . " from  Aeag\FrdBundle\Entity\FraisDeplacement f";
         $query = $query . " where f.etfrId = " . $etfrId;
-      
-       //print_r($query);
+
+        //print_r($query);
         $qb = $this->_em->createQuery($query);
-       return $qb->getSingleScalarResult();
+        return $qb->getSingleScalarResult();
     }
 
-     /**
+    /**
      *
      * @return array
      */
@@ -315,10 +365,16 @@ class FraisDeplacementRepository extends EntityRepository {
 
         $query = "select f";
         $query = $query . " from  Aeag\FrdBundle\Entity\FraisDeplacement f";
-        $query = $query . " where f.etfrId = " . $etfrId;
-      
-       //print_r($query);
+        if ($etfrId) {
+            $query = $query . " where f.etfrId = " . $etfrId;
+        } else {
+            $query = $query . " where f.etfrId is null";
+        }
+        $query = $query . " order by  f.dateDepart desc , f.heureDepart desc , f.dateRetour, f.heureRetour";
+
+        //print_r($query);
         $qb = $this->_em->createQuery($query);
-       return $qb->getResult();
+        return $qb->getResult();
     }
+
 }

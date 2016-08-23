@@ -217,14 +217,12 @@
         {# <a class="btn btn-primary pull-right" href="{{ path('AeagDecBundle_admin_pdfListeDechets') }}" title="Imprimer la lister"> 
                 <i class="fa fa-print"> Imprimer la liste</i>
          </a>#}
-        {% if  not app.session.get('evolution')%}
-            {%if stationAns | length%}  
+             {%if stationAns | length%}  
                 <a id="idTelechargerPeriodes" class="btn btn-success btn-telecharger btn-sm  pull-right" href="#" title="Télécharger les périodes">
                     <i class="fa fa-upload"></i> 
                 </a>
             {% endif %}
-        {% endif %}
-    </h3>
+     </h3>
 {%endblock panel_heading %}
 
 

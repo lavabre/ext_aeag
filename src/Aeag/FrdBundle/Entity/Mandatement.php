@@ -29,10 +29,7 @@ class Mandatement {
     /**
      * @ORM\Id
      * @ORM\Column(name="etfr_id", type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\SequenceGenerator(sequenceName="fraisDeplacement_seq", initialValue=1, allocationSize=1)
-     * ORM\GeneratedValue
-     */
+      */
     private $etfrId;
 
     /**

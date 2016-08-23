@@ -8,7 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Validator\Constraints\True;
-use  \Aeag\FrdBundle\Entity\EtatFrais;
+use Aeag\FrdBundle\Entity\EtatFrais;
 use Aeag\FrdBundle\Entity\FraisDeplacement;
 use Aeag\FrdBundle\Form\FraisDeplacement\FraisDeplacementType;
 use Aeag\FrdBundle\Form\FraisDeplacement\CompteType;
@@ -53,10 +53,10 @@ class FraisDeplacementController extends Controller {
         }
 
 
-        return $this->redirect($this->generateUrl('AeagFrdBundle_membre_consulterEtatFraisParAnnee', array('anneeSelect' => date_format($session->get('annee'), 'Y'))));
+        return $this->redirect($this->generateUrl('AeagFrdBundle_membre_consulterEtatFraisParAnnee', array('anneeSelect' => $session->get('anneeSelect'))));
     }
-    
-     public function consulterEtatFraisParAnneeAction($anneeSelect = null) {
+
+    public function consulterEtatFraisParAnneeAction($anneeSelect = null) {
 
         $user = $this->getUser();
         if (!$user) {
@@ -70,56 +70,131 @@ class FraisDeplacementController extends Controller {
         $emFrd = $this->getDoctrine()->getManager('frd');
 
         $repoEtatFrais = $emFrd->getRepository('AeagFrdBundle:EtatFrais');
+        $repoMandatement = $emFrd->getRepository('AeagFrdBundle:Mandatement');
         $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
         $repoPhase = $emFrd->getRepository('AeagFrdBundle:Phase');
         $repoUsers = $em->getRepository('AeagUserBundle:User');
         $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
 
-           if ($anneeSelect == '9999') {
-            $anneeSel = $session->get('annee');
+        if ($anneeSelect == '9999') {
+            $anneeSel = $session->get('anneeSelect');
         } else {
             $anneeSel = $anneeSelect;
         }
-  
-        $annee1 = $anneeSelect . '-01-01';
-        $annee2 = new \DateTime($annee1);
-        $annee3 = $annee2->format('Y');
-        $anneeDeb1 = $annee3 . '-01-01';
-        $anneeDeb = new \DateTime($anneeDeb1);
-        
+
+        $session->set('anneeSelect', $anneeSel);
+
+        $annee1 = $anneeSel . '-01-01';
+        $anneeDeb = new \DateTime($annee1);
+        $annee1 = $anneeSel . '-12-31';
+        $anneeFin = new \DateTime($annee1);
+
         $correspondant = $repoCorrespondant->getCorrespondantById($user->getCorrespondant());
-        $phase = $repoPhase->getPhaseByCode('40') ;
-        $nbFraisDeplacementEnCours = $repoFraisDeplacement->getNbFraisDeplacementEnCoursByUserPhase($user->getId(), $phase->getId(), $anneeDeb);
+        $phase = $repoPhase->getPhaseByCode('40');
+        $nbFraisDeplacementEnCours = $repoFraisDeplacement->getNbFraisDeplacementEnCoursByUserPhase($user->getId(), $phase->getId(), $anneeDeb, $anneeFin);
         $i = 0;
         $entities = array();
-        $etatFrais = new EtatFrais();
-        $phase = $repoPhase->getPhaseByCode('10') ;
-        $entities[$i]['etatFrais'] = $etatFrais ;
-        $entities[$i]['phase'] = $phase;
-        $entities[$i]['nbFraisDeplacements'] = $nbFraisDeplacementEnCours;
-        $i++;
+        if ($anneeSel == date_format($session->get('annee'), 'Y')) {
+            $etatFrais = new EtatFrais();
+            $phase = $repoPhase->getPhaseByCode('10');
+            $entities[$i]['etatFrais'] = $etatFrais;
+            $entities[$i]['mandatement'] =null;
+            $entities[$i]['phase'] = $phase;
+            $entities[$i]['nbFraisDeplacements'] = $nbFraisDeplacementEnCours;
+            $i++;
+        }
         $etatsFrais = $repoEtatFrais->getListeEtatFraisByCorrespondantAnnee($correspondant->getCorId(), $anneeSel);
         foreach ($etatsFrais as $etatFrais) {
-            // print_r('frais : '. $fraisDeplacement->getid() );
             $entities[$i]['etatFrais'] = $etatFrais;
-            if ( $etatFrais->getPhase() == '10'){
-                $codePhase = '40';
+            $mandatement = $repoMandatement->getMandatementByEtfrId($etatFrais->getId());
+            if ($mandatement){
+                $entities[$i]['mandatement'] = $mandatement;
             }else{
+                $entities[$i]['mandatement'] =null;
+            }
+             if ($etatFrais->getPhase() == '10') {
+                $codePhase = '40';
+            } else {
                 $codePhase = $etatFrais->getPhase();
             }
-            $phase = $repoPhase->getPhaseByCode($codePhase) ;
+            $phase = $repoPhase->getPhaseByCode($codePhase);
             $entities[$i]['phase'] = $phase;
             $nbFraisDeplacements = $repoFraisDeplacement->getNbFraisDeplacementByEtfrId($etatFrais->getId());
             $entities[$i]['nbFraisDeplacements'] = $nbFraisDeplacements;
             $i++;
         }
         usort($entities, create_function('$a,$b', 'return $a[\'etatFrais\']->getNum()-$b[\'etatFrais\']->getNum();'));
-        
+
+        $session->set('retour', $this->generateUrl('AeagFrdBundle_membre_consulterEtatFraisParAnnee', array('anneeSelect' => $session->get('anneeSelect'))));
+
         return $this->render('AeagFrdBundle:EtatFrais:consulterEtatFrais.html.twig', array(
                     'user' => $user,
                     'correspondant' => $correspondant,
                     'entities' => $entities,
                     'annee' => $anneeSelect
+        ));
+    }
+
+    public function consulterFraisDeplacementsParEtatFraisAction($etatFraisId = null) {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'Frais');
+        $session->set('controller', 'Admin');
+        $session->set('fonction', 'consulterFraisDeplacementsParEtatFrais');
+        $em = $this->get('doctrine')->getManager();
+        $emFrd = $this->getDoctrine()->getManager('frd');
+
+        $repoEtatFrais = $emFrd->getRepository('AeagFrdBundle:EtatFrais');
+        $repoMandatement = $emFrd->getRepository('AeagFrdBundle:Mandatement');
+        $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
+        $repoPhase = $emFrd->getRepository('AeagFrdBundle:Phase');
+        $repoUsers = $em->getRepository('AeagUserBundle:User');
+        $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
+
+        $correspondant = $repoCorrespondant->getCorrespondantById($user->getCorrespondant());
+        if ($etatFraisId) {
+            $etatFrais = $repoEtatFrais->getEtatFraisById($etatFraisId);
+             $mandatement = $repoMandatement->getMandatementByEtfrId($etatFrais->getId());
+             $fraisDeplacements = $repoFraisDeplacement->getFraisDeplacementByEtfrId($etatFrais->getId());
+        } else {
+            $etatFrais = null;
+            $mandatement = null;
+            $phase = $repoPhase->getPhaseByCode('40');
+            $annee1 = $session->get('anneeSelect') . '-01-01';
+            $anneeDeb = new \DateTime($annee1);
+            $annee1 = $session->get('anneeSelect') . '-12-31';
+            $anneeFin = new \DateTime($annee1);
+            $fraisDeplacements = $repoFraisDeplacement->getFraisDeplacementEnCoursByUserPhase($user->getId(), $phase->getId(), $anneeDeb, $anneeFin);
+        }
+
+        $i = 0;
+        $entities = array();
+        foreach ($fraisDeplacements as $fraisDeplacement) {
+            // print_r('frais : '. $fraisDeplacement->getid() );
+            $entities[$i][0] = $fraisDeplacement;
+            $user = $repoUsers->getUserById($fraisDeplacement->getUser());
+            $entities[$i][1] = $user;
+            if ($correspondant) {
+                $entities[$i][2] = $correspondant;
+            } else {
+                $entities[$i][2] = null;
+            }
+            $i++;
+        }
+
+        $session->set('retour1', $this->generateUrl('AeagFrdBundle_membre_consulterFraisDeplacementsParEtatFrais', array('etatFraisId' => $etatFraisId)));
+
+        return $this->render('AeagFrdBundle:EtatFrais:consulterFraisDeplacementsParEtatFrais.html.twig', array(
+                    'user' => $user,
+                    'correspondant' => $correspondant,
+                    'etatFrais' => $etatFrais,
+                    'mandatement' => $mandatement,
+                    'entities' => $entities,
+                    'annee' => $session->get('anneeSelect')
         ));
     }
 
@@ -536,26 +611,26 @@ class FraisDeplacementController extends Controller {
                                 $this->sendAccuseReception($fraisDeplacement->getId());
                                 $session->set('passage', '1');
                             }
-                           $this->sendAccuseResponsable($fraisDeplacement->getId());
-                       
+                            $this->sendAccuseResponsable($fraisDeplacement->getId());
+
 //                        return $this->redirect($this->generateUrl('AeagFrdBundle_declaration_pdf', array('id' => $fraisDeplacement->getId())));
-                        $entity = array();
-                        $entity[0] = $fraisDeplacement;
-                        $user = $repoUsers->getUserById($fraisDeplacement->getUser());
-                        $entity[1] = $user;
-                        $dept = $repoDept->getDepartementByDept($fraisDeplacement->getdepartement());
-                        $entity[2] = $dept;
-                        $pdf = new PDF('P', 'mm', 'A4');
-                        $pdf->StartPageGroup();
-                        $pdf->AddPage($entity);
-                        $pdf->SetFont('Arial', '', 10);
-                        $pdf->Formatage($entity);
-                        $fichier = 'FRD_' . '_' . $entity[1]->getUsername();
-                        $fichier = $fichier . '_' . $entity[1]->getPrenom() . '_' . $entity[0]->getId() . '.pdf';
-                        $pdf->Output($fichier, 'D');
-                         }
+                            $entity = array();
+                            $entity[0] = $fraisDeplacement;
+                            $user = $repoUsers->getUserById($fraisDeplacement->getUser());
+                            $entity[1] = $user;
+                            $dept = $repoDept->getDepartementByDept($fraisDeplacement->getdepartement());
+                            $entity[2] = $dept;
+                            $pdf = new PDF('P', 'mm', 'A4');
+                            $pdf->StartPageGroup();
+                            $pdf->AddPage($entity);
+                            $pdf->SetFont('Arial', '', 10);
+                            $pdf->Formatage($entity);
+                            $fichier = 'FRD_' . '_' . $entity[1]->getUsername();
+                            $fichier = $fichier . '_' . $entity[1]->getPrenom() . '_' . $entity[0]->getId() . '.pdf';
+                            $pdf->Output($fichier, 'D');
+                        }
                     }
-                     return $this->redirect($this->generateUrl('aeag_frd'));
+                    return $this->redirect($this->generateUrl('aeag_frd'));
                 }
             }
         }

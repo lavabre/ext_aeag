@@ -4,16 +4,18 @@
        <li>
          <a href="{{ path('aeag_frd') }}">Accueil</a> 
        </li>
+         <li>
+         <a href="{{ app.session.get('retour') }}">Etats</a> 
+       </li>
+     {#    <li>
+         <a href="{{ app.session.get('retour1') }}">Missions</a> 
+        </li>#}
        <li class="active">
           {%if entity.0.id %}
-             <a href="{{ path('AeagFrdBundle_membre_fraisDeplacement', { 'id': entity.0.id }) }}">
-               Frais de déplacement n° {{entity.0.id}} de {{ entity.1.username }} {{ entity.1.prenom }}
-            </a>    
+                Demande n° {{entity.0.id}} de {{ entity.1.username }} {{ entity.1.prenom }}
           {%else%}
-            <a href="{{ path('AeagFrdBundle_membre_fraisDeplacement') }}">
-               Nouvelle demande
-            </a> 
-          {%endif%}
+                Nouvelle demande
+           {%endif%}
        </li>
 {% endblock breadcrumb %}
 
@@ -21,9 +23,9 @@
 {%block panel_heading %}
            <h3>
                 {%if entity.0.id %}
-                Modification de l'état de frais de déplacement n° {{entity.0.id}} de {{ entity.1.username }} {{ entity.1.prenom }}
+                Modification de la demande  n° {{entity.0.id}} de {{ entity.1.username }} {{ entity.1.prenom }}
                 {%else%}
-                Création d'un état de frais de déplacement de {{ user.username }} {{ user.prenom }}
+                Création d'une demande de {{ user.username }} {{ user.prenom }}
                 {%endif%}
            </h3>
  {%endblock panel_heading %}
@@ -37,14 +39,14 @@
                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                      <h4 class="modal-title" id="ValiderLabel">
                         {%if entity.0.id %}
-                                Validation de l'état de frais n° {{ entity.0.id}} de {{ entity.1.username }} {{ entity.1.prenom }}
+                                Validation de la demande n° {{ entity.0.id}} de {{ entity.1.username }} {{ entity.1.prenom }}
                           {%else%}
-                               validation de l'état de frais de déplacement de {{ user.username }} {{ user.prenom }}
+                               validation de la demande de {{ user.username }} {{ user.prenom }}
                         {%endif%}
                      </h4>
                    </div>
                    <div class="modal-body">
-                        <h4>Cliquer sur 'Valider' pour confirmer la validation de l'état et transmettre à l'agence de l'eau votre demande de remboursement</h4>
+                        <h4>Cliquer sur 'Valider' pour confirmer la validation de la demande et  la transmettre à l'agence de l'eau</h4>
                         </br></br>
                         <div class="alert alert-danger">
                             <p>
