@@ -19,8 +19,7 @@ class AdminController extends Controller {
             return $this->render('AeagFrdBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->clear();
-        $session->set('menu', 'Frais');
+       $session->set('menu', 'Frais');
         $session->set('controller', 'Admin');
         $session->set('fonction', 'index');
         $em = $this->get('doctrine')->getManager();
@@ -36,8 +35,9 @@ class AdminController extends Controller {
         }
         $annee = new \DateTime($annee->getLibelle());
         $session->set('annee', $annee);
-        return $this->redirect($this->generateUrl('AeagFrdBundle_admin_consulterFraisDeplacementsParAnnee', array('anneeSelect' => date_format($session->get('annee'), 'Y'))));
-    }
+        
+        return $this->redirect($this->generateUrl('AeagFrdBundle_admin_consulterEtatFraisParAnnee', array('anneeSelect' => date_format($session->get('annee'), 'Y'))));
+        }
 
     public function validerFraisDeplacementAction() {
 

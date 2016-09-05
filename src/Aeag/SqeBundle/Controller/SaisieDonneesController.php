@@ -55,13 +55,13 @@ class SaisieDonneesController extends Controller {
             $nbPrelevCorrectes = $repoPgCmdPrelev->getCountPgCmdPrelevByLotanPhase($pgProgLotAn, $pgProgPhase);
             $tabProgLotAns[$i]['nbDemandes'] = $nbPrelevs;
             $tabProgLotAns[$i]['nbDemandeCorrectes'] = $nbPrelevCorrectes;
-//            if ($pgProgLotAn->getid() == 327){
+//            if ($pgProgLotAn->getid() ==502){
 //            echo('lot : ' . $pgProgLotAn->getLot()->getNomLot() . ' demandes : ' . $tabProgLotAns[$i]['nbDemandes'] . ' correctes : ' . $tabProgLotAns[$i]['nbDemandeCorrectes'] . '</br>');
 //            }
             $i++;
         }
-        
-       // return new Response(' ');
+
+        // return new Response(' ');
 
         return $this->render('AeagSqeBundle:SaisieDonnees:index.html.twig', array('user' => $user,
                     'lotans' => $tabProgLotAns));
@@ -506,18 +506,14 @@ class SaisieDonneesController extends Controller {
                 }
                 sort($tabPgCmdDemandes);
                 $tabStations[$is]['pgCmdDemandes'] = $tabPgCmdDemandes;
-//                if ( $station->getCode() == '05235070'){
-//                     \Symfony\Component\VarDumper\VarDumper::dump($tabStations);
-//                     return new Response('');
-//                }
+
                 $is++;
             }
         }
 
-//
 //        \Symfony\Component\VarDumper\VarDumper::dump($tabStations);
 //        return new Response('');
-
+        
         $dateDepot = new \DateTime();
         $chemin = '/base/extranet/Transfert/Sqe/csv';
         $fichier = $user->getId() . '_' . $dateDepot->format('Y-m-d-H') . '_rapport.csv';

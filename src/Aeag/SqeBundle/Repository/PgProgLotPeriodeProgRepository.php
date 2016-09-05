@@ -40,9 +40,14 @@ class PgProgLotPeriodeProgRepository extends EntityRepository {
     }
 
     public function getPgProgLotPeriodeProgByStationAn($PgProgLotStationAn) {
-        $query = "select p";
-        $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotPeriodeProg p";
-        $query = $query . " where p.stationAn = " . $PgProgLotStationAn->getId();
+        $query = "select prog";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotPeriodeProg prog";
+        $query = $query . "        ,Aeag\SqeBundle\Entity\PgProgLotPeriodeAn peran";
+        $query = $query . "        ,Aeag\SqeBundle\Entity\PgProgPeriodes per";
+        $query = $query . " where prog.stationAn = " . $PgProgLotStationAn->getId();
+        $query = $query . " and  peran.id = prog.periodan";
+        $query = $query . " and  per.id = peran.periode";
+        $query = $query . " order by per.numPeriode";
         $qb = $this->_em->createQuery($query);
         //print_r($query);
         return $qb->getResult();

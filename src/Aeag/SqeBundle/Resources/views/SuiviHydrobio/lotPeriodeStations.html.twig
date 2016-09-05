@@ -173,7 +173,7 @@
 
 {%block panel_heading %}
     <h3 class="page-title text-center">
-        Liste des stations entre le  {{ periodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;et&nbsp;&nbsp; {{ dateFin | date("d/m/Y") }}</br>
+        Liste des stations entre le  {{ periodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;et&nbsp;&nbsp; {{ dateFin | date("d/m/Y") }}<br/>
         {{ lotan.lot.nomLot }} - {{ lotan.anneeProg }}  - version :  {{ lotan.version }}
     </h3>
 {%endblock panel_heading %}
@@ -205,7 +205,6 @@
                     <thead>
                         <tr>
                             <th>Action</th>
-                            <th>Avis</th>
                             <th>Station</th>
                             <th>Libellé</th>
                             <th>Réseau</th>
@@ -264,33 +263,6 @@
                                                 {% endif %}
 
                                             </td>
-                                            {%if cmdPrelev.suiviPrels.0.suiviPrel | length%}
-                                                  {% if cmdPrelev.suiviPrels.0.suiviPrel.avis == 'F' %}
-                                                       <td  class="success">
-                                                           {% if cmdPrelev.suiviPrels.0.suiviPrel.validAuto == 'O' %}
-                                                               Favorable (auto)
-                                                           {% elseif  cmdPrelev.suiviPrels.0.suiviPrel.validAuto == 'N' %}
-                                                                Favorable (manu)
-                                                           {% else %}
-                                                                Favorable
-                                                           {% endif %}
-                                                       </td>
-                                                   {% elseif cmdPrelev.suiviPrels.0.suiviPrel.avis == 'D' %}
-                                                       <td  class="danger">
-                                                             {% if cmdPrelev.suiviPrels.0.suiviPrel.validAuto == 'O' %}
-                                                               Défavorable (auto)
-                                                           {% elseif  cmdPrelev.suiviPrels.0.suiviPrel.validAuto == 'N' %}
-                                                                Défavorable (manu)
-                                                           {% else %}
-                                                                Défavorable
-                                                           {% endif %}
-                                                        </td>
-                                                    {% else %}
-                                                         <td></td>
-                                                {% endif %}
-                                            {% else %}
-                                                <td></td>
-                                             {% endif %}
                                             <td>
                                                  <a  href="{{ station.lien }}" target="_blank" title="Localisation">{{ station.station.code }}</a>
                                             </td>
@@ -303,7 +275,7 @@
                                             <td>
                                                 {%if  cmdPrelev.autrePrelevs %}
                                                     {#      {% for autrePrelev in cmdPrelev.autrePrelevs  %}#}
-                                                    {{ cmdPrelev.autrePrelevs.0.datePrel | date("d/m/Y H:i") }} : {{ cmdPrelev.autrePrelevs.0.support }} </br>
+                                                    {{ cmdPrelev.autrePrelevs.0.datePrel | date("d/m/Y H:i") }} : {{ cmdPrelev.autrePrelevs.0.support }} <br/>
                                                     {#    {% endfor %}#}
                                                 {% endif %}
                                             </td>

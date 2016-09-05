@@ -1718,6 +1718,123 @@ class ProgrammationGroupeController extends Controller {
         }
     }
 
+    public function telechargerAction($lotan = null) {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'programmation');
+        $session->set('controller', 'ProgrammationGroupe');
+        $session->set('fonction', 'telecharger');
+
+        //recupération des parametres
+        $pgProgLotAnId = $lotan;
+
+        $em = $this->get('doctrine')->getManager();
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+        $repoPgProgLotAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotAn');
+        $repoPgProgLotGrparAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotGrparAn');
+        $repoPgProgLotParamAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotParamAn');
+        $repoPgProgGrpParamRef = $emSqe->getRepository('AeagSqeBundle:PgProgGrpParamRef');
+        $repoPgSandreFractions = $emSqe->getRepository('AeagSqeBundle:PgSandreFractions');
+        $repoPgSandreUnites = $emSqe->getRepository('AeagSqeBundle:PgSandreUnites');
+
+
+        $pgProgLotAn = $repoPgProgLotAn->getPgProgLotAnById($pgProgLotAnId);
+        $pgProgLot = $pgProgLotAn->getLot();
+        $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
+        $pgProgLotGrparAns = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotan($pgProgLotAn);
+        asort($pgProgLotGrparAns);
+
+
+        // récuperation des groupes de parametres liés au lot et type de milieu
+        $tabGroupes = array();
+        $i = 0;
+        foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
+            $tabGroupes[$i]['groupe'] = $pgProgLotGrparAn;
+            if ($tabGroupes[$i]['groupe']->getGrparRef()->getSupport()){
+                $tabGroupes[$i]['support'] = $tabGroupes[$i]['groupe']->getGrparRef()->getSupport()->getNomSupport();
+            }else{
+                $tabGroupes[$i]['support'] = null;
+            }
+            $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
+            asort($pgProgLotParamAns);
+            $tabParametres = array();
+            $j = 0;
+            foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
+                $tabParametres[$j]['parametre'] = $pgProgLotParamAn;
+                if ($pgProgLotParamAn->getCodeFraction()) {
+                    $pgSandreFraction = $repoPgSandreFractions->getPgSandreFractionsByCodeFraction($pgProgLotParamAn->getCodeFraction());
+                    $tabParametres[$j]['fraction'] = $pgSandreFraction->getNomFraction();
+                } else {
+                    $tabParametres[$j]['fraction'] = null;
+                }
+                if ($pgProgLotParamAn->getCodeUnite()) {
+                    $pgSandreUnite = $repoPgSandreUnites->getPgSandreUnitesByCodeUnite($pgProgLotParamAn->getCodeUnite());
+                    $tabParametres[$j]['unite'] = $pgSandreUnite->getNomUnite();
+                } else {
+                    $tabParametres[$j]['unite'] = null;
+                }
+                $j++;
+            }
+            $tabGroupes[$i]['parametres'] = $tabParametres;
+            $i++;
+        }
+        $chemin = '/base/extranet/Transfert/Sqe/csv';
+        $fichier = 'groupes-parametres-programmation-' . $pgProgLotAn->getAnneeProg() . '-' . $pgProgLotAnId . '.csv';
+        $fullFileName = $chemin . '/' . $fichier;
+        $ext = strtolower(pathinfo($fullFileName, PATHINFO_EXTENSION));
+        if (file_exists($fullFileName)) {
+            unlink($fullFileName);
+        }
+        $fichier_csv = fopen($fullFileName, 'w+');
+        // Entete
+        $ligne = array('Programmation', 'Version', 'Lot', 'Groupe', 'Libellé', 'Type', 'Support', 'Prestataire', 'Parametre', 'libellé', 'Fraction', 'Unité', 'Prestataire');
+        for ($i = 0; $i < count($ligne); $i++) {
+            $ligne[$i] = \iconv("UTF-8", "Windows-1252//TRANSLIT", $ligne[$i]);
+        }
+        fputcsv($fichier_csv, $ligne, ';');
+
+        for ($i = 0; $i < count($tabGroupes); $i++) {
+            for ($j = 0; $j < count($tabGroupes[$i]['parametres']); $j++) {
+                $ligne = array($pgProgLotAn->getAnneeProg(),
+                    $pgProgLotAn->getversion(),
+                    $pgProgLotAn->getLot()->getNomLot(),
+                    $tabGroupes[$i]['groupe']->getGrparRef()->getCodeGrp(),
+                    $tabGroupes[$i]['groupe']->getGrparRef()->getLibelleGrp(),
+                    $tabGroupes[$i]['groupe']->getGrparRef()->getTypeGrp(),
+                    $tabGroupes[$i]['support'],
+                    $tabGroupes[$i]['groupe']->getPrestaDft()->getNomCorres(),
+                    $tabGroupes[$i]['parametres'][$j]['parametre']->getCodeParametre()->getCodeParametre(),
+                    $tabGroupes[$i]['parametres'][$j]['parametre']->getCodeParametre()->getNomParametre(),
+                    $tabGroupes[$i]['parametres'][$j]['fraction'],
+                    $tabGroupes[$i]['parametres'][$j]['unite'],
+                    $tabGroupes[$i]['parametres'][$j]['parametre']->getPrestataire()->getNomCorres(),
+                );
+                for ($k = 0; $k < count($ligne); $k++) {
+                    $ligne[$k] = \iconv("UTF-8", "Windows-1252//TRANSLIT", $ligne[$k]);
+                }
+                fputcsv($fichier_csv, $ligne, ';');
+            }
+        }
+
+        fclose($fichier_csv);
+
+//        \Symfony\Component\VarDumper\VarDumper::dump($tabGroupes);
+//        return new Response ('');
+//         return new Response ('fichier : ' . $chemin . '/' . $fichier . ' ext : ' . $ext. ' size : ' . filesize($chemin . '/' . $fichier));
+
+        \header("Cache-Control: no-cahe, must-revalidate");
+        \header('Content-Type', 'text/' . $ext);
+        \header('Content-disposition: attachment; filename="' . $fichier . '"');
+        \header('Expires: 0');
+        \header('Content-Length: ' . filesize($chemin . '/' . $fichier));
+        readfile($chemin . '/' . $fichier);
+        exit();
+    }
+
     public static function wd_remove_accents($str, $charset = 'utf-8') {
 
 

@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Validator\Constraints\True;
+use Aeag\FrdBundle\Entity\EtatFrais;
 use Aeag\FrdBundle\Entity\FraisDeplacement;
 use Aeag\FrdBundle\Form\FraisDeplacement\FraisDeplacementType;
 use Aeag\FrdBundle\Form\FraisDeplacement\CompteType;
@@ -34,8 +35,8 @@ class FraisDeplacementController extends Controller {
      * @Template()
      */
     public function indexAction() {
-        
-             $user = $this->getUser();
+
+        $user = $this->getUser();
         if (!$user) {
             return $this->render('AeagFrdBundle:Default:interdit.html.twig');
         }
@@ -46,51 +47,160 @@ class FraisDeplacementController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emFrd = $this->getDoctrine()->getManager('frd');
 
-      
-//        if ($session->get('passage') == '1') {
-//            $session->set('passage', '0');
-//        } else {
-//            $session->set('notice', '');
-//        }
-
         if (is_object($user)) {
             $mes = AeagController::notificationAction($user, $em, $session);
             $mes1 = AeagController::messageAction($user, $em, $session);
         }
 
-//        $annee = $emFrd->getRepository('AeagFrdBundle:Parametre')->findOneBy(array('code' => 'ANNEE'));
-//        $annee = new \DateTime($annee->getLibelle());
-//
-//
-//        $annee1 = $annee->format('Y');
-//        $annee2 = $annee1 - 2 . '-01-01';
-//        $annee = new \DateTime($annee2);
-//
-//
-//        $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
-//        $repoUsers = $em->getRepository('AeagUserBundle:User');
-//
-//        $fraisDeplacements = $repoFraisDeplacement->getListeFraisDeplacementByUser($user->getId(), $annee);
-//        $i = 0;
-//        $entities = array();
-//        foreach ($fraisDeplacements as $fraisDeplacement) {
-//            $entities[$i][0] = $fraisDeplacement;
-//            $membre = $repoUsers->getUserById($fraisDeplacement->getUser());
-//            $entities[$i][1] = $membre;
-//            $i++;
-//        }
-//        return $this->render('AeagFrdBundle:FraisDeplacement:index.html.twig', array(
-//                    'user' => $user,
-//                    'entities' => $entities
-//        ));
-        
-        return $this->redirect($this->generateUrl('AeagFrdBundle_membre_consulterFraisDeplacementsParAnnee', array('anneeSelect' => date_format($session->get('annee'),'Y'))));
-        
+
+        return $this->redirect($this->generateUrl('AeagFrdBundle_membre_consulterEtatFraisParAnnee', array('anneeSelect' => $session->get('anneeSelect'))));
     }
-    
+
+    public function consulterEtatFraisParAnneeAction($anneeSelect = null) {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'Frais');
+        $session->set('controller', 'Admin');
+        $session->set('fonction', 'consulterEtatFraisParAnnee');
+        $em = $this->get('doctrine')->getManager();
+        $emFrd = $this->getDoctrine()->getManager('frd');
+
+        $repoEtatFrais = $emFrd->getRepository('AeagFrdBundle:EtatFrais');
+        $repoMandatement = $emFrd->getRepository('AeagFrdBundle:Mandatement');
+        $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
+        $repoPhase = $emFrd->getRepository('AeagFrdBundle:Phase');
+        $repoUsers = $em->getRepository('AeagUserBundle:User');
+        $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
+
+        if ($anneeSelect == '9999') {
+            $anneeSel = $session->get('anneeSelect');
+        } else {
+            $anneeSel = $anneeSelect;
+        }
+
+        $session->set('anneeSelect', $anneeSel);
+
+        $annee1 = $anneeSel . '-01-01';
+        $anneeDeb = new \DateTime($annee1);
+        $annee1 = $anneeSel . '-12-31';
+        $anneeFin = new \DateTime($annee1);
+
+        $correspondant = $repoCorrespondant->getCorrespondantById($user->getCorrespondant());
+        $phase = $repoPhase->getPhaseByCode('40');
+        $nbFraisDeplacementEnCours = $repoFraisDeplacement->getNbFraisDeplacementEnCoursByUserPhase($user->getId(), $phase->getId(), $anneeDeb, $anneeFin);
+        $i = 0;
+        $entities = array();
+        if ($anneeSel == date_format($session->get('annee'), 'Y')) {
+            $etatFrais = new EtatFrais();
+            $phase = $repoPhase->getPhaseByCode('10');
+            $entities[$i]['etatFrais'] = $etatFrais;
+            $entities[$i]['mandatement'] =null;
+            $entities[$i]['phase'] = $phase;
+            $entities[$i]['nbFraisDeplacements'] = $nbFraisDeplacementEnCours;
+            $i++;
+        }
+        $etatsFrais = $repoEtatFrais->getListeEtatFraisByCorrespondantAnnee($correspondant->getCorId(), $anneeSel);
+        foreach ($etatsFrais as $etatFrais) {
+            $entities[$i]['etatFrais'] = $etatFrais;
+            $mandatement = $repoMandatement->getMandatementByEtfrId($etatFrais->getId());
+            if ($mandatement){
+                $entities[$i]['mandatement'] = $mandatement;
+            }else{
+                $entities[$i]['mandatement'] =null;
+            }
+             if ($etatFrais->getPhase() == '10') {
+                $codePhase = '40';
+            } else {
+                $codePhase = $etatFrais->getPhase();
+            }
+            $phase = $repoPhase->getPhaseByCode($codePhase);
+            $entities[$i]['phase'] = $phase;
+            $nbFraisDeplacements = $repoFraisDeplacement->getNbFraisDeplacementByEtfrId($etatFrais->getId());
+            $entities[$i]['nbFraisDeplacements'] = $nbFraisDeplacements;
+            $i++;
+        }
+        usort($entities, create_function('$a,$b', 'return $a[\'etatFrais\']->getNum()-$b[\'etatFrais\']->getNum();'));
+
+        $session->set('retour', $this->generateUrl('AeagFrdBundle_membre_consulterEtatFraisParAnnee', array('anneeSelect' => $session->get('anneeSelect'))));
+
+        return $this->render('AeagFrdBundle:EtatFrais:consulterEtatFrais.html.twig', array(
+                    'user' => $user,
+                    'correspondant' => $correspondant,
+                    'entities' => $entities,
+                    'annee' => $anneeSelect
+        ));
+    }
+
+    public function consulterFraisDeplacementsParEtatFraisAction($etatFraisId = null) {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'Frais');
+        $session->set('controller', 'Admin');
+        $session->set('fonction', 'consulterFraisDeplacementsParEtatFrais');
+        $em = $this->get('doctrine')->getManager();
+        $emFrd = $this->getDoctrine()->getManager('frd');
+
+        $repoEtatFrais = $emFrd->getRepository('AeagFrdBundle:EtatFrais');
+        $repoMandatement = $emFrd->getRepository('AeagFrdBundle:Mandatement');
+        $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
+        $repoPhase = $emFrd->getRepository('AeagFrdBundle:Phase');
+        $repoUsers = $em->getRepository('AeagUserBundle:User');
+        $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
+
+        $correspondant = $repoCorrespondant->getCorrespondantById($user->getCorrespondant());
+        if ($etatFraisId) {
+            $etatFrais = $repoEtatFrais->getEtatFraisById($etatFraisId);
+             $mandatement = $repoMandatement->getMandatementByEtfrId($etatFrais->getId());
+             $fraisDeplacements = $repoFraisDeplacement->getFraisDeplacementByEtfrId($etatFrais->getId());
+        } else {
+            $etatFrais = null;
+            $mandatement = null;
+            $phase = $repoPhase->getPhaseByCode('40');
+            $annee1 = $session->get('anneeSelect') . '-01-01';
+            $anneeDeb = new \DateTime($annee1);
+            $annee1 = $session->get('anneeSelect') . '-12-31';
+            $anneeFin = new \DateTime($annee1);
+            $fraisDeplacements = $repoFraisDeplacement->getFraisDeplacementEnCoursByUserPhase($user->getId(), $phase->getId(), $anneeDeb, $anneeFin);
+        }
+
+        $i = 0;
+        $entities = array();
+        foreach ($fraisDeplacements as $fraisDeplacement) {
+            // print_r('frais : '. $fraisDeplacement->getid() );
+            $entities[$i][0] = $fraisDeplacement;
+            $user = $repoUsers->getUserById($fraisDeplacement->getUser());
+            $entities[$i][1] = $user;
+            if ($correspondant) {
+                $entities[$i][2] = $correspondant;
+            } else {
+                $entities[$i][2] = null;
+            }
+            $i++;
+        }
+
+        $session->set('retour1', $this->generateUrl('AeagFrdBundle_membre_consulterFraisDeplacementsParEtatFrais', array('etatFraisId' => $etatFraisId)));
+
+        return $this->render('AeagFrdBundle:EtatFrais:consulterFraisDeplacementsParEtatFrais.html.twig', array(
+                    'user' => $user,
+                    'correspondant' => $correspondant,
+                    'etatFrais' => $etatFrais,
+                    'mandatement' => $mandatement,
+                    'entities' => $entities,
+                    'annee' => $session->get('anneeSelect')
+        ));
+    }
+
     public function consulterFraisDeplacementsParAnneeAction($anneeSelect = null) {
-        
-       $user = $this->getUser();
+
+        $user = $this->getUser();
         if (!$user) {
             return $this->render('AeagFrdBundle:Default:interdit.html.twig');
         }
@@ -104,13 +214,13 @@ class FraisDeplacementController extends Controller {
         $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
         $repoUsers = $em->getRepository('AeagUserBundle:User');
         $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
-        
+
         if ($anneeSelect == '9999') {
             $anneeSel = $session->get('annee');
         } else {
             $annee = $anneeSelect . '-01-01';
             $anneeSel = new \DateTime($annee);
-         }
+        }
 
         $annee1 = $anneeSel->format('Y');
         $anneeDeb1 = $annee1 . '-01-01';
@@ -118,7 +228,7 @@ class FraisDeplacementController extends Controller {
         $anneeDeb = new \DateTime($anneeDeb1);
         $anneeFin = new \DateTime($anneeFin1);
 
-         $fraisDeplacements = $repoFraisDeplacement->getFraisDeplacementByUserAnnee($user->getId(),$anneeDeb, $anneeFin);
+        $fraisDeplacements = $repoFraisDeplacement->getFraisDeplacementByUserAnnee($user->getId(), $anneeDeb, $anneeFin);
         $i = 0;
         $entities = array();
         foreach ($fraisDeplacements as $fraisDeplacement) {
@@ -152,8 +262,8 @@ class FraisDeplacementController extends Controller {
     }
 
     public function validerFraisDeplacementAction($id) {
-        
-         $user = $this->getUser();
+
+        $user = $this->getUser();
         if (!$user) {
             return $this->render('AeagFrdBundle:Default:interdit.html.twig');
         }
@@ -164,7 +274,7 @@ class FraisDeplacementController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emFrd = $this->getDoctrine()->getManager('frd');
 
-      
+
         $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
         $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
         $repoPhase = $this->getDoctrine()->getManager('frd')->getRepository('AeagFrdBundle:Phase');
@@ -225,8 +335,8 @@ class FraisDeplacementController extends Controller {
     }
 
     public function devaliderFraisDeplacementAction($id) {
-        
-          $user = $this->getUser();
+
+        $user = $this->getUser();
         if (!$user) {
             return $this->render('AeagFrdBundle:Default:interdit.html.twig');
         }
@@ -237,7 +347,7 @@ class FraisDeplacementController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emFrd = $this->getDoctrine()->getManager('frd');
 
-          $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
+        $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
         $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
         $repoPhase = $this->getDoctrine()->getManager('frd')->getRepository('AeagFrdBundle:Phase');
         $repoUsers = $em->getRepository('AeagUserBundle:User');
@@ -307,8 +417,8 @@ class FraisDeplacementController extends Controller {
      * @Method("DELETE")
      */
     public function deleteFraisDeplacementAction(Request $request, $id) {
-        
-          $user = $this->getUser();
+
+        $user = $this->getUser();
         if (!$user) {
             return $this->render('AeagFrdBundle:Default:interdit.html.twig');
         }
@@ -369,8 +479,8 @@ class FraisDeplacementController extends Controller {
      * or modify a FraisDeplacement entity.
      */
     public function fraisDeplacementAction($id, Request $request) {
-        
-          $user = $this->getUser();
+
+        $user = $this->getUser();
         if (!$user) {
             return $this->render('AeagFrdBundle:Default:interdit.html.twig');
         }
@@ -380,8 +490,8 @@ class FraisDeplacementController extends Controller {
         $session->set('fonction', 'fraisDeplacement');
         $em = $this->get('doctrine')->getManager();
         $emFrd = $this->getDoctrine()->getManager('frd');
-        
-         $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
+
+        $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
         $repoPhase = $this->getDoctrine()->getManager('frd')->getRepository('AeagFrdBundle:Phase');
         $repoUsers = $em->getRepository('AeagUserBundle:User');
         $repoDept = $em->getRepository('AeagAeagBundle:Departement');
@@ -433,6 +543,13 @@ class FraisDeplacementController extends Controller {
                 if ($interval->format('%R%a') < 0) {
                     $constraint = new True(array(
                         'message' => 'La date de départ ne peut être supérieure à la date de retour'
+                    ));
+                    $erreurDate = $this->get('validator')->validateValue(false, $constraint);
+                }
+
+                if ($interval->format('%R%a') > 30) {
+                    $constraint = new True(array(
+                        'message' => 'La date de départ et la date de retour ne peut  être supérieure à 30 jours'
                     ));
                     $erreurDate = $this->get('validator')->validateValue(false, $constraint);
                 }
@@ -495,9 +612,24 @@ class FraisDeplacementController extends Controller {
                                 $session->set('passage', '1');
                             }
                             $this->sendAccuseResponsable($fraisDeplacement->getId());
+
+//                        return $this->redirect($this->generateUrl('AeagFrdBundle_declaration_pdf', array('id' => $fraisDeplacement->getId())));
+                            $entity = array();
+                            $entity[0] = $fraisDeplacement;
+                            $user = $repoUsers->getUserById($fraisDeplacement->getUser());
+                            $entity[1] = $user;
+                            $dept = $repoDept->getDepartementByDept($fraisDeplacement->getdepartement());
+                            $entity[2] = $dept;
+                            $pdf = new PDF('P', 'mm', 'A4');
+                            $pdf->StartPageGroup();
+                            $pdf->AddPage($entity);
+                            $pdf->SetFont('Arial', '', 10);
+                            $pdf->Formatage($entity);
+                            $fichier = 'FRD_' . '_' . $entity[1]->getUsername();
+                            $fichier = $fichier . '_' . $entity[1]->getPrenom() . '_' . $entity[0]->getId() . '.pdf';
+                            $pdf->Output($fichier, 'D');
                         }
                     }
-
                     return $this->redirect($this->generateUrl('aeag_frd'));
                 }
             }
@@ -521,8 +653,8 @@ class FraisDeplacementController extends Controller {
      * @Template()
      */
     public function viewFraisDeplacementAction($id) {
-        
-           $user = $this->getUser();
+
+        $user = $this->getUser();
         if (!$user) {
             return $this->render('AeagFrdBundle:Default:interdit.html.twig');
         }
@@ -532,8 +664,8 @@ class FraisDeplacementController extends Controller {
         $session->set('fonction', 'viewfraisDeplacement');
         $em = $this->get('doctrine')->getManager();
         $emFrd = $this->getDoctrine()->getManager('frd');
-        
-           $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
+
+        $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
         $repoUsers = $em->getRepository('AeagUserBundle:User');
         $repoDept = $em->getRepository('AeagAeagBundle:Departement');
 
@@ -591,8 +723,8 @@ class FraisDeplacementController extends Controller {
      *  Fichier PDF
      */
     public function pdfAction($id) {
-        
-           $user = $this->getUser();
+
+        $user = $this->getUser();
         if (!$user) {
             return $this->render('AeagFrdBundle:Default:interdit.html.twig');
         }
@@ -642,8 +774,8 @@ class FraisDeplacementController extends Controller {
      */
 
     public function sendAccuseReception($id) {
-        
-           $user = $this->getUser();
+
+        $user = $this->getUser();
         if (!$user) {
             return $this->render('AeagFrdBundle:Default:interdit.html.twig');
         }
@@ -654,7 +786,7 @@ class FraisDeplacementController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emFrd = $this->getDoctrine()->getManager('frd');
 
-         $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
+        $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
         $repoUsers = $em->getRepository('AeagUserBundle:User');
         $repoDept = $em->getRepository('AeagAeagBundle:Departement');
 
@@ -714,8 +846,8 @@ class FraisDeplacementController extends Controller {
      */
 
     public function sendAccuseResponsable($id) {
-        
-            $user = $this->getUser();
+
+        $user = $this->getUser();
         if (!$user) {
             return $this->render('AeagFrdBundle:Default:interdit.html.twig');
         }
@@ -726,7 +858,7 @@ class FraisDeplacementController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emFrd = $this->getDoctrine()->getManager('frd');
 
-         $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
+        $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
         $repoUsers = $em->getRepository('AeagUserBundle:User');
         $repoDept = $em->getRepository('AeagAeagBundle:Departement');
 
@@ -763,8 +895,8 @@ class FraisDeplacementController extends Controller {
     }
 
     public function envoyerMessageAction(Request $request) {
-        
-           $user = $this->getUser();
+
+        $user = $this->getUser();
         if (!$user) {
             return $this->render('AeagFrdBundle:Default:interdit.html.twig');
         }
@@ -844,6 +976,5 @@ class FraisDeplacementController extends Controller {
                     'form' => $form->createView()
         ));
     }
-
 
 }

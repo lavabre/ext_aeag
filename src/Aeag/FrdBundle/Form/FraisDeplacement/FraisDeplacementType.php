@@ -58,7 +58,8 @@ class FraisDeplacementType extends AbstractType
             ->add('trainTotal',  'number', array('required' => false,'invalid_message' => 'Le prix du train est incorrect'))
             ->add('trainClasse',  'choice', array('choices'   => array('1' => '1ere', '2' => '2eme'),
                                                    'required' => false,
-                                                   'empty_value' => false,))
+                                                   'empty_value' => false,
+                                                    'data'  => '2'))
             ->add('trainCouchette', 'choice', array('choices'   => array('O' => 'Oui', 'N' => 'Non'),
                                                     'required' => false,
                                                     'empty_value' => false))

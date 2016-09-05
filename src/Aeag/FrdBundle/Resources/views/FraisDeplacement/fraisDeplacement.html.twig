@@ -4,16 +4,18 @@
        <li>
          <a href="{{ path('aeag_frd') }}">Accueil</a> 
        </li>
+         <li>
+         <a href="{{ app.session.get('retour') }}">Etats</a> 
+       </li>
+     {#    <li>
+         <a href="{{ app.session.get('retour1') }}">Missions</a> 
+        </li>#}
        <li class="active">
           {%if entity.0.id %}
-             <a href="{{ path('AeagFrdBundle_membre_fraisDeplacement', { 'id': entity.0.id }) }}">
-               Frais de déplacement n° {{entity.0.id}} de {{ entity.1.username }} {{ entity.1.prenom }}
-            </a>    
+                Demande n° {{entity.0.id}} de {{ entity.1.username }} {{ entity.1.prenom }}
           {%else%}
-            <a href="{{ path('AeagFrdBundle_membre_fraisDeplacement') }}">
-               Nouvelle demande
-            </a> 
-          {%endif%}
+                Nouvelle demande
+           {%endif%}
        </li>
 {% endblock breadcrumb %}
 
@@ -21,9 +23,9 @@
 {%block panel_heading %}
            <h3>
                 {%if entity.0.id %}
-                Modification de l'état de frais de déplacement n° {{entity.0.id}} de {{ entity.1.username }} {{ entity.1.prenom }}
+                Modification de la demande  n° {{entity.0.id}} de {{ entity.1.username }} {{ entity.1.prenom }}
                 {%else%}
-                Création d'un état de frais de déplacement de {{ user.username }} {{ user.prenom }}
+                Création d'une demande de {{ user.username }} {{ user.prenom }}
                 {%endif%}
            </h3>
  {%endblock panel_heading %}
@@ -37,14 +39,14 @@
                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                      <h4 class="modal-title" id="ValiderLabel">
                         {%if entity.0.id %}
-                                Validation de l'état de frais n° {{ entity.0.id}} de {{ entity.1.username }} {{ entity.1.prenom }}
+                                Validation de la demande n° {{ entity.0.id}} de {{ entity.1.username }} {{ entity.1.prenom }}
                           {%else%}
-                               validation de l'état de frais de déplacement de {{ user.username }} {{ user.prenom }}
+                               validation de la demande de {{ user.username }} {{ user.prenom }}
                         {%endif%}
                      </h4>
                    </div>
                    <div class="modal-body">
-                        <h4>Cliquer sur 'Valider' pour confirmer la validation de l'état et transmettre à l'agence de l'eau votre demande de remboursement</h4>
+                        <h4>Cliquer sur 'Valider' pour confirmer la validation de la demande et  la transmettre à l'agence de l'eau</h4>
                         </br></br>
                         <div class="alert alert-danger">
                             <p>
@@ -699,15 +701,16 @@
       </div>
    </div>
  </div>
+                                                     
+          <div class="form-actions fluid center">
+              <div class="col-md-offset-5 col-md-9">
+                  {#   <button type="submit" class="btn btn-warning"><i class="fa fa-save"></i> Enregister</button>#}
+                    <a class="btn btn-success" data-toggle="modal" href="#Valider" id="idBtValider"><i class="fa fa-check"></i> Valider</a>
+                    <a class="btn btn-danger" href="{{ path('aeag_frd') }}"><i class="fa fa-power-off"></i> Quitter</a>
+              </div>
+          </div>
             
-     <div class="form-group">
-        <div class="col-xs-offset-3 col-xs-9">
-           <button type="submit" class="btn btn-warning"><i class="fa fa-save"></i> Enregister</button>
-           <a class="btn btn-success" data-toggle="modal" href="#Valider"><i class="fa fa-check"></i> Valider</a>
-           <a class="btn btn-danger" href="{{ path('aeag_frd') }}"><i class="fa fa-power-off"></i> Annuler</a>
-        </div>
-     </div>
-     
+         
      <div class="hide">
      {{ form_rest(form) }}
      </div>
@@ -720,9 +723,9 @@
   <div class="row">
          <div class="col-md-12 pull-left text-info">
            <ul class="list-inline">
-            <li><a class="btn btn-warning btn-xs" href="#" title="Consulter"><i class="fa fa-save"></i></a> Enregistrer votre saisie</li>
+         {#   <li><a class="btn btn-warning btn-xs" href="#" title="Consulter"><i class="fa fa-save"></i></a> Enregistrer votre saisie</li>#}
             <li><a class="btn btn-success btn-xs" href="#" title="Valider"> <i class="fa fa-check"></i></a> Valider et transmettre à l'agence de l'eau</li>
-            <li><a class="btn btn-danger btn-xs" href="#" title="Supprimer"><i class="fa fa-trash-o"></i></a> Annuler votre saisie et retour à l'accueil</li>
+            <li><a class="btn btn-danger btn-xs" href="#" title="Quitter"><i class="fa fa-trash-o"></i></a> Quitter votre saisie et retour à l'accueil</li>
          </ul>  
         </div>
       </div>  
@@ -810,12 +813,11 @@
                    $("#idSousTheme" ).html( responseData ); 
               });
           } );  
-   
-         
-       
           
           
           $('#btValider').click( function() {
+            $('#Valider').modal('hide');
+            $('#idBtValider').hide();
              $('#valider').val('O');
              $('form').submit();
              return false;

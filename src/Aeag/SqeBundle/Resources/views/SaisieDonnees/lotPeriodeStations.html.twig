@@ -67,7 +67,7 @@
 
 {%block panel_heading %}
     <h3 class="page-title text-center">
-        Liste des stations entre le  {{ periodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;et&nbsp;&nbsp; {{periodeAn.periode.dateFin | date("d/m/Y") }}</br>
+        Liste des stations entre le  {{ periodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;et&nbsp;&nbsp; {{periodeAn.periode.dateFin | date("d/m/Y") }}<br/>
         du lot  {{ lotan.lot.nomLot }} - {{ lotan.anneeProg }}  - version :  {{ lotan.version }}</td></tr>
 </h3>
 {%endblock panel_heading %}
@@ -111,7 +111,7 @@
                             {% for station in stations %}
                                 {% for demande in station.pgCmdDemandes %}
                                     {% for cmdPrelev in demande.pgCmdPrelevs %}
-                                        {% if cmdPrelev.nbParametresTerrain != 'O' or   cmdPrelev.nbParametresAnalyse != 'O'%}
+                                       {# {% if cmdPrelev.nbParametresTerrain != 'O' or   cmdPrelev.nbParametresAnalyse != 'O'%}#}
                                             {# {% if is_granted('ROLE_ADMINSQE')  or ( pgProgWebUser.prestataire == demande.prestataire )%}#}
                                             {% if station.passage == 0 %}
                                                 {% if cmdPrelev.devalider == 'O'%}
@@ -242,7 +242,7 @@
                                                     {% endif %}
                                                 </td>
                                             </tr>
-                                       {% endif %}
+                                     {#  {% endif %}#}
                                     {% endfor %}
                                 {% endfor %}
                             {% endfor %}
@@ -310,7 +310,7 @@
                     html = 'Station : ' + '{{ station.station.code }}' + ' ' + '{{ station.station.libelle }}'
                     $('#idHeaderCommentaire').html(html);
                     html = '<h4>Prélèvement ' + {{ cmdPrelev.cmdPrelev.id }} + ' prévu le  ' + {{ cmdPrelev.cmdPrelev.datePrelev | date("d/m/Y") }} + '</h4>';
-                    html += '</br></br>';
+                    html += '<br/><br/>';
                     html += '<textarea id="idTextareaCommenataire"  name="textareaCommentaire" rows="10" cols="110"></textarea>'
                     $('#idBodyCommentaire').html(html);
                     $('#modal-commentaire').modal('toggle');

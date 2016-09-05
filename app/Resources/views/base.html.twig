@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
         <link rel="icon" type="image/x-icon" href="{{ asset('bundles/aeagaeag/images/favicon.ico') }}" />
         <title>{% block title %}Agence de l'eau Adour-garonne{% endblock %}</title>
         <!--<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.0/css/jquery.dataTables.css">-->
@@ -40,16 +40,16 @@
             <div class="page-header-ie8">
             <![endif]-->
              <div class="row">
-                 <div class="col-xs-1">
+                 <div class="col-md-1">
                      <a class="navbar-brand" href="http://www.eau-adour-garonne.fr" target="_target">
-                        <img class=img-responsive" id="logo" src="{{ asset('bundles/aeagaeag/images/logoAEAG2010.jpg') }}" alt="Site Aeag">
+                        <img class="img-responsive" id="logo" src="{{ asset('bundles/aeagaeag/images/logoAEAG2010.jpg') }}" alt="Site Aeag">
                      </a> 
                  </div>
-                 <div class="col-xs-9 hidden-xs text-center">
-                     <h2>Agence de l'eau Adour-Garonne</br>{% block titre %}'{% endblock titre %}</h2>
+                 <div class="col-md-9 hidden-xs text-center">
+                     <h2>Agence de l'eau Adour-Garonne<br/>{% block titre %}'{% endblock titre %}</h2>
                  </div>
-                 <div class="col-xs-2  text-right">
-                      </br>
+                 <div class="col-md-2  text-right">
+                      <br/>
                        {% block message_admin %}{% endblock message_admin %}
                       {% block inbox_notificaton %}
                      <ul class="nav navbar-nav navbar-right">
@@ -232,7 +232,7 @@
                 </ol> 
            {% endblock breadcrumbAll %}
             
-            <div class="container">
+            <div class="container-fluid">
                     
                      	{#<!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
                          {%if (app.session.get('messageAdmin') | length) > 0 and is_granted('ROLE_SQE') and not is_granted('ROLE_ADMINSQE') %}
@@ -335,12 +335,16 @@
                           
                           {% endblock modalAll %}
                                 
-                        <div class="panel panel-group">
-                           <div id="idPanelHeading" class="panel-heading">{% block panel_heading %}panel title{% endblock panel_heading %}</div>
-                           <div id="panel-body" class="panel-body small">
-                                {% block content %}Panel content {% endblock content %}
+                       <div class="row responsive">
+                           <div class="col-md-12 col-md-12">
+                                <div class="panel panel-group">
+                                   <div id="idPanelHeading" class="panel-heading">{% block panel_heading %}panel title{% endblock panel_heading %}</div>
+                                   <div id="panel-body" class="panel-body small">
+                                        {% block content %}Panel content {% endblock content %}
+                                   </div>
+                                </div>
                            </div>
-                        </div>
+                       </div>
                                  
                  </div>
            

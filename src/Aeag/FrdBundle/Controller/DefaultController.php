@@ -42,6 +42,7 @@ class DefaultController extends Controller {
 
         $annee = new \DateTime($annee->getLibelle());
         $session->set('annee', $annee);
+         $session->set('anneeSelect', date_format($session->get('annee'), 'Y'));
 
 
         if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMINFRD')) {
@@ -66,10 +67,11 @@ class DefaultController extends Controller {
                 $nbAnnees++;
             }
         }
-//                                    \Symfony\Component\VarDumper\VarDumper::dump($tabAnnees);
-//                                    return new Response ('');   
         $session->set('annees', $tabAnnees);
 
+//                                    \Symfony\Component\VarDumper\VarDumper::dump($tabAnnees);
+//                                    return new Response ('');   
+        
         $message = $emFrd->getRepository('AeagFrdBundle:Parametre')->findOneBy(array('code' => 'LIB_MESSAGE'));
         if (strlen($message->getLibelle()) > 0) {
             $session->set('messageAdmin', $message->getLibelle());
@@ -88,8 +90,7 @@ class DefaultController extends Controller {
         }
 
         if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMINFRD')) {
-            return $this->redirect($this->generateUrl('AeagFrdBundle_admin', array(
-                                'user' => $user)));
+            return $this->redirect($this->generateUrl('AeagFrdBundle_admin'));
         }
 
         return $this->redirect($this->generateUrl('AeagFrdBundle_membre'));

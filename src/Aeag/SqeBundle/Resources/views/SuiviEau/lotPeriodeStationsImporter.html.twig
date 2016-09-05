@@ -21,7 +21,7 @@
 <div class="form-group">
     <div id="idImportMessage" class="col-xs-offset-3 col-xs-5 alert alert-warning text-danger text-center" role="alert"></div>
     <div id="idImportProgress" class="col-xs-offset-3 col-xs-5 alert alert-info"><progress></progress></div>
-    </br></br>
+    <br/><br/>
 </div>
 
 
@@ -93,10 +93,10 @@
                             $('#idImportMessage').show();
                             $('#idImportMessage').empty().append(html).show();
                      }else{
-                            var html = "</br>";
+                            var html = "<br/>";
                             for (var ii = 0; ii < tabRapports.length; ii++){
                                     var rapport = tabRapports[ii];
-                                    html = html + rapport + "</br>" ;
+                                    html = html + rapport + "<br/>" ;
                              }
                              erreur = true;
                             $('#idImportMessage').show();

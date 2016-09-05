@@ -14,7 +14,7 @@
                   </div>
               </div>
               </h5>
-              </br>
+              <br/>
               <h4 class="modal-title text-center" id="idTitreStationsSelectionnes">
                     Liste des stations sélectionnées
               </h4>
@@ -40,7 +40,7 @@
                                               {% for periodes in  prog.periodes %}
                                                    {% if periodes.codeStatut.codeStatut != 'INV' %}
                                                       {{periodes.periode.labelPeriode }}&nbsp;&nbsp;
-                                                        (du {{ periodes.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;au&nbsp;&nbsp; {{ periodes.periode.dateFin | date("d/m/Y") }})</br>
+                                                        (du {{ periodes.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;au&nbsp;&nbsp; {{ periodes.periode.dateFin | date("d/m/Y") }})<br/>
                                                    {% endif %}
                                               {% endfor %}
                                              </td>
