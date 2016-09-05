@@ -60,7 +60,7 @@ class ExporterDonneesBrutesCommand extends AeagCommand {
         $this->getContainer()->get('aeag_sqe.process_rai')->createFileDonneesBrutes($fullFileName, $donneesBrutes);
         // Rajouter un fichier pdf et générer une archive zip au lieu d'un csv
         $nomFichierPdf = $this->getContainer()->getParameter('repertoire_echange').'AvertissementDonneesBrutes.pdf';
-        $files = array($fullFileName, $nomFichierPdf);
+        $files = array($nomFichierCsv => $fullFileName, 'AvertissementDonneesBrutes.pdf' => $nomFichierPdf);
         $nomArchive = str_replace('.csv', '.zip', $nomFichierCsv);
         $fullNomArchive = $pathBase.$nomArchive;
         if ($this->createZip($files, $fullNomArchive)) {
@@ -101,10 +101,10 @@ class ExporterDonneesBrutesCommand extends AeagCommand {
 	//if files were passed in...
 	if(is_array($files)) {
 		//cycle through each file
-		foreach($files as $file) {
+		foreach($files as $fileName => $file) {
 			//make sure the file exists
 			if(file_exists($file)) {
-				$validFiles[] = $file;
+				$validFiles[$fileName] = $file;
 			}
 		}
 	}
@@ -116,8 +116,8 @@ class ExporterDonneesBrutesCommand extends AeagCommand {
 			return false;
 		}
 		//add the files
-		foreach($validFiles as $file) {
-			$zip->addFile($file,$file);
+		foreach($validFiles as $fileName => $file) {
+			$zip->addFile($file,$fileName);
 		}
 		//debug
 		//echo 'The zip archive contains ',$zip->numFiles,' files with a status of ',$zip->status;
