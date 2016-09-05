@@ -274,9 +274,9 @@
                                             </td>
                                             <td>
                                                 {%if  cmdPrelev.autrePrelevs %}
-                                                    {#      {% for autrePrelev in cmdPrelev.autrePrelevs  %}#}
-                                                    {{ cmdPrelev.autrePrelevs.0.datePrel | date("d/m/Y H:i") }} : {{ cmdPrelev.autrePrelevs.0.support }} <br/>
-                                                    {#    {% endfor %}#}
+                                                    {% for autrePrelev in cmdPrelev.autrePrelevs  %}
+                                                    {{ autrePrelev.datePrel | date("d/m/Y H:i") }} : {{ autrePrelev.support }} <br/>
+                                                    {% endfor %}
                                                 {% endif %}
                                             </td>
                                             {%if not cmdPrelev.suiviPrels.0.suiviPrel | length %}
