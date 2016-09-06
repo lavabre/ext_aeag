@@ -96,10 +96,7 @@
 
     <ul class="dropdown-menu">
         <li><a href="{{ path('AeagSqeBundle_echangefichiers_index')}}">Echange de fichiers</a></li>
-        {% if  not app.session.get('evolution')%}
-            <li><a href="{{ path('AeagSqeBundle_exportdonneesbrutes_index')}}">Export données brutes</a></li>
-        {%endif%}
-        
+        <li><a href="{{ path('AeagSqeBundle_exportdonneesbrutes_index')}}">Export données brutes</a></li>
     </ul>
 </li>
 
