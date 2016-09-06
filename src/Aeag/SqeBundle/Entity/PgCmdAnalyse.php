@@ -46,6 +46,7 @@ class PgCmdAnalyse {
     /**
      * @var \PgSandreFractions
      *
+     * @ORM\Id
      * @ORM\ManyToOne(targetEntity="PgSandreFractions")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="code_fraction", referencedColumnName="code_fraction")
