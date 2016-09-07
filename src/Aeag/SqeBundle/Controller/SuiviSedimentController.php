@@ -37,7 +37,8 @@ class SuiviSedimentController extends Controller {
         $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
         $repoPgProgLotPeriodeProg = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeProg');
         $repoPgProgPrestaTypfic = $emSqe->getRepository('AeagSqeBundle:PgProgPrestaTypfic');
-
+		$repoPgProgLotGrparAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotGrparAn');
+		
         if ($user->hasRole('ROLE_ADMINSQE')) {
             $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByAdmin();
         } else if ($user->hasRole('ROLE_PRESTASQE')) {
@@ -53,32 +54,47 @@ class SuiviSedimentController extends Controller {
         foreach ($pgProgLotAns as $pgProgLotAn) {
             $pgProgLot = $pgProgLotAn->getLot();
             if ($pgProgLot->getTypeEchange() == 'Edilabo_SED') {
-                $pgProgLotPeriodeAns = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnByLotan($pgProgLotAn);
-                if (count($pgProgLotPeriodeAns) > 0) {
-                    $trouve = false;
-                    foreach ($pgProgLotPeriodeAns as $pgProgLotPeriodeAn) {
-                        $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByPeriodeAn($pgProgLotPeriodeAn);
-                        if (count($pgProgLotPeriodeProgs) > 0) {
-                            $trouve = true;
-                            break;
-                        }
-                    }
-                    if ($trouve) {
-                        $trouve = false;
-                        foreach ($pgProgLot->getGrparRef() as $pgProgGrpParamRef) {
-                            if ($pgProgGrpParamRef->getSupport()) {
-                                if ($pgProgGrpParamRef->getSupport()->getCodeSupport() == '6') {
-                                    $trouve = true;
-                                    break;
-                                }
-                            }
-                        }
-                        if ($trouve) {
-                            $tabProglotAns[$i] = $pgProgLotAn;
-                            $i++;
-                        }
-                    }
-                }
+				$trouveSup6 = false;
+                $pgProgLotGrparAns = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotan($pgProgLotAn);
+				if (count($pgProgLotGrparAns) > 0) {
+					foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
+						if ($pgProgLotGrparAn->getGrparRef()->getSupport()) {
+							if ($pgProgLotGrparAn->getGrparRef()->getSupport()->getCodeSupport() == '6') {
+								$trouveSup6 = true;
+								break;
+							}
+						}
+					}
+				}
+				if ($trouveSup6) {
+					$trouve = false;
+					$pgProgLotPeriodeAns = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnByLotan($pgProgLotAn);
+					if (count($pgProgLotPeriodeAns) > 0) {
+						foreach ($pgProgLotPeriodeAns as $pgProgLotPeriodeAn) {
+							$pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByPeriodeAn($pgProgLotPeriodeAn);
+							if (count($pgProgLotPeriodeProgs) > 0) {
+								$trouve = true;
+								break;
+							}
+						}
+						//if ($trouve) {
+							/*$trouve = false;
+							foreach ($pgProgLot->getGrparRef() as $pgProgGrpParamRef) {
+								if ($pgProgGrpParamRef->getSupport()) {
+									if ($pgProgGrpParamRef->getSupport()->getCodeSupport() == '6') {
+										$trouve = true;
+										break;
+									}
+								}
+							}*/
+							if ($trouve) {
+								$tabProglotAns[$i] = $pgProgLotAn;
+								$i++;
+							}
+						//}
+					}
+				}
+				
             }
         }
 
