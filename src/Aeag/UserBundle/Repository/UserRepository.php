@@ -139,7 +139,7 @@ class UserRepository extends EntityRepository {
      */
     public function getUsersByRole($role) {
 
-        $query = "select u";
+        $query = "select distinct u";
         $query = $query . " from Aeag\UserBundle\Entity\User u";
         $query = $query . " where u.roles like '%" . $role . "%'";
      
