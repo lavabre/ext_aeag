@@ -16,7 +16,6 @@ class DefaultController extends Controller {
         
         $user = $this->getUser();
         $session = $this->get('session');
-        $session->clear();
         $session->set('appli', 'dec');
         $session->set('retourErreur', $this->generateUrl('aeag_dec'));
         $session->set('menu', 'index');
@@ -24,7 +23,7 @@ class DefaultController extends Controller {
         $session->set('fonction', 'index');
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
-
+     
         $ua = $this->getBrowser();
 //        $yourbrowser= "Your browser: " . $ua['name'] . " " . $ua['version'] . " on " .$ua['platform'] . " reports: <br >" . $ua['userAgent'];
 //        print_r($yourbrowser);

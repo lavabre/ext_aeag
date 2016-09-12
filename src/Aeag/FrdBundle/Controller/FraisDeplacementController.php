@@ -19,6 +19,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Aeag\AeagBundle\Controller\AeagController;
 use Aeag\AeagBundle\Entity\Message;
 use Aeag\AeagBundle\Entity\Notification;
+use Aeag\UserBundle\Entity\Statistiques;
 
 /**
  * FraisDeplacement controller.

@@ -36,7 +36,6 @@ class DefaultController extends Controller {
         $session->set('fonction', 'index');
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
-        $session->clear();
         $session->set('appli', 'edl');
         $session->set('retourErreur', $this->generateUrl('aeag_edl'));
 
@@ -70,7 +69,7 @@ class DefaultController extends Controller {
 
 
         return $this->render('AeagEdlBundle:Default:index.html.twig', array(
-                    'form' => $form->createView(),
+                    'form' => $form->createView()
         ));
     }
 

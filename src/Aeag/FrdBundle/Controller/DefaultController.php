@@ -19,8 +19,7 @@ class DefaultController extends Controller {
             return $this->render('AeagFrdBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->clear();
-        $session->set('menu', 'Frais');
+       $session->set('menu', 'Frais');
         $session->set('controller', 'Default');
         $session->set('fonction', 'index');
         $em = $this->get('doctrine')->getManager();

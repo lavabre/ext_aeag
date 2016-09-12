@@ -9,6 +9,7 @@ use Aeag\FrdBundle\DependencyInjection\PDF;
 use Aeag\AeagBundle\Entity\Message;
 use Aeag\AeagBundle\Entity\Notification;
 use Aeag\AeagBundle\Controller\AeagController;
+use Aeag\UserBundle\Entity\Statistiques;
 
 class AdminController extends Controller {
 
@@ -24,6 +25,9 @@ class AdminController extends Controller {
         $session->set('fonction', 'index');
         $em = $this->get('doctrine')->getManager();
         $emFrd = $this->getDoctrine()->getManager('frd');
+        
+        $repoStatistiques = $em->getRepository('AeagUserBundle:Statistiques');
+        $nbStatistiques = $repoStatistiques->getNbStatistiques();
 
         $repoParametre = $emFrd->getRepository('AeagFrdBundle:Parametre');
 
@@ -36,7 +40,10 @@ class AdminController extends Controller {
         $annee = new \DateTime($annee->getLibelle());
         $session->set('annee', $annee);
         
-        return $this->redirect($this->generateUrl('AeagFrdBundle_admin_consulterEtatFraisParAnnee', array('anneeSelect' => date_format($session->get('annee'), 'Y'))));
+        return $this->redirect($this->generateUrl('AeagFrdBundle_admin_consulterEtatFraisParAnnee', 
+                array('anneeSelect' => date_format($session->get('annee'), 'Y'),
+                     'nbStatistiques' => $nbStatistiques
+                )));
         }
 
     public function validerFraisDeplacementAction() {

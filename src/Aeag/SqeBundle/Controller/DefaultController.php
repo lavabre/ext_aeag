@@ -20,7 +20,7 @@ class DefaultController extends Controller {
 
         $user = $this->getUser();
         $session = $this->get('session');
-        $session->clear();
+      //  $session->clear();
         $session->set('retourErreur', $this->generateUrl('aeag_sqe'));
         $session->set('controller', 'default');
         $session->set('fonction', 'index');
@@ -28,10 +28,12 @@ class DefaultController extends Controller {
         $emSqe = $this->get('doctrine')->getManager('sqe');
         $factory = $this->get('security.encoder_factory');
 
+  
         $repoParametre = $emSqe->getRepository('AeagSqeBundle:Parametre');
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
         $repoPgProgPrestaTypfic = $emSqe->getRepository('AeagSqeBundle:PgProgPrestaTypfic');
 
+        
         $annee = $repoParametre->getParametreByCode('ANNEE');
         if (!$annee) {
             $this->initBase($emSqe, $em);
@@ -137,7 +139,9 @@ class DefaultController extends Controller {
         $session->set('suiviSED', $suiviSED);
         $session->set('suiviEau', $suiviEau);
 
-        return $this->render('AeagSqeBundle:Default:index.html.twig', array('suiviHb' => $suiviHb, 'suiviDonnees' => $suiviDonnees));
+        return $this->render('AeagSqeBundle:Default:index.html.twig',
+                array('suiviHb' => $suiviHb,
+                         'suiviDonnees' => $suiviDonnees));
     }
 
     public function envoyerMessageAction(Request $request) {
