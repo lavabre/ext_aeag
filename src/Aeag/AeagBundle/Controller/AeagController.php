@@ -89,7 +89,7 @@ class AeagController extends Controller {
             $em->flush();
         }
         
-          $statistiquesActuel = $repoStatistiques->getStatistiquesByUserDateConnexion(0, new \DateTime());
+        $statistiquesActuel = $repoStatistiques->getStatistiquesByUserDateConnexion($user->getId(), new \DateTime());
         if (!$statistiquesActuel) {
             $statistiques->setAppli($session->get('appli'));
             $statistiques->setDateDebutConnexion(new \DateTime());
