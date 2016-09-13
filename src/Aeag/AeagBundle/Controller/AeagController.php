@@ -85,14 +85,19 @@ class AeagController extends Controller {
             $statistiques = new Statistiques();
             $statistiques->setUser($user->getId());
             $statistiques->setNbConnexion(0);
+            $em->persist($statistiques);
+            $em->flush();
         }
-        $statistiques->setAppli($session->get('appli'));
-        $statistiques->setDateDebutConnexion(new \DateTime());
-        $statistiques->setDateFinConnexion(null);
-        $statistiques->setNbConnexion($statistiques->getNbConnexion() + 1);
-        $em->persist($statistiques);
-        $em->flush();
-
+        
+          $statistiquesActuel = $repoStatistiques->getStatistiquesByUserDateConnexion(0, new \DateTime());
+        if (!$statistiquesActuel) {
+            $statistiques->setAppli($session->get('appli'));
+            $statistiques->setDateDebutConnexion(new \DateTime());
+            $statistiques->setNbConnexion($statistiques->getNbConnexion() + 1);
+            $em->persist($statistiques);
+            $em->flush();
+        }
+      
         $nbStatistiques = $repoStatistiques->getNbStatistiques();
         $session->set('nbStatistiques', $nbStatistiques);
 

@@ -31,25 +31,39 @@ class StatistiquesController extends Controller {
         $repoStatistiques = $em->getRepository('AeagUserBundle:Statistiques');
         $repoUsers = $em->getRepository('AeagUserBundle:User');
 
-        $statistiques = $repoStatistiques->getStatistiques();
-        $tabStats = array();
-        $i = 0;
-        foreach ($statistiques as $statistique) {
-            $tabStats[$i]['stat'] = $statistique;
-            $utilisateur = $repoUsers->getUserById($statistique->getUser());
-            if ($utilisateur) {
-                $tabStats[$i]['user'] = $utilisateur;
-            } else {
-                $tabStats[$i]['user'] = null;
+        $roles = $user->getRoles();
+        $admin = false;
+        foreach ($roles as $role) {
+            if (strstr($role, 'ADMIN')) {
+                $admin = true;
+                break;
             }
-            $i++;
         }
-        
-        $session->set('retour',$this->generateUrl('AeagUserBundle_Statistiques'));
 
-        return $this->render('AeagUserBundle:Statistiques:index.html.twig', array(
-                    'entities' => $tabStats
-        ));
+        if ($admin) {
+            $statistiques = $repoStatistiques->getStatistiques();
+            $tabStats = array();
+            $i = 0;
+            foreach ($statistiques as $statistique) {
+                $tabStats[$i]['stat'] = $statistique;
+                $utilisateur = $repoUsers->getUserById($statistique->getUser());
+                if ($utilisateur) {
+                    $tabStats[$i]['user'] = $utilisateur;
+                } else {
+                    $tabStats[$i]['user'] = null;
+                }
+                $i++;
+            }
+
+            $session->set('retour', $this->generateUrl('AeagUserBundle_Statistiques'));
+
+            return $this->render('AeagUserBundle:Statistiques:index.html.twig', array(
+                        'user' => $user,
+                        'entities' => $tabStats
+            ));
+        } else {
+            return $this->redirect($this->generateUrl('aeag_homepage'));
+        }
     }
 
 }

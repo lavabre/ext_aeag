@@ -28,6 +28,7 @@
                                 <th width="1%">Actions</th>
                                 <th>Nom</th>
                                 <th>Application</th>
+                                <th>nombre de connexions</th>
                                 <th>Début connexion</th>
                                 <th>Fin connexion</th>
                            </tr>
@@ -49,11 +50,16 @@
                                             Anonyme
                                         {% endif %}
                                     </td>
-                                    <td>
+                                    <td class="text-center">
                                         {{ entity.stat.appli  }}
                                     </td>
-                                    <td>{{ entity.stat.DateDebutConnexion|date('d/m/Y H:i:s') }}</td>
-                                   <td>
+                                     <td class="text-center">
+                                        {{ entity.stat.nbConnexion  }}
+                                    </td>
+                                    <td class="text-center">
+                                        {{ entity.stat.DateDebutConnexion|date('d/m/Y H:i:s') }}
+                                    </td>
+                                   <td class="text-center">
                                        {% if entity.stat.DateFinConnexion %}
                                              {{  entity.stat.DateFinConnexion|date('d/m/Y H:i:s') }}
                                         {% endif%}
