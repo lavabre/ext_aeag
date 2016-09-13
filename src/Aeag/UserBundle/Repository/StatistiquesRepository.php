@@ -31,8 +31,7 @@ class StatistiquesRepository extends EntityRepository {
         return $qb->getResult();
     }
 
- 
-     /**
+    /**
      * @param $id
      * @return mixed
      */
@@ -41,41 +40,48 @@ class StatistiquesRepository extends EntityRepository {
         $query = "select u";
         $query = $query . " from Aeag\UserBundle\Entity\Statistiques u";
         $query = $query . " where u.id = " . $id;
-     
+
         $qb = $this->_em->createQuery($query);
 
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-    
-    /**
-     * @param $username
-     * @return mixed
-     */
+
     public function getStatistiquesByUser($userId) {
 
         $query = "select u";
         $query = $query . " from Aeag\UserBundle\Entity\Statistiques u";
         $query = $query . " where u.user = " . $userId;
-     
+
         $qb = $this->_em->createQuery($query);
 
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-    
-    
-       public function getNbStatistiques() {
+
+    public function getStatistiquesByUserDateConnexion($userId, $dateConnexion) {
+        
+           
+        $query = "select u";
+        $query = $query . " from Aeag\UserBundle\Entity\Statistiques u";
+        $query = $query . " where u.user = " . $userId;
+        $query = $query . " and  to_char(u.dateDebutConnexion,'YYYY-MM-DD') = '" . $dateConnexion->format('Y-m-d') . "'";
+
+        $qb = $this->_em->createQuery($query);
+
+       //  print_r($query);
+        return $qb->getOneOrNullResult();
+    }
+
+    public function getNbStatistiques() {
 
         $query = "select sum(u.nbConnexion)";
         $query = $query . " from Aeag\UserBundle\Entity\Statistiques u";
-      
+
         $qb = $this->_em->createQuery($query);
 
         //print_r($query);
-         return $qb->getSingleScalarResult();
+        return $qb->getSingleScalarResult();
     }
-    
-    
-     
+
 }

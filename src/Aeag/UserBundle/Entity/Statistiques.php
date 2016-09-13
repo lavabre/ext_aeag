@@ -29,11 +29,21 @@ class Statistiques {
      * @ORM\Column(name="user_id", type="integer", nullable=true)
      */
     private $user;
+    
+    /**
+     * @ORM\Column(type="string", length=10, name="appli", nullable=true)
+     */
+    protected $appli;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=true)
      */
-    protected $dateConnexion;
+    protected $dateDebutConnexion;
+    
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    protected $dateFinConnexion;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
@@ -44,7 +54,7 @@ class Statistiques {
      *
      */
     public function __construct() {
-        $this->setDateConnexion(new \DateTime());
+        $this->setDateDebutConnexion(new \DateTime());
     }
 
     function getId() {
@@ -55,8 +65,16 @@ class Statistiques {
         return $this->user;
     }
 
-    function getDateConnexion() {
-        return $this->dateConnexion;
+    function getAppli() {
+        return $this->appli;
+    }
+
+    function getDateDebutConnexion() {
+        return $this->dateDebutConnexion;
+    }
+
+    function getDateFinConnexion() {
+        return $this->dateFinConnexion;
     }
 
     function getNbConnexion() {
@@ -71,12 +89,21 @@ class Statistiques {
         $this->user = $user;
     }
 
-    function setDateConnexion($dateConnexion) {
-        $this->dateConnexion = $dateConnexion;
+    function setAppli($appli) {
+        $this->appli = $appli;
+    }
+
+    function setDateDebutConnexion($dateDebutConnexion) {
+        $this->dateDebutConnexion = $dateDebutConnexion;
+    }
+
+    function setDateFinConnexion($dateFinConnexion) {
+        $this->dateFinConnexion = $dateFinConnexion;
     }
 
     function setNbConnexion($nbConnexion) {
         $this->nbConnexion = $nbConnexion;
     }
+
 
 }

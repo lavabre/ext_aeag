@@ -42,12 +42,39 @@ class DefaultController extends Controller {
         $repoUtilisateur = $emEdl->getRepository('AeagEdlBundle:Utilisateur');
         $repoExportAvisEtat = $emEdl->getRepository('AeagEdlBundle:ExportAvisEtat');
         $repoExportAvisPression = $emEdl->getRepository('AeagEdlBundle:ExportAvisPression');
+        $repoStatistiques = $em->getRepository('AeagUserBundle:Statistiques');
 
         if ($user) {
             $utilisateur = $repoUtilisateur->getUtilisateurByExtid($user->getId());
         } else {
             $utilisateur = null;
+            $statistiques = $repoStatistiques->getStatistiquesByUser(0);
+            if (!$statistiques) {
+                $statistiques = new Statistiques();
+                $statistiques->setUser(0);
+                $statistiques->setNbConnexion(1);
+                $statistiques->setAppli('edl');
+                $statistiques->setDateDebutConnexion(new \DateTime());
+                $em->persist($statistiques);
+                $em->flush();
+            }
+            $statistiquesActuel = $repoStatistiques->getStatistiquesByUserDateConnexion(0, new \DateTime());
+            if (!$statistiquesActuel) {
+                $statistiques->setAppli('edl');
+                $statistiques->setDateDebutConnexion(new \DateTime());
+                $statistiques->setNbConnexion($statistiques->getNbConnexion() + 1);
+                $em->persist($statistiques);
+                $em->flush();
+            } else {
+                $statistiques->setAppli('edl');
+                $statistiques->setDateDebutConnexion(new \DateTime());
+                $em->persist($statistiques);
+                $em->flush();
+            }
         }
+
+        $nbStatistiques = $repoStatistiques->getNbStatistiques();
+        $session->set('nbStatistiques', $nbStatistiques);
 
         if (is_object($user) && ($this->get('security.authorization_checker')->isGranted('ROLE_ADMINEDL'))) {
 // insertion des users

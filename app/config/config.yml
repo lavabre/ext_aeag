@@ -118,6 +118,9 @@ doctrine:
         default_entity_manager:   default
         entity_managers:
             default:
+                dql:
+                       datetime_functions:
+                              to_char: Aeag\AeagBundle\DoctrineExtensions\DateFormat
                 connection:       default
                 mappings:
                     AeagAeagBundle : ~
@@ -152,6 +155,7 @@ doctrine:
                 mappings:
                     AeagEdlBundle : ~
                     
+                       
   
 # Swiftmailer Configuration
 swiftmailer:

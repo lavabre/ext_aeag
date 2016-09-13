@@ -49,59 +49,85 @@ class AeagController extends Controller {
 
         $repoStatistiques = $em->getRepository('AeagUserBundle:Statistiques');
 
+        if ($security->isGranted('ROLE_ADMIN')) {
+            $session->set('appli', 'admin');
+        };
+
+        if ($security->isGranted('ROLE_ADMINEDL')) {
+            $session->set('appli', 'edl');
+        };
+
+        if ($security->isGranted('ROLE_ODEC')) {
+            $session->set('appli', 'dec');
+        };
+        if ($security->isGranted('ROLE_FRD')) {
+            $session->set('appli', 'frd');
+        };
+
+        if ($security->isGranted('ROLE_EDL')) {
+            $session->set('appli', 'edl');
+        };
+
+        if ($security->isGranted('ROLE_STOCK')) {
+            $session->set('appli', 'stock');
+        };
+
+        if ($security->isGranted('ROLE_SQE')) {
+            $session->set('appli', 'sqe');
+        };
+
+        if ($security->isGranted('ROLE_ADMINDIE')) {
+            $session->set('appli', 'die');
+        };
+
         $statistiques = $repoStatistiques->getStatistiquesByUser($user->getId());
         if (!$statistiques) {
             $statistiques = new Statistiques();
             $statistiques->setUser($user->getId());
-            $statistiques->setNbConnexion(1);
-        } else {
-            $statistiques->setNbConnexion($statistiques->getNbConnexion() + 1);
+            $statistiques->setNbConnexion(0);
         }
+        $statistiques->setAppli($session->get('appli'));
+        $statistiques->setDateDebutConnexion(new \DateTime());
+        $statistiques->setDateFinConnexion(null);
+        $statistiques->setNbConnexion($statistiques->getNbConnexion() + 1);
         $em->persist($statistiques);
         $em->flush();
-        
-         $nbStatistiques = $repoStatistiques->getNbStatistiques();
-         $session->set('nbStatistiques', $nbStatistiques);
-         
-        
+
+        $nbStatistiques = $repoStatistiques->getNbStatistiques();
+        $session->set('nbStatistiques', $nbStatistiques);
+
         if ($security->isGranted('ROLE_ADMIN')) {
             return $this->render('AeagAeagBundle:Admin:index.html.twig');
         };
 
         if ($security->isGranted('ROLE_ADMINEDL')) {
-            $session->set('appli', 'edl');
             return $this->redirect($this->generateUrl('aeag_edl'));
         };
 
         if ($security->isGranted('ROLE_ODEC')) {
-            $session->set('appli', 'dec');
             return $this->redirect($this->generateUrl('aeag_dec'));
         };
         if ($security->isGranted('ROLE_FRD')) {
-            $session->set('appli', 'frd');
             return $this->redirect($this->generateUrl('aeag_frd'));
         };
 
 
         if ($security->isGranted('ROLE_EDL')) {
-            $session->set('appli', 'edl');
             return $this->redirect($this->generateUrl('aeag_edl'));
         };
 
         if ($security->isGranted('ROLE_STOCK')) {
-            $session->set('appli', 'stock');
             return $this->redirect($this->generateUrl('aeag_stock'));
         };
 
         if ($security->isGranted('ROLE_SQE')) {
-            $session->set('appli', 'sqe');
             return $this->redirect($this->generateUrl('aeag_sqe'));
         };
 
         if ($security->isGranted('ROLE_ADMINDIE')) {
-            $session->set('appli', 'die');
             return $this->redirect($this->generateUrl('aeag_die_admin'));
         };
+
 
         return $this->render('AeagAeagBundle:Default:interdit.html.twig');
 //        return $this->render('AeagAeagBundle:Default:index.html.twig', array('roles' => $roles));
@@ -291,7 +317,11 @@ class AeagController extends Controller {
             }
         } else {
             $User = $repoUsers->getUserById($id);
-            $correspondant = $repoCorrespondant->getCorrespondantById($User->getCorrespondant());
+            if ($User->getCorrespondant()) {
+                $correspondant = $repoCorrespondant->getCorrespondantById($User->getCorrespondant());
+            }else{
+                $correspondant = null;
+            }
         }
 
 

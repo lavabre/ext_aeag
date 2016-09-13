@@ -47,6 +47,18 @@ AeagUserBundle_ChangePassword:
     defaults: { _controller: "AeagUserBundle:ChangePassword:ChangePassword" }
     requirements:
         methods:  GET|POST
+        
+AeagUserBundle_Logout:
+    path:  /logout
+    defaults: { _controller: "AeagUserBundle:Security:logout" }
+    requirements:
+        methods:  GET|POST
+        
+AeagUserBundle_Statistiques:
+    path:  /statistiques
+    defaults: { _controller: "AeagUserBundle:Statistiques:index" }
+    requirements:
+        methods:  GET|POST
 
 
 

@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Aeag\AideBundle\Form\Criteres\CriteresRequestType;
 use Aeag\AideBundle\Entity\Form\CriteresRequest;
 use Aeag\AideBundle\DependencyInjection\PdfAidesAccordees;
+use Aeag\UserBundle\Entity\Statistiques;
 
 /**
  * Description DefaultController
@@ -35,6 +36,28 @@ class CriteresController extends Controller {
         $emAeag = $this->getDoctrine()->getManager();
         $em = $this->getDoctrine()->getManager('aide');
         $session->set('retourErreur', $this->generateUrl('aeag_aide'));
+
+        $repoStatistiques = $emAeag->getRepository('AeagUserBundle:Statistiques');
+        $statistiques = $repoStatistiques->getStatistiquesByUser(0);
+        if (!$statistiques) {
+            $statistiques = new Statistiques();
+            $statistiques->setUser(0);
+            $statistiques->setNbConnexion(1);
+            $statistiques->setAppli('aide');
+            $statistiques->setDateDebutConnexion(new \DateTime());
+            $emAeag->persist($statistiques);
+            $emAeag->flush();
+        }
+        $statistiquesActuel = $repoStatistiques->getStatistiquesByUserDateConnexion(0, new \DateTime());
+        if (!$statistiquesActuel) {
+            $statistiques->setDateDebutConnexion(new \DateTime());
+            $statistiques->setNbConnexion($statistiques->getNbConnexion() + 1);
+            $emAeag->persist($statistiques);
+            $emAeag->flush();
+        }
+
+        $nbStatistiques = $repoStatistiques->getNbStatistiques();
+        $session->set('nbStatistiques', $nbStatistiques);
 
         $criteres = new CriteresRequest();
 

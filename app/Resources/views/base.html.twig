@@ -357,8 +357,12 @@
         &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
         {% block statistiques %}
               {% if app.session.get('nbStatistiques')  > 0 %}
-                Visiteurs : {{ app.session.get('nbStatistiques') }}
-            {% endif %}
+                Visiteurs :  <a  href="{{ path('AeagUserBundle_Statistiques') }}">
+                                     <button class="btn btn-primary" type="button">
+                                            <span class="badge">{{ app.session.get('nbStatistiques') }}</span>
+                                      </button>
+                                </a>
+               {% endif %}
         {%endblock statistiques %}
         {# &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;   Webmaster : {{ webmaster }}#}
         {# &nbsp; &nbsp; &nbsp; &nbsp; Symfony : {{ symfony }}#}
