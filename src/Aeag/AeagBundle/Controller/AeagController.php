@@ -84,7 +84,8 @@ class AeagController extends Controller {
         if (!$statistiques) {
             $statistiques = new Statistiques();
             $statistiques->setUser($user->getId());
-            $statistiques->setNbConnexion(0);
+            $statistiques->setNbConnexion(1);
+            $statistiques->setAppli($session->get('appli'));
             $em->persist($statistiques);
             $em->flush();
         }
