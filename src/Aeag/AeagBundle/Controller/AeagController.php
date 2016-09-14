@@ -555,6 +555,17 @@ class AeagController extends Controller {
             }
             $em->remove($connecte);
         }
+        
+        $statistiques = $repoStatistiques->getStatistiques();
+        foreach($statistiques as $statistique){
+            $connecte = $repoConnectes->getConnectesByIp($statistique->getIp());
+            if (!$connecte){
+                $statistique->setDateFinConnexion(new \DateTime());
+                $em->persist($statistique);
+            }
+        }
+        
+        
         $em->flush();
 
         $connecte = $repoConnectes->getConnectesByIp($_SERVER['REMOTE_ADDR']);
