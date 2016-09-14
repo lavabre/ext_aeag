@@ -86,19 +86,24 @@ class AeagController extends Controller {
             $statistiques->setUser($user->getId());
             $statistiques->setNbConnexion(1);
             $statistiques->setAppli($session->get('appli'));
-            $em->persist($statistiques);
-            $em->flush();
+            $statistiques->setDateDebutConnexion(new \DateTime());
+        } else {
+            $statistiques->setDateFinConnexion(null);
         }
-        
+        $em->persist($statistiques);
+        $em->flush();
+
+
         $statistiquesActuel = $repoStatistiques->getStatistiquesByUserDateConnexion($user->getId(), new \DateTime());
         if (!$statistiquesActuel) {
             $statistiques->setAppli($session->get('appli'));
             $statistiques->setDateDebutConnexion(new \DateTime());
+            $statistiques->setDateFinConnexion(null);
             $statistiques->setNbConnexion($statistiques->getNbConnexion() + 1);
             $em->persist($statistiques);
             $em->flush();
         }
-      
+
         $nbStatistiques = $repoStatistiques->getNbStatistiques();
         $session->set('nbStatistiques', $nbStatistiques);
 
@@ -325,7 +330,7 @@ class AeagController extends Controller {
             $User = $repoUsers->getUserById($id);
             if ($User->getCorrespondant()) {
                 $correspondant = $repoCorrespondant->getCorrespondantById($User->getCorrespondant());
-            }else{
+            } else {
                 $correspondant = null;
             }
         }
