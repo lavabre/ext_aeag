@@ -555,17 +555,19 @@ class AeagController extends Controller {
             }
             $em->remove($connecte);
         }
-        
+
         $statistiques = $repoStatistiques->getStatistiques();
-        foreach($statistiques as $statistique){
+        foreach ($statistiques as $statistique) {
             $connecte = $repoConnectes->getConnectesByIp($statistique->getIp());
-            if (!$connecte){
-                $statistique->setDateFinConnexion(new \DateTime());
-                $em->persist($statistique);
+            if (!$connecte) {
+                if (!$statistique->getDateFinConnexion()) {
+                    $statistique->setDateFinConnexion(new \DateTime());
+                    $em->persist($statistique);
+                }
             }
         }
-        
-        
+
+
         $em->flush();
 
         $connecte = $repoConnectes->getConnectesByIp($_SERVER['REMOTE_ADDR']);
@@ -599,7 +601,7 @@ class AeagController extends Controller {
         } else {
             if ($user) {
                 $statistique->setAppli($session->get('appli'));
-            }else{
+            } else {
                 $statistique->setDateDebutConnexion(new \DateTime());
                 $statistique->setNbConnexion($statistique->getNbConnexion() + 1);
             }
