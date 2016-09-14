@@ -41,7 +41,8 @@
                         url = url.replace("par1", {{ periodeAnId }});
                          url = url.replace("amp;","");
                          var formulaire = new FormData($('form')[0]);
-                         $.ajax({
+                          $('#modalTraitementEncours').modal('toggle');
+                          $.ajax({
                                       url: url,
                                       type: 'post',
                                       xhr: function() { // xhr qui traite la barre de progression
@@ -53,13 +54,14 @@
                                        },
                                       //Traitements AJAX
                                       success: function(messages) { // Je récupère la réponse du fichier PHP
-                                             tabMessages = JSON.parse(messages)
+                                           {#  tabMessages = JSON.parse(messages)
                                              fichier = tabMessages[0];
                                              rapport = tabMessages[1];
                                              html = tabMessages[2];
                                             $('#idMessage').show();
-                                            $('#idMessage').empty().append(html).show();
+                                            $('#idMessage').empty().append(html).show();#}
                                             $('#idProgress').hide();
+                                            $('#modalTraitementEncours').modal('hide');
                                             {#href = '{{path("AeagSqeBundle_saisieDonnees_lot_periode_stations_telecharger_rapport",{"periodeAnId": "par1","fichier": "par2"})}}';
                                             url = url.replace("par1", {{ periodeAnId }});
                                             href = href.replace("par2", rapport);
@@ -78,7 +80,8 @@
                                                 $('#idMessage').show();
                                                  $('#idMessage').empty().append(html).show();
                                                  $('#idProgress').hide();
-                                      },
+                                                 $('#modalTraitementEncours').modal('hide');
+                                            },
                                       data: formulaire,
                                       cache: false,
                                       contentType: false,
