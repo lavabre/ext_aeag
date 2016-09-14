@@ -357,7 +357,7 @@
         &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
         {% block statistiques %}
               {% if app.session.get('nbStatistiques')  > 0 %}
-                Visiteurs :  <a  href="{{ path('AeagUserBundle_Statistiques') }}">
+                Visiteurs connectés :  <a  href="{{ path('AeagUserBundle_Statistiques') }}">
                                      <button class="btn btn-primary" type="button">
                                             <span class="badge">{{ app.session.get('nbStatistiques') }}</span>
                                       </button>

@@ -65,11 +65,13 @@
                                     {{ entity.stat.nbConnexion  }}
                                 </td>
                                 <td class="text-center">
-                                    {{ entity.stat.DateDebutConnexion|date('d/m/Y H:i:s') }}
+                                     <span class="hidden">{{ entity.stat.DateDebutConnexion | date("Y/m/d H:i") }}</span>
+                                    {{ entity.stat.DateDebutConnexion | date('d/m/Y H:i:s') }}
                                 </td>
                                 <td class="text-center">
                                     {% if entity.stat.DateFinConnexion %}
-                                        {{  entity.stat.DateFinConnexion|date('d/m/Y H:i:s') }}
+                                         <span class="hidden">{{ entity.stat.DateFinConnexion | date("Y/m/d H:i") }}</span>
+                                        {{  entity.stat.DateFinConnexion | date('d/m/Y H:i:s') }}
                                     {% endif%}
                                 </td>
                             </tr>

@@ -127,30 +127,48 @@ doctrine:
                     AeagUserBundle : ~
                     FOSUserBundle: ~
             dec:
+                dql:
+                       datetime_functions:
+                              to_char: Aeag\AeagBundle\DoctrineExtensions\DateFormat
                 connection:       dec
                 mappings:
                     AeagDecBundle : ~
             frd:
+                dql:
+                       datetime_functions:
+                              to_char: Aeag\AeagBundle\DoctrineExtensions\DateFormat
                 connection:       frd
                 mappings:
                     AeagFrdBundle : ~
                     
             aide:
+                dql:
+                       datetime_functions:
+                              to_char: Aeag\AeagBundle\DoctrineExtensions\DateFormat
                 connection:       aide
                 mappings:
                     AeagAideBundle : ~
                     
             sqe:
+                dql:
+                       datetime_functions:
+                              to_char: Aeag\AeagBundle\DoctrineExtensions\DateFormat
                 connection:       sqe
                 mappings:
                     AeagSqeBundle : ~
                     
             die:
+                dql:
+                       datetime_functions:
+                              to_char: Aeag\AeagBundle\DoctrineExtensions\DateFormat
                 connection:       die
                 mappings:
                     AeagDieBundle : ~
                     
             edl:
+                dql:
+                       datetime_functions:
+                              to_char: Aeag\AeagBundle\DoctrineExtensions\DateFormat
                 connection:       edl
                 mappings:
                     AeagEdlBundle : ~

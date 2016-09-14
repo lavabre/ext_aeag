@@ -13,6 +13,7 @@ use Aeag\AeagBundle\Entity\Notification;
 use Aeag\AeagBundle\Entity\Message;
 use Aeag\AeagBundle\Entity\Document;
 use Aeag\UserBundle\Entity\Statistiques;
+use Aeag\UserBundle\Entity\Connectes;
 use Aeag\AeagBundle\Entity\Form\EnvoyerMessage;
 use Aeag\AeagBundle\Entity\Form\EnvoyerMessageAll;
 
@@ -43,11 +44,12 @@ class AeagController extends Controller {
         if (is_object($user)) {
             $mes = $this->notificationAction($user, $em, $session);
             $mes1 = $this->messageAction($user, $em, $session);
+            $stat = $this->statistiquesAction($user, $em, $session);
         } else {
             return $this->redirect($this->generateUrl('fos_user_security_login'));
         }
 
-        $repoStatistiques = $em->getRepository('AeagUserBundle:Statistiques');
+
 
         if ($security->isGranted('ROLE_ADMIN')) {
             $session->set('appli', 'admin');
@@ -80,32 +82,6 @@ class AeagController extends Controller {
             $session->set('appli', 'die');
         };
 
-        $statistiques = $repoStatistiques->getStatistiquesByUser($user->getId());
-        if (!$statistiques) {
-            $statistiques = new Statistiques();
-            $statistiques->setUser($user->getId());
-            $statistiques->setNbConnexion(1);
-            $statistiques->setAppli($session->get('appli'));
-            $statistiques->setDateDebutConnexion(new \DateTime());
-        } else {
-            $statistiques->setDateFinConnexion(null);
-        }
-        $em->persist($statistiques);
-        $em->flush();
-
-
-        $statistiquesActuel = $repoStatistiques->getStatistiquesByUserDateConnexion($user->getId(), new \DateTime());
-        if (!$statistiquesActuel) {
-            $statistiques->setAppli($session->get('appli'));
-            $statistiques->setDateDebutConnexion(new \DateTime());
-            $statistiques->setDateFinConnexion(null);
-            $statistiques->setNbConnexion($statistiques->getNbConnexion() + 1);
-            $em->persist($statistiques);
-            $em->flush();
-        }
-
-        $nbStatistiques = $repoStatistiques->getNbStatistiques();
-        $session->set('nbStatistiques', $nbStatistiques);
 
         if ($security->isGranted('ROLE_ADMIN')) {
             return $this->render('AeagAeagBundle:Admin:index.html.twig');
@@ -559,6 +535,95 @@ class AeagController extends Controller {
         }
 
         return "ok";
+    }
+
+    /**
+     * @return Response
+     */
+    public static function statistiquesAction($user, $em, $session) {
+
+        $repoStatistiques = $em->getRepository('AeagUserBundle:Statistiques');
+        $repoConnectes = $em->getRepository('AeagUserBundle:Connectes');
+
+        $timestamp_5min = time() - (60 * 5); // 60 * 5 = nombre de secondes écoulées en 5 minutes
+        $connectes = $repoConnectes->getConnectes5Minutes($timestamp_5min);
+        foreach ($connectes as $connecte) {
+            $statistiques = $repoStatistiques->getStatistiquesByIp($_SERVER['REMOTE_ADDR']);
+            foreach ($statistiques as $statistique) {
+                $statistique->setDateFinConnexion(new \DateTime());
+                $em->persist($statistique);
+            }
+            $em->remove($connecte);
+        }
+        $em->flush();
+
+        $connecte = $repoConnectes->getConnectesByIp($_SERVER['REMOTE_ADDR']);
+        if (!$connecte) {
+            $connecte = new Connectes();
+            $connecte->setIp($_SERVER['REMOTE_ADDR']);
+            $connecte->setTime(time());
+            $em->persist($connecte);
+            $em->flush();
+        }
+
+
+        if ($user) {
+            $statistique = $repoStatistiques->getStatistiquesByUser($user->getId());
+        } else {
+            $statistique = $repoStatistiques->getStatistiquesByUser(0);
+        }
+        if (!$statistique) {
+            $statistique = new Statistiques();
+            if ($user) {
+                $statistique->setUser($user->getId());
+            } else {
+                $statistique->setUser(0);
+            }
+            $statistique->setIp($_SERVER['REMOTE_ADDR']);
+            $statistique->setNbConnexion(1);
+            if ($user) {
+                $statistique->setAppli($session->get('appli'));
+            }
+            $statistique->setDateDebutConnexion(new \DateTime());
+        } else {
+            if ($user) {
+                $statistique->setAppli($session->get('appli'));
+            }else{
+                $statistique->setDateDebutConnexion(new \DateTime());
+                $statistique->setNbConnexion($statistique->getNbConnexion() + 1);
+            }
+            $statistique->setDateFinConnexion(null);
+        }
+        $em->persist($statistique);
+        $em->flush();
+
+//
+//        if ($user) {
+//            $statistique = $repoStatistiques->getStatistiquesByUserDateConnexion($user->getId(), new \DateTime());
+//        } else {
+//            $statistique = $repoStatistiques->getStatistiquesByUserDateConnexion(0, new \DateTime());
+//        }
+//        if (!$statistique) {
+//            if ($user) {
+//                $statistique->setAppli($session->get('appli'));
+//            }
+//            $statistique->setDateDebutConnexion(new \DateTime());
+//            $statistique->setDateFinConnexion(null);
+//            $statistique->setNbConnexion($statistique->getNbConnexion() + 1);
+//        } else {
+//            if ($user) {
+//                $statistique->setAppli($session->get('appli'));
+//            }else{
+//                $statistique->setNbConnexion($statistique->getNbConnexion() + 1);
+//            }
+//            $statistique->setDateFinConnexion(null);
+//        }
+//        $em->persist($statistique);
+//        $em->flush();
+
+        $nbStatistiques = $repoStatistiques->getNbConnectes();
+        $session->set('nbStatistiques', $nbStatistiques);
+        return $statistique->getid();
     }
 
 }

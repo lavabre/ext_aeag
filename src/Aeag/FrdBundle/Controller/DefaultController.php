@@ -9,6 +9,7 @@ use Aeag\FrdBundle\Controller\ReferentielController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Aeag\FrdBundle\Entity\Browser;
+use Aeag\AeagBundle\Controller\AeagController;
 
 class DefaultController extends Controller {
 
@@ -31,6 +32,7 @@ class DefaultController extends Controller {
         $repoParametre = $emFrd->getRepository('AeagFrdBundle:Parametre');
         $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
 
+        $stat = AeagController::statistiquesAction($user, $em, $session);
 
         $annee = $repoParametre->getParametreByCode('ANNEE');
 

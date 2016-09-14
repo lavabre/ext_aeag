@@ -46,6 +46,22 @@ class StatistiquesRepository extends EntityRepository {
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
+    
+      /**
+     * @param $id
+     * @return mixed
+     */
+    public function getStatistiquesByIp($ip) {
+
+        $query = "select u";
+        $query = $query . " from Aeag\UserBundle\Entity\Statistiques u";
+        $query = $query . " where u.ip = '" . $ip . "'";
+
+        $qb = $this->_em->createQuery($query);
+
+        //print_r($query);
+        return $qb->getResult();
+    }
 
     public function getStatistiquesByUser($userId) {
 
@@ -77,6 +93,18 @@ class StatistiquesRepository extends EntityRepository {
 
         $query = "select sum(u.nbConnexion)";
         $query = $query . " from Aeag\UserBundle\Entity\Statistiques u";
+
+        $qb = $this->_em->createQuery($query);
+
+        //print_r($query);
+        return $qb->getSingleScalarResult();
+    }
+    
+     public function getNbConnectes() {
+
+        $query = "select count(u.id)";
+        $query = $query . " from Aeag\UserBundle\Entity\Statistiques u";
+        $query = $query . " where u.dateFinConnexion is null ";
 
         $qb = $this->_em->createQuery($query);
 

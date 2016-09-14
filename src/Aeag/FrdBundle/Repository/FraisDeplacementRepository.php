@@ -40,7 +40,7 @@ class FraisDeplacementRepository extends EntityRepository {
         $query = "select f";
         $query = $query . " from  Aeag\FrdBundle\Entity\FraisDeplacement f";
         $query = $query . " where f.user = " . $userId;
-        $query = $query . " and f.dateDepart >= '" . $annee->format('Ymd') . "'";
+        $query = $query . " and to_char(f.dateDepart,'YYYYMMDD') >= '" . $annee->format('Ymd') . "'";
         $query = $query . " order by  f.dateDepart Desc , f.heureDepart desc , f.dateRetour, f.heureRetour";
 
         //print_r($query);
@@ -87,7 +87,7 @@ class FraisDeplacementRepository extends EntityRepository {
 
         $query = "select f";
         $query = $query . " from  Aeag\FrdBundle\Entity\FraisDeplacement f";
-        $query = $query . " where f.dateDepart >= '" . $annee->format('Ymd') . "'";
+        $query = $query . " where to_char(f.dateDepart,'YYYYMMDD') >= '" . $annee->format('Ymd') . "'";
 
         //print_r($query);
         $qb = $this->_em->createQuery($query);
@@ -103,8 +103,8 @@ class FraisDeplacementRepository extends EntityRepository {
 
         $query = "select f";
         $query = $query . " from  Aeag\FrdBundle\Entity\FraisDeplacement f";
-        $query = $query . " where f.dateDepart >= '" . $anneeDeb->format('Ymd') . "'";
-        $query = $query . " and f.dateDepart <= '" . $anneeFin->format('Ymd') . "'";
+        $query = $query . " where to_char(f.dateDepart,'YYYYMMDD') >= '" . $anneeDeb->format('Ymd') . "'";
+        $query = $query . " and to_char(f.dateDepart,'YYYYMMDD') <= '" . $anneeFin->format('Ymd') . "'";
 
         //print_r($query);
         $qb = $this->_em->createQuery($query);
@@ -121,8 +121,8 @@ class FraisDeplacementRepository extends EntityRepository {
         $query = "select f";
         $query = $query . " from  Aeag\FrdBundle\Entity\FraisDeplacement f";
         $query = $query . " where f.user = " . $userId;
-        $query = $query . " and f.dateDepart >= '" . $anneeDeb->format('Ymd') . "'";
-        $query = $query . " and f.dateDepart <= '" . $anneeFin->format('Ymd') . "'";
+        $query = $query . " and to_char(f.dateDepart,'YYYYMMDD') >= '" . $anneeDeb->format('Ymd') . "'";
+        $query = $query . " and to_char(f.dateDepart,'YYYYMMDD') <= '" . $anneeFin->format('Ymd') . "'";
 
         //print_r($query);
         $qb = $this->_em->createQuery($query);
@@ -171,7 +171,7 @@ class FraisDeplacementRepository extends EntityRepository {
         $query = "select f";
         $query = $query . " from  Aeag\FrdBundle\Entity\FraisDeplacement f";
         $query = $query . " where f.user = " . $userId;
-        $query = $query . " and f.dateDepart = '" . $dateDepart->format('Y-m-d') . "'";
+        $query = $query . " and to_char(f.dateDepart,'YYYY-MM-DD') = '" . $dateDepart->format('Y-m-d') . "'";
         $query = $query . " and f.heureDepart = '" . $heureDepart . "'";
         $query = $query . " order by f.dateDepart desc , f.heureDepart desc , f.dateRetour, f.heureRetour";
 
@@ -189,9 +189,9 @@ class FraisDeplacementRepository extends EntityRepository {
         $query = "select f";
         $query = $query . " from  Aeag\FrdBundle\Entity\FraisDeplacement f";
         $query = $query . " where f.user = " . $userId;
-        $query = $query . " and f.dateDepart = '" . $dateDepart->format('Y-m-d') . "'";
+        $query = $query . " and to_char(f.dateDepart,'YYYY-MM-DD') = '" . $dateDepart->format('Y-m-d') . "'";
         $query = $query . " and f.heureDepart = '" . $heureDepart . "'";
-        $query = $query . " and f.dateRetour = '" . $dateRetour->format('Y-m-d') . "'";
+        $query = $query . " and to_char(f.dateRetour,'YYYY-MM-DD') = '" . $dateRetour->format('Y-m-d') . "'";
         $query = $query . " and f.heureRetour = '" . $heureRetour . "'";
         $query = $query . " order by f.dateDepart desc , f.heureDepart desc , f.dateRetour, f.heureRetour";
 
@@ -210,7 +210,7 @@ class FraisDeplacementRepository extends EntityRepository {
         $query = $query . " from Aeag\FrdBundle\Entity\FraisDeplacement f";
         $query = $query . " where f.user = " . $userId;
         $query = $query . " and f.phase =  '" . $phaseId . "'";
-        $query = $query . " and f.dateDepart >= '" . $annee->format('Ymd') . "'";
+        $query = $query . " and to_char(f.dateDepart,'YYYYMMDD') >= '" . $annee->format('Ymd') . "'";
         $query = $query . " order by f.dateDepart desc , f.heureDepart desc , f.dateRetour, f.heureRetour";
         //print_r($query);
         $qb = $this->_em->createQuery($query);
@@ -227,8 +227,8 @@ class FraisDeplacementRepository extends EntityRepository {
         $query = $query . " from Aeag\FrdBundle\Entity\FraisDeplacement f";
         $query = $query . " where f.user = " . $userId;
         $query = $query . " and f.phase <=  '" . $phaseId . "'";
-        $query = $query . " and f.dateDepart >= '" . $anneeDeb->format('Ymd') . "'";
-        $query = $query . " and f.dateRetour <= '" . $anneeFin->format('Ymd') . "'";
+        $query = $query . " and to_char(f.dateDepart,'YYYYMMDD') >= '" . $anneeDeb->format('Ymd') . "'";
+        $query = $query . " and to_char(f.dateRetour,'YYYYMMDD') <= '" . $anneeFin->format('Ymd') . "'";
         //print_r($query);
         $qb = $this->_em->createQuery($query);
         return $qb->getSingleScalarResult();
@@ -244,8 +244,8 @@ class FraisDeplacementRepository extends EntityRepository {
         $query = $query . " from Aeag\FrdBundle\Entity\FraisDeplacement f";
         $query = $query . " where f.user = " . $userId;
         $query = $query . " and f.phase <=  '" . $phaseId . "'";
-        $query = $query . " and  f.dateDepart >= '" . $anneeDeb->format('Ymd') . "'";
-        $query = $query . " and f.dateRetour <= '" . $anneeFin->format('Ymd') . "'";
+        $query = $query . " and to_char(f.dateDepart,'YYYYMMDD') >= '" . $anneeDeb->format('Ymd') . "'";
+        $query = $query . " and to_char(f.dateRetour,'YYYYMMDD') <= '" . $anneeFin->format('Ymd') . "'";
         $query = $query . " order by f.dateDepart desc , f.heureDepart desc , f.dateRetour, f.heureRetour";
        // print_r($query);
         $qb = $this->_em->createQuery($query);
@@ -261,8 +261,8 @@ class FraisDeplacementRepository extends EntityRepository {
         $query = "select count(f.id)";
         $query = $query . " from Aeag\FrdBundle\Entity\FraisDeplacement f";
        $query = $query . " where f.phase <=  '" . $phaseId . "'";
-        $query = $query . " and f.dateDepart >= '" . $anneeDeb->format('Ymd') . "'";
-        $query = $query . " and f.dateRetour <= '" . $anneeFin->format('Ymd') . "'";
+        $query = $query . " and to_char(f.dateDepart,'YYYYMMDD') >= '" . $anneeDeb->format('Ymd') . "'";
+        $query = $query . " and to_char(f.dateRetour,'YYYYMMDD') <= '" . $anneeFin->format('Ymd') . "'";
         //print_r($query);
         $qb = $this->_em->createQuery($query);
         return $qb->getSingleScalarResult();
@@ -277,8 +277,8 @@ class FraisDeplacementRepository extends EntityRepository {
         $query = "select f";
         $query = $query . " from Aeag\FrdBundle\Entity\FraisDeplacement f";
        $query = $query . " where f.phase <=  '" . $phaseId . "'";
-        $query = $query . " and  f.dateDepart >= '" . $anneeDeb->format('Ymd') . "'";
-        $query = $query . " and f.dateRetour <= '" . $anneeFin->format('Ymd') . "'";
+        $query = $query . " and  to_char(f.dateDepart,'YYYYMMDD') >= '" . $anneeDeb->format('Ymd') . "'";
+        $query = $query . " and to_char(f.dateRetour,'YYYYMMDD') <= '" . $anneeFin->format('Ymd') . "'";
         $query = $query . " order by f.dateDepart desc , f.heureDepart desc , f.dateRetour, f.heureRetour";
        // print_r($query);
         $qb = $this->_em->createQuery($query);
@@ -296,7 +296,7 @@ class FraisDeplacementRepository extends EntityRepository {
         $query = $query . " from Aeag\FrdBundle\Entity\FraisDeplacement f";
         $query = $query . " where f.user = u.id";
         $query = $query . " and f.phase =  '" . $phaseId . "'";
-        $query = $query . " and f.dateDepart >= '" . $annee->format('Ymd') . "'";
+        $query = $query . " and to_char(f.dateDepart,'YYYYMMDD') >= '" . $annee->format('Ymd') . "'";
         $query = $query . " order by f.dateDepart desc , f.heureDepart desc , f.dateRetour, f.heureRetour";
         //print_r($query);
         $qb = $this->_em->createQuery($query);
@@ -316,7 +316,7 @@ class FraisDeplacementRepository extends EntityRepository {
         $query = $query . " and p.code = '30'";
         $query = $query . " and f.valider = 'O'";
         $query = $query . " and (f.exporter =  'N' or f.exporter is null)";
-        $query = $query . " and f.dateDepart >= '" . $annee->format('Ymd') . "'";
+        $query = $query . " and to_char(f.dateDepart,'YYYYMMDD') >= '" . $annee->format('Ymd') . "'";
         $query = $query . " order by f.user, f.dateDepart desc , f.heureDepart desc , f.dateRetour, f.heureRetour";
         //print_r($query);
         $qb = $this->_em->createQuery($query);
@@ -335,7 +335,7 @@ class FraisDeplacementRepository extends EntityRepository {
         $query = $query . " where f.phase =  p.id";
         $query = $query . " and p.code > '30'";
         $query = $query . " and (f.exporter =  'N' or f.exporter is null)";
-        $query = $query . " and f.dateDepart >= '" . $annee->format('Ymd') . "'";
+        $query = $query . " and to_char(f.dateDepart,'YYYYMMDD') >= '" . $annee->format('Ymd') . "'";
         $query = $query . " order by  f.dateDepart desc , f.heureDepart desc , f.dateRetour, f.heureRetour";
         //print_r($query);
         $qb = $this->_em->createQuery($query);

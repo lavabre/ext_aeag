@@ -29,7 +29,12 @@ class Statistiques {
      * @ORM\Column(name="user_id", type="integer", nullable=true)
      */
     private $user;
-    
+
+    /**
+     * @ORM\Column(type="string", length=15, name="ip", nullable=true)
+     */
+    protected $ip;
+
     /**
      * @ORM\Column(type="string", length=10, name="appli", nullable=true)
      */
@@ -39,7 +44,7 @@ class Statistiques {
      * @ORM\Column(type="datetime", nullable=true)
      */
     protected $dateDebutConnexion;
-    
+
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
@@ -63,6 +68,10 @@ class Statistiques {
 
     function getUser() {
         return $this->user;
+    }
+
+    function getIp() {
+        return $this->ip;
     }
 
     function getAppli() {
@@ -89,6 +98,10 @@ class Statistiques {
         $this->user = $user;
     }
 
+    function setIp($ip) {
+        $this->ip = $ip;
+    }
+
     function setAppli($appli) {
         $this->appli = $appli;
     }
@@ -104,6 +117,5 @@ class Statistiques {
     function setNbConnexion($nbConnexion) {
         $this->nbConnexion = $nbConnexion;
     }
-
 
 }
