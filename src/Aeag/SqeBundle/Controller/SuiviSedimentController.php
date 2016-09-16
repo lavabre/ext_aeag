@@ -42,7 +42,7 @@ class SuiviSedimentController extends Controller {
         if ($user->hasRole('ROLE_ADMINSQE')) {
             $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByAdmin();
         } else if ($user->hasRole('ROLE_PRESTASQE')) {
-            $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnSuiviSedimentByPresta($user);
+            $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnSuiviByPrestaPrel($user);
         } else if ($user->hasRole('ROLE_PROGSQE')) {
             $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByProg($user);
         } else if ($user->hasRole('ROLE_SQE')) {

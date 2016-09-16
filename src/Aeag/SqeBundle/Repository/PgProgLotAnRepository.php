@@ -123,7 +123,7 @@ class PgProgLotAnRepository extends EntityRepository {
         return $qb->getResult();
     }
 
-    public function getPgProgLotAnSuiviSedimentByPresta($user) {
+    public function getPgProgLotAnSuiviByPrestaPrel($user) {
 
         $query = "select distinct lotan";
         $query .= " from Aeag\SqeBundle\Entity\PgProgLotParamAn paran, ";

@@ -133,7 +133,7 @@ class DefaultController extends Controller {
             $suiviSED = true;
             $suiviEau = true;
         }
-
+        
         $session->set('suiviHb', $suiviHb);
         $session->set('suiviQHb', $suiviQHb);
         $session->set('suiviDonnees', $suiviDonnees);
