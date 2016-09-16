@@ -151,7 +151,11 @@ class AeagCommand extends ContainerAwareCommand {
     protected function _addLog($typeErreur, $demandeId, $fichierRpsId, $message, $codePrelevement = null, $commentaire = null) {
         $dateLog = new \DateTime();
         if (!is_null($commentaire) && is_array($commentaire)) {
-            $commentaire = $this->_convertMultiArray($commentaire);
+            if (count($commentaire) == count($commentaire, COUNT_RECURSIVE)) {
+                $commentaire = implode("-", $commentaire);
+            } else {
+                $commentaire = $this->_convertMultiArray($commentaire);
+            }    
         }
         $pgLogValidEdilabo = new \Aeag\SqeBundle\Entity\PgLogValidEdilabo($demandeId, $fichierRpsId, $typeErreur, $message, $dateLog, $codePrelevement, $commentaire);
 

@@ -231,7 +231,7 @@ class EchangeFichiersController extends Controller {
                 }
                 
             } else {
-                $session->getFlashBag()->add('notice-error', 'Le fichier ' . $nomFichier . ' a rencontré une erreur lors de la validation');
+                $session->getFlashBag()->add('notice-error', 'Le fichier ' . $nomFichier . ' a rencontré une erreur lors de la validation auprès du Sandre. Merci de réessayer plus tard.');
                 $this->_rmdirRecursive($pathBase);
                 $emSqe->remove($reponse);
                 $emSqe->flush();

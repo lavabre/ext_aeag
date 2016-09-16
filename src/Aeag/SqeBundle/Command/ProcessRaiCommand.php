@@ -214,6 +214,13 @@ class ProcessRaiCommand extends AeagCommand {
                     $this->_addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: Paramètre manquant", $codePrelev["codePrelevement"], $diff);
                 }
             }
+            
+            // paramètres/unité : fractions différentes => erreur
+            if (count($diff = $this->repoPgTmpValidEdilabo->getDiffCodeFraction($codePrelev["codePrelevement"], $demandeId, $reponseId)) > 0) {
+                $this->_addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: Fractions différentes", $codePrelev["codePrelevement"], $diff);
+            }
+            
+            
         }
         
         //$date = new \DateTime();

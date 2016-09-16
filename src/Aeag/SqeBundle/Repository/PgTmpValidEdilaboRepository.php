@@ -57,21 +57,7 @@ class PgTmpValidEdilaboRepository extends EntityRepository {
         $stmt->bindValue('demande', $demandeId);
         $stmt->execute();
         return $stmt->fetchAll();
-        
-        /*$query = "select distinct dmd.codePrelevement";
-        $query .= " from Aeag\SqeBundle\Entity\PgTmpValidEdilabo dmd";
-        $query .= " where dmd.demandeId = :demande";
-        $query .= " and dmd.fichierRpsId IS NULL";
-        $query .= " and dmd.codePrelevement NOT IN";
-        $query .= " (select distinct rps.codePrelevement";
-        $query .= " from Aeag\SqeBundle\Entity\PgTmpValidEdilabo rps";
-        $query .= " where rps.demandeId = :demande";
-        $query .= " and rps.fichierRpsId = :reponse)";
 
-        $qb = $this->_em->createQuery($query);
-        $qb->setParameter('demande', $demandeId);
-        $qb->setParameter('reponse', $reponseId);
-        return $qb->getResult();*/
     }
     
     public function getCodePrelevement($demandeId, $reponseId = null) {
@@ -432,70 +418,65 @@ class PgTmpValidEdilaboRepository extends EntityRepository {
         }
         
         return $return;
-        
-        /*$query = " select rps.codeParametre";
-        $query .= " from Aeag\SqeBundle\Entity\PgTmpValidEdilabo rps";
-        $query .= " where rps.demandeId = :demande";
-        $query .= " and rps.fichierRpsId = :reponse";
-        $query .= " and rps.codePrelevement = :codePrelevement";
-        $query .= " and rps.codeParametre NOT IN";
-        $query .= " (select distinct dmd.codeParametre";
-        $query .= " from Aeag\SqeBundle\Entity\PgTmpValidEdilabo dmd";
-        $query .= " where dmd.demandeId = :demande";
-        $query .= " and dmd.fichierRpsId IS NULL";
-        $query .= " and dmd.codePrelevement = :codePrelevement)";
-        
-        $qb = $this->_em->createQuery($query);
-        $qb->setParameter('demande', $demandeId);
-        $qb->setParameter('reponse', $reponseId);
-        $qb->setParameter('codePrelevement', $codePrelevement);
-        return $qb->getResult();*/
+
     }
     
     public function getDiffCodeParametreMissing($codePrelevement, $demandeId, $reponseId) {
         
         $query = "select dmd.*, rps.* from";
-        $query .= " (select distinct code_parametre, code_fraction from pg_tmp_valid_edilabo";
+        $query .= " (select distinct code_parametre as codeparamdmd, code_fraction from pg_tmp_valid_edilabo";
         $query .= " where demande_id = :demande and fichier_rps_id is null and code_prelevement = :codePrelevement) dmd";
-        $query .= " left join (select distinct code_parametre, code_fraction from pg_tmp_valid_edilabo";
+        $query .= " left join (select distinct code_parametre as codeparamrps, code_fraction from pg_tmp_valid_edilabo";
         $query .= " where demande_id = :demande and fichier_rps_id = :reponse and code_prelevement = :codePrelevement) rps";
-        $query .= " on  dmd.code_parametre = rps.code_parametre and ((dmd.code_fraction is null and rps.code_fraction is null) or (dmd.code_fraction = rps.code_fraction))";
-        $query .= " where rps.code_parametre is null";
-        
+        $query .= " on  codeparamdmd = codeparamrps";
+        $query .= " where codeparamrps is null";
         $stmt = $this->_em->getConnection()->prepare($query);
         $stmt->bindValue('demande', $demandeId);
         $stmt->bindValue('reponse', $reponseId);
         $stmt->bindValue('codePrelevement', $codePrelevement);
+
         $stmt->execute();
-        
+
         $results = $stmt->fetchAll();
+
         $return = array();
         foreach($results as $result){
-            if (!is_null($result['code_parametre'])) {
-                $return[] = $result['code_parametre'];
+            if (!is_null($result['codeparamdmd'])) {
+                $return[] = $result['codeparamdmd'];
             }
         }
         
         return $return;
+  
+    }
+    
+    public function getDiffCodeFraction($codePrelevement, $demandeId, $reponseId) {
         
-        /*$query = "select distinct dmd.codeParametre";
-        $query .= " from Aeag\SqeBundle\Entity\PgTmpValidEdilabo dmd";
-        $query .= " where dmd.demandeId = :demande";
-        $query .= " and dmd.fichierRpsId IS NULL";
-        $query .= " and dmd.codePrelevement = :codePrelevement";
-        $query .= " and dmd.codeParametre NOT IN";
-        $query .= " (select rps.codeParametre";
-        $query .= " from Aeag\SqeBundle\Entity\PgTmpValidEdilabo rps";
-        $query .= " where rps.demandeId = :demande";
-        $query .= " and rps.fichierRpsId = :reponse";
-        $query .= " and rps.codePrelevement = :codePrelevement)";
+        $query = "select dmd.*, rps.* from";
+        $query .= " (select distinct code_parametre as codeparamdmd, code_fraction from pg_tmp_valid_edilabo";
+        $query .= " where demande_id = :demande and fichier_rps_id is null and code_prelevement = :codePrelevement) dmd";
+        $query .= " left join (select distinct code_parametre as codeparamrps, code_fraction from pg_tmp_valid_edilabo";
+        $query .= " where demande_id = :demande and fichier_rps_id = :reponse and code_prelevement = :codePrelevement) rps";
+        $query .= " on  codeparamdmd = codeparamrps";
+        $query .= " where dmd.code_fraction <> rps.code_fraction";
+        $stmt = $this->_em->getConnection()->prepare($query);
+        $stmt->bindValue('demande', $demandeId);
+        $stmt->bindValue('reponse', $reponseId);
+        $stmt->bindValue('codePrelevement', $codePrelevement);
+
+        $stmt->execute();
+
+        $results = $stmt->fetchAll();
+
+        $return = array();
+        foreach($results as $result){
+            if (!is_null($result['codeparamdmd'])) {
+                $return[] = $result['codeparamdmd'];
+            }
+        }
         
-        
-        $qb = $this->_em->createQuery($query);
-        $qb->setParameter('demande', $demandeId);
-        $qb->setParameter('reponse', $reponseId);
-        $qb->setParameter('codePrelevement', $codePrelevement);
-        return $qb->getResult();*/
+        return $return;
+  
     }
     
     public function getCodesMethodes($codePrelevement, $demandeId, $reponseId) {

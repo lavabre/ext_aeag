@@ -3,17 +3,15 @@
 namespace Aeag\SqeBundle\Utils;
 
 class ControleVraisemblance {
-    
+
     // III.1 Champs non renseignés (valeurs et code remarque)  ou valeurs non numériques ou valeurs impossibles params env
     public function champsNonRenseignes($mesure, $codeRq, $codeParametre, $inSitu) {
-        if (is_null($mesure)) {
+        if ($this->isNull($mesure)) {
             if ($codeRq != 0 || is_null($codeRq)) { // III.2 Si valeur "vide" avec code remarque "0" hors lecture échelle (1429),,,,,,,'ABSENT' / on doit avoir un code remarque = 0 pour les valeurs vides, sinon avertissement, sauf pour le 1429 (cote échelle) => Avertissement
                 if ($codeParametre == 1429 || $inSitu == 0) {
                     return array("warning", "Valeur non renseignée et code remarque différent de 0");
-                    //$this->_addLog('warning', $demandeId, $reponseId, "Valeur non renseignée et code remarque différent de 0", $codePrelevement, $codeParametre);
                 } else {
                     return array("error", "Valeur non renseignée et code remarque différent de 0");
-                    //$this->_addLog('error', $demandeId, $reponseId, "Valeur non renseignée et code remarque différent de 0", $codePrelevement, $codeParametre);
                 }
             }
         }
@@ -22,14 +20,13 @@ class ControleVraisemblance {
 
     // III.1.1
     public function champsNonRenseignesEtValeursVides($mesure, $codeRq, $codeParametre, $inSitu) {
-        if (is_null($codeRq) && !is_null($mesure)) {
+        if ($this->isNull($codeRq) && !$this->isNull($mesure)) {
             if ($codeParametre == 1429 || $inSitu == 0) {
                 // TODO Si version edilabo
                 // A remettre lorsque la version edilabo sera prise en compte 
                 // $this->_addLog('warning', $demandeId, $reponseId, "Valeur renseignée et code remarque vide", $codePrelevement, $codeParametre);
             } else {
                 return array("error", "Valeur non renseignée et code remarque vide");
-                //$this->_addLog('error', $demandeId, $reponseId, "Valeur renseignée et code remarque vide", $codePrelevement, $codeParametre);
             }
         }
         return true;
@@ -37,9 +34,8 @@ class ControleVraisemblance {
 
     // III.2 Si valeur "vide" avec code remarque "0" hors lecture échelle (1429),,,,,,,'ABSENT' / on doit avoir un code remarque = 0 pour les valeurs vides, sinon avertissement, sauf pour le 1429 (cote échelle) => Avertissement
     public function valeursNumeriques($mesure, $codeRq) {
-        if (!is_null($codeRq) && $codeRq != 0 && !is_null($mesure)) {
+        if (!$this->isNull($codeRq) && $codeRq != 0 && !$this->isNull($mesure)) {
             if (!is_numeric($mesure) || !is_numeric($codeRq)) {
-                //$this->_addLog('error', $demandeId, $reponseId, "La valeur n'est pas un nombre", $codePrelevement, $codeParametre);
                 return array("error", "La valeur n'est pas un nombre");
             }
         }
@@ -48,12 +44,11 @@ class ControleVraisemblance {
 
     // III.3 Valeurs =0 (hors TH (1345), TA (1346), TAC (1347), Temp(1301)) hors codes observations environnementales / résultat = 0 possible pour les paramètres de cette liste (et pour 1345, 1346, 1347 et 1301) => Erreur
     public function valeursEgalZero($mesure, $codeParametre, $inSitu) {
-        if (!is_null($mesure) && $mesure == 0) {
-            if ($inSitu != 0){
-            if  ($codeParametre != 1345 && $codeParametre != 1346 && $codeParametre != 1347 && $codeParametre != 1301 && $codeParametre != 1328 && $codeParametre != 1295)  {
-                //$this->_addLog('error', $demandeId, $reponseId, "Valeur = 0 impossible pour ce paramètre", $codePrelevement, $codeParametre);
-                return array("error", "Valeur = 0 impossible pour ce paramètre");
-            }
+        if (!$this->isNull($mesure) && $mesure == 0) {
+            if ($inSitu != 0) {
+                if ($codeParametre != 1345 && $codeParametre != 1346 && $codeParametre != 1347 && $codeParametre != 1301 && $codeParametre != 1328 && $codeParametre != 1295) {
+                    return array("error", "Valeur = 0 impossible pour ce paramètre");
+                }
             }
         }
         return true;
@@ -63,7 +58,6 @@ class ControleVraisemblance {
     public function valeursInfZero($mesure, $codeParametre) {
         if ($mesure < 0) {
             if ($codeParametre != 1409 && $codeParametre != 1330 && $codeParametre != 1420 && $codeParametre != 1429) {
-                //$this->_addLog('error', $demandeId, $reponseId, "Valeur < 0 impossible pour ce paramètre", $codePrelevement, $codeParametre);
                 return array("error", "Valeur < 0 impossible pour ce paramètre");
             }
         }
@@ -76,7 +70,6 @@ class ControleVraisemblance {
             1447, 1448, 1449, 1451, 5479, 6455
         );
         if (($codeRq == 3 && !in_array($codeParametre, $codeParamsBacterio)) || $codeRq == 7 || $codeRq == 2) {
-            //$this->_addLog('error', $demandeId, $reponseId, "Code Remarque > 3 ou == 7 impossible pour ce paramètre", $codePrelevement, $codeParametre);
             return array("error", "Code Remarque > 3 ou == 7 ou == 2 impossible pour ce paramètre");
         }
         return true;
@@ -84,9 +77,8 @@ class ControleVraisemblance {
 
     // III.6 1 < pH(1302) < 14
     public function pH($mPh) {
-        if (!is_null($mPh)) {
+        if (!$this->isNull($mPh)) {
             if ($mPh < 1 || $mPh > 14) {
-                //$this->_addLog('error', $demandeId, $reponseId, "Le pH n\'est pas entre 1 et 14", $codePrelevement, $mPh);
                 return array("error", "Le pH n\'est pas entre 1 et 14");
             }
         }
@@ -95,7 +87,7 @@ class ControleVraisemblance {
 
     // III.7 modèle  de WEISS : cohérence Teau, % O2, Concentration O2  sauf si Conductivité > 10 000
     public function modeleWeiss($mTxSatOx, $mOxDiss, $mTEau, $mConductivite) {
-        if (!is_null($mTxSatOx) && !is_null($mOxDiss) && !is_null($mTEau) && !is_null($mConductivite)) {
+        if (!$this->isNull($mTxSatOx) && !$this->isNull($mOxDiss) && !$this->isNull($mTEau) && !$this->isNull($mConductivite)) {
             if ($mConductivite < 10000) {
                 $mTEauK = $mTEau + 273.15;
                 $argExp = -173.4292 + 249.6339 * (100 / $mTEauK) + 143.3483 * log($mTEauK / 100) - 21.8492 * ($mTEauK / 100);
@@ -104,19 +96,17 @@ class ControleVraisemblance {
 
                 if (abs($indVraiWess) > 25) {
                     //error
-                    //$this->_addLog('error', $demandeId, $reponseId, "Modele de Weiss : valeurs non conformes", $codePrelevement, abs($indVraiWess));
                     return array("error", "Modele de Weiss : valeurs non conformes");
                 } else if (10 < abs($indVraiWess) && abs($indVraiWess) <= 25) {
                     // Avertissement
-                    //$this->_addLog('warning', $demandeId, $reponseId, "Modele de Weiss : valeur réservée", $codePrelevement, abs($indVraiWess));
                     return array("warning", "Modele de Weiss : valeur réservée");
                 }
             } else {
                 //error ou avertissement ?
-                //$this->_addLog('warning', $demandeId, $reponseId, "Modele de Weiss : Conductivité supérieur à 10000", $codePrelevement, $mConductivite);
                 return array("warning", "Modele de Weiss : Conductivité supérieur à 10000");
             }
         }
+        var_dump('la on divise par zero 1 fin');
         return true;
     }
 
@@ -127,7 +117,7 @@ class ControleVraisemblance {
         $cpt = 0;
         $keys = array_keys($cCationParams);
         while ($cpt < count($keys) && $valid) {
-            if (is_null($cCationParams[$keys[$cpt]])) {
+            if ($this->isNull($cCationParams[$keys[$cpt]])) {
                 $valid = false;
             }
             $cpt++;
@@ -138,7 +128,7 @@ class ControleVraisemblance {
             $cpt = 0;
             $keys = array_keys($cAnionParams);
             while ($cpt < count($keys) && $valid) {
-                if (is_null($cAnionParams[$keys[$cpt]])) {
+                if ($this->isNull($cAnionParams[$keys[$cpt]])) {
                     $valid = false;
                 }
                 $cpt++;
@@ -160,7 +150,6 @@ class ControleVraisemblance {
             }
 
             if ($countLq >= (count($cAnionParams) + count($cCationParams))) {
-                //$this->_addLog('error', $demandeId, $reponseId, "Balance Ionique : Tous les dosages sont en LQ", $codePrelevement);
                 return array("error", "Balance Ionique : Tous les dosages sont en LQ");
             } else {
                 $vCationParams = array(1374 => 20.039,
@@ -192,10 +181,8 @@ class ControleVraisemblance {
                 $indVraiBion = ($cCation - $cAnion);
 
                 if (0.5 < $indVraiBion && $indVraiBion <= 1.25) {
-                    //$this->_addLog('warning', $demandeId, $reponseId, "Balance Ionique : Valeur réservée", $codePrelevement);
                     return array("warning", "Balance Ionique : Valeur réservée");
                 } else if ($indVraiBion > 1.25) {
-                    //$this->_addLog('error', $demandeId, $reponseId, "Balance Ionique : Valeur non conforme", $codePrelevement);
                     return array("error", "Balance Ionique : Valeur non conforme");
                 }
             }
@@ -211,7 +198,7 @@ class ControleVraisemblance {
         $cpt = 0;
         $keys = array_keys($cCationParams);
         while ($cpt < count($keys) && $valid) {
-            if (is_null($cCationParams[$keys[$cpt]])) {
+            if ($this->isNull($cCationParams[$keys[$cpt]])) {
                 $valid = false;
             }
             $cpt++;
@@ -221,7 +208,7 @@ class ControleVraisemblance {
             $cpt = 0;
             $keys = array_keys($cAnionParams);
             while ($cpt < count($keys) && $valid) {
-                if (is_null($cAnionParams[$keys[$cpt]])) {
+                if ($this->isNull($cAnionParams[$keys[$cpt]])) {
                     $valid = false;
                 }
                 $cpt++;
@@ -229,7 +216,7 @@ class ControleVraisemblance {
         }
 
         if ($valid) {
-            if (is_null($mConductivite)) {
+            if ($this->isNull($mConductivite)) {
                 $valid = false;
             }
         }
@@ -249,7 +236,6 @@ class ControleVraisemblance {
             }
 
             if ($countLq >= (count($cAnionParams) + count($cCationParams))) {
-                //$this->_addLog('error', $demandeId, $reponseId, "Balance Ionique TDS 2 : Tous les dosages sont en LQ", $codePrelevement);
                 return array("error", "Balance Ionique TDS 2 : Tous les dosages sont en LQ");
             } else {
                 $cCation = 0;
@@ -268,10 +254,8 @@ class ControleVraisemblance {
                 $indVraiTds = $tdsEstime - $tdsModele;
 
                 if (175 <= abs($indVraiTds) && abs($indVraiTds) < 280) {
-                    //$this->_addLog('warning', $demandeId, $reponseId, "Balance Ionique TDS 2 : Réserve", $codePrelevement, abs($indVraiTds));
                     return array("warning", "Balance Ionique TDS 2 : Réserve");
                 } else if (abs($indVraiTds) >= 280) {
-                    //$this->_addLog('warning', $demandeId, $reponseId, "Balance Ionique TDS 2 : Valeur non conforme", $codePrelevement, abs($indVraiTds));
                     return array("warning", "Balance Ionique TDS 2 : Valeur non conforme");
                 }
             }
@@ -281,14 +265,12 @@ class ControleVraisemblance {
 
     // III.10 [PO4] (1433) en P < [P total](1350) 
     public function orthophosphate($mPo4, $mP, $codeRqPo4, $codeRqP) {
-        if (!is_null($mPo4) && !is_null($mP)) {
-            if (($codeRqPo4 != 10) || ($codeRqP != 10)) {
+        if (!$this->isNull($mPo4) && !$this->isNull($mP)) {
+            if (($codeRqPo4 != 10 && $codeRqPo4 != 0) || ($codeRqP != 10 && $codeRqP != 0)) {
                 $indP = ($mPo4 * 0.3261379) / $mP;
                 if (1 < $indP && $indP <= 1.25) {
-                    //$this->_addLog('warning', $demandeId, $reponseId, "Orthophosphate : Réserve", $codePrelevement, $indP);
                     return array("warning", "Orthophosphate : Réserve");
                 } else if ($indP > 1.25) {
-                    //$this->_addLog('error', $demandeId, $reponseId, "Orthophosphate : Valeur non conforme", $codePrelevement, $indP);
                     return array("error", "Orthophosphate : Valeur non conforme");
                 }
             }
@@ -298,14 +280,12 @@ class ControleVraisemblance {
 
     // III.11 NH4 (1335) en N < Nkj (1319)
     public function ammonium($mNh4, $mNkj, $codeRqNh4, $codeRqNkj) {
-        if (!is_null($mNh4) && !is_null($mNkj)) {
+        if (!$this->isNull($mNh4) && !$this->isNull($mNkj)) {
             if (($codeRqNh4 != 10) || ($codeRqNkj != 10)) {
                 $indP = ($mNh4 * 0.7765) / $mNkj;
                 if (1 < $indP && $indP <= 1.25) {
-                    //$this->_addLog('warning', $demandeId, $reponseId, "Ammonium : Réserve", $codePrelevement, $indP);
                     return array("warning", "Ammonium : Réserve");
                 } else if ($indP > 1.25) {
-                    //$this->_addLog('error', $demandeId, $reponseId, "Ammonium : Valeur non conforme", $codePrelevement, $indP);
                     return array("error", "Ammonium : Valeur non conforme");
                 }
             }
@@ -317,10 +297,9 @@ class ControleVraisemblance {
     public function pourcentageHorsOxygene($tabMesures) {
         $tabRetour = array();
         foreach ($tabMesures as $tabMesure) {
-            if (!is_null($tabMesure) && count($tabMesure) > 0) {
+            if (!$this->isNull($tabMesure) && count($tabMesure) > 0) {
                 foreach ($tabMesure as $mesure) {
                     if ($mesure > 100 || $mesure < 0) {
-                        //$this->_addLog('error', $demandeId, $reponseId, "Valeur pourcentage : pourcentage n'est pas entre 0 et 100", $mesure);
                         $tabRetour[] = array("error", "Valeur pourcentage : pourcentage n'est pas entre 0 et 100");
                     }
                 }
@@ -331,7 +310,6 @@ class ControleVraisemblance {
         } else {
             return true;
         }
-        
     }
 
     // III.13 Somme des paramètres distincts (1200+1201+1202+1203=5537; 1178+1179 = 1743; 1144+1146+ 1147+1148 = 7146; 2925 + 1292 =  1780) à  (+/- 20%)
@@ -344,20 +322,20 @@ class ControleVraisemblance {
             $j = 0;
             $keys = array_keys($sommeParams[$i]);
             while ($j < count($keys) && $valid) {
-                if (is_null($sommeParams[$i][$keys[$j]])) {
+                if ($this->isNull($sommeParams[$i][$keys[$j]])) {
                     $valid = false;
                 }
                 $j++;
             }
             $i++;
         }
-        
-        
+
+
         if ($valid) {
             if (count($resultParams) == count($sommeParams)) {
                 $i = 0;
                 while ($i < count($resultParams) && $valid) {
-                    if (is_null($resultParams[$i])) {
+                    if ($this->isNull($resultParams[$i])) {
                         $valid = false;
                     }
                     $i++;
@@ -366,7 +344,7 @@ class ControleVraisemblance {
                 $valid = false;
             }
         }
-        
+
         if ($valid) {
             $tabRetour = array();
             foreach ($sommeParams as $idx => $sommeParam) {
@@ -379,7 +357,6 @@ class ControleVraisemblance {
                 $resultParamMin = $resultParams[$idx] - $percent;
                 $resultParamMax = $resultParams[$idx] + $percent;
                 if (($resultParamMin > $somme) || ($somme > $resultParamMax)) {
-                    //$this->_addLog('error', $demandeId, $reponseId, "Somme Parametres Distincts : La somme des paramètres ne correspond pas au paramètre global " . $params[$idx], $codePrelevement, $somme);
                     $tabRetour[] = array("error", "Somme Parametres Distincts : La somme des paramètres ne correspond pas au paramètre global" . $params[$idx]);
                 }
             }
@@ -390,6 +367,10 @@ class ControleVraisemblance {
             }
         }
         return true;
+    }
+
+    public function isNull($val) {
+        return (is_null($val) || (isset($val) && $val == ""));
     }
 
 }
