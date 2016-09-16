@@ -42,7 +42,7 @@ class SuiviSedimentController extends Controller {
         if ($user->hasRole('ROLE_ADMINSQE')) {
             $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByAdmin();
         } else if ($user->hasRole('ROLE_PRESTASQE')) {
-            $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnSuiviByPrestaPrel($user);
+            $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnSuiviSedimentByPresta($user);
         } else if ($user->hasRole('ROLE_PROGSQE')) {
             $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByProg($user);
         } else if ($user->hasRole('ROLE_SQE')) {
@@ -238,6 +238,7 @@ class SuiviSedimentController extends Controller {
                 $tabStations[$i]['cmdPrelevs'] = null;
                 //$pgCmdDemande = $repoPgCmdDemande->getPgCmdDemandeByLotanPrestatairePeriode($pgProgLotAn, $pgProgLotPeriodeProg->getGrparAn()->getPrestaDft(), $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
 				$pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandesByLotanPeriode($pgProgLotAn, $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
+				$trouveDmd = false;
 				if (count($pgCmdDemandes) > 0) {
 					foreach ($pgCmdDemandes as $pgCmdDemande) {
 					//if ($pgCmdDemande) {
@@ -248,6 +249,7 @@ class SuiviSedimentController extends Controller {
 						$pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($pgCmdDemande->getPrestataire(), $pgCmdDemande, $pgProgLotPeriodeProg->getStationAn()->getStation(), $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
 						foreach ($pgCmdPrelevs as $pgCmdPrelev) {
 							if ($pgCmdPrelev->getCodeSupport()->getCodeSupport() == '6') {
+								$trouveDmd = true;
 								$tabCmdPrelevs[$nbCmdPrelevs]['cmdPrelev'] = $pgCmdPrelev;
 								$tabCmdPrelevs[$nbCmdPrelevs]['maj'] = 'N';
 								$tabCmdPrelevs[$nbCmdPrelevs]['commentaire'] = null;
@@ -308,6 +310,9 @@ class SuiviSedimentController extends Controller {
 							}
 						}
 						$tabStations[$i]['cmdPrelevs'] = $tabCmdPrelevs;
+						if ($trouveDmd) {
+							break;
+						}
 					} 
 				} else {
                     $tabStations[$i]['cmdDemande'] = null;

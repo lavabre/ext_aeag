@@ -232,90 +232,84 @@ class SuiviEauController extends Controller {
                     $tabStations[$i]['reseau'] = null;
                 }
                 $tabStations[$i]['cmdPrelevs'] = null;
-                $pgCmdDemande = $repoPgCmdDemande->getPgCmdDemandeByLotanPrestatairePeriode($pgProgLotAn, $pgProgLotPeriodeProg->getGrparAn()->getPrestaDft(), $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
-                if ($pgCmdDemande) {
-                    $tabStations[$i]['cmdDemande'] = $pgCmdDemande;
-                    $tabCmdPrelevs = array();
-                    $nbCmdPrelevs = 0;
-                    $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($pgProgLotPeriodeProg->getGrparAn()->getPrestaDft(), $pgCmdDemande, $pgProgLotPeriodeProg->getStationAn()->getStation(), $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
-                    foreach ($pgCmdPrelevs as $pgCmdPrelev) {
-                        $tabCmdPrelevs[$nbCmdPrelevs]['cmdPrelev'] = $pgCmdPrelev;
-                        $tabCmdPrelevs[$nbCmdPrelevs]['maj'] = 'N';
-                        $tabCmdPrelevs[$nbCmdPrelevs]['commentaire'] = null;
-                        $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelevOrderId($pgCmdPrelev);
-                        $tabSuiviPrels = array();
-                        $nbSuiviPrels = 0;
-                        if (count($pgCmdSuiviPrels) == 0) {
-                            $tabSuiviPrels[$nbSuiviPrels]['suiviPrel'] = array();
-                            $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'O';
-                            $tabCmdPrelevs[$nbCmdPrelevs]['maj'] = 'O';
-                        } else {
-                            foreach ($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
-                                $tabSuiviPrels[$nbSuiviPrels]['suiviPrel'] = $pgCmdSuiviPrel;
-                                $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'N';
-                                $tabSuiviPrels[$nbSuiviPrels]['avisSaisie'] = 'N';
-                                if ($pgCmdSuiviPrel->getCommentaire()) {
-                                    if ($tabCmdPrelevs[$nbCmdPrelevs]['commentaire'] == null) {
-                                        $tabCmdPrelevs[$nbCmdPrelevs]['commentaire'] = $pgCmdSuiviPrel->getCommentaire();
-                                    }
-                                }
-                                if ($user->hasRole('ROLE_ADMINSQE') or ( $pgCmdPrelev->getPrestaPrel() == $pgCmdDemande->getPrestataire())) {
-                                    if ($pgCmdSuiviPrel->getStatutPrel() != 'F' or ( $pgCmdSuiviPrel->getStatutPrel() == 'F' and $pgCmdSuiviPrel->getValidation() != 'A')) {
-                                        $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'O';
-                                        $tabCmdPrelevs[$nbCmdPrelevs]['maj'] = 'O';
-                                    }
-                                } else {
-                                    if ($user->hasRole('ROLE_ADMINSQE')) {
-                                        if ($pgCmdSuiviPrel->getStatutPrel() != 'F' or ( $pgCmdSuiviPrel->getStatutPrel() == 'F' and $pgCmdSuiviPrel->getValidation() != 'A')) {
-                                            $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'O';
-                                            $tabCmdPrelevs[$nbCmdPrelevs]['maj'] = 'O';
-                                        }
-                                    } else {
-                                        $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'N';
-                                    }
-                                }
-                                $commentaire = $pgCmdSuiviPrel->getCommentaire();
-                                $tabCommentaires = explode(CHR(13) . CHR(10), $commentaire);
-                                for ($nbLignes = 0; $nbLignes < count($tabCommentaires); $nbLignes++) {
-                                    $pos = explode(' ', $tabCommentaires[$nbLignes]);
-                                    //echo ('ligne : ' . $nbLignes . '  pos : ' . $pos[0] .  ' ligne : ' . $tabCommentaires[$nbLignes] . '</br>');
-                                    if ($pos[0] == 'Déposé' and $pos[1] = 'le' and $pos[3] == 'à' and $pos[5] == 'par' and $pos[7] == ':') {
-                                        $commentaireBis = null;
-                                        for ($nbLignesBis = 0; $nbLignesBis < $nbLignes; $nbLignesBis++) {
-                                            $commentaireBis .= $tabCommentaires[$nbLignesBis] . CHR(13) . CHR(10);
-                                        }
-                                        if (!$user->hasRole('ROLE_ADMINSQE')) {
-                                            $tabSuiviPrels[$nbSuiviPrels]['suiviPrel']->setCommentaire($commentaireBis);
-                                            break;
-                                        }
-                                    }
-                                }
-                                $nbSuiviPrels++;
-                                break;
-                            }
-                        }
-                        if (count($tabSuiviPrels) > 0) {
-                            $tabCmdPrelevs[$nbCmdPrelevs]['suiviPrels'] = $tabSuiviPrels;
-                        } else {
-                            $tabCmdPrelevs[$nbCmdPrelevs]['suiviPrels'] = null;
-                        }
-                        $tabAutrePrelevs = $repoPgCmdPrelev->getAutrePrelevs($pgCmdPrelev);
-                        if (count($tabAutrePrelevs) > 0) {
-                            $tabCmdPrelevs[$nbCmdPrelevs]['autrePrelevs'] = $tabAutrePrelevs;
-                        } else {
-                            $tabCmdPrelevs[$nbCmdPrelevs]['autrePrelevs'] = null;
-                        }
-//                         if ($pgCmdPrelev->getStation()->getOuvFoncId() == 557655){
-//                             for($j = 0 ; $j < count($tabCmdPrelevs[$nbCmdPrelevs]['autrePrelevs']); $j++){
-//                                 echo('j : ' . $j . ' date : ' . $tabCmdPrelevs[$nbCmdPrelevs]['autrePrelevs'][$j]['datePrel'] . ' support : ' . $tabCmdPrelevs[$nbCmdPrelevs]['autrePrelevs'][$j]['support'] . '</br>');
-//                             }
-//                             echo('nb: ' . count($tabCmdPrelevs[$nbCmdPrelevs]['autrePrelevs']));
-//                           \Symfony\Component\VarDumper\VarDumper::dump($tabCmdPrelevs[$nbCmdPrelevs]['autrePrelevs']);
-//                            return new Response ('');   
-//                        }
-                        $nbCmdPrelevs++;
-                    }
-                    $tabStations[$i]['cmdPrelevs'] = $tabCmdPrelevs;
+				//$pgCmdDemande = $repoPgCmdDemande->getPgCmdDemandeByLotanPrestatairePeriode($pgProgLotAn, $pgProgLotPeriodeProg->getGrparAn()->getPrestaDft(), $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
+				$pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandesByLotanPeriode($pgProgLotAn, $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
+                $trouveDmd = false;
+				if (count($pgCmdDemandes) > 0) {
+					foreach ($pgCmdDemandes as $pgCmdDemande) {
+					//if ($pgCmdDemande) {
+						$tabStations[$i]['cmdDemande'] = $pgCmdDemande;
+						$tabCmdPrelevs = array();
+						$nbCmdPrelevs = 0;
+						//$pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($pgProgLotPeriodeProg->getGrparAn()->getPrestaDft(), $pgCmdDemande, $pgProgLotPeriodeProg->getStationAn()->getStation(), $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
+						$pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($pgCmdDemande->getPrestataire(), $pgCmdDemande, $pgProgLotPeriodeProg->getStationAn()->getStation(), $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
+						foreach ($pgCmdPrelevs as $pgCmdPrelev) {
+							if ($pgCmdPrelev->getCodeSupport()->getCodeSupport() == '3') {
+								$trouveDmd = true;
+								$tabCmdPrelevs[$nbCmdPrelevs]['cmdPrelev'] = $pgCmdPrelev;
+								$tabCmdPrelevs[$nbCmdPrelevs]['maj'] = 'N';
+								$tabCmdPrelevs[$nbCmdPrelevs]['commentaire'] = null;
+								$pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelevOrderId($pgCmdPrelev);
+								$tabSuiviPrels = array();
+								$nbSuiviPrels = 0;
+								if (count($pgCmdSuiviPrels) == 0) {
+									$tabSuiviPrels[$nbSuiviPrels]['suiviPrel'] = array();
+									$tabSuiviPrels[$nbSuiviPrels]['maj'] = 'O';
+									$tabCmdPrelevs[$nbCmdPrelevs]['maj'] = 'O';
+								} else {
+									foreach ($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
+										$tabSuiviPrels[$nbSuiviPrels]['suiviPrel'] = $pgCmdSuiviPrel;
+										$tabSuiviPrels[$nbSuiviPrels]['maj'] = 'N';
+										if ($pgCmdSuiviPrel->getCommentaire()) {
+											if ($tabCmdPrelevs[$nbCmdPrelevs]['commentaire'] == null) {
+												$tabCmdPrelevs[$nbCmdPrelevs]['commentaire'] = $pgCmdSuiviPrel->getCommentaire();
+											}
+										}
+										if ($user->hasRole('ROLE_ADMINSQE') or ( $pgCmdSuiviPrel->getUser()->getPrestataire() == $pgCmdDemande->getPrestataire())) {
+											if ($pgCmdSuiviPrel->getStatutPrel() != 'F' or ( $pgCmdSuiviPrel->getStatutPrel() == 'F' and $pgCmdSuiviPrel->getValidation() != 'A')) {
+												$tabSuiviPrels[$nbSuiviPrels]['maj'] = 'O';
+												$tabCmdPrelevs[$nbCmdPrelevs]['maj'] = 'O';
+											}
+										} else {
+											if ($user->hasRole('ROLE_ADMINSQE')) {
+												if ($pgCmdSuiviPrel->getStatutPrel() != 'F' or ( $pgCmdSuiviPrel->getStatutPrel() == 'F' and $pgCmdSuiviPrel->getValidation() != 'A')) {
+													$tabSuiviPrels[$nbSuiviPrels]['maj'] = 'O';
+													$tabCmdPrelevs[$nbCmdPrelevs]['maj'] = 'O';
+												}
+											} else {
+												$tabSuiviPrels[$nbSuiviPrels]['maj'] = 'N';
+											}
+										}
+										$nbSuiviPrels++;
+									}
+								}
+								if (count($tabSuiviPrels) > 0) {
+									$tabCmdPrelevs[$nbCmdPrelevs]['suiviPrels'] = $tabSuiviPrels;
+								} else {
+									$tabCmdPrelevs[$nbCmdPrelevs]['suiviPrels'] = null;
+								}
+								$tabAutrePrelevs = $repoPgCmdPrelev->getAutrePrelevs($pgCmdPrelev);
+								if (count($tabAutrePrelevs) > 0) {
+									$tabCmdPrelevs[$nbCmdPrelevs]['autrePrelevs'] = $tabAutrePrelevs;
+								} else {
+									$tabCmdPrelevs[$nbCmdPrelevs]['autrePrelevs'] = null;
+								}
+		//                         if ($pgCmdPrelev->getStation()->getOuvFoncId() == 557655){
+		//                             for($j = 0 ; $j < count($tabCmdPrelevs[$nbCmdPrelevs]['autrePrelevs']); $j++){
+		//                                 echo('j : ' . $j . ' date : ' . $tabCmdPrelevs[$nbCmdPrelevs]['autrePrelevs'][$j]['datePrel'] . ' support : ' . $tabCmdPrelevs[$nbCmdPrelevs]['autrePrelevs'][$j]['support'] . '</br>');
+		//                             }
+		//                             echo('nb: ' . count($tabCmdPrelevs[$nbCmdPrelevs]['autrePrelevs']));
+		//                           \Symfony\Component\VarDumper\VarDumper::dump($tabCmdPrelevs[$nbCmdPrelevs]['autrePrelevs']);
+		//                            return new Response ('');   
+		//                        }
+								$nbCmdPrelevs++;
+							}
+						}
+						$tabStations[$i]['cmdPrelevs'] = $tabCmdPrelevs;
+						if ($trouveDmd) {
+							break;
+						}
+					}
                 } else {
                     $tabStations[$i]['cmdDemande'] = null;
                 }
