@@ -48,6 +48,7 @@ class CollecteurController extends Controller {
         if (is_object($user)) {
             $mes = AeagController::notificationAction($user, $em, $session);
             $mes1 = AeagController::messageAction($user, $em, $session);
+            $stat = AeagController::statistiquesAction($user, $em, $session);
         }
 
         $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
@@ -2086,6 +2087,45 @@ class CollecteurController extends Controller {
                                 $producteur->setDec('O');
                                 $em->persist($producteur);
                                 $em->flush();
+                            } else {
+                                $producteur->setLibelle($this->wd_remove_accents($tab[1]));
+                                if ($tab[2]) {
+                                    $tab[2] = str_replace(' ', '', $tab[2]);
+                                    $tab[2] = str_pad($tab[2], 5, '0', STR_PAD_LEFT);
+                                    $codePostal = $repoCodePostal->getCodePostalByCp($tab[2]);
+                                    if (!$codePostal) {
+                                        $dept = substr($tab[2], 0, 2);
+                                        $departement = $repoDepartement->getDepartementByDept($dept);
+                                        if ($departement->getDec() == 'N') {
+                                            $err = true;
+                                            $message = $message . "dans le fichier CSV : Département " . $dept . " non aidable par l'agence de l'eau 'adour-garonne' à la ligne " . $ligne . " \n";
+                                        } else {
+                                            $producteur->setCp($tab[2]);
+                                        }
+                                    } else {
+                                        $aidable = 'O';
+                                        foreach ($codePostal as $cp) {
+                                            if ($cp->getDec() == 'N') {
+                                                $err = true;
+                                                $message = $message . "dans le fichier CSV : Commune " . $tab[2] . " non aidable par l'agence de l'eau 'adour-garonne' à la ligne " . $ligne . " \n";
+                                            } else {
+                                                if (count($codePostal) == 1) {
+                                                    $producteur->setCommune($cp->getCommune());
+                                                    $producteur->setCp($cp->getCp());
+                                                    $producteur->setVille($cp->getAcheminement());
+                                                } else {
+                                                    $producteur->setCp($cp->getCp());
+                                                }
+                                                break;
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    $err = true;
+                                    $message = $message . "dans le fichier CSV : Code postal " . $tab[2] . " incorrecte à la ligne " . $ligne . " \n";
+                                }
+                                $em->persist($producteur);
+                                $em->flush();
                             }
 
 
@@ -2247,6 +2287,8 @@ class CollecteurController extends Controller {
                                 $declarationDetail = new DeclarationDetail();
                                 $action = 'AJOUTER';
                             } else {
+                                $err = true;
+                                $message = $message . "dans le fichier CSV :  la ligne " . $ligne . " est en double \n";
                                 $declarationDetail = $declarationDetail;
                                 $ancDeclarationDetail = clone($declarationDetail);
                                 if ($ancDeclarationDetail->getStatut()->getCode() == '11') {
@@ -2732,6 +2774,7 @@ class CollecteurController extends Controller {
         }
 
         $message = null;
+        $erreurProducteur = null;
         $erreurOuvrageFiliere = null;
         $erreurQuantiteReel = null;
         $erreurMontAide = null;
@@ -2744,6 +2787,16 @@ class CollecteurController extends Controller {
                 if ($form->isValid()) {
                     $message = null;
                     $producteur = $repoOuvrage->getOuvrageById($crudDeclarationDetail->getProducteur());
+                    if (!$producteur->getCp()) {
+                        $message = $message . "Le code postal du producteur " . $producteur->getSiret() . " doit être renseigné. \n";
+                        $declarationDetail->setMessage($message);
+//$emDec->persist($declarationDetail);
+//$emDec->flush();
+                        $constraint = new True(array(
+                            'message' => 'Le code postal du producteur ' . $producteur->getSiret() . ' doit être renseigné'
+                        ));
+                        $erreurProducteur = $this->get('validator')->validateValue(false, $constraint);
+                    }
                     $repoOuvrageFiliere = $emDec->getRepository('AeagDecBundle:OuvrageFiliere');
                     $ouvrageFiliere = $repoOuvrageFiliere->getOuvrageFiliereByOuvrageFiliere($crudDeclarationDetail->getCentreTraitement()->getId(), $crudDeclarationDetail->getTraitFiliere()->getCode(), $declarationCollecteur->getAnnee());
                     if (!$ouvrageFiliere) {
@@ -2756,7 +2809,7 @@ class CollecteurController extends Controller {
                         ));
                         $erreurOuvrageFiliere = $this->get('validator')->validateValue(false, $constraint);
                     }
-                    if (count($erreurOuvrageFiliere) == 0) {
+                    if (count($erreurProducteur) == 0 and count($erreurOuvrageFiliere) == 0) {
 
                         $statut = $repoStatut->getStatutByCode('20');
                         if ($crud == 'U') {
@@ -2833,7 +2886,7 @@ class CollecteurController extends Controller {
                             $crudDeclarationDetail->setQuantiteAide($quantiteRet);
                         }
 
-                        if (count($erreurQuantiteReel) == 0) {
+                        if (count($erreurProducteur) == 0 and count($erreurQuantiteReel) == 0) {
 
                             $producteurTauxSpecial = $repoProducteurTauxSpecial->getProducteurTauxSpecialBySiret($producteur->getSiret());
                             if ($producteurTauxSpecial) {

@@ -18,7 +18,7 @@ class AdminController extends Controller {
         $session->set('controller', 'Admin');
         $session->set('fonction', 'index');
         $em = $this->get('doctrine')->getManager('die');
-        
+           
         return $this->render('AeagDieBundle:Admin:index.html.twig');
     }
 

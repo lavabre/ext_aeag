@@ -12,6 +12,7 @@ use Aeag\EdlBundle\Entity\Contact;
 use Aeag\EdlBundle\Entity\Criteres;
 use Aeag\EdlBundle\Form\ContactType;
 use Aeag\UserBundle\Entity\User;
+use Aeag\AeagBundle\Controller\AeagController;
 
 class MyDateTime extends \DateTime {
 
@@ -36,13 +37,19 @@ class DefaultController extends Controller {
         $session->set('fonction', 'index');
         $em = $this->get('doctrine')->getManager();
         $emEdl = $this->get('doctrine')->getManager('edl');
-        $session->clear();
         $session->set('appli', 'edl');
         $session->set('retourErreur', $this->generateUrl('aeag_edl'));
 
         $repoUtilisateur = $emEdl->getRepository('AeagEdlBundle:Utilisateur');
         $repoExportAvisEtat = $emEdl->getRepository('AeagEdlBundle:ExportAvisEtat');
         $repoExportAvisPression = $emEdl->getRepository('AeagEdlBundle:ExportAvisPression');
+        $repoStatistiques = $em->getRepository('AeagUserBundle:Statistiques');
+
+        if (!$user) {
+            $stat = AeagController::statistiquesAction(null, $em, $session);
+        } else {
+            $stat = AeagController::statistiquesAction($user, $em, $session);
+        }
 
         if ($user) {
             $utilisateur = $repoUtilisateur->getUtilisateurByExtid($user->getId());
@@ -70,7 +77,7 @@ class DefaultController extends Controller {
 
 
         return $this->render('AeagEdlBundle:Default:index.html.twig', array(
-                    'form' => $form->createView(),
+                    'form' => $form->createView()
         ));
     }
 

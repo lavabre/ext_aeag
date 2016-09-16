@@ -41,7 +41,7 @@ class UserController extends Controller {
         $session->set('menu', 'acteurs');
         $repoUsers = $em->getRepository('AeagUserBundle:User');
         $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
-
+        
         if ($security->isGranted('ROLE_ADMIN')) {
             $entities = $repoUsers->getUsers();
             $role = 'ROLE_AEAG';

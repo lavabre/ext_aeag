@@ -63,7 +63,7 @@
                                 <div class="panel-body text-justify">
                                     <ul class="list-group">
                                         {% if app.session.get('suiviDonnees') %}
-                                            <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_saisieDonnees_index')}}" title="Saisie des données"><i class="fa fa-dashboard fa-3x"></i> Terrain</a></li>
+                                            <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_saisieDonnees_index')}}" title="Saisie des données"><i class="fa fa-dashboard fa-3x"></i> Terrain / Labo</a></li>
                                             {% endif %}
                                             {% if app.session.get('suiviQHb') %}
                                                 {#{% if  not app.session.get('evolution')%}#}
@@ -143,7 +143,7 @@
                                 <div class="panel-body">
                                     <ul class="list-group">
                                         {% if app.session.get('suiviDonnees') %}
-                                            <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_saisieDonnees_index')}}" title="Saisie des données"><i class="fa fa-dashboard fa-3x"></i> Terrain</a></li>
+                                            <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_saisieDonnees_index')}}" title="Saisie des données"><i class="fa fa-dashboard fa-3x"></i> Terrain / Labo</a></li>
                                             {% endif %}
                                             {% if app.session.get('suiviQHb') %}
                                                 {#{% if  not app.session.get('evolution')%}#}
@@ -233,6 +233,7 @@
   
 
 {% endblock content %}
+
 
 {% block scriptsTr %}
 

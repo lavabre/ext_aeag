@@ -1,0 +1,112 @@
+{% extends "AeagUserBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+    <li>
+        <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+    </li>
+    <li class="active">
+        Statistiques
+    </li>
+{% endblock breadcrumb %}
+
+{% block panel_heading %}
+    <h3>
+        Statistiques
+    </h3>
+{% endblock panel_heading %}
+
+
+{%block content %}
+
+
+    <div class="row">
+        <div class="col-xm-12">
+            <div class="small ">
+                <table class="table table-bordered table-striped table-condensed table-advance table-hover" id="idTable">
+                    <thead>
+                        <tr>
+                            <th width="1%">Actions</th>
+                            <th>Nom</th>
+                            <th>Application</th>
+                            <th>nombre de connexions</th>
+                            <th>Début connexion</th>
+                            <th>Fin connexion</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% set nbPresents = 0 %}
+                        {% set nbAbsents = 0 %}
+                        {% for entity in entities %}
+                            {% if entity.stat.DateFinConnexion %}
+                                {% set nbAbsents = nbAbsents + 1 %}
+                                <tr class="danger">
+                                {% else %}
+                                    {% set nbPresents = nbPresents + 1 %}
+                                <tr class="success">
+                                {% endif %}
+                                <td nowrap>
+                                    {% if entity.user  and  not entity.stat.DateFinConnexion %}
+                                        <a class="btn btn-info" href="{{ path('Aeag_envoyerMessage', { 'id': entity.user.id }) }}" title="Message">
+                                            <i class="fa fa-inbox"></i> 
+                                        </a>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if entity.user %}
+                                        {{ entity.user.username  }} {{ entity.user.prenom  }}
+                                    {% else %}
+                                        Anonyme
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                    {{ entity.stat.appli  }}
+                                </td>
+                                <td class="text-center">
+                                    {{ entity.stat.nbConnexion  }}
+                                </td>
+                                <td class="text-center">
+                                    <span class="hidden">{{ entity.stat.DateDebutConnexion | date("Y/m/d H:i") }}</span>
+                                    {{ entity.stat.DateDebutConnexion | date('d/m/Y H:i:s') }}
+                                </td>
+                                <td class="text-center">
+                                    {% if entity.stat.DateFinConnexion %}
+                                        <span class="hidden">{{ entity.stat.DateFinConnexion | date("Y/m/d H:i") }}</span>
+                                        {{  entity.stat.DateFinConnexion | date('d/m/Y H:i:s') }}
+                                    {% endif%}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 pull-right text-info">
+            <ul class="list-inline">
+                <li><span class="label label-success">Connectés : {{ nbPresents }}</span></li>
+                <li><span class="label label-danger">Non Connectés : {{ nbAbsents }}</span></li>
+            </ul>  
+        </div>
+    </div>                          
+
+{%endblock content %}
+
+{% block scripts %}
+    jQuery(document).ready(function() {
+    var table = $('#idTable').DataTable(
+    {"stateSave": true,
+    "order": [[ 5, "asc" ],[ 1, "asc" ]],
+    "language": {
+    "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
+    },
+    "aLengthMenu": [
+    [10, 25, 50, 100, -1],
+    [10, 25, 50, 100, "Tous"]
+    ],
+    "iDisplayLength": 10
+    });
+
+    });
+{% endblock scripts %}

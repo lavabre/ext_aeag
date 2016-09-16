@@ -34,7 +34,7 @@ security:
                 path : /
             anonymous:      false         # On autorise les utilisateurs anonymes (non identifiés)
             logout:    
-               path: fos_user_security_logout
+               path: logout
                target: /
                invalidate_session: true
      
