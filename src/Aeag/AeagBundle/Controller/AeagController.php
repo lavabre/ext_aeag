@@ -45,73 +45,47 @@ class AeagController extends Controller {
             $mes = $this->notificationAction($user, $em, $session);
             $mes1 = $this->messageAction($user, $em, $session);
             $stat = $this->statistiquesAction($user, $em, $session);
+          //  return new Response ($stat);
         } else {
             return $this->redirect($this->generateUrl('fos_user_security_login'));
         }
 
-
-
         if ($security->isGranted('ROLE_ADMIN')) {
             $session->set('appli', 'admin');
-        };
-
-        if ($security->isGranted('ROLE_ADMINEDL')) {
-            $session->set('appli', 'edl');
-        };
-
-        if ($security->isGranted('ROLE_ODEC')) {
-            $session->set('appli', 'dec');
-        };
-        if ($security->isGranted('ROLE_FRD')) {
-            $session->set('appli', 'frd');
-        };
-
-        if ($security->isGranted('ROLE_EDL')) {
-            $session->set('appli', 'edl');
-        };
-
-        if ($security->isGranted('ROLE_STOCK')) {
-            $session->set('appli', 'stock');
-        };
-
-        if ($security->isGranted('ROLE_SQE')) {
-            $session->set('appli', 'sqe');
-        };
-
-        if ($security->isGranted('ROLE_ADMINDIE')) {
-            $session->set('appli', 'die');
-        };
-
-
-        if ($security->isGranted('ROLE_ADMIN')) {
             return $this->render('AeagAeagBundle:Admin:index.html.twig');
         };
 
         if ($security->isGranted('ROLE_ADMINEDL')) {
+            $session->set('appli', 'edl');
             return $this->redirect($this->generateUrl('aeag_edl'));
         };
 
         if ($security->isGranted('ROLE_ODEC')) {
+            $session->set('appli', 'dec');
             return $this->redirect($this->generateUrl('aeag_dec'));
         };
         if ($security->isGranted('ROLE_FRD')) {
+            $session->set('appli', 'frd');
             return $this->redirect($this->generateUrl('aeag_frd'));
         };
 
-
         if ($security->isGranted('ROLE_EDL')) {
+             $session->set('appli', 'edl');
             return $this->redirect($this->generateUrl('aeag_edl'));
         };
 
         if ($security->isGranted('ROLE_STOCK')) {
+            $session->set('appli', 'stock');
             return $this->redirect($this->generateUrl('aeag_stock'));
         };
 
         if ($security->isGranted('ROLE_SQE')) {
+            $session->set('appli', 'sqe');
             return $this->redirect($this->generateUrl('aeag_sqe'));
         };
 
         if ($security->isGranted('ROLE_ADMINDIE')) {
+            $session->set('appli', 'die');
             return $this->redirect($this->generateUrl('aeag_die_admin'));
         };
 
@@ -545,16 +519,17 @@ class AeagController extends Controller {
         $repoStatistiques = $em->getRepository('AeagUserBundle:Statistiques');
         $repoConnectes = $em->getRepository('AeagUserBundle:Connectes');
 
-        $timestamp_5min = time() - (60 * 5); // 60 * 5 = nombre de secondes écoulées en 5 minutes
+        $timestamp_5min = time() - (60 * 10); // 60 * 10 = nombre de secondes écoulées en 10 minutes
         $connectes = $repoConnectes->getConnectes5Minutes($timestamp_5min);
-        foreach ($connectes as $connecte) {
-            $statistiques = $repoStatistiques->getStatistiquesByIp($_SERVER['REMOTE_ADDR']);
+           foreach ($connectes as $connecte) {
+            $statistiques = $repoStatistiques->getStatistiquesByIp($connecte->getIp());
             foreach ($statistiques as $statistique) {
                 $statistique->setDateFinConnexion(new \DateTime());
                 $em->persist($statistique);
             }
             $em->remove($connecte);
         }
+        
 
         $statistiques = $repoStatistiques->getStatistiques();
         foreach ($statistiques as $statistique) {
@@ -566,9 +541,9 @@ class AeagController extends Controller {
                 }
             }
         }
-
-
         $em->flush();
+    //      return new Response ('time : ' .  $timestamp_5min . ' connectes : ' . count($connectes));
+   
 
         $connecte = $repoConnectes->getConnectesByIp($_SERVER['REMOTE_ADDR']);
         if (!$connecte) {
@@ -599,20 +574,22 @@ class AeagController extends Controller {
             }
             $statistique->setDateDebutConnexion(new \DateTime());
         } else {
-               if ($statistique->getDateFinConnexion()) {
+            if ($statistique->getDateFinConnexion()) {
                 $statistique->setAppli($session->get('appli'));
                 $statistique->setNbConnexion($statistique->getNbConnexion() + 1);
                 $statistique->setDateDebutConnexion(new \DateTime());
                 $statistique->setDateFinConnexion(null);
-               }
-           }
+            }else{
+                $statistique->setAppli($session->get('appli'));
+            }
+        }
         $em->persist($statistique);
         $em->flush();
 
 
         $nbStatistiques = $repoStatistiques->getNbStatistiques();
         $session->set('nbStatistiques', $nbStatistiques);
-         $nbConnectes = $repoStatistiques->getNbConnectes();
+        $nbConnectes = $repoStatistiques->getNbConnectes();
         $session->set('nbConnectes', $nbConnectes);
         return 'ok';
     }
