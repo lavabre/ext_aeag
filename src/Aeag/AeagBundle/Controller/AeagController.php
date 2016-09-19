@@ -599,44 +599,22 @@ class AeagController extends Controller {
             }
             $statistique->setDateDebutConnexion(new \DateTime());
         } else {
-            if ($user) {
+               if ($statistique->getDateFinConnexion()) {
                 $statistique->setAppli($session->get('appli'));
-            } else {
-                $statistique->setDateDebutConnexion(new \DateTime());
                 $statistique->setNbConnexion($statistique->getNbConnexion() + 1);
-            }
-            $statistique->setDateFinConnexion(null);
-        }
+                $statistique->setDateDebutConnexion(new \DateTime());
+                $statistique->setDateFinConnexion(null);
+               }
+           }
         $em->persist($statistique);
         $em->flush();
 
-//
-//        if ($user) {
-//            $statistique = $repoStatistiques->getStatistiquesByUserDateConnexion($user->getId(), new \DateTime());
-//        } else {
-//            $statistique = $repoStatistiques->getStatistiquesByUserDateConnexion(0, new \DateTime());
-//        }
-//        if (!$statistique) {
-//            if ($user) {
-//                $statistique->setAppli($session->get('appli'));
-//            }
-//            $statistique->setDateDebutConnexion(new \DateTime());
-//            $statistique->setDateFinConnexion(null);
-//            $statistique->setNbConnexion($statistique->getNbConnexion() + 1);
-//        } else {
-//            if ($user) {
-//                $statistique->setAppli($session->get('appli'));
-//            }else{
-//                $statistique->setNbConnexion($statistique->getNbConnexion() + 1);
-//            }
-//            $statistique->setDateFinConnexion(null);
-//        }
-//        $em->persist($statistique);
-//        $em->flush();
 
-        $nbStatistiques = $repoStatistiques->getNbConnectes();
+        $nbStatistiques = $repoStatistiques->getNbStatistiques();
         $session->set('nbStatistiques', $nbStatistiques);
-        return $statistique->getid();
+         $nbConnectes = $repoStatistiques->getNbConnectes();
+        $session->set('nbConnectes', $nbConnectes);
+        return 'ok';
     }
 
 }

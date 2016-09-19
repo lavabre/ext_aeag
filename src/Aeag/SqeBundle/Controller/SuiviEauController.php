@@ -17,7 +17,7 @@ use \Aeag\SqeBundle\Form\SyntheseSupportStationType;
 use Aeag\SqeBundle\Form\LotPeriodeStationDemandeSuiviSaisirType;
 use Aeag\AeagBundle\Controller\AeagController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Request; 
 
 class SuiviEauController extends Controller {
 
@@ -908,22 +908,39 @@ class SuiviEauController extends Controller {
                 }
                 if (!$trouve) {
                     $tabStations[$j]['station'] = $pgProgLotPeriodeProg->getStationAn()->getStation();
-                    $pgCmdDemande = $repoPgCmdDemande->getPgCmdDemandeByLotanPrestatairePeriode($pgProgLotAn, $pgProgLotPeriodeProg->getGrparAn()->getPrestaDft(), $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
-                    if ($pgCmdDemande) {
-                        $tabStations[$j]['demande'] = $pgCmdDemande;
-                        $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($pgProgLotPeriodeProg->getGrparAn()->getPrestaDft(), $pgCmdDemande, $pgProgLotPeriodeProg->getStationAn()->getStation(), $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
-                        $tabCmdPrelevs = array();
-                        $nbCmdPrelevs = 0;
-                        foreach ($pgCmdPrelevs as $pgCmdPrelev) {
-                            $tabCmdPrelevs[$nbCmdPrelevs]['cmdPrelev'] = $pgCmdPrelev;
-                            $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelevOrderId($pgCmdPrelev);
-                            $tabCmdPrelevs[$nbCmdPrelevs]['cmdSuiviPrelevs'] = $pgCmdSuiviPrels;
-                            $nbCmdPrelevs++;
-                        }
-                        $tabStations[$j]['prelevs'] = $tabCmdPrelevs;
-                    }
-                    $nbStations++;
-                    $j++;
+                    //$pgCmdDemande = $repoPgCmdDemande->getPgCmdDemandeByLotanPrestatairePeriode($pgProgLotAn, $pgProgLotPeriodeProg->getGrparAn()->getPrestaDft(), $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
+					$pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandesByLotanPeriode($pgProgLotAn, $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
+					$trouveDmd = false;
+					if (count($pgCmdDemandes) > 0) {
+						foreach ($pgCmdDemandes as $pgCmdDemande) {
+							//if ($pgCmdDemande) {
+								$tabStations[$j]['demande'] = $pgCmdDemande;
+								//$pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($pgProgLotPeriodeProg->getGrparAn()->getPrestaDft(), $pgCmdDemande, $pgProgLotPeriodeProg->getStationAn()->getStation(), $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
+								$pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($pgCmdDemande->getPrestataire(), $pgCmdDemande, $pgProgLotPeriodeProg->getStationAn()->getStation(), $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
+								$tabCmdPrelevs = array();
+								$nbCmdPrelevs = 0;
+								foreach ($pgCmdPrelevs as $pgCmdPrelev) {
+									if ($pgCmdPrelev->getCodeSupport()->getCodeSupport() == '3') {
+										$trouveDmd = true;
+										$tabCmdPrelevs[$nbCmdPrelevs]['cmdPrelev'] = $pgCmdPrelev;
+										$pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelevOrderId($pgCmdPrelev);
+										$tabCmdPrelevs[$nbCmdPrelevs]['cmdSuiviPrelevs'] = $pgCmdSuiviPrels;
+										$nbCmdPrelevs++;
+									}
+								}
+								$tabStations[$j]['prelevs'] = $tabCmdPrelevs;
+							//}
+							//$nbStations++;
+							//$j++;
+							
+							if ($trouveDmd) {
+								break;
+							}
+						}
+					}
+					$nbStations++;
+					$j++;
+							
                 }
             }
         }
@@ -1078,7 +1095,7 @@ class SuiviEauController extends Controller {
                     }
 
                     $dateActuel = new \DateTime();
-                    $dateActuel->add(new \DateInterval('P15D'));
+                    //$dateActuel->add(new \DateInterval('P15D'));
                     $date = $tab[3];
                     $tabDate = explode(' ', $date);
                     if (count($tabDate) != 2) {
@@ -1105,7 +1122,13 @@ class SuiviEauController extends Controller {
                         }
                         if ($statutPrel == 'P') {
                             if ($datePrel < $dateActuel or $datePrel > $dateFin) {
-                                $contenu = 'ligne  ' . $ligne . '  :  Avertissement date  (' . $datePrel->format('d/m/Y H:i') . ') non comprise entre ' . $dateActuel->format('d/m/Y H:i') . ' et ' . $dateFin->format('d/m/Y H:i') . CHR(13) . CHR(10);
+                                //$contenu = 'ligne  ' . $ligne . '  :  Avertissement date  (' . $datePrel->format('d/m/Y H:i') . ') non comprise entre ' . $dateActuel->format('d/m/Y H:i') . ' et ' . $dateFin->format('d/m/Y H:i') . CHR(13) . CHR(10);
+								if ($datePrel < $dateActuel) {
+									$contenu = 'ligne  ' . $ligne . ' , Avertissement : date prévisionnelle (' . $datePrel->format('d/m/Y H:i') . ') antérieure à la date actuelle (' . $dateActuel->format('d/m/Y H:i') . ')';
+								}
+								else {
+									$contenu = 'ligne  ' . $ligne . ' , Avertissement : date prévisionnelle (' . $datePrel->format('d/m/Y H:i') . ') postérieure à la date de fin de la période programmée (' . $dateFin->format('d/m/Y H:i') .')';
+								}
                                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                                 fputs($rapport, $contenu);
                             }
@@ -1117,7 +1140,13 @@ class SuiviEauController extends Controller {
                                 if (!$user->hasRole('ROLE_ADMINSQE')) {
                                     $err = true;
                                 }
-                                $contenu = 'ligne  ' . $ligne . '  :   date  (' . $datePrel->format('d/m/Y H:i') . ') non comprise entre ' . $dateDebut->format('d/m/Y H:i') . ' et ' . $dateActuel->format('d/m/Y H:i') . CHR(13) . CHR(10);
+                                //$contenu = 'ligne  ' . $ligne . '  :   date  (' . $datePrel->format('d/m/Y H:i') . ') non comprise entre ' . $dateDebut->format('d/m/Y H:i') . ' et ' . $dateActuel->format('d/m/Y H:i') . CHR(13) . CHR(10);
+								if ($datePrel < $dateDebut) {
+									$contenu = 'ligne  ' . $ligne . ' , Erreur : date de prélèvement (' . $datePrel->format('d/m/Y H:i') . ') antérieure à la date de début de la période programmée (' . $dateDebut->format('d/m/Y H:i') .')';
+								}
+								else {
+									$contenu = 'ligne  ' . $ligne . ' , Erreur : date de prélèvement (' . $datePrel->format('d/m/Y H:i') . ') postérieure à la date actuelle (' . $dateActuel->format('d/m/Y H:i') . ')';
+								}
                                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                                 fputs($rapport, $contenu);
                             }
@@ -1143,7 +1172,12 @@ class SuiviEauController extends Controller {
 
                     $trouve = false;
                     $prelev = null;
-                    if (count($prelevs) > 0) {
+					
+					//$contenu = 'ligne  ' . $ligne . '  :  ' .  count($prelevs) . 'prelevs ' . CHR(13) . CHR(10);
+                    //$contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                    //fputs($rapport, $contenu);
+                    
+					if (count($prelevs) > 0) {
                         for ($j = 0; $j < count($prelevs); $j++) {
                             $prelev = $prelevs[$j]['cmdPrelev'];
                             if ($prelev->getCodeSupport()->getCodeSupport() == $codeSupport) {
