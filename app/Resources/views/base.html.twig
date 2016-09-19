@@ -412,6 +412,15 @@
             url = '{{ path('AeagUserBundle_Statistiques') }}';
             $('footer a').attr('href', url);
             $('footer a').attr('target', '');
+            
+            var url = '{{ path("AeagUserBundle_statistiques_maj") }}';
+             $.ajax({
+                url: url,
+                type: 'get',
+           {#     success: function(html) {
+                    $('#modalTraitementEncours').modal('hide');
+               }#}
+           });
 
             // controle formulaire
             $("#idForm").validate();

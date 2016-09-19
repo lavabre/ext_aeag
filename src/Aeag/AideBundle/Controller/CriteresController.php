@@ -9,7 +9,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Aeag\AideBundle\Form\Criteres\CriteresRequestType;
 use Aeag\AideBundle\Entity\Form\CriteresRequest;
 use Aeag\AideBundle\DependencyInjection\PdfAidesAccordees;
-use Aeag\AeagBundle\Controller\AeagController;
 
 /**
  * Description DefaultController
@@ -36,9 +35,7 @@ class CriteresController extends Controller {
         $emAeag = $this->getDoctrine()->getManager();
         $em = $this->getDoctrine()->getManager('aide');
         $session->set('retourErreur', $this->generateUrl('aeag_aide'));
-        
-        $stat = AeagController::statistiquesAction(null, $emAeag, $session);
-    
+     
         $criteres = new CriteresRequest();
 
         $form = $this->createForm(new CriteresRequestType(), $criteres);

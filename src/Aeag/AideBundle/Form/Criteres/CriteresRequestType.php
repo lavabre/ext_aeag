@@ -81,6 +81,11 @@ class CriteresRequestType extends AbstractType {
                     'required' => false,
                     'label' => "",
                     'choice_label' => 'DeptLibelle',
+                     'query_builder' => function(\Doctrine\ORM\EntityRepository $er)
+                                    {
+                                    $qb = $er->createQueryBuilder('d');
+                                    return $qb->orderBy('d.dept', 'ASC');
+                                    },
                   
                 ))  
                         

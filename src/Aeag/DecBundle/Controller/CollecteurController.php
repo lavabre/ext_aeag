@@ -48,8 +48,7 @@ class CollecteurController extends Controller {
         if (is_object($user)) {
             $mes = AeagController::notificationAction($user, $em, $session);
             $mes1 = AeagController::messageAction($user, $em, $session);
-            $stat = AeagController::statistiquesAction($user, $em, $session);
-        }
+          }
 
         $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
         $repoDeclarationCollecteur = $emDec->getRepository('AeagDecBundle:DeclarationCollecteur');

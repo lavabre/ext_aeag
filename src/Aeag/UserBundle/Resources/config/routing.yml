@@ -59,6 +59,12 @@ AeagUserBundle_Statistiques:
     defaults: { _controller: "AeagUserBundle:Statistiques:index" }
     requirements:
         methods:  GET|POST
+        
+AeagUserBundle_statistiques_maj:
+    path:  /statistiques/majStatistiques
+    defaults: { _controller: "AeagUserBundle:Statistiques:majStatistiques" }
+    requirements:
+        methods:  GET|POST
 
 
 
