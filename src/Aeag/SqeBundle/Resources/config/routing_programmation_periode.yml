@@ -17,9 +17,15 @@ AeagSqeBundle_programmation_semaines_selectionnees:
     requirements:
         methods:  GET|POST
         
-AeagSqeBundle_programmation_periode_filtrer:
-    path:  /filtrer/
-    defaults: { _controller: AeagSqeBundle:ProgrammationPeriode:filtrer }
+AeagSqeBundle_programmation_periode_selectionner:
+    path:  /filtrer/selectionner
+    defaults: { _controller: AeagSqeBundle:ProgrammationPeriode:SelectionnerPeriodes }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_periode_valider_selection:
+    path:  /filtrer/valider
+    defaults: { _controller: AeagSqeBundle:ProgrammationPeriode:ValiderSelectionPeriodes }
     requirements:
         methods:  GET|POST
         
@@ -74,6 +80,24 @@ AeagSqeBundle_programmation_periode_bilan:
 AeagSqeBundle_programmation_periode_telecharger:
     path:  /telecharger/{lotan}
     defaults: { _controller: AeagSqeBundle:ProgrammationPeriode:telecharger, lotan:null}
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_periode_gerer:
+    path:  /gerer/{lotan}
+    defaults: { _controller: AeagSqeBundle:ProgrammationPeriode:gererPeriode, lotan:null}
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_periode_dupliquer_periode:
+    path:  /dupliquerPeriode/{periodeId}
+    defaults: { _controller: AeagSqeBundle:ProgrammationPeriode:dupliquerPeriode, periodeId : null }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_periode_supprimer:
+    path:  /supprimer/{periodeId}
+    defaults: { _controller: AeagSqeBundle:ProgrammationPeriode:supprimerPeriode, periodeId : null }
     requirements:
         methods:  GET|POST
         

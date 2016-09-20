@@ -1,0 +1,65 @@
+
+  <table class="table table-bordered table-condensed table-advance" id="idTable_station">
+        <thead id="idTheadStations">
+            <tr>
+                {% if action == 'P'  and maj != 'V' %}
+                    <th width="1%">Actions</th>
+                    {% endif %}
+                <th width="10%">Stations</th>
+                <th width="10%">Réseaux</th>
+                    {%if stationAns | length%}  
+                        {% for periode in stationAns.0.periodes %}
+                        <th width="1%" id="idThPeriode_{{ periode.periode.id }}">{{ periode.periode.labelPeriode }}</th>
+                        {% endfor %}
+                    {% endif %}
+            </tr>
+        </thead>
+        <tbody id="idBodyStations">
+            {%if stationAns | length%}  
+                {% for stationAn in stationAns %}
+                    <tr id='idStation_{{ stationAn.station.id }}' name='idStation_{{ stationAn.station.id }}' width="10%">
+                        {% if action == 'P'  and maj != 'V' %}
+                            <td nowrap>
+                                <a id="idDupliquerStation_{{ stationAn.station.id }}" data-toggle="modal" href="#" class="btn btn-primary" href="#" title="dupliquer la programmation sur les autres stations">
+                                    <i class="fa fa-sitemap"></i> 
+                                </a>
+                                <a id="idInitialiserStation_{{ stationAn.station.id }}"  class="btn btn-danger" data-toggle="modal" href="#" title="Initialiser les périodes">
+                                    <i class="fa fa-eraser"></i> 
+                                </a>
+                            </td>
+                        {% endif %}
+                        <td nowrap>{{ stationAn.station.station.code}}&nbsp;&nbsp;{{ stationAn.station.station.libelle}}</td>
+                        <td nowrap>{{ stationAn.reseau.nomRsx }}</td>
+                        {% for periode in stationAn.periodes %}
+                            <td id="idTd_{{ stationAn.station.id }}_{{ periode.periode.id }}">
+                                <div id="idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}" class="text-center">
+                                    <a id="idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}" class="btn btn-default">
+                                        <span id="idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}" class="badge"></span>
+                                    </a>
+                                </div>
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            {% endif %}
+        </tbody>
+    </table> 
+        
+<script>
+    
+     var url = '{{ path("AeagSqeBundle_programmation_periode_gerer",{"action": "par1","maj":"pa2","lotan":"par3"}) }}', // Le nom du fichier indiqué dans le formulaire
+    url = url.replace("par1", '{{ action }}');
+    url = url.replace("par2", '{{ maj }}');
+    url = url.replace("amp;","");
+    url = url.replace("par3", '{{ lotan.id }}');
+    url = url.replace("amp;","");
+    $.ajax({
+    url: url,
+    type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+    success: function(html) { // Je récupère la réponse du fichier PHP
+    $('#idBody_gestion_periodes').empty().append(html);
+    $('#modalTraitementEncours').modal('hide');
+    }
+    });
+
+ </script>

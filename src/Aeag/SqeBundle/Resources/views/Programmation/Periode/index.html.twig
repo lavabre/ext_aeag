@@ -120,7 +120,7 @@
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                         <h4 class="modal-title">
-                            Liste des semaines disponibles
+                            Liste des periodes disponibles
                         </h4>
                     </div>
                     <div class="modal-body-sqe">
@@ -138,21 +138,7 @@
                                                 <th>Intervalles</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                            {%if periodes | length%} 
-                                                {% for periode in periodes %}
-                                                    <tr>
-                                                        <td>
-                                                            <div class="checbox">
-                                                                <input type="checkbox" id="checkPeriode_{{  periode.id }}" name="checkPeriode[]" value="{{  periode.id }}" >
-                                                            </div>
-                                                        </td> 
-                                                        <td nowrap>{{ periode.labelPeriode }}</td>
-                                                        <td nowrap>du {{ periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;au&nbsp;&nbsp; {{ periode.dateFin | date("d/m/Y") }}</td>
-                                                    </tr>
-                                                {% endfor %}
-                                            {% endif %}
-                                        </tbody>
+                                        <tbody id="idBody_selection_periodes"></tbody>
                                     </table>
                                 </div>
                             </div>
@@ -169,6 +155,70 @@
                         </button>
                     </div>
                 </div>
+            </div>
+        </div>
+    </form>
+                        
+    {#modal gestion periodes #}
+    <form action="#" class="form-horizontal" id="idForm_gestion_periode" method="post">
+        <div class="modal fade" id="modal_gestion_periode">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">
+                            Gestion des périodes programmées
+                        </h4>
+                    </div>
+                    <div class="modal-body-sqe">
+                        <div id="idMessage_gestion_periode"></div>
+                        <div class="row">
+                            <div class="col-md-offset-1 col-md-10">
+                                <div class="small">
+                                    <table class="table table-bordered table-condensed table-advance" id="idTable_gestion_periodes">
+                                        <thead>
+                                            <tr>
+                                                <th width="1%" align="center">Action</th>
+                                                <th width="5%">Périodes</th>
+                                                <th>Intervalles</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="idBody_gestion_periodes">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        {% if action == 'P'  and maj != 'V' %}
+                            <button id="idValiderGestionPeriode" type="submit" class="btn btn-success">
+                                <i class="fa fa-check"> Valider</i>
+                            </button>
+                        {% endif %}
+                        <button id="idAnnulerGestionPeriode" type="button" class="btn btn-default" data-dismiss="modal">
+                            <i class="fa fa-undo"> Annuler</i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+                        
+       {#modal dupliquer periode#}
+    <form action="#" class="form-horizontal" id="idFormDupliquerPeriode" method="post">
+        <div class="modal fade" id="modalDupliquerPeriode" >
+            <div class="modal-dialog">
+                <div class="modal-content" id="idModalContentDupliquerPeriode"></div>
+            </div>
+        </div>
+    </form>
+    
+     {#modal initialiser periode #}
+    <form action="#" class="form-horizontal" id="idFormInitialiserPeriode" method="post">
+        <div class="modal fade" id="modalInitialiserPeriode" >
+            <div class="modal-dialog">
+                <div class="modal-content" id="idModalContentInitialiserPeriode"></div>
             </div>
         </div>
     </form>
@@ -245,17 +295,24 @@
                         <div class="panel-body">
                             <form action="#" class="form-horizontal" id="idForm_periode" method="post">
                                 {% if action == 'P'  and maj != 'V' %}
+                                     <div class="row">
                                     {% if typePeriode.codeTypePeriode == 'SEM' %}
-                                        <div class="row">
-                                            <div class="col-md-2">
-                                                <a  data-toggle="modal" href="#modal_periode" href="#" title="Filtrer les semaines">
+                                          <div class="col-md-2">
+                                                <a  data-toggle="modal" href="#modal_periode" href="#" title="Filtrer les périodes">
                                                     <button id="idSelectionPeriodes" type="button" class="btn btn-primary icon-ok-sign">
-                                                        Filtrer les semaines
+                                                        Filtrer les périodes
                                                     </button>
                                                 </a>
                                             </div>
-                                        </div>
                                     {% endif %}
+                                              <div class="col-md-2">
+                                                <a  data-toggle="modal" href="#modal_gestion_periode" href="#" title="Gérer les périodes">
+                                                    <button id="idGestionPeriodes" type="button" class="btn btn-primary icon-ok-sign">
+                                                        Gérer les périodes
+                                                    </button>
+                                                </a>
+                                            </div>
+                                       </div>
                                 {% endif %}
 
 
@@ -429,6 +486,8 @@
 
         <div id="idResultatDupliquerStation"></div>
         <div id="idResultatInitialiserStation"></div>
+        <div id="idResultatDupliquerPeriode"></div>
+        <div id="idResultatInitialiserPeriode"></div>
         <div id="idResultatBilan"></div>
     </div>
 {% endblock content %}
@@ -465,7 +524,36 @@
     }
     }
     );
-
+ 
+           // Table periode
+    var table_gestion_periodes = $('#idTable_gestion_periodes').DataTable(
+                {  "ordering": false,
+                "scrollCollapse": true,
+                "oLanguage": {
+                "sSearch": "Filtre",
+                "sFirst": "1ere page",
+                "sLast": "Dernière page",
+                "sNext": "Prochaine page",
+                "sPrevious": "Page précédente",
+                "EmptyTable": "Pas de données",
+                "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+                "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+                "sZeroRecords": "Pas d'enregistrement à afficher",
+                "sInfoEmpty": "Pas d'enregistrement à afficher",
+                "sInfoThousands": " ",
+                "sLengthMenu": 'Afficher <select>' +
+                    '<option value="10">10</option>' +
+                    '<option value="20">20</option>' +
+                    '<option value="30">30</option>' +
+                    '<option value="40">40</option>' +
+                    '<option value="50">50</option>' +
+                    '<option value="-1">Tous</option>' +
+                    '</select> enregistrements',
+                "sPaginationType": "full_numbers"
+                }
+                }
+                );
+        
 
 
     // table station
@@ -530,9 +618,31 @@
         table_periode.page.len( nbRecords ).draw();
     {% endif %}
     });
+    
+    
 
 
     {#  filtrer les semaines  #}
+    
+      $(document).on('click', '#idSelectionPeriodes',function(e){
+            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+            $('#modalTraitementEncours').modal('toggle');
+            var url = '{{ path("AeagSqeBundle_programmation_periode_selectionner",{"action": "par1","maj":"pa2","lotan":"par3"}) }}', // Le nom du fichier indiqué dans le formulaire
+            url = url.replace("par1", '{{ action }}');
+            url = url.replace("par2", '{{ maj }}');
+            url = url.replace("amp;","");
+            url = url.replace("par3", '{{ lotan.id }}');
+            url = url.replace("amp;","");
+            $.ajax({
+            url: url,
+            type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+            success: function(html) { // Je récupère la réponse du fichier PHP
+            $('#idBody_selection_periodes').empty().append(html);
+            $('#modal_periode').modal();
+            $('#modalTraitementEncours').modal('hide');
+            }
+            });
+            });
 
     var cocher = true;
     $(document).on('click','#cocherToutLesPeriodes',function(e){
@@ -563,7 +673,7 @@
     var nbRecords = $('#idTable_periodes_length option:selected').val();
     table_periode.page.len( -1 ).draw();
     var $this = $('#idForm_periode'); // L'objet jQuery du formulaire
-    var url = '{{ path("AeagSqeBundle_programmation_periode_filtrer",{"action": "par1","maj":"par2","lotan":"par3"}) }}', // Le nom du fichier indiqué dans le formulaire
+    var url = '{{ path("AeagSqeBundle_programmation_periode_valider_selection",{"action": "par1","maj":"par2","lotan":"par3"}) }}', // Le nom du fichier indiqué dans le formulaire
     url = url.replace("par1", '{{ action }}');
     url = url.replace("par2", '{{ maj }}');
     url = url.replace("amp;","");
@@ -1055,10 +1165,70 @@
     $("#modal_periode").draggable({
     handle: ".modal-header"
     });    
+    
+    $("#modal_gestion_periode").draggable({
+    handle: ".modal-header"
+    });    
 
     $("#idModalProgrammer").draggable({
     handle: ".modal-header"
     });    
+    
+    
+    
+     $(document).on('click', '#idGestionPeriodes',function(e){
+            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+            $('#modalTraitementEncours').modal('toggle');
+            var url = '{{ path("AeagSqeBundle_programmation_periode_gerer",{"action": "par1","maj":"pa2","lotan":"par3"}) }}', // Le nom du fichier indiqué dans le formulaire
+            url = url.replace("par1", '{{ action }}');
+            url = url.replace("par2", '{{ maj }}');
+            url = url.replace("amp;","");
+            url = url.replace("par3", '{{ lotan.id }}');
+            url = url.replace("amp;","");
+            $.ajax({
+            url: url,
+            type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+            success: function(html) { // Je récupère la réponse du fichier PHP
+            $('#idBody_gestion_periodes').empty().append(html);
+            $('#modal_gestion_periode').modal();
+            $('#modalTraitementEncours').modal('hide');
+            }
+            });
+            });
+    
+    
+           {# tout cocher ou tout decocher periodes #}
+            var cocherToutesLesPeriodesDisponibles = false;
+            $(document).on('click','#idCocherToutesLesPeriodesDisponibles',function(e){
+            var info = table_TableDupliquerPeriode.page.info();
+            var nbRecords = $('#idTableDupliquerPeriode_length option:selected').val();
+            var filtre = $('#idTableDupliquerPeriode_filter input').val();
+            if (filtre != ''){
+            var initval = '';
+            table_TableDupliquerPeriode.search(initval).draw();
+            };
+            table_TableDupliquerPeriode.page.len( -1 ).draw();
+            if (cocherToutesLesPeriodesDisponibles == true){
+            cocherToutesLesPeriodesDisponibles = false;
+            $('#idCocherToutesLesPeriodesDisponibles').removeClass('btn-danger').addClass('btn-success');
+            $('#idCocherToutesLesPeriodesDisponibles i').removeClass('fa-eraser').addClass('fa-check ');
+            {% for periodeAnAutre in stationAns.0.periodes  %}
+                $('#checkDupliquerPeriode_{{ periodeAnAutre.periode.id }}').prop( "checked", false );
+            {% endfor %}
+            }else{
+            cocherToutesLesPeriodesDisponibles = true;
+            $('#idCocherToutesLesPeriodesDisponibles').removeClass('btn-success').addClass('btn-danger');
+            $('#idCocherToutesLesPeriodesDisponibles i').removeClass("fa-check").addClass('fa-eraser');
+            {% for periodeAnAutre in stationAns.0.periodes  %}
+                $('#checkDupliquerPeriode_{{ periodeAnAutre.periode.id }}').prop( "checked", true );
+             {% endfor %}
+            };
+            if (filtre != ''){
+            table_TableDupliquerPeriode.search(filtre).draw();
+            };
+            table_TableDupliquerPeriode.page.len( nbRecords ).draw();
+            nbcocherPeriodes();
+            });
 
 
     });
