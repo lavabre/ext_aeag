@@ -251,18 +251,16 @@ class SuiviHydrobioController extends Controller {
                                     }
                                 }
                                 if ($user->hasRole('ROLE_ADMINSQE') or ( $pgCmdPrelev->getPrestaPrel() == $pgCmdDemande->getPrestataire())) {
-                                    if ($pgCmdSuiviPrel->getStatutPrel() != 'F' or ( $pgCmdSuiviPrel->getStatutPrel() == 'F' and $pgCmdSuiviPrel->getValidation() != 'A')) {
+                                    if ($pgCmdSuiviPrel->getStatutPrel() != 'F') {
                                         $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'O';
                                         $tabCmdPrelevs[$nbCmdPrelevs]['maj'] = 'O';
-                                    }
-                                } else {
-                                    if ($user->hasRole('ROLE_ADMINSQE')) {
-                                        if ($pgCmdSuiviPrel->getStatutPrel() != 'F' or ( $pgCmdSuiviPrel->getStatutPrel() == 'F' and $pgCmdSuiviPrel->getValidation() != 'A')) {
-                                            $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'O';
-                                            $tabCmdPrelevs[$nbCmdPrelevs]['maj'] = 'O';
-                                        }
                                     } else {
-                                        $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'N';
+                                        if (!$pgCmdSuiviPrel->getFichierRps()) {
+                                            if ($pgCmdSuiviPrel->getValidation() != 'A') {
+                                                $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'O';
+                                                $tabCmdPrelevs[$nbCmdPrelevs]['maj'] = 'O';
+                                            }
+                                        }
                                     }
                                 }
                                 $commentaire = $pgCmdSuiviPrel->getCommentaire();
@@ -1078,7 +1076,7 @@ class SuiviHydrobioController extends Controller {
                     $pgRefStationMesure = $repoPgRefStationMesure->getPgRefStationMesureByCode($codeStation);
                     if (!$pgRefStationMesure) {
                         $err = true;
-                        $contenu = 'ligne  ' . $ligne . '  :  code station inconnu (' . $tab[0] . ')' . CHR(13) . CHR(10);
+                        $contenu = 'ligne  ' . $ligne . ' : Erreur code station inconnu (' . $tab[0] . ')' . CHR(13) . CHR(10);
                         $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                         fputs($rapport, $contenu);
                     } else {
@@ -1094,7 +1092,7 @@ class SuiviHydrobioController extends Controller {
                         }
                         if (!$trouve) {
                             $err = true;
-                            $contenu = 'ligne  ' . $ligne . '  :  code station  (' . $codeStation . ') non référencé dans la liste' . CHR(13) . CHR(10);
+                            $contenu = 'ligne  ' . $ligne . ' : Erreur code station  (' . $codeStation . ') non référencé dans la liste' . CHR(13) . CHR(10);
                             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                             fputs($rapport, $contenu);
                         }
@@ -1104,7 +1102,7 @@ class SuiviHydrobioController extends Controller {
                     $pgSandreSupports = $repoPgSandreSupports->getPgSandreSupportsByCodeSupport($codeSupport);
                     if (!$pgSandreSupports) {
                         $err = true;
-                        $contenu = 'ligne  ' . $ligne . '  :  code support inconnu (' . $codeSupport . ')' . CHR(13) . CHR(10);
+                        $contenu = 'ligne  ' . $ligne . ' : Erreur code support inconnu (' . $codeSupport . ')' . CHR(13) . CHR(10);
                         $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                         fputs($rapport, $contenu);
                     }
@@ -1112,7 +1110,7 @@ class SuiviHydrobioController extends Controller {
                     $statutPrel = $tab[2];
                     if ($statutPrel != 'P' and $statutPrel != 'F' and $statutPrel != 'N' and $statutPrel != 'R') {
                         $err = true;
-                        $contenu = 'ligne  ' . $ligne . '  :  code statut inconnu (\'' . $statutPrel . '\')' . CHR(13) . CHR(10);
+                        $contenu = 'ligne  ' . $ligne . ' : Erreur code statut inconnu (\'' . $statutPrel . '\')' . CHR(13) . CHR(10);
                         $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                         fputs($rapport, $contenu);
                     }
@@ -1123,7 +1121,7 @@ class SuiviHydrobioController extends Controller {
                     $tabDate = explode(' ', $date);
                     if (count($tabDate) != 2) {
                         $err = true;
-                        $contenu = 'ligne  ' . $ligne . '  :  date heure incorrecte (' . $date . ')' . CHR(13) . CHR(10);
+                        $contenu = 'ligne  ' . $ligne . ' : Erreur date heure incorrecte (' . $date . ')' . CHR(13) . CHR(10);
                         $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                         fputs($rapport, $contenu);
                     } else {
@@ -1132,7 +1130,7 @@ class SuiviHydrobioController extends Controller {
 
                         if (!$datePrel) {
                             $err = true;
-                            $contenu = 'ligne  ' . $ligne . '  :  date heure incorrecte (' . $date . ')' . CHR(13) . CHR(10);
+                            $contenu = 'ligne  ' . $ligne . ' : Erreur date heure incorrecte (' . $date . ')' . CHR(13) . CHR(10);
                             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                             fputs($rapport, $contenu);
                         }
@@ -1147,12 +1145,11 @@ class SuiviHydrobioController extends Controller {
                             if ($datePrel < $dateActuel or $datePrel > $dateFin) {
                                 //$contenu = 'ligne  ' . $ligne . '  :  Avertissement date  (' . $datePrel->format('d/m/Y H:i') . ') non comprise entre ' . $dateActuel->format('d/m/Y H:i') . ' et ' . $dateFin->format('d/m/Y H:i') . CHR(13) . CHR(10);
                                 if ($datePrel < $dateActuel) {
-									$contenu = 'ligne  ' . $ligne . ' , Avertissement : date prévisionnelle (' . $datePrel->format('d/m/Y H:i') . ') antérieure à la date actuelle (' . $dateActuel->format('d/m/Y H:i') . ')';
-								}
-								else {
-									$contenu = 'ligne  ' . $ligne . ' , Avertissement : date prévisionnelle (' . $datePrel->format('d/m/Y H:i') . ') postérieure à la date de fin de la période programmée (' . $dateFin->format('d/m/Y H:i') .')';
-								}
-								$contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                    $contenu = 'ligne  ' . $ligne . ' : Avertissement date prévisionnelle (' . $datePrel->format('d/m/Y H:i') . ') antérieure à la date actuelle (' . $dateActuel->format('d/m/Y H:i') . ')' . CHR(13) . CHR(10);
+                                } else {
+                                    $contenu = 'ligne  ' . $ligne . ' : Avertissement date prévisionnelle (' . $datePrel->format('d/m/Y H:i') . ') postérieure à la date de fin de la période programmée (' . $dateFin->format('d/m/Y H:i') . ')' . CHR(13) . CHR(10);
+                                }
+                                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                                 fputs($rapport, $contenu);
                             }
                         }
@@ -1165,12 +1162,11 @@ class SuiviHydrobioController extends Controller {
                                 }
                                 //$contenu = 'ligne  ' . $ligne . '  :   date  (' . $datePrel->format('d/m/Y H:i') . ') non comprise entre ' . $dateDebut->format('d/m/Y H:i') . ' et ' . $dateActuel->format('d/m/Y H:i') . CHR(13) . CHR(10);
                                 if ($datePrel < $dateDebut) {
-									$contenu = 'ligne  ' . $ligne . ' , Erreur : date de prélèvement (' . $datePrel->format('d/m/Y H:i') . ') antérieure à la date de début de la période programmée (' . $dateDebut->format('d/m/Y H:i') .')';
-								}
-								else {
-									$contenu = 'ligne  ' . $ligne . ' , Erreur : date de prélèvement (' . $datePrel->format('d/m/Y H:i') . ') postérieure à la date actuelle (' . $dateActuel->format('d/m/Y H:i') . ')';
-								}
-								$contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                    $contenu = 'ligne  ' . $ligne . ' : Erreur date de prélèvement (' . $datePrel->format('d/m/Y H:i') . ') antérieure à la date de début de la période programmée (' . $dateDebut->format('d/m/Y H:i') . ')' . CHR(13) . CHR(10);
+                                } else {
+                                    $contenu = 'ligne  ' . $ligne . ' : Erreur date de prélèvement (' . $datePrel->format('d/m/Y H:i') . ') postérieure à la date actuelle (' . $dateActuel->format('d/m/Y H:i') . ')' . CHR(13) . CHR(10);
+                                }
+                                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                                 fputs($rapport, $contenu);
                             }
                         }
@@ -1179,7 +1175,7 @@ class SuiviHydrobioController extends Controller {
                     $commentaire = $tab[4];
                     if ($statutPrel == 'P') {
                         if (!$commentaire or $commentaire == '') {
-                            $contenu = 'ligne  ' . $ligne . '  :  Avertissement commentaire renseigner l’équipe et le contact (portable)  ' . CHR(13) . CHR(10);
+                            $contenu = 'ligne  ' . $ligne . ' : Avertissement commentaire renseigner l’équipe et le contact (portable)  ' . CHR(13) . CHR(10);
                             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                             fputs($rapport, $contenu);
                         }
@@ -1187,7 +1183,7 @@ class SuiviHydrobioController extends Controller {
                     if ($statutPrel == 'N' or $statutPrel == 'R') {
                         if (!$commentaire or $commentaire == '') {
                             $err = true;
-                            $contenu = 'ligne  ' . $ligne . '  :  commentaire obligatoire, indiquer pourquoi  ' . CHR(13) . CHR(10);
+                            $contenu = 'ligne  ' . $ligne . ' : Erreur commentaire obligatoire, indiquer pourquoi  ' . CHR(13) . CHR(10);
                             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                             fputs($rapport, $contenu);
                         }
@@ -1205,7 +1201,7 @@ class SuiviHydrobioController extends Controller {
                                     //if (( $autreSuport == '4' && $autreSuport == '69') ||
                                     //        ($prelev->getCodeSupport()->getCodeSupport() == '69' && $autreSuport != '4') ||
                                     //        ($prelev->getCodeSupport()->getCodeSupport() == '4' && $autreSuport != '69')) {
-									if ( (($autreSuport == '4') || ($autreSuport == '69')) && ($pgCmdPrelev->getCodeSupport()->getCodeSupport() != '69') && ($pgCmdPrelev->getCodeSupport()->getCodeSupport() != '4') ) {
+                                    if ((($autreSuport == '4') || ($autreSuport == '69')) && ($pgCmdPrelev->getCodeSupport()->getCodeSupport() != '69') && ($pgCmdPrelev->getCodeSupport()->getCodeSupport() != '4')) {
                                         $autreDateDebut = clone($autrePgCmdPrelevs[$i]['datePrel']);
                                         $autreDateDebut->sub(new \DateInterval('P4D'));
                                         $autreDateFin = clone($autrePgCmdPrelevs[$i]['datePrel']);
@@ -1218,19 +1214,19 @@ class SuiviHydrobioController extends Controller {
                                             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                                             fputs($rapport, $contenu);
                                         }
-                                    }
-									else if (($autreSuport != '10') && ($autreSuport != '11')){
-										$autreDateDebut = clone($autrePgCmdPrelevs[$i]['datePrel']);
+                                    } else if (($autreSuport != '10') && ($autreSuport != '11')) {
+                                        $autreDateDebut = clone($autrePgCmdPrelevs[$i]['datePrel']);
                                         $autreDateDebut->sub(new \DateInterval('P4D'));
                                         $autreDateFin = clone($autrePgCmdPrelevs[$i]['datePrel']);
                                         $autreDateFin->add(new \DateInterval('P4D'));
-										if ($datePrel >= $autreDateDebut and $datePrel <= $autreDateFin) {
-											$contenu = 'ATTENTION, autre prestation programmée le : ' . $autrePgCmdPrelevs[$i]['datePrel']->format('d/m/Y H:i') . ' pour le support ' . $autrePgCmdPrelevs[$i]['support'];;
-											$tabMessage[$nbMessages][0] = 'av';
-											$tabMessage[$nbMessages][1] = $contenu;
-											$nbMessages++;
-										}
-									}
+                                        if ($datePrel >= $autreDateDebut and $datePrel <= $autreDateFin) {
+                                            $contenu = 'ATTENTION, autre prestation programmée le : ' . $autrePgCmdPrelevs[$i]['datePrel']->format('d/m/Y H:i') . ' pour le support ' . $autrePgCmdPrelevs[$i]['support'];
+                                            ;
+                                            $tabMessage[$nbMessages][0] = 'av';
+                                            $tabMessage[$nbMessages][1] = $contenu;
+                                            $nbMessages++;
+                                        }
+                                    }
                                 }
                             }
                             if ($prelev->getCodeSupport()->getCodeSupport() == $codeSupport) {
@@ -1246,7 +1242,7 @@ class SuiviHydrobioController extends Controller {
                                             $suiviPrel->getStatutPrel() == $statutPrel and
                                             $suiviPrel->getCommentaire() == $commentaire) {
                                         $err = true;
-                                        $contenu = 'ligne  ' . $ligne . '  :  suivi déja intégré ' . CHR(13) . CHR(10);
+                                        $contenu = 'ligne  ' . $ligne . ' :  Erreur suivi déja intégré ' . CHR(13) . CHR(10);
                                         $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                                         fputs($rapport, $contenu);
                                         $k = count($suiviPrels) + 1;
@@ -1263,7 +1259,7 @@ class SuiviHydrobioController extends Controller {
                                 if ($pgCmdPrelev->getCodeSupport()->getCodeSupport() == '13' || $pgCmdPrelev->getCodeSupport()->getCodeSupport() == '11') {
                                     if ($nbStations > 4) {
                                         $err = true;
-                                        $contenu = 'ligne  ' . $ligne . '  :  4 stations maxi le même jour pour une même équipe ' . CHR(13) . CHR(10);
+                                        $contenu = 'ligne  ' . $ligne . ' : Erreur 4 stations maxi le même jour pour une même équipe ' . CHR(13) . CHR(10);
                                         $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                                         fputs($rapport, $contenu);
                                     }
@@ -1271,7 +1267,7 @@ class SuiviHydrobioController extends Controller {
                                 if ($pgCmdPrelev->getCodeSupport()->getCodeSupport() == '10') {
                                     if ($nbStations > 6) {
                                         $err = true;
-                                        $contenu = 'ligne  ' . $ligne . '  :  6 stations maxi le même jour pour une même équipe ' . CHR(13) . CHR(10);
+                                        $contenu = 'ligne  ' . $ligne . ' : Erreur 6 stations maxi le même jour pour une même équipe ' . CHR(13) . CHR(10);
                                         $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                                         fputs($rapport, $contenu);
                                     }
@@ -1281,31 +1277,38 @@ class SuiviHydrobioController extends Controller {
                     }
                     if (!$trouve) {
                         $err = true;
-                        $contenu = 'ligne  ' . $ligne . '  :  code support ne correspond pas à celui du prélèvement associé à la station ' . CHR(13) . CHR(10);
+                        $contenu = 'ligne  ' . $ligne . ' : Erreur  code support ne correspond pas à celui du prélèvement associé à la station ' . CHR(13) . CHR(10);
                         $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                         fputs($rapport, $contenu);
                     } else {
                         if ($suiviPrelActuel) {
                             if ($suiviPrelActuel->getStatutPrel() == 'E' and $statutPrel == 'P') {
                                 $err = true;
-                                $contenu = 'ligne  ' . $ligne . '  :  code statut ne peut être à \'P\' ' . CHR(13) . CHR(10);
+                                $contenu = 'ligne  ' . $ligne . ' : Erreur code statut ne peut être à \'P\' ' . CHR(13) . CHR(10);
                                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                                 fputs($rapport, $contenu);
                             }
                             if ($suiviPrelActuel->getStatutPrel() == 'P' and $statutPrel == 'P') {
                                 if ($suiviPrelActuel->getdatePrel() != $datePrel) {
-                                    $contenu = 'ligne  ' . $ligne . '  :  Attention modification de la date de prélevement ' . CHR(13) . CHR(10);
+                                    $contenu = 'ligne  ' . $ligne . ' : Attention modification de la date de prélevement ' . CHR(13) . CHR(10);
                                     $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                                     fputs($rapport, $contenu);
                                 }
                             }
                             if ($suiviPrelActuel->getStatutPrel() == 'P' and $statutPrel == 'E') {
                                 if ($suiviPrelActuel->getdatePrel() != $datePrel and ( !$commentaire or $commentaire == '')) {
-                                    $contenu = 'ligne  ' . $ligne . '  :  commentaire obligatoire  ' . CHR(13) . CHR(10);
+                                    $err = true;
+                                    $contenu = 'ligne  ' . $ligne . ' : Erreur commentaire obligatoire  ' . CHR(13) . CHR(10);
                                     $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                                     fputs($rapport, $contenu);
                                 }
                             }
+                            if ($suiviPrelActuel->getStatutPrel() == 'F' and $suiviPrelActuel->getFichierRps()) {
+                                    $err = true;
+                                    $contenu = 'ligne  ' . $ligne . ' : Erreur Impossible d\'intégrer un suivi après un suivi effectué avec un fichier terrain déposé  ' . CHR(13) . CHR(10);
+                                    $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                    fputs($rapport, $contenu);
+                              }
                         }
                     }
 
@@ -1603,12 +1606,11 @@ class SuiviHydrobioController extends Controller {
             }
             if ($pgCmdSuiviPrel->getStatutPrel() == 'P') {
                 if ($pgCmdSuiviPrel->getDatePrel() < $dateActuel or $pgCmdSuiviPrel->getDatePrel() > $dateFin) {
-					if ($pgCmdSuiviPrel->getDatePrel() < $dateActuel) {
-						$contenu = 'Avertissement : date prévisionnelle (' . $pgCmdSuiviPrel->getDatePrel()->format('d/m/Y H:i') . ') antérieure à la date actuelle (' . $dateActuel->format('d/m/Y H:i') . ')';
-					}
-					else {
-						$contenu = 'Avertissement : date prévisionnelle (' . $pgCmdSuiviPrel->getDatePrel()->format('d/m/Y H:i') . ') postérieure à la date de fin de la période programmée (' . $dateFin->format('d/m/Y H:i') .')';
-					}
+                    if ($pgCmdSuiviPrel->getDatePrel() < $dateActuel) {
+                        $contenu = 'Avertissement : date prévisionnelle (' . $pgCmdSuiviPrel->getDatePrel()->format('d/m/Y H:i') . ') antérieure à la date actuelle (' . $dateActuel->format('d/m/Y H:i') . ')';
+                    } else {
+                        $contenu = 'Avertissement : date prévisionnelle (' . $pgCmdSuiviPrel->getDatePrel()->format('d/m/Y H:i') . ') postérieure à la date de fin de la période programmée (' . $dateFin->format('d/m/Y H:i') . ')';
+                    }
                     $tabMessage[$nbMessages][0] = 'av';
                     $tabMessage[$nbMessages][1] = $contenu;
                     $nbMessages++;
@@ -1621,12 +1623,11 @@ class SuiviHydrobioController extends Controller {
                     if (!$user->hasRole('ROLE_ADMINSQE')) {
                         $err = true;
                     }
-					if ($pgCmdSuiviPrel->getDatePrel() < $dateDebut) {
-						$contenu = 'Erreur : date de prélèvement (' . $pgCmdSuiviPrel->getDatePrel()->format('d/m/Y H:i') . ') antérieure à la date de début de la période programmée (' . $dateDebut->format('d/m/Y H:i') .')';
-					}
-					else {
-						$contenu = 'Erreur : date de prélèvement (' . $pgCmdSuiviPrel->getDatePrel()->format('d/m/Y H:i') . ') postérieure à la date actuelle (' . $dateActuel->format('d/m/Y H:i') . ')';
-					}
+                    if ($pgCmdSuiviPrel->getDatePrel() < $dateDebut) {
+                        $contenu = 'Erreur : date de prélèvement (' . $pgCmdSuiviPrel->getDatePrel()->format('d/m/Y H:i') . ') antérieure à la date de début de la période programmée (' . $dateDebut->format('d/m/Y H:i') . ')';
+                    } else {
+                        $contenu = 'Erreur : date de prélèvement (' . $pgCmdSuiviPrel->getDatePrel()->format('d/m/Y H:i') . ') postérieure à la date actuelle (' . $dateActuel->format('d/m/Y H:i') . ')';
+                    }
                     $tabMessage[$nbMessages][0] = 'ko';
                     $tabMessage[$nbMessages][1] = $contenu;
                     $nbMessages++;
@@ -1635,13 +1636,13 @@ class SuiviHydrobioController extends Controller {
 
             if ($pgCmdPrelev->getCodeSupport()->getCodeSupport() != '10' && $pgCmdPrelev->getCodeSupport()->getCodeSupport() != '11') {
                 $autrePgCmdPrelevs = $repoPgCmdPrelev->getAutrePrelevs($pgCmdPrelev);
-				
+
                 for ($i = 0; $i < count($autrePgCmdPrelevs); $i++) {
                     $autreSuport = $autrePgCmdPrelevs[$i]['codeSupport'];
                     //if (( $autreSuport == '4' && $autreSuport == '69') ||
                     //        ($pgCmdPrelev->getCodeSupport()->getCodeSupport() == '69' && $autreSuport != '4') ||
                     //        ($pgCmdPrelev->getCodeSupport()->getCodeSupport() == '4' && $autreSuport != '69')) {
-					if ( (($autreSuport == '4') || ($autreSuport == '69')) && ($pgCmdPrelev->getCodeSupport()->getCodeSupport() != '69') && ($pgCmdPrelev->getCodeSupport()->getCodeSupport() != '4') ) {
+                    if ((($autreSuport == '4') || ($autreSuport == '69')) && ($pgCmdPrelev->getCodeSupport()->getCodeSupport() != '69') && ($pgCmdPrelev->getCodeSupport()->getCodeSupport() != '4')) {
                         $autreDateDebut = clone($autrePgCmdPrelevs[$i]['datePrel']);
                         $autreDateDebut->sub(new \DateInterval('P4D'));
                         $autreDateFin = clone($autrePgCmdPrelevs[$i]['datePrel']);
@@ -1655,19 +1656,19 @@ class SuiviHydrobioController extends Controller {
                             $tabMessage[$nbMessages][1] = $contenu;
                             $nbMessages++;
                         }
-                    }
-					else if (($autreSuport != '10') && ($autreSuport != '11')){
-						$autreDateDebut = clone($autrePgCmdPrelevs[$i]['datePrel']);
+                    } else if (($autreSuport != '10') && ($autreSuport != '11')) {
+                        $autreDateDebut = clone($autrePgCmdPrelevs[$i]['datePrel']);
                         $autreDateDebut->sub(new \DateInterval('P4D'));
                         $autreDateFin = clone($autrePgCmdPrelevs[$i]['datePrel']);
                         $autreDateFin->add(new \DateInterval('P4D'));
-						if ($pgCmdSuiviPrel->getDatePrel() >= $autreDateDebut and $pgCmdSuiviPrel->getDatePrel() <= $autreDateFin) {
-                            $contenu = 'ATTENTION, autre prestation programmée le ' . $autrePgCmdPrelevs[$i]['datePrel']->format('d/m/Y H:i') . ' pour le support ' . $autrePgCmdPrelevs[$i]['support'];;
+                        if ($pgCmdSuiviPrel->getDatePrel() >= $autreDateDebut and $pgCmdSuiviPrel->getDatePrel() <= $autreDateFin) {
+                            $contenu = 'ATTENTION, autre prestation programmée le ' . $autrePgCmdPrelevs[$i]['datePrel']->format('d/m/Y H:i') . ' pour le support ' . $autrePgCmdPrelevs[$i]['support'];
+                            ;
                             $tabMessage[$nbMessages][0] = 'av';
                             $tabMessage[$nbMessages][1] = $contenu;
                             $nbMessages++;
-						}
-					}
+                        }
+                    }
                 }
             }
 
@@ -2069,17 +2070,17 @@ class SuiviHydrobioController extends Controller {
         $nbIncorrect = 0;
         $valid = true;
         $name = 'inconu';
-        
-         $dateDepot = new \DateTime();
-            $pathBase = '/base/extranet/Transfert/Sqe/csv-' . $dateDepot->format('Y-m-d-H-i-s');
-            $pathRapport = '/base/extranet/Transfert/Sqe/csv';
-            $ficRapport = $user->getId() . '_' . $dateDepot->format('Y-m-d-H') . '_rapport.csv';
-            if (!is_dir($pathBase)) {
-                if (!mkdir($pathBase, 0777, true)) {
-                    $session->getFlashBag()->add('notice-error', 'Le répertoire : ' . $pathBase . ' n\'a pas pu être créé');
-                    ;
-                }
+
+        $dateDepot = new \DateTime();
+        $pathBase = '/base/extranet/Transfert/Sqe/csv-' . $dateDepot->format('Y-m-d-H-i-s');
+        $pathRapport = '/base/extranet/Transfert/Sqe/csv';
+        $ficRapport = $user->getId() . '_' . $dateDepot->format('Y-m-d-H') . '_rapport.csv';
+        if (!is_dir($pathBase)) {
+            if (!mkdir($pathBase, 0777, true)) {
+                $session->getFlashBag()->add('notice-error', 'Le répertoire : ' . $pathBase . ' n\'a pas pu être créé');
+                ;
             }
+        }
 
         if (!file_exists($_FILES['file']['tmp_name'])) {
             $response = 'Aucun fichier sélectionné.';
@@ -2765,7 +2766,7 @@ class SuiviHydrobioController extends Controller {
                 }
                 $pgCmdSuiviPrel->setCommentaire($commentaire);
             }
-            $pgCmdSuiviPrel->setValidation('A'); 
+            $pgCmdSuiviPrel->setValidation('A');
             $pgCmdSuiviPrel->setValidAuto('N');
             $pgCmdSuiviPrel->setCommentaireAvis($commentaireAvis);
             $pgCmdSuiviPrel->setAvis($avis);

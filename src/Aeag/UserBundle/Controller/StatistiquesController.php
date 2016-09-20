@@ -66,32 +66,33 @@ class StatistiquesController extends Controller {
             return $this->redirect($this->generateUrl('aeag_homepage'));
         }
     }
-    
-    public function majStatistiquesAction(){
-        
+
+    public function majStatistiquesAction() {
+
         $user = $this->getUser();
         $session = $this->get('session');
         $session->set('menu', 'index');
         $session->set('controller', 'Statistiques');
         $session->set('fonction', 'majStatistiques');
         $em = $this->get('doctrine')->getManager();
-      
+
         $repoStatistiques = $em->getRepository('AeagUserBundle:Statistiques');
         $repoConnectes = $em->getRepository('AeagUserBundle:Connectes');
 
-        $timestamp_5min = time() - (60 * 10); // 60 * 10 = nombre de secondes écoulées en 10 minutes
+        $timestamp_5min = time() - (60 * 60); // 60 * 60 = nombre de secondes écoulées en 60 minutes
         $connectes = $repoConnectes->getConnectes5Minutes($timestamp_5min);
-           foreach ($connectes as $connecte) {
+        foreach ($connectes as $connecte) {
             $statistiques = $repoStatistiques->getStatistiquesByIp($connecte->getIp());
             foreach ($statistiques as $statistique) {
-                $statistique->setDateFinConnexion(new \DateTime());
-                $em->persist($statistique);
+                if (!$statistique->getDateFinConnexion()) {
+                    $statistique->setDateFinConnexion(new \DateTime());
+                    $em->persist($statistique);
+                }
             }
             $em->remove($connecte);
         }
-        
 
-        $statistiques = $repoStatistiques->getStatistiques();
+        $statistiques = $repoStatistiques->getConnectes();
         foreach ($statistiques as $statistique) {
             $connecte = $repoConnectes->getConnectesByIp($statistique->getIp());
             if (!$connecte) {
@@ -101,9 +102,10 @@ class StatistiquesController extends Controller {
                 }
             }
         }
+        
         $em->flush();
-    //      return new Response ('time : ' .  $timestamp_5min . ' connectes : ' . count($connectes));
-   
+        //      return new Response ('time : ' .  $timestamp_5min . ' connectes : ' . count($connectes));
+
 
         $connecte = $repoConnectes->getConnectesByIp($_SERVER['REMOTE_ADDR']);
         if (!$connecte) {
@@ -139,7 +141,7 @@ class StatistiquesController extends Controller {
                 $statistique->setNbConnexion($statistique->getNbConnexion() + 1);
                 $statistique->setDateDebutConnexion(new \DateTime());
                 $statistique->setDateFinConnexion(null);
-            }else{
+            } else {
                 $statistique->setAppli($session->get('appli'));
             }
         }
@@ -151,8 +153,8 @@ class StatistiquesController extends Controller {
         $session->set('nbStatistiques', $nbStatistiques);
         $nbConnectes = $repoStatistiques->getNbConnectes();
         $session->set('nbConnectes', $nbConnectes);
-         echo json_encode('ok');
-         exit();
+        echo json_encode('ok');
+        exit();
     }
 
 }
