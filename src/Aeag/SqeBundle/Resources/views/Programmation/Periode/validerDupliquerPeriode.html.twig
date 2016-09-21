@@ -47,22 +47,9 @@
         
 <script>
     
-     var url = '{{ path("AeagSqeBundle_programmation_periode_gerer",{"action": "par1","maj":"pa2","lotan":"par3"}) }}', // Le nom du fichier indiqué dans le formulaire
-    url = url.replace("par1", '{{ action }}');
-    url = url.replace("par2", '{{ maj }}');
-    url = url.replace("amp;","");
-    url = url.replace("par3", '{{ lotan.id }}');
-    url = url.replace("amp;","");
-    $.ajax({
-    url: url,
-    type: 'get', // La méthode indiquée dans le formulaire (get ou post)
-    success: function(html) { // Je récupère la réponse du fichier PHP
-    $('#idBody_gestion_periodes').empty().append(html);
-    $('#modalTraitementEncours').modal('hide');
-    }
-    });
-    
-       {#  traitement sur chaque periode de chaque station   #}
+    $('#modalDupliquerPeriode').modal('hide');
+  
+     {#  traitement sur chaque periode de chaque station   #}
        {% if stationAns |length %}
         {% for stationAn in stationAns %}
             {% for stationAnAutre in stationAns %}
@@ -186,5 +173,5 @@
             {% endfor %}
         {% endfor %}
     {% endif %}
-   
+
  </script>

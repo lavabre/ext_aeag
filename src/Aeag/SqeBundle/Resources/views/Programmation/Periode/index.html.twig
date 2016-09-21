@@ -112,9 +112,9 @@
         </div>
     </form>
 
-    {#modal periodes #}
-    <form action="#" class="form-horizontal" id="idForm_filtrer_periode" method="post">
-        <div class="modal fade" id="modal_periode">
+    {#modal filtrer periodes #}
+    
+        <div class="modal fade" id="modal_filtrer_periode">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -127,8 +127,9 @@
                         <div id="idMessage_periode"></div>
                         <div class="row">
                             <div class="col-md-offset-1 col-md-10">
-                                <div class="small">
-                                    <table class="table table-bordered table-condensed table-advance" id="idTable_periodes">
+                                <div id="idTable_filtrer_periodes"class="small">
+                                    <form action="#" class="form-horizontal" id="idForm_filtrer_periode" method="post">
+                                         <table class="table table-bordered table-condensed table-advance" id="idTable_periodes">
                                         <thead>
                                             <tr>
                                                 <th width="1%" align="center">
@@ -138,7 +139,7 @@
                                                 <th>Intervalles</th>
                                             </tr>
                                         </thead>
-                                        <tbody id="idBody_selection_periodes">
+                                        <tbody id="idBody_filtrer_periodes">
                                             {%if periodes | length%} 
                                                 {% for periode in periodes %}
                                                     <tr>
@@ -154,13 +155,14 @@
                                             {% endif %}
                                         </tbody>
                                     </table>
+                                   </form>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
                         {% if action == 'P'  and maj != 'V' %}
-                            <button id="idValiderSelectionPeriode" type="submit" class="btn btn-success">
+                            <button id="idValiderFiltrerPeriode" type="submit" class="btn btn-success">
                                 <i class="fa fa-check"> Valider</i>
                             </button>
                         {% endif %}
@@ -171,7 +173,7 @@
                 </div>
             </div>
         </div>
-    </form>
+  
                         
     {#modal gestion periodes #}
     <form action="#" class="form-horizontal" id="idForm_gestion_periode" method="post">
@@ -205,12 +207,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        {% if action == 'P'  and maj != 'V' %}
-                            <button id="idValiderGestionPeriode" type="submit" class="btn btn-success">
-                                <i class="fa fa-check"> Valider</i>
-                            </button>
-                        {% endif %}
-                        <button id="idAnnulerGestionPeriode" type="button" class="btn btn-default" data-dismiss="modal">
+                         <button id="idAnnulerGestionPeriode" type="button" class="btn btn-default" data-dismiss="modal">
                             <i class="fa fa-undo"> Annuler</i>
                         </button>
                     </div>
@@ -312,7 +309,7 @@
                                      <div class="row">
                                     {% if typePeriode.codeTypePeriode == 'SEM' %}
                                           <div class="col-md-2">
-                                                <a  data-toggle="modal" href="#modal_periode" href="#" title="Filtrer les périodes">
+                                                <a  data-toggle="modal" href="#modal_filtrer_periode" href="#" title="Filtrer les périodes">
                                                     <button id="idFiltrerPeriodes" type="button" class="btn btn-primary icon-ok-sign">
                                                         Filtrer les périodes
                                                     </button>
@@ -332,7 +329,7 @@
 
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <div id="idtableau_station" class="small">
+                                        <div id="idTableau_station" class="small">
                                             <table class="table table-bordered table-condensed table-advance" id="idTable_station">
                                                 <thead id="idTheadStations">
                                                     <tr>
@@ -641,7 +638,7 @@
       $(document).on('click', '#idFiltrerPeriodes',function(e){
             e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
             $('#modalTraitementEncours').modal('toggle');
-            var url = '{{ path("AeagSqeBundle_programmation_periode_selectionner",{"action": "par1","maj":"pa2","lotan":"par3"}) }}', // Le nom du fichier indiqué dans le formulaire
+            var url = '{{ path("AeagSqeBundle_programmation_periode_filtrer",{"action": "par1","maj":"pa2","lotan":"par3"}) }}', // Le nom du fichier indiqué dans le formulaire
             url = url.replace("par1", '{{ action }}');
             url = url.replace("par2", '{{ maj }}');
             url = url.replace("amp;","");
@@ -651,8 +648,8 @@
             url: url,
             type: 'get', // La méthode indiquée dans le formulaire (get ou post)
             success: function(html) { // Je récupère la réponse du fichier PHP
-            $('#idBody_selection_periodes').empty().append(html);
-            $('#modal_periode').modal();
+            $('#idTable_filtrer_periodes').empty().append(html);
+            $('#modal_filtrer_periode').modal();
             $('#modalTraitementEncours').modal('hide');
             }
             });
@@ -681,13 +678,13 @@
     });
 
 
-    $(document).on('click', '#idValiderSelectionPeriode',function(e){
+    $(document).on('click', '#idValiderFiltrerPeriode',function(e){
     $('#modalTraitementEncours').modal('toggle');
     e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
     var nbRecords = $('#idTable_periodes_length option:selected').val();
     table_periode.page.len( -1 ).draw();
     var $this = $('#idForm_filtrer_periode'); // L'objet jQuery du formulaire
-    var url = '{{ path("AeagSqeBundle_programmation_periode_valider_selection",{"action": "par1","maj":"par2","lotan":"par3"}) }}', // Le nom du fichier indiqué dans le formulaire
+    var url = '{{ path("AeagSqeBundle_programmation_periode_filtrer_valider",{"action": "par1","maj":"par2","lotan":"par3"}) }}', // Le nom du fichier indiqué dans le formulaire
     url = url.replace("par1", '{{ action }}');
     url = url.replace("par2", '{{ maj }}');
     url = url.replace("amp;","");
@@ -698,8 +695,8 @@
     type: 'post', // La méthode indiquée dans le formulaire (get ou post)
     data: $this.serialize(),
     success: function(html) { // Je récupère la réponse du fichier PHP
-    $('#idtableau_station').empty().append(html);
-    {%if stationAns | length%}  
+    $('#idTableau_station').empty().append(html);
+    {#{%if stationAns | length%}  
         {% for periode in periodes %}
             $('#checkPeriode_{{  periode.id }}').prop( "checked", false );
             {% for periodeSelectionnee in stationAns.0.periodes %}
@@ -708,12 +705,11 @@
                 {% endif %}
             {% endfor %}
         {% endfor %}
-    {% endif %}
+    {% endif %}#}
     $('#modalTraitementEncours').modal('hide');
-    $('#modal_periode').modal('hide');
+    $('#modal_filtrer_periode').modal('hide');
     }
     });
-    table_periode.page.len( nbRecords ).draw();
     $('#idAttente').hide();
     });
 

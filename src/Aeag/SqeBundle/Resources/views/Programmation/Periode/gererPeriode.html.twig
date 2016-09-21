@@ -22,7 +22,7 @@
                     $(document).on('click','#idDupliquerPeriode_{{ periode.periode.id }}',function(e){
                             e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
                             $('#modalTraitementEncours').modal('toggle');
-                            var url = '{{ path("AeagSqeBundle_programmation_periode_dupliquer_periode",{"periodeId":  "par1","action": "par2","maj":"par3","lotan":"par4"}) }}', // Le nom du fichier indiqué dans le formulaire
+                            var url = '{{ path("AeagSqeBundle_programmation_periode_dupliquer",{"periodeId":  "par1","action": "par2","maj":"par3","lotan":"par4"}) }}', // Le nom du fichier indiqué dans le formulaire
                             url = url.replace("par1", {{ periode.periode.id }});
                             url = url.replace("par2", '{{ action }}');
                             url = url.replace("amp;","");
@@ -30,8 +30,8 @@
                             url = url.replace("amp;","");
                             url = url.replace("par4", '{{ lotan.id }}');
                             url = url.replace("amp;","");
-                            var nbRecords = $('#idTable_gestion_periodes_length option:selected').val();
-                            table_gestion_periodes.page.len( -1 ).draw();
+                            {#var nbRecords = $('#idTable_gestion_periodes_length option:selected').val();
+                            table_gestion_periodes.page.len( -1 ).draw();#}
                             $.ajax({
                             url: url,
                             type: 'get', // La méthode indiquée dans le formulaire (get ou post)
@@ -42,7 +42,7 @@
                             $('#modalTraitementEncours').modal('hide');
                             }
                             });
-                            table_gestion_periodes.page.len( nbRecords ).draw();
+                            {#table_gestion_periodes.page.len( nbRecords ).draw();#}
                             });
                             
                   $(document).on('click','#idInitialiserPeriode_{{ periode.periode.id }}',function(e){
@@ -85,7 +85,7 @@
                             type: 'post', // La méthode indiquée dans le formulaire (get ou post)
                             data: $this.serialize(),
                             success: function(html) { // Je récupère la réponse du fichier PHP
-                            $('#idtableau_station').empty().append(html);
+                            $('#idTableau_station').empty().append(html);
                             $('#modalInitialiserPeriode').modal('hide');
                             $('#modalTraitementEncours').modal('hide');
                             }

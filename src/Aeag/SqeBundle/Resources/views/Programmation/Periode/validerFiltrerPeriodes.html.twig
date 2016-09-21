@@ -76,9 +76,7 @@
     
      
    {#  traitement sur chaque periode de chaque station   #}
-    var nbRecords = $('#idTable_length option:selected').val();
-    table_station.page.len( -1 ).draw();
-    {% if stationAns |length %}
+      {% if stationAns |length %}
         {% for stationAn in stationAns %}
             {% for stationAnAutre in stationAns %}
                 {% if stationAnAutre.station.id != stationAn.station.id %}
@@ -151,8 +149,7 @@
            
        {% endfor %}
     {% endif %}
-    table_station.page.len( 10 ).draw();
-  
+ 
       html = '';
       {%if stationAns | length%}  
             {% for periode in stationAns.0.periodes %}
