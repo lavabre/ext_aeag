@@ -109,6 +109,23 @@ class EchangeFichiersController extends Controller {
             $log->setDate(new \DateTime());
             $emSqe->persist($log);
             $emSqe->flush();
+            
+//            $chemin = $pathBase . $zipName;
+//            $fichiers = $this->unzip($chemin, $pathBase . '/');
+//            $tabFichiers = array();
+//            $i = 0;
+//            foreach($fichiers as $fichier){
+//                $tabFichiers[$i]['fichier'] = $fichier;
+//                $tabFichiers[$i]['chemin'] = $pathBase  . $fichier;
+//                chmod($pathBase  . $fichier, 0775);
+//                chown($pathBase  . $fichier, 'www-data');
+//                $i++;
+//            }
+//            return $this->render('AeagSqeBundle:EchangeFichiers:listeFichiers.html.twig', array(
+//                'repertoire' => $pathBase,
+//                'fichier' =>  $zipName,
+//                'chemin' => $chemin,
+//                'fichiers' => $tabFichiers));
 
             header('Content-Type', 'application/zip');
             header('Content-disposition: attachment; filename="' . $zipName . '"');
@@ -355,5 +372,63 @@ class EchangeFichiersController extends Controller {
         //On a bien effacé toutes les entrées du dossier, on peut à présent l'effacer
         return rmdir($dir);
     }
+    
+     protected function unzip($file, $path = '', $effacer_zip = false) {/* Méthode qui permet de décompresser un fichier zip $file dans un répertoire de destination $path 
+      et qui retourne un tableau contenant la liste des fichiers extraits
+      Si $effacer_zip est égal à true, on efface le fichier zip d'origine $file */
+
+        $tab_liste_fichiers = array(); //Initialisation 
+
+        $zip = zip_open($file);
+
+        if ($zip) {
+            while ($zip_entry = zip_read($zip)) { //Pour chaque fichier contenu dans le fichier zip 
+                if (zip_entry_filesize($zip_entry) >= 0) {
+                    $complete_path = $path . dirname(zip_entry_name($zip_entry));
+
+                    /* On supprime les éventuels caractères spéciaux et majuscules */
+                    $nom_fichier = zip_entry_name($zip_entry);
+                    $nom_fichier = strtr($nom_fichier, "ÀÁÂÃÄÅàáâãäåÒÓÔÕÖØòóôõöøÈÉÊËèéêëÇçÌÍÎÏìíîïÙÚÛÜùúûüÿÑñ", "AAAAAAaaaaaaOOOOOOooooooEEEEeeeeCcIIIIiiiiUUUUuuuuyNn");
+                    $nom_fichier = strtolower($nom_fichier);
+                    $nom_fichier = ereg_replace('[^a-zA-Z0-9.]', '-', $nom_fichier);
+
+                    /* On ajoute le nom du fichier dans le tableau */
+                    array_push($tab_liste_fichiers, $nom_fichier);
+
+                    $complete_name = $path . $nom_fichier; //Nom et chemin de destination 
+
+                    if (!file_exists($complete_path)) {
+                        $tmp = '';
+                        foreach (explode('/', $complete_path) AS $k) {
+                            $tmp .= $k . '/';
+
+                            if (!file_exists($tmp)) {
+                                mkdir($tmp, 0755);
+                            }
+                        }
+                    }
+
+                    /* On extrait le fichier */
+                    if (zip_entry_open($zip, $zip_entry, "r")) {
+                        $fd = fopen($complete_name, 'w');
+
+                        fwrite($fd, zip_entry_read($zip_entry, zip_entry_filesize($zip_entry)));
+
+                        fclose($fd);
+                        zip_entry_close($zip_entry);
+                    }
+                }
+            }
+
+            zip_close($zip);
+
+            /* On efface éventuellement le fichier zip d'origine */
+            if ($effacer_zip === true)
+                unlink($file);
+        }
+
+        return $tab_liste_fichiers;
+    }
+
 
 }
