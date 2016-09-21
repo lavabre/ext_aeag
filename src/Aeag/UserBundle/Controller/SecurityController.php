@@ -46,7 +46,7 @@ class SecurityController extends Controller {
 
         // last username entered by the user
         $lastUsername = (null === $session) ? '' : $session->get($lastUsernameKey);
-
+      
         if ($this->has('security.csrf.token_manager')) {
             $csrfToken = $this->get('security.csrf.token_manager')->getToken('authenticate')->getValue();
         } else {
@@ -85,14 +85,23 @@ class SecurityController extends Controller {
         $session->set('fonction', 'logout');
         $em = $this->get('doctrine')->getManager();
         $repoStatistiques = $em->getRepository('AeagUserBundle:Statistiques');
+        $repoConnectes = $em->getRepository('AeagUserBundle:Connectes');
+
         $statistiques = $repoStatistiques->getStatistiquesByUser($user->getId());
+
         if ($statistiques) {
             $statistiques->setDateFinConnexion(new \DateTime());
             $em->persist($statistiques);
+            $connecte = $repoConnectes->getConnectesByIp($statistiques->getIp());
+            if ($connecte) {
+                $em->remove($connecte);
+            }
             $em->flush();
         }
+         //return new Response('stats : ' . $statistiques->getId() . ' user : ' . $user->getId());
         //throw new \RuntimeException('You must activate the logout in your security firewall configuration.');
-        $session->clear();
+        // $session->clear();
+        $session->set('connecte', 'ko');
         \apc_clear_cache();
         $referer_url = $request->headers->get('referer');
         $response = new RedirectResponse('login');

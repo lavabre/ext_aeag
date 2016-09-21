@@ -102,51 +102,52 @@ class StatistiquesController extends Controller {
                 }
             }
         }
-        
+
         $em->flush();
         //      return new Response ('time : ' .  $timestamp_5min . ' connectes : ' . count($connectes));
 
+        if (!$session->get('connecte')) {
 
-        $connecte = $repoConnectes->getConnectesByIp($_SERVER['REMOTE_ADDR']);
-        if (!$connecte) {
-            $connecte = new Connectes();
-            $connecte->setIp($_SERVER['REMOTE_ADDR']);
-            $connecte->setTime(time());
-            $em->persist($connecte);
+            $connecte = $repoConnectes->getConnectesByIp($_SERVER['REMOTE_ADDR']);
+            if (!$connecte) {
+                $connecte = new Connectes();
+                $connecte->setIp($_SERVER['REMOTE_ADDR']);
+                $connecte->setTime(time());
+                $em->persist($connecte);
+                $em->flush();
+            }
+
+            if ($user) {
+                $statistique = $repoStatistiques->getStatistiquesByUser($user->getId());
+            } else {
+                $statistique = $repoStatistiques->getStatistiquesByUser(0);
+            }
+            if (!$statistique) {
+                $statistique = new Statistiques();
+                if ($user) {
+                    $statistique->setUser($user->getId());
+                } else {
+                    $statistique->setUser(0);
+                }
+                $statistique->setIp($_SERVER['REMOTE_ADDR']);
+                $statistique->setNbConnexion(1);
+                if ($user) {
+                    $statistique->setAppli($session->get('appli'));
+                }
+                $statistique->setDateDebutConnexion(new \DateTime());
+            } else {
+                if ($statistique->getDateFinConnexion()) {
+                    $statistique->setAppli($session->get('appli'));
+                    $statistique->setNbConnexion($statistique->getNbConnexion() + 1);
+                    $statistique->setDateDebutConnexion(new \DateTime());
+                    $statistique->setDateFinConnexion(null);
+                } else {
+                    $statistique->setAppli($session->get('appli'));
+                }
+            }
+            $em->persist($statistique);
             $em->flush();
         }
-
-
-        if ($user) {
-            $statistique = $repoStatistiques->getStatistiquesByUser($user->getId());
-        } else {
-            $statistique = $repoStatistiques->getStatistiquesByUser(0);
-        }
-        if (!$statistique) {
-            $statistique = new Statistiques();
-            if ($user) {
-                $statistique->setUser($user->getId());
-            } else {
-                $statistique->setUser(0);
-            }
-            $statistique->setIp($_SERVER['REMOTE_ADDR']);
-            $statistique->setNbConnexion(1);
-            if ($user) {
-                $statistique->setAppli($session->get('appli'));
-            }
-            $statistique->setDateDebutConnexion(new \DateTime());
-        } else {
-            if ($statistique->getDateFinConnexion()) {
-                $statistique->setAppli($session->get('appli'));
-                $statistique->setNbConnexion($statistique->getNbConnexion() + 1);
-                $statistique->setDateDebutConnexion(new \DateTime());
-                $statistique->setDateFinConnexion(null);
-            } else {
-                $statistique->setAppli($session->get('appli'));
-            }
-        }
-        $em->persist($statistique);
-        $em->flush();
 
 
         $nbStatistiques = $repoStatistiques->getNbStatistiques();
