@@ -113,7 +113,7 @@
     </form>
 
     {#modal periodes #}
-    <form action="#" class="form-horizontal" id="idForm_periode" method="post">
+    <form action="#" class="form-horizontal" id="idForm_filtrer_periode" method="post">
         <div class="modal fade" id="modal_periode">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -138,7 +138,21 @@
                                                 <th>Intervalles</th>
                                             </tr>
                                         </thead>
-                                        <tbody id="idBody_selection_periodes"></tbody>
+                                        <tbody id="idBody_selection_periodes">
+                                            {%if periodes | length%} 
+                                                {% for periode in periodes %}
+                                                    <tr>
+                                                        <td>
+                                                            <div class="checbox">
+                                                                <input type="checkbox" id="checkPeriode_{{  periode.id }}" name="checkPeriode[]" value="{{  periode.id }}" >
+                                                            </div>
+                                                        </td> 
+                                                        <td nowrap>{{ periode.labelPeriode }}</td>
+                                                        <td nowrap>du {{ periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;au&nbsp;&nbsp; {{ periode.dateFin | date("d/m/Y") }}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                            {% endif %}
+                                        </tbody>
                                     </table>
                                 </div>
                             </div>
@@ -299,7 +313,7 @@
                                     {% if typePeriode.codeTypePeriode == 'SEM' %}
                                           <div class="col-md-2">
                                                 <a  data-toggle="modal" href="#modal_periode" href="#" title="Filtrer les périodes">
-                                                    <button id="idSelectionPeriodes" type="button" class="btn btn-primary icon-ok-sign">
+                                                    <button id="idFiltrerPeriodes" type="button" class="btn btn-primary icon-ok-sign">
                                                         Filtrer les périodes
                                                     </button>
                                                 </a>
@@ -624,7 +638,7 @@
 
     {#  filtrer les semaines  #}
     
-      $(document).on('click', '#idSelectionPeriodes',function(e){
+      $(document).on('click', '#idFiltrerPeriodes',function(e){
             e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
             $('#modalTraitementEncours').modal('toggle');
             var url = '{{ path("AeagSqeBundle_programmation_periode_selectionner",{"action": "par1","maj":"pa2","lotan":"par3"}) }}', // Le nom du fichier indiqué dans le formulaire
@@ -672,7 +686,7 @@
     e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
     var nbRecords = $('#idTable_periodes_length option:selected').val();
     table_periode.page.len( -1 ).draw();
-    var $this = $('#idForm_periode'); // L'objet jQuery du formulaire
+    var $this = $('#idForm_filtrer_periode'); // L'objet jQuery du formulaire
     var url = '{{ path("AeagSqeBundle_programmation_periode_valider_selection",{"action": "par1","maj":"par2","lotan":"par3"}) }}', // Le nom du fichier indiqué dans le formulaire
     url = url.replace("par1", '{{ action }}');
     url = url.replace("par2", '{{ maj }}');
