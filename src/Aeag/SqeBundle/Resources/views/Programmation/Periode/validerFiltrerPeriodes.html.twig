@@ -1,0 +1,176 @@
+<table class="table table-bordered table-condensed table-advance" id="idTable_station">
+        <thead id="idTheadStations">
+            <tr>
+                {% if action == 'P'  and maj != 'V' %}
+                    <th width="1%">Actions</th>
+                    {% endif %}
+                <th width="10%">Stations</th>
+                <th width="10%">Réseaux</th>
+                    {%if stationAns | length%}  
+                        {% for periode in stationAns.0.periodes %}
+                        <th width="1%" id="idThPeriode_{{ periode.periode.id }}">{{ periode.periode.labelPeriode }}</th>
+                        {% endfor %}
+                    {% endif %}
+            </tr>
+        </thead>
+        <tbody id="idBodyStations">
+            {%if stationAns | length%}  
+                {% for stationAn in stationAns %}
+                    <tr id='idStation_{{ stationAn.station.id }}' name='idStation_{{ stationAn.station.id }}' width="10%">
+                        {% if action == 'P'  and maj != 'V' %}
+                            <td nowrap>
+                                <a id="idDupliquerStation_{{ stationAn.station.id }}" data-toggle="modal" href="#" class="btn btn-primary" href="#" title="dupliquer la programmation sur les autres stations">
+                                    <i class="fa fa-sitemap"></i> 
+                                </a>
+                                <a id="idInitialiserStation_{{ stationAn.station.id }}"  class="btn btn-danger" data-toggle="modal" href="#" title="Initialiser les périodes">
+                                    <i class="fa fa-eraser"></i> 
+                                </a>
+                            </td>
+                        {% endif %}
+                        <td nowrap>{{ stationAn.station.station.code}}&nbsp;&nbsp;{{ stationAn.station.station.libelle}}</td>
+                        <td nowrap>{{ stationAn.reseau.nomRsx }}</td>
+                        {% for periode in stationAn.periodes %}
+                            <td id="idTd_{{ stationAn.station.id }}_{{ periode.periode.id }}">
+                                <div id="idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}" class="text-center">
+                                    <a id="idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}" class="btn btn-default">
+                                        <span id="idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}" class="badge"></span>
+                                    </a>
+                                </div>
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            {% endif %}
+        </tbody>
+    </table> 
+
+ <script>
+       
+     table_station = $('#idTable_station').DataTable(
+            {"stateSave": true,
+             "order": [[ 1, "asc" ]],
+             "oLanguage": {
+                    "sSearch": "Filtre",
+                    "sFirst": "1ere page",
+                    "sLast": "Dernière page",
+                    "sNext": "Prochaine page",
+                    "sPrevious": "Page précédente",
+                    "EmptyTable": "Pas de données",
+                    "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+                    "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+                    "sZeroRecords": "Pas d'enregistrement à afficher",
+                    "sInfoEmpty": "Pas d'enregistrement à afficher",
+                    "sInfoThousands": " ",
+                    "sLengthMenu": 'Afficher <select>' +
+                        '<option value="10">10</option>' +
+                        '<option value="20">20</option>' +
+                        '<option value="30">30</option>' +
+                        '<option value="40">40</option>' +
+                        '<option value="50">50</option>' +
+                        '<option value="-1">Tous</option>' +
+                        '</select> enregistrements',
+                    "sPaginationType": "full_numbers"
+                    }
+            }
+        ); 
+    
+     
+   {#  traitement sur chaque periode de chaque station   #}
+      {% if stationAns |length %}
+        {% for stationAn in stationAns %}
+            {% for stationAnAutre in stationAns %}
+                {% if stationAnAutre.station.id != stationAn.station.id %}
+                    {% set nbGroupes = 0 %}
+                    {% for periode in stationAnAutre.periodes %}
+                        {% if periode.nbGroupe > 0 %}
+                            {% set nbGroupes = nbGroupes + periode.nbGroupe %}
+                        {% endif %}
+                    {% endfor %}
+                    {% if  nbGroupes > 0 %}
+                        $('#trDupliquerStation_{{ stationAn.station.id }}_{{ stationAnAutre.station.id }}').addClass("danger");
+                        $('#nbGroupes_{{ stationAn.station.id }}_{{ stationAnAutre.station.id }}').val({{ nbGroupes }})
+                      {% else %}
+                         $('#trDupliquerStation_{{ stationAn.station.id }}_{{ stationAnAutre.station.id }}').removeClass("danger");
+                         $('#nbGroupes_{{ stationAn.station.id }}_{{ stationAnAutre.station.id }}').val(0)
+                      {% endif %}
+                {% endif %}
+            {% endfor %}
+            {% for periode in stationAn.periodes %}
+                  {% if periode.nbGroupe > 0 %}
+                     {% if periode.autreStatut == 'N' %}
+                                $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("warning").removeClass("info").removeClass("primary").addClass("success");
+                                $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("btn-default").removeClass("btn-warning").removeClass("btn-info").removeClass("btn-primary").addClass('btn-success');
+                                $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
+                            {% elseif periode.autreStatut == 'C'%}
+                                $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("warning").addClass("info").removeClass("primary").removeClass("success");
+                                $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("btn-default").removeClass("btn-warning").addClass("btn-info").removeClass("btn-primary").removeClass('btn-success');
+                                $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
+                            {% elseif periode.autreStatut == 'I'%}
+                                $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("warning").removeClass("info").addClass("primary").removeClass("success");
+                                $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("btn-default").removeClass("btn-warning").removeClass("btn-info").addClass("btn-primary").removeClass('btn-success');
+                                $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
+                            {% endif %}
+                {% else %}
+                    {% if periode.autreProgrammation == 0 %}
+                        $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("success").removeClass("warning");
+                        $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("btn-success").removeClass("btn-warning").addClass('btn-default');
+                        $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().hide();
+                    {% else %}
+                        $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("success").addClass("warning");
+                        $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("btn-success").removeClass("btn-default").addClass('btn-warning');
+                         $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().append({{ periode.autreProgrammation }} + '/' + {{ grparAns | length }} );
+                    {% endif %}
+                {% endif %}
+
+                {#   traitement sur un période sélectionner   #}
+                $(document).on('click', '#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}', function(e){
+                   var url = '{{ path("AeagSqeBundle_programmation_periode_programmer",{"stationId":  "par1", "periodeId" : "par2" ,"action": "par3","maj":"par4","lotan":"par5"}) }}', // Le nom du fichier indiqué dans le formulaire
+                    url = url.replace("par1", {{ stationAn.station.id }});
+                    url = url.replace("par2", {{ periode.periode.id }});
+                    url = url.replace("amp;","");
+                    url = url.replace("par3", '{{ action }}');
+                     url = url.replace("amp;","");
+                    url = url.replace("par4", '{{ maj }}');
+                    url = url.replace("amp;","");
+                    url = url.replace("par5", '{{ lotan.id }}');
+                    url = url.replace("amp;","");
+                    $.ajax({
+                        url: url,
+                        type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+                        success: function(html) { // Je récupère la réponse du fichier PHP
+                            $('#idModalProgrammer').modal('show'); 
+                            $('#idModalContentProgrammer').empty().append(html);
+                           }
+                    });
+                    
+                  });
+
+            {% endfor %}
+           
+       {% endfor %}
+    {% endif %}
+ 
+      html = '';
+      {%if stationAns | length%}  
+            {% for periode in stationAns.0.periodes %}
+                            html = html + '<tr>';
+                            html = html + '<td nowrap>';
+                            html = html + '<a id="idDupliquerPeriode_{{ periode.periode.id }}" data-toggle="modal" href="#" class="btn btn-primary" href="#" title="dupliquer la période sur les autres periodes"><i class="fa fa-sitemap"></i></a>'; 
+                            html = html + '<a id="idInitialiserPeriode_{{ periode.periode.id }}"  class="btn btn-danger" data-toggle="modal" href="#" title="Supprimer la période"><i class="fa fa-eraser"></i></a>';
+                             html = html + '</td> ';
+                             html = html + '<td nowrap>{{ periode.periode.labelPeriode }}</td>';
+                             html = html + ' <td nowrap>du {{ periode.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;au&nbsp;&nbsp; {{ periode.periode.dateFin | date("d/m/Y") }}</td>';
+                             html = html + '</tr>';
+             {% endfor %}
+        {% endif %}
+         $('#idBody_gestion_periodes').html(html);
+    
+     html = '';
+      html = html + '<a id="idSuivantPeriode" href="#">Périodes';
+      html = html + '<span class="btn btn-danger">';
+      html = html + '<span class="badge">';
+      html = html + '{{ controle.periode.nb  |  number_format(0,'.',' ')}}';
+      html = html + '</span></span></a>'; 
+      $('#idSuivantPeriode').empty().append(html);
+    
+</script>

@@ -6,20 +6,26 @@ AeagSqeBundle_programmation_periodes:
         methods:  GET|POST
         
 AeagSqeBundle_programmation_filtrer_semaines:
-    path:  /filtrer/semaines/
+    path:  /semaines/selectionner
     defaults: { _controller: AeagSqeBundle:ProgrammationPeriode:filtrerSemaines }
     requirements:
         methods:  GET|POST
         
 AeagSqeBundle_programmation_semaines_selectionnees:
-    path:  /selection/semaines
+    path:  /semaines/valider
     defaults: { _controller: AeagSqeBundle:ProgrammationPeriode:semainesSelectionnees }
     requirements:
         methods:  GET|POST
         
 AeagSqeBundle_programmation_periode_filtrer:
-    path:  /filtrer/
-    defaults: { _controller: AeagSqeBundle:ProgrammationPeriode:filtrer }
+    path:  /filtrer
+    defaults: { _controller: AeagSqeBundle:ProgrammationPeriode:FiltrerPeriodes }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_periode_filtrer_valider:
+    path:  /filtrer/valider
+    defaults: { _controller: AeagSqeBundle:ProgrammationPeriode:ValiderFiltrerPeriodes }
     requirements:
         methods:  GET|POST
         
@@ -30,13 +36,13 @@ AeagSqeBundle_programmation_periode_dupliquer_station:
         methods:  GET|POST
         
 AeagSqeBundle_programmation_periode_valider_dupliquer_station:
-    path:  /valideDupliquerStation/{stationId}
+    path:  /dupliquerStation/valider/{stationId}
     defaults: { _controller: AeagSqeBundle:ProgrammationPeriode:validerDupliquerStation, stationId : null }
     requirements:
         methods:  GET|POST
         
 AeagSqeBundle_programmation_periode_valider_dupliquer_station_sur_autre_station:
-    path:  /valideDupliquerStationSurAutreStation/{stationId}/{autreStationId}
+    path:  /dupliquerStation/SurAutreStation/{stationId}/{autreStationId}
     defaults: { _controller: AeagSqeBundle:ProgrammationPeriode:validerDupliquerStationSurAutreStation, stationId : null, autreStationId : null }
     requirements:
         methods:  GET|POST
@@ -74,6 +80,30 @@ AeagSqeBundle_programmation_periode_bilan:
 AeagSqeBundle_programmation_periode_telecharger:
     path:  /telecharger/{lotan}
     defaults: { _controller: AeagSqeBundle:ProgrammationPeriode:telecharger, lotan:null}
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_periode_gerer:
+    path:  /gerer/{lotan}
+    defaults: { _controller: AeagSqeBundle:ProgrammationPeriode:gererPeriode, lotan:null}
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_periode_dupliquer:
+    path:  /dupliquer/{periodeId}
+    defaults: { _controller: AeagSqeBundle:ProgrammationPeriode:dupliquerPeriode, periodeId : null }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_periode_dupliquer_valider:
+    path:  /dupliquer/valider/{periodeId}
+    defaults: { _controller: AeagSqeBundle:ProgrammationPeriode:validerDupliquerPeriode, periodeId : null }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_periode_supprimer:
+    path:  /supprimer/{periodeId}
+    defaults: { _controller: AeagSqeBundle:ProgrammationPeriode:supprimerPeriode, periodeId : null }
     requirements:
         methods:  GET|POST
         

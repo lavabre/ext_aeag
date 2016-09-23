@@ -11,12 +11,22 @@
 
 {% block panel_heading %}
     <h3>
-        Statistiques
-    </h3>
+       Statitisques
+      </h3>
 {% endblock panel_heading %}
 
 
 {%block content %}
+    
+    <div class="row">
+        <div class="form-group text-center">
+                    <div class="col-xm-3">Connectés : 
+                     <button class="btn btn-info" type="button">
+                            <span class="badge">{{ app.session.get('nbConnectes') }}</span>
+                      </button>
+                     </div>
+          </div>
+    </div>
 
 
     <div class="row">

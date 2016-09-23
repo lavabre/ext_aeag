@@ -8,7 +8,6 @@ use Aeag\DieBundle\Form\DemandeType;
 use Aeag\DieBundle\Form\DemandeThemeType;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Aeag\AeagBundle\Controller\AeagController;
 
 class DefaultController extends Controller {
 
@@ -24,13 +23,7 @@ class DefaultController extends Controller {
 
         $session->set('logo', '1');
         $session->set('size', '2');
-        
-          if (!$user) {
-              $stat = AeagController::statistiquesAction(null, $emAeag, $session);
-        }else{
-            $stat = AeagController::statistiquesAction($user, $emAeag, $session);
-        }
-
+   
           if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
             // accres au menu adminitrateur
             return $this->render('AeagDieBundle:Admin:index.html.twig', array(
@@ -87,12 +80,7 @@ class DefaultController extends Controller {
         $em = $this->get('doctrine')->getManager('die');
         $emAeag = $this->get('doctrine')->getManager();
 
-          if (!$user) {
-              $stat = AeagController::statistiquesAction(null, $emAeag, $session);
-        }else{
-            $stat = AeagController::statistiquesAction($user, $emAeag, $session);
-        }
-        
+    
         if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
             // accres au menu adminitrateur
             return $this->render('AeagDieBundle:Admin:index.html.twig');

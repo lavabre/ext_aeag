@@ -77,6 +77,7 @@ security:
          
          # PAGES ACCESSIBLES AUX ADMINISTRATEUR CONNECTES
          - { path: ^/user/compte, role: [ROLE_ODEC, ROLE_FRD, ROLE_SQE, ROLE_STOCK, ROLE_EDL] }
+         - { path: ^/user/statistiques, role: [ROLE_ODEC, ROLE_FRD, ROLE_SQE, ROLE_STOCK, ROLE_EDL] }
          - { path: ^/user*, role: [ROLE_ADMINDEC, ROLE_ADMINFRD, ROLE_ADMINSQE, ROLE_ADMINSTOCK, ROLE_ADMINEDL] }
 
           # PAGES ACCESSIBLES AUX ADMINISTRATEURS DECHETS

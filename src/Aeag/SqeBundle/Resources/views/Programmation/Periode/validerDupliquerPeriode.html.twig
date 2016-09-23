@@ -1,0 +1,177 @@
+
+  <table class="table table-bordered table-condensed table-advance" id="idTable_station">
+        <thead id="idTheadStations">
+            <tr>
+                {% if action == 'P'  and maj != 'V' %}
+                    <th width="1%">Actions</th>
+                    {% endif %}
+                <th width="10%">Stations</th>
+                <th width="10%">Réseaux</th>
+                    {%if stationAns | length%}  
+                        {% for periode in stationAns.0.periodes %}
+                        <th width="1%" id="idThPeriode_{{ periode.periode.id }}">{{ periode.periode.labelPeriode }}</th>
+                        {% endfor %}
+                    {% endif %}
+            </tr>
+        </thead>
+        <tbody id="idBodyStations">
+            {%if stationAns | length%}  
+                {% for stationAn in stationAns %}
+                    <tr id='idStation_{{ stationAn.station.id }}' name='idStation_{{ stationAn.station.id }}' width="10%">
+                        {% if action == 'P'  and maj != 'V' %}
+                            <td nowrap>
+                                <a id="idDupliquerStation_{{ stationAn.station.id }}" data-toggle="modal" href="#" class="btn btn-primary" href="#" title="dupliquer la programmation sur les autres stations">
+                                    <i class="fa fa-sitemap"></i> 
+                                </a>
+                                <a id="idInitialiserStation_{{ stationAn.station.id }}"  class="btn btn-danger" data-toggle="modal" href="#" title="Initialiser les périodes">
+                                    <i class="fa fa-eraser"></i> 
+                                </a>
+                            </td>
+                        {% endif %}
+                        <td nowrap>{{ stationAn.station.station.code}}&nbsp;&nbsp;{{ stationAn.station.station.libelle}}</td>
+                        <td nowrap>{{ stationAn.reseau.nomRsx }}</td>
+                        {% for periode in stationAn.periodes %}
+                            <td id="idTd_{{ stationAn.station.id }}_{{ periode.periode.id }}">
+                                <div id="idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}" class="text-center">
+                                    <a id="idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}" class="btn btn-default">
+                                        <span id="idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}" class="badge"></span>
+                                    </a>
+                                </div>
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            {% endif %}
+        </tbody>
+    </table> 
+        
+<script>
+    
+    $('#modalDupliquerPeriode').modal('hide');
+  
+     {#  traitement sur chaque periode de chaque station   #}
+       {% if stationAns |length %}
+        {% for stationAn in stationAns %}
+            {% for stationAnAutre in stationAns %}
+                {% if stationAnAutre.station.id != stationAn.station.id %}
+                    {% set nbGroupes = 0 %}
+                    {% for periode in stationAnAutre.periodes %}
+                        {% if periode.nbGroupe > 0 %}
+                            {% set nbGroupes = nbGroupes + periode.nbGroupe %}
+                        {% endif %}
+                    {% endfor %}
+                    {% if  nbGroupes > 0 %}
+                        $('#trDupliquerStation_{{ stationAn.station.id }}_{{ stationAnAutre.station.id }}').addClass("danger");
+                        $('#nbGroupes_{{ stationAn.station.id }}_{{ stationAnAutre.station.id }}').val({{ nbGroupes }})
+                    {% else %}
+                        $('#trDupliquerStation_{{ stationAn.station.id }}_{{ stationAnAutre.station.id }}').removeClass("danger");
+                        $('#nbGroupes_{{ stationAn.station.id }}_{{ stationAnAutre.station.id }}').val(0)
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+            {% for periode in stationAn.periodes %}
+
+                {% if periode.statut | length %}
+                    {% if periode.statut.codeStatut == 'INV' %}
+
+                        {% if periode.nbGroupe > 0 %}
+                            $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').addClass("danger");
+                            $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').addClass('btn-danger');
+                            $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
+                        {% else %}
+                            {% if periode.autreProgrammation == 0 %}
+                                $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("danger");
+                                $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass('btn-danger');
+                                $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().hide();
+                            {% else %}
+                                $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').addClass("danger");
+                                $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').addClass('btn-danger');
+                                $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().append({{ periode.autreProgrammation }} + '/' + {{ grparAns | length }} );
+                            {% endif %}
+                        {% endif %}
+
+                    {% else %}
+                        {% if periode.nbGroupe > 0 %}
+                            {% if periode.autreStatut == 'N' %}
+                                $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("warning").removeClass("info").removeClass("primary").addClass("success");
+                                $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("btn-default").removeClass("btn-warning").removeClass("btn-info").removeClass("btn-primary").addClass('btn-success');
+                                $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
+                            {% elseif periode.autreStatut == 'C'%}
+                                $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("warning").addClass("info").removeClass("primary").removeClass("success");
+                                $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("btn-default").removeClass("btn-warning").addClass("btn-info").removeClass("btn-primary").removeClass('btn-success');
+                                $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
+                            {% elseif periode.autreStatut == 'I'%}
+                                $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("warning").removeClass("info").addClass("primary").removeClass("success");
+                                $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("btn-default").removeClass("btn-warning").removeClass("btn-info").addClass("btn-primary").removeClass('btn-success');
+                                $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
+                            {% endif %}
+                        {% else %}
+                            {% if periode.autreProgrammation == 0 %}
+                                $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("warning").removeClass("info").removeClass("primary").removeClass("success");
+                                $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').addClass("btn-default").removeClass("btn-warning").removeClass("btn-info").removeClass("btn-primary").removeClass('btn-success');
+                                $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty();
+                            {% else %}
+                                $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').addClass("warning").removeClass("info").removeClass("primary").removeClass("success");
+                                $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("btn-default").addClass("btn-warning").removeClass("btn-info").removeClass("btn-primary").removeClass('btn-success');
+                                $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().append({{ periode.autreProgrammation }} + '/' + {{ grparAns | length }} ).show();
+                            {% endif %}
+                        {% endif %}
+                    {%endif %}
+                {% else %}
+                    {% if periode.nbGroupe > 0 %}
+                        {% if periode.autreStatut == 'N' %}
+                            $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("warning").removeClass("info").removeClass("primary").addClass("success");
+                            $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("btn-default").removeClass("btn-warning").removeClass("btn-info").removeClass("btn-primary").addClass('btn-success');
+                            $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
+                        {% elseif periode.autreStatut == 'C'%}
+                            $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("warning").addClass("info").removeClass("primary").removeClass("success");
+                            $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("btn-default").removeClass("btn-warning").addClass("btn-info").removeClass("btn-primary").removeClass('btn-success');
+                            $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
+                        {% elseif periode.autreStatut == 'I'%}
+                            $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("warning").removeClass("info").addClass("primary").removeClass("success");
+                            $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("btn-default").removeClass("btn-warning").removeClass("btn-info").addClass("btn-primary").removeClass('btn-success');
+                            $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
+                        {% endif %}
+                    {% else %}
+                        {% if periode.autreProgrammation == 0 %}
+                            $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("warning").removeClass("info").removeClass("primary").removeClass("success");
+                            $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').addClass("btn-default").removeClass("btn-warning").removeClass("btn-info").removeClass("btn-primary").removeClass('btn-success');
+                            $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty();
+                        {% else %}
+                            $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').addClass("warning").removeClass("info").removeClass("primary").removeClass("success");
+                            $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("btn-default").addClass("btn-warning").removeClass("btn-info").removeClass("btn-primary").removeClass('btn-success');
+                            $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().append({{ periode.autreProgrammation }} + '/' + {{ grparAns | length }} ).show();
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+
+                {#   traitement sur un période sélectionner   #}
+                $(document).on('click', '#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}', function(e){
+                $('#modalTraitementEncours').modal('toggle');
+                var url = '{{ path("AeagSqeBundle_programmation_periode_programmer",{"stationId":  "par1", "periodeId" : "par2","action": "par3","maj":"par4","lotan":"par5"}) }}', // Le nom du fichier indiqué dans le formulaire
+                url = url.replace("par1", {{ stationAn.station.id }});
+                url = url.replace("par2", {{ periode.periode.id }});
+                url = url.replace("amp;","");
+                url = url.replace("par3", '{{ action }}');
+                url = url.replace("amp;","");
+                url = url.replace("par4", '{{ maj }}');
+                url = url.replace("amp;","");
+                url = url.replace("par5", '{{ lotan.id }}');
+                url = url.replace("amp;","");
+                $.ajax({
+                url: url,
+                type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+                success: function(html) { // Je récupère la réponse du fichier PHP
+                $('#idModalProgrammer').modal(); 
+                $('#idModalContentProgrammer').empty().append(html);
+                $('#modalTraitementEncours').modal('hide');
+                }
+                });
+
+                });
+
+            {% endfor %}
+        {% endfor %}
+    {% endif %}
+
+ </script>

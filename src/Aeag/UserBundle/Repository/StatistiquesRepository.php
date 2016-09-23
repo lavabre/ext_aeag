@@ -88,6 +88,18 @@ class StatistiquesRepository extends EntityRepository {
        //  print_r($query);
         return $qb->getOneOrNullResult();
     }
+    
+     public function getConnectes() {
+
+        $query = "select u";
+        $query = $query . " from Aeag\UserBundle\Entity\Statistiques u";
+        $query = $query . " where u.dateFinConnexion is null";
+
+        $qb = $this->_em->createQuery($query);
+
+        //print_r($query);
+        return $qb->getResult();
+    }
 
     public function getNbStatistiques() {
 
