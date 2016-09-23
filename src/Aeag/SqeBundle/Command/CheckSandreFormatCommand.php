@@ -115,7 +115,9 @@ class CheckSandreFormatCommand extends AeagCommand {
         $cr .= date("Y-m-d H:i:s") . ' - ' . $pgCmdFichierRps->getPhaseFichier()->getLibellePhase() . "\r\n";
         if (count($erreurs) > 0) {
             $erreurs = array_unique($erreurs);
+            $cr .= "--- Début Test Sandre \r\n";
             $cr .= 'Erreurs : ' . implode("\r\n", $erreurs);
+            $cr .= "--- Fin Test Sandre \r\n";
         }
         file_put_contents($fullFileName, $cr);
         // Enregistrement du fichier CR en base

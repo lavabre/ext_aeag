@@ -196,9 +196,11 @@ class AeagCommand extends ContainerAwareCommand {
         $fullFileName = $pathBase . '/' . $fileName;
 
         $cr = '';
+        $cr .= "--- Début Test Aeag \r\n";
         foreach ($logs as $log) {
             $cr .= $log . "\r\n";
         }
+        $cr .= "--- Fin Test Aeag \r\n";
         file_put_contents($fullFileName, $cr, FILE_APPEND);
     }
 
