@@ -46,17 +46,24 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
 
             // Envoi de mail au producteur et au titulaire
             $destinataires = array();
-            $prestataire = $this->repoPgProgWebUsers->findOneByPrestataire($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getTitulaire());
-            $producteur = $this->repoPgProgWebUsers->findOneByProducteur($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getRespAdrCor());
-            $destinataires[] = $prestataire;
-            if ($prestataire->getId() != $producteur->getId()) {
-                $destinataires[] = $producteur;
+            // Verifier que le titulaire n'est pas nul
+            if (!is_null($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getTitulaire())) {
+                $prestataires = $this->repoPgProgWebUsers->findByPrestataire($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getTitulaire());
+                foreach($prestataires as $prestataire){
+                    $destinataires[$prestataire->getId()] = $prestataire;
+                }
+            }
+            if (!is_null($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getRespAdrCor())) {
+                $producteurs = $this->repoPgProgWebUsers->findByProducteur($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getRespAdrCor());
+                foreach($producteurs as $producteur) {
+                    $destinataires[$producteur->getId()] = $producteur;
+                }
             }
             
             // Récupérer le code milieu de la RAI
             $admins = $this->repoPgProgWebuserTypmil->findByTypmil($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getCodeMilieu());
             foreach ($admins as $admin) {
-                $destinataires[] = $admin->getWebuser();
+                $destinataires[$admin->getWebuser()->getId()] = $admin->getWebuser();
             }
                     
             $objetMessage = "SQE - RAI : Fichier csv des données brutes disponible pour le lot " . $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getNomLot();

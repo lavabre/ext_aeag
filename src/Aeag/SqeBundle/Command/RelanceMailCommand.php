@@ -50,11 +50,29 @@ class RelanceMailCommand extends AeagCommand {
         foreach ($pgCmdDemandes as $pgCmdDemande) {
             $this->output->writeln($pgCmdDemande->getPeriode()->getDateDeb());
             $dateLimite = $pgCmdDemande->getPeriode()->getDateDeb();
-            $interval = $pgCmdDemande->getLotan()->getLot()->getDelaiLot() + $pgCmdDemande->getLotan()->getLot()->getDelaiPrel();
+            $delaiLot = $pgCmdDemande->getLotan()->getLot()->getDelaiLot();
+            if (is_null($delaiLot)) {
+                $delaiLot = 30;
+            }
+            $delaiPrel = $pgCmdDemande->getLotan()->getLot()->getDelaiPrel();
+            if (is_null($delaiPrel)) {
+                $delaiPrel = 7;
+            }
+            $interval = $delaiLot + $delaiPrel;
             $dateLimite->add(new \DateInterval('P'.$interval.'D'));
             $destinataires = array();
-            $destinataires[] = $this->repoPgProgWebUsers->findOneByPrestataire($pgCmdDemande->getLotan()->getLot()->getTitulaire());
-
+            if (!is_null($pgCmdDemande->getLotan()->getLot()->getTitulaire())) {
+                $prestataires = $this->repoPgProgWebUsers->findByPrestataire($pgCmdDemande->getLotan()->getLot()->getTitulaire());
+                foreach($prestataires as $prestataire) {
+                    $destinataires[$prestataire->getId()] = $prestataire;
+                }
+            }
+            if (!is_null($pgCmdDemande->getPrestataire())) {
+                $prestatairesDmd = $this->repoPgProgWebUsers->findByPrestataire($pgCmdDemande->getPrestataire());
+                foreach($prestatairesDmd as $prestataireDmd) {
+                    $destinataires[$prestataireDmd->getId()] = $prestataireDmd;
+                }
+            }
             $objetMessage = "Relance SQE - RAI : Dépot de fichier en attente " . $pgCmdDemande->getLotan()->getLot()->getNomLot();
             $txtMessage = "Lot : " . $pgCmdDemande->getLotan()->getLot()->getNomLot() . "<br/>";
             $txtMessage .= "Période : " . $pgCmdDemande->getPeriode()->getLabelPeriode() . "<br/>";
@@ -78,7 +96,19 @@ class RelanceMailCommand extends AeagCommand {
         foreach ($pgCmdDemandes as $pgCmdDemande) {
             $this->output->writeln($pgCmdDemande->getPeriode()->getDateDeb());
             $destinataires = array();
-            $destinataires[] = $this->repoPgProgWebUsers->findOneByPrestataire($pgCmdDemande->getLotan()->getLot()->getTitulaire());
+            if (!is_null($pgCmdDemande->getLotan()->getLot()->getTitulaire())) {
+                $prestataires = $this->repoPgProgWebUsers->findByPrestataire($pgCmdDemande->getLotan()->getLot()->getTitulaire());
+                foreach($prestataires as $prestataire) {
+                    $destinataires[$prestataire->getId()] = $prestataire;
+                }
+            }
+            
+            if (!is_null($pgCmdDemande->getPrestataire())) {
+                $prestatairesDmd = $this->repoPgProgWebUsers->findByPrestataire($pgCmdDemande->getPrestataire());
+                foreach($prestatairesDmd as $prestataireDmd) {
+                    $destinataires[$prestataireDmd->getId()] = $prestataireDmd;
+                }
+            }
 
             $objetMessage = "Relance SQE - RAI : Dépot de fichier non effectué " . $pgCmdDemande->getLotan()->getLot()->getNomLot();
             $txtMessage = "Lot : " . $pgCmdDemande->getLotan()->getLot()->getNomLot() . "<br/>";
@@ -102,7 +132,9 @@ class RelanceMailCommand extends AeagCommand {
             $pgCmdSuiviPrels = $this->repoPgCmdSuiviPrel->getSuiviPrelPByDaysAndLot(15, $pgProgLot);
             
             $destinataires = array();
-            $destinataires[] = $this->repoPgProgWebUsers->findOneByPrestataire($pgProgLot->getTitulaire());
+            if (!is_null($pgProgLot->getTitulaire())) {
+                $destinataires[] = $this->repoPgProgWebUsers->findOneByPrestataire($pgProgLot->getTitulaire());
+            }
             
             $listeStationLibs = '<ul>';
             $listeStationCodes = array();
@@ -139,8 +171,10 @@ class RelanceMailCommand extends AeagCommand {
             $destinataires = array();
             $listeStationCodes = array();
             $listePrelevDates = array();
-            
-            $destinataires[] = $this->repoPgProgWebUsers->findOneByPrestataire($pgProgLot->getTitulaire());
+
+            if (!is_null($pgProgLot->getTitulaire())) {
+                $destinataires[] = $this->repoPgProgWebUsers->findOneByPrestataire($pgProgLot->getTitulaire());
+            }
             $listeStationLibs = '<ul>';
             foreach($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
                 $listeStationLibs .= '<li>'.$pgCmdSuiviPrel->getPrelev()->getStation()->getCode().' - '.$pgCmdSuiviPrel->getPrelev()->getStation()->getLibelle().' - '.$pgCmdSuiviPrel->getPrelev()->getDemande()->getPeriode()->getLabelPeriode().'</li>';
@@ -189,6 +223,7 @@ class RelanceMailCommand extends AeagCommand {
             $this->output->writeln($date->format('d/m/Y H:i:s') .' - Mise à jour validation a A HB P - Lot '.$pgCmdSuiviPrel->getPrelev()->getDemande()->getLotan()->getLot()->getNomLot().' - Station '.$pgCmdSuiviPrel->getPrelev()->getStation()->getCode());
             $pgCmdSuiviPrel->setValidation('A');
             $pgCmdSuiviPrel->setValidAuto('O');
+            
             $this->emSqe->persist($pgCmdSuiviPrel);
         }
         $this->emSqe->flush();
@@ -205,7 +240,13 @@ class RelanceMailCommand extends AeagCommand {
             $this->output->writeln($date->format('d/m/Y H:i:s') .' - Mise à jour validation a A HB F - Lot '.$pgCmdSuiviPrel->getPrelev()->getDemande()->getLotan()->getLot()->getNomLot().' - Station '.$pgCmdSuiviPrel->getPrelev()->getStation()->getCode());
             $pgCmdSuiviPrel->setValidation('A');
             $pgCmdSuiviPrel->setValidAuto('O');
+            
+            $pgCmdPrel = $pgCmdSuiviPrel->getPrelev();
+            $pgCmdPrel->setDatePrel($pgCmdSuiviPrel->getDatePrel());
+            $pgCmdPrel->setRealise(1);
+            
             $this->emSqe->persist($pgCmdSuiviPrel);
+            $this->emSqe->persist($pgCmdPrel);
         }
         $this->emSqe->flush();
         $date = new \DateTime();

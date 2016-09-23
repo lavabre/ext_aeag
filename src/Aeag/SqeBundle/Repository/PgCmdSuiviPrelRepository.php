@@ -256,6 +256,7 @@ class PgCmdSuiviPrelRepository extends EntityRepository {
         $query .= " join Aeag\SqeBundle\Entity\PgProgLotAn lotan with dmd.lotan = lotan.id";
         $query .= " join Aeag\SqeBundle\Entity\PgProgLot lot with lotan.lot = lot.id";
         $query .= " join Aeag\SqeBundle\Entity\PgProgTypeMilieu mil with mil.codeMilieu = lot.codeMilieu";
+        $query .= " join Aeag\SqeBundle\Entity\PgProgMarche marche with lot.marche = marche.id";
         $query .= " where suivi2 IN (";
         $query .= " select max(suivi)";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdSuiviPrel suivi";
@@ -264,6 +265,7 @@ class PgCmdSuiviPrelRepository extends EntityRepository {
         $query .= " and suivi2.statutPrel = 'P'";
         $query .= " and DATE_DIFF(DATE_ADD(suivi2.datePrel, ".$days.", 'day'),CURRENT_TIMESTAMP()) = 0";
         $query .= " and mil.codeMilieu like '%HB'";
+        $query .= " and marche.typeMarche = 'MOA'";
         $query .= " and lot = :lot";
         $query .= " order by lot.id, station.code";
         
@@ -281,6 +283,7 @@ class PgCmdSuiviPrelRepository extends EntityRepository {
         $query .= " join Aeag\SqeBundle\Entity\PgProgLotAn lotan with dmd.lotan = lotan.id";
         $query .= " join Aeag\SqeBundle\Entity\PgProgLot lot with lotan.lot = lot.id";
         $query .= " join Aeag\SqeBundle\Entity\PgProgTypeMilieu mil with mil.codeMilieu = lot.codeMilieu";
+        $query .= " join Aeag\SqeBundle\Entity\PgProgMarche marche with lot.marche = marche.id";
         $query .= " where suivi2 IN (";
         $query .= " select max(suivi)";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdSuiviPrel suivi";
@@ -289,6 +292,7 @@ class PgCmdSuiviPrelRepository extends EntityRepository {
         $query .= " and suivi2.statutPrel = 'P'";
         $query .= " and DATE_DIFF(DATE_ADD(suivi2.datePrel, ".$days.", 'day'),CURRENT_TIMESTAMP()) = 0";
         $query .= " and mil.codeMilieu like '%HB'";
+        $query .= " and marche.typeMarche = 'MOA'";
         $query .= " group by lot";
         $query .= " order by lot.id";
         
@@ -306,6 +310,7 @@ class PgCmdSuiviPrelRepository extends EntityRepository {
         $query .= " join Aeag\SqeBundle\Entity\PgProgLotAn lotan with dmd.lotan = lotan.id";
         $query .= " join Aeag\SqeBundle\Entity\PgProgLot lot with lotan.lot = lot.id";
         $query .= " join Aeag\SqeBundle\Entity\PgProgTypeMilieu mil with mil.codeMilieu = lot.codeMilieu";
+        $query .= " join Aeag\SqeBundle\Entity\PgProgMarche marche with lot.marche = marche.id";
         $query .= " left join Aeag\SqeBundle\Entity\PgCmdFichiersRps rps with dmd.id = rps.demande where rps.demande is null";
         $query .= " and suivi2 IN (";
         $query .= " select max(suivi)";
@@ -315,6 +320,7 @@ class PgCmdSuiviPrelRepository extends EntityRepository {
         $query .= " and suivi2.statutPrel = 'F'";
         $query .= " and DATE_DIFF(DATE_ADD(suivi2.datePrel, ".$days.", 'day'),CURRENT_TIMESTAMP()) = 0";
         $query .= " and mil.codeMilieu like '%HB'";
+        $query .= " and marche.typeMarche = 'MOA'";
         $query .= " and lot = :lot";
         $query .= " order by lot.id, station.code";
         
@@ -333,6 +339,7 @@ class PgCmdSuiviPrelRepository extends EntityRepository {
         $query .= " join Aeag\SqeBundle\Entity\PgProgLotAn lotan with dmd.lotan = lotan.id";
         $query .= " join Aeag\SqeBundle\Entity\PgProgLot lot with lotan.lot = lot.id";
         $query .= " join Aeag\SqeBundle\Entity\PgProgTypeMilieu mil with mil.codeMilieu = lot.codeMilieu";
+        $query .= " join Aeag\SqeBundle\Entity\PgProgMarche marche with lot.marche = marche.id";
         $query .= " left join Aeag\SqeBundle\Entity\PgCmdFichiersRps rps with dmd.id = rps.demande where rps.demande is null";
         $query .= " and suivi2 IN (";
         $query .= " select max(suivi)";
@@ -342,6 +349,7 @@ class PgCmdSuiviPrelRepository extends EntityRepository {
         $query .= " and suivi2.statutPrel = 'F'";
         $query .= " and DATE_DIFF(DATE_ADD(suivi2.datePrel, ".$days.", 'day'),CURRENT_TIMESTAMP()) = 0";
         $query .= " and mil.codeMilieu like '%HB'";
+        $query .= " and marche.typeMarche = 'MOA'";
         $query .= " group by lot";
         $query .= " order by lot.id";
         
