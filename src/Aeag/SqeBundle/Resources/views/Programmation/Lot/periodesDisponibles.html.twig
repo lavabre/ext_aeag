@@ -1,0 +1,143 @@
+ <div class="modal fade" id="modal_periodes" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title text-center" id="myModalLabel">
+                                      Nouvelle version de la programmation {{ lotan.anneeProg }} version {{ lotan.version }} du lot : {{ lotan.lot.nomLot }}<br/>
+                                      {{ periodes | length }} Périodes disponibles
+                             </div>
+                            <div class="modal-body">
+                                
+                                  <div class="row">
+                                    <div class="col-md-offset-1 col-md10 text-center" id="idNbCocherPeriodes">
+                                        <p class="btn btn-primary"></p>
+                                    </div>
+                                </div>
+                                
+                                 <div class="row">
+                                    <table class="table table-bordered table-condensed table-advance" id="idTable_periodes">
+                                          <thead>
+                                              <tr>
+                                                  <th width="1%" align="center">
+                                                      <a class="btn btn-success" id="cocherToutLesPeriodes"  href="#"><i class="fa fa-check fa-lg"></i></a>
+                                                  </th>
+                                                  <th  width="5%">Periodes</th>
+                                                  <th>Intervalles</th>
+                                               </tr>
+                                          </thead>
+                                          <tbody>
+                                             {% for periode in periodes %}
+                                              <tr>
+                                                  <td align="center" nowrap>
+                                                        <div class="checbox">
+                                                              <input type="checkbox" id="checkPeriode_{{  periode.id }}" name="checkPeriode[]" value="{{  periode.id }}" >
+                                                        </div>
+                                                  </td>
+                                                      <td nowrap>{{periode.labelPeriode }}</td>
+                                                   <td nowrap>du {{ periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;au&nbsp;&nbsp; {{ periode.dateFin | date("d/m/Y") }}</td>
+                                                 </tr>
+                                              {% endfor %}
+                                          </tbody>
+                                      </table>
+                                 </div>
+                        </div>
+                        <div class="modal-footer">
+                              {% if action == 'P'  %}
+                                    <button id="idValiderFiltrerPeriode" type="submit" class="btn btn-success">
+                                        <i class="fa fa-check"> Valider</i>
+                                    </button>
+                                {% endif %}
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+<script>
+    var table_periode = $('#idTable_periodes').DataTable(
+            {"stateSave": false,
+                "order": [[1, "asc"]],
+                "oLanguage": {
+                    "sSearch": "Filtre",
+                    "sFirst": "1ere page",
+                    "sLast": "Dernière page",
+                    "sNext": "Prochaine page",
+                    "sPrevious": "Page précédente",
+                    "EmptyTable": "Pas de données",
+                    "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+                    "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+                    "sZeroRecords": "Pas d'enregistrement à afficher",
+                    "sInfoEmpty": "Pas d'enregistrement à afficher",
+                    "sInfoThousands": " ",
+                    "sLengthMenu": 'Afficher <select>' +
+                            '<option value="10">10</option>' +
+                            '<option value="20">20</option>' +
+                            '<option value="30">30</option>' +
+                            '<option value="40">40</option>' +
+                            '<option value="50">50</option>' +
+                            '<option value="-1">Tous</option>' +
+                            '</select> enregistrements',
+                    "sPaginationType": "full_numbers"
+                }
+            }
+    );
+    
+   
+    
+             /* Nombre de periodes cocheées*/
+        var nbcocherPeriodes = function () {
+            var info = table_periode.page.info();
+            var nbRecords = $('#idTable_periodes_length option:selected').val();
+            var filtre = $('#idTable_periodes_filter input').val();
+            if (filtre != '') {
+                var initval = '';
+                table_periode.search(initval).draw();
+            }
+            ;
+            table_periode.page.len(-1).draw();
+            var n = $("#idTable_periodes input:checked").length;
+            html = "Périodes cochées  : <span class='badge'>" + n + "</span>";
+            $("#idNbCocherPeriodes p").html(html);
+            if (filtre != '') {
+                table_periode.search(filtre).draw();
+            }
+            ;
+            table_periode.page.len(nbRecords).draw();
+            table_periode.page(info.page).draw(false);
+        };
+        nbcocherPeriodes();
+        
+       {% for periode in periodes %}
+            $('#checkPeriode_{{ periode.id }}').prop("checked", false);
+             $(document).on('click', '#checkPeriode_{{ periode.id }}', function (e) {
+                nbcocherPeriodes();
+              });
+     {% endfor %}
+         
+     var cocher = false;
+     $(document).on('click','#cocherToutLesPeriodes',function(e){
+           var nbRecords = $('#idTable_periodes_length option:selected').val();
+           table_periode.page.len( -1 ).draw();
+           if (cocher == true){
+                   cocher = false;
+                   $('#cocherToutLesPeriodes').removeClass('btn-danger').addClass('btn-success');
+                   $('#cocherToutLesPeriodes i').removeClass('fa-eraser').addClass('fa-check ');
+                   {% for periode in periodes %}
+                       $('#checkPeriode_{{  periode.id }}').prop( "checked", false );
+                   {% endfor %}
+           }else{
+                   cocher = true;
+                   $('#cocherToutLesPeriodes').removeClass('btn-success').addClass('btn-danger');
+                   $('#cocherToutLesPeriodes i').removeClass("fa-check").addClass('fa-eraser');
+                   {% for periode in periodes %}
+                       $('#checkPeriode_{{  periode.id }}').prop( "checked", true );
+                   {% endfor %}
+           };
+           table_periode.page.len( nbRecords ).draw();
+            nbcocherPeriodes();
+       });
+
+    
+    
+</script>

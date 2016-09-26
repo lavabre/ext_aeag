@@ -2601,6 +2601,8 @@ class SuiviHydrobioController extends Controller {
             $tabFichiers = array();
             $i = 0;
             foreach($fichiers as $fichier){
+                $ext = strtolower(pathinfo($fichier, PATHINFO_EXTENSION));
+                if ($ext){
                 $tabFichiers[$i]['fichier'] = $fichier;
                 $tabFichiers[$i]['chemin'] = $pathBase  . '/' .  $fichier;
                 chmod($pathBase  . '/' .  $fichier, 0775);
@@ -2608,6 +2610,7 @@ class SuiviHydrobioController extends Controller {
                 $repertoire = "fichiers";
                 rename($pathBase  . '/' .  $fichier, $repertoire . "/" . $fichier);
                 $i++;
+                }
             }
             return $this->render('AeagSqeBundle:SuiviHydrobio:lotPeriodeStationDemandeSuiviFichierListe.html.twig', array(
                 'suiviPrel' => $pgCmdSuiviPrel,
