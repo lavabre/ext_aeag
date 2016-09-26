@@ -43,7 +43,7 @@
                             <tr>
                         {% endif %}
                             <td align="center" nowrap>
-                                <a id="id_{{demande.id}}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_echangefichiers_telecharger',{'demandeId' : demande.id})}}" title="Télécharger la DAI">
+                                <a id="id_{{demande.id}}" class="btn btn-success btn-telecharger" data-id="{{demande.id}}" title="Télécharger la DAI">
                                     <i class="fa fa-upload"></i> 
                                 </a>
                                 {% if (is_granted('ROLE_ADMINSQE') or (user.prestataire == demande.prestataire and ("Saisie" not in demande.formatFichier))) and (demande.phaseDemande.codePhase != 'D40' and demande.phaseDemande.codePhase != 'D50') %}
@@ -100,9 +100,9 @@
 {% block scripts %}
     
     jQuery(document).ready(function() {
-        $('.btn-telecharger').click(function (){
+       {# $('.btn-telecharger').click(function (){
             setTimeout("window.location.reload()",2000);//or other value
-        });
+        });#}
         
          $('.btn-deposer-reponse').click(function (e){
          e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
@@ -110,7 +110,7 @@
             var url = '{{ path("AeagSqeBundle_echangefichiers_reponses_selectionner",{"demandeId":  "par1" }) }}';
             var demandeId = $(this).data('id');
             url = url.replace("par1", demandeId);
-            $.ajax({
+           $.ajax({
                 url: url,
                 type: 'get',
                 success: function(html) {
@@ -121,10 +121,10 @@
             });
          });
             
-     {#    $('.btn-telecharger').click(function (e){
+         $('.btn-telecharger').click(function (e){
            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
            $('#modalTraitementEncours').modal('toggle');
-            var url = '{{ path("AeagSqeBundle_echangefichiers_telecharger",{"demandeId":  "par1" }) }}';
+            var url = '{{ path("AeagSqeBundle_echangefichiers_liste_fichiers",{"demandeId":  "par1" }) }}';
             var demandeId = $(this).data('id');
             url = url.replace("par1", demandeId);
             $.ajax({
@@ -136,7 +136,7 @@
                    $('#modal_fichiers').modal();
                 }
             });
-         });#}
+         });
         
        
         

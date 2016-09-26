@@ -10,6 +10,11 @@ AeagSqeBundle_echangefichiers_telecharger:
     path:  /telecharger/{demandeId}
     defaults: { _controller: AeagSqeBundle:EchangeFichiers:telecharger, demandeId : null }
     
+AeagSqeBundle_echangefichiers_liste_fichiers:
+    path:  /listeFichiers/{demandeId}
+    defaults: { _controller: AeagSqeBundle:EchangeFichiers:listeFichiers, demandeId : null }
+    
+
 AeagSqeBundle_echangefichiers_reponses:
     path:  /reponses/{demandeId}
     defaults: { _controller: AeagSqeBundle:EchangeFichiers:reponses, demandeId : null }
