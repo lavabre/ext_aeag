@@ -453,12 +453,13 @@ class PgTmpValidEdilaboRepository extends EntityRepository {
     public function getDiffCodeFraction($codePrelevement, $demandeId, $reponseId) {
         
         $query = "select dmd.*, rps.* from";
-        $query .= " (select distinct code_parametre as codeparamdmd, code_fraction from pg_tmp_valid_edilabo";
+        $query .= " (select distinct code_parametre as codeparamdmd, code_fraction as codefractiondmd  from pg_tmp_valid_edilabo";
         $query .= " where demande_id = :demande and fichier_rps_id is null and code_prelevement = :codePrelevement) dmd";
-        $query .= " left join (select distinct code_parametre as codeparamrps, code_fraction from pg_tmp_valid_edilabo";
+        $query .= " left join (select distinct code_parametre as codeparamrps, code_fraction as codefractionrps  from pg_tmp_valid_edilabo";
         $query .= " where demande_id = :demande and fichier_rps_id = :reponse and code_prelevement = :codePrelevement) rps";
-        $query .= " on  codeparamdmd = codeparamrps";
-        $query .= " where dmd.code_fraction <> rps.code_fraction";
+        $query .= " on  codeparamdmd = codeparamrps and codefractiondmd  = codefractionrps ";
+        $query .= " where codeparamrps is null";
+
         $stmt = $this->_em->getConnection()->prepare($query);
         $stmt->bindValue('demande', $demandeId);
         $stmt->bindValue('reponse', $reponseId);

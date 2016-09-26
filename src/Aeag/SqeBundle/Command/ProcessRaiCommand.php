@@ -207,16 +207,23 @@ class ProcessRaiCommand extends AeagCommand {
             }
 
             // paramètres/unité : paramètre manquant => erreur
-            if (count($diff = $this->repoPgTmpValidEdilabo->getDiffCodeParametreMissing($codePrelev["codePrelevement"], $demandeId, $reponseId)) > 0) {
-                if ((count($diff) == 1) && in_array(1429, $diff)) {
-                    $this->_addLog('warning', $demandeId, $reponseId, "Incoherence RAI/DAI: Paramètre manquant", $codePrelev["codePrelevement"], $diff);
+            if (count($diffMiss = $this->repoPgTmpValidEdilabo->getDiffCodeParametreMissing($codePrelev["codePrelevement"], $demandeId, $reponseId)) > 0) {
+                if ((count($diffMiss) == 1) && in_array(1429, $diffMiss)) {
+                    $this->_addLog('warning', $demandeId, $reponseId, "Incoherence RAI/DAI: Paramètre manquant", $codePrelev["codePrelevement"], $diffMiss);
                 } else {
-                    $this->_addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: Paramètre manquant", $codePrelev["codePrelevement"], $diff);
+                    $this->_addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: Paramètre manquant", $codePrelev["codePrelevement"], $diffMiss);
                 }
             }
             
             // paramètres/unité : fractions différentes => erreur
-            if (count($diff = $this->repoPgTmpValidEdilabo->getDiffCodeFraction($codePrelev["codePrelevement"], $demandeId, $reponseId)) > 0) {
+            $diffFractions = $this->repoPgTmpValidEdilabo->getDiffCodeFraction($codePrelev["codePrelevement"], $demandeId, $reponseId);
+            $diff = array();
+            foreach($diffFractions as $diffFraction){
+                if (!in_array($diffFraction, $diffMiss)) {
+                    $diff[] = $diffFraction;
+                }
+            }
+            if (count($diff) > 0) {
                 $this->_addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: Fractions différentes", $codePrelev["codePrelevement"], $diff);
             }
             
