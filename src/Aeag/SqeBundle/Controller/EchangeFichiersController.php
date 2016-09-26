@@ -118,75 +118,7 @@ class EchangeFichiersController extends Controller {
         }
     }
 
-    public function listeFichiersAction($demandeId) {
-        $user = $this->getUser();
-        if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
-        }
-        $session = $this->get('session');
-        $session->set('menu', 'echangeFichier');
-        $session->set('controller', 'EchangeFichier');
-        $session->set('fonction', 'listeFichiers');
-        $emSqe = $this->get('doctrine')->getManager('sqe');
-
-        $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
-        $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
-        $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
-
-        $pgProgWebUser = $repoPgProgWebUsers->findOneByExtId($user->getId());
-        $pgCmdDemande = $repoPgCmdDemande->findOneById($demandeId);
-        if ($pgCmdDemande) {
-            // Récupération du fichier
-            $zipName = str_replace('xml', 'zip', $pgCmdDemande->getNomFichier());
-            $chemin = $this->getParameter('repertoire_echange');
-            $pathBase = $this->get('aeag_sqe.process_rai')->getCheminEchange($chemin, $pgCmdDemande);
-
-            // Changement de la phase s'il est téléchargé par un presta pour la première fois
-            if ($user->hasRole('ROLE_PRESTASQE') && substr($pgCmdDemande->getPhaseDemande()->getCodePhase(), 1) < '25') {
-                $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('D25');
-                if (count($pgProgPhases) > 0) {
-                    $pgCmdDemande->setPhaseDemande($pgProgPhases);
-                    $emSqe->persist($pgCmdDemande);
-                    $emSqe->flush();
-                }
-            }
-
-            // On log le téléchargement
-            $log = new \Aeag\SqeBundle\Entity\PgCmdDwnldUsrDmd();
-            $log->setUser($pgProgWebUser);
-            $log->setDemande($pgCmdDemande);
-            $log->setDate(new \DateTime());
-            $emSqe->persist($log);
-            $emSqe->flush();
-            
-            $chemin = $pathBase . $zipName;
-            print_r('chemin : ' . $chemin);
-            $fichiers = $this->unzip($chemin, $pathBase . '/');
-            $tabFichiers = array();
-            $i = 0;
-            foreach($fichiers as $fichier){
-                $tabFichiers[$i]['fichier'] = $fichier;
-                $tabFichiers[$i]['chemin'] = $pathBase  . $fichier;
-                chmod($pathBase  . $fichier, 0775);
-                chown($pathBase  . $fichier, 'www-data');
-                $repertoire = "fichiers";
-                rename($pathBase  . $fichier, $repertoire . "/" . $fichier);
-                $i++;
-            }
-            return $this->render('AeagSqeBundle:EchangeFichiers:listeFichiers.html.twig', array(
-                'demande' => $pgCmdDemande,
-                'repertoire' => $pathBase,
-                'fichier' =>  $zipName,
-                'chemin' => $chemin,
-                'fichiers' => $tabFichiers));
-
-            header('Content-Type', 'application/zip');
-            header('Content-disposition: attachment; filename="' . $zipName . '"');
-            header('Content-Length: ' . filesize($pathBase . $zipName));
-            readfile($pathBase . $zipName);
-            exit();
-        }
-    }
+    
     
      public function telechargerFichierAction($demandeId = null, $nomFichier = null) {
         $user = $this->getUser();

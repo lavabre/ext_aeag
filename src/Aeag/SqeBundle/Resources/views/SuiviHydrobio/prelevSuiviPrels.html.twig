@@ -55,7 +55,7 @@
                                         {% if suiviPrel.statutPrel  == 'F' %}
                                             {% if suiviPrel.fichierRps %}
                                                 {% if suiviPrel.fichierRps.nomFichier %}
-                                                    <a id="idTelechargerSuivi-{{ suiviPrel.id }}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_fichier_telecharger',{'suiviPrelId': suiviPrel.id })}}" title="Télécharger le fichier terrain">
+                                                    <a id="idTelechargerSuivi-{{ suiviPrel.id }}" class="btn btn-success btn-telecharger" data-id="{{ suiviPrel.id }}"  title="Télécharger le fichier terrain">
                                                         <i class="fa fa-upload"></i> 
                                                     </a>
                                                 {% endif %}
@@ -93,6 +93,25 @@
         $("#idTablePrelevSuiviPrels").draggable({
             handle: ".modal-header"
         });
+        
+         $('.btn-telecharger').click(function (e){
+           e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+           $('#modalTraitementEncours').modal('toggle');
+            var url = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_fichier_liste_fichiers",{"suiviPrelId":  "par1" }) }}';
+            var suiviPrelId = $(this).data('id');
+            url = url.replace("par1", suiviPrelId);
+           $.ajax({
+                url: url,
+                type: 'get',
+                success: function(html) {
+                  $('#idListeFichiers').empty().append(html);
+                   $('#modalTraitementEncours').modal('hide');
+                   $('#modal_fichiers').modal();
+                }
+            });
+         });
+        
+        
     });
 
 </script>

@@ -5,7 +5,8 @@
                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                                 <h4 class="modal-title text-center" id="myModalLabel">
                                     {% block modal_fichiers_header %}
-                                      {{demande.lotAn.lot.nomLot}} - {{demande.codeDemandeCmd}}<br/>
+                                      {{ suiviPrel.prelev.station.code }} {{ suiviPrel.prelev.station.libelle }}<br/>
+                                      Date prélèvement {{ suiviPrel.datePrel | date("d/m/Y H:i") }}<br/>
                                       Fichiers disponibles
                                     {% endblock modal_fichiers_header %}</h4>
                             </div>
@@ -21,7 +22,7 @@
                                         <tbody>
                                             <tr>
                                                 <td align="center" nowrap>
-                                                    <a  class="btn btn-success" href="{{path('AeagSqeBundle_echangefichiers_telecharger',{'demandeId' : demande.id})}}" title="Voir le fichier">
+                                                    <a  class="btn btn-success" href="{{path('AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_fichier_telecharger',{'suiviPrelId': suiviPrel.id })}}" title="Voir le fichier">
                                                         <i class="fa fa-upload"></i> 
                                                     </a>
                                                 </td>
