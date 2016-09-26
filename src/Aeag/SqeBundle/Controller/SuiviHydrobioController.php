@@ -571,7 +571,7 @@ class SuiviHydrobioController extends Controller {
                 if (count($tabStations) > 0) {
                     for ($k = 0; $k < count($tabStations); $k++) {
 //if ($tabStations[$k]['station']->getCode() == $tabNomFichier[0]) {
-                        if (strpos($nomFichier, $tabStations[$k]['station']->getCode()) !== false) {
+                        if (strpos($nomFichier, $tabStations[$k]['station']->getCode()) !== false or strpos($nomFichier, $tabStations[$k]['station']->getNumero()) !== false) {
                             $trouve = true;
                             break;
                         }
@@ -2559,7 +2559,65 @@ class SuiviHydrobioController extends Controller {
         readfile($chemin . '/' . $fichier);
         exit();
     }
+    
+    public function lotPeriodeStationDemandeSuiviFichierListeAction($suiviPrelId = null) {
+        $user = $this->getUser();
+        if (!$user) {
+             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'suiviHydrobio');
+        $session->set('controller', 'SuiviHydrobio');
+        $session->set('fonction', 'lotPeriodeStationDemandeSuiviFichierListe');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
 
+        $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
+        $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
+
+        $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
+        $pgCmdSuiviPrel = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelById($suiviPrelId);
+        $pgCmdPrelev = $pgCmdSuiviPrel->getPrelev();
+        $pgCmdFichiersRps = $pgCmdSuiviPrel->getFichierRps();
+        $pathBase = $this->getCheminEchange($pgCmdSuiviPrel);
+        $fichierZip = $pgCmdFichiersRps->getNomFichier();
+        $ext = strtolower(pathinfo($fichierZip, PATHINFO_EXTENSION));
+     
+           
+        if ($ext != 'zip'){
+             return $this->redirect($this->generateUrl('AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_fichier_telecharger', array('suiviPrelId' => $suiviPrelId)));
+        }
+
+        $pgCmdDwnldUsrRps = new PgCmdDwnldUsrRps();
+        $pgCmdDwnldUsrRps->setUser($pgProgWebUser);
+        $pgCmdDwnldUsrRps->setFichierReponse($pgCmdFichiersRps);
+        $pgCmdDwnldUsrRps->setDate(new \DateTime());
+        $pgCmdDwnldUsrRps->setTypeFichier($pgCmdFichiersRps->getTypeFichier());
+        $emSqe->persist($pgCmdDwnldUsrRps);
+        $emSqe->flush();
+            
+            $chemin = $pathBase . '/' . $fichierZip;
+            print_r('chemin : ' . $chemin);
+            $fichiers = $this->unzip($chemin, $pathBase . '/');
+            $tabFichiers = array();
+            $i = 0;
+            foreach($fichiers as $fichier){
+                $tabFichiers[$i]['fichier'] = $fichier;
+                $tabFichiers[$i]['chemin'] = $pathBase  . '/' .  $fichier;
+                chmod($pathBase  . '/' .  $fichier, 0775);
+                chown($pathBase  . '/' .  $fichier, 'www-data');
+                $repertoire = "fichiers";
+                rename($pathBase  . '/' .  $fichier, $repertoire . "/" . $fichier);
+                $i++;
+            }
+            return $this->render('AeagSqeBundle:SuiviHydrobio:lotPeriodeStationDemandeSuiviFichierListe.html.twig', array(
+                'suiviPrel' => $pgCmdSuiviPrel,
+                'repertoire' => $pathBase,
+                'fichier' =>  $fichierZip,
+                'chemin' => $chemin,
+                'fichiers' => $tabFichiers));
+
+        }
+   
     public function prelevSuiviPrelsAction($prelevId = null) {
         $user = $this->getUser();
         if (!$user) {

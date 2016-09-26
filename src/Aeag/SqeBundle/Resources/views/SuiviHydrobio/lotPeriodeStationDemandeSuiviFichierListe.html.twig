@@ -1,11 +1,13 @@
  <div class="modal fade" id="modal_fichiers" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
+                    <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                <h4 class="modal-title" id="myModalLabel">
+                                <h4 class="modal-title text-center" id="myModalLabel">
                                     {% block modal_fichiers_header %}
-                                      Le fichier {{ fichier }} contient {{ fichiers | length }} fichiers
+                                      {{ suiviPrel.prelev.station.code }} {{ suiviPrel.prelev.station.libelle }}<br/>
+                                      Date prélèvement {{ suiviPrel.datePrel | date("d/m/Y H:i") }}<br/>
+                                      Fichiers disponibles
                                     {% endblock modal_fichiers_header %}</h4>
                             </div>
                             <div class="modal-body">
@@ -20,7 +22,7 @@
                                         <tbody>
                                             <tr>
                                                 <td align="center" nowrap>
-                                                    <a  class="btn btn-success btn-telecharger" href="{{ chemin }}" title="Voir le fichier">
+                                                    <a  class="btn btn-success" href="{{path('AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_fichier_telecharger',{'suiviPrelId': suiviPrel.id })}}" title="Voir le fichier">
                                                         <i class="fa fa-upload"></i> 
                                                     </a>
                                                 </td>
@@ -29,7 +31,7 @@
                                             {% for fic in fichiers %}
                                             <tr>
                                                 <td align="center" nowrap>
-                                                    <a  class="btn btn-success btn-telecharger" href="{{ fic.chemin }}" title="Voir le fichier">
+                                                    <a  class="btn btn-success btn-telecharger" target="_blank" href="{{ asset('fichiers/') }}{{ fic.fichier }}" title="Voir le fichier">
                                                         <i class="fa fa-upload"></i> 
                                                     </a>
                                                 </td>
@@ -78,6 +80,5 @@
             }
     );
     
-  
     
 </script>

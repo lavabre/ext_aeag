@@ -33,17 +33,11 @@ class AeagController extends Controller {
 
         $security = $this->get('security.authorization_checker');
         
-        if ($session->get('nbStatistiques')){
-            $nbStatistiques = $session->get('nbStatistiques');
-        }
-        
+       
         $session->clear();
         \apc_clear_cache();
         
-        if ($nbStatistiques){
-            $session->set('nbStatistiques',$nbStatistiques);
-        }
-
+     
         $session->set('retourErreur', $this->generateUrl('aeag_homepage'));
 
         if (!$session->get('appli')) {
