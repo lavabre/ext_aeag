@@ -2920,7 +2920,6 @@ class ProgrammationLotController extends Controller {
 
         $now = date('Y-m-d H:i');
         $now = new \DateTime($now);
-        $dateEssai = new \DateTime('2016-01-01');
         $tabPeriodes = array();
         $i = 0;
 
