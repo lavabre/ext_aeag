@@ -9,25 +9,21 @@
     <div class="col-xs-1">
         <button type="button" id="idImporter" class="btn btn-success" >Importer</button> 
         <button type="button" id="idImportSupprimer" class="btn btn-danger" >Supprimer</button> 
-        <a id ="idImportRapport" class="btn btn-primary" href="#" target="_blank">
-            <i class="fa fa-file-excel-o "> Rapport</i>
-        </a>
-    </div>
+       </div>
 </div>
 <br><br>
 <div class="form-group text-center">
     <div class="col-xs-offset-2 col-xs-8 info alert-info text-info text-center">
         seul l'extension zip est acceptée et la taille du fichier doit ête inférieure à 10 MB. 
     </div>
+    <br/>
+    <div id ="idImportRapport"></div>
 </div>
 
 <div class="form-group">
     <div id="idImportMessage" class="col-xs-offset-3 col-xs-5 alert alert-warning text-danger text-center" role="alert"></div>
     <div id="idImportProgress" class="col-xs-offset-3 col-xs-5 alert alert-info"><progress></progress></div>
-    <br/><br/>
-</div>
-
-
+  </div>
 
 
 <script type="text/javascript" language="javascript">
@@ -59,10 +55,12 @@
                 },
                 //Traitements AJAX
                 success: function (reponses) { // Je récupère la réponse du fichier PHP
-                    tabReponse = JSON.parse(reponses)
+                      tabReponse = JSON.parse(reponses)
                     fichier = tabReponse[0];
                     rapport = tabReponse[1];
                     tabMessages = tabReponse[2];
+                    tabRapports = tabReponse[3];
+                    ficRapport = tabReponse[4];
                    var erreur = false;
                    var nbMessage = 0;
                     var html = "<ul>";
@@ -81,7 +79,7 @@
                     if (nbMessage > 0){
                             $('#idImportMessage').show();
                             $('#idImportMessage').empty().append(html).show();
-                     }
+                             }
                     $('#idImportProgress').hide();
                    if (!erreur){
                             var url1 = '{{ path("AeagSqeBundle_suiviSediment_lot_periode_stations",{"periodeAnId": "par1"}) }}', // Le nom du fichier indiqué dans le formulaire
