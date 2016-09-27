@@ -295,7 +295,7 @@
 
     <div class="row responsive">
         <div class="col-xm-12">
-            <div class="small ">
+            <div class="small " id="idListeLots">
                 <table class="table table-bordered table-condensed table-advance" id="idTable">
                     <thead>
                         <tr>
@@ -583,7 +583,7 @@
                  success: function(html) {
                     $('#idListePeriodes').empty().append(html);
                     $('#modalTraitementEncours').modal('hide');
-                    $('#modal_periodes').modal();
+                    $('#modal_periodes_disponibles').modal();
                  }
              });
           });

@@ -1,50 +1,43 @@
- <div class="modal fade" id="modal_periodes" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+ <div class="modal fade" id="modal_periodes_disponibles" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                                 <h4 class="modal-title text-center" id="myModalLabel">
                                       Nouvelle version de la programmation {{ lotan.anneeProg }} version {{ lotan.version }} du lot : {{ lotan.lot.nomLot }}<br/>
-                                      {{ periodes | length }} Périodes disponibles
+                                      Sélectionner la période à partir de laquelle on doit dupliquer sur la nouvelle version
                              </div>
                             <div class="modal-body">
-                                
-                                  <div class="row">
-                                    <div class="col-md-offset-1 col-md10 text-center" id="idNbCocherPeriodes">
-                                        <p class="btn btn-primary"></p>
-                                    </div>
-                                </div>
-                                
-                                 <div class="row">
-                                    <table class="table table-bordered table-condensed table-advance" id="idTable_periodes">
-                                          <thead>
-                                              <tr>
-                                                  <th width="1%" align="center">
-                                                      <a class="btn btn-success" id="cocherToutLesPeriodes"  href="#"><i class="fa fa-check fa-lg"></i></a>
-                                                  </th>
-                                                  <th  width="5%">Periodes</th>
-                                                  <th>Intervalles</th>
-                                               </tr>
-                                          </thead>
-                                          <tbody>
-                                             {% for periode in periodes %}
-                                              <tr>
-                                                  <td align="center" nowrap>
-                                                        <div class="checbox">
-                                                              <input type="checkbox" id="checkPeriode_{{  periode.id }}" name="checkPeriode[]" value="{{  periode.id }}" >
-                                                        </div>
-                                                  </td>
-                                                      <td nowrap>{{periode.labelPeriode }}</td>
-                                                   <td nowrap>du {{ periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;au&nbsp;&nbsp; {{ periode.dateFin | date("d/m/Y") }}</td>
-                                                 </tr>
-                                              {% endfor %}
-                                          </tbody>
-                                      </table>
+                               <div class="row">
+                                 <form action="#" class="form-horizontal" id="idForm_periodes_disponibles" method="post">
+                                        <table class="table table-bordered table-condensed table-advance" id="idTable_periodes">
+                                              <thead>
+                                                  <tr>
+                                                      <th width="1%" align="center">Action</th>
+                                                      <th  width="5%">Periodes</th>
+                                                      <th>Intervalles</th>
+                                                   </tr>
+                                              </thead>
+                                              <tbody>
+                                                 {% for periode in periodes %}
+                                                  <tr>
+                                                      <td align="center" nowrap>
+                                                            <div class="radio">
+                                                                  <input type="radio" id="optPeriode_{{  periode.id }}" name="optPeriode" value="{{  periode.id }}" >
+                                                            </div>
+                                                      </td>
+                                                          <td nowrap>{{periode.labelPeriode }}</td>
+                                                       <td nowrap>du {{ periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;au&nbsp;&nbsp; {{ periode.dateFin | date("d/m/Y") }}</td>
+                                                     </tr>
+                                                  {% endfor %}
+                                              </tbody>
+                                          </table>
+                                     </form>
                                  </div>
                         </div>
                         <div class="modal-footer">
                               {% if action == 'P'  %}
-                                    <button id="idValiderFiltrerPeriode" type="submit" class="btn btn-success">
+                                    <button id="idValiderPeriodesDisponibles" type="submit" class="btn btn-success">
                                         <i class="fa fa-check"> Valider</i>
                                     </button>
                                 {% endif %}
@@ -84,60 +77,30 @@
     );
     
    
-    
-             /* Nombre de periodes cocheées*/
-        var nbcocherPeriodes = function () {
-            var info = table_periode.page.info();
-            var nbRecords = $('#idTable_periodes_length option:selected').val();
-            var filtre = $('#idTable_periodes_filter input').val();
-            if (filtre != '') {
-                var initval = '';
-                table_periode.search(initval).draw();
-            }
-            ;
-            table_periode.page.len(-1).draw();
-            var n = $("#idTable_periodes input:checked").length;
-            html = "Périodes cochées  : <span class='badge'>" + n + "</span>";
-            $("#idNbCocherPeriodes p").html(html);
-            if (filtre != '') {
-                table_periode.search(filtre).draw();
-            }
-            ;
-            table_periode.page.len(nbRecords).draw();
-            table_periode.page(info.page).draw(false);
-        };
-        nbcocherPeriodes();
-        
-       {% for periode in periodes %}
-            $('#checkPeriode_{{ periode.id }}').prop("checked", false);
-             $(document).on('click', '#checkPeriode_{{ periode.id }}', function (e) {
-                nbcocherPeriodes();
-              });
-     {% endfor %}
-         
-     var cocher = false;
-     $(document).on('click','#cocherToutLesPeriodes',function(e){
-           var nbRecords = $('#idTable_periodes_length option:selected').val();
-           table_periode.page.len( -1 ).draw();
-           if (cocher == true){
-                   cocher = false;
-                   $('#cocherToutLesPeriodes').removeClass('btn-danger').addClass('btn-success');
-                   $('#cocherToutLesPeriodes i').removeClass('fa-eraser').addClass('fa-check ');
-                   {% for periode in periodes %}
-                       $('#checkPeriode_{{  periode.id }}').prop( "checked", false );
-                   {% endfor %}
-           }else{
-                   cocher = true;
-                   $('#cocherToutLesPeriodes').removeClass('btn-success').addClass('btn-danger');
-                   $('#cocherToutLesPeriodes i').removeClass("fa-check").addClass('fa-eraser');
-                   {% for periode in periodes %}
-                       $('#checkPeriode_{{  periode.id }}').prop( "checked", true );
-                   {% endfor %}
-           };
-           table_periode.page.len( nbRecords ).draw();
-            nbcocherPeriodes();
-       });
-
+       $(document).on('click', '#idValiderPeriodesDisponibles',function(e){
+                $('#modal_periodes_disponibles').modal('hide');
+                $('#modalTraitementEncours').modal('toggle');
+                e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                var nbRecords = $('#idTable_periodes_length option:selected').val();
+                table_periode.page.len( -1 ).draw();
+                var $this = $('#idForm_periodes_disponibles'); // L'objet jQuery du formulaire
+                var url = '{{ path("AeagSqeBundle_programmation_lot_dupliquer",{"action": "par1","lotAnId":"par2"}) }}', // Le nom du fichier indiqué dans le formulaire
+                url = url.replace("par1", '{{ action }}');
+                 url = url.replace("par2", '{{ lotan.id }}');
+                url = url.replace("amp;","");
+                $.ajax({
+                        url: url,
+                        type: 'post', // La méthode indiquée dans le formulaire (get ou post)
+                        data: $this.serialize(),
+                        success: function(html) { // Je récupère la réponse du fichier PHP
+                            var url = '{{ path("AeagSqeBundle_programmation_lot_retour",{"action": "par1"}) }}', // Le nom du fichier indiqué dans le formulaire
+                            url = url.replace("par1", '{{ action }}');
+                            url = url.replace("amp;","");
+                            window.location.replace(url);
+                            $('#modalTraitementEncours').modal('hide');
+                          }
+                });
+        });
     
     
 </script>

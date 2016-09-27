@@ -2924,18 +2924,21 @@ class ProgrammationLotController extends Controller {
         $i = 0;
 
         foreach ($pgProgLotPeriodeAns as $pgProgLotPeriodeAn) {
-                $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandesByLotanPeriode($pgProgLotAn, $pgProgLotPeriodeAn->getPeriode());
-                $ok = true;
-                foreach ($pgCmdDemandes as $pgCmdDemande) {
-                    if ($pgCmdDemande->getPhaseDemande()->getCodePhase() >= $pgProgPhases->getCodePhase()) {
-                        $ok = false;
-                        break;
-                    }
+            $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandesByLotanPeriode($pgProgLotAn, $pgProgLotPeriodeAn->getPeriode());
+            $ok = true;
+            foreach ($pgCmdDemandes as $pgCmdDemande) {
+                if ($pgCmdDemande->getPhaseDemande()->getCodePhase() >= $pgProgPhases->getCodePhase()) {
+                    $ok = false;
+                    break;
                 }
-                if ($ok) {
-                    $tabPeriodes[$i] = $pgProgLotPeriodeAn->getPeriode();
-                    $i++;
-                }
+            }
+            if ($ok) {
+                $tabPeriodes[$i] = $pgProgLotPeriodeAn->getPeriode();
+                $i++;
+            } else {
+                $tabPeriodes = array();
+                $i = 0;
+            }
         }
 
         return $this->render('AeagSqeBundle:Programmation:Lot/periodesDisponibles.html.twig', array(
@@ -2968,6 +2971,7 @@ class ProgrammationLotController extends Controller {
         $repoPgProgLotStationAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotStationAn');
         $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
         $repoPgProgLotPeriodeProg = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeProg');
+        $repoPgProgPeriodes= $emSqe->getRepository('AeagSqeBundle:PgProgPeriodes');
         $repoPgProgLotParamAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotParamAn');
         $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
         $repoPgProgStatut = $emSqe->getRepository('AeagSqeBundle:PgProgStatut');
@@ -3012,9 +3016,13 @@ class ProgrammationLotController extends Controller {
 
         $emSqe->flush();
 
-        foreach ($pgProgLotPeriodeAns as $pgProgLotPeriodeAn) {
-            if ($now->format('ymd') <= $pgProgLotPeriodeAn->getPeriode()->getDateFin()->format('ymd')) {
-                //print_r(  $now->format('ymd')  . ' > ' . $pgProgLotPeriodeAn->getPeriode()->getDateDeb()->format('ymd') . ' < ' . $pgProgLotPeriodeAn->getPeriode()->getDateFin()->format('ymd') . '     ');
+        if (isset($_POST['optPeriode'])) {
+            $debPeriode =  $repoPgProgPeriodes->getPgProgPeriodesById($_POST['optPeriode']);
+            print_r ('debut periode : ' . $debPeriode->getNumPeriode());
+         foreach ($pgProgLotPeriodeAns as $pgProgLotPeriodeAn) {
+            // if ($now->format('ymd') <= $pgProgLotPeriodeAn->getPeriode()->getDateFin()->format('ymd')) {
+            //print_r(  $now->format('ymd')  . ' > ' . $pgProgLotPeriodeAn->getPeriode()->getDateDeb()->format('ymd') . ' < ' . $pgProgLotPeriodeAn->getPeriode()->getDateFin()->format('ymd') . '     ');
+            if ($pgProgLotPeriodeAn->getPeriode()->getNumPeriode() >= $debPeriode->getNumPeriode()) {
                 $pgProgLotPeriodeAnBis = clone($pgProgLotPeriodeAn);
                 $pgProgLotPeriodeAnBis->setLotan($pgProgLotAnBis);
                 $emSqe->persist($pgProgLotPeriodeAnBis);
@@ -3044,6 +3052,7 @@ class ProgrammationLotController extends Controller {
                 $emSqe->persist($pgProgLotPeriodeAn);
             }
         }
+         }
 
         $pgProgPhase = $repoPgProgPhases->getPgProgPhasesByCodePhase('P45');
         $pgProgLotAn->setPhase($pgProgPhase);
