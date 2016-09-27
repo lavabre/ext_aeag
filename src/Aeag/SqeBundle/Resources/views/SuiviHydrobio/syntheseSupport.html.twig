@@ -99,7 +99,7 @@
                                             {% if station.suiviPrel.statutPrel  == 'F' %}
                                                 {% if   station.suiviPrel.fichierRps %}
                                                     {% if station.suiviPrel.fichierRps.nomFichier %}
-                                                        <a id="idTelechargerSuivi-{{ station.suiviPrel.id }}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_fichier_telecharger',{'suiviPrelId': station.suiviPrel.id })}}" title="Télécharger le fichier terrain">
+                                                        <a id="idTelechargerSuivi-{{ station.suiviPrel.id }}" class="btn btn-success btn-telecharger" data-id="{{ station.suiviPrel.id }}"  title="Télécharger le fichier terrain">
                                                             <i class="fa fa-upload"></i> 
                                                         </a>
                                                     {% endif %}
@@ -226,6 +226,9 @@
                                     </div>
                                 </div>
                             </div>
+                                            
+                             <div id="idListeFichiers"></div>
+                             
                             {%endblock content %}    
 
 
@@ -343,6 +346,23 @@
                                                     }
                                                     });
                                                     });
+                                                    
+                                                   $(document).on('click','#idTelechargerSuivi-{{ station.suiviPrel.id }}',function(e){
+                                                        e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                                                        $('#modalTraitementEncours').modal('toggle');
+                                                         var url = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_fichier_liste_fichiers",{"suiviPrelId":  "par1" }) }}';
+                                                         var suiviPrelId = $(this).data('id');
+                                                         url = url.replace("par1", suiviPrelId);
+                                                        $.ajax({
+                                                             url: url,
+                                                             type: 'get',
+                                                             success: function(html) {
+                                                               $('#idListeFichiers').empty().append(html);
+                                                                $('#modalTraitementEncours').modal('hide');
+                                                                $('#modal_fichiers').modal();
+                                                             }
+                                                         });
+                                                      });
 
                                                   
                                                 {% endif %}
