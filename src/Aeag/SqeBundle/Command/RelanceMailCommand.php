@@ -7,6 +7,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class RelanceMailCommand extends AeagCommand {
+    
+    private $logs = array();
 
     protected function configure() {
         $this
@@ -38,6 +40,8 @@ class RelanceMailCommand extends AeagCommand {
         $this->updateHbP();
         
         $this->updateHbF();
+        
+        $this->sendEmailRecap();
 
         $date = new \DateTime();
         $this->output->writeln($date->format('d/m/Y H:i:s') . ' - Relance mail : Fin');
@@ -133,7 +137,15 @@ class RelanceMailCommand extends AeagCommand {
             
             $destinataires = array();
             if (!is_null($pgProgLot->getTitulaire())) {
-                $destinataires[] = $this->repoPgProgWebUsers->findOneByPrestataire($pgProgLot->getTitulaire());
+                $prestataires = $this->repoPgProgWebUsers->findByPrestataire($pgProgLot->getTitulaire());
+                foreach ($prestataires as $prestataire) {
+                    $destinataires[$prestataire->getId()] = $prestataire;
+                }
+            }
+            $typMil = $this->repoPgProgTypeMilieu->findByCodeMilieu('RHB');
+            $admins = $this->repoPgProgWebuserTypmil->findByTypmil($typMil);
+            foreach($admins as $admin) {
+                $destinataires[$admin->getWebuser()->getId()] = $admin->getWebuser();
             }
             
             $listeStationLibs = '<ul>';
@@ -168,12 +180,20 @@ class RelanceMailCommand extends AeagCommand {
         foreach($pgProgLots as $pgProgLot) {
             $pgCmdSuiviPrels = $this->repoPgCmdSuiviPrel->getSuiviPrelFWithoutRpsByDaysAndLot(15, $pgProgLot);
             
-            $destinataires = array();
             $listeStationCodes = array();
             $listePrelevDates = array();
 
+            $destinataires = array();
             if (!is_null($pgProgLot->getTitulaire())) {
-                $destinataires[] = $this->repoPgProgWebUsers->findOneByPrestataire($pgProgLot->getTitulaire());
+                $prestataires = $this->repoPgProgWebUsers->findByPrestataire($pgProgLot->getTitulaire());
+                foreach ($prestataires as $prestataire) {
+                    $destinataires[$prestataire->getId()] = $prestataire;
+                }
+            }
+            $typMil = $this->repoPgProgTypeMilieu->findByCodeMilieu('RHB');
+            $admins = $this->repoPgProgWebuserTypmil->findByTypmil($typMil);
+            foreach($admins as $admin) {
+                $destinataires[$admin->getWebuser()->getId()] = $admin->getWebuser();
             }
             $listeStationLibs = '<ul>';
             foreach($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
@@ -199,6 +219,29 @@ class RelanceMailCommand extends AeagCommand {
         $this->output->writeln($date->format('d/m/Y H:i:s') .' - Fin relance suivis hydrobio (code_milieu like ‘%HB’) F');
     }
     
+    protected function sendEmailRecap() {
+        if (count($this->getLogs()) > 0) {
+            $typMil = $this->repoPgProgTypeMilieu->findByCodeMilieu('RHB');
+            $admins = $this->repoPgProgWebuserTypmil->findByTypmil($typMil);
+            $destinataires = array();
+            foreach($admins as $admin) {
+                $destinataires[$admin->getWebuser()->getId()] = $admin->getWebuser();
+            }
+            
+            $date = new \DateTime();
+            $objetMessage = "Relance SQE : Récapitulatif des mises à jour automatique du ".$date->format('d/m/Y H:i:s');
+            $txtMessage = "Vous trouverez ci-dessous le récapitulatif des mises à jour automatique effectuées le ".$date->format('d/m/Y H:i:s')."<br/><br/>";
+            foreach ($this->getLogs() as $log) {
+                $txtMessage .= $log.'<br/>';
+            }
+            foreach ($destinataires as $destinataire) {
+                if (!is_null($destinataire)) {
+                    $this->sendEmail($destinataire, $txtMessage, $objetMessage);
+                }
+            }
+        }
+    }
+    
     protected function sendEmail($destinataire, $txtMessage, $objetMessage) {
         if (!is_null($destinataire)) {
             $mailer = $this->getContainer()->get('mailer');
@@ -220,7 +263,9 @@ class RelanceMailCommand extends AeagCommand {
         $this->output->writeln($date->format('d/m/Y H:i:s') .' - Début validation auto HB P');
         foreach($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
             $date = new \DateTime();
-            $this->output->writeln($date->format('d/m/Y H:i:s') .' - Mise à jour validation a A HB P - Lot '.$pgCmdSuiviPrel->getPrelev()->getDemande()->getLotan()->getLot()->getNomLot().' - Station '.$pgCmdSuiviPrel->getPrelev()->getStation()->getCode());
+            $msgLog = $date->format('d/m/Y H:i:s') .' - Mise à jour validation à Accepté HB Prévisionnel - Lot '.$pgCmdSuiviPrel->getPrelev()->getDemande()->getLotan()->getLot()->getNomLot().' - Station '.$pgCmdSuiviPrel->getPrelev()->getStation()->getCode();
+            $this->output->writeln($msgLog);
+            $this->addLog($msgLog);
             $pgCmdSuiviPrel->setValidation('A');
             $pgCmdSuiviPrel->setValidAuto('O');
             
@@ -237,12 +282,14 @@ class RelanceMailCommand extends AeagCommand {
         $this->output->writeln($date->format('d/m/Y H:i:s') .' - Début validation auto HB F');
         foreach($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
             $date = new \DateTime();
-            $this->output->writeln($date->format('d/m/Y H:i:s') .' - Mise à jour validation a A HB F - Lot '.$pgCmdSuiviPrel->getPrelev()->getDemande()->getLotan()->getLot()->getNomLot().' - Station '.$pgCmdSuiviPrel->getPrelev()->getStation()->getCode());
+            $msgLog = $date->format('d/m/Y H:i:s') .' - Mise à jour validation à Accepté HB Effectué - Lot '.$pgCmdSuiviPrel->getPrelev()->getDemande()->getLotan()->getLot()->getNomLot().' - Station '.$pgCmdSuiviPrel->getPrelev()->getStation()->getCode();
+            $this->output->writeln($msgLog);
+            $this->addLog($msgLog);
             $pgCmdSuiviPrel->setValidation('A');
             $pgCmdSuiviPrel->setValidAuto('O');
             
             $pgCmdPrel = $pgCmdSuiviPrel->getPrelev();
-            $pgCmdPrel->setDatePrel($pgCmdSuiviPrel->getDatePrel());
+            $pgCmdPrel->setDatePrelev($pgCmdSuiviPrel->getDatePrel());
             $pgCmdPrel->setRealise(1);
             
             $this->emSqe->persist($pgCmdSuiviPrel);
@@ -251,6 +298,18 @@ class RelanceMailCommand extends AeagCommand {
         $this->emSqe->flush();
         $date = new \DateTime();
         $this->output->writeln($date->format('d/m/Y H:i:s') .' - Fin validation auto HB F');
+    }
+    
+    public function getLogs() {
+        return $this->logs;
+    }
+
+    public function setLogs($logs) {
+        $this->logs = $logs;
+    } 
+    
+    public function addLog($log) {
+        $this->logs[] = $log;
     }
 
 }

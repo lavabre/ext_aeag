@@ -54,16 +54,17 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
                 }
             }
             if (!is_null($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getRespAdrCor())) {
-                $producteurs = $this->repoPgProgWebUsers->findByProducteur($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getRespAdrCor());
+                $producteurs = $this->repoPgProgWebUsers->getNotAdminPgProgWebusersByProducteur($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getRespAdrCor());
                 foreach($producteurs as $producteur) {
                     $destinataires[$producteur->getId()] = $producteur;
                 }
             }
             
-            // Récupérer le code milieu de la RAI
             $admins = $this->repoPgProgWebuserTypmil->findByTypmil($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getCodeMilieu());
             foreach ($admins as $admin) {
-                $destinataires[$admin->getWebuser()->getId()] = $admin->getWebuser();
+                if (!is_null($admin)) {
+                    $destinataires[$admin->getWebuser()->getId()] = $admin->getWebuser();
+                }
             }
                     
             $objetMessage = "SQE - RAI : Fichier csv des données brutes disponible pour le lot " . $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getNomLot();
