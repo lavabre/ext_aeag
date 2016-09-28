@@ -43,6 +43,7 @@ class PgProgLotPeriodeAnRepository extends EntityRepository {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotPeriodeAn p";
         $query = $query . " where p.lotan = " . $PgProgLotAn->getId();
+        $query = $query . " order by p.periode";
         $qb = $this->_em->createQuery($query);
         //print_r($query);
         return $qb->getResult();

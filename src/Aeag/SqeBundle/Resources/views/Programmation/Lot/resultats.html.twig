@@ -295,7 +295,7 @@
 
     <div class="row responsive">
         <div class="col-xm-12">
-            <div class="small ">
+            <div class="small " id="idListeLots">
                 <table class="table table-bordered table-condensed table-advance" id="idTable">
                     <thead>
                         <tr>
@@ -412,7 +412,7 @@
                                             
                                              {% if entity.lotAn.phase.codePhase == 'P40' %}
                                                   {%if  is_granted('ROLE_ADMINSQE') %}   
-                                                    <a class="btn btn-warning" data-toggle="modal" href="#dupl-{{ entity.lotAn.id }}" title="Nouvelle version">
+                                                    <a class="btn btn-warning"  id="newVersion" data-id="{{ entity.lotAn.id }}" title="Nouvelle version">
                                                       <i class="fa fa-plus"></i>
                                                     </a>
                                                 {% endif %}   
@@ -484,7 +484,8 @@
                 </ul>  
             </div>
          </div>                  
-                                         
+                 
+           <div id="idListePeriodes"></div>
 {% endblock content %}
 
 
@@ -566,5 +567,26 @@
                             } );
                             };
                             } ); #}
-
+     
+     
+         $(document).on('click','#newVersion',function(e){
+            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+            $('#modalTraitementEncours').modal('toggle');
+             var url = '{{ path("AeagSqeBundle_programmation_lot_periodes_disponibles", { "lotAnId": "par1", "action": "par2" }) }}';
+             var lotAnId = $(this).data('id');
+             url = url.replace("par1", lotAnId);
+             url = url.replace("par2", '{{ action }}');
+            $.ajax({
+                 url: url,
+                 cache: false,
+                 type: 'get',
+                 success: function(html) {
+                    $('#idListePeriodes').empty().append(html);
+                    $('#modalTraitementEncours').modal('hide');
+                    $('#modal_periodes_disponibles').modal();
+                 }
+             });
+          });
+          
+    
  {% endblock scripts %}

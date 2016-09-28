@@ -1,0 +1,106 @@
+ <div class="modal fade" id="modal_periodes_disponibles" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title text-center" id="myModalLabel">
+                                      Nouvelle version de la programmation {{ lotan.anneeProg }} version {{ lotan.version }} du lot : {{ lotan.lot.nomLot }}<br/>
+                                      Sélectionner la période à partir de laquelle on doit générer la nouvelle version
+                             </div>
+                            <div class="modal-body">
+                               <div class="row">
+                                 <form action="#" class="form-horizontal" id="idForm_periodes_disponibles" method="post">
+                                        <table class="table table-bordered table-condensed table-advance" id="idTable_periodes">
+                                              <thead>
+                                                  <tr>
+                                                      <th width="1%" align="center">Action</th>
+                                                      <th  width="5%">Periodes</th>
+                                                      <th>Intervalles</th>
+                                                   </tr>
+                                              </thead>
+                                              <tbody>
+                                                 {% for periode in periodes %}
+                                                  <tr>
+                                                      <td align="center" nowrap>
+                                                            <div class="radio">
+                                                                  <input type="radio" id="optPeriode_{{  periode.id }}" name="optPeriode" value="{{  periode.id }}" >
+                                                            </div>
+                                                      </td>
+                                                          <td nowrap>{{periode.labelPeriode }}</td>
+                                                       <td nowrap>du {{ periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;au&nbsp;&nbsp; {{ periode.dateFin | date("d/m/Y") }}</td>
+                                                     </tr>
+                                                  {% endfor %}
+                                              </tbody>
+                                          </table>
+                                     </form>
+                                 </div>
+                        </div>
+                        <div class="modal-footer">
+                              {% if action == 'P'  %}
+                                    <button id="idValiderPeriodesDisponibles" type="submit" class="btn btn-success">
+                                        <i class="fa fa-check"> Valider</i>
+                                    </button>
+                                {% endif %}
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+<script>
+    var table_periode = $('#idTable_periodes').DataTable(
+            {"stateSave": false,
+                "order": [[1, "asc"]],
+                "oLanguage": {
+                    "sSearch": "Filtre",
+                    "sFirst": "1ere page",
+                    "sLast": "Dernière page",
+                    "sNext": "Prochaine page",
+                    "sPrevious": "Page précédente",
+                    "EmptyTable": "Pas de données",
+                    "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+                    "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+                    "sZeroRecords": "Pas d'enregistrement à afficher",
+                    "sInfoEmpty": "Pas d'enregistrement à afficher",
+                    "sInfoThousands": " ",
+                    "sLengthMenu": 'Afficher <select>' +
+                            '<option value="10">10</option>' +
+                            '<option value="20">20</option>' +
+                            '<option value="30">30</option>' +
+                            '<option value="40">40</option>' +
+                            '<option value="50">50</option>' +
+                            '<option value="-1">Tous</option>' +
+                            '</select> enregistrements',
+                    "sPaginationType": "full_numbers"
+                }
+            }
+    );
+    
+   
+       $(document).on('click', '#idValiderPeriodesDisponibles',function(e){
+                $('#modal_periodes_disponibles').modal('hide');
+                $('#modalTraitementEncours').modal('toggle');
+                e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                var nbRecords = $('#idTable_periodes_length option:selected').val();
+                table_periode.page.len( -1 ).draw();
+                var $this = $('#idForm_periodes_disponibles'); // L'objet jQuery du formulaire
+                var url = '{{ path("AeagSqeBundle_programmation_lot_dupliquer",{"action": "par1","lotAnId":"par2"}) }}', // Le nom du fichier indiqué dans le formulaire
+                url = url.replace("par1", '{{ action }}');
+                 url = url.replace("par2", '{{ lotan.id }}');
+                url = url.replace("amp;","");
+                $.ajax({
+                        url: url,
+                        type: 'post', // La méthode indiquée dans le formulaire (get ou post)
+                        data: $this.serialize(),
+                        success: function(html) { // Je récupère la réponse du fichier PHP
+                            var url = '{{ path("AeagSqeBundle_programmation_lot_retour",{"action": "par1"}) }}', // Le nom du fichier indiqué dans le formulaire
+                            url = url.replace("par1", '{{ action }}');
+                            url = url.replace("amp;","");
+                            window.location.replace(url);
+                            $('#modalTraitementEncours').modal('hide');
+                          }
+                });
+        });
+    
+    
+</script>

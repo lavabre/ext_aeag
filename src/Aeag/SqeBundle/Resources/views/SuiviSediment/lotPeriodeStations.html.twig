@@ -169,8 +169,8 @@
     {% if is_granted('ROLE_PRESTASQE') %}
         <div class="row">
             <div class="col-md-offset-3 col-md-7">
-                <a id="idImporterFichier" class="btn btn-primary"  title="Intégrer plusieurs fichiers de suivi">
-                    <i class="fa fa-download"> Intégrer plusieurs fichiers de terrain</i> 
+                 <a id="idImporterFichier" class="btn btn-primary"  title="Intégrer un fichier zip (plusieurs fichiers de suivi) ">
+                    <i class="fa fa-download"> Intégrer fichier zip (terrain + photos) </i> 
                 </a>
                 ou
                 <a id="idIntegrerFichier" class="btn btn-primary"  title="Intégrer un fichier de suivi">
@@ -200,6 +200,16 @@
                             <th>Statut</th>
                             <th>Validation</th>
                         </tr>
+                         <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                          </tr>
                     </thead>
                     <tbody>
                         {%if stations | length%} 
@@ -233,7 +243,7 @@
                                                             {% endif %}
                                                         {% else %}
                                                             {% if cmdPrelev.suiviPrels.0.suiviPrel.fichierRps.nomFichier %}
-                                                                <a id="idTelechargerSuivi{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_suiviSediment_lot_periode_station_demande_suivi_fichier_telecharger',{'suiviPrelId': cmdPrelev.suiviPrels.0.suiviPrel.id })}}" title="Télécharger le fichier terrain">
+                                                                <a id="idTelechargerSuivi{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}" class="btn btn-success btn-telecharger" data-id="{{ cmdPrelev.suiviPrels.0.suiviPrel.id  }}" href="{{path('AeagSqeBundle_suiviSediment_lot_periode_station_demande_suivi_fichier_telecharger',{'suiviPrelId': cmdPrelev.suiviPrels.0.suiviPrel.id })}}" title="Télécharger le fichier terrain">
                                                                     <i class="fa fa-upload"></i> 
                                                                 </a>
                                                             {% endif %}
@@ -331,25 +341,49 @@
             </div>
         </div>
     </div>
+    <div id="idListeFichiers"></div>
 {%endblock content %}    
 
 
 {% block scripts %}
     jQuery(document).ready(function() {
+    
+      var table = $('#idTable').DataTable({
+                "stateSave": true,
+                 "order": [[ 1, "asc" ]],
+                 "language": {
+                 "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
+                 },
+                 "aLengthMenu": [
+                 [10, 25, 50, 100, -1],
+                 [10, 25, 50, 100, "Tous"]
+                 ],
+                 "iDisplayLength": -1,
+                 initComplete: function () {
+                         var api = this.api();
 
-    var table = $('#idTable').DataTable(
-    {"stateSave": true,
-    "order": [[ 1, "asc" ]],
-    "language": {
-    "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
-    },
-    "aLengthMenu": [
-    [10, 25, 50, 100, -1],
-    [10, 25, 50, 100, "Tous"]
-    ],
-    "iDisplayLength": -1
-    }
-    );
+                         {#  api.columns().indexes().flatten().each( function ( i ) {#}
+                         $("#idTable thead td").each( function ( i ) {
+                                 if (i != 0 && i != 1 && i != 2 && i != 4 && i != 5){
+
+                                     var column =  api.column( i );
+                                     var select = $('<select><option value=""></option></select>')
+                                     .appendTo( $(this).empty() )
+                                     .on( 'change', function () {
+                                             column
+                                             .search( $(this).val() )
+                                             .draw();
+                                      } )
+
+                                     column.data().unique().sort().each( function ( d, j ) {
+                                             select.append( '<option value="'+d+'">'+d+'</option>' )
+                                     } );
+                                 };
+                         } );
+                 }
+           } );
+
+
     
     $("#modalArchive").draggable({
     handle: ".modal-header"
@@ -457,6 +491,24 @@
                         }
                         });
                         });
+                        
+                        $(document).on('click','#idTelechargerSuivi{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}',function(e){
+                                e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                                $('#modalTraitementEncours').modal('toggle');
+                                 var url = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_fichier_liste_fichiers",{"suiviPrelId":  "par1" }) }}';
+                                 var suiviPrelId = $(this).data('id');
+                                 url = url.replace("par1", suiviPrelId);
+                                $.ajax({
+                                     url: url,
+                                     type: 'get',
+                                     success: function(html) {
+                                       $('#idListeFichiers').empty().append(html);
+                                        $('#modalTraitementEncours').modal('hide');
+                                        $('#modal_fichiers').modal();
+                                     }
+                                 });
+                              });
+                
 
                     {% endif %}
                 {% endfor %}

@@ -51,7 +51,13 @@ AeagSqeBundle_programmation_lot_supprimer:
     defaults: { _controller: AeagSqeBundle:ProgrammationLot:supprimer, lotAnId : null, action : null }
     requirements:
         methods:  GET|POST
-        
+    
+AeagSqeBundle_programmation_lot_periodes_disponibles:
+    path:  /periodes/disponibles/{lotAnId}/{action}
+    defaults: { _controller: AeagSqeBundle:ProgrammationLot:periodesDisponibles, lotAnId : null, action : null }
+    requirements:
+        methods:  GET|POST      
+  
 AeagSqeBundle_programmation_lot_dupliquer:
     path:  /dupliquer/{lotAnId}/{action}
     defaults: { _controller: AeagSqeBundle:ProgrammationLot:dupliquer, lotAnId : null, action : null }

@@ -25,7 +25,7 @@ class CriteresRequestType extends AbstractType {
                     'class' => 'Aeag\\AideBundle\\Entity\\Categorie',
                     'multiple' => true,
                     'required' => false,
-                    'choice_label' => 'Cate',
+                     'choice_label' => 'Cate',
                     'query_builder' => function(\Doctrine\ORM\EntityRepository $er) {
                         return $er->createQueryBuilder('c')
                                 ->orderBy('c.cate', 'desc');

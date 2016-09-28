@@ -1407,19 +1407,19 @@ class ProgrammationLotController extends Controller {
             } else {
                 $selZoneGeoRef = null;
             }
-            
-            if ($criteres->getCatMilieu()){
+
+            if ($criteres->getCatMilieu()) {
                 $selMilieu = $criteres->getCatMilieu();
-            }else{
+            } else {
                 $selMilieu = null;
             }
-            if ($selMilieu){
-                    $session->set('selMilieu', $selMilieu);
+            if ($selMilieu) {
+                $session->set('selMilieu', $selMilieu);
             } else {
-               $session->remove('selMilieu');
+                $session->remove('selMilieu');
             }
-            
-            if ($criteres->getCatMilieu() and !$criteres->getTypeMilieu()) {
+
+            if ($criteres->getCatMilieu() and ! $criteres->getTypeMilieu()) {
                 $critTypeMilieu = $criteres->getCatMilieu();
             } else {
                 $critTypeMilieu = $criteres->getTypeMilieu();
@@ -1676,8 +1676,8 @@ class ProgrammationLotController extends Controller {
                 $i = 0;
                 foreach ($tabLotBis as $lot) {
                     if (strlen($critTypeMilieu) == 1) {
-                     //   echo('lot : ' . $lot->getCodeMilieu()->getCodeMilieu() . ' -> ' . substr($lot->getCodeMilieu()->getCodeMilieu(),0,1) . '</br>');
-                        if (substr($lot->getCodeMilieu()->getCodeMilieu(),0,1) == $critTypeMilieu) {
+                        //   echo('lot : ' . $lot->getCodeMilieu()->getCodeMilieu() . ' -> ' . substr($lot->getCodeMilieu()->getCodeMilieu(),0,1) . '</br>');
+                        if (substr($lot->getCodeMilieu()->getCodeMilieu(), 0, 1) == $critTypeMilieu) {
                             $tabLots[$i] = $lot;
                             $i++;
                         }
@@ -1690,8 +1690,7 @@ class ProgrammationLotController extends Controller {
                 }
             }
 
-           // return new Response('type milieu : ' . $critTypeMilieu . ' nb lot : ' . count($tabLots));
-
+            // return new Response('type milieu : ' . $critTypeMilieu . ' nb lot : ' . count($tabLots));
             //  lot séléctioné
             if ($critLot) {
                 $tabLotBis = array();
@@ -1876,12 +1875,12 @@ class ProgrammationLotController extends Controller {
             $tabLots[$i]['lotAn'] = null;
             $critPhase = null;
         }
-        
-         if ($session->has('selMilieu')){
-                $selMilieu = $session->get('selMilieu');
-            }else{
-                $selMilieu = null;
-            }
+
+        if ($session->has('selMilieu')) {
+            $selMilieu = $session->get('selMilieu');
+        } else {
+            $selMilieu = null;
+        }
 
         $session->set('niveau2', '');
 
@@ -1896,7 +1895,7 @@ class ProgrammationLotController extends Controller {
                     'critTitulaire' => $lot->getTitulaire(),
                     'critZoneGeoRef' => $lot->getZgeoRef(),
                     'critTypeMilieu' => $typeMilieu,
-                   'critMilieu' => $selMilieu,
+                    'critMilieu' => $selMilieu,
                     'critLot' => $lot));
     }
 
@@ -2025,14 +2024,14 @@ class ProgrammationLotController extends Controller {
         } else {
             $critTypeMilieu = null;
         }
-        
-         
-            if ($session->has('selMilieu')){
-                $selMilieu = $session->get('selMilieu');
-            }else{
-                $selMilieu = null;
-            }
-       
+
+
+        if ($session->has('selMilieu')) {
+            $selMilieu = $session->get('selMilieu');
+        } else {
+            $selMilieu = null;
+        }
+
 
         if ($session->has('critLot')) {
             $critLot = $repoPgProgLot->getPgProgLotById($session->get('critLot'));
@@ -2891,6 +2890,63 @@ class ProgrammationLotController extends Controller {
         return $this->redirect($this->generateUrl('AeagSqeBundle_programmation_lot_retour', array('action' => $action)));
     }
 
+    public function periodesDisponiblesAction($lotAnId = null, $action = null) {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'programmation');
+        $session->set('controller', 'ProgrammationLot');
+        $session->set('fonction', 'periodesDisponibles');
+        $em = $this->get('doctrine')->getManager();
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        $i = 0;
+        $ok = 'ko';
+        $tabMessage = array();
+        $tabMessage[$i] = null;
+        $i++;
+
+        $repoPgProgLotAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotAn');
+        $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
+        $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
+        $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
+
+        $pgProgLotAn = $repoPgProgLotAn->getPgProgLotAnById($lotAnId);
+        $pgProgLotPeriodeAns = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnByLotan($pgProgLotAn);
+        $pgProgPhases = $repoPgProgPhases->getPgProgPhasesByCodePhase('D30');
+
+        $now = date('Y-m-d H:i');
+        $now = new \DateTime($now);
+        $tabPeriodes = array();
+        $i = 0;
+
+        foreach ($pgProgLotPeriodeAns as $pgProgLotPeriodeAn) {
+            $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandesByLotanPeriode($pgProgLotAn, $pgProgLotPeriodeAn->getPeriode());
+            $ok = true;
+            foreach ($pgCmdDemandes as $pgCmdDemande) {
+                if ($pgCmdDemande->getPhaseDemande()->getCodePhase() >= $pgProgPhases->getCodePhase()) {
+                    $ok = false;
+                    break;
+                }
+            }
+            if ($ok) {
+                $tabPeriodes[$i] = $pgProgLotPeriodeAn->getPeriode();
+                $i++;
+            } else {
+                $tabPeriodes = array();
+                $i = 0;
+            }
+        }
+
+        return $this->render('AeagSqeBundle:Programmation:Lot/periodesDisponibles.html.twig', array(
+                    'lotan' => $pgProgLotAn,
+                    'periodes' => $tabPeriodes,
+                    'action' => $action));
+    }
+
     public function dupliquerAction($lotAnId = null, $action = null) {
 
         $user = $this->getUser();
@@ -2915,6 +2971,7 @@ class ProgrammationLotController extends Controller {
         $repoPgProgLotStationAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotStationAn');
         $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
         $repoPgProgLotPeriodeProg = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeProg');
+        $repoPgProgPeriodes= $emSqe->getRepository('AeagSqeBundle:PgProgPeriodes');
         $repoPgProgLotParamAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotParamAn');
         $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
         $repoPgProgStatut = $emSqe->getRepository('AeagSqeBundle:PgProgStatut');
@@ -2959,9 +3016,13 @@ class ProgrammationLotController extends Controller {
 
         $emSqe->flush();
 
-        foreach ($pgProgLotPeriodeAns as $pgProgLotPeriodeAn) {
-            if ($now->format('ymd') <= $pgProgLotPeriodeAn->getPeriode()->getDateFin()->format('ymd')) {
-                //print_r(  $now->format('ymd')  . ' > ' . $pgProgLotPeriodeAn->getPeriode()->getDateDeb()->format('ymd') . ' < ' . $pgProgLotPeriodeAn->getPeriode()->getDateFin()->format('ymd') . '     ');
+        if (isset($_POST['optPeriode'])) {
+            $debPeriode =  $repoPgProgPeriodes->getPgProgPeriodesById($_POST['optPeriode']);
+            print_r ('debut periode : ' . $debPeriode->getNumPeriode());
+         foreach ($pgProgLotPeriodeAns as $pgProgLotPeriodeAn) {
+            // if ($now->format('ymd') <= $pgProgLotPeriodeAn->getPeriode()->getDateFin()->format('ymd')) {
+            //print_r(  $now->format('ymd')  . ' > ' . $pgProgLotPeriodeAn->getPeriode()->getDateDeb()->format('ymd') . ' < ' . $pgProgLotPeriodeAn->getPeriode()->getDateFin()->format('ymd') . '     ');
+            if ($pgProgLotPeriodeAn->getPeriode()->getNumPeriode() >= $debPeriode->getNumPeriode()) {
                 $pgProgLotPeriodeAnBis = clone($pgProgLotPeriodeAn);
                 $pgProgLotPeriodeAnBis->setLotan($pgProgLotAnBis);
                 $emSqe->persist($pgProgLotPeriodeAnBis);
@@ -2991,6 +3052,7 @@ class ProgrammationLotController extends Controller {
                 $emSqe->persist($pgProgLotPeriodeAn);
             }
         }
+         }
 
         $pgProgPhase = $repoPgProgPhases->getPgProgPhasesByCodePhase('P45');
         $pgProgLotAn->setPhase($pgProgPhase);

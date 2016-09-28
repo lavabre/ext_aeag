@@ -300,7 +300,7 @@ class SuiviHydrobioController extends Controller {
 //                             }
 //                             echo('nb: ' . count($tabCmdPrelevs[$nbCmdPrelevs]['autrePrelevs']));
 //                           \Symfony\Component\VarDumper\VarDumper::dump($tabCmdPrelevs[$nbCmdPrelevs]['autrePrelevs']);
-//                            return new Response ('');   
+//                            return new Response ('');
 //                        }
                         $nbCmdPrelevs++;
                     }
@@ -322,7 +322,7 @@ class SuiviHydrobioController extends Controller {
         }
 
 //        \Symfony\Component\VarDumper\VarDumper::dump($tabStations);
-//        return new Response ('');   
+//        return new Response ('');
 
         return $this->render('AeagSqeBundle:SuiviHydrobio:lotPeriodeStations.html.twig', array(
                     'user' => $pgProgWebUser,
@@ -437,7 +437,7 @@ class SuiviHydrobioController extends Controller {
         }
 
 //        \Symfony\Component\VarDumper\VarDumper::dump($tabStations);
-//        return new Response ('');   
+//        return new Response ('');
 // Récupération des valeurs du fichier
 
         $name = $_FILES['file']['name'];
@@ -810,7 +810,7 @@ class SuiviHydrobioController extends Controller {
                     }
                 }
             }
-            // envoi mail  aux presta connecte 
+            // envoi mail  aux presta connecte
             $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
             if ($pgProgWebUser) {
                 $txtMessage.= '<br/><br/>Veullez trouver en pièce jointe le rapport d\'intégration';
@@ -856,7 +856,7 @@ class SuiviHydrobioController extends Controller {
         $tabReponse[4] = $ficRapport;
 
 //         \Symfony\Component\VarDumper\VarDumper::dump($tabReponse);
-//          return new Response (''); 
+//          return new Response ('');
 //$session->getFlashBag()->add('notice-warning', $response);
 
         return new Response(json_encode($tabReponse));
@@ -975,7 +975,7 @@ class SuiviHydrobioController extends Controller {
         }
 
 //        \Symfony\Component\VarDumper\VarDumper::dump($tabStations);
-//        return new Response ('');   
+//        return new Response ('');
 // Récupération des valeurs du fichier
 
         $name = $_FILES['file']['name'];
@@ -1304,11 +1304,11 @@ class SuiviHydrobioController extends Controller {
                                 }
                             }
                             if ($suiviPrelActuel->getStatutPrel() == 'F' and $suiviPrelActuel->getFichierRps()) {
-                                    $err = true;
-                                    $contenu = 'ligne  ' . $ligne . ' : Erreur Impossible d\'intégrer un suivi après un suivi effectué avec un fichier terrain déposé  ' . CHR(13) . CHR(10);
-                                    $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                                    fputs($rapport, $contenu);
-                              }
+                                $err = true;
+                                $contenu = 'ligne  ' . $ligne . ' : Erreur Impossible d\'intégrer un suivi après un suivi effectué avec un fichier terrain déposé  ' . CHR(13) . CHR(10);
+                                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                fputs($rapport, $contenu);
+                            }
                         }
                     }
 
@@ -1353,7 +1353,7 @@ class SuiviHydrobioController extends Controller {
             unlink($pathBase . '/' . $name);
             unlink($pathBase . '/trans-' . $user->getId() . '.csv');
 
-            // envoi mail  aux presta connecte 
+            // envoi mail  aux presta connecte
             $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
             if ($pgProgWebUser) {
                 $objetMessage = "fichier de suivi ";
@@ -2410,7 +2410,7 @@ class SuiviHydrobioController extends Controller {
                     }
                 }
             }
-            // envoi mail  aux presta connecte 
+            // envoi mail  aux presta connecte
             $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
             if ($pgProgWebUser) {
                 $txtMessage.= '<br/><br/>Veullez trouver en pièce jointe le rapport d\'intégration';
@@ -2456,7 +2456,7 @@ class SuiviHydrobioController extends Controller {
         $tabReponse[4] = $ficRapport;
 
 //         \Symfony\Component\VarDumper\VarDumper::dump($tabReponse);
-//          return new Response (''); 
+//          return new Response ('');
 //$session->getFlashBag()->add('notice-warning', $response);
 
         return new Response(json_encode($tabReponse));
@@ -2559,11 +2559,11 @@ class SuiviHydrobioController extends Controller {
         readfile($chemin . '/' . $fichier);
         exit();
     }
-    
+
     public function lotPeriodeStationDemandeSuiviFichierListeAction($suiviPrelId = null) {
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'suiviHydrobio');
@@ -2581,10 +2581,10 @@ class SuiviHydrobioController extends Controller {
         $pathBase = $this->getCheminEchange($pgCmdSuiviPrel);
         $fichierZip = $pgCmdFichiersRps->getNomFichier();
         $ext = strtolower(pathinfo($fichierZip, PATHINFO_EXTENSION));
-     
-           
-        if ($ext != 'zip'){
-             return $this->redirect($this->generateUrl('AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_fichier_telecharger', array('suiviPrelId' => $suiviPrelId)));
+
+
+        if ($ext != 'zip') {
+            return $this->redirect($this->generateUrl('AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_fichier_telecharger', array('suiviPrelId' => $suiviPrelId)));
         }
 
         $pgCmdDwnldUsrRps = new PgCmdDwnldUsrRps();
@@ -2594,30 +2594,32 @@ class SuiviHydrobioController extends Controller {
         $pgCmdDwnldUsrRps->setTypeFichier($pgCmdFichiersRps->getTypeFichier());
         $emSqe->persist($pgCmdDwnldUsrRps);
         $emSqe->flush();
-            
-            $chemin = $pathBase . '/' . $fichierZip;
-            print_r('chemin : ' . $chemin);
-            $fichiers = $this->unzip($chemin, $pathBase . '/');
-            $tabFichiers = array();
-            $i = 0;
-            foreach($fichiers as $fichier){
+
+        $chemin = $pathBase . '/' . $fichierZip;
+        //print_r('chemin : ' . $chemin);
+        $fichiers = $this->unzip($chemin, $pathBase . '/');
+        $tabFichiers = array();
+        $i = 0;
+        foreach ($fichiers as $fichier) {
+            $ext = strtolower(pathinfo($fichier, PATHINFO_EXTENSION));
+            if ($ext) {
                 $tabFichiers[$i]['fichier'] = $fichier;
-                $tabFichiers[$i]['chemin'] = $pathBase  . '/' .  $fichier;
-                chmod($pathBase  . '/' .  $fichier, 0775);
-                chown($pathBase  . '/' .  $fichier, 'www-data');
+                $tabFichiers[$i]['chemin'] = $pathBase . '/' . $fichier;
+                chmod($pathBase . '/' . $fichier, 0775);
+                chown($pathBase . '/' . $fichier, 'www-data');
                 $repertoire = "fichiers";
-                rename($pathBase  . '/' .  $fichier, $repertoire . "/" . $fichier);
+                rename($pathBase . '/' . $fichier, $repertoire . "/" . $fichier);
                 $i++;
             }
-            return $this->render('AeagSqeBundle:SuiviHydrobio:lotPeriodeStationDemandeSuiviFichierListe.html.twig', array(
-                'suiviPrel' => $pgCmdSuiviPrel,
-                'repertoire' => $pathBase,
-                'fichier' =>  $fichierZip,
-                'chemin' => $chemin,
-                'fichiers' => $tabFichiers));
-
         }
-   
+        return $this->render('AeagSqeBundle:SuiviHydrobio:lotPeriodeStationDemandeSuiviFichierListe.html.twig', array(
+                    'suiviPrel' => $pgCmdSuiviPrel,
+                    'repertoire' => $pathBase,
+                    'fichier' => $fichierZip,
+                    'chemin' => $chemin,
+                    'fichiers' => $tabFichiers));
+    }
+
     public function prelevSuiviPrelsAction($prelevId = null) {
         $user = $this->getUser();
         if (!$user) {
@@ -2657,9 +2659,22 @@ class SuiviHydrobioController extends Controller {
         $session->set('fonction', 'synthese');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
+        $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
         $repoPgSandreSupport = $emSqe->getRepository('AeagSqeBundle:PgSandreSupports');
 
-        $pgSandreSupports = $repoPgSandreSupport->getPgSandreSupports();
+        $pgSandreSupports = array();
+        $pgSandreSupport = null;
+
+        $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
+
+        if ($pgProgWebUser->getTypeUser() == 'XHBIO') {
+            $pgSandreSupport = $repoPgSandreSupport->getPgSandreSupportsByCodeSupport($pgProgWebUser->getCodeSupport());
+        }
+        if ($pgSandreSupport) {
+            $pgSandreSupports[0] = $pgSandreSupport;
+        } else {
+            $pgSandreSupports = $repoPgSandreSupport->getPgSandreSupports();
+        }
 
         return $this->render('AeagSqeBundle:SuiviHydrobio:synthese.html.twig', array('supports' => $pgSandreSupports));
     }
@@ -2765,8 +2780,10 @@ class SuiviHydrobioController extends Controller {
         $session->set('menu', 'syntheseHydrobio');
         $session->set('controller', 'SuiviHydrobio');
         $session->set('fonction', 'syntheseSupportStation');
+        $em = $this->get('doctrine')->getManager();
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
+        $repoUsers = $em->getRepository('AeagUserBundle:User');
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
         $repoPgSandreSupport = $emSqe->getRepository('AeagSqeBundle:PgSandreSupports');
         $repoPgRefStationMesure = $emSqe->getRepository('AeagSqeBundle:PgRefStationMesure');
@@ -2830,6 +2847,41 @@ class SuiviHydrobioController extends Controller {
             $pgCmdSuiviPrel->setAvis($avis);
             $emSqe->persist($pgCmdSuiviPrel);
             $emSqe->flush();
+            if ($pgCmdSuiviPrel->getAvis() == 'D') {
+                $objetMessage = "Suivi Hydobio : Avis Défavorable sur la la station " . $pgRefStationMesure->getCode();
+                $txtMessage = "Un avis défavorable viens d'être déposé : <br/>";
+                $txtMessage = $txtMessage . " <ul><li>  Station : " . $pgRefStationMesure->getCode() . "  " . $pgRefStationMesure->getLibelle() . '</li>';
+                $txtMessage = $txtMessage . "<li> Support : " . $pgSandreSupport->getNomSupport();
+                "</li>";
+                $txtMessage = $txtMessage . " <li> Date : " . $pgCmdSuiviPrel->getdatePrel()->format('d/m/Y H:i') . '</li>';
+                $txtMessage = $txtMessage . " <li> " . $commentaireAvis . '</li></ul>';
+                $mailer = $this->get('mailer');
+                // envoi mail  à Margaux
+                $destinataire = $repoPgProgWebUsers->getPgProgWebusersByid('3');
+                // Envoi d'un mail
+                if ($this->get('aeag_sqe.message')->envoiMessage($emSqe, $mailer, $txtMessage, $destinataire, $objetMessage)) {
+                    $message = 'un email vous a été envoyé par ' . $pgProgWebUser->getNom();
+                    $message = $message . ' suite à un avis défavorable déposé ' . CHR(13) . CHR(10);
+                    $message = $message . ' sur la station ' . $pgRefStationMesure->getCode() . " : " . $pgRefStationMesure->getLibelle() . CHR(13) . CHR(10);
+                    $message = $message . ' pour le support  ' . $pgSandreSupport->getNomSupport() . CHR(13) . CHR(10);
+                    $message = $message . ' à la date du ' . $pgCmdSuiviPrel->getdatePrel()->format('d/m/Y H:i') . CHR(13) . CHR(10);
+                    $notification = new Notification();
+                    $notification->setRecepteur($destinataire->getExtId());
+                    $notification->setEmetteur($user->getId());
+                    $notification->setNouveau(true);
+                    $notification->setIteration(2);
+                    $notification->setMessage($message);
+                    $em->persist($notification);
+                    $em->flush();
+                    $userDest = $repoUsers->getUserById($destinataire->getExtId());
+                    if ($userDest) {
+                        $mes = AeagController::notificationAction($userDest, $em, $session);
+                    }
+                } else {
+                    $session->getFlashBag()->add('notice-warning', ' l\'email n\'a pas pu être envoyé à ' . $destinataire->getNom());
+                }
+            }
+
             return $this->render('AeagSqeBundle:SuiviHydrobio:syntheseSupportStationMaj.html.twig', array('support' => $pgSandreSupport,
                         'station' => $pgRefStationMesure,
                         'lien' => $lien,
@@ -2918,6 +2970,8 @@ class SuiviHydrobioController extends Controller {
             }
             $emSqe->persist($pgCmdPrelev);
             $emSqe->flush();
+
+
 //            $session->getFlashBag()->add('notice-success', 'le suivi du ' . $datePrel->format('d/m/Y') . ' a été modifié !');
             return $this->render('AeagSqeBundle:SuiviHydrobio:syntheseSupportStationValiderRetour.html.twig', array(
                         'pgProgWebUser' => $pgProgWebUser,
@@ -2959,16 +3013,16 @@ class SuiviHydrobioController extends Controller {
         return $chemin;
     }
 
-    protected function unzip($file, $path = '', $effacer_zip = false) {/* Méthode qui permet de décompresser un fichier zip $file dans un répertoire de destination $path 
+    protected function unzip($file, $path = '', $effacer_zip = false) {/* Méthode qui permet de décompresser un fichier zip $file dans un répertoire de destination $path
       et qui retourne un tableau contenant la liste des fichiers extraits
       Si $effacer_zip est égal à true, on efface le fichier zip d'origine $file */
 
-        $tab_liste_fichiers = array(); //Initialisation 
+        $tab_liste_fichiers = array(); //Initialisation
 
         $zip = zip_open($file);
 
         if ($zip) {
-            while ($zip_entry = zip_read($zip)) { //Pour chaque fichier contenu dans le fichier zip 
+            while ($zip_entry = zip_read($zip)) { //Pour chaque fichier contenu dans le fichier zip
                 if (zip_entry_filesize($zip_entry) >= 0) {
                     $complete_path = $path . dirname(zip_entry_name($zip_entry));
 
@@ -2981,7 +3035,7 @@ class SuiviHydrobioController extends Controller {
                     /* On ajoute le nom du fichier dans le tableau */
                     array_push($tab_liste_fichiers, $nom_fichier);
 
-                    $complete_name = $path . $nom_fichier; //Nom et chemin de destination 
+                    $complete_name = $path . $nom_fichier; //Nom et chemin de destination
 
                     if (!file_exists($complete_path)) {
                         $tmp = '';
