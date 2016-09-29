@@ -49,14 +49,7 @@ parameters:
     database_user7: postgres
     database_password7: null
     
-    database_driver8: pdo_pgsql
-    database_host8: vslindev211
-    database_port8: null
-    database_name8: trombi
-    database_user8: postgres
-    database_password8: null
-    
-        
+           
     mailer_transport: smtp
     mailer_host: exhubcas
     mailer_user: automate
