@@ -75,8 +75,7 @@
 {%block content %}
 
     {% if is_granted('ROLE_PRESTASQE') %}
-        {% if  not app.session.get('evolution')%}
-        <div class="row responsive">
+         <div class="row responsive">
              <a id="idIntegrerFichier" class="btn btn-primary"  title="Intégrer un fichier de suivi">
                     <i class="fa fa-download"> Intégrer un fichier de données</i> 
                 </a>
@@ -87,8 +86,8 @@
                 {% endif %}
             </div>
         </div>
-       {% endif %}
-    {% endif %}
+     {% endif %}
+     
 
     <div class="row responsive">
         <div class="col-xm-12">
