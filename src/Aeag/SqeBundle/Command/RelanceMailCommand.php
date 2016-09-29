@@ -156,9 +156,9 @@ class RelanceMailCommand extends AeagCommand {
             }
             $listeStationLibs .= '</ul>';
 
-            $objetMessage = "Relance SQE : Lot ".$pgProgLot->getNomLot()." - Stations non réalisée à ce jour";
+            $objetMessage = "Relance SQE : Lot ".$pgProgLot->getNomLot()." - Stations non réalisées à ce jour";
             $txtMessage = "Lot : " . $pgProgLot->getNomLot() . "<br/>";
-            $txtMessage .= "Stations : <br/>" . $listeStationLibs . "<br/>";
+            $txtMessage .= "Stations prévues le ".$pgCmdSuiviPrels[0]->getDatePrel()->format('d/m/Y').":<br/>" . $listeStationLibs . "<br/>";
             $txtMessage .= "<br/>Vous n'avez pas renseigné le prélèvement de la station comme \"Effectué\" ni déposé les fichiers associés.<br/>";
             foreach ($destinataires as $destinataire) {
                 if (!is_null($destinataire)) {
