@@ -1,0 +1,47 @@
+<li><a href="{{ path('aeag_homepage') }}"><i class="fa fa-home"></i>&nbsp; Accueil</a></li>
+
+
+{% if app.session.get('suiviDonnees')  or app.session.get('suiviHb') or app.session.get('suiviQHb') or app.session.get('suiviSED') %}
+ 
+{%if  app.session.get('menu') == 'syntheseHydrobio' or app.session.get('menu') == 'suiviHydrobio' or app.session.get('menu') == 'suiviSediment'%}
+    <li  class="active">
+    {% else %}
+    <li>
+    {% endif %}   
+    <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+        {%if app.session.get('menu') == 'programmation'%}<span class="selected"></span>{%endif%}
+        Suivi des prélèvements
+        <i class="fa fa-angle-down"></i>     
+    </a>
+
+    <ul class="dropdown-menu">
+        <li><a href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}">Hydrobio</a></li>
+        {% if app.session.get('suiviQHb') %}
+        <li><a href="{{ path('AeagSqeBundle_suiviHydrobio_synthese')}}">Qualification Hydrobio</a></li>
+        {% endif %}
+         <li><a href="{{ path('AeagSqeBundle_planning_index', {'typeMilieu': 'HB'}) }}" title="Planning Hydrobio">Planning Hydrobio</a></li>
+      </ul>
+</li>
+{% endif %}
+
+<li>
+ <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+        {%if app.session.get('menu') == 'programmation'%}<span class="selected"></span>{%endif%}
+        Aides
+        <i class="fa fa-angle-down"></i>     
+    </a>
+
+    <ul class="dropdown-menu">
+         <li><a  href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur.pdf') }}" target="_blank" title="Aide">Aide utilisateur</a></li>
+     </ul>
+</li>
+
+{%if app.session.get('menu') == 'contact'%}
+    <li  class="active">
+    {% else %}
+    <li>
+    {% endif %}
+    <a href="{{ path('aeag_sqe_envoyerMessage') }}">
+        Contact
+    </a>
+</li>

@@ -9,6 +9,7 @@
     <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
         {%if app.session.get('menu') == 'programmation'%}<span class="selected"></span>{%endif%}
         Programmation
+         <i class="fa fa-angle-down"></i>     
     </a>
 
     <ul class="dropdown-menu">
@@ -16,6 +17,62 @@
         <li><a href="{{ path('Aeag_sqe_programmation_lots', {'action': 'V'}) }}">Consulter</a></li>
     </ul>
 </li>
+
+
+
+{%if app.session.get('menu') == 'echangeFichier'%}
+    <li  class="active">
+    {% else %}
+    <li>
+    {% endif %}   
+    <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+        {%if app.session.get('menu') == 'echangeFichier'%}<span class="selected"></span>{%endif%}
+        Données
+        <i class="fa fa-angle-down"></i>     
+    </a>
+
+    <ul class="dropdown-menu">
+        <li><a href="{{ path('AeagSqeBundle_echangefichiers_index')}}">Echange EDI LABO</a></li>
+        {% if app.session.get('suiviDonnees') %}
+                <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_saisieDonnees_index')}}" title="Saisie Terrain / Labo"><i class="fa fa-dashboard fa-2x"></i> Saisie Terrain / Labo</a></li>
+        {% endif %}
+        {%if   is_granted('ROLE_ADMINSQE')%}
+            <li class="list-group-item  list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_exportdonneesbrutes_index')}}" title="Export des Données Brutes"><i class="fa fa-upload fa-2x"></i> Export des Données Brutes</a></li>    
+        {% endif %} 
+    </ul>
+</li>
+
+{% if app.session.get('suiviDonnees')  or app.session.get('suiviHb') or app.session.get('suiviQHb') or app.session.get('suiviSED') %}
+ 
+{%if  app.session.get('menu') == 'syntheseHydrobio' or app.session.get('menu') == 'suiviHydrobio' or app.session.get('menu') == 'suiviSediment'%}
+    <li  class="active">
+    {% else %}
+    <li>
+    {% endif %}   
+    <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+        {%if app.session.get('menu') == 'programmation'%}<span class="selected"></span>{%endif%}
+        Suivi des prélèvements
+        <i class="fa fa-angle-down"></i>     
+    </a>
+
+    <ul class="dropdown-menu">
+        <li><a href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}">Hydrobio</a></li>
+        {% if app.session.get('suiviQHb') %}
+        <li><a href="{{ path('AeagSqeBundle_suiviHydrobio_synthese')}}">Qualification Hydrobio</a></li>
+        {% endif %}
+        {% if app.session.get('suiviSED') %}
+        <li><a href="{{ path('AeagSqeBundle_suiviSediment_index')}}">Sédiment</a></li>
+        {% endif  %}
+        {# {% if  not app.session.get('evolution')%}#}
+                 {% if app.session.get('suiviEau') %}
+                           <li><a href="{{ path('AeagSqeBundle_suiviEau_index')}}">Eau</a></li>
+                 {% endif %}
+         {#{% endif %}#}
+         <li><a href="{{ path('AeagSqeBundle_planning_index', {'typeMilieu': 'HB'}) }}" title="Planning Hydrobio">Planning Hydrobio</a></li>
+         <li><a href="{{ path('AeagSqeBundle_planning_index', {'typeMilieu': 'PC'}) }}" title="Planning Autres"> Planning Autres</a></li>
+     </ul>
+</li>
+{% endif %}
 
 {%if app.session.get('menu') == 'referentiel'%}
     <li  class="active">
@@ -68,51 +125,17 @@
     </ul>
 </li>   
 
-{%if app.session.get('menu') == 'echangeFichier'%}
-    <li class="active">
-    {% else %}
-    <li> 
-    {%endif%}
-    <a href="{{ path('AeagSqeBundle_echangefichiers_index')}}">Echange de fichiers</a>
-</li>
-
-{% if app.session.get('suiviDonnees')  or app.session.get('suiviHb') or app.session.get('suiviQHb') or app.session.get('suiviSED') %}
-    {%if app.session.get('menu') == 'saisieDonnees' or app.session.get('menu') == 'syntheseHydrobio' or app.session.get('menu') == 'suiviHydrobio' or app.session.get('menu') == 'suiviSediment'%}
-        <li  class="active">
-        {% else %}
-        <li>
-        {% endif %}   
-        <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
-            {%if app.session.get('menu') == 'programmation'%}<span class="selected"></span>{%endif%}
-            Saisie
-            <i class="fa fa-angle-down"></i>     
-        </a>
-
-        <ul class="dropdown-menu">
-            {% if app.session.get('suiviDonnees') %}
-                <li><a href="{{ path('AeagSqeBundle_saisieDonnees_index')}}">Terrain / Labo</a></li>
-                {% endif %}
-                {% if app.session.get('suiviQHb') %}
-                        <li><a href="{{ path('AeagSqeBundle_suiviHydrobio_synthese')}}">Qualification suivis Hydrobio</a></li>
-                {% endif %}
-                {% if app.session.get('suiviHb') %}
-                <li><a href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}">Suivi Hydrobio</a></li>
-                {% endif  %}
-                {% if app.session.get('suiviSED') %}
-                    <li><a href="{{ path('AeagSqeBundle_suiviSediment_index')}}">Suivi Sédiment</a></li>
-                 {% endif  %}
-                 {#{% if  not app.session.get('evolution')%}#}
-                    {% if app.session.get('suiviEau') %}
-                           <li><a href="{{ path('AeagSqeBundle_suiviEau_index')}}">Suivi Eau</a></li>
-                    {% endif %}
-                 {#{% endif %}#}
-         </ul>
-    </li>
-{% endif %}
-
-
 <li>
-    <a href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur.pdf') }}" target="_blank">Aide</a>
+ <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+        {%if app.session.get('menu') == 'programmation'%}<span class="selected"></span>{%endif%}
+        Aides
+        <i class="fa fa-angle-down"></i>     
+    </a>
+
+    <ul class="dropdown-menu">
+        <li><a  href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur-prog.pdf') }}" target="_blank" title="Aide">Aide programmation</a></li>
+        <li><a  href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur.pdf') }}" target="_blank" title="Aide">Aide utilisateur</a></li>
+     </ul>
 </li>
 
 {%if app.session.get('menu') == 'contact'%}

@@ -37,6 +37,9 @@
     {%elseif is_granted('ROLE_PRESTASQE') %}
         <!-- Menu presta sqe -->
         {% include 'AeagSqeBundle:Default:menu_prestasqe.html.twig'%}
+     {%elseif is_granted('ROLE_XHBIOSQE') %}
+        <!-- Menu presta sqe -->
+        {% include 'AeagSqeBundle:Default:menu_xhbiosqe.html.twig'%}
     {% else %}
         <!-- Menu sqe -->
         {% include 'AeagSqeBundle:Default:menu_sqe.html.twig'%}
