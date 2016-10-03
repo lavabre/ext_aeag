@@ -112,14 +112,7 @@ doctrine:
                 password: %database_password7%
                 charset:  UTF8
                 
-            trombi:
-                driver:   %database_driver8%
-                host:     %database_host8%
-                port:     %database_port8%
-                dbname:   %database_name8%
-                user:     %database_user8%
-                password: %database_password8%
-                charset:  UTF8           
+              
             
                 
     orm:

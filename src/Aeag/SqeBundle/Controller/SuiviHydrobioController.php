@@ -1353,6 +1353,51 @@ class SuiviHydrobioController extends Controller {
             unlink($pathBase . '/' . $name);
             unlink($pathBase . '/trans-' . $user->getId() . '.csv');
 
+             $objetMessage = "fichier de suivi ";
+             $txtMessage = "Un fichier de suivi a été déposé sur le lot " . $pgProgLot->getNomLot() . " pour la période du " . $pgProgPeriode->getDateDeb()->format('d/m/Y') . " au " . $dateFin->format('d/m/Y');
+             $mailer = $this->get('mailer');
+            // envoi mail  aux XHBIO
+            $pgProgWebusers = $repoPgProgWebUsers->getPgProgWebusersByTypeUser('XHBIO');
+            foreach ($pgProgWebusers as $destinataire) {
+                if ($destinataire->getCodeSupport()) {
+                    $trouve = false;
+                    if (count($tabSupport) > 0) {
+                        for ($nbSupport = 0; $nbSupport < count($tabSupport); $nbSupport++) {
+                            if ($tabSupport[$nbSupport] == $destinataire->getCodeSupport()) {
+                                $trouve = true;
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    $trouve = true;
+                }
+                if ($trouve) {
+                    $trouve = false;
+                    $pgProgWebuserZgeorefs = $repoPgProgWebuserZgeoref->getPgProgWebuserZgeorefByWebuser($destinataire);
+                    foreach ($pgProgWebuserZgeorefs as $pgProgWebuserZgeoref) {
+                        if ($pgProgWebuserZgeoref->getZgeoref()->getId() == $pgProgLot->getZgeoref()->getId()) {
+                            $trouve = true;
+                        }
+                    }
+                    if ($trouve) {
+                        // Envoi d'un mail
+                        if ($this->get('aeag_sqe.message')->envoiMessage($emSqe, $mailer, $txtMessage, $destinataire, $objetMessage)) {
+                            $message = 'un email  vous a été envoyé par ' . $pgProgWebUser->getNom() . ' suite à l\'intégration de plusieurs fichiers de terrain ' . CHR(13) . CHR(10) . ' sur le lot ' . $pgProgLot->getNomLot() . ' pour la période du ' . $pgProgPeriode->getDateDeb()->format('d/m/Y') . ' au ' . $dateFin->format('d/m/Y');
+                            $notification = new Notification();
+                            $notification->setRecepteur($destinataire->getExtId());
+                            $notification->setEmetteur($user->getId());
+                            $notification->setNouveau(true);
+                            $notification->setIteration(2);
+                            $notification->setMessage($message);
+                            $em->persist($notification);
+                            $em->flush();
+                        } else {
+                            $session->getFlashBag()->add('notice-warning', 'Le dépôt a été traité, mais l\'email n\'a pas pu être envoyé à ' . $destinataire->getNom());
+                        }
+                    }
+                }
+            }
             // envoi mail  aux presta connecte
             $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
             if ($pgProgWebUser) {
