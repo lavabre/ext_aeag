@@ -208,7 +208,7 @@ class ProcessRaiCommand extends AeagCommand {
 
             // paramètres/unité : paramètre manquant => erreur
             if (count($diffMiss = $this->repoPgTmpValidEdilabo->getDiffCodeParametreMissing($codePrelev["codePrelevement"], $demandeId, $reponseId)) > 0) {
-                if ((count($diffMiss) == 1) && in_array(1429, $diffMiss)) {
+                if ((count($diffMiss) == 1) && in_array(1429, $diffMiss) || ($pgCmdFichierRps->getLotan()->getLot()->getMarche()->getTypeMarche() == 'MOE')) {
                     $this->_addLog('warning', $demandeId, $reponseId, "Incoherence RAI/DAI: Paramètre manquant", $codePrelev["codePrelevement"], $diffMiss);
                 } else {
                     $this->_addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: Paramètre manquant", $codePrelev["codePrelevement"], $diffMiss);
