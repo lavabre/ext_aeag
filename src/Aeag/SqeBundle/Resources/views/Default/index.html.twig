@@ -28,9 +28,11 @@
                                     <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('Aeag_sqe_programmation_lots', {'action': 'V'}) }}" title="Consulter"><i class="fa fa-eye fa-2x"></i> Consulter</a></li>
                                     <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('Aeag_sqe_programmation_lots', {'action': 'P'}) }}" title="Programmer"><i class="fa fa-edit fa-2x"></i> Programmer</a></li>
                                     {%if   is_granted('ROLE_ADMINSQE') %}
+                                        {% if  not app.session.get('evolution')%}
                                          <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="#" title="Avancement campagne Hydrobio"><i class="fa fa-signal fa-2x"></i> Avancement campagne Hydrobio </a></li>
                                           <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="#" title="Avancement campagne Analyses"><i class="fa fa-signal fa-2x"></i> Avancement campagne Analyses  </a></li>
-                                      {% endif %}   
+                                        {% endif %} 
+                                     {% endif %} 
                                 </ul>
                             </div>
                         </div>

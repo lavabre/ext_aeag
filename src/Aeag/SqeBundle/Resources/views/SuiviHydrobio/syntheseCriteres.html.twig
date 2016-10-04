@@ -1,0 +1,76 @@
+<form  class="form-horizontal small" role="form" action="{{ path('AeagSqeBundle_suiviHydrobio_synthese_filtres', { 'codeSupport': support.codeSupport }) }}"  id="idForm" method="post" >
+
+<div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3 class="modal-title"><span class="text-info">Filtres sur le support : {{support.nomSupport}}</span></h3>
+</div>
+           
+<div class="modal-body">
+      <div class="row responsive">
+          <div class="col-xm-12">
+              <div class="small ">
+              
+                  <div class="form-group">
+                        <label class="col-sm-2 col-sm-offset-1 left">Prestataires</label>
+                        <div class="col-sm-7 input-group">
+                              {%if prestataires | length == 1%}  
+                                <select id="filtre_criteres_prestataire" disabled class="form-control input-small" placeholder="Prestataire" name="prestataire">
+                                {% else %}
+                                    <select id="filtre_criteres_prestataire" class="form-control input-small" placeholder="Prestataire" name="prestataire">
+                                {% endif %}
+                                     <option value=""></option>
+                                     {%if prestataires | length %}  
+                                         {% for a in prestataires %}
+                                             <option  value="{{  a.adrCorId }}" >{{ a.nomCorres }}</option>
+                                         {% endfor %}
+                                     {%endif%}
+                                </select>
+                        </div>
+                    </div>
+                                
+                   <div class="form-group">
+                        <label class="col-sm-2 col-sm-offset-1 left">Avis</label>
+                        <div class="col-sm-7 input-group">
+                                <select id="filtre_criteres_avis" class="form-control input-small" placeholder="Avis" name="avis">
+                                    <option value=""></option>
+                                    <option  value="F" >Favorable</option>
+                                    <option  value="D" >Défavorable</option>
+                                   </select>
+                        </div>
+                    </div>
+                                
+                   <div class="form-group">
+                        <label class="col-sm-2 col-sm-offset-1 left">Statut</label>
+                        <div class="col-sm-7 input-group">
+                                <select id="filtre_criteres_statut" class="form-control input-small" placeholder="Statut" name="statut">
+                                    <option value=""></option>
+                                    <option  value="P" >Prévisionnel</option>
+                                    <option  value="F" >Effectué</option>
+                                    <option  value="N" >Non effectué</option>
+                                </select>
+                        </div>
+                    </div>
+                                
+                    <div class="form-group">
+                        <label class="col-sm-2 col-sm-offset-1 left">Validation</label>
+                        <div class="col-sm-7 input-group">
+                                <select id="filtre_criteres_validation" class="form-control input-small" placeholder="validation" name="validation">
+                                    <option value=""></option>
+                                    <option  value="A" >Accepté</option>
+                                    <option  value="R" >Refusé</option>
+                                    <option  value="E" >En attente</option>
+                                </select>
+                        </div>
+                    </div>
+    
+                </div>
+          </div>
+      </div>
+ </div>
+                        
+<div class="modal-footer">
+     <button id="btForm" type="submit" class="btn btn-success"><i class="fa fa-refresh"></i> Filtrer</button>
+    <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Fermer</button>
+</div>
+
+</form>                               
