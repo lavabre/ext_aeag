@@ -34,9 +34,9 @@
     <ul class="dropdown-menu">
         <li><a href="{{ path('AeagSqeBundle_echangefichiers_index')}}">Echange EDI LABO</a></li>
         {% if app.session.get('suiviDonnees') %}
-                <li><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_saisieDonnees_index')}}" title="Saisie Terrain / Labo">Saisie Terrain / Labo</a></li>
+                <li><a  href="{{ path('AeagSqeBundle_saisieDonnees_index')}}" title="Saisie Terrain / Labo">Saisie Terrain / Labo</a></li>
         {% endif %}
-            <li><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_exportdonneesbrutes_index')}}" title="Export des Données Brutes">Export des Données Brutes</a></li>    
+            <li><a  href="{{ path('AeagSqeBundle_exportdonneesbrutes_index')}}" title="Export des Données Brutes">Export des Données Brutes</a></li>    
      </ul>
 </li>
 
