@@ -201,7 +201,8 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
                             $this->emSqe->persist($pgCmdMesureEnv);
                         } else {
                             $pgSandreParametres = $this->repoPgSandreParametres->findOneByCodeParametre($pgTmpValidEdilabo->getCodeParametre());
-                            $pgCmdAnalyse = $this->repoPgCmdAnalyse->findOneBy(array("prelevId" => $pgCmdPrelev->getId(), "numOrdre" => $pgTmpValidEdilabo->getNumOrdre(), "codeParametre" => $pgSandreParametres));
+                            $pgSandreFractions = $this->repoPgSandreFractions->findOneByCodeFraction($pgTmpValidEdilabo->getCodeFraction());
+                            $pgCmdAnalyse = $this->repoPgCmdAnalyse->findOneBy(array("prelevId" => $pgCmdPrelev->getId(), "numOrdre" => $pgTmpValidEdilabo->getNumOrdre(), "codeParametre" => $pgSandreParametres, "codeFraction" => $pgSandreFractions));
                             if (is_null($pgCmdAnalyse)) {
                                 $pgCmdAnalyse = new \Aeag\SqeBundle\Entity\PgCmdAnalyse();
                             }
@@ -211,7 +212,6 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
                             if (!is_null($pgSandreParametres)) {
                                 $pgCmdAnalyse->setCodeParametre($pgSandreParametres);
                             }
-                            $pgSandreFractions = $this->repoPgSandreFractions->findOneByCodeFraction($pgTmpValidEdilabo->getCodeFraction());
                             if (!is_null($pgSandreFractions)) {
                                 $pgCmdAnalyse->setCodeFraction($pgSandreFractions);
                             }
