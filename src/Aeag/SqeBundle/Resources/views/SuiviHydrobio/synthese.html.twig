@@ -9,6 +9,25 @@
     </li>
 {% endblock breadcrumb %} 
 
+{% block modal %}
+
+     <div class="modal fade" id="modal-filtrer">
+        <div class="modal-dialog modal-scroll modal-lg">
+            <div id="idmodal-content-filtrer" class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="idHeaderFiltrer">Critères</h4>
+                </div>
+                <div class="modal-body"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Fermer</button>
+                  </div>
+            </div>
+        </div>
+    </div>  
+    
+{% endblock modal %}
+
 {%block panel_heading %}
     <h3 class="page-title text-center">
         Liste des supports
@@ -22,7 +41,7 @@
                 <table class="table table-bordered table-condensed table-advance table-responsive table-striped" id="idTable_support">
                     <thead>
                         <tr>
-                            <th width="1%">Actions</th>
+                            <th width="5%">Actions</th>
                             <th>Support</th>
                         </tr>
                     </thead>
@@ -31,10 +50,15 @@
                             {% for support in supports %}
                                 {% if support.codeSupport == '4' or support.codeSupport == '10' or support.codeSupport == '11' or support.codeSupport == '13' or support.codeSupport == '27'  %}
                                     <tr>
-                                        <td>
+                                        <td nowrap>
                                             <a id="id_{{support.codeSupport}}" class="btn btn-primary btn-demandes" href="{{path('AeagSqeBundle_suiviHydrobio_synthese_support',{ 'codeSupport': support.codeSupport })}}" title="Qualification">
                                                 <i class="fa fa-eye"></i> 
                                             </a>
+                                            {% if is_granted('ROLE_ADMINSQE') %}
+                                                <a id="idFiltrer" class="btn btn-warning" data-id="{{support.codeSupport}}"  title="Filtrer">
+                                                  <i class="fa fa-filter"></i> 
+                                                </a>
+                                             {% endif %}
                                         </td>
                                         <td>{{support.nomSupport}}</td>
                                     </tr>
@@ -71,5 +95,22 @@
     $('#modalTraitementEncours').modal();
     });
     });
+    
+     $(document).on('click','#idFiltrer',function(e){
+            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+              $('#modalTraitementEncours').modal('toggle');
+               var url = '{{ path("AeagSqeBundle_suiviHydrobio_synthese_criteres",{"codeSupport":  "par1" }) }}';
+               var support = $(this).data('id');
+               url = url.replace("par1", support);
+              $.ajax({
+                   url: url,
+                   type: 'get',
+                   success: function(html) {
+                       $('#idmodal-content-filtrer').empty().append(html);
+                       $('#modalTraitementEncours').modal('hide');
+                       $('#modal-filtrer').modal();
+                   }
+               });
+         });
 
 {%endblock scripts %}    

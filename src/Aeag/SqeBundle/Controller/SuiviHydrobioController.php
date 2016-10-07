@@ -1353,9 +1353,9 @@ class SuiviHydrobioController extends Controller {
             unlink($pathBase . '/' . $name);
             unlink($pathBase . '/trans-' . $user->getId() . '.csv');
 
-             $objetMessage = "fichier de suivi ";
-             $txtMessage = "Un fichier de suivi a été déposé sur le lot " . $pgProgLot->getNomLot() . " pour la période du " . $pgProgPeriode->getDateDeb()->format('d/m/Y') . " au " . $dateFin->format('d/m/Y');
-             $mailer = $this->get('mailer');
+            $objetMessage = "fichier de suivi ";
+            $txtMessage = "Un fichier de suivi a été déposé sur le lot " . $pgProgLot->getNomLot() . " pour la période du " . $pgProgPeriode->getDateDeb()->format('d/m/Y') . " au " . $dateFin->format('d/m/Y');
+            $mailer = $this->get('mailer');
             // envoi mail  aux XHBIO
             $pgProgWebusers = $repoPgProgWebUsers->getPgProgWebusersByTypeUser('XHBIO');
             foreach ($pgProgWebusers as $destinataire) {
@@ -2724,6 +2724,177 @@ class SuiviHydrobioController extends Controller {
         return $this->render('AeagSqeBundle:SuiviHydrobio:synthese.html.twig', array('supports' => $pgSandreSupports));
     }
 
+    public function syntheseCriteresAction($codeSupport = null) {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+
+        $session = $this->get('session');
+        $session->set('menu', 'syntheseHydrobio');
+        $session->set('controller', 'SuiviHydrobio');
+        $session->set('fonction', 'syntheseCriteres');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
+        $repoPgSandreSupport = $emSqe->getRepository('AeagSqeBundle:PgSandreSupports');
+        $repoPgRefCorresPresta = $emSqe->getRepository('AeagSqeBundle:PgRefCorresPresta');
+        $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
+
+        $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
+        $pgSandreSupport = $repoPgSandreSupport->getPgSandreSupportsByCodeSupport($codeSupport);
+
+        $tabPrestataires = $repoPgCmdPrelev->getPrestataireBySupport($pgSandreSupport);
+
+
+//         \Symfony\Component\VarDumper\VarDumper::dump($tabPrestataires);
+//        return new Response('');
+
+        return $this->render('AeagSqeBundle:SuiviHydrobio:syntheseCriteres.html.twig', array(
+                    'prestataires' => $tabPrestataires,
+                    'support' => $pgSandreSupport,));
+    }
+
+    public function syntheseFiltresAction($codeSupport = null) {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+
+        $session = $this->get('session');
+        $session->set('menu', 'syntheseHydrobio');
+        $session->set('controller', 'SuiviHydrobio');
+        $session->set('fonction', 'syntheseFiltres');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
+        $repoPgProgWebuserZgeoref = $emSqe->getRepository('AeagSqeBundle:PgProgWebuserZgeoref');
+        $repoPgProgZgeorefStation = $emSqe->getRepository('AeagSqeBundle:PgProgZgeorefStation');
+        $repoPgSandreSupport = $emSqe->getRepository('AeagSqeBundle:PgSandreSupports');
+        $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
+        $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
+        $repoPgRefStationMesure = $emSqe->getRepository('AeagSqeBundle:PgRefStationMesure');
+        $repoPgRefReseauMesure = $emSqe->getRepository('AeagSqeBundle:PgRefReseauMesure');
+        $repoPgProgLotStationAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotStationAn');
+        $repoPgRefCorresPresta = $emSqe->getRepository('AeagSqeBundle:PgRefCorresPresta');
+
+        $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
+        $pgSandreSupport = $repoPgSandreSupport->getPgSandreSupportsByCodeSupport($codeSupport);
+
+        $presta = $_POST['prestataire'];
+        $avis = $_POST['avis'];
+        $statut = $_POST['statut'];
+        $validation = $_POST['validation'];
+
+        if ($presta) {
+            $pgRefCorresPresta = $repoPgRefCorresPresta->getPgRefCorresPrestaByAdrCorId($presta);
+            $session->set('suiviHydrobio_prestataire', $pgRefCorresPresta->getNomCorres());
+        }else{
+            $session->remove('suiviHydrobio_prestataire');
+        }
+        if ($avis) {
+            if ($avis == 'F') {
+                $session->set('suiviHydrobio_avis', 'Favorable');
+            }
+            if ($avis == 'D') {
+                $session->set('suiviHydrobio_avis', 'Défavorable');
+            }
+        }else{
+            $session->remove('suiviHydrobio_avis');
+        }
+        if ($statut) {
+            if ($statut == 'P') {
+                $session->set('suiviHydrobio_statut', 'Prévisionnel');
+            }
+            if ($statut == 'F') {
+                $session->set('suiviHydrobio_statut', 'Effectué');
+            }
+             if ($statut == 'N') {
+                $session->set('suiviHydrobio_statut', 'Non effectué');
+            }
+        }else{
+            $session->remove('suiviHydrobio_statut');
+        }
+        if ($validation) {
+            if ($validation == 'A') {
+                $session->set('suiviHydrobio_validation', 'Accepté');
+            }
+            if ($validation == 'R') {
+                $session->set('suiviHydrobio_validation', 'Refusé');
+            }
+             if ($validation == 'E') {
+                $session->set('suiviHydrobio_validation', 'En attente');
+            }
+        }else{
+            $session->remove('suiviHydrobio_validation');
+        }
+      
+        $tabResultats = $repoPgCmdPrelev->getPgCmdPrelevBySupportPrestaAvisStatutValidation($pgSandreSupport, $presta, $avis, $statut, $validation);
+        $tabStations = array();
+        $i = 0;
+        for ($nbStations = 0; $nbStations < count($tabResultats); $nbStations++) {
+            $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevById($tabResultats[$nbStations]['prelevId']);
+            $pgCmdSuiviPrelDernier = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelById($tabResultats[$nbStations]['suiviPrelId']);
+            $pgRefStationMesure = $repoPgRefStationMesure->getPgRefStationMesureByOuvFoncId($tabResultats[$nbStations]['ouvFoncId']);
+            if (!$user->hasRole('ROLE_ADMINSQE')) {
+                $pgProgWebuserZgeorefs = $repoPgProgWebuserZgeoref->getPgProgWebuserZgeorefByWebuser($pgProgWebUser);
+                $trouve = false;
+                foreach ($pgProgWebuserZgeorefs as $pgProgWebuserZgeoref) {
+                    $pgProgZoneGeoref = $pgProgWebuserZgeoref->getZgeoref();
+                    $pgProgZgeorefStations = $repoPgProgZgeorefStation->getpgProgZgeorefStationByZgeoref($pgProgZoneGeoref);
+                    foreach ($pgProgZgeorefStations as $pgProgZgeorefStation) {
+                        if ($pgRefStationMesure->getOuvFoncId() == $pgProgZgeorefStation->getStationMesure()->getOuvFoncId()) {
+                            $trouve = true;
+                            break;
+                        }
+                    }
+                    if ($trouve) {
+                        break;
+                    }
+                }
+            } else {
+                $trouve = true;
+            }
+            if ($trouve) {
+                if ($pgCmdSuiviPrelDernier) {
+                    $tabStations[$i]['station']['ouvFoncId'] = $pgRefStationMesure->getOuvFoncId();
+                    $tabStations[$i]['station']['code'] = $pgRefStationMesure->getCode();
+                    $tabStations[$i]['station']['libelle'] = $pgRefStationMesure->getLibelle();
+                    $tabStations[$i]['lien'] = '/sqe_fiches_stations/' . str_replace('/', '-', $pgRefStationMesure->getCode()) . '.pdf';
+                    $pgProgLotStationAn = $repoPgProgLotStationAn->getPgProgLotStationAnByLotAnStation($pgCmdPrelev->getDemande()->getLotan(), $pgRefStationMesure);
+                    $pgRefReseauMesure = $repoPgRefReseauMesure->getPgRefReseauMesureByGroupementId($pgProgLotStationAn->getRsxId());
+                    if ($pgRefReseauMesure) {
+                        $tabStations[$i]['reseau'] = $pgRefReseauMesure->getnomRsx();
+                    } else {
+                        $tabStations[$i]['reseau'] = null;
+                    }
+                    $tabStations[$i]['cmdDemande'] = $pgCmdPrelev->getDemande();
+                    $dateLimite = null;
+                    if ($pgCmdSuiviPrelDernier->getFichierRps()) {
+                        if ($pgCmdSuiviPrelDernier->getFichierRps()->getDateDepot()) {
+                            $dateDepot = $pgCmdSuiviPrelDernier->getFichierRps()->getDateDepot();
+                            $delai = 21;
+                            $dateLimite = $dateDepot->add(new \DateInterval('P' . $delai . 'D'));
+                        }
+                    }
+                    $tabStations[$i]['dateLimite'] = $dateLimite;
+                    $tabStations[$i]['cmdPrelev'] = $pgCmdPrelev;
+                    $tabStations[$i]['suiviPrel'] = $pgCmdSuiviPrelDernier;
+                    $i++;
+                }
+            }
+//                }
+//            }
+        }
+
+//         \Symfony\Component\VarDumper\VarDumper::dump($tabStations);
+//        return new Response('');
+
+        return $this->render('AeagSqeBundle:SuiviHydrobio:syntheseSupport.html.twig', array('pgProgWebUser' => $pgProgWebUser,
+                    'support' => $pgSandreSupport,
+                    'stations' => $tabStations,));
+    }
+
     public function syntheseSupportAction($codeSupport = null) {
         $user = $this->getUser();
         if (!$user) {
@@ -2735,6 +2906,11 @@ class SuiviHydrobioController extends Controller {
         $session->set('controller', 'SuiviHydrobio');
         $session->set('fonction', 'syntheseSupport');
         $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        $session->remove('suiviHydrobio_prestataire');
+        $session->remove('suiviHydrobio_avis');
+        $session->remove('suiviHydrobio_statut');
+        $session->remove('suiviHydrobio_validation');
 
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
         $repoPgProgWebuserZgeoref = $emSqe->getRepository('AeagSqeBundle:PgProgWebuserZgeoref');

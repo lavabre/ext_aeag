@@ -440,5 +440,57 @@ class PgCmdPrelevRepository extends EntityRepository {
 //        }
         return $qb->getResult();
     }
+    
+    public function getPrestataireBySupport($pgSandreSupports) {
+        $query = "select distinct presta";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelev prelev,";
+        $query = $query . "         Aeag\SqeBundle\Entity\PgRefCorresPresta presta ";
+         $query = $query . " where prelev.codeSupport = '" . $pgSandreSupports->getCodeSupport() . "'";
+        $query = $query . "  and prelev.prestaPrel = presta.adrCorId" ;
+         $query = $query . " order by presta.nomCorres";
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+        return $qb->getResult();
+    }
+    
+    public function getPgCmdPrelevBySupportPrestaAvisStatutValidation($pgSandreSupports, $presta, $avis, $statut, $validation) {
+        $query = " SELECT prelev.id as prelevId, support.nomSupport, station.ouvFoncId, suiviprel.id as suiviPrelId ";
+        $query = $query . "FROM Aeag\SqeBundle\Entity\PgCmdPrelev prelev,";
+        $query = $query . "           Aeag\SqeBundle\Entity\PgCmdSuiviPrel suiviprel,";
+        $query = $query . "           Aeag\SqeBundle\Entity\PgCmdDemande demande,";
+        $query = $query . "           Aeag\SqeBundle\Entity\PgRefStationMesure station,";
+        $query = $query . "           Aeag\SqeBundle\Entity\PgProgLotAn lotan,";
+        $query = $query . "           Aeag\SqeBundle\Entity\PgProgLot lot,";
+        $query = $query . "           Aeag\SqeBundle\Entity\PgProgTypeMilieu typemilieu, ";
+        $query = $query . "           Aeag\SqeBundle\Entity\PgSandreSupports support ";
+        $query = $query . " where support.codeSupport = '" . $pgSandreSupports->getCodeSupport() . "'";
+        $query = $query . "and support.codeSupport= prelev.codeSupport  ";
+        $query = $query . "and demande.id = prelev.demande ";
+        $query = $query . "and station.ouvFoncId = prelev.station ";
+        $query = $query . "and lotan.id = demande.lotan ";
+        $query = $query . "and lotan.phase <> 9 ";
+        $query = $query . "and lot.id = lotan.lot ";
+        $query = $query . "and typemilieu.codeMilieu = lot.codeMilieu ";
+        $query = $query . "and (substring(typemilieu.codeMilieu,2,2) = 'HB' or typemilieu.codeMilieu = 'RHM') ";
+        $query = $query . "and prelev.id = suiviprel.prelev ";
+        $query = $query . "and suiviprel.id = (select max(ss.id) from Aeag\SqeBundle\Entity\PgCmdSuiviPrel ss where ss.prelev = prelev.id) ";
+        if ($presta){
+            $query = $query . " and prelev.prestaPrel = " . $presta;
+        }
+        if ($avis){
+            $query = $query . " and suiviprel.avis = '" . $avis . "'";
+        }
+        if ($statut){
+            $query = $query . " and suiviprel.statutPrel = '" . $statut . "'";
+        }
+        if ($validation){
+            $query = $query . " and suiviprel.validation = '" . $validation . "'";
+        }
+        $query = $query . " order by prelev.station, prelev.periode ";
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+        return $qb->getResult();
+    }
+
 
 }

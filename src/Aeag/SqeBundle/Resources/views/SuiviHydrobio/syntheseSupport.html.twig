@@ -57,6 +57,33 @@
 {%endblock panel_heading %}
 
 {%block content %}
+    
+    {% if app.session.get('suiviHydrobio_prestataire')  or app.session.get('suiviHydrobio_avis') or app.session.get('suiviHydrobio_statut') or app.session.get('suiviHydrobio_validation')%}
+         <div class="row responsive">
+                <div class="col-md-offset-3 col-md-6  text-info text-center">
+                    <div class="panel panel-info">
+                            <div class="panel-body">
+                                    <ul class="list-inline">
+                                         <li class="list-group-item-text list"><h5>Filtrer sur :</h5></li>
+                                        {% if app.session.get('suiviHydrobio_prestataire') %}
+                                                <li class="list-group-item list-group-item-text list-group-item-info">Prestataire : {{ app.session.get('suiviHydrobio_prestataire') }}</li>
+                                        {% endif %}
+                                        {% if app.session.get('suiviHydrobio_avis') %}
+                                                <li class="list-group-item list-group-item-text list-group-item-info">Avis : {{ app.session.get('suiviHydrobio_avis') }}</li>
+                                        {% endif %}
+                                        {% if app.session.get('suiviHydrobio_statut') %}
+                                                <li class="list-group-item list-group-item-text list-group-item-info">Statut : {{ app.session.get('suiviHydrobio_statut') }}</li>
+                                        {% endif %}
+                                        {% if app.session.get('suiviHydrobio_validation') %}
+                                                <li class="list-group-item list-group-item-text list-group-item-info">Validation : {{ app.session.get('suiviHydrobio_validation') }}</li>
+                                        {% endif %}
+                                    </ul>
+                            </div>
+                    </div>
+                </div>
+         </div>
+        
+    {% endif %}
 
     <div class="row responsive">
         <div class="col-xm-12">

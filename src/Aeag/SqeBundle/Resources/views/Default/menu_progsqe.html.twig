@@ -34,12 +34,10 @@
     <ul class="dropdown-menu">
         <li><a href="{{ path('AeagSqeBundle_echangefichiers_index')}}">Echange EDI LABO</a></li>
         {% if app.session.get('suiviDonnees') %}
-                <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_saisieDonnees_index')}}" title="Saisie Terrain / Labo"><i class="fa fa-dashboard fa-2x"></i> Saisie Terrain / Labo</a></li>
+                <li><a  href="{{ path('AeagSqeBundle_saisieDonnees_index')}}" title="Saisie Terrain / Labo">Saisie Terrain / Labo</a></li>
         {% endif %}
-        {%if   is_granted('ROLE_ADMINSQE')%}
-            <li class="list-group-item  list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_exportdonneesbrutes_index')}}" title="Export des Données Brutes"><i class="fa fa-upload fa-2x"></i> Export des Données Brutes</a></li>    
-        {% endif %} 
-    </ul>
+            <li><a  href="{{ path('AeagSqeBundle_exportdonneesbrutes_index')}}" title="Export des Données Brutes">Export des Données Brutes</a></li>    
+     </ul>
 </li>
 
 {% if app.session.get('suiviDonnees')  or app.session.get('suiviHb') or app.session.get('suiviQHb') or app.session.get('suiviSED') %}

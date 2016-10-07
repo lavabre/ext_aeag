@@ -61,7 +61,6 @@
     <ul class="dropdown-menu">
         <li><a href="{{ path('AeagSqeBundle_echangefichiers_index')}}">Echange EDI LABO</a></li>
         <li><a href="{{ path('AeagSqeBundle_saisieDonnees_index')}}">Saisie Terrain / Labo</a></li>
-        <li><a href="{{ path('AeagSqeBundle_exportdonneesbrutes_index')}}">Export données brutes</a></li>
     </ul>
 </li>
 
@@ -91,9 +90,7 @@
                            <li><a href="{{ path('AeagSqeBundle_suiviEau_index')}}">Eau</a></li>
                  {% endif %}
          {#{% endif %}#}
-         <li><a href="{{ path('AeagSqeBundle_planning_index', {'typeMilieu': 'HB'}) }}" title="Planning Hydrobio">Planning Hydrobio</a></li>
-         <li><a href="{{ path('AeagSqeBundle_planning_index', {'typeMilieu': 'PC'}) }}" title="Planning Autres"> Planning Autres</a></li>
-     </ul>
+       </ul>
 </li>
 {% endif %}
 

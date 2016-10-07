@@ -118,6 +118,18 @@ AeagSqeBundle_suiviHydrobio_synthese:
     requirements:
          methods:  GET|POST
          
+AeagSqeBundle_suiviHydrobio_synthese_criteres:
+    path:  /synthese/criteres/{codeSupport}    
+    defaults: { _controller: AeagSqeBundle:SuiviHydrobio:syntheseCriteres, codeSupport: null}
+    requirements:
+         methods:  GET|POST
+         
+AeagSqeBundle_suiviHydrobio_synthese_filtres:
+    path:  /synthese/filtres/{codeSupport}    
+    defaults: { _controller: AeagSqeBundle:SuiviHydrobio:syntheseFiltres, codeSupport: null}
+    requirements:
+         methods:  GET|POST
+         
 AeagSqeBundle_suiviHydrobio_synthese_support:
     path:  /synthese/support/{codeSupport}   
     defaults: { _controller: AeagSqeBundle:SuiviHydrobio:syntheseSupport, codeSupport: null}
