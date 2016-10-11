@@ -7,7 +7,8 @@
                         <th>N°ordre</th>
                         <th>Date</th>
                         <th>Statut</th>
-                        <th>validation</th>
+                        <th>Validation</th>
+                        <th>Avis</th>
                         <th>Commentaire</th>
                         <th>Fichier joint</th>
                     </tr>
@@ -47,6 +48,28 @@
                                         {% elseif suiviPrel.validation == 'A' %}
                                             Accepté
                                         {% endif %}
+                                    </td>
+                                    <td>
+                                       {% if suiviPrel.avis == 'F' %}
+                                               {% if suiviPrel.validAuto == 'O' %}
+                                                         Favorable (auto)
+                                                {% elseif suiviPrel.validAuto == 'N' %}
+                                                         Favorable (manu)
+                                                {% else %}
+                                                          Favorable
+                                               {% endif %}
+                                      {% elseif suiviPrel.avis == 'D' %}
+                                                {% if suiviPrel.validAuto == 'O' %}
+                                                          Défavorable (auto)
+                                               {% elseif  suiviPrel.validAuto == 'N' %}
+                                                          Défavorable (manu)
+                                               {% else %}
+                                                          Défavorable
+                                               {% endif %}
+                                      {% endif %}
+                                      {% if  suiviPrel.commentaireAvis | length %}
+                                                :<br/>{{ suiviPrel.commentaireAvis | nl2br }}
+                                       {% endif %}
                                     </td>
                                     <td>
                                         {{ suiviPrel.commentaire | nl2br }}
