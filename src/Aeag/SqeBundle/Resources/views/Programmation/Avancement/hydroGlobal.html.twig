@@ -1,0 +1,49 @@
+ <br/><br/>
+ {{ dump(tableau)}}
+ {{ dump(tableau2)}}
+ {{ dump(tableau3)}}
+ <div class="col-md-12">
+    <div id="idtableau_global" class="small">
+        <table class="table table-bordered table-condensed table-advance" id="idTable_global">
+            <thead id="idTheadStations">
+                <tr>
+                    <th width="10%">Statut</th>
+                    {% if marches | length %}
+                    {% for marche in marches %}
+                    <th width="10%">{{ marche }}</th>
+                    {% endfor %}
+                    {% endif %}
+                 </tr>
+            </thead>
+            <tbody id="idBodyGobal">
+                {% if statuts | length %}
+                  {% for statut in statuts %}
+                      <tr  width="10%">
+                          <td>{{ statut.libelle }}</td>
+                            {% if marches | length %}
+                                 {% for marche in marches %}
+                                     {%if tableau | length%}  
+                                         {% for tab in tableau %}
+                                             {% if  tab.typeMarche == marche%}
+                                                    {% if  tab.statutPrel == statut.code %}
+                                                          <td>
+                                                              {% if tab.nb_prel | length %}
+                                                                {{tab.nb_prel }}
+                                                              {% else %}
+                                                                 0 
+                                                              {% endif %}
+                                                              </td>
+                                                    {% endif %}
+                                            {% endif %}
+                                   {% endfor %}
+                                 {% endif %}
+                              {% endfor %}
+                            {% endif %}
+                        </tr>
+                   {% endfor %}
+                {% endif %}
+            </tbody>
+        </table> 
+    </div>
+</div>
+ 

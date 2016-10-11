@@ -1,0 +1,68 @@
+<div class="col-md-12">
+    <div id="idtableau_global" class="small">
+        <table class="table table-bordered table-condensed table-advance" id="idTable_global">
+            <thead id="idTheadStations">
+                <tr>
+                   <th width="10%">Statut</th>
+                    <th width="10%">marchés</th>
+                  </tr>
+            </thead>
+            <tbody id="idBodyGobal">
+                {%if tableau | length%}  
+                    {% for tab in tableau %}
+                            <tr  width="10%">
+                                <td nowrap></td>
+                                 <td nowrap></td>
+                                {% for groupe in grparAns %}
+                                     <td id="idTd_{{ stationAn.station.id }}_{{ groupe.id }}">
+                                        <div class="text-center" id="idDiv_{{ stationAn.station.id }}_{{ groupe.id }}">
+                                             {% for prog in stationAn.progs %}
+                                                {% if groupe.grparRef.codeGrp == prog.groupe %}
+                                                     {% if prog.nb > 0 %}
+                                                        <a id="idBt_{{ stationAn.station.id }}_{{ groupe.id }}" class="btn btn-success" data-toggle="modal" href="#modal_{{ stationAn.station.id }}_{{ groupe.id }}">
+                                                           <span id="idNb_{{ stationAn.station.id }}_{{ groupe.id }}" class="badge">
+                                                              {{ prog.nb |  number_format(0,'.',' ')}}
+                                                           </span>
+                                                        </a>
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endfor %}
+                                            {% for prog in stationAn.progCompls %}
+                                                {% if groupe.grparRef.codeGrp == prog.groupe %}
+                                                      {% if prog.nb > 0 %}
+                                                            <a id="idBt_{{ stationAn.station.id }}_{{ groupe.id }}" class="btn btn-info" data-toggle="modal" href="#modal_compl_{{ stationAn.station.id }}_{{ groupe.id }}">
+                                                               <span id="idNb_{{ stationAn.station.id }}_{{ groupe.id }}" class="badge">
+                                                                  {{ prog.nb |  number_format(0,'.',' ')}}
+                                                               </span>
+                                                            </a>
+                                                       {% endif %}
+                                                {% endif %}
+                                            {% endfor %}
+                                            {% for prog in stationAn.progIgnores %}
+                                                {% if groupe.grparRef.codeGrp == prog.groupe %}
+                                                      {% if prog.nb > 0 %}
+                                                            <a id="idBt_{{ stationAn.station.id }}_{{ groupe.id }}" class="btn btn-primary" data-toggle="modal" href="#modal_compl_{{ stationAn.station.id }}_{{ groupe.id }}">
+                                                               <span id="idNb_{{ stationAn.station.id }}_{{ groupe.id }}" class="badge">
+                                                                  {{ prog.nb |  number_format(0,'.',' ')}}
+                                                               </span>
+                                                            </a>
+                                                       {% endif %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </td>
+                                 {% endfor %}
+                             </tr>
+                    {% endfor %}
+                {% endif %}
+            </tbody>
+        </table> 
+    </div>
+</div>
+            
+{% block modal %}
+    
+    <div id="idModalStationGroupes"></div>
+    
+ {% endblock modal %}
+  
