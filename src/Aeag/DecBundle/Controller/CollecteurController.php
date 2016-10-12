@@ -2287,7 +2287,7 @@ class CollecteurController extends Controller {
                                 $action = 'AJOUTER';
                             } else {
                                 $err = true;
-                                $message = $message . "dans le fichier CSV :  la ligne " . $ligne . " est en double \n";
+                                $message = $message . "dans le fichier CSV :  la ligne " . $ligne . " est en double  date ". $dateFacture->format('Y-m-d') .  "\n";
                                 $declarationDetail = $declarationDetail;
                                 $ancDeclarationDetail = clone($declarationDetail);
                                 if ($ancDeclarationDetail->getStatut()->getCode() == '11') {

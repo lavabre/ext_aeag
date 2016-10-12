@@ -17,6 +17,10 @@ aeag_sqe_programmation_periode:
 aeag_sqe_programmation_bilan:
     resource: "@AeagSqeBundle/Resources/config/routing_programmation_bilan.yml"
     prefix:   /bilan
+    
+aeag_sqe_programmation_avancement:
+    resource: "@AeagSqeBundle/Resources/config/routing_programmation_avancement.yml"
+    prefix:   /avancement
 
 
 

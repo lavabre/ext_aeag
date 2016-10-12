@@ -69,5 +69,71 @@ class PgProgMarcheRepository extends EntityRepository {
         //print_r($query);
         return $qb->getResult();
     }
+    
+     /**
+     * @return array
+     */
+    public function getAvancementHydrobioGlobal() {
+   
+        $query = "select * from sqe_avancement_hydrobio_global() "; 
+         return $this->getEntityManager('')
+                ->getConnection()
+                ->query($query);
+    }
+    
+      /**
+     * @return array
+     */
+    public function getAvancementHydrobioSupport() {
+   
+        $query = "select * from sqe_avancement_hydrobio_support() "; 
+         return $this->getEntityManager('')
+                ->getConnection()
+                ->query($query);
+    }
+    
+      /**
+     * @return array
+     */
+    public function getAvancementHydrobioLot() {
+   
+        $query = "select * from sqe_avancement_hydrobio_lot() "; 
+         return $this->getEntityManager('')
+                ->getConnection()
+                ->query($query);
+    }
+    
+     /**
+     * @return array
+     */
+    public function getAvancementAnalyseGlobal() {
+   
+        $query = "select * from sqe_avancement_analyse_global() "; 
+         return $this->getEntityManager('')
+                ->getConnection()
+                ->query($query);
+    }
+    
+     /**
+     * @return array
+     */
+    public function getAvancementAnalysePeriode() {
+   
+        $query = "select * from sqe_avancement_analyse_periode() "; 
+         return $this->getEntityManager('')
+                ->getConnection()
+                ->query($query);
+    }
+    
+     /**
+     * @return array
+     */
+    public function getAvancementAnalyseLot() {
+   
+        $query = "select * from sqe_avancement_analyse_lot() "; 
+         return $this->getEntityManager('')
+                ->getConnection()
+                ->query($query);
+    }
 
 }

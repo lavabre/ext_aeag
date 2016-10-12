@@ -26,8 +26,8 @@
         <li><a href="{{ path('Aeag_sqe_programmation_lots', {'action': 'P'}) }}">Programmer</a></li>
         <li><a href="{{ path('Aeag_sqe_programmation_lots', {'action': 'V'}) }}">Consulter</a></li>
          {% if  not app.session.get('evolution')%}
-        <li><a href="#" title="Avancement campagne Hydrobio">Avancement campagne Hydrobio </a></li>
-        <li><a href="#" title="Avancement campagne Analyses">Avancement campagne Analyses  </a></li>
+        <li><a href="{{ path('AeagSqeBundle_programmation_avancement_hydro') }}" title="Avancement campagne Hydrobio">Avancement campagne Hydrobio </a></li>
+        <li><a href="{{ path('AeagSqeBundle_programmation_avancement_analyse') }}" title="Avancement campagne Analyses">Avancement campagne Analyses  </a></li>
         {% endif %}
     </ul>
 </li>

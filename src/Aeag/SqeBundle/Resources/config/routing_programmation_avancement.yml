@@ -1,0 +1,59 @@
+
+AeagSqeBundle_programmation_avancement_hydro:
+    path:  /hydro
+    defaults: { _controller: AeagSqeBundle:ProgrammationAvancement:hydroIndex }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_avancement_hydro_global:
+    path:  /hydro/global
+    defaults: { _controller: AeagSqeBundle:ProgrammationAvancement:hydroGlobal }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_avancement_hydro_support:
+    path:  /hydro/support
+    defaults: { _controller: AeagSqeBundle:ProgrammationAvancement:hydroSupport }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_avancement_hydro_lot:
+    path:  /hydro/lot
+    defaults: { _controller: AeagSqeBundle:ProgrammationAvancement:hydroLot }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_avancement_analyse:
+    path:  /analyse
+    defaults: { _controller: AeagSqeBundle:ProgrammationAvancement:analyseIndex }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_avancement_analyse_global:
+    path:  /analyse/global
+    defaults: { _controller: AeagSqeBundle:ProgrammationAvancement:analyseGlobal }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_avancement_analyse_periode:
+    path:  /analyse/periode
+    defaults: { _controller: AeagSqeBundle:ProgrammationAvancement:analysePeriode }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_avancement_analyse_lot:
+    path:  /analyse/lot/ptrestataire
+    defaults: { _controller: AeagSqeBundle:ProgrammationAvancement:analyseLot }
+    requirements:
+        methods:  GET|POST
+        
+
+
+    
+
+    
+
+
+
+
+        
