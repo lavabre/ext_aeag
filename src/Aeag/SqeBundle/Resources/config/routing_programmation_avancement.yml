@@ -23,6 +23,30 @@ AeagSqeBundle_programmation_avancement_hydro_lot:
     requirements:
         methods:  GET|POST
         
+AeagSqeBundle_programmation_avancement_analyse:
+    path:  /analyse
+    defaults: { _controller: AeagSqeBundle:ProgrammationAvancement:analyseIndex }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_avancement_analyse_global:
+    path:  /analyse/global
+    defaults: { _controller: AeagSqeBundle:ProgrammationAvancement:analyseGlobal }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_avancement_analyse_periode:
+    path:  /analyse/periode
+    defaults: { _controller: AeagSqeBundle:ProgrammationAvancement:analysePeriode }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_avancement_analyse_lot:
+    path:  /analyse/lot/ptrestataire
+    defaults: { _controller: AeagSqeBundle:ProgrammationAvancement:analyseLot }
+    requirements:
+        methods:  GET|POST
+        
 
 
     

@@ -1,0 +1,99 @@
+{% extends "AeagSqeBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+               <li>
+                   <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+               </li>
+                  <li class="active">
+                          Avancement campagne Analyses
+                 </li>
+ {% endblock breadcrumb %}
+
+
+
+{%block panel_heading %}
+    <h3 class="page-title">
+       Avancement campagne Analyses
+     </h3>
+{%endblock panel_heading %}
+
+
+
+{%block content %}
+    <div class="form-body">
+        
+
+        <div class="row responsive">
+        <div class="col-xm-12">
+            <div class="small ">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <ul  class="nav nav-pills nav-justified" role="tablist">
+                            <li class="active"><a id="idTab_1" href="#tab_1_1" data-toggle="tab"><h4>Global </h4></a></li>
+                            <li class=""><a id="idTab_2" href="#tab_1_2" data-toggle="tab"><h4>Période </h4></a></li>
+                            <li class=""><a id="idTab_3" href="#tab_1_3" data-toggle="tab"><h4>Lot</h4></a></li>
+                        </ul>
+                        <div  class="tab-content">
+                           <div class="tab-pane fade active in" id="tab_1_1"></div>
+                            <div class="tab-pane fade" id="tab_1_2"></div>
+                            <div class="tab-pane fade" id="tab_1_3"></div>
+                        </div>
+                         <div id="idCache"></div>
+                   </div>
+                </div>
+            </div>
+        </div>
+     </div> 
+   
+   </div>
+{%endblock content %}
+
+{% block scripts %}
+
+    jQuery(document).ready(function() {
+
+    $('#idCache').hide();
+    
+    
+          $('#modalTraitementEncours').modal('toggle');
+            var url = '{{ path("AeagSqeBundle_programmation_avancement_analyse_global") }}'; // Le nom du fichier indiqué dans le formulaire
+             $.get( url, function( responseData ) { 
+                 $("#tab_1_1" ).empty().html( responseData ); 
+                 $('#modalTraitementEncours').modal('hide');
+            });
+          
+         var click_tab_2 = false;
+        $(document).on('click','#idTab_2',function(e){
+            if (click_tab_2 == false){
+                   console.log('click_tab_2 avant : ' +click_tab_2);
+                   $('#modalTraitementEncours').modal('toggle');
+                     e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                     var url = '{{ path("AeagSqeBundle_programmation_avancement_analyse_periode") }}'; // Le nom du fichier indiqué dans le formulaire
+                    $.get( url, function( responseData ) { 
+                          $("#tab_1_2" ).empty().html( responseData ); 
+                          $('#modalTraitementEncours').modal('hide');
+                     });
+                   click_tab_2 = true;
+                   console.log('click_tab_2 apres : ' +click_tab_2);
+            }
+       });
+     
+    
+        var click_tab_3 = false;
+       $(document).on('click','#idTab_3',function(e){
+            if (click_tab_3 == false){
+                $('#modalTraitementEncours').modal('toggle');
+                e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                var url = '{{ path("AeagSqeBundle_programmation_avancement_analyse_lot") }}'; // Le nom du fichier indiqué dans le formulaire
+               $.get( url, function( responseData ) { 
+                     $("#tab_1_3" ).empty().html( responseData ); 
+                     $('#modalTraitementEncours').modal('hide');
+                });
+                 click_tab_3 = true;
+             }
+       });
+  
+    
+   });
+
+{% endblock scripts %}

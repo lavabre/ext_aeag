@@ -1,45 +1,33 @@
  <br/><br/>
- {{ dump(tableau)}}
- {{ dump(tableau2)}}
- {{ dump(tableau3)}}
- <div class="col-md-12">
-    <div id="idtableau_global" class="small">
+  <div class="col-md-12">
+    <div id="idtableau_global">
         <table class="table table-bordered table-condensed table-advance" id="idTable_global">
-            <thead id="idTheadStations">
+            <thead>
                 <tr>
-                    <th width="10%">Statut</th>
-                    {% if marches | length %}
-                    {% for marche in marches %}
-                    <th width="10%">{{ marche }}</th>
-                    {% endfor %}
-                    {% endif %}
+                    <th width="5%">Marche</th>
+                    <th width="5%">Statut</th>
+                    <th width="1%">Nb prelev</th>
+                    <th width="1%">Nb prelev prog</th>
+                    <th width="1%">Poucentage</th>
+                   </tr>
+                 <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
                  </tr>
             </thead>
-            <tbody id="idBodyGobal">
-                {% if statuts | length %}
-                  {% for statut in statuts %}
-                      <tr  width="10%">
-                          <td>{{ statut.libelle }}</td>
-                            {% if marches | length %}
-                                 {% for marche in marches %}
-                                     {%if tableau | length%}  
-                                         {% for tab in tableau %}
-                                             {% if  tab.typeMarche == marche%}
-                                                    {% if  tab.statutPrel == statut.code %}
-                                                          <td>
-                                                              {% if tab.nb_prel | length %}
-                                                                {{tab.nb_prel }}
-                                                              {% else %}
-                                                                 0 
-                                                              {% endif %}
-                                                              </td>
-                                                    {% endif %}
-                                            {% endif %}
-                                   {% endfor %}
-                                 {% endif %}
-                              {% endfor %}
-                            {% endif %}
-                        </tr>
+            <tbody>
+                {% if tableau| length %}
+                  {% for ligne  in tableau %}
+                      <tr>
+                          <td>{{ ligne.nom_marche }}</td>
+                          <td>{{ ligne.statut_prel }}</td>
+                          <td class="text-right">{{ ligne.nb_prel  | number_format(0,'.',' ')}}</td>
+                          <td class="text-right">{{ ligne.nb_prel_prog | number_format(0,'.',' ') }}</td>
+                          <td class="text-right">{{ ligne.pourcentage | number_format(2,'.',' ') }} %</td>
+                     </tr>
                    {% endfor %}
                 {% endif %}
             </tbody>
@@ -47,3 +35,54 @@
     </div>
 </div>
  
+<script type="text/javascript" language="javascript">
+
+    jQuery(document).ready(function () {
+      var tableGlobal =   $('#idTable_global').DataTable(
+                                    {"stateSave": false,
+                                            "order": [[ 0, "asc" ]],
+                                             "oLanguage": {
+                                                "sSearch": "Filtre",
+                                                "sFirst": "1ere page",
+                                                "sLast": "Dernière page",
+                                                "sNext": "Prochaine page",
+                                                "sPrevious": "Page précédente",
+                                                "EmptyTable": "Pas de données",
+                                                "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+                                                "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+                                                "sZeroRecords": "Pas d'enregistrement à afficher",
+                                                "sInfoEmpty": "Pas d'enregistrement à afficher",
+                                                "sInfoThousands": " ",
+                                                "sLengthMenu": 'Afficher <select>' +
+                                                        '<option value="10">10</option>' +
+                                                        '<option value="20">20</option>' +
+                                                        '<option value="30">30</option>' +
+                                                        '<option value="40">40</option>' +
+                                                        '<option value="50">50</option>' +
+                                                        '<option value="-1">Tous</option>' +
+                                                        '</select> enregistrements',
+                                                "sPaginationType": "full_numbers"
+                                            }
+                                           }
+                                     );
+
+         $("#idTable_global thead td").each( function ( i ) {
+
+                        if ( i != 2 && i != 3 && i != 4){
+                                var select = $('<select><option value=""></option></select>')
+                                .appendTo( $(this).empty() )
+                                .on( 'change', function () {
+                                tableGlobal.column( i )
+                                .search( $(this).val() )
+                                .draw();
+                                });
+
+                                tableGlobal.column( i ).data().unique().sort().each( function ( d, j ) {
+                                select.append( '<option value="'+d+'">'+d+'</option>' )
+                                });
+                        };
+          }); 
+
+    });
+
+</script>

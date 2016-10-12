@@ -30,7 +30,7 @@
                                         {% if  not app.session.get('evolution')%}
                                         {%if   is_granted('ROLE_ADMINSQE') %}
                                          <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_programmation_avancement_hydro') }}" title="Avancement campagne Hydrobio"><i class="fa fa-signal fa-2x"></i> Avancement campagne Hydrobio </a></li>
-                                          <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="#" title="Avancement campagne Analyses"><i class="fa fa-signal fa-2x"></i> Avancement campagne Analyses  </a></li>
+                                          <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_programmation_avancement_analyse') }}" title="Avancement campagne Analyses"><i class="fa fa-signal fa-2x"></i> Avancement campagne Analyses  </a></li>
                                         {% endif %}
                                         {% endif %}
                                 </ul>
