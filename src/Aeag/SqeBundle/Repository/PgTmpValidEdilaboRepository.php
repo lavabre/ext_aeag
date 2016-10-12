@@ -384,6 +384,7 @@ class PgTmpValidEdilaboRepository extends EntityRepository {
         $query .= " and p.fichierRpsId = :reponse";
         $query .= " and p.codePrelevement = :codePrelevement";
         $query .= " and p.codeRqM IS NOT NULL";
+        $query .= " and p.inSitu <> '0'";
         $query .= " and p.codeRqM <> '0'";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('demande', $demandeId);
