@@ -1,0 +1,129 @@
+<br/><br/>
+<div class="row responsive">
+    <div class="col-xm-12">
+        <table class="table table-bordered table-condensed table-advance" id="idTable_station">
+            <thead>
+                <tr>
+                    <th width="5%">Prestataire</th>
+                    <th width="5%">Support</th>
+                    <th width="10%">Station</th>
+                    <th width="10%">Lot</th>
+                    <th width="5%">Marché</th>
+                    <th width="5%" nowrap>N° suivi</th>
+                    <th width="5%" nowrap>Statut</th>
+                    <th width="1%" nowrap>Date Prelev</th>
+                    <th width="1%">Fichier</th>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </thead>
+            <tbody>
+                {% if tableau| length %}
+                    {% for ligne  in tableau %}
+                        <tr>
+                            <td>{{ ligne.nom_corres }}</td>
+                            <td>{{ ligne.nom_support }}</td>
+                            <td>{{ ligne.code_station }} {{ ligne.nom_station }}</td>
+                            <td>{{ ligne.nom_lot }}</td>
+                            <td>{{ ligne.nom_marche }}</td>
+                            <td class="text-right">{{ ligne.numero_suivi  | number_format(0,'.',' ')}}</td>
+                            <td>{{ ligne.statut_prel }}</td>
+                            <td nowrap>
+                                <span class="hidden">{{ ligne.date_prel | date("Y/m/d H:i") }}</span>
+                                {{ ligne.date_prel | date("d/m/Y H:i") }}
+                            </td>
+                            <td>
+                                {% if ligne.ft_deposee == 'oui' and ligne.url_zip | length%}
+                                      <a id="idTelechargerZip" class="btn btn-success btn-telecharger" data-id="{{ ligne.numero_suivi }}"  title="Télécharger le fichier terrain">
+                                          <i class="fa fa-upload"></i> 
+                                      </a>
+                                   {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+            </tbody>
+        </table> 
+    </div>
+</div>
+        
+  <div id="idListeFichiers"></div>
+
+<script type="text/javascript" language="javascript">
+
+    jQuery(document).ready(function () {
+        var tableStation = $('#idTable_station').DataTable(
+                {"stateSave": false,
+                    "order": [[0, "asc"]],
+                    "oLanguage": {
+                        "sSearch": "Filtre",
+                        "sFirst": "1ere page",
+                        "sLast": "Dernière page",
+                        "sNext": "Prochaine page",
+                        "sPrevious": "Page précédente",
+                        "EmptyTable": "Pas de données",
+                        "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+                        "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+                        "sZeroRecords": "Pas d'enregistrement à afficher",
+                        "sInfoEmpty": "Pas d'enregistrement à afficher",
+                        "sInfoThousands": " ",
+                        "sLengthMenu": 'Afficher <select>' +
+                                '<option value="10">10</option>' +
+                                '<option value="20">20</option>' +
+                                '<option value="30">30</option>' +
+                                '<option value="40">40</option>' +
+                                '<option value="50">50</option>' +
+                                '<option value="-1">Tous</option>' +
+                                '</select> enregistrements',
+                        "sPaginationType": "full_numbers"
+                    }
+                }
+        );
+
+        $("#idTable_station thead td").each(function (i) {
+
+            if (i != 5 && i != 7 && i != 8) {
+                var select = $('<select><option value=""></option></select>')
+                        .appendTo($(this).empty())
+                        .on('change', function () {
+                            tableStation.column(i)
+                                    .search($(this).val())
+                                    .draw();
+                        });
+
+                tableStation.column(i).data().unique().sort().each(function (d, j) {
+                    select.append('<option value="' + d + '">' + d + '</option>')
+                });
+            }
+            ;
+        });
+        
+        $(document).on('click','#idTelechargerZip',function(e){
+            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+            $('#modalTraitementEncours').modal('toggle');
+             var url = '{{ path("AeagSqeBundle_programmation_avancement_unzip",{"suiviPrelId":  "par1" }) }}';
+             var suiviPrelId = $(this).data('id');
+             url = url.replace("par1", suiviPrelId);
+             $.ajax({
+                 url: url,
+                 type: 'get',
+                 success: function(html) {
+                   $('#idListeFichiers').empty().append(html);
+                    $('#modalTraitementEncours').modal('hide');
+                    $('#modal_fichiers').modal();
+                 }
+             });
+          });
+
+    });
+
+</script>

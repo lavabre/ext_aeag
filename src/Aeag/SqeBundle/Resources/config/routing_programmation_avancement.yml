@@ -23,6 +23,18 @@ AeagSqeBundle_programmation_avancement_hydro_lot:
     requirements:
         methods:  GET|POST
         
+AeagSqeBundle_programmation_avancement_hydro_station:
+    path:  /hydro/station
+    defaults: { _controller: AeagSqeBundle:ProgrammationAvancement:hydroStation }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_avancement_unzip:
+    path:  /fichier/liste/{suiviPrelId}
+    defaults: { _controller: AeagSqeBundle:ProgrammationAvancement:unzip }
+    requirements:
+        methods:  GET|POST
+        
 AeagSqeBundle_programmation_avancement_analyse:
     path:  /analyse
     defaults: { _controller: AeagSqeBundle:ProgrammationAvancement:analyseIndex }
