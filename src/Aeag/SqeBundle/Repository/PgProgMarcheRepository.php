@@ -103,6 +103,18 @@ class PgProgMarcheRepository extends EntityRepository {
                 ->query($query);
     }
     
+    /**
+     * @return array
+     */
+    public function getAvancementHydrobioStation() {
+   
+        $query = "select * from sqe_avancement_hydrobio_station() "; 
+         return $this->getEntityManager('')
+                ->getConnection()
+                ->query($query);
+    }
+    
+    
      /**
      * @return array
      */
