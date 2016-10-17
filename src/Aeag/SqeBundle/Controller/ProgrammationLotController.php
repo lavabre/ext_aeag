@@ -2378,7 +2378,7 @@ class ProgrammationLotController extends Controller {
         $userAdmins = $repoUsers->getUsersByRole('ROLE_ADMINSQE');
         $emetteur = $user;
         foreach ($userAdmins as $userAdmin) {
-            $pgProgWebuser = $repoPgProgWebusers->getPgProgWebusersByExtid($userAdmin->getd());
+            $pgProgWebuser = $repoPgProgWebusers->getPgProgWebusersByExtid($userAdmin->getId());
             $pgProgWebuserTypmils = $repoPgProgWebuserTypmil->getPgProgWebuserTypmilByWebuser($pgProgWebuser);
             $trouve = false;
             foreach ($pgProgWebuserTypmils as $pgProgWebuserTypmil) {

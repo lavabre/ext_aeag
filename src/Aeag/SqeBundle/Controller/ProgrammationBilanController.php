@@ -73,11 +73,11 @@ class ProgrammationBilanController extends Controller {
 
         if ($action == 'P' and $maj != 'V') {
             if ($tabControle['station']['ok'] and $tabControle['groupe']['ok'] and $tabControle['periode']['ok']) {
-                if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMINSQE')) {
-                    $pgProgPhase = $repoPgProgPhases->getPgProgPhasesByCodePhase('P25');
-                } else {
+//                if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMINSQE')) {
+//                    $pgProgPhase = $repoPgProgPhases->getPgProgPhasesByCodePhase('P25');
+//                } else {
                     $pgProgPhase = $repoPgProgPhases->getPgProgPhasesByCodePhase('P20');
-                }
+//                }
             } else {
                 if ($tabControle['station']['ok'] or $tabControle['groupe']['ok'] or $tabControle['periode']['ok']) {
                     $pgProgPhase = $repoPgProgPhases->getPgProgPhasesByCodePhase('P15');

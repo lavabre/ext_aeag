@@ -441,8 +441,10 @@ class DefaultController extends Controller {
             $entityUser->setRoles($tabRoles);
             $encoder = $factory->getEncoder($entityUser);
             $entityUser->setUsername($pgProgWebuser->getLogin());
+            //$entityUser->setSalt(base_convert(sha1(uniqid(mt_rand(), true)), 16, 36));
             $entityUser->setSalt('');
             $password = $encoder->encodePassword($pgProgWebuser->getPwd(), $entityUser->getSalt());
+            $password = str_replace('{sha512}','',$password);
             $entityUser->setpassword($password);
             $entityUser->setPlainPassword($entityUser->getPassword());
             $email = $pgProgWebuser->getMail();
@@ -457,7 +459,7 @@ class DefaultController extends Controller {
 
             $pgProgWebuser->setExtId($entityUser->getId());
             $pgProgWebuser->setMail($entityUser->getEmail());
-            $pgProgWebuser->setPwd($entityUser->getPassword());
+            //$pgProgWebuser->setPwd($entityUser->getPassword());
             $emSqe->persist($pgProgWebuser);
         }
         $em->flush();
