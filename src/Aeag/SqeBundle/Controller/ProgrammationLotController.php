@@ -1129,15 +1129,9 @@ class ProgrammationLotController extends Controller {
                 $tabLots = array();
                 $i = 0;
                 foreach ($tabLotBis as $lot) {
-                    $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByLot($lot);
-                    if (count($pgProgLotAns) > 0) {
-                        $trouve = false;
-                        foreach ($pgProgLotAns as $pgProgLotAn) {
-                            if ($pgProgLotAn->getAnneeProg() == $critAnnee) {
-                                $trouve = true;
-                            }
-                            if ($trouve) {
-                                $trouve = false;
+                    $pgProgLotAn = $repoPgProgLotAn->getPgProgLotAnByAnneeLot($critAnnee, $lot);
+                    if ($pgProgLotAn) {
+                            $trouve = false;
                                 for ($j = 0; $j < count($tabLots); $j++) {
                                     if ($tabLots[$j]->getId() == $lot->getId()) {
                                         $trouve = true;
@@ -1149,14 +1143,7 @@ class ProgrammationLotController extends Controller {
                                 }
                             }
                         }
-                    } else {
-                        $tabLots[$i] = $lot;
-                        $i++;
-                    }
-                }
-            }
-
-
+               }
 
             $tabLotBis = array();
             $i = 0;
@@ -1168,16 +1155,14 @@ class ProgrammationLotController extends Controller {
             $tabLots = array();
             $i = 0;
             foreach ($tabLotBis as $lot) {
-                $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByLot($lot);
-                if ($pgProgLotAns) {
-                    foreach ($pgProgLotAns as $pgProgLotAn) {
-                        $tabLots[$i]['lot'] = $lot;
+                $pgProgLotAn = $repoPgProgLotAn->getPgProgLotAnByAnneeLot($critAnnee, $lot);
+                if ($pgProgLotAn) {
+                       $tabLots[$i]['lot'] = $lot;
                         $typeMilieu = $lot->getCodeMilieu();
                         $tabLots[$i]['typeMilieu'] = $typeMilieu;
                         $tabLots[$i]['lotAn'] = $pgProgLotAn;
                         $tabLots[$i]['tri'] = $lot->getId() . '000' . $pgProgLotAn->getVersion();
                         $i++;
-                    }
                 } else {
                     $tabLots[$i]['lot'] = $lot;
                     $typeMilieu = $lot->getCodeMilieu();
@@ -1344,6 +1329,8 @@ class ProgrammationLotController extends Controller {
         }
 
         $criteres = new Criteres();
+
+        $selMilieu = null;
 
         $form = $this->createForm(new CriteresType(), $criteres);
 
@@ -1711,6 +1698,7 @@ class ProgrammationLotController extends Controller {
 
 
             // les lots séléctionées suivant l'année selectionnée
+
             if ($critAnnee) {
                 $tabLotBis = array();
                 $i = 0;
@@ -1721,35 +1709,22 @@ class ProgrammationLotController extends Controller {
                 $tabLots = array();
                 $i = 0;
                 foreach ($tabLotBis as $lot) {
-                    $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByLot($lot);
-                    if (count($pgProgLotAns) > 0) {
-                        $trouve = false;
-                        foreach ($pgProgLotAns as $pgProgLotAn) {
-                            if ($pgProgLotAn->getAnneeProg() == $critAnnee) {
+                    $pgProgLotAn = $repoPgProgLotAn->getPgProgLotAnByAnneeLot($critAnnee, $lot);
+                    if ($pgProgLotAn) {
+                       $trouve = false;
+                        for ($j = 0; $j < count($tabLots); $j++) {
+                            if ($tabLots[$j]->getId() == $lot->getId()) {
                                 $trouve = true;
                             }
-                            if ($trouve) {
-                                $trouve = false;
-                                for ($j = 0; $j < count($tabLots); $j++) {
-                                    if ($tabLots[$j]->getId() == $lot->getId()) {
-                                        $trouve = true;
-                                    }
-                                }
-                                if (!$trouve) {
-                                    $tabLots[$i] = $lot;
-                                    $i++;
-                                }
-                            }
                         }
-                    } else {
-                        $tabLots[$i] = $lot;
-                        $i++;
+                        if (!$trouve) {
+                            $tabLots[$i] = $lot;
+                            $i++;
+                        }
                     }
                 }
             }
-
-
-
+        
             $tabLotBis = array();
             $i = 0;
             foreach ($tabLots as $lot) {
@@ -1759,17 +1734,15 @@ class ProgrammationLotController extends Controller {
 
             $tabLots = array();
             $i = 0;
-            foreach ($tabLotBis as $lot) {
-                $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByLot($lot);
-                if ($pgProgLotAns) {
-                    foreach ($pgProgLotAns as $pgProgLotAn) {
+              foreach ($tabLotBis as $lot) {
+                $pgProgLotAn = $repoPgProgLotAn->getPgProgLotAnByAnneeLot($critAnnee, $lot);
+                if ($pgProgLotAn) {
                         $tabLots[$i]['lot'] = $lot;
                         $typeMilieu = $lot->getCodeMilieu();
                         $tabLots[$i]['typeMilieu'] = $typeMilieu;
                         $tabLots[$i]['lotAn'] = $pgProgLotAn;
                         $tabLots[$i]['tri'] = $lot->getId() . '000' . $pgProgLotAn->getVersion();
                         $i++;
-                    }
                 } else {
                     $tabLots[$i]['lot'] = $lot;
                     $typeMilieu = $lot->getCodeMilieu();
@@ -1779,8 +1752,7 @@ class ProgrammationLotController extends Controller {
                     $i++;
                 }
             }
-
-
+      
             $session->set('niveau1', $this->generateUrl('Aeag_sqe_programmation_lots', array('action' => $action)));
             $session->set('niveau2', '');
 
@@ -2222,6 +2194,35 @@ class ProgrammationLotController extends Controller {
         }
 
 
+        // les lots séléctionées suivant l'année selectionnée
+
+        if ($critAnnee) {
+            $tabLotBis = array();
+            $i = 0;
+            foreach ($tabLots as $lot) {
+                $tabLotBis[$i] = $lot;
+                $i++;
+            }
+            $tabLots = array();
+            $i = 0;
+            foreach ($tabLotBis as $lot) {
+                $pgProgLotAn = $repoPgProgLotAn->getPgProgLotAnByAnneeLot($critAnnee, $lot);
+                if ($pgProgLotAn) {
+                            $trouve = false;
+                            for ($j = 0; $j < count($tabLots); $j++) {
+                                if ($tabLots[$j]->getId() == $lot->getId()) {
+                                    $trouve = true;
+                                }
+                            }
+                            if (!$trouve) {
+                                $tabLots[$i] = $lot;
+                                $i++;
+                            }
+                        }
+             }
+        }
+
+
         //  lot séléctioné
         if ($critLot) {
             $tabLotBis = array();
@@ -2241,6 +2242,7 @@ class ProgrammationLotController extends Controller {
         }
 
 
+
         $tabLotBis = array();
         $i = 0;
         foreach ($tabLots as $lot) {
@@ -2251,16 +2253,14 @@ class ProgrammationLotController extends Controller {
         $tabLots = array();
         $i = 0;
         foreach ($tabLotBis as $lot) {
-            $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByLot($lot);
-            if ($pgProgLotAns) {
-                foreach ($pgProgLotAns as $pgProgLotAn) {
-                    $tabLots[$i]['lot'] = $lot;
+            $pgProgLotAn = $repoPgProgLotAn->getPgProgLotAnByAnneeLot($critAnnee, $lot);
+            if ($pgProgLotAn) {
+                     $tabLots[$i]['lot'] = $lot;
                     $typeMilieu = $lot->getCodeMilieu();
                     $tabLots[$i]['typeMilieu'] = $typeMilieu;
                     $tabLots[$i]['lotAn'] = $pgProgLotAn;
                     $i++;
-                }
-            } else {
+             } else {
                 $tabLots[$i]['lot'] = $lot;
                 $typeMilieu = $lot->getCodeMilieu();
                 $tabLots[$i]['typeMilieu'] = $typeMilieu;
@@ -2971,7 +2971,7 @@ class ProgrammationLotController extends Controller {
         $repoPgProgLotStationAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotStationAn');
         $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
         $repoPgProgLotPeriodeProg = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeProg');
-        $repoPgProgPeriodes= $emSqe->getRepository('AeagSqeBundle:PgProgPeriodes');
+        $repoPgProgPeriodes = $emSqe->getRepository('AeagSqeBundle:PgProgPeriodes');
         $repoPgProgLotParamAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotParamAn');
         $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
         $repoPgProgStatut = $emSqe->getRepository('AeagSqeBundle:PgProgStatut');
@@ -3017,42 +3017,41 @@ class ProgrammationLotController extends Controller {
         $emSqe->flush();
 
         if (isset($_POST['optPeriode'])) {
-            $debPeriode =  $repoPgProgPeriodes->getPgProgPeriodesById($_POST['optPeriode']);
-            print_r ('debut periode : ' . $debPeriode->getNumPeriode());
-         foreach ($pgProgLotPeriodeAns as $pgProgLotPeriodeAn) {
-            // if ($now->format('ymd') <= $pgProgLotPeriodeAn->getPeriode()->getDateFin()->format('ymd')) {
-            //print_r(  $now->format('ymd')  . ' > ' . $pgProgLotPeriodeAn->getPeriode()->getDateDeb()->format('ymd') . ' < ' . $pgProgLotPeriodeAn->getPeriode()->getDateFin()->format('ymd') . '     ');
-            if ($pgProgLotPeriodeAn->getPeriode()->getNumPeriode() >= $debPeriode->getNumPeriode()) {
-                $pgProgLotPeriodeAnBis = clone($pgProgLotPeriodeAn);
-                $pgProgLotPeriodeAnBis->setLotan($pgProgLotAnBis);
-                $emSqe->persist($pgProgLotPeriodeAnBis);
+            $debPeriode = $repoPgProgPeriodes->getPgProgPeriodesById($_POST['optPeriode']);
+             foreach ($pgProgLotPeriodeAns as $pgProgLotPeriodeAn) {
+                // if ($now->format('ymd') <= $pgProgLotPeriodeAn->getPeriode()->getDateFin()->format('ymd')) {
+                //print_r(  $now->format('ymd')  . ' > ' . $pgProgLotPeriodeAn->getPeriode()->getDateDeb()->format('ymd') . ' < ' . $pgProgLotPeriodeAn->getPeriode()->getDateFin()->format('ymd') . '     ');
+                if ($pgProgLotPeriodeAn->getPeriode()->getNumPeriode() >= $debPeriode->getNumPeriode()) {
+                    $pgProgLotPeriodeAnBis = clone($pgProgLotPeriodeAn);
+                    $pgProgLotPeriodeAnBis->setLotan($pgProgLotAnBis);
+                    $emSqe->persist($pgProgLotPeriodeAnBis);
 
-                $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByPeriodeAn($pgProgLotPeriodeAn);
-                foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
-                    $pgProgLotPeriodeProgBis = clone($pgProgLotPeriodeProg);
-                    $pgProgLotPeriodeProgBis->setPeriodan($pgProgLotPeriodeAnBis);
-                    $pgProgLotGrparAnsBis = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotan($pgProgLotAnBis);
-                    foreach ($pgProgLotGrparAnsBis as $pgProgLotGrparAnBis) {
-                        if ($pgProgLotGrparAnBis->getGrparRef()->getId() == $pgProgLotPeriodeProgBis->getGrparAn()->getGrparRef()->getId()) {
-                            $pgProgLotPeriodeProgBis->setGrparAn($pgProgLotGrparAnBis);
-                            break;
+                    $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByPeriodeAn($pgProgLotPeriodeAn);
+                    foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
+                        $pgProgLotPeriodeProgBis = clone($pgProgLotPeriodeProg);
+                        $pgProgLotPeriodeProgBis->setPeriodan($pgProgLotPeriodeAnBis);
+                        $pgProgLotGrparAnsBis = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotan($pgProgLotAnBis);
+                        foreach ($pgProgLotGrparAnsBis as $pgProgLotGrparAnBis) {
+                            if ($pgProgLotGrparAnBis->getGrparRef()->getId() == $pgProgLotPeriodeProgBis->getGrparAn()->getGrparRef()->getId()) {
+                                $pgProgLotPeriodeProgBis->setGrparAn($pgProgLotGrparAnBis);
+                                break;
+                            }
                         }
-                    }
-                    $pgProgLotStationAnsBis = $repoPgProgLotStationAn->getPgProgLotStationAnBylotan($pgProgLotAnBis);
-                    foreach ($pgProgLotStationAnsBis as $pgProgLotStationAnBis) {
-                        if ($pgProgLotStationAnBis->getStation()->getOuvFoncid() == $pgProgLotPeriodeProgBis->getStationAn()->getStation()->getOuvFoncid()) {
-                            $pgProgLotPeriodeProgBis->setStationAn($pgProgLotStationAnBis);
-                            break;
+                        $pgProgLotStationAnsBis = $repoPgProgLotStationAn->getPgProgLotStationAnBylotan($pgProgLotAnBis);
+                        foreach ($pgProgLotStationAnsBis as $pgProgLotStationAnBis) {
+                            if ($pgProgLotStationAnBis->getStation()->getOuvFoncid() == $pgProgLotPeriodeProgBis->getStationAn()->getStation()->getOuvFoncid()) {
+                                $pgProgLotPeriodeProgBis->setStationAn($pgProgLotStationAnBis);
+                                break;
+                            }
                         }
+                        $emSqe->persist($pgProgLotPeriodeProgBis);
                     }
-                    $emSqe->persist($pgProgLotPeriodeProgBis);
+                    $pgProgStatut = $repoPgProgStatut->getPgProgStatutByCodeStatut('INV');
+                    $pgProgLotPeriodeAn->setCodeStatut($pgProgStatut);
+                    $emSqe->persist($pgProgLotPeriodeAn);
                 }
-                $pgProgStatut = $repoPgProgStatut->getPgProgStatutByCodeStatut('INV');
-                $pgProgLotPeriodeAn->setCodeStatut($pgProgStatut);
-                $emSqe->persist($pgProgLotPeriodeAn);
             }
         }
-         }
 
         $pgProgPhase = $repoPgProgPhases->getPgProgPhasesByCodePhase('P45');
         $pgProgLotAn->setPhase($pgProgPhase);

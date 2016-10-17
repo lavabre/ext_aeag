@@ -37,6 +37,8 @@ class DefaultController extends Controller {
         $annee = $repoParametre->getParametreByCode('ANNEE');
         if (!$annee) {
             $this->initBase($emSqe, $em);
+        }else{
+            $session->set('anneeProg', $annee->getLibelle());
         }
 
         if (is_object($user)) {
