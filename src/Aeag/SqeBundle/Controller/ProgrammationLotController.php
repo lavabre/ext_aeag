@@ -1131,19 +1131,19 @@ class ProgrammationLotController extends Controller {
                 foreach ($tabLotBis as $lot) {
                     $pgProgLotAn = $repoPgProgLotAn->getPgProgLotAnByAnneeLot($critAnnee, $lot);
                     if ($pgProgLotAn) {
-                            $trouve = false;
-                                for ($j = 0; $j < count($tabLots); $j++) {
-                                    if ($tabLots[$j]->getId() == $lot->getId()) {
-                                        $trouve = true;
-                                    }
-                                }
-                                if (!$trouve) {
-                                    $tabLots[$i] = $lot;
-                                    $i++;
-                                }
+                        $trouve = false;
+                        for ($j = 0; $j < count($tabLots); $j++) {
+                            if ($tabLots[$j]->getId() == $lot->getId()) {
+                                $trouve = true;
                             }
                         }
-               }
+                        if (!$trouve) {
+                            $tabLots[$i] = $lot;
+                            $i++;
+                        }
+                    }
+                }
+            }
 
             $tabLotBis = array();
             $i = 0;
@@ -1157,12 +1157,12 @@ class ProgrammationLotController extends Controller {
             foreach ($tabLotBis as $lot) {
                 $pgProgLotAn = $repoPgProgLotAn->getPgProgLotAnByAnneeLot($critAnnee, $lot);
                 if ($pgProgLotAn) {
-                       $tabLots[$i]['lot'] = $lot;
-                        $typeMilieu = $lot->getCodeMilieu();
-                        $tabLots[$i]['typeMilieu'] = $typeMilieu;
-                        $tabLots[$i]['lotAn'] = $pgProgLotAn;
-                        $tabLots[$i]['tri'] = $lot->getId() . '000' . $pgProgLotAn->getVersion();
-                        $i++;
+                    $tabLots[$i]['lot'] = $lot;
+                    $typeMilieu = $lot->getCodeMilieu();
+                    $tabLots[$i]['typeMilieu'] = $typeMilieu;
+                    $tabLots[$i]['lotAn'] = $pgProgLotAn;
+                    $tabLots[$i]['tri'] = $lot->getId() . '000' . $pgProgLotAn->getVersion();
+                    $i++;
                 } else {
                     $tabLots[$i]['lot'] = $lot;
                     $typeMilieu = $lot->getCodeMilieu();
@@ -1711,7 +1711,7 @@ class ProgrammationLotController extends Controller {
                 foreach ($tabLotBis as $lot) {
                     $pgProgLotAn = $repoPgProgLotAn->getPgProgLotAnByAnneeLot($critAnnee, $lot);
                     if ($pgProgLotAn) {
-                       $trouve = false;
+                        $trouve = false;
                         for ($j = 0; $j < count($tabLots); $j++) {
                             if ($tabLots[$j]->getId() == $lot->getId()) {
                                 $trouve = true;
@@ -1724,7 +1724,7 @@ class ProgrammationLotController extends Controller {
                     }
                 }
             }
-        
+
             $tabLotBis = array();
             $i = 0;
             foreach ($tabLots as $lot) {
@@ -1734,15 +1734,15 @@ class ProgrammationLotController extends Controller {
 
             $tabLots = array();
             $i = 0;
-              foreach ($tabLotBis as $lot) {
+            foreach ($tabLotBis as $lot) {
                 $pgProgLotAn = $repoPgProgLotAn->getPgProgLotAnByAnneeLot($critAnnee, $lot);
                 if ($pgProgLotAn) {
-                        $tabLots[$i]['lot'] = $lot;
-                        $typeMilieu = $lot->getCodeMilieu();
-                        $tabLots[$i]['typeMilieu'] = $typeMilieu;
-                        $tabLots[$i]['lotAn'] = $pgProgLotAn;
-                        $tabLots[$i]['tri'] = $lot->getId() . '000' . $pgProgLotAn->getVersion();
-                        $i++;
+                    $tabLots[$i]['lot'] = $lot;
+                    $typeMilieu = $lot->getCodeMilieu();
+                    $tabLots[$i]['typeMilieu'] = $typeMilieu;
+                    $tabLots[$i]['lotAn'] = $pgProgLotAn;
+                    $tabLots[$i]['tri'] = $lot->getId() . '000' . $pgProgLotAn->getVersion();
+                    $i++;
                 } else {
                     $tabLots[$i]['lot'] = $lot;
                     $typeMilieu = $lot->getCodeMilieu();
@@ -1752,7 +1752,7 @@ class ProgrammationLotController extends Controller {
                     $i++;
                 }
             }
-      
+
             $session->set('niveau1', $this->generateUrl('Aeag_sqe_programmation_lots', array('action' => $action)));
             $session->set('niveau2', '');
 
@@ -2208,18 +2208,18 @@ class ProgrammationLotController extends Controller {
             foreach ($tabLotBis as $lot) {
                 $pgProgLotAn = $repoPgProgLotAn->getPgProgLotAnByAnneeLot($critAnnee, $lot);
                 if ($pgProgLotAn) {
-                            $trouve = false;
-                            for ($j = 0; $j < count($tabLots); $j++) {
-                                if ($tabLots[$j]->getId() == $lot->getId()) {
-                                    $trouve = true;
-                                }
-                            }
-                            if (!$trouve) {
-                                $tabLots[$i] = $lot;
-                                $i++;
-                            }
+                    $trouve = false;
+                    for ($j = 0; $j < count($tabLots); $j++) {
+                        if ($tabLots[$j]->getId() == $lot->getId()) {
+                            $trouve = true;
                         }
-             }
+                    }
+                    if (!$trouve) {
+                        $tabLots[$i] = $lot;
+                        $i++;
+                    }
+                }
+            }
         }
 
 
@@ -2255,12 +2255,12 @@ class ProgrammationLotController extends Controller {
         foreach ($tabLotBis as $lot) {
             $pgProgLotAn = $repoPgProgLotAn->getPgProgLotAnByAnneeLot($critAnnee, $lot);
             if ($pgProgLotAn) {
-                     $tabLots[$i]['lot'] = $lot;
-                    $typeMilieu = $lot->getCodeMilieu();
-                    $tabLots[$i]['typeMilieu'] = $typeMilieu;
-                    $tabLots[$i]['lotAn'] = $pgProgLotAn;
-                    $i++;
-             } else {
+                $tabLots[$i]['lot'] = $lot;
+                $typeMilieu = $lot->getCodeMilieu();
+                $tabLots[$i]['typeMilieu'] = $typeMilieu;
+                $tabLots[$i]['lotAn'] = $pgProgLotAn;
+                $i++;
+            } else {
                 $tabLots[$i]['lot'] = $lot;
                 $typeMilieu = $lot->getCodeMilieu();
                 $tabLots[$i]['typeMilieu'] = $typeMilieu;
@@ -2379,51 +2379,53 @@ class ProgrammationLotController extends Controller {
         $emetteur = $user;
         foreach ($userAdmins as $userAdmin) {
             $pgProgWebuser = $repoPgProgWebusers->getPgProgWebusersByExtid($userAdmin->getId());
-            $pgProgWebuserTypmils = $repoPgProgWebuserTypmil->getPgProgWebuserTypmilByWebuser($pgProgWebuser);
-            $trouve = false;
-            foreach ($pgProgWebuserTypmils as $pgProgWebuserTypmil) {
-                if ($pgProgLotAn->getLot()->getCodeMilieu()->getCodeMilieu() == $pgProgWebuserTypmil->getTypmil()->getCodeMilieu()) {
-                    $trouve = true;
-                    break;
+            if ($pgProgWebuser) {
+                $pgProgWebuserTypmils = $repoPgProgWebuserTypmil->getPgProgWebuserTypmilByWebuser($pgProgWebuser);
+                $trouve = false;
+                foreach ($pgProgWebuserTypmils as $pgProgWebuserTypmil) {
+                    if ($pgProgLotAn->getLot()->getCodeMilieu()->getCodeMilieu() == $pgProgWebuserTypmil->getTypmil()->getCodeMilieu()) {
+                        $trouve = true;
+                        break;
+                    }
                 }
-            }
-            if ($trouve) {
-                $message = new Message();
-                $message->setRecepteur($userAdmin->getId());
-                $message->setEmetteur($user->getid());
-                $message->setNouveau(true);
-                $message->setIteration(2);
-                $texte = "Bonjour ," . PHP_EOL;
-                $texte = $texte . "La programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL;
-                $texte = $texte . " a été soumise à la validation par " . $pgProgWebuser->getNom() . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y') . PHP_EOL;
-                $texte = $texte . " " . PHP_EOL;
-                $texte = $texte . "Cordialement.";
-                $message->setMessage($texte);
-                $em->persist($message);
+                if ($trouve) {
+                    $message = new Message();
+                    $message->setRecepteur($userAdmin->getId());
+                    $message->setEmetteur($user->getid());
+                    $message->setNouveau(true);
+                    $message->setIteration(2);
+                    $texte = "Bonjour ," . PHP_EOL;
+                    $texte = $texte . "La programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL;
+                    $texte = $texte . " a été soumise à la validation par " . $pgProgWebuser->getNom() . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y') . PHP_EOL;
+                    $texte = $texte . " " . PHP_EOL;
+                    $texte = $texte . "Cordialement.";
+                    $message->setMessage($texte);
+                    $em->persist($message);
 
-                $notification = new Notification();
-                $notification->setRecepteur($userAdmin->getId());
-                $notification->setEmetteur($user->getId());
-                $notification->setNouveau(true);
-                $notification->setIteration(2);
-                $notification->setMessage("la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été soumise à la validation par " . $pgProgWebuser->getNom() . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y'));
-                $em->persist($notification);
-                // Récupération du service.
-                $mailer = $this->get('mailer');
-                $dest = $userAdmin->getEmail() . ";";
-                $destinataires = explode(";", $dest);
+                    $notification = new Notification();
+                    $notification->setRecepteur($userAdmin->getId());
+                    $notification->setEmetteur($user->getId());
+                    $notification->setNouveau(true);
+                    $notification->setIteration(2);
+                    $notification->setMessage("la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été soumise à la validation par " . $pgProgWebuser->getNom() . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y'));
+                    $em->persist($notification);
+                    // Récupération du service.
+                    $mailer = $this->get('mailer');
+                    $dest = $userAdmin->getEmail() . ";";
+                    $destinataires = explode(";", $dest);
 // Création de l'e-mail : le service mailer utilise SwiftMailer, donc nous créons une instance de Swift_Message.
-                $mail = \Swift_Message::newInstance('Wonderful Subject')
-                        ->setSubject('Programmation ' . $pgProgLotAn->getAnneeProg() . ' version ' . $pgProgLotAn->getVersion() . ' du lot  ' . $pgProgLotAn->getLot()->getNomLot() . '  soumise à validation')
-                        ->setFrom('automate@eau-adour-garonne.fr')
-                        ->setTo($userAdmin->getEmail())
-                        ->setBody($this->renderView('AeagSqeBundle:Programmation:Lot/prevaliderEmail.txt.twig', array(
-                            'emetteur' => $pgProgWebuser,
-                            'lotan' => $pgProgLotAn,
-                )));
+                    $mail = \Swift_Message::newInstance('Wonderful Subject')
+                            ->setSubject('Programmation ' . $pgProgLotAn->getAnneeProg() . ' version ' . $pgProgLotAn->getVersion() . ' du lot  ' . $pgProgLotAn->getLot()->getNomLot() . '  soumise à validation')
+                            ->setFrom('automate@eau-adour-garonne.fr')
+                            ->setTo($userAdmin->getEmail())
+                            ->setBody($this->renderView('AeagSqeBundle:Programmation:Lot/prevaliderEmail.txt.twig', array(
+                                'emetteur' => $pgProgWebuser,
+                                'lotan' => $pgProgLotAn,
+                    )));
 
 // Retour au service mailer, nous utilisons sa méthode « send() » pour envoyer notre $message.
-                $mailer->send($mail);
+                    $mailer->send($mail);
+                }
             }
         }
 
@@ -3018,7 +3020,7 @@ class ProgrammationLotController extends Controller {
 
         if (isset($_POST['optPeriode'])) {
             $debPeriode = $repoPgProgPeriodes->getPgProgPeriodesById($_POST['optPeriode']);
-             foreach ($pgProgLotPeriodeAns as $pgProgLotPeriodeAn) {
+            foreach ($pgProgLotPeriodeAns as $pgProgLotPeriodeAn) {
                 // if ($now->format('ymd') <= $pgProgLotPeriodeAn->getPeriode()->getDateFin()->format('ymd')) {
                 //print_r(  $now->format('ymd')  . ' > ' . $pgProgLotPeriodeAn->getPeriode()->getDateDeb()->format('ymd') . ' < ' . $pgProgLotPeriodeAn->getPeriode()->getDateFin()->format('ymd') . '     ');
                 if ($pgProgLotPeriodeAn->getPeriode()->getNumPeriode() >= $debPeriode->getNumPeriode()) {

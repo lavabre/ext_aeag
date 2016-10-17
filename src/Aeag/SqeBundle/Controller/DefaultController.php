@@ -400,14 +400,14 @@ class DefaultController extends Controller {
         $repoUsers = $em->getRepository('AeagUserBundle:User');
         $repoPgProgWebusers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
 
-        $pgProgWebusers = $repoPgProgWebusers->getPgProgWebusers();
+        $pgProgWebuser = $repoPgProgWebusers->getPgProgWebusersByid(10);
 
         $pgProgWebusersNbCrees = 0;
         $pgProgWebusersNbModifies = 0;
         $message = '';
 
 
-        foreach ($pgProgWebusers as $pgProgWebuser) {
+        //foreach ($pgProgWebusers as $pgProgWebuser) {
             if ($pgProgWebuser->getExtId()) {
                 $user = $repoUsers->getUserById($pgProgWebuser->getExtId());
             } else {
@@ -418,6 +418,15 @@ class DefaultController extends Controller {
                 $entityUser->setEnabled(true);
                 $pgProgWebusersNbCrees++;
             } else {
+//                $entityUser = new User();
+//                $entityUser->setUsername($user->getUsername());
+//                $entityUser->setUsernameCanonical($user->getUsernameCanonical());
+//                $entityUser->setEmail($user->getEmail());
+//                $entityUser->setEmailCanonical($user->getEmailCanonical());
+//                $entityUser->setRoles($user->getRoles());
+//                $entityUser->setEnabled(true);
+//                $entityUser->setPassword($user->getPassword());
+//                $em->remove($user);
                 $entityUser = $user;
                 $pgProgWebusersNbModifies++;
             }
@@ -441,8 +450,9 @@ class DefaultController extends Controller {
             $entityUser->setRoles($tabRoles);
             $encoder = $factory->getEncoder($entityUser);
             $entityUser->setUsername($pgProgWebuser->getLogin());
-            //$entityUser->setSalt(base_convert(sha1(uniqid(mt_rand(), true)), 16, 36));
+            //$entityUser->setSalt($entityUser->getid());
             $entityUser->setSalt('');
+            //$entityUser->setSalt(hash('sha512', $entityUser->getid())); 
             $password = $encoder->encodePassword($pgProgWebuser->getPwd(), $entityUser->getSalt());
             $password = str_replace('{sha512}','',$password);
             $entityUser->setpassword($password);
@@ -461,7 +471,7 @@ class DefaultController extends Controller {
             $pgProgWebuser->setMail($entityUser->getEmail());
             //$pgProgWebuser->setPwd($entityUser->getPassword());
             $emSqe->persist($pgProgWebuser);
-        }
+        //}
         $em->flush();
         $emSqe->flush();
         $message = "users sqe crees : " . $pgProgWebusersNbCrees . "   users sqe modifiés : " . $pgProgWebusersNbModifies;
