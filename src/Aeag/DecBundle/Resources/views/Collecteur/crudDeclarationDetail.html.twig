@@ -435,7 +435,7 @@
             strRet1 = strRet1.substring(0, strRet1.length-1);
             montRet1 = parseFloat( strRet1 );#}
             montRet = Math.round( (montRet1 + 0.00001)* 100) / 100;
-            {#console.log ('montret1 : ' + montRet1 + ' montret : ' + montRet + ' aide : ' + $('#crudDeclarationDetail_montAide').val());#}
+            console.log ('montret1 : ' + montRet1 + ' montret : ' + montRet + ' aide : ' + $('#crudDeclarationDetail_montAide').val());
             $('#crudDeclarationDetail_montAide').val(montRet);  
             if (montRet != $('#crudDeclarationDetail_montAide').val()){
                 $('#crudDeclarationDetail_montAide').css("color","red");
@@ -550,7 +550,7 @@
                     strRet1 = strRet1.substring(0, strRet1.length-1);
                     montRet1 = parseFloat( strRet1 );#}
                     montRet = Math.round( (montRet1 + 0.00001)* 100) / 100;
-                    {#console.log ('montret1 : ' + montRet1 + ' montret : ' + montRet + ' aide : ' + $('#crudDeclarationDetail_montAide').val() + ' taux aide : ' + $('#idTauxAide').val());#}
+                    console.log ('montret111 : ' + montRet1 + ' montret : ' + montRet + ' aide : ' + $('#crudDeclarationDetail_montAide').val() + ' taux aide : ' + $('#idTauxAide').val());
                     $('#crudDeclarationDetail_montAide').val(montRet);  
                     if (montRet != $('#crudDeclarationDetail_montAide').val()){
                         $('#crudDeclarationDetail_montAide').css("color","red");
