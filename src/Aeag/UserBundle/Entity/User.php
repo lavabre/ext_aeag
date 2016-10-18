@@ -68,11 +68,19 @@ class User extends BaseUser {
      * @var string
      */
     protected $salt;
-    
-      /**
+
+    /**
      * @var array
      */
     protected $depts;
+
+    /**
+     * Plain password. Used for model validation. Must not be persisted.
+     *
+     * @ORM\Column(type="string", length=250, name="plainpwd", nullable=true)
+     * @var string
+     */
+    protected $plainPwd;
 
     public function _construct() {
         $this->roles = array();
@@ -146,7 +154,7 @@ class User extends BaseUser {
     public function setSalt($salt) {
         $this->salt = $salt;
     }
-    
+
     function getDepts() {
         return $this->depts;
     }
@@ -155,6 +163,12 @@ class User extends BaseUser {
         $this->depts = $depts;
     }
 
+    function getPlainPwd() {
+        return $this->plainPwd;
+    }
 
+    function setPlainPwd($plainPwd) {
+        $this->plainPwd = $plainPwd;
+    }
 
 }

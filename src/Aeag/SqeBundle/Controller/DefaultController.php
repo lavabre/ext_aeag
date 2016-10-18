@@ -20,7 +20,7 @@ class DefaultController extends Controller {
 
         $user = $this->getUser();
         $session = $this->get('session');
-      //  $session->clear();
+        //  $session->clear();
         $session->set('retourErreur', $this->generateUrl('aeag_sqe'));
         $session->set('controller', 'default');
         $session->set('fonction', 'index');
@@ -28,23 +28,24 @@ class DefaultController extends Controller {
         $emSqe = $this->get('doctrine')->getManager('sqe');
         $factory = $this->get('security.encoder_factory');
 
-  
+
         $repoParametre = $emSqe->getRepository('AeagSqeBundle:Parametre');
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
+        $repoUsers = $em->getRepository('AeagUserBundle:User');
         $repoPgProgPrestaTypfic = $emSqe->getRepository('AeagSqeBundle:PgProgPrestaTypfic');
 
-        
+
         $annee = $repoParametre->getParametreByCode('ANNEE');
         if (!$annee) {
             $this->initBase($emSqe, $em);
-        }else{
+        } else {
             $session->set('anneeProg', $annee->getLibelle());
         }
 
         if (is_object($user)) {
             $mes = AeagController::notificationAction($user, $em, $session);
             $mes1 = AeagController::messageAction($user, $em, $session);
-         } else {
+        } else {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
 
@@ -134,16 +135,15 @@ class DefaultController extends Controller {
             $suiviSED = true;
             $suiviEau = true;
         }
-        
+
         $session->set('suiviHb', $suiviHb);
         $session->set('suiviQHb', $suiviQHb);
         $session->set('suiviDonnees', $suiviDonnees);
         $session->set('suiviSED', $suiviSED);
         $session->set('suiviEau', $suiviEau);
 
-        return $this->render('AeagSqeBundle:Default:index.html.twig',
-                array('suiviHb' => $suiviHb,
-                         'suiviDonnees' => $suiviDonnees));
+        return $this->render('AeagSqeBundle:Default:index.html.twig', array('suiviHb' => $suiviHb,
+                    'suiviDonnees' => $suiviDonnees));
     }
 
     public function envoyerMessageAction(Request $request) {
@@ -400,14 +400,14 @@ class DefaultController extends Controller {
         $repoUsers = $em->getRepository('AeagUserBundle:User');
         $repoPgProgWebusers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
 
-        $pgProgWebuser = $repoPgProgWebusers->getPgProgWebusersByid(10);
+        $pgProgWebusers = $repoPgProgWebusers->getPgProgWebusers();
 
         $pgProgWebusersNbCrees = 0;
         $pgProgWebusersNbModifies = 0;
         $message = '';
 
 
-        //foreach ($pgProgWebusers as $pgProgWebuser) {
+        foreach ($pgProgWebusers as $pgProgWebuser) {
             if ($pgProgWebuser->getExtId()) {
                 $user = $repoUsers->getUserById($pgProgWebuser->getExtId());
             } else {
@@ -418,15 +418,6 @@ class DefaultController extends Controller {
                 $entityUser->setEnabled(true);
                 $pgProgWebusersNbCrees++;
             } else {
-//                $entityUser = new User();
-//                $entityUser->setUsername($user->getUsername());
-//                $entityUser->setUsernameCanonical($user->getUsernameCanonical());
-//                $entityUser->setEmail($user->getEmail());
-//                $entityUser->setEmailCanonical($user->getEmailCanonical());
-//                $entityUser->setRoles($user->getRoles());
-//                $entityUser->setEnabled(true);
-//                $entityUser->setPassword($user->getPassword());
-//                $em->remove($user);
                 $entityUser = $user;
                 $pgProgWebusersNbModifies++;
             }
@@ -450,30 +441,35 @@ class DefaultController extends Controller {
             $entityUser->setRoles($tabRoles);
             $encoder = $factory->getEncoder($entityUser);
             $entityUser->setUsername($pgProgWebuser->getLogin());
-            //$entityUser->setSalt($entityUser->getid());
             $entityUser->setSalt('');
-            //$entityUser->setSalt(hash('sha512', $entityUser->getid())); 
             $password = $encoder->encodePassword($pgProgWebuser->getPwd(), $entityUser->getSalt());
-            $password = str_replace('{sha512}','',$password);
+            //$password = str_replace('{sha512}','',$password);
             $entityUser->setpassword($password);
-            $entityUser->setPlainPassword($entityUser->getPassword());
+
             $email = $pgProgWebuser->getMail();
             if ($email) {
                 $entityUser->setEmail($email);
             } else {
                 $entityUser->setEmail($pgProgWebuser->getLogin() . '@a-renseigner-merci.svp');
             }
+            $entityUser->eraseCredentials();
+           //$pwd = str_replace('{sha512}','',$pgProgWebuser->getPwd());
+            $pwd = $pgProgWebuser->getPwd();
+            $entityUser->setPlainPwd($pwd);
             $em->persist($entityUser);
-
-            //print_r('user : ' . $entityUser->getid() . ' ' . $entityUser->getUsername() .  ' ' . $entityUser->getEmail() . ' ' . $entityUser->getPassword() . '  prohuser : ' . $pgProgWebuser->getid() . ' ' .  $pgProgWebuser->getNom() . '\n  ');
-
             $pgProgWebuser->setExtId($entityUser->getId());
             $pgProgWebuser->setMail($entityUser->getEmail());
-            //$pgProgWebuser->setPwd($entityUser->getPassword());
+            $pgProgWebuser->setPwd($pwd);
             $emSqe->persist($pgProgWebuser);
-        //}
+        }
+
         $em->flush();
         $emSqe->flush();
+        // print_r('apres user : ' . $entityUser->getid() . ' ' . $entityUser->getUsername() .  ' ' . $entityUser->getEmail() . ' ' . $entityUser->getPassword() . ' plainpassword : ' . $entityUser->getPlainPwd()   . '  prohuser : ' . $pgProgWebuser->getid() . ' ' .  $pgProgWebuser->getNom() . ' pwd : ' . $pgProgWebuser->getPwd() . '<br/>  ');
+
+
+
+
         $message = "users sqe crees : " . $pgProgWebusersNbCrees . "   users sqe modifiés : " . $pgProgWebusersNbModifies;
         return $message;
     }

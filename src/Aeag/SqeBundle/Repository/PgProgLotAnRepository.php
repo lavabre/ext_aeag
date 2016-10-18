@@ -66,7 +66,7 @@ class PgProgLotAnRepository extends EntityRepository {
         $query = $query . " and p.lot = " . $pgProgLot->getId();
         $qb = $this->_em->createQuery($query);
         //print_r($query);
-        return $qb->getOneOrNullResult();
+        return $qb->getResult();
     }
 
     public function getPgProgLotAnByLotVersion($pgProgLot, $version) {

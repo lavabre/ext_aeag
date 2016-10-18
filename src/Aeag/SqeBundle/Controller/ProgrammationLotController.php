@@ -1129,7 +1129,8 @@ class ProgrammationLotController extends Controller {
                 $tabLots = array();
                 $i = 0;
                 foreach ($tabLotBis as $lot) {
-                    $pgProgLotAn = $repoPgProgLotAn->getPgProgLotAnByAnneeLot($critAnnee, $lot);
+                    $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByAnneeLot($critAnnee, $lot);
+                    foreach($pgProgLotAns as $pgProgLotAn){
                     if ($pgProgLotAn) {
                         $trouve = false;
                         for ($j = 0; $j < count($tabLots); $j++) {
@@ -1143,6 +1144,7 @@ class ProgrammationLotController extends Controller {
                         }
                     }
                 }
+                }
             }
 
             $tabLotBis = array();
@@ -1155,7 +1157,8 @@ class ProgrammationLotController extends Controller {
             $tabLots = array();
             $i = 0;
             foreach ($tabLotBis as $lot) {
-                $pgProgLotAn = $repoPgProgLotAn->getPgProgLotAnByAnneeLot($critAnnee, $lot);
+                $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByAnneeLot($critAnnee, $lot);
+                    foreach($pgProgLotAns as $pgProgLotAn){
                 if ($pgProgLotAn) {
                     $tabLots[$i]['lot'] = $lot;
                     $typeMilieu = $lot->getCodeMilieu();
@@ -1171,6 +1174,7 @@ class ProgrammationLotController extends Controller {
                     $tabLots[$i]['tri'] = $lot->getId() . '0000';
                     $i++;
                 }
+            }
             }
 
 
@@ -1709,7 +1713,8 @@ class ProgrammationLotController extends Controller {
                 $tabLots = array();
                 $i = 0;
                 foreach ($tabLotBis as $lot) {
-                    $pgProgLotAn = $repoPgProgLotAn->getPgProgLotAnByAnneeLot($critAnnee, $lot);
+                    $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByAnneeLot($critAnnee, $lot);
+                    foreach($pgProgLotAns as $pgProgLotAn){
                     if ($pgProgLotAn) {
                         $trouve = false;
                         for ($j = 0; $j < count($tabLots); $j++) {
@@ -1723,6 +1728,7 @@ class ProgrammationLotController extends Controller {
                         }
                     }
                 }
+                }
             }
 
             $tabLotBis = array();
@@ -1735,7 +1741,9 @@ class ProgrammationLotController extends Controller {
             $tabLots = array();
             $i = 0;
             foreach ($tabLotBis as $lot) {
-                $pgProgLotAn = $repoPgProgLotAn->getPgProgLotAnByAnneeLot($critAnnee, $lot);
+                $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByAnneeLot($critAnnee, $lot);
+                $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByAnneeLot($critAnnee, $lot);
+                    foreach($pgProgLotAns as $pgProgLotAn){
                 if ($pgProgLotAn) {
                     $tabLots[$i]['lot'] = $lot;
                     $typeMilieu = $lot->getCodeMilieu();
@@ -1751,6 +1759,7 @@ class ProgrammationLotController extends Controller {
                     $tabLots[$i]['tri'] = $lot->getId() . '0000';
                     $i++;
                 }
+            }
             }
 
             $session->set('niveau1', $this->generateUrl('Aeag_sqe_programmation_lots', array('action' => $action)));
@@ -1834,12 +1843,13 @@ class ProgrammationLotController extends Controller {
         $annee = $session->get('critAnnee');
         $lot = $repoPgProgLot->getPgProgLotById($session->get('critLot'));
         $typeMilieu = $lot->getCodeMilieu();
-        $pgProgLotAn = $repoPgProgLotAn->getPgProgLotAnByAnneeLot($annee, $lot);
+        $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByAnneeLot($annee, $lot);
 
         $tabLots = array();
         $i = 0;
         $tabLots[$i]['lot'] = $lot;
         $tabLots[$i]['typeMilieu'] = $typeMilieu;
+       foreach($pgProgLotAns as $pgProgLotAn){
         if ($pgProgLotAn) {
             $tabLots[$i]['lotAn'] = $pgProgLotAn;
             $critPhase = $pgProgLotAn->getPhase();
@@ -1847,6 +1857,7 @@ class ProgrammationLotController extends Controller {
             $tabLots[$i]['lotAn'] = null;
             $critPhase = null;
         }
+       }
 
         if ($session->has('selMilieu')) {
             $selMilieu = $session->get('selMilieu');
@@ -2206,7 +2217,8 @@ class ProgrammationLotController extends Controller {
             $tabLots = array();
             $i = 0;
             foreach ($tabLotBis as $lot) {
-                $pgProgLotAn = $repoPgProgLotAn->getPgProgLotAnByAnneeLot($critAnnee, $lot);
+               $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByAnneeLot($critAnnee, $lot);
+                    foreach($pgProgLotAns as $pgProgLotAn){
                 if ($pgProgLotAn) {
                     $trouve = false;
                     for ($j = 0; $j < count($tabLots); $j++) {
@@ -2219,6 +2231,7 @@ class ProgrammationLotController extends Controller {
                         $i++;
                     }
                 }
+                    }
             }
         }
 
@@ -2253,7 +2266,8 @@ class ProgrammationLotController extends Controller {
         $tabLots = array();
         $i = 0;
         foreach ($tabLotBis as $lot) {
-            $pgProgLotAn = $repoPgProgLotAn->getPgProgLotAnByAnneeLot($critAnnee, $lot);
+           $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByAnneeLot($critAnnee, $lot);
+                    foreach($pgProgLotAns as $pgProgLotAn){
             if ($pgProgLotAn) {
                 $tabLots[$i]['lot'] = $lot;
                 $typeMilieu = $lot->getCodeMilieu();
@@ -2267,6 +2281,7 @@ class ProgrammationLotController extends Controller {
                 $tabLots[$i]['lotAn'] = null;
                 $i++;
             }
+                    }
         }
 
 

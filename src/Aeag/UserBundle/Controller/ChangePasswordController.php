@@ -66,12 +66,13 @@ class ChangePasswordController extends Controller {
             $event = new FormEvent($form, $request);
             $dispatcher->dispatch(FOSUserEvents::CHANGE_PASSWORD_SUCCESS, $event);
 
+            $user->setPlainPwd($user->getPlainPassword());
             $userManager->updateUser($user);
 
             $pgProgWebuser = $repoPgProgWebusers->getPgProgWebusersByExtid($user->getId());
             if ($pgProgWebuser) {
                 $pgProgWebuser->setMail($user->getEmail());
-                $pgProgWebuser->setPwd($user->getPassword());
+                $pgProgWebuser->setPwd($user->getPlainPwd());
                 $emSqe->persist($pgProgWebuser);
                 $emSqe->flush();
             }
