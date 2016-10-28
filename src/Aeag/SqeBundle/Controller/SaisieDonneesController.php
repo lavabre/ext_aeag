@@ -425,8 +425,9 @@ class SaisieDonneesController extends Controller {
                         $tabPgCmdPrelevs[$ip]['nbSaisisParametresAnalyseCorrect'] = 0;
                         $tabPgCmdPrelevs[$ip]['nbSaisisParametresAnalyseIncorrect'] = 0;
                         $tabPgCmdPrelevs[$ip]['nbSaisisParametresAnalyseErreur'] = 0;
-                        $pgProgPrestaTypfic = $repoPgProgPrestaTypfic->getPgProgPrestaTypficByCodeMilieuPrestataireFormatFic($pgProgTypeMilieu, $pgCmdPrelev->getprestaPrel(), 'Saisie');
-                        if ($pgProgPrestaTypfic) {
+                        //$pgProgPrestaTypfic = $repoPgProgPrestaTypfic->getPgProgPrestaTypficByCodeMilieuPrestataireFormatFic($pgProgTypeMilieu, $pgCmdPrelev->getprestaPrel(), 'Saisie');
+						$pgProgPrestaTypfic = $repoPgProgPrestaTypfic->getPgProgPrestaTypficByCodeMilieuPrestataireFormatFic($pgProgTypeMilieu, $pgCmdDemande->getPrestataire(), 'Saisie');
+						if ($pgProgPrestaTypfic) {
                             $nbParametresTerrain = 0;
                             $nbParametresAnalyse = 0;
                             foreach ($pgCmdPrelev->getPprog() as $pgProgLotPeriodeProg1) {
@@ -436,7 +437,8 @@ class SaisieDonneesController extends Controller {
                                         $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
 
                                         foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
-                                            if ($pgCmdPrelev->getprestaPrel()->getAdrCorId() == $pgProgLotParamAn->getPrestataire()->getAdrCorId()) {
+                                            //if ($pgCmdPrelev->getprestaPrel()->getAdrCorId() == $pgProgLotParamAn->getPrestataire()->getAdrCorId()) {
+											if ($pgCmdDemande->getPrestataire()->getAdrCorId() == $pgProgLotParamAn->getPrestataire()->getAdrCorId()) {
                                                 if ($pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'ENV') {
                                                     $nbParametresTerrain++;
                                                 }
@@ -474,7 +476,8 @@ class SaisieDonneesController extends Controller {
                                     $tabPgCmdPrelevs[$ip]['nbSaisisParametresAnalyseErreur'] = $NbCmdAnalyseErreur;
                                     if ($pgCmdPrelev->getPhaseDmd()->getcodePhase() <= 'M40') {
                                         if ($userPrestataire) {
-                                            if ($pgCmdPrelev->getprestaPrel()->getAdrCorId() == $userPrestataire->getAdrCorId()) {
+                                            //if ($pgCmdPrelev->getprestaPrel()->getAdrCorId() == $userPrestataire->getAdrCorId()) {
+											if ($pgCmdDemande->getPrestataire()->getAdrCorId() == $userPrestataire->getAdrCorId()) {
                                                 if (strtoupper($pgProgPrestaTypfic->getFormatFic()) == 'SAISIE_TA' or strtoupper($pgProgPrestaTypfic->getFormatFic()) == 'SAISIE_T') {
                                                     $tabPgCmdPrelevs[$ip]['saisieTerrain'] = 'O';
                                                 }
