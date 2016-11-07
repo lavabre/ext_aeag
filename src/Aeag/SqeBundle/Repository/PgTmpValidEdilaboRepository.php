@@ -497,6 +497,35 @@ class PgTmpValidEdilaboRepository extends EntityRepository {
         return $result;
     }
     
+    public function getPgTmpValidEdilaboDmd($demandeId) {
+        $query = "select p from";
+        $query .= " from Aeag\SqeBundle\Entity\PgTmpValidEdilabo p";
+        $query .= " where p.demandeId = :demande";
+        $query .= " and p.fichierRpsId IS NULL";
+        
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('demande', $demandeId);
+        
+        $result = $qb->getResult();
+        
+        return $result;
+    }
+    
+    public function getPgTmpValidEdilaboRps($demandeId) {
+        $query = "select p from";
+        $query .= " from Aeag\SqeBundle\Entity\PgTmpValidEdilabo p";
+        $query .= " where p.demandeId = :demande";
+        $query .= " and p.fichierRpsId IS NOT NULL";
+        
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('demande', $demandeId);
+        
+        $result = $qb->getResult();
+        
+        return $result;
+    }
+    
+    
     
     
 }

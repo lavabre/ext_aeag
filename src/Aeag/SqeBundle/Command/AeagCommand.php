@@ -238,14 +238,20 @@ class AeagCommand extends ContainerAwareCommand {
     protected function _cleanTmpTable($pgCmdFichierRps) {
         $demandeId = $pgCmdFichierRps->getDemande()->getId();
         $reponseId = $pgCmdFichierRps->getId();
-        /*$pgTmpValidEdilabos = $this->repoPgTmpValidEdilabo->findBy(array('demandeId' => $demandeId, 'fichierRpsId' => $reponseId));
-        foreach ($pgTmpValidEdilabos as $pgTmpValidEdilabo) {
-            $this->emSqe->remove($pgTmpValidEdilabo);
-        }*/
         
-        $pgTmpValidEdilabos = $this->repoPgTmpValidEdilabo->findBy(array('demandeId' => $demandeId));
+        // Suppression de la RAI
+        $pgTmpValidEdilabos = $this->repoPgTmpValidEdilabo->findBy(array('demandeId' => $demandeId, 'fichierRpsId' => $reponseId));
         foreach ($pgTmpValidEdilabos as $pgTmpValidEdilabo) {
             $this->emSqe->remove($pgTmpValidEdilabo);
+        }
+        
+        // Suppression de la DAI
+        // Avant de supprimer la DAI, on vérifie s'il n'existe pas encore des RAIs
+        if (count($this->repoPgTmpValidEdilabo->getPgTmpValidEdilaboRps($demandeId)) == 0) {
+            $pgTmpValidEdilabos = $this->repoPgTmpValidEdilabo->getPgTmpValidEdilaboDmd($demandeId);
+            foreach ($pgTmpValidEdilabos as $pgTmpValidEdilabo) {
+                $this->emSqe->remove($pgTmpValidEdilabo);
+            }
         }
 
         $pgPgLogValidEdilabos = $this->repoPgLogValidEdilabo->findBy(array('demandeId' => $demandeId, 'fichierRpsId' => $reponseId));
