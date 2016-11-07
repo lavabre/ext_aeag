@@ -46,12 +46,14 @@ class AdminController extends Controller {
         $session->set('fonction', 'index');
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
-        
-         if (is_object($user)) {
+
+        if (is_object($user)) {
             $mes = AeagController::notificationAction($user, $em, $session);
             $mes1 = AeagController::messageAction($user, $em, $session);
-         }
+            //$mes3 = $this->majBugProducteurs();
+        }
 
+      
         $repoDeclarationCollecteur = $emDec->getRepository('AeagDecBundle:DeclarationCollecteur');
 
         $paraAnnee = $emDec->getRepository('AeagDecBundle:Parametre')->findOneBy(array('code' => 'ANNEE'));
@@ -915,6 +917,151 @@ class AdminController extends Controller {
 
 
         return $str;
+    }
+
+    public function majBugProducteurs() {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagDecBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'index');
+        $session->set('controller', 'admin');
+        $session->set('fonction', 'majBugProducteur');
+        $em = $this->get('doctrine')->getManager();
+        $emDec = $this->get('doctrine')->getManager('dec');
+
+        $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
+        $repoDeclarationProducteur = $emDec->getRepository('AeagDecBundle:DeclarationProducteur');
+        $repoDeclarationdetail = $emDec->getRepository('AeagDecBundle:DeclarationDetail');
+        $repoSousDeclarationCollecteur = $emDec->getRepository('AeagDecBundle:SousDeclarationCollecteur');
+        $repoDeclarationCollecteur = $emDec->getRepository('AeagDecBundle:DeclarationCollecteur');
+
+        $paraAnnee = $emDec->getRepository('AeagDecBundle:Parametre')->findOneBy(array('code' => 'ANNEE'));
+        $annee = $paraAnnee->getLibelle();
+        $ouvrages = $repoOuvrage->getOuvragesEnDoubleBySiretType('PDEC');
+
+        $tabSirets = array();
+        $nbSir = 0;
+        for ($nbOuv = 0; $nbOuv < count($ouvrages); $nbOuv++) {
+            $tabProducteurs = array();
+            $nbProd = 0;
+            $producteurs = $repoOuvrage->getOuvragesBySiretType($ouvrages[$nbOuv]['siret'], 'PDEC');
+            foreach ($producteurs as $producteur) {
+                $tabProducteurs[$nbProd]['producteur'] = $producteur;
+                $tabProducteurs[$nbProd]['declarationDetails'] = null;
+                $tabProducteurs[$nbProd]['declaration'] = null;
+                $tabProducteurs[$nbProd]['collecteurs'] = null;
+                $nbProd++;
+            }
+            $tabSirets[$nbSir]['siret'] = $ouvrages[$nbOuv]['siret'];
+            $tabSirets[$nbSir]['producteurs'] = $tabProducteurs;
+            $nbSir++;
+        }
+        for ($nbSir = 0; $nbSir < count($tabSirets); $nbSir++) {
+            $tabProducteurs = $tabSirets[$nbSir]['producteurs'];
+            for ($nbProd = 0; $nbProd < count($tabProducteurs); $nbProd++) {
+                $producteur = $tabProducteurs[$nbProd]['producteur'];
+                $declarationProducteur = $repoDeclarationProducteur->getDeclarationProducteurByProducteurAnnee($producteur->getId(), $annee);
+                if ($declarationProducteur) {
+                    $tabProducteurs[$nbProd]['declaration'] = $declarationProducteur;
+                    $declarationdetails = $repoDeclarationdetail->getDeclarationDetailsByDeclarationProducteur($declarationProducteur->getid());
+                    $tabCollecteurs = array();
+                    $tabDeclarationDetails = array();
+                    $nbDet = 0;
+                    $nbCol = 0;
+                    foreach ($declarationdetails as $declarationdetail) {
+                        $tabDeclarationDetails[$nbDet] = $declarationdetail;
+                        $sousDeclarationCollecteur = $declarationdetail->getSousDeclarationCollecteur();
+                        $declarationCollecteur = $sousDeclarationCollecteur->getDeclarationCollecteur();
+                        $collecteur = $repoOuvrage->getOuvrageById($declarationCollecteur->getCollecteur());
+                        $trouve = false;
+                        for ($k = 0; $k < count($tabCollecteurs); $k++) {
+                            if ($tabCollecteurs[$k] == $collecteur) {
+                                $trouve = true;
+                                break;
+                            }
+                        }
+                        if (!$trouve) {
+                            $tabCollecteurs[$nbCol] = $collecteur;
+                            $nbCol++;
+                        }
+                        $nbDet++;
+                    }
+                    $tabProducteurs[$nbProd]['declarationDetails'] = $tabDeclarationDetails;
+                    $tabProducteurs[$nbProd]['collecteurs'] = $tabCollecteurs;
+                }
+            }
+            $tabSirets[$nbSir]['producteurs'] = $tabProducteurs;
+        }
+
+        for ($nbSir = 0; $nbSir < count($tabSirets); $nbSir++) {
+            $tabProducteurs = $tabSirets[$nbSir]['producteurs'];
+            for ($nbProd = 0; $nbProd < count($tabProducteurs); $nbProd++) {
+                if ($nbProd == 0) {
+                    $totQuantiteReel = 0;
+                    $totMontReel = 0;
+                    $totQuantiteRet = 0;
+                    $totMontRet = 0;
+                    $totQuantiteAide = 0;
+                    $totMontAide = 0;
+                    $producteurRetenu = null;
+                }
+                $producteur = $tabProducteurs[$nbProd]['producteur'];
+                $declarationProducteur = $tabProducteurs[$nbProd]['declaration'];
+                if ($declarationProducteur) {
+                    if (!$producteurRetenu) {
+                        $producteurRetenu = clone( $producteur);
+                    }
+                    $totQuantiteReel += $declarationProducteur->getQuantiteReel();
+                    $totMontReel += $declarationProducteur->getMontReel();
+                    $totQuantiteRet += $declarationProducteur->getQuantiteRet();
+                    $totMontRet += $declarationProducteur->getMontRet();
+                    $totQuantiteAide += $declarationProducteur->getQuantiteAide();
+                    $totMontAide += $declarationProducteur->getMontAide();
+                }
+            }
+
+            for ($nbProd = 0; $nbProd < count($tabProducteurs); $nbProd++) {
+                $producteur = $tabProducteurs[$nbProd]['producteur'];
+                $declarationProducteur = $tabProducteurs[$nbProd]['declaration'];
+                if (!$declarationProducteur) {
+                    $em->remove($producteur);
+                } else {
+                    if ($producteurRetenu == $producteur) {
+                        $declarationProducteur->setQuantiteReel($totQuantiteReel);
+                        $declarationProducteur->setMontReel($totMontReel);
+                        $declarationProducteur->setQuantiteRet($totQuantiteRet);
+                        $declarationProducteur->setMontRet($totMontRet);
+                        $declarationProducteur->setQuantiteAide($totQuantiteAide);
+                        $declarationProducteur->setMontAide($totMontAide);
+                        $emDec->persist($declarationProducteur);
+                        if ($totQuantiteAide > 10000) {
+                            $tabCollecteurs = $tabProducteurs[$nbProd]['collecteurs'];
+                            for ($nbCol = 0; $nbCol < count($tabCollecteurs); $nbCol++) {
+                                $collecteur = $tabCollecteurs[$nbCol];
+                                print_r('collecteur : ' . $collecteur->getNumero() . ' ' . $collecteur->getLibelle() . ' avec producteur : ' . $producteurRetenu->getNumero() . ' ' . $producteurRetenu->getLibelle() . ' ayant une quantite = ' . $totQuantiteAide . '<br/>');
+                            }
+                        }
+                    } else {
+                        $tabDeclarationDetails = $tabProducteurs[$nbProd]['declarationDetails'];
+                        for ($nbDet = 0; $nbDet < count($tabDeclarationDetails); $nbDet++) {
+                            $déclarationDetail = $tabDeclarationDetails[$nbDet];
+                            $déclarationDetail->setDeclarationProducteur($producteurRetenu);
+                            $emDec->persist($déclarationDetail);
+                        }
+                        $emDec->remove($declarationProducteur);
+                        $em->remove($producteur);
+                    }
+                }
+            }
+        }
+        $em->flush();
+       $emDec->flush();
+
+       \Symfony\Component\VarDumper\VarDumper::dump($tabSirets);
+        return count($tabSirets);
     }
 
 }
