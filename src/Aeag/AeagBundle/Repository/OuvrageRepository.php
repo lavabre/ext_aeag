@@ -194,6 +194,21 @@ class OuvrageRepository extends EntityRepository {
      /**
      * @return array
      */
+    public function getOuvragesEnDoubleBySiretType($type) {
+        $query = "select c.siret, count(c.id)";
+        $query = $query . " from Aeag\AeagBundle\Entity\Ouvrage c";
+        $query = $query . " where c.type = '" . $type . "'";
+        $query = $query . " group by c.siret ";
+        $query = $query . " having count(c.id) > 1 ";
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+        //return $qb->getOneOrNullResult();
+         return $qb->getResult();
+    }
+    
+     /**
+     * @return array
+     */
     /*public function getProducteursByCollecteur($collecteur) {
         $query = "select p";
         $query = $query . " from Aeag\AeagBundle\Entity\Ouvrage p";

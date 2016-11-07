@@ -18,8 +18,8 @@ class UsersUpdateType extends AbstractType {
         $role = $this->role;
         if ($role == 'ROLE_AEAG') {
             $builder
-                    ->add('username', 'text', array('label' => 'Login', 'required' => false, 'read_only' => true))
-                    ->add('password', 'text', array('label' => 'password', 'required' => false, 'read_only' => true))
+                    ->add('username', 'text', array('label' => 'Login', 'required' => true, 'read_only' => true))
+                    ->add('password', 'text', array('label' => 'password', 'required' => true, 'read_only' => true))
                     ->add('email', 'email', array('label' => 'Email', 'required' => true))
                     ->add('email1', 'email', array('label' => 'Email1', 'required' => false))
                     ->add('email2', 'email', array('label' => 'Email2', 'required' => false))
@@ -60,8 +60,8 @@ class UsersUpdateType extends AbstractType {
             ));
         }elseif ($role == 'ROLE_ODEC') {
             $builder
-                    ->add('username', 'text', array('label' => 'Login', 'required' => false, 'read_only' => true))
-                    ->add('password', 'text', array('label' => 'password', 'required' => false, 'read_only' => true))
+                    ->add('username', 'text', array('label' => 'Login', 'required' => true))
+                    ->add('password', 'text', array('label' => 'password', 'required' => true))
                     ->add('email', 'email', array('label' => 'Email', 'required' => true))
                     ->add('email1', 'email', array('label' => 'Email1', 'required' => false))
                     ->add('email2', 'email', array('label' => 'Email2', 'required' => false))
