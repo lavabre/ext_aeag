@@ -50,11 +50,10 @@ class AdminController extends Controller {
         if (is_object($user)) {
             $mes = AeagController::notificationAction($user, $em, $session);
             $mes1 = AeagController::messageAction($user, $em, $session);
-            $mes3 = $this->majBugProducteurs();
+            //$mes3 = $this->majBugProducteurs();
         }
 
-        return new Response('nb producteurs en double : ' . $mes3);
-
+      
         $repoDeclarationCollecteur = $emDec->getRepository('AeagDecBundle:DeclarationCollecteur');
 
         $paraAnnee = $emDec->getRepository('AeagDecBundle:Parametre')->findOneBy(array('code' => 'ANNEE'));
@@ -1058,8 +1057,8 @@ class AdminController extends Controller {
                 }
             }
         }
-//        $em->flush();
-//        $emDec->flush();
+        $em->flush();
+       $emDec->flush();
 
        \Symfony\Component\VarDumper\VarDumper::dump($tabSirets);
         return count($tabSirets);
