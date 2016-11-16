@@ -116,7 +116,7 @@ class CheckSandreFormatCommand extends AeagCommand {
         if (count($erreurs) > 0) {
             $erreurs = array_unique($erreurs);
             $cr .= "--- Début Test Sandre \r\n";
-            $cr .= 'Erreurs : ' . implode("\r\n", $erreurs);
+            $cr .= implode("\r\n", $erreurs);
             $cr .= "--- Fin Test Sandre \r\n";
         }
         file_put_contents($fullFileName, $cr);

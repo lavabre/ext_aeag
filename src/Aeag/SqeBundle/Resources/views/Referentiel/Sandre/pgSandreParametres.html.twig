@@ -51,7 +51,11 @@
                     <tbody>
                         {% for entity in entities %}
                             <tr>
-                                <td>{{ entity.pgSandreParametre.codeParametre }}</td>
+								<td>
+									<a  href="http://id.eaufrance.fr/par/{{ entity.pgSandreParametre.codeParametre }}" target="_blank" title="Fiche Sandre">
+                                             {{ entity.pgSandreParametre.codeParametre }}
+                                    </a>
+								</td>
                                 <td>{{ entity.pgSandreParametre.nomParametre }}</td>
                                 <td>{{ entity.pgSandreParametre.libelleCourt }}</td>
                                 <td>{{ entity.pgSandreParametre.typeParametre }}</td>
