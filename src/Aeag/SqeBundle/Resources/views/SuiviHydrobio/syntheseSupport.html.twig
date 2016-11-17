@@ -136,13 +136,13 @@
                                             {% endif %}
 
                                             {% if is_granted('ROLE_ADMINSQE') or pgProgWebUser.typeUser == 'XHBIO' %}
-                                                {% if station.suiviPrel.statutPrel  == 'F'  and 
+                                              {#  {% if station.suiviPrel.statutPrel  == 'F'  and 
                                                         station.suiviPrel.validation  == 'E'  and
-                                                        station.suiviPrel.fichierRps | length %}
+                                                        station.suiviPrel.fichierRps | length %}#}
                                                 <a  id="idAvis-{{ station.suiviPrel.id }}" class="btn btn-warning"  title="Donner un avis">
                                                     <i class="fa fa-graduation-cap"></i>
                                                 </a>
-                                            {% endif %}
+                                            {#{% endif %}#}
                                         {% endif %}
 
                                         {% if is_granted('ROLE_ADMINSQE') %}
