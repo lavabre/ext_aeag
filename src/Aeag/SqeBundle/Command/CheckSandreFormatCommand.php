@@ -24,7 +24,8 @@ class CheckSandreFormatCommand extends AeagCommand {
         parent::execute($input, $output);
 
         $pgProgPhases = $this->repoPgProgPhases->findOneByCodePhase('R15');
-        $pgCmdFichiersRps = $this->repoPgCmdFichiersRps->getReponsesHorsLac($pgProgPhases);
+        //$pgCmdFichiersRps = $this->repoPgCmdFichiersRps->getReponsesHorsLac($pgProgPhases);
+        $pgCmdFichiersRps = $this->repoPgCmdFichiersRps->getReponses($pgProgPhases);
         //$pgCmdFichiersRps = $this->repoPgCmdFichiersRps->findBy(array('phaseFichier' => $pgProgPhases, 'typeFichier' => 'RPS', 'suppr' => 'N'));
         
         foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {

@@ -132,6 +132,24 @@ class PgProgWebusersRepository extends EntityRepository {
 
         return $qb->getResult();
     }
+    
+    /*
+     * public function getNotAdminPgProgWebusersByProducteur($producteur, $marche) {
+        $query = "select p";
+        $query .= " from Aeag\SqeBundle\Entity\PgProgWebusers p";
+        $query .= " join Aeag\SqeBundle\Entity\PgProgMarcheUser mu with mu.webuser = p.id";
+        $query .= " where p.producteur = :producteur";
+        $query .= " and p.typeUser <> 'ADMIN'";
+        $query .= " and mu.marche = :marche";
+        $query .= " order by p.nom";
+        $qb = $this->_em->createQuery($query);
+        
+        $qb->setParameter('producteur', $producteur);
+        $qb->setParameter('marche', $marche);
+
+        return $qb->getResult();
+    }
+     */
    
 
 }

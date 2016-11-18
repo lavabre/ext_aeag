@@ -38,6 +38,7 @@ class AeagCommand extends ContainerAwareCommand {
     protected $repoPgProgZoneGeoRef;
     protected $repoPgProgTypeMilieu;
     protected $repoPgProgWebuserTypmil;
+    protected $repoPgProgBornesParams;
     
     protected $detectionCodeRemarqueComplet;
     protected $detectionCodeRemarqueMoitie;
@@ -86,6 +87,7 @@ class AeagCommand extends ContainerAwareCommand {
         $this->repoPgProgZoneGeoRef = $this->emSqe->getRepository('AeagSqeBundle:PgProgZoneGeoRef');
         $this->repoPgProgTypeMilieu = $this->emSqe->getRepository('AeagSqeBundle:PgProgTypeMilieu');
         $this->repoPgProgWebuserTypmil = $this->emSqe->getRepository('AeagSqeBundle:PgProgWebuserTypmil');
+        $this->repoPgProgBornesParams = $this->emSqe->getRepository('AeagSqeBundle:PgProgBornesParams');
 
         // Chargement des fichiers csv dans des tableaux 
         $cheminCourant = __DIR__ . '/../../../../';

@@ -38,6 +38,51 @@ class PgCmdFichiersRpsRepository extends EntityRepository {
         return $qb->getResult();
     }
     
+    public function getReponses($phase) {
+        $query = "select rps";
+        $query .= " from Aeag\SqeBundle\Entity\PgCmdFichiersRps rps";
+        $query .= " join rps.phaseFichier phase";
+        $query .= " join rps.demande dmd";
+        $query .= " join dmd.lotan lotan";
+        $query .= " join lotan.lot lot";
+        $query .= " where phase = :phase";
+        $query .= " and rps.typeFichier = 'RPS'";
+        $query .= " and rps.suppr = 'N'";
+        $query .= " and rps.id NOT IN ";
+        $query .= " (select suivi.objId ";
+        $query .= " from Aeag\SqeBundle\Entity\PgProgSuiviPhases suivi";
+        $query .= " where suivi.phase = :phase";
+        $query .= " group by suivi.objId";
+        $query .= " having count(suivi) >= 5)";
+        $query .= " order by rps.id asc";
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('phase', $phase);
+        $qb->setMaxResults(1);
+        return $qb->getResult();
+    }
+    
+    public function getReponsesBackup($phase) {
+        $query = "select rps2";
+        $query .= " from Aeag\SqeBundle\Entity\PgCmdFichiersRps rps2";
+        $query .= " where rps2.id IN ( ";
+        $query .= " select suivi.objId";
+        $query .= " from Aeag\SqeBundle\Entity\PgProgSuiviPhases suivi";
+        $query .= " join Aeag\SqeBundle\Entity\PgCmdFichiersRps rps with rps.id = suivi.objId";
+        $query .= " join rps.demande dmd";
+        $query .= " join dmd.lotan lotan";
+        $query .= " join lotan.lot lot";
+        $query .= " where suivi.phase = :phase";
+        $query .= " and rps.typeFichier = 'RPS'";
+        $query .= " and rps.suppr = 'N'";
+        $query .= " and rps.phaseFichier = :phase";
+        $query .= " group by suivi.objId";
+        $query .= " having DATE_ADD(max(suivi.datePhase),1, 'day') < CURRENT_TIMESTAMP()";
+        $query .= " order by suivi.objId)";
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('phase', $phase);
+        return $qb->getResult();
+    }
+    
     public function getReponsesHorsLac($phase) {
         $query = "select rps";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdFichiersRps rps";

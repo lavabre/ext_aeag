@@ -30,24 +30,24 @@ class ProcessRaiCommand extends AeagCommand {
         $pgCmdFichierRps = $this->repoPgCmdFichiersRps->findOneBy(array('phaseFichier' => $pgProgPhases, 'typeFichier' => 'RPS', 'suppr' => 'N'), array('id' => 'ASC'));
         $cptRaisTraitesOk = 0;
         $cptRaisTraitesNok = 0;
-        
+
         if (!is_null($pgCmdFichierRps)) {
-        
-        // On les passe tous en phase R26
-        //foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
+
+            // On les passe tous en phase R26
+            //foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
             $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R26');
-        //}
-        
-        /*if (count($pgCmdFichiersRps) > 0) {
+            //}
+
+            /* if (count($pgCmdFichiersRps) > 0) {
+              $date = new \DateTime();
+              $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : ' . count($pgCmdFichiersRps) . " RAI(s) vont être traitées ");
+              } */
+
+
+            //foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
             $date = new \DateTime();
-            $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : ' . count($pgCmdFichiersRps) . " RAI(s) vont être traitées ");
-        }*/
-        
-        
-        //foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
-            $date = new \DateTime();
-            $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : Le traitement de la RAI '.$pgCmdFichierRps->getId().' commence');
-            
+            $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : Le traitement de la RAI ' . $pgCmdFichierRps->getId() . ' commence');
+
             // TODO On vérifie que l'on insère pas deux fois la même RAI
             $this->_coherenceRaiDai($pgCmdFichierRps);
 
@@ -66,7 +66,7 @@ class ProcessRaiCommand extends AeagCommand {
                 }
             }
             $this->_controleVraisemblance($pgCmdFichierRps);
-            
+
             // Changement de la phase en fonction des retours
             $logErrorsVraisemblance = $this->repoPgLogValidEdilabo->findBy(array('demandeId' => $pgCmdFichierRps->getDemande()->getId(), 'fichierRpsId' => $pgCmdFichierRps->getId(), 'typeErreur' => 'error'));
             $logWarningsVraisemblance = $this->repoPgLogValidEdilabo->findBy(array('demandeId' => $pgCmdFichierRps->getDemande()->getId(), 'fichierRpsId' => $pgCmdFichierRps->getId(), 'typeErreur' => 'warning'));
@@ -98,7 +98,7 @@ class ProcessRaiCommand extends AeagCommand {
             if (!$this->getContainer()->get('aeag_sqe.message')->createMail($this->em, $mailer, $txtMessage, $destinataire, $objetMessage)) {
                 $this->_addLog('warning', $pgCmdFichierRps->getDemande()->getId(), $pgCmdFichierRps->getId(), "Erreur lors de l\'envoi de mail dans le process de verification des RAIs", null, $destinataire);
             }
-            
+
             // Insertion données brutes
             if (($pgCmdFichierRps->getPhaseFichier()->getCodePhase() == 'R41') || ($pgCmdFichierRps->getPhaseFichier()->getCodePhase() == 'R40')) {
                 $cptRaisTraitesOk++;
@@ -107,21 +107,21 @@ class ProcessRaiCommand extends AeagCommand {
                 //$this->_cleanTmpTable($pgCmdFichierRps);
                 $cptRaisTraitesNok++;
             }
-            
+
             $date = new \DateTime();
-            $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : Le traitement de la RAI '.$pgCmdFichierRps->getId().' est terminé');
-        //}
-        }    
+            $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : Le traitement de la RAI ' . $pgCmdFichierRps->getId() . ' est terminé');
+            //}
+        }
         $date = new \DateTime();
         $cptRaisTraitesTot = $cptRaisTraitesOk + $cptRaisTraitesNok;
         $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : ' . $cptRaisTraitesTot . " RAI(s) traitée(s), " . $cptRaisTraitesOk . " OK, " . $cptRaisTraitesNok . " NOK");
     }
 
     protected function _coherenceRaiDai($pgCmdFichierRps) {
-        
+
         $date = new \DateTime();
-        $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : RAI '.$pgCmdFichierRps->getId().' - Début cohérence RAI/DAI');
-        
+        $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : RAI ' . $pgCmdFichierRps->getId() . ' - Début cohérence RAI/DAI');
+
         $demandeId = $pgCmdFichierRps->getDemande()->getId();
         $reponseId = $pgCmdFichierRps->getId();
 
@@ -129,26 +129,26 @@ class ProcessRaiCommand extends AeagCommand {
         if (count($diff = $this->repoPgTmpValidEdilabo->getDiffCodeDemande($demandeId, $reponseId)) > 0) {
             $this->_addLog('warning', $demandeId, $reponseId, "Incoherence RAI/DAI: code demande", null, $diff);
         } else {
-			//$this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : RAI '.$pgCmdFichierRps->getId().' - code demande ok');
-		}
+            //$this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : RAI '.$pgCmdFichierRps->getId().' - code demande ok');
+        }
 
         // Vérif code prélèvement
         if (count($diff = $this->repoPgTmpValidEdilabo->getDiffCodePrelevementAdd($demandeId, $reponseId)) > 0) {
             $this->_addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: codes prélèvement RAI en trop", null, $diff);
         } else {
-			//$this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : RAI '.$pgCmdFichierRps->getId().' - codes prélèvements ok');
-		}
-		
+            //$this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : RAI '.$pgCmdFichierRps->getId().' - codes prélèvements ok');
+        }
+
         // A tester à l'issue des données brutes (lorsqu'on est censé avoir tous les codes prélevements de la DAI)
 //        if (count($diff = $this->repoPgTmpValidEdilabo->getDiffCodePrelevementMissing($demandeId, $reponseId)) > 0) {
 //            $this->_addLog('warning', $demandeId, $reponseId, "Incoherence RAI/DAI: code prélèvement RAI manquant", null, $diff);
 //        }
         // Vérif Date prélèvement, si hors période
         $codePrelevs = $this->repoPgTmpValidEdilabo->getCodePrelevement($demandeId, $reponseId);
-		$this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : RAI '.$pgCmdFichierRps->getId().' - '.count($codePrelevs).' codes prélèvements');
+        $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : RAI ' . $pgCmdFichierRps->getId() . ' - ' . count($codePrelevs) . ' codes prélèvements');
         foreach ($codePrelevs as $codePrelev) {
-			$prelevRealise = true;
-			
+            $prelevRealise = true;
+
             // Vérification de la date de prélèvement
             $datePrelRps = $this->repoPgTmpValidEdilabo->getDatePrelevement($codePrelev["codePrelevement"], $demandeId, $reponseId);
             $datePrelRps = new \DateTime($datePrelRps["datePrel"]);
@@ -176,8 +176,8 @@ class ProcessRaiCommand extends AeagCommand {
                     $this->_addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: Preleveur", $codePrelev["codePrelevement"], $diff);
                 }
             } else {
-				//$this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : '.$codePrelev["codePrelevement"].' : preleveur ok');
-			}
+                //$this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : '.$codePrelev["codePrelevement"].' : preleveur ok');
+            }
 
             if (count($diff = $this->repoPgTmpValidEdilabo->getDiffLabo($codePrelev["codePrelevement"], $demandeId, $reponseId)) > 0) {
                 if ($this->_existePresta($diff)) {
@@ -186,86 +186,85 @@ class ProcessRaiCommand extends AeagCommand {
                     $this->_addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: Laboratoire", $codePrelev["codePrelevement"], $diff);
                 }
             } else {
-				//$this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : '.$codePrelev["codePrelevement"].' : labo ok');
-			}
+                //$this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : '.$codePrelev["codePrelevement"].' : labo ok');
+            }
 
             // Vérif STQ : concordance STQ RAI (unique ou multiple) / DAI : stations rajoutées => Erreur
             if (count($diff = $this->repoPgTmpValidEdilabo->getDiffCodeStation($codePrelev["codePrelevement"], $demandeId, $reponseId)) > 0) {
                 $this->_addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: Stations rajoutées", $codePrelev["codePrelevement"], $diff);
             } else {
-				//$this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : '.$codePrelev["codePrelevement"].' : stations ok');
-			}
-			
-			//test si prelevement ok
-			$meSituHydro = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1726, $demandeId, $reponseId, $codePrelev["codePrelevement"]);
-            if (!is_null($meSituHydro) && $meSituHydro <= 2) {
-				$prelevRealise = false;
-			}
-			
-			if ($prelevRealise) {
-				
-				// paramètres/unité : si unité changée => erreur
-				$mesuresRps = $this->repoPgTmpValidEdilabo->getMesures($codePrelev["codePrelevement"], $demandeId, $reponseId);
-				$date = new \DateTime();
-				$this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : RAI '.$pgCmdFichierRps->getId().' - '.$codePrelev["codePrelevement"].' - '.count($mesuresRps).' mesures');
-				if (count($mesuresRps) > 0) {
-					foreach ($mesuresRps as $mesureRps) {
-						$mesureDmd = $this->repoPgTmpValidEdilabo->getMesuresByCodeParametre($mesureRps['codeParametre'], $codePrelev["codePrelevement"], $demandeId, null, $mesureRps['codeFraction']);
-						if ((count($mesureDmd) == 1) && ($mesureRps['codeUnite'] != $mesureDmd['codeUnite'])) {
-							$pgSandreFractions = $this->repoPgSandreFractions->findOneByCodeFraction($mesureRps['codeFraction']);
-							$pgProgUnitesPossiblesParam = $this->repoPgProgUnitesPossiblesParam->findOneBy(array('codeParametre' => $mesureRps['codeParametre'], 'codeUnite' => $mesureRps['codeUnite'], 'natureFraction' => $pgSandreFractions->getNatureFraction()));
-							if (!$pgProgUnitesPossiblesParam) {
-								$this->_addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: Unité changée", $codePrelev["codePrelevement"], $mesureRps['codeUnite']);
-							}
-						}
-					}
-				} else {
-					$this->_addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: Mesures absentes", $codePrelev["codePrelevement"]);
-				}
-
-				// paramètres/unité : rajout de paramètres => avertissement
-				if (count($diff = $this->repoPgTmpValidEdilabo->getDiffCodeParametreAdd($codePrelev["codePrelevement"], $demandeId, $reponseId)) > 0) {
-					//Avertissement
-					$this->_addLog('warning', $demandeId, $reponseId, "Incoherence RAI/DAI: Rajout de paramètre", $codePrelev["codePrelevement"], $diff);
-				} else {
-					//$this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : '.$codePrelev["codePrelevement"].' : pas de params ajoutes');
-				}
-
-				// paramètres/unité : paramètre manquant => erreur
-				if (count($diffMiss = $this->repoPgTmpValidEdilabo->getDiffCodeParametreMissing($codePrelev["codePrelevement"], $demandeId, $reponseId)) > 0) {
-					if ( ((count($diffMiss) == 1) && in_array(1429, $diffMiss)) || ($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getTypeMarche() == 'MOE') ) {
-						$this->_addLog('warning', $demandeId, $reponseId, "Incoherence RAI/DAI: Paramètre manquant", $codePrelev["codePrelevement"], $diffMiss);
-					} else {
-						$this->_addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: Paramètre manquant", $codePrelev["codePrelevement"], $diffMiss);
-					}
-				} else {
-					//$this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : '.$codePrelev["codePrelevement"].' : pas de params manquants');
-				}
-				
-				// paramètres/unité : fractions différentes => erreur
-				$diffFractions = $this->repoPgTmpValidEdilabo->getDiffCodeFraction($codePrelev["codePrelevement"], $demandeId, $reponseId);
-				$diff = array();
-				foreach($diffFractions as $diffFraction){
-					if (!in_array($diffFraction, $diffMiss)) {
-						$diff[] = $diffFraction;
-					}
-				}
-				if (count($diff) > 0) {
-					if ($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getTypeMarche() == 'MOE') {
-						$this->_addLog('warning', $demandeId, $reponseId, "Incoherence RAI/DAI: Fractions différentes", $codePrelev["codePrelevement"], $diff);
-					} else {
-						$this->_addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: Fractions différentes", $codePrelev["codePrelevement"], $diff);
-					}
-				}  else {
-					//$this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : '.$codePrelev["codePrelevement"].' : fractions ok');
-					//($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getTypeMarche() == 'MOE')
-				}
+                //$this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : '.$codePrelev["codePrelevement"].' : stations ok');
             }
-            
+
+            //test si prelevement ok
+            $meSituHydro = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1726, $demandeId, $reponseId, $codePrelev["codePrelevement"]);
+            if (!is_null($meSituHydro) && $meSituHydro <= 2) {
+                $prelevRealise = false;
+            }
+
+            if ($prelevRealise) {
+
+                // paramètres/unité : si unité changée => erreur
+                $mesuresRps = $this->repoPgTmpValidEdilabo->getMesures($codePrelev["codePrelevement"], $demandeId, $reponseId);
+                $date = new \DateTime();
+                $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : RAI ' . $pgCmdFichierRps->getId() . ' - ' . $codePrelev["codePrelevement"] . ' - ' . count($mesuresRps) . ' mesures');
+                if (count($mesuresRps) > 0) {
+                    foreach ($mesuresRps as $mesureRps) {
+                        $mesureDmd = $this->repoPgTmpValidEdilabo->getMesuresByCodeParametre($mesureRps['codeParametre'], $codePrelev["codePrelevement"], $demandeId, null, $mesureRps['codeFraction']);
+                        if ((count($mesureDmd) == 1) && ($mesureRps['codeUnite'] != $mesureDmd['codeUnite'])) {
+                            $pgSandreFractions = $this->repoPgSandreFractions->findOneByCodeFraction($mesureRps['codeFraction']);
+                            $pgProgUnitesPossiblesParam = $this->repoPgProgUnitesPossiblesParam->findOneBy(array('codeParametre' => $mesureRps['codeParametre'], 'codeUnite' => $mesureRps['codeUnite'], 'natureFraction' => $pgSandreFractions->getNatureFraction()));
+                            if (!$pgProgUnitesPossiblesParam) {
+                                $this->_addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: Unité changée", $codePrelev["codePrelevement"], $mesureRps['codeUnite']);
+                            }
+                        }
+                    }
+                } else {
+                    $this->_addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: Mesures absentes", $codePrelev["codePrelevement"]);
+                }
+
+                // paramètres/unité : rajout de paramètres => avertissement
+                if (count($diff = $this->repoPgTmpValidEdilabo->getDiffCodeParametreAdd($codePrelev["codePrelevement"], $demandeId, $reponseId)) > 0) {
+                    //Avertissement
+                    $this->_addLog('warning', $demandeId, $reponseId, "Incoherence RAI/DAI: Rajout de paramètre", $codePrelev["codePrelevement"], $diff);
+                } else {
+                    //$this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : '.$codePrelev["codePrelevement"].' : pas de params ajoutes');
+                }
+
+                // paramètres/unité : paramètre manquant => erreur
+                if (count($diffMiss = $this->repoPgTmpValidEdilabo->getDiffCodeParametreMissing($codePrelev["codePrelevement"], $demandeId, $reponseId)) > 0) {
+                    if (((count($diffMiss) == 1) && in_array(1429, $diffMiss)) || ($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getTypeMarche() == 'MOE')) {
+                        $this->_addLog('warning', $demandeId, $reponseId, "Incoherence RAI/DAI: Paramètre manquant", $codePrelev["codePrelevement"], $diffMiss);
+                    } else {
+                        $this->_addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: Paramètre manquant", $codePrelev["codePrelevement"], $diffMiss);
+                    }
+                } else {
+                    //$this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : '.$codePrelev["codePrelevement"].' : pas de params manquants');
+                }
+
+                // paramètres/unité : fractions différentes => erreur
+                $diffFractions = $this->repoPgTmpValidEdilabo->getDiffCodeFraction($codePrelev["codePrelevement"], $demandeId, $reponseId);
+                $diff = array();
+                foreach ($diffFractions as $diffFraction) {
+                    if (!in_array($diffFraction, $diffMiss)) {
+                        $diff[] = $diffFraction;
+                    }
+                }
+                if (count($diff) > 0) {
+                    if ($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getTypeMarche() == 'MOE') {
+                        $this->_addLog('warning', $demandeId, $reponseId, "Incoherence RAI/DAI: Fractions différentes", $codePrelev["codePrelevement"], $diff);
+                    } else {
+                        $this->_addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: Fractions différentes", $codePrelev["codePrelevement"], $diff);
+                    }
+                } else {
+                    //$this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : '.$codePrelev["codePrelevement"].' : fractions ok');
+                    //($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getTypeMarche() == 'MOE')
+                }
+            }
         }
-        
+
         $date = new \DateTime();
-        $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : RAI '.$pgCmdFichierRps->getId().' - Fin cohérence RAI/DAI');
+        $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : RAI ' . $pgCmdFichierRps->getId() . ' - Fin cohérence RAI/DAI');
     }
 
     protected function _existePresta($codeIntervenants) {
@@ -284,15 +283,15 @@ class ProcessRaiCommand extends AeagCommand {
 
     protected function _controleVraisemblance($pgCmdFichierRps) {
         $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R36');
-        
+
         $date = new \DateTime();
-        $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : RAI '.$pgCmdFichierRps->getId().' - Début controle vraisemblance');
+        $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : RAI ' . $pgCmdFichierRps->getId() . ' - Début controle vraisemblance');
 
         $demandeId = $pgCmdFichierRps->getDemande()->getId();
         $reponseId = $pgCmdFichierRps->getId();
         $codePrelevements = $this->repoPgTmpValidEdilabo->getCodePrelevement($demandeId, $reponseId);
-		$this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : RAI '.$pgCmdFichierRps->getId().' - '.count($codePrelevements).' prelevements');
-		
+        $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : RAI ' . $pgCmdFichierRps->getId() . ' - ' . count($codePrelevements) . ' prelevements');
+
         // Contrôles sur toutes les valeurs insérées
         foreach ($codePrelevements as $codePrelevement) {
             $codePrelevement = $codePrelevement['codePrelevement'];
@@ -304,40 +303,40 @@ class ProcessRaiCommand extends AeagCommand {
                 $codesRqValides = $this->repoPgTmpValidEdilabo->getCodeRqValideByCodePrelevement($demandeId, $reponseId, $codePrelevement);
                 if (count($codesRqValides) > 0) {
                     $this->_addLog('error', $demandeId, $reponseId, "Situation Hydro : Code Remarque impossible ", $codePrelevement, 1726);
-                } 
-				//else {
-                    $pgTmpValidEdilabos = $this->repoPgTmpValidEdilabo->findBy(array('fichierRpsId' => $reponseId, 'demandeId' => $demandeId, 'codePrelevement' => $codePrelevement, 'inSitu' => 0));
-                    foreach ($pgTmpValidEdilabos as $pgTmpValidEdilabo) {
-                        $pgTmpValidEdilabo->setCodeRqM(0);
-                        //$pgTmpValidEdilabo->setResM(null);
-                    }
-                    $this->emSqe->flush();
+                }
+                //else {
+                $pgTmpValidEdilabos = $this->repoPgTmpValidEdilabo->findBy(array('fichierRpsId' => $reponseId, 'demandeId' => $demandeId, 'codePrelevement' => $codePrelevement, 'inSitu' => 0));
+                foreach ($pgTmpValidEdilabos as $pgTmpValidEdilabo) {
+                    $pgTmpValidEdilabo->setCodeRqM(0);
+                    //$pgTmpValidEdilabo->setResM(null);
+                }
+                $this->emSqe->flush();
                 //}
             } else {
                 $pgTmpValidEdilabos = $this->repoPgTmpValidEdilabo->findBy(array('fichierRpsId' => $reponseId, 'demandeId' => $demandeId, 'codePrelevement' => $codePrelevement));
                 $date = new \DateTime();
-				$this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : RAI '.$pgCmdFichierRps->getId().' - '.$codePrelevement.' - '.count($pgTmpValidEdilabos).' mesures tmp');
-				foreach ($pgTmpValidEdilabos as $pgTmpValidEdilabo) {
+                $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : RAI ' . $pgCmdFichierRps->getId() . ' - ' . $codePrelevement . ' - ' . count($pgTmpValidEdilabos) . ' mesures tmp');
+                foreach ($pgTmpValidEdilabos as $pgTmpValidEdilabo) {
                     // Appel du service
                     $this->controleVraisemblanceSpeProcess($pgTmpValidEdilabo, $codePrelevement, $pgCmdFichierRps);
                 }
                 $this->controleVraisemblanceGlobalProcess($codePrelevement, $pgCmdFichierRps);
             }
         }
-        
+
         $date = new \DateTime();
-        $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : RAI '.$pgCmdFichierRps->getId().' - Fin controle vraisemblance');
+        $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : RAI ' . $pgCmdFichierRps->getId() . ' - Fin controle vraisemblance');
     }
-    
+
     public function controleVraisemblanceSpeProcess($pgTmpValidEdilabo, $codePrelevement, $pgCmdFichierRps) {
-        
+
         $mesure = $pgTmpValidEdilabo->getResM();
         $codeRq = $pgTmpValidEdilabo->getCodeRqM();
         $codeParametre = $pgTmpValidEdilabo->getCodeParametre();
         $inSitu = $pgTmpValidEdilabo->getInSitu();
         $demandeId = $pgCmdFichierRps->getDemande()->getId();
         $reponseId = $pgCmdFichierRps->getId();
-        
+
         $controleVraisemblaceService = $this->getContainer()->get('aeag_sqe.controle_vraisemblance');
         // III.1
         //$dateLog = new \DateTime();
@@ -347,8 +346,6 @@ class ProcessRaiCommand extends AeagCommand {
         }
         //$dateLog = new \DateTime();
         //$this->output->writeln($dateLog->format('d/m/Y H:i:s') . '- Process RAI : RAI '.$pgCmdFichierRps->getId().' - Controle Vraisemblance - '.$codePrelevement.' - Fin III.1');
-        
-
         // III.1.1
         //$dateLog = new \DateTime();
         //$this->output->writeln($dateLog->format('d/m/Y H:i:s') . '- Process RAI : RAI '.$pgCmdFichierRps->getId().' - Controle Vraisemblance - '.$codePrelevement.' - Début III.1.1');
@@ -357,7 +354,6 @@ class ProcessRaiCommand extends AeagCommand {
         }
         //$dateLog = new \DateTime();
         //$this->output->writeln($dateLog->format('d/m/Y H:i:s') . '- Process RAI : RAI '.$pgCmdFichierRps->getId().' - Controle Vraisemblance - '.$codePrelevement.' - Fin III.1.1');
-
         // III.2
         //$dateLog = new \DateTime();
         //$this->output->writeln($dateLog->format('d/m/Y H:i:s') . '- Process RAI : RAI '.$pgCmdFichierRps->getId().' - Controle Vraisemblance - '.$codePrelevement.' - Début III.2');
@@ -366,7 +362,6 @@ class ProcessRaiCommand extends AeagCommand {
         }
         //$dateLog = new \DateTime();
         //$this->output->writeln($dateLog->format('d/m/Y H:i:s') . '- Process RAI : RAI '.$pgCmdFichierRps->getId().' - Controle Vraisemblance - '.$codePrelevement.' - Fin III.2');
-
         // III.3 Valeurs =0 (hors TH (1345), TA (1346), TAC (1347), Temp(1301)) hors codes observations environnementales / résultat = 0 possible pour les paramètres de cette liste (et pour 1345, 1346, 1347 et 1301) => Erreur
         //$dateLog = new \DateTime();
         //$this->output->writeln($dateLog->format('d/m/Y H:i:s') . '- Process RAI : RAI '.$pgCmdFichierRps->getId().' - Controle Vraisemblance - '.$codePrelevement.' - Début III.3');
@@ -375,7 +370,6 @@ class ProcessRaiCommand extends AeagCommand {
         }
         //$dateLog = new \DateTime();
         //$this->output->writeln($dateLog->format('d/m/Y H:i:s') . '- Process RAI : RAI '.$pgCmdFichierRps->getId().' - Controle Vraisemblance - '.$codePrelevement.' - Fin III.3');
-
         // III.4 Valeurs < 0 (hors température de air 1409, potentiel REDOX 1330)
         //$dateLog = new \DateTime();
         //$this->output->writeln($dateLog->format('d/m/Y H:i:s') . '- Process RAI : RAI '.$pgCmdFichierRps->getId().' - Controle Vraisemblance - '.$codePrelevement.' - Début III.4');
@@ -384,7 +378,6 @@ class ProcessRaiCommand extends AeagCommand {
         }
         //$dateLog = new \DateTime();
         //$this->output->writeln($dateLog->format('d/m/Y H:i:s') . '- Process RAI : RAI '.$pgCmdFichierRps->getId().' - Controle Vraisemblance - '.$codePrelevement.' - Fin III.4');
-
         // III.5 Valeurs avec code remarque '> (3)' hors bactério (1147,1448,1449,1451,5479,6455); code remarque ="Trace (7)"
         //$dateLog = new \DateTime();
         //$this->output->writeln($dateLog->format('d/m/Y H:i:s') . '- Process RAI : RAI '.$pgCmdFichierRps->getId().' - Controle Vraisemblance - '.$codePrelevement.' - Début III.5');
@@ -394,13 +387,13 @@ class ProcessRaiCommand extends AeagCommand {
         //$dateLog = new \DateTime();
         //$this->output->writeln($dateLog->format('d/m/Y H:i:s') . '- Process RAI : RAI '.$pgCmdFichierRps->getId().' - Controle Vraisemblance - '.$codePrelevement.' - Fin III.5');
     }
-    
+
     public function controleVraisemblanceGlobalProcess($codePrelevement, $pgCmdFichierRps) {
         $demandeId = $pgCmdFichierRps->getDemande()->getId();
         $reponseId = $pgCmdFichierRps->getId();
-        
+
         $controleVraisemblaceService = $this->getContainer()->get('aeag_sqe.controle_vraisemblance');
-        
+
         // III.6 1 < pH(1302) < 14
         $mPh = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1302, $demandeId, $reponseId, $codePrelevement);
         if (($result = $controleVraisemblaceService->pH($mPh)) != true) {
@@ -408,12 +401,14 @@ class ProcessRaiCommand extends AeagCommand {
         }
 
         // III.7 modèle  de WEISS : cohérence Teau, % O2, Concentration O2  sauf si Conductivité > 10 000
-        $mTxSatOx = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1312, $demandeId, $reponseId, $codePrelevement);
-        $mOxDiss = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1311, $demandeId, $reponseId, $codePrelevement);
-        $mTEau = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1301, $demandeId, $reponseId, $codePrelevement);
-        $mConductivite = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1303, $demandeId, $reponseId, $codePrelevement);
-        if (($result = $controleVraisemblaceService->modeleWeiss($mTxSatOx, $mOxDiss, $mTEau, $mConductivite)) != true) {
-            $this->_addLog($result[0], $demandeId, $reponseId, $result[1], $codePrelevement);
+        if ($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getCodeMilieu()->getCodeMilieu() !== 'GPC') {
+            $mTxSatOx = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1312, $demandeId, $reponseId, $codePrelevement);
+            $mOxDiss = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1311, $demandeId, $reponseId, $codePrelevement);
+            $mTEau = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1301, $demandeId, $reponseId, $codePrelevement);
+            $mConductivite = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1303, $demandeId, $reponseId, $codePrelevement);
+            if (($result = $controleVraisemblaceService->modeleWeiss($mTxSatOx, $mOxDiss, $mTEau, $mConductivite)) != true) {
+                $this->_addLog($result[0], $demandeId, $reponseId, $result[1], $codePrelevement);
+            }
         }
 
         // III.8 Balance ionique (meq) sauf si tous les résultats < LQ
@@ -458,7 +453,7 @@ class ProcessRaiCommand extends AeagCommand {
         if (($result = $controleVraisemblaceService->orthophosphate($mPo4, $mP, $codeRqPo4, $codeRqP)) != true) {
             $this->_addLog($result[0], $demandeId, $reponseId, $result[1], $codePrelevement);
         }
-        
+
         // III.11 NH4 (1335) en N < Nkj (1319)
         $mNh4 = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1335, $demandeId, $reponseId, $codePrelevement);
         $mNkj = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1319, $demandeId, $reponseId, $codePrelevement);
@@ -467,12 +462,12 @@ class ProcessRaiCommand extends AeagCommand {
         if (($result = $controleVraisemblaceService->ammonium($mNh4, $mNkj, $codeRqNh4, $codeRqNkj)) != true) {
             $this->_addLog($result[0], $demandeId, $reponseId, $result[1], $codePrelevement);
         }
-        
+
         // III.12 Valeur de pourcentage hors 1312 oxygène (ex : matière sèche ou granulo) : non compris entre 0 et 100 si code unité = 243 ou 246
         $tabMesures = array(243 => $this->repoPgTmpValidEdilabo->getMesureByCodeUnite(243, $demandeId, $reponseId, $codePrelevement, 1312),
             246 => $this->repoPgTmpValidEdilabo->getMesureByCodeUnite(246, $demandeId, $reponseId, $codePrelevement, 1312));
         if (($results = $controleVraisemblaceService->pourcentageHorsOxygene($tabMesures)) != true) {
-            foreach($results as $result) {
+            foreach ($results as $result) {
                 $this->_addLog($result[0], $demandeId, $reponseId, $result[1], $codePrelevement);
                 //$this->_addLog('info', $demandeId, $reponseId, 'III.12', $codePrelevement, $codeParametre);
             }
@@ -508,30 +503,40 @@ class ProcessRaiCommand extends AeagCommand {
                 $this->_addLog($result[0], $demandeId, $reponseId, $result[1], $codePrelevement);
             }
         }
-        
-        $this->controleVraisemblanceMacroPolluants($demandeId, $reponseId, $codePrelevement);
-        
-        $this->detectionCodeRemarqueLot7($demandeId, $reponseId, $codePrelevement);
-        
-        $this->detectionCodeRemarqueLot8($demandeId, $reponseId, $codePrelevement);
-        
-        $this->controleLqAeag($pgCmdFichierRps, $codePrelevement);
-        
-        $this->codeMethodesValides($pgCmdFichierRps, $codePrelevement);
 
+        //III.14 Contrôle de vraisemblance par parmètres macropolluants : Résultat d’analyse< Valeur max de la base x 2 
+        $this->controleVraisemblanceMacroPolluants($demandeId, $reponseId, $codePrelevement);
+
+        //III.15 Détection Code remarque Lot 7 (Etat chimique, Substance pertinentes, Complément AEAG, PSEE) :  % de détection différent de 100 (= recherche d'absence de code remarque) suivant liste ref-doc
+        $this->detectionCodeRemarqueLot7($demandeId, $reponseId, $codePrelevement);
+
+        //III.16
+        $this->detectionCodeRemarqueLot8($demandeId, $reponseId, $codePrelevement);
+
+        // III.17
+        $this->controleLqAeag($pgCmdFichierRps, $codePrelevement);
+
+        $this->codeMethodesValides($pgCmdFichierRps, $codePrelevement);
     }
-    
-    
+
     //III.14 Contrôle de vraisemblance par parmètres macropolluants : Résultat d’analyse< Valeur max de la base x 2 
     public function controleVraisemblanceMacroPolluants($demandeId, $reponseId, $codePrelevement) {
-        $pgProgUnitesPossiblesParams = $this->repoPgProgUnitesPossiblesParam->getPgProgUnitesPossiblesParamWithValeurMax();
-        foreach ($pgProgUnitesPossiblesParams as $pgProgUnitesPossiblesParam) {
-            $mesures = $this->repoPgTmpValidEdilabo->getAllMesureByCodeParametre($pgProgUnitesPossiblesParam->getCodeParametre(), $demandeId, $reponseId, $codePrelevement);
-            foreach($mesures as $mesure) {
+        
+        $rps = $this->repoPgCmdFichiersRps->findOneById($reponseId);
+        $codeMilieu = $rps->getDemande()->getLotan()->getLot()->getCodeMilieu()->getCodeMilieu();
+        $pgProgBornesParams = $this->repoPgProgBornesParams->getPgProgBornesParamsByCodeMilieu($codeMilieu);
+        //$pgProgUnitesPossiblesParams = $this->repoPgProgUnitesPossiblesParam->getPgProgUnitesPossiblesParamWithValeurMax();
+        foreach ($pgProgBornesParams as $pgProgBornesParam) {
+            $mesures = $this->repoPgTmpValidEdilabo->getAllMesureByCodeParametre($pgProgBornesParam->getCodeParametre(), $demandeId, $reponseId, $codePrelevement, $pgProgBornesParam->getCodeFraction());
+            foreach ($mesures as $mesure) {
                 if (!is_null($mesure)) {
-                    if ($mesure['resM'] > $pgProgUnitesPossiblesParam->getValMax()) {
-                        $this->_addLog('warning', $demandeId, $reponseId, "Controle Vraisemblance Macro Polluants : Le résultat est supérieur à la valeur attendue pour le paramètre " . $pgProgUnitesPossiblesParam->getCodeParametre()->getCodeParametre(), $codePrelevement, $mesure['resM']);
+                    if ($mesure['resM'] > $pgProgBornesParam->getValMax()) {
+                        $this->_addLog('warning', $demandeId, $reponseId, "Controle Vraisemblance Macro Polluants : Le résultat est supérieur à la valeur attendue pour le paramètre " . $pgProgBornesParam->getCodeParametre()->getCodeParametre(), $codePrelevement, $mesure['resM']);
                         //return array("warning", "Controle Vraisemblance Macro Polluants : Le résultat est supérieur à la valeur attendue pour le paramètre");
+                    }
+
+                    if (!is_null($pgProgBornesParam->getValMin()) && ($mesure['resM'] < $pgProgBornesParam->getValMin())) {
+                        $this->_addLog('warning', $demandeId, $reponseId, "Controle Vraisemblance Macro Polluants : Le résultat est inférieur à la valeur attendue pour le paramètre " . $pgProgBornesParam->getCodeParametre()->getCodeParametre(), $codePrelevement, $mesure['resM']);
                     }
                 }
             }
@@ -607,27 +612,27 @@ class ProcessRaiCommand extends AeagCommand {
                 if (!is_null($pgTmpValidEdilabo->getLqM())) {
                     $lq = $this->repoPgProgLotLqParam->isValidLq($pgCmdFichierRps->getDemande()->getLotan()->getLot(), $pgTmpValidEdilabo->getCodeParametre(), $pgTmpValidEdilabo->getCodeFraction(), $pgTmpValidEdilabo->getLqM());
                     if (count($lq) == 0) {
-                        $this->_addLog('warning', $demandeId, $reponseId, "Controle Lq AEAG : Lq supérieure à la valeur prévue: ". $pgTmpValidEdilabo->getLqM(), $codePrelevement, $pgTmpValidEdilabo->getCodeParametre());
+                        $this->_addLog('warning', $demandeId, $reponseId, "Controle Lq AEAG : Lq supérieure à la valeur prévue: " . $pgTmpValidEdilabo->getLqM(), $codePrelevement, $pgTmpValidEdilabo->getCodeParametre());
                         //return array("warning", "Controle Lq AEAG : Lq supérieure à la valeur prévue");
                     }
                 }
             }
         }
     }
-    
+
     public function codeMethodesValides($pgCmdFichierRps, $codePrelevement) {
         $demandeId = $pgCmdFichierRps->getDemande()->getId();
         $reponseId = $pgCmdFichierRps->getId();
         // Récupération des code Methodes
         $codesMethodes = $this->repoPgTmpValidEdilabo->getCodesMethodes($codePrelevement, $demandeId, $reponseId);
         //
-        foreach($codesMethodes as $codeMethode) {
-            foreach($codeMethode as $codeMeth) {
+        foreach ($codesMethodes as $codeMethode) {
+            foreach ($codeMethode as $codeMeth) {
                 if ($codeMeth != "") {
                     $pgSandreMethode = $this->repoPgSandreMethodes->findOneByCodeMethode($codeMeth);
                     if (is_null($pgSandreMethode)) {
-                        $this->_addLog('error', $demandeId, $reponseId, "Controle codes méthode : Code Méthode inexistant en base: ". $codeMeth, $codePrelevement, $codeMeth);
-                    }    
+                        $this->_addLog('error', $demandeId, $reponseId, "Controle codes méthode : Code Méthode inexistant en base: " . $codeMeth, $codePrelevement, $codeMeth);
+                    }
                 }
             }
         }

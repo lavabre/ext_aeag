@@ -78,7 +78,8 @@ class BackUpProcessCommand extends AeagCommand {
     protected function _phaseR15() {
         $pgProgPhase = $this->repoPgProgPhases->findOneByCodePhase('R15');
         //$pgCmdFichiersRps = $this->repoPgCmdFichiersRps->findBy(array('typeFichier' => 'RPS', 'suppr'=> 'N', 'phaseFichier' => $pgProgPhase), array('id' => 'ASC'));
-        $pgCmdFichiersRps = $this->repoPgCmdFichiersRps->getReponsesHorsLacBackup($pgProgPhase);
+        //$pgCmdFichiersRps = $this->repoPgCmdFichiersRps->getReponsesHorsLacBackup($pgProgPhase);
+        $pgCmdFichiersRps = $this->repoPgCmdFichiersRps->getReponsesBackup($pgProgPhase);
         $cptPhaseR15Fait = 0;
         foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
             $chemin = $this->getContainer()->getParameter('repertoire_echange');
