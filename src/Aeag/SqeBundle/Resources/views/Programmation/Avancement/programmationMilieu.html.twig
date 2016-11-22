@@ -9,6 +9,7 @@
                     <th width="1%">Validés</th>
                     <th width="1%">Soumis à validation</th>
                     <th width="1%">Créés</th>
+                    <th width="1%">Pourcentage validés</th>
                 </tr>
             </thead>
             <tbody>
@@ -20,6 +21,10 @@
                             <td class="text-right">{{ ligne.nb_valid | number_format(0,'.',' ') }}</td>
                             <td class="text-right">{{ ligne.nb_prevalid  | number_format(0,'.',' ')}}</td>
                             <td class="text-right">{{ ligne.nb_nb | number_format(0,'.',' ') }}</td>
+                            <td class="text-right">
+                                {%set pourcent = ((ligne.nb_valid  / ligne.nb_nb) * 100) %}
+                                {{  pourcent | number_format(2,'.',' ') }} %
+                            </td>
                         </tr>
                     {% endfor %}
                 {% endif %}

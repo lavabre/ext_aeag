@@ -6,7 +6,8 @@
                 <tr>
                     <th width="1%">Année</th>
                      <th width="1%">Nb rendus</th>
-                    <th width="1%">Nb attendus</th>
+                     <th width="1%">Nb attendus</th>
+                     <th width="1%">Pourcentage</th>
                 </tr>
           </thead>
             <tbody>
@@ -16,6 +17,10 @@
                             <td>{{ ligne.annee_prog }}</td>
                            <td class="text-right">{{ ligne.nb_rendus  | number_format(0,'.',' ')}}</td>
                             <td class="text-right">{{ ligne.nb_attendus | number_format(0,'.',' ') }}</td>
+                            <td class="text-right">
+                                {%set pourcent = ((ligne.nb_rendus  / ligne.nb_attendus) * 100) %}
+                                {{  pourcent | number_format(2,'.',' ') }} %
+                            </td>
                         </tr>
                     {% endfor %}
                 {% endif %}
