@@ -106,7 +106,6 @@ class ControleVraisemblance {
                 return array("warning", "Modele de Weiss : Conductivité supérieur à 10000");
             }
         }
-        var_dump('la on divise par zero 1 fin');
         return true;
     }
 
