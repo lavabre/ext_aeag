@@ -206,6 +206,202 @@ class ProgrammationAvancementController extends Controller {
                     'tableau' => $tableau,
         ));
     }
+    
+     public function prelevementIndexAction() {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'programmation');
+        $session->set('controller', 'ProgrammationAvancement');
+        $session->set('fonction', 'analyseIndex');
+
+        return $this->render('AeagSqeBundle:Programmation:Avancement\prelevementIndex.html.twig');
+    }
+
+    public function prelevementGlobalAction() {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'programmation');
+        $session->set('controller', 'ProgrammationAvancement');
+        $session->set('fonction', 'analyseGlobal');
+        $em = $this->get('doctrine')->getManager();
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        $repoPgProgMarche = $emSqe->getRepository('AeagSqeBundle:PgProgMarche');
+
+        $tableau = $repoPgProgMarche->getAvancementPrelevementGlobal();
+
+
+//          \Symfony\Component\VarDumper\VarDumper::dump($tableau);
+//          return new Response (''); 
+
+        return $this->render('AeagSqeBundle:Programmation:Avancement\prelevementGlobal.html.twig', array(
+                    'tableau' => $tableau,
+        ));
+    }
+
+    public function prelevementTypeMilieuAction() {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'programmation');
+        $session->set('controller', 'ProgrammationAvancement');
+        $session->set('fonction', 'analysePeriode');
+        $em = $this->get('doctrine')->getManager();
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        $repoPgProgMarche = $emSqe->getRepository('AeagSqeBundle:PgProgMarche');
+
+        $tableau = $repoPgProgMarche->getAvancementPrelevementTypeMilieu();
+
+
+//          \Symfony\Component\VarDumper\VarDumper::dump($tableau);
+//          return new Response (''); 
+
+        return $this->render('AeagSqeBundle:Programmation:Avancement\prelevementTypeMilieu.html.twig', array(
+                    'tableau' => $tableau,
+        ));
+    }
+
+    public function prelevementTypeMarcheAction() {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'programmation');
+        $session->set('controller', 'ProgrammationAvancement');
+        $session->set('fonction', 'analyseLotPrestataire');
+        $em = $this->get('doctrine')->getManager();
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        $repoPgProgMarche = $emSqe->getRepository('AeagSqeBundle:PgProgMarche');
+
+        $tableau = $repoPgProgMarche->getAvancementPrelevementTypeMarche();
+
+
+//          \Symfony\Component\VarDumper\VarDumper::dump($tableau);
+//          return new Response (''); 
+
+        return $this->render('AeagSqeBundle:Programmation:Avancement\prelevementTypeMarche.html.twig', array(
+                    'tableau' => $tableau,
+        ));
+    }
+    
+    public function programmationIndexAction() {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'programmation');
+        $session->set('controller', 'ProgrammationIndex');
+        $session->set('fonction', 'analyseIndex');
+
+        return $this->render('AeagSqeBundle:Programmation:Avancement\programmationIndex.html.twig');
+    }
+
+    public function programmationGlobalAction() {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'programmation');
+        $session->set('controller', 'ProgrammationAvancement');
+        $session->set('fonction', 'programmationtGlobal');
+        $em = $this->get('doctrine')->getManager();
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        $repoPgProgLotAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotAn');
+        $repoPgProgMarche = $emSqe->getRepository('AeagSqeBundle:PgProgMarche');
+        
+        $anneeProgs = $repoPgProgLotAn->getPgProgLotAnDistinctAnnee();
+        
+        $tab = array();
+        $tableau = array();
+        $i = 0;
+        foreach  ($anneeProgs as $anneeProg){
+            $tab[$i] = $repoPgProgMarche->getAvancementProgrammationGlobal($anneeProg["anneeProg"]);
+            $i++;
+        }
+
+        $tableau = $tab;
+
+
+//          \Symfony\Component\VarDumper\VarDumper::dump($tableau);
+//          return new Response (''); 
+
+        return $this->render('AeagSqeBundle:Programmation:Avancement\programmationGlobal.html.twig', array(
+                    'tableau' => $tableau,
+          ));
+    }
+
+    public function programmationMilieuAction() {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'programmation');
+        $session->set('controller', 'ProgrammationMilieu');
+        $session->set('fonction', 'analysePeriode');
+        $em = $this->get('doctrine')->getManager();
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        $repoPgProgMarche = $emSqe->getRepository('AeagSqeBundle:PgProgMarche');
+
+        $tableau = $repoPgProgMarche->getAvancementProgrammationMilieu();
+
+
+//          \Symfony\Component\VarDumper\VarDumper::dump($tableau);
+//          return new Response (''); 
+
+        return $this->render('AeagSqeBundle:Programmation:Avancement\programmationMilieu.html.twig', array(
+                    'tableau' => $tableau,
+        ));
+    }
+
+    public function programmationMarcheAction() {
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'programmation');
+        $session->set('controller', 'ProgrammationMarche');
+        $session->set('fonction', 'analyseLotPrestataire');
+        $em = $this->get('doctrine')->getManager();
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        $repoPgProgMarche = $emSqe->getRepository('AeagSqeBundle:PgProgMarche');
+
+        $tableau = $repoPgProgMarche->getAvancementProgrammationMarche();
+
+
+//          \Symfony\Component\VarDumper\VarDumper::dump($tableau);
+//          return new Response (''); 
+
+        return $this->render('AeagSqeBundle:Programmation:Avancement\programmationMarche.html.twig', array(
+                    'tableau' => $tableau,
+        ));
+    }
+
 
     public function unzipAction($suiviPrelId = null) {
         $user = $this->getUser();

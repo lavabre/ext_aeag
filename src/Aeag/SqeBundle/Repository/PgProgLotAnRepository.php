@@ -203,5 +203,16 @@ class PgProgLotAnRepository extends EntityRepository {
 
         return $qb->getResult();
     }
+    
+    /**
+     * @return array
+     */
+    public function getPgProgLotAnDistinctAnnee() {
+        $query = "select distinct p.anneeProg";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotAn p";
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+        return $qb->getResult();
+    }
 
 }

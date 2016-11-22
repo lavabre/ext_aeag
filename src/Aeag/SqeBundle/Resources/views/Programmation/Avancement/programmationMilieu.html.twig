@@ -1,0 +1,65 @@
+<br/><br/>
+<div class="row responsive">
+    <div class="col-xm-12">
+        <table class="table table-bordered table-condensed table-advance" id="idTable_milieu">
+            <thead>
+                <tr>
+                    <th width="1%">Année</th>
+                    <th width="5%">Milieu</th>
+                    <th width="1%">Validés</th>
+                    <th width="1%">Soumis à validation</th>
+                    <th width="1%">Créés</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if tableau| length %}
+                    {% for ligne  in tableau %}
+                        <tr>
+                            <td>{{ ligne.annee_prog }}</td>
+                            <td>{{ ligne.nom_milieu }}</td>
+                            <td class="text-right">{{ ligne.nb_valid | number_format(0,'.',' ') }}</td>
+                            <td class="text-right">{{ ligne.nb_prevalid  | number_format(0,'.',' ')}}</td>
+                            <td class="text-right">{{ ligne.nb_nb | number_format(0,'.',' ') }}</td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+            </tbody>
+        </table> 
+    </div>
+</div>
+
+<script type="text/javascript" language="javascript">
+
+    jQuery(document).ready(function () {
+        var tableMilieu = $('#idTable_milieu').DataTable(
+                {"stateSave": false,
+                    "order": [[0, "asc"], [1, "asc"]],
+                    "oLanguage": {
+                        "sSearch": "Filtre",
+                        "sFirst": "1ere page",
+                        "sLast": "Dernière page",
+                        "sNext": "Prochaine page",
+                        "sPrevious": "Page précédente",
+                        "EmptyTable": "Pas de données",
+                        "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+                        "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+                        "sZeroRecords": "Pas d'enregistrement à afficher",
+                        "sInfoEmpty": "Pas d'enregistrement à afficher",
+                        "sInfoThousands": " ",
+                        "sLengthMenu": 'Afficher <select>' +
+                                '<option value="10">10</option>' +
+                                '<option value="20">20</option>' +
+                                '<option value="30">30</option>' +
+                                '<option value="40">40</option>' +
+                                '<option value="50">50</option>' +
+                                '<option value="-1">Tous</option>' +
+                                '</select> enregistrements',
+                        "sPaginationType": "full_numbers"
+                    }
+                }
+        );
+
+
+    });
+
+</script>

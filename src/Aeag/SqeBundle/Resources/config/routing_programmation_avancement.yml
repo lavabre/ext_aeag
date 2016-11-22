@@ -1,3 +1,9 @@
+AeagSqeBundle_programmation_avancement_campagne:
+    path:  /campagne
+    defaults: { _controller: AeagSqeBundle:ProgrammationAvancement:campagneIndex }
+    requirements:
+        methods:  GET|POST
+
 
 AeagSqeBundle_programmation_avancement_hydro:
     path:  /hydro
@@ -56,6 +62,54 @@ AeagSqeBundle_programmation_avancement_analyse_periode:
 AeagSqeBundle_programmation_avancement_analyse_lot:
     path:  /analyse/lot/ptrestataire
     defaults: { _controller: AeagSqeBundle:ProgrammationAvancement:analyseLot }
+    requirements:
+        methods:  GET|POST
+
+AeagSqeBundle_programmation_avancement_prelevement:
+    path:  /prelevement
+    defaults: { _controller: AeagSqeBundle:ProgrammationAvancement:prelevementIndex }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_avancement_prelevement_global:
+    path:  /prelevement/global
+    defaults: { _controller: AeagSqeBundle:ProgrammationAvancement:prelevementGlobal }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_avancement_prelevement_type_milieu:
+    path:  /prelevement/type/milieu
+    defaults: { _controller: AeagSqeBundle:ProgrammationAvancement:prelevementTypeMilieu }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_avancement_prelevement_type_marche:
+    path:  /prelevement/type/marche
+    defaults: { _controller: AeagSqeBundle:ProgrammationAvancement:prelevementTypeMarche }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_avancement_programmation:
+    path:  /programmation
+    defaults: { _controller: AeagSqeBundle:ProgrammationAvancement:programmationIndex }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_avancement_programmation_global:
+    path:  /programmation/global
+    defaults: { _controller: AeagSqeBundle:ProgrammationAvancement:programmationGlobal }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_avancement_programmation_milieu:
+    path:  /programmation/milieu
+    defaults: { _controller: AeagSqeBundle:ProgrammationAvancement:programmationMilieu }
+    requirements:
+        methods:  GET|POST
+        
+AeagSqeBundle_programmation_avancement_programmation_marche:
+    path:  /programmation/marche
+    defaults: { _controller: AeagSqeBundle:ProgrammationAvancement:programmationMarche }
     requirements:
         methods:  GET|POST
         
