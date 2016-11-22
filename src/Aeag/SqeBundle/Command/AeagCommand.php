@@ -43,6 +43,8 @@ class AeagCommand extends ContainerAwareCommand {
     protected $detectionCodeRemarqueComplet;
     protected $detectionCodeRemarqueMoitie;
     
+    protected $controleVraisemblaceService;
+    
 
     protected function configure() {
         $this
@@ -93,6 +95,8 @@ class AeagCommand extends ContainerAwareCommand {
         $cheminCourant = __DIR__ . '/../../../../';
         $this->detectionCodeRemarqueComplet = $this->_csvToArray($cheminCourant . "/web/tablesCorrespondancesRai/detectionCodeRemarqueComplet.csv");
         $this->detectionCodeRemarqueMoitie = $this->_csvToArray($cheminCourant . "/web/tablesCorrespondancesRai/detectionCodeRemarqueMoitie.csv");
+        
+        $this->controleVraisemblaceService = $this->getContainer()->get('aeag_sqe.controle_vraisemblance');
     }
 
     protected function _updatePhaseFichierRps(\Aeag\SqeBundle\Entity\PgCmdFichiersRps $pgCmdFichierRps, $phase, $phase82atteinte = false) {
