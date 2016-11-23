@@ -141,4 +141,28 @@ class PgCmdFichiersRpsRepository extends EntityRepository {
         return $qb->getResult();
     }
     
+      public function getReponseByDemandeNomFichier($demande,$nomFichier) {
+        $query = "select rps";
+        $query .= " from Aeag\SqeBundle\Entity\PgCmdFichiersRps rps";
+        $query .= " where rps.demande = :demande"; 
+        $query .= " and rps.nomFichier = :nomFichier";
+        $query .= " and rps.suppr = 'N'";
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('demande', $demande);
+         $qb->setParameter('nomFichier', $nomFichier);
+        return $qb->getOneOrNullResult();
+    }
+    
+     public function getReponseByDemandeType($demande,$typeFichier) {
+        $query = "select rps";
+        $query .= " from Aeag\SqeBundle\Entity\PgCmdFichiersRps rps";
+        $query .= " where rps.demande = :demande"; 
+        $query .= " and rps.typeFichier = :typeFichier";
+        $query .= " and rps.suppr = 'N'";
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('demande', $demande);
+         $qb->setParameter('typeFichier', $typeFichier);
+        return $qb->getResult();
+    } 
+    
 }

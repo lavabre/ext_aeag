@@ -8,7 +8,8 @@ class DepotHydrobio {
         
     
         $dateDepot = new \DateTime();
-        $ficRapport =  $pgCmdFichierRps->getId() .  '_rapport.csv';
+        $tabNomFichier = explode('.', $pgCmdFichierRps->getNomFichier());
+        $ficRapport =  $tabNomFichier[0] .  '_rapport.csv';
         $liste = array();
         $liste = $this->unzip($pathBase . '/' . $nomFichier, $pathBase  . '/');
         $rapport = fopen($pathBase . '/' . $ficRapport , "w+");
@@ -21,16 +22,8 @@ class DepotHydrobio {
         fclose($rapport);
         
         // Enregistrement des valeurs en base
-        $reponse = new \Aeag\SqeBundle\Entity\PgCmdFichiersRps();
-        $reponse->setDemande($pgCmdFichierRps->getDemande());
-        $reponse->setNomFichier($ficRapport);
-        $reponse->setDateDepot(new \DateTime());
-        $reponse->setTypeFichier('CR');
-        $reponse->setPhaseFichier($pgCmdFichierRps->getPhaseFichier());
-        $reponse->setUser($pgCmdFichierRps->getUser());
-        $reponse->setSuppr('N');
-
-        $em->persist($reponse);
+        $pgCmdFichierRps->setNomFichierCompteRendu($ficRapport);
+        $em->persist($pgCmdFichierRps);
         $em->flush();
         
         

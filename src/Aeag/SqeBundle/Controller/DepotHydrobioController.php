@@ -144,7 +144,7 @@ class DepotHydrobioController extends Controller {
         if ($pgCmdDemande) {
             // Récupération du fichier
             $zipName = str_replace('xml', 'zip', $pgCmdDemande->getNomFichier());
-            $chemin = $this->getParameter('repertoire_excel');
+            $chemin = $this->getParameter('repertoire_depotHydrobio');
             $pathBase = $this->get('aeag_sqe.process_rai')->getCheminEchange($chemin, $pgCmdDemande);
 
             // Changement de la phase s'il est téléchargé par un presta pour la première fois
@@ -192,7 +192,7 @@ class DepotHydrobioController extends Controller {
         $pgCmdDemande = $repoPgCmdDemande->findOneById($demandeId);
         if ($pgCmdDemande) {
             // Récupération du fichier
-            $chemin = $this->getParameter('repertoire_excel');
+            $chemin = $this->getParameter('repertoire_depotHydrobio');
             $pathBase = $this->get('aeag_sqe.process_rai')->getCheminEchange($chemin, $pgCmdDemande);
 
             // Changement de la phase s'il est téléchargé par un presta pour la première fois
@@ -240,13 +240,12 @@ class DepotHydrobioController extends Controller {
         $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
 
-        $pgCmdFichiersRps = $repoPgCmdFichiersRps->findBy(array('demande' => $demandeId,
-            'typeFichier' => 'EXL',
-            'suppr' => 'N'));
-        $pgCmdDemande = $repoPgCmdDemande->findOneById($demandeId);
+        $pgCmdFichiersRps = $repoPgCmdFichiersRps->getReponseByDemandeType($demandeId, 'EXL');
+         $pgCmdDemande = $repoPgCmdDemande->findOneById($demandeId);
         $pgProgWebUser = $repoPgProgWebUsers->findOneByExtId($user->getId());
 
-        return $this->render('AeagSqeBundle:DepotHydrobio:reponses.html.twig', array('reponses' => $pgCmdFichiersRps,
+        return $this->render('AeagSqeBundle:DepotHydrobio:reponses.html.twig', array(
+                   'reponses' =>  $pgCmdFichiersRps,
                     'demande' => $pgCmdDemande,
                     'user' => $pgProgWebUser));
     }
@@ -287,7 +286,7 @@ class DepotHydrobioController extends Controller {
 
         $pgProgWebUser = $repoPgProgWebUsers->findOneByExtId($user->getId());
         $pgCmdDemande = $repoPgCmdDemande->findOneById($demandeId);
-        $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R10');
+        $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('DH10');
 
         // Récupération des valeurs du fichier
         $nomFichier = $_FILES["fichier"]["name"];
@@ -310,7 +309,7 @@ class DepotHydrobioController extends Controller {
 
 
         // Enregistrement du fichier sur le serveur
-        $chemin = $this->getParameter('repertoire_excel');
+        $chemin = $this->getParameter('repertoire_depotHydrobio');
         $pathBase = $this->get('aeag_sqe.process_rai')->getCheminEchange($chemin, $pgCmdDemande, $reponse->getId());
 
         if (!mkdir($pathBase, 0755, true)) {
@@ -323,12 +322,7 @@ class DepotHydrobioController extends Controller {
 
             // Envoi du fichier sur le serveur du sandre pour validationFormat
             if ($this->get('aeag_sqe.depotHydrobio')->extraireFichier($emSqe, $reponse, $pathBase, $nomFichier, $session)) {
-                // Changement de la phase de la réponse 
-                $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R15');
-                $reponse->setPhaseFichier($pgProgPhases);
-                $emSqe->persist($reponse);
-                $emSqe->flush();
-
+           
                 // Envoi d'un mail
                 $objetMessage = "Dépôt Hydrobio  " . $reponse->getId() . " soumis et en cours de traitement";
                 $txtMessage = "Votre dépôt hydrobio (id " . $reponse->getId() . ") concernant la DAI " . $pgCmdDemande->getCodeDemandeCmd() . " a été soumis. Le fichier " . $reponse->getNomFichier() . " est en cours de traitement. "
@@ -372,7 +366,7 @@ class DepotHydrobioController extends Controller {
         $pgCmdFichiersRps = $repoPgCmdFichiersRps->findOneById($reponseId);
 
         // Récupération du fichier
-        $chemin = $this->getParameter('repertoire_excel');
+        $chemin = $this->getParameter('repertoire_depotHydrobio');
         $pathBase = $this->get('aeag_sqe.process_rai')->getCheminEchange($chemin, $pgCmdFichiersRps->getDemande(), $reponseId);
         switch ($typeFichier) {
             case "EXL" :
@@ -383,7 +377,7 @@ class DepotHydrobioController extends Controller {
                 $contentType = "application/octet-stream";
                 $fileName = $pgCmdFichiersRps->getNomFichierCompteRendu();
                 break;
-           }
+        }
         // On log le téléchargement
         $log = new \Aeag\SqeBundle\Entity\PgCmdDwnldUsrRps();
         $log->setUser($pgProgWebUser);
@@ -415,17 +409,16 @@ class DepotHydrobioController extends Controller {
         $repoPgCmdFichiersRps = $emSqe->getRepository('AeagSqeBundle:PgCmdFichiersRps');
 
         $pgCmdFichiersRps = $repoPgCmdFichiersRps->findOneById($reponseId);
-        $ficRapport =  $pgCmdFichierRps->getId() .  '_rapport.csv';
-
+      
         // Suppression physique des fichiers
-        $chemin = $this->getParameter('repertoire_excel');
+        $chemin = $this->getParameter('repertoire_depotHydrobio');
         $pathBase = $this->get('aeag_sqe.process_rai')->getCheminEchange($chemin, $pgCmdFichiersRps->getDemande(), $reponseId);
         if (file_exists($pathBase)) {
             if ($this->_rmdirRecursive($pathBase)) {
                 // Suppression en base
                 $pgCmdFichiersRps->setSuppr('O');
                 $emSqe->persist($pgCmdFichiersRps);
-                $emSqe->flush();
+                 $emSqe->flush();
             }
         } else {
             $pgCmdFichiersRps->setSuppr('O');
