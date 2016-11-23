@@ -25,10 +25,18 @@
     <ul class="dropdown-menu">
         <li><a href="{{ path('Aeag_sqe_programmation_lots', {'action': 'P'}) }}">Programmer</a></li>
         <li><a href="{{ path('Aeag_sqe_programmation_lots', {'action': 'V'}) }}">Consulter</a></li>
-         {% if  not app.session.get('evolution')%}
-        <li><a href="{{ path('AeagSqeBundle_programmation_avancement_hydro') }}" title="Avancement campagne Hydrobio">Avancement campagne Hydrobio </a></li>
-        <li><a href="{{ path('AeagSqeBundle_programmation_avancement_analyse') }}" title="Avancement campagne Analyses">Avancement campagne Analyses  </a></li>
-        {% endif %}
+            {% if  not app.session.get('evolution')%}
+             <li class="dropdown-submenu">
+                <a href="javascript:;">
+                    Avancement campagne
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ path('AeagSqeBundle_programmation_avancement_hydro') }}" title="Avancement campagne Hydrobio"> Hydrobio </a></li>
+                    <li><a href="{{ path('AeagSqeBundle_programmation_avancement_analyse') }}" title="Avancement campagne Analyses"> Analyses  </a></li>
+                    <li><a href="{{ path('AeagSqeBundle_programmation_avancement_prelevement') }}" title="Avancement campagne Prélèvements"> Prélèvements  </a></li>
+                </ul>
+                <li><a href="{{ path('AeagSqeBundle_programmation_avancement_programmation') }}" title="Avancement pogrammation">Avancement programmation  </a></li>
+            {% endif %}
     </ul>
 </li>
 
@@ -66,20 +74,20 @@
 
     <ul class="dropdown-menu">
         <li><a href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}">Hydrobio</a></li>
-        {% if app.session.get('suiviQHb') %}
-        <li><a href="{{ path('AeagSqeBundle_suiviHydrobio_synthese')}}">Qualification Hydrobio</a></li>
-        {% endif %}
-        {% if app.session.get('suiviSED') %}
-        <li><a href="{{ path('AeagSqeBundle_suiviSediment_index')}}">Sédiment</a></li>
-        {% endif  %}
-        {# {% if  not app.session.get('evolution')%}#}
-                 {% if app.session.get('suiviEau') %}
-                           <li><a href="{{ path('AeagSqeBundle_suiviEau_index')}}">Eau</a></li>
-                 {% endif %}
-         {#{% endif %}#}
-         <li><a href="{{ path('AeagSqeBundle_planning_index', {'typeMilieu': 'HB'}) }}" title="Planning Hydrobio">Planning Hydrobio</a></li>
-         <li><a href="{{ path('AeagSqeBundle_planning_index', {'typeMilieu': 'PC'}) }}" title="Planning Autres"> Planning Autres</a></li>
-     </ul>
+            {% if app.session.get('suiviQHb') %}
+            <li><a href="{{ path('AeagSqeBundle_suiviHydrobio_synthese')}}">Qualification Hydrobio</a></li>
+            {% endif %}
+            {% if app.session.get('suiviSED') %}
+            <li><a href="{{ path('AeagSqeBundle_suiviSediment_index')}}">Sédiment</a></li>
+            {% endif  %}
+            {# {% if  not app.session.get('evolution')%}#}
+            {% if app.session.get('suiviEau') %}
+            <li><a href="{{ path('AeagSqeBundle_suiviEau_index')}}">Eau</a></li>
+            {% endif %}
+            {#{% endif %}#}
+        <li><a href="{{ path('AeagSqeBundle_planning_index', {'typeMilieu': 'HB'}) }}" title="Planning Hydrobio">Planning Hydrobio</a></li>
+        <li><a href="{{ path('AeagSqeBundle_planning_index', {'typeMilieu': 'PC'}) }}" title="Planning Autres"> Planning Autres</a></li>
+    </ul>
 </li>
 
 {%if app.session.get('menu') == 'referentiel'%}
@@ -135,7 +143,7 @@
 </li>   
 
 <li>
- <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+    <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
         {%if app.session.get('menu') == 'programmation'%}<span class="selected"></span>{%endif%}
         Aides
         <i class="fa fa-angle-down"></i>     
@@ -144,5 +152,5 @@
     <ul class="dropdown-menu">
         <li><a  href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur-prog.pdf') }}" target="_blank" title="Aide">Aide programmation</a></li>
         <li><a  href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur.pdf') }}" target="_blank" title="Aide">Aide utilisateur</a></li>
-     </ul>
+    </ul>
 </li>

@@ -1,0 +1,71 @@
+<br/><br/>
+<div class="row responsive">
+    <div class="col-xm-12">
+        <table class="table table-bordered table-condensed table-advance" id="idTable_global">
+            <thead>
+                <tr>
+                    <th width="1%">Année</th>
+                    <th width="1%">Validés</th>
+                    <th width="1%">Soumis à validation</th>
+                    <th width="1%">Créés</th>
+                    <th width="1%">Pourcentage validés</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if tableau| length %}
+                    {% for tab in tableau %}
+                        {% for ligne  in tab %}
+                            <tr>
+                                <td>{{ ligne.annee_prog }}</td>
+                                <td class="text-right">{{ ligne.nb_valid | number_format(0,'.',' ') }}</td>
+                                <td class="text-right">{{ ligne.nb_prevalid  | number_format(0,'.',' ')}}</td>
+                                <td class="text-right">{{ ligne.nb_nb | number_format(0,'.',' ') }}</td>
+                                <td class="text-right">
+                                    {%set pourcent = ((ligne.nb_valid  / ligne.nb_nb) * 100) %}
+                                    {{  pourcent | number_format(2,'.',' ') }} %
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% endfor %}
+                {% endif %}
+            </tbody>
+        </table> 
+    </div>
+</div>
+
+<script type="text/javascript" language="javascript">
+
+    jQuery(document).ready(function () {
+        var tableGlobal = $('#idTable_global').DataTable(
+                {"stateSave": false,
+                    "order": [[0, "asc"]],
+                    "oLanguage": {
+                        "sSearch": "Filtre",
+                        "sFirst": "1ere page",
+                        "sLast": "Dernière page",
+                        "sNext": "Prochaine page",
+                        "sPrevious": "Page précédente",
+                        "EmptyTable": "Pas de données",
+                        "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+                        "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+                        "sZeroRecords": "Pas d'enregistrement à afficher",
+                        "sInfoEmpty": "Pas d'enregistrement à afficher",
+                        "sInfoThousands": " ",
+                        "sLengthMenu": 'Afficher <select>' +
+                                '<option value="10">10</option>' +
+                                '<option value="20">20</option>' +
+                                '<option value="30">30</option>' +
+                                '<option value="40">40</option>' +
+                                '<option value="50">50</option>' +
+                                '<option value="-1">Tous</option>' +
+                                '</select> enregistrements',
+                        "sPaginationType": "full_numbers"
+                    }
+                }
+        );
+
+
+
+    });
+
+</script>
