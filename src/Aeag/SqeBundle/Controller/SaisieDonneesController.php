@@ -23,7 +23,7 @@ class SaisieDonneesController extends Controller {
         }
 
         $session = $this->get('session');
-        $session->set('menu', 'saisieDonnees');
+        $session->set('menu', 'donnees');
         $session->set('controller', 'SaisieDonnees');
         $session->set('fonction', 'index');
         $emSqe = $this->get('doctrine')->getManager('sqe');
@@ -73,7 +73,7 @@ class SaisieDonneesController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'saisieDonnees');
+        $session->set('menu', 'donnees');
         $session->set('controller', 'SaisieDonnees');
         $session->set('fonction', 'lotPeriodes');
         $emSqe = $this->get('doctrine')->getManager('sqe');
@@ -182,7 +182,7 @@ class SaisieDonneesController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'saisieDonnees');
+        $session->set('menu', 'donnees');
         $session->set('controller', 'SaisieDonnees');
         $session->set('fonction', ' lotPeriodeTelecharger');
         $emSqe = $this->get('doctrine')->getManager('sqe');
@@ -332,7 +332,7 @@ class SaisieDonneesController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'saisieDonnees');
+        $session->set('menu', 'donnees');
         $session->set('controller', 'SaisieDonnees');
         $session->set('fonction', 'lotPeriodeStations');
         $emSqe = $this->get('doctrine')->getManager('sqe');
@@ -542,7 +542,7 @@ class SaisieDonneesController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'saisieDonnees');
+        $session->set('menu', 'donnees');
         $session->set('controller', 'SaisieDonnees');
         $session->set('fonction', 'lotPeriodeStationSaisirCommentaire');
         $emSqe = $this->get('doctrine')->getManager('sqe');
@@ -578,7 +578,7 @@ class SaisieDonneesController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'saisieDonnees');
+        $session->set('menu', 'donnees');
         $session->set('controller', 'SaisieDonnees');
         $session->set('fonction', 'lotPeriodeStationSaisirEnvSitu');
         $emSqe = $this->get('doctrine')->getManager('sqe');
@@ -797,7 +797,7 @@ class SaisieDonneesController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'saisieDonnees');
+        $session->set('menu', 'donnees');
         $session->set('controller', 'SaisieDonnees');
         $session->set('fonction', ' otPeriodeStationResultatEnvSitu');
         $emSqe = $this->get('doctrine')->getManager('sqe');
@@ -1256,7 +1256,7 @@ class SaisieDonneesController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'saisieDonnees');
+        $session->set('menu', 'donnees');
         $session->set('controller', 'SaisieDonnees');
         $session->set('fonction', 'lotPeriodeStationSaisirAna');
         $emSqe = $this->get('doctrine')->getManager('sqe');
@@ -1429,7 +1429,7 @@ class SaisieDonneesController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'saisieDonnees');
+        $session->set('menu', 'donnees');
         $session->set('controller', 'SaisieDonnees');
         $session->set('fonction', 'lotPeriodeStationResultatAna');
         $emSqe = $this->get('doctrine')->getManager('sqe');
@@ -1749,7 +1749,7 @@ class SaisieDonneesController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'saisieDonnees');
+        $session->set('menu', 'donnees');
         $session->set('controller', 'SaisieDonnees');
         $session->set('fonction', 'lotPeriodeStationValider');
         $em = $this->get('doctrine')->getManager();
@@ -1934,7 +1934,7 @@ class SaisieDonneesController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'saisieDonnees');
+        $session->set('menu', 'donnees');
         $session->set('controller', 'SaisieDonnees');
         $session->set('fonction', 'lotPeriodeStationValider');
         $emSqe = $this->get('doctrine')->getManager('sqe');
@@ -2009,7 +2009,7 @@ class SaisieDonneesController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'saisieDonnees');
+        $session->set('menu', 'donnees');
         $session->set('controller', 'SaisieDonnees');
         $session->set('fonction', 'lotPeriodeStationTelecharger');
         $emSqe = $this->get('doctrine')->getManager('sqe');
@@ -2074,7 +2074,7 @@ class SaisieDonneesController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'saisieDonnees');
+        $session->set('menu', 'donnees');
         $session->set('controller', 'SaisieDonnees');
         $session->set('fonction', 'lotPeriodeStationsIntegrer');
         $emSqe = $this->get('doctrine')->getManager('sqe');
@@ -2097,7 +2097,7 @@ class SaisieDonneesController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'saisieDonnees');
+        $session->set('menu', 'donnees');
         $session->set('controller', 'SaisieDonnees');
         $session->set('fonction', 'lotPeriodeStationsIntegrerFichier');
         $em = $this->get('doctrine')->getManager();
@@ -2331,25 +2331,25 @@ class SaisieDonneesController extends Controller {
                         } else {
                             $tabDate1 = explode('-', $date);
                             $tabDate2 = explode(':', $date);
-                            if (count($tabDate1) != 3 or count($tabDate2) != 3) {
+                            if (count($tabDate1) != 3 or count($tabDate2) != 2) {
                                 $err = true;
-                                $contenu = 'ligne  ' . $ligne . '  :  date heure incorrecte (' . $date . '). Le format attendu est : YYYY-MM-DD HH:MM:SS' . CHR(13) . CHR(10);
+                                $contenu = 'ligne  ' . $ligne . '  :  date heure incorrecte (' . $date . '). Le format attendu est : YYYY-MM-DD HH:MM' . CHR(13) . CHR(10);
                                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                                 fputs($rapport, $contenu);
                             } else {
-                                list( $annee, $mois, $jour, $heure, $min, $sec ) = sscanf($date, "%d-%d-%d %d:%d:%d");
+                                list( $annee, $mois, $jour, $heure, $min ) = sscanf($date, "%d-%d-%d %d:%d");
                                 try {
-                                    $datePrel = new \DateTime($annee . '-' . $mois . '-' . $jour . ' ' . $heure . ':' . $min . ':' . $sec);
+                                    $datePrel = new \DateTime($annee . '-' . $mois . '-' . $jour . ' ' . $heure . ':' . $min );
                                     if (!$datePrel) {
                                         $err = true;
-                                        $contenu = 'ligne  ' . $ligne . '  :  date heure incorrecte (' . $date . '). Le format attendu est : YYYY-MM-DD HH:MM:SS' . CHR(13) . CHR(10);
+                                        $contenu = 'ligne  ' . $ligne . '  :  date heure incorrecte (' . $date . '). Le format attendu est : YYYY-MM-DD HH:MM' . CHR(13) . CHR(10);
                                         $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                                         fputs($rapport, $contenu);
                                     }
                                 } catch (Exception $e) {
                                     echo $e->getMessage();
                                     $err = true;
-                                    $contenu = 'ligne  ' . $ligne . '  :  date heure incorrecte (' . $date . '). Le format attendu est : YYYY-MM-DD HH:MM:SS' . CHR(13) . CHR(10);
+                                    $contenu = 'ligne  ' . $ligne . '  :  date heure incorrecte (' . $date . '). Le format attendu est : YYYY-MM-DD HH:MM' . CHR(13) . CHR(10);
                                     $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                                     fputs($rapport, $contenu);
                                 }
@@ -2379,6 +2379,7 @@ class SaisieDonneesController extends Controller {
                                 $err = true;
                                 $contenu = 'ligne  ' . $ligne . '  :  Paramètre  (' . $tab[8] . ') non prévu dans le lot' . CHR(13) . CHR(10);
                                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                $pgProgLotParamAn = null;
                                 fputs($rapport, $contenu);
                             }
                         }
@@ -2462,6 +2463,14 @@ class SaisieDonneesController extends Controller {
                                     fputs($rapport, $contenu);
                                 }
                             }
+                        }
+                        
+                        $pgCmdPrelev = $tabStations[$i]['prelev'];
+                        if (!$pgCmdPrelev){
+                             $err = true;
+                                    $contenu = 'ligne  ' . $ligne . '  :  Pas de prélevement pour la demande : ' . $tabStations[$i]['demande']->getCodeDemandeCmd() . ' de la station : ' . $tab[1]  . ' pour le prestataire : ' . $tabStations[$i]['prestataire']->getAncnum(). CHR(13) . CHR(10);;
+                                    $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                    fputs($rapport, $contenu);
                         }
 
                         if ($err) {
@@ -2676,7 +2685,7 @@ class SaisieDonneesController extends Controller {
                                 if ($user->hasRole('ROLE_ADMINSQE') or ( $prestataire == $pgProgLotParamAn->getPrestataire() and $userPrestataire == $prestataire)) {
 
                                     if ($pgProgGrpParamRef->getTypeGrp() == 'ENV') {
-                                        // echo ('groupe: ' . $pgProgLotGrparAn->getId() . ' type : ' . $pgProgGrpParamRef->getTypeGrp() . '  pgCmdPrelev : ' . $pgCmdPrelev->getId() . ' parametre : ' . $pgProgLotParamAn->getId() . ' </br>');
+                                         echo ('groupe: ' . $pgProgLotGrparAn->getId() . ' type : ' . $pgProgGrpParamRef->getTypeGrp() . '  pgCmdPrelev : ' . $pgCmdPrelev->getId() . ' parametre : ' . $pgProgLotParamAn->getId() . ' </br>');
                                         $nbParametresEnvSit++;
                                         $pgCmdMesureEnv = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParamProg($pgCmdPrelev, $pgProgLotParamAn);
                                         if ($pgCmdMesureEnv) {
@@ -2816,7 +2825,7 @@ class SaisieDonneesController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'saisieDonnees');
+        $session->set('menu', 'donnees');
         $session->set('controller', 'SaisieDonnees');
         $session->set('fonction', 'lotPeriodeStationsTelechargerRapport');
         $emSqe = $this->get('doctrine')->getManager('sqe');
@@ -2837,7 +2846,7 @@ class SaisieDonneesController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'saisieDonnees');
+        $session->set('menu', 'donnees');
         $session->set('controller', 'SaisieDonnees');
         $session->set('fonction', 'lotPeriodeLacs');
         $emSqe = $this->get('doctrine')->getManager('sqe');
@@ -3083,7 +3092,7 @@ class SaisieDonneesController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'saisieDonnees');
+        $session->set('menu', 'donnees');
         $session->set('controller', 'SaisieDonnees');
         $session->set('fonction', 'lotPeriodeStationSaisirEnvSitu');
         $emSqe = $this->get('doctrine')->getManager('sqe');
@@ -3407,7 +3416,7 @@ class SaisieDonneesController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'saisieDonnees');
+        $session->set('menu', 'donnees');
         $session->set('controller', 'SaisieDonnees');
         $session->set('fonction', ' otPeriodeStationResultatEnvSitu');
         $emSqe = $this->get('doctrine')->getManager('sqe');
@@ -3918,7 +3927,7 @@ class SaisieDonneesController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'saisieDonnees');
+        $session->set('menu', 'donnees');
         $session->set('controller', 'SaisieDonnees');
         $session->set('fonction', ' otPeriodeStationResultatEnvSitu');
         $emSqe = $this->get('doctrine')->getManager('sqe');
@@ -4070,7 +4079,7 @@ class SaisieDonneesController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'saisieDonnees');
+        $session->set('menu', 'donnees');
         $session->set('controller', 'SaisieDonnees');
         $session->set('fonction', 'lotPeriodeStationSaisirAna');
         $emSqe = $this->get('doctrine')->getManager('sqe');
@@ -4251,7 +4260,7 @@ class SaisieDonneesController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'saisieDonnees');
+        $session->set('menu', 'donnees');
         $session->set('controller', 'SaisieDonnees');
         $session->set('fonction', 'lotPeriodeStationResultatAna');
         $emSqe = $this->get('doctrine')->getManager('sqe');
@@ -4584,7 +4593,7 @@ class SaisieDonneesController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'saisieDonnees');
+        $session->set('menu', 'donnees');
         $session->set('controller', 'SaisieDonnees');
         $session->set('fonction', 'lotPeriodeLacValiderEnvSitu');
         $emSqe = $this->get('doctrine')->getManager('sqe');
@@ -4699,7 +4708,7 @@ class SaisieDonneesController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'saisieDonnees');
+        $session->set('menu', 'donnees');
         $session->set('controller', 'SaisieDonnees');
         $session->set('fonction', 'lotPeriodeLacDevaliderEnvSitu');
         $emSqe = $this->get('doctrine')->getManager('sqe');
@@ -4800,7 +4809,7 @@ class SaisieDonneesController extends Controller {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-        $session->set('menu', 'saisieDonnees');
+        $session->set('menu', 'donnees');
         $session->set('controller', 'SaisieDonnees');
         $session->set('fonction', 'lotPeriodeStationTelecharger');
         $emSqe = $this->get('doctrine')->getManager('sqe');
@@ -4832,7 +4841,7 @@ class SaisieDonneesController extends Controller {
     protected function _controleVraisemblance($parametre, $valeur, $remarque, $unite, $inSitu, $fraction, $tabStatut) {
 
         $session = $this->get('session');
-        $session->set('menu', 'saisieDonnees');
+        $session->set('menu', 'donnees');
         $session->set('controller', 'SaisieDonnees');
         $session->set('fonction', '_controleVraisemblance');
 
@@ -4947,7 +4956,7 @@ class SaisieDonneesController extends Controller {
     protected function _modeleWeiss($pgCmdPrelev) {
 
         $session = $this->get('session');
-        $session->set('menu', 'saisieDonnees');
+        $session->set('menu', 'donnees');
         $session->set('controller', 'SaisieDonnees');
         $session->set('fonction', '_modeleWeiss');
         $emSqe = $this->get('doctrine')->getManager('sqe');
@@ -5032,7 +5041,7 @@ class SaisieDonneesController extends Controller {
     protected function _balanceIonique($pgCmdPrelev) {
 
         $session = $this->get('session');
-        $session->set('menu', 'saisieDonnees');
+        $session->set('menu', 'donnees');
         $session->set('controller', 'SaisieDonnees');
         $session->set('fonction', '_balanceIonique');
         $emSqe = $this->get('doctrine')->getManager('sqe');
@@ -5275,7 +5284,7 @@ class SaisieDonneesController extends Controller {
     protected function _ortophosphate($pgCmdPrelev) {
 
         $session = $this->get('session');
-        $session->set('menu', 'saisieDonnees');
+        $session->set('menu', 'donnees');
         $session->set('controller', 'SaisieDonnees');
         $session->set('fonction', '_ortophosphate');
         $emSqe = $this->get('doctrine')->getManager('sqe');
@@ -5341,7 +5350,7 @@ class SaisieDonneesController extends Controller {
     protected function _ammonium($pgCmdPrelev) {
 
         $session = $this->get('session');
-        $session->set('menu', 'saisieDonnees');
+        $session->set('menu', 'donnees');
         $session->set('controller', 'SaisieDonnees');
         $session->set('fonction', '_ammonium');
         $emSqe = $this->get('doctrine')->getManager('sqe');
@@ -5408,7 +5417,7 @@ class SaisieDonneesController extends Controller {
     protected function _pourcentageHorsOxygene($pgCmdPrelev) {
 
         $session = $this->get('session');
-        $session->set('menu', 'saisieDonnees');
+        $session->set('menu', 'donnees');
         $session->set('controller', 'SaisieDonnees');
         $session->set('fonction', '_pourcentageHorsOxygene');
         $emSqe = $this->get('doctrine')->getManager('sqe');
@@ -5473,7 +5482,7 @@ class SaisieDonneesController extends Controller {
     protected function _sommeParametresDistincts($pgCmdPrelev) {
 
         $session = $this->get('session');
-        $session->set('menu', 'saisieDonnees');
+        $session->set('menu', 'donnees');
         $session->set('controller', 'SaisieDonnees');
         $session->set('fonction', '_sommeParametresDistincts');
         $emSqe = $this->get('doctrine')->getManager('sqe');
@@ -5736,7 +5745,7 @@ class SaisieDonneesController extends Controller {
     protected function _controleVraisemblanceMacroPolluants($pgCmdPrelev) {
 
         $session = $this->get('session');
-        $session->set('menu', 'saisieDonnees');
+        $session->set('menu', 'donnees');
         $session->set('controller', 'SaisieDonnees');
         $session->set('fonction', '_controleVraisemblanceMacroPolluants');
         $emSqe = $this->get('doctrine')->getManager('sqe');

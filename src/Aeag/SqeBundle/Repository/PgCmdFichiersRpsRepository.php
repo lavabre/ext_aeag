@@ -129,4 +129,16 @@ class PgCmdFichiersRpsRepository extends EntityRepository {
         $qb->setParameter('phase', $phase);
         return $qb->getResult();
     }
+    
+     public function getReponsesExcelByDemande($demande) {
+        $query = "select rps";
+        $query .= " from Aeag\SqeBundle\Entity\PgCmdFichiersRps rps";
+        $query .= " where rps.demande = :demande"; 
+        $query .= " and rps.typeFichier = 'EXL'";
+        $query .= " and rps.suppr = 'N'";
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('demande', $demande);
+        return $qb->getResult();
+    }
+    
 }

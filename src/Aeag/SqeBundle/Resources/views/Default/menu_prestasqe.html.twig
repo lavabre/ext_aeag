@@ -47,7 +47,7 @@
 </li>   
 
 
-{%if app.session.get('menu') == 'echangeFichier'%}
+{%if app.session.get('menu') == 'donnees'%}
     <li  class="active">
     {% else %}
     <li>
@@ -60,6 +60,9 @@
 
     <ul class="dropdown-menu">
         <li><a href="{{ path('AeagSqeBundle_echangefichiers_index')}}">Echange EDI LABO</a></li>
+         {% if  not app.session.get('evolution')%}
+        <li><a href="{{ path('AeagSqeBundle_depotHydrobio_index')}}">Dépôt Hydrobio</a></li>
+        {% endif %}   
         <li><a href="{{ path('AeagSqeBundle_saisieDonnees_index')}}">Saisie Terrain / Labo</a></li>
     </ul>
 </li>

@@ -59,6 +59,7 @@ parameters:
     
     repertoire_echange : /base/extranet/Transfert/Sqe/Echanges/
     repertoire_exportdb : /base/extranet/Transfert/Sqe/Export_Db/
+    repertoire_excel : /base/extranet/Transfert/Sqe/Excel/
 
     router.request_context.host: vslindev211
     router.request_context.scheme: http

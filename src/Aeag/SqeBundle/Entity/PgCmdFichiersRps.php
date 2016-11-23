@@ -50,7 +50,7 @@ class PgCmdFichiersRps {
     /**
      * @var string
      *
-     * @ORM\Column(name="type_fichier", type="string", length=1, nullable=false)
+     * @ORM\Column(name="type_fichier", type="string", length=3, nullable=false)
      */
     private $typeFichier;
     

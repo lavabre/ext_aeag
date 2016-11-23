@@ -61,7 +61,7 @@ class PgCmdMesureEnvRepository extends EntityRepository {
         $query = $query . " where c.prelev = " . $pgCmdPrelev->getId();
         $query = $query . " and  c.paramProg = " . $pgProgLotParamAn->getId();
         $qb = $this->_em->createQuery($query);
-        //print_r($query);
+        // print_r($query . '<br/>');
         return $qb->getOneOrNullResult();
     }
     
