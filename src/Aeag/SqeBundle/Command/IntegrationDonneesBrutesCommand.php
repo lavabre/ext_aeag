@@ -54,7 +54,7 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
                 }
             }
             if (!is_null($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getRespAdrCor())) {
-                $producteurs = $this->repoPgProgWebUsers->getNotAdminPgProgWebusersByProducteur($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getRespAdrCor());
+                $producteurs = $this->repoPgProgWebUsers->getNotAdminPgProgWebusersByProducteurAndMarche($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getRespAdrCor(), $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche());
                 foreach($producteurs as $producteur) {
                     $destinataires[$producteur->getId()] = $producteur;
                 }

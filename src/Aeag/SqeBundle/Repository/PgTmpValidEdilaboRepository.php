@@ -498,7 +498,7 @@ class PgTmpValidEdilaboRepository extends EntityRepository {
     }
     
     public function getPgTmpValidEdilaboDmd($demandeId) {
-        $query = "select p from";
+        $query = "select p";
         $query .= " from Aeag\SqeBundle\Entity\PgTmpValidEdilabo p";
         $query .= " where p.demandeId = :demande";
         $query .= " and p.fichierRpsId IS NULL";
@@ -512,7 +512,7 @@ class PgTmpValidEdilaboRepository extends EntityRepository {
     }
     
     public function getPgTmpValidEdilaboRps($demandeId) {
-        $query = "select p from";
+        $query = "select p";
         $query .= " from Aeag\SqeBundle\Entity\PgTmpValidEdilabo p";
         $query .= " where p.demandeId = :demande";
         $query .= " and p.fichierRpsId IS NOT NULL";
