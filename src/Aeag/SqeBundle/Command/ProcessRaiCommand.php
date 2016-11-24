@@ -104,7 +104,7 @@ class ProcessRaiCommand extends AeagCommand {
                 $cptRaisTraitesOk++;
             } else {
                 // Vider les tables
-                //$this->_cleanTmpTable($pgCmdFichierRps);
+                $this->_cleanTmpTable($pgCmdFichierRps);
                 $cptRaisTraitesNok++;
             }
 
