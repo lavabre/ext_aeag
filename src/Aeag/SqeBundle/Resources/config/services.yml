@@ -3,6 +3,7 @@ parameters:
     aeag_sqe.process_rai.class: Aeag\SqeBundle\Utils\ProcessRai
     aeag_sqe.message.class: Aeag\SqeBundle\Utils\MessageMaker
     aeag_sqe.controle_vraisemblance.class: Aeag\SqeBundle\Utils\ControleVraisemblance
+    aeag_sqe.depotHydrobio.class: Aeag\SqeBundle\Utils\DepotHydrobio
     
 services:
     # keep your service names short
@@ -16,6 +17,8 @@ services:
         arguments: [@mailer]
     aeag_sqe.controle_vraisemblance:
         class: %aeag_sqe.controle_vraisemblance.class%
+    aeag_sqe.depotHydrobio:
+        class: %aeag_sqe.depotHydrobio.class%
     class.twig_extension:
         class: Aeag\SqeBundle\Twig\ClassTwigExtension
         public: false

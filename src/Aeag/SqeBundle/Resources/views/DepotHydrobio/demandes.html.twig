@@ -1,0 +1,187 @@
+{% extends "AeagSqeBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+    <li>
+        <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+    </li>
+    <li>
+           <a href="{{ path('AeagSqeBundle_depotHydrobio_index') }}">Lots</a> 
+    </li>
+    <li class="active">
+          Demandes
+    </li>
+{% endblock breadcrumb %} 
+
+{%block panel_heading %}
+    <h3 class="page-title">
+        Dépôt Hydrobio - Liste des DAI - {{ lotan.lot.nomLot }} - {{ lotan.anneeProg }}
+    </h3>
+{%endblock panel_heading %}
+
+{%block content %}
+    <div class="form-body">        
+        <table class="table table-bordered table-condensed table-advance" id="idTable_demandes">
+            <thead>
+                <tr>
+                    <th width="5%">Actions</th>
+                    <th>Période</th>
+                    <th>Prestataire</th>
+                    <th>Producteur</th>
+                    <th>Code</th>
+                    <th>Date</th>
+                    <th>Phase</th>
+                    <th>Format fichier</th>
+                    <th>Dépôts</th>
+                </tr>
+            </thead>
+            <tbody>
+                 {%if demandes | length%} 
+                    {% for demande in demandes %}
+                       {% if demande.prestataire == user.prestataire %} 
+                       <tr style="background-color: #aac3f1">
+                        {% else %}
+                            <tr>
+                        {% endif %}
+                            <td align="center" nowrap>
+                                <a id="id_{{demande.id}}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_depotHydrobio_prelevements',{'demandeId' : demande.id})}}" title="Liste des prélèvements">
+                                    <i class="fa fa-eye"></i> 
+                                </a>
+                                {% if (is_granted('ROLE_ADMINSQE') or (user.prestataire == demande.prestataire and ("Saisie" not in demande.formatFichier))) and (demande.phaseDemande.codePhase != 'D40' and demande.phaseDemande.codePhase != 'D50') %}
+                                    <a id="id_{{demande.id}}" class="btn btn-primary btn-deposer-reponse" data-id="{{demande.id}}" title="Déposer des fiches Excel">
+                                        <i class="fa fa-download"></i> 
+                                    </a>
+                                {% endif%}
+                            </td>
+                            {% if demande.periode %}
+                                <td>{{ demande.periode.labelPeriode}}</td>
+                            {% else %}
+                                <td>An</td>
+                            {% endif%}
+                            <td>{{ demande.prestataire.nomCorres }}</td>
+                            <td>{{ demande.commanditaire.nomCorres }}</td>
+                            <td>{{ demande.codeDemandeCmd }}</td>
+                            <td>{{ demande.dateDemande | date("d/m/Y H:i")}}</td>
+                            <td>{{ demande.phaseDemande.libellePhase }}</td>
+                            <td>{{ demande.formatFichier }}</td>
+                            <td align="center" nowrap>
+                                 {% if reponses[demande.id] | length %}
+                                       <a id="{{demande.id}}" class="btn btn-info btn-voir-reponses" data-toggle="modal" href="#" title="Voir les dépôts">
+                                         <span class="badge">{{ reponses[demande.id] | length}}</span>
+                                       </a>
+                                    {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+       
+    </div>
+{%endblock content %}    
+
+{% block modal %}
+    <div class="modal fade" id="modal_reponses">
+        <div class="modal-dialog modal-lg modal-scroll">
+            <div class="modal-content" id="modal-reponses-content">
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal modal-reponse fade" id="modal_reponses_selection">
+        <div class="modal-dialog">
+            <div class="modal-content" id="modal-reponses-selection-content">
+            </div>
+        </div>    
+    </div>
+{%endblock modal %}
+
+{% block scripts %}
+    
+    jQuery(document).ready(function() {
+        $('.btn-telecharger').click(function (){
+            setTimeout("window.location.reload()",2000);//or other value
+        });
+        
+         $('.btn-deposer-reponse').click(function (e){
+         e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+           $('#modalTraitementEncours').modal('toggle');
+            var url = '{{ path("AeagSqeBundle_depotHydrobio_reponses_selectionner",{"demandeId":  "par1" }) }}';
+            var demandeId = $(this).data('id');
+            url = url.replace("par1", demandeId);
+           $.ajax({
+                url: url,
+                type: 'get',
+                success: function(html) {
+                    $('#modal-reponses-selection-content').empty().append(html);
+                    $('#modalTraitementEncours').modal('hide');
+                    $('#modal_reponses_selection').modal();
+                }
+            });
+         });
+            
+           
+        $('.btn-voir-reponses').click(function (){
+            $('#modalTraitementEncours').modal();
+            var url = '{{ path("AeagSqeBundle_depotHydrobio_reponses",{"demandeId":  "par1" }) }}';
+            url = url.replace("par1", $(this).attr('id'));
+            $.ajax({
+                url: url,
+                type: 'get',
+                success: function(html) {
+                    $('#modal-reponses-content').empty().append(html);
+                    $('#modalTraitementEncours').modal('hide');
+                    $('#modal_reponses').modal();
+                }
+            });
+            
+        });
+    
+        var table = $('#idTable_demandes').DataTable(
+            {"stateSave": true,
+             "order": [[ 1, 'asc' ], [ 2, 'asc' ]],
+            "oLanguage": {
+            "sSearch": "Filtre",
+            "sFirst": "1ere page",
+            "sLast": "Dernière page",
+            "sNext": "Prochaine page",
+            "sPrevious": "Page précédente",
+            "EmptyTable": "Pas de données",
+            "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+            "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+            "sZeroRecords": "Pas d'enregistrement à afficher",
+            "sInfoEmpty": "Pas d'enregistrement à afficher",
+            "sInfoThousands": " ",
+            "sLengthMenu": 'Afficher <select id="select-length-menu">' +
+                '<option value="10">10</option>' +
+                '<option value="20">20</option>' +
+                '<option value="30">30</option>' +
+                '<option value="40">40</option>' +
+                '<option value="50">50</option>' +
+                '<option value="-1">Tous</option>' +
+                '</select> enregistrements',
+            "sPaginationType": "full_numbers"
+            }
+            }
+            );
+
+            $("#idTable_demandes thead td").each( function ( i ) {
+
+            if (i != 0){
+            var select = $('<select><option value=""></option></select>')
+            .appendTo( $(this).empty() )
+            .on( 'change', function () {
+            table.column( i )
+            .search( $(this).val() )
+            .draw();
+            });
+
+            table.column( i ).data().unique().sort().each( function ( d, j ) {
+                select.append( '<option value="'+d+'">'+d+'</option>' )
+            });
+            };
+            }); 
+            
+            $('#select-length-menu').val("-1");
+    });
+    
+{%endblock scripts %}    

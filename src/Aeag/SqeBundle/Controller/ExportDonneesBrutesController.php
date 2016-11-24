@@ -13,7 +13,7 @@ class ExportDonneesBrutesController extends Controller {
         $user = $this->getUser();
         $emSqe = $this->get('doctrine')->getManager('sqe');
         $session = $this->get('session');
-        $session->set('menu', 'echangeFichier');
+        $session->set('menu', 'donnees');
         $session->set('controller', 'ExportDonneesBrutes');
         $session->set('fonction', 'index');
 

@@ -24,6 +24,10 @@ aeag_sqe_echangeFichiers:
     resource: "@AeagSqeBundle/Resources/config/routing_echangefichiers.yml"
     prefix:   /echangefichiers   
     
+aeag_sqe_depotHydrobio:
+    resource: "@AeagSqeBundle/Resources/config/routing_depotHydrobio.yml"
+    prefix:   /depotHydrobio   
+    
 aeag_sqe_suiviHydrobio:
     resource: "@AeagSqeBundle/Resources/config/routing_suiviHydrobio.yml"
     prefix:   /suiviHydrobio 

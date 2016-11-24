@@ -6,44 +6,73 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Aeag\AeagBundle\Entity\Notification;
 use Aeag\AeagBundle\Entity\Message;
 use Aeag\AeagBundle\Controller\AeagController;
+use Symfony\Component\HttpFoundation\Response;
 
-class EchangeFichiersController extends Controller {
+class DepotHydrobioController extends Controller {
 
     public function indexAction() {
-        
+
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'donnees');
-        $session->set('controller', 'EchangeFichier');
+        $session->set('controller', 'DepotHydrobio');
         $session->set('fonction', 'index');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
         // Récupération des programmations
         $repoPgProgLotAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotAn');
-        $pgProgLotAns = array();
+        $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
+        $repoPgProgLotPeriodeProg = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeProg');
+
         if ($user->hasRole('ROLE_ADMINSQE')) {
             $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByAdmin();
         } else if ($user->hasRole('ROLE_PRESTASQE')) {
             $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByPresta($user);
         } else if ($user->hasRole('ROLE_PROGSQE')) {
             $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByProg($user);
+        } else if ($user->hasRole('ROLE_SQE')) {
+            $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByAdmin();
         }
 
-        return $this->render('AeagSqeBundle:EchangeFichiers:index.html.twig', array('user' => $user,
+        $tabProglotAns = array();
+        $i = 0;
+        foreach ($pgProgLotAns as $pgProgLotAn) {
+            $pgProgLot = $pgProgLotAn->getLot();
+            $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
+            if (substr($pgProgTypeMilieu->getCodeMilieu(), 1, 2) === 'HB' or $pgProgTypeMilieu->getCodeMilieu() === 'RHM') {
+                $pgProgLotPeriodeAns = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnByLotan($pgProgLotAn);
+                if (count($pgProgLotPeriodeAns) > 0) {
+                    $trouve = false;
+                    foreach ($pgProgLotPeriodeAns as $pgProgLotPeriodeAn) {
+                        $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByPeriodeAn($pgProgLotPeriodeAn);
+                        if (count($pgProgLotPeriodeProgs) > 0) {
+                            $trouve = true;
+                            break;
+                        }
+                    }
+                    if ($trouve) {
+                        $tabProglotAns[$i] = $pgProgLotAn;
+                        $i++;
+                    }
+                }
+            }
+        }
+
+        return $this->render('AeagSqeBundle:DepotHydrobio:index.html.twig', array('user' => $user,
                     'lotans' => $pgProgLotAns));
     }
 
     public function demandesAction($lotanId) {
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'donnees');
-        $session->set('controller', 'EchangeFichier');
+        $session->set('controller', 'DepotHydrobio');
         $session->set('fonction', 'demandes');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
@@ -55,28 +84,54 @@ class EchangeFichiersController extends Controller {
         $pgProgWebUser = $repoPgProgWebUsers->findOneByExtId($user->getId());
         $pgProgLotAn = $repoPgProgLotAn->findOneById($lotanId);
         $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandeByLotan($pgProgLotAn);
-        
+
         $reponses = array();
         $reponsesMax = array();
         foreach ($pgCmdDemandes as $pgCmdDemande) {
-            $reponses[$pgCmdDemande->getId()] = $repoPgCmdFichiersRps->getReponsesValidesByDemande($pgCmdDemande->getId());
-            $reponsesMax[$pgCmdDemande->getId()] = $repoPgCmdFichiersRps->findBy(array('demande' => $pgCmdDemande->getId(), 'typeFichier' => 'RPS','suppr' => 'N'));
+            $reponses[$pgCmdDemande->getId()] = $repoPgCmdFichiersRps->getReponsesExcelByDemande($pgCmdDemande->getId());
         }
-        return $this->render('AeagSqeBundle:EchangeFichiers:demandes.html.twig', array('user' => $pgProgWebUser,
+        return $this->render('AeagSqeBundle:DepotHydrobio:demandes.html.twig', array('user' => $pgProgWebUser,
                     'demandes' => $pgCmdDemandes,
                     'lotan' => $pgProgLotAn,
-                    'reponses' => $reponses,
-                    'reponsesMax' => $reponsesMax));
+                    'reponses' => $reponses));
     }
-    
-    public function telechargerAction($demandeId) {
+
+    public function prelevementsAction($demandeId) {
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'donnees');
-        $session->set('controller', 'EchangeFichier');
+        $session->set('controller', 'DepotHydrobio');
+        $session->set('fonction', 'prelevements');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
+        $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
+        $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
+        $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
+
+        $pgProgWebUser = $repoPgProgWebUsers->findOneByExtId($user->getId());
+        $pgCmdDemande = $repoPgCmdDemande->findOneById($demandeId);
+        if ($pgCmdDemande) {
+            $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByDemande($pgCmdDemande);
+        } else {
+            $pgCmdPrelevs = null;
+        }
+        return $this->render('AeagSqeBundle:DepotHydrobio:prelevements.html.twig', array('user' => $pgProgWebUser,
+                    'demande' => $pgCmdDemande,
+                    'prelevs' => $pgCmdPrelevs,));
+    }
+
+    public function telechargerAction($demandeId) {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'donnees');
+        $session->set('controller', 'DepotHydrobio');
         $session->set('fonction', 'telecharger');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
@@ -89,7 +144,7 @@ class EchangeFichiersController extends Controller {
         if ($pgCmdDemande) {
             // Récupération du fichier
             $zipName = str_replace('xml', 'zip', $pgCmdDemande->getNomFichier());
-            $chemin = $this->getParameter('repertoire_echange');
+            $chemin = $this->getParameter('repertoire_depotHydrobio');
             $pathBase = $this->get('aeag_sqe.process_rai')->getCheminEchange($chemin, $pgCmdDemande);
 
             // Changement de la phase s'il est téléchargé par un presta pour la première fois
@@ -109,7 +164,7 @@ class EchangeFichiersController extends Controller {
             $log->setDate(new \DateTime());
             $emSqe->persist($log);
             $emSqe->flush();
-            
+
             header('Content-Type', 'application/zip');
             header('Content-disposition: attachment; filename="' . $zipName . '"');
             header('Content-Length: ' . filesize($pathBase . $zipName));
@@ -118,16 +173,14 @@ class EchangeFichiersController extends Controller {
         }
     }
 
-    
-    
-     public function telechargerFichierAction($demandeId = null, $nomFichier = null) {
+    public function telechargerFichierAction($demandeId = null, $nomFichier = null) {
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'donnees');
-        $session->set('controller', 'EchangeFichier');
+        $session->set('controller', 'DepotHydrobio');
         $session->set('fonction', 'telecharger');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
@@ -139,7 +192,7 @@ class EchangeFichiersController extends Controller {
         $pgCmdDemande = $repoPgCmdDemande->findOneById($demandeId);
         if ($pgCmdDemande) {
             // Récupération du fichier
-            $chemin = $this->getParameter('repertoire_echange');
+            $chemin = $this->getParameter('repertoire_depotHydrobio');
             $pathBase = $this->get('aeag_sqe.process_rai')->getCheminEchange($chemin, $pgCmdDemande);
 
             // Changement de la phase s'il est téléchargé par un presta pour la première fois
@@ -151,7 +204,7 @@ class EchangeFichiersController extends Controller {
                     $emSqe->flush();
                 }
             }
-            
+
             $type = substr($nomFichier, -3);
 
             // On log le téléchargement
@@ -161,10 +214,10 @@ class EchangeFichiersController extends Controller {
             $log->setDate(new \DateTime());
             $emSqe->persist($log);
             $emSqe->flush();
-           
-            
 
-            header('Content-Type', "'application/" . $type ."'");
+
+
+            header('Content-Type', "'application/" . $type . "'");
             header('Content-disposition: attachment; filename="' . $nomFichier . '"');
             header('Content-Length: ' . filesize($pathBase . $nomFichier));
             readfile($pathBase . $nomFichier);
@@ -175,11 +228,11 @@ class EchangeFichiersController extends Controller {
     public function reponsesAction($demandeId) {
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'donnees');
-        $session->set('controller', 'EchangeFichier');
+        $session->set('controller', 'DepotHydrobio');
         $session->set('fonction', 'reponses');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
@@ -187,13 +240,12 @@ class EchangeFichiersController extends Controller {
         $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
 
-        $pgCmdFichiersRps = $repoPgCmdFichiersRps->findBy(array('demande' => $demandeId,
-            'typeFichier' => 'RPS',
-            'suppr' => 'N'));
-        $pgCmdDemande = $repoPgCmdDemande->findOneById($demandeId);
+        $pgCmdFichiersRps = $repoPgCmdFichiersRps->getReponseByDemandeType($demandeId, 'EXL');
+         $pgCmdDemande = $repoPgCmdDemande->findOneById($demandeId);
         $pgProgWebUser = $repoPgProgWebUsers->findOneByExtId($user->getId());
 
-        return $this->render('AeagSqeBundle:EchangeFichiers:reponses.html.twig', array('reponses' => $pgCmdFichiersRps,
+        return $this->render('AeagSqeBundle:DepotHydrobio:reponses.html.twig', array(
+                   'reponses' =>  $pgCmdFichiersRps,
                     'demande' => $pgCmdDemande,
                     'user' => $pgProgWebUser));
     }
@@ -201,11 +253,11 @@ class EchangeFichiersController extends Controller {
     public function selectionnerReponseAction($demandeId) {
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'donnees');
-        $session->set('controller', 'EchangeFichier');
+        $session->set('controller', 'DepotHydrobio');
         $session->set('fonction', 'reponses');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
@@ -213,17 +265,17 @@ class EchangeFichiersController extends Controller {
 
         $pgCmdDemande = $repoPgCmdDemande->findOneById($demandeId);
 
-        return $this->render('AeagSqeBundle:EchangeFichiers:selectionnerReponse.html.twig', array('demande' => $pgCmdDemande));
+        return $this->render('AeagSqeBundle:DepotHydrobio:selectionnerReponse.html.twig', array('demande' => $pgCmdDemande));
     }
 
     public function deposerReponseAction($demandeId) {
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'donnees');
-        $session->set('controller', 'EchangeFichier');
+        $session->set('controller', 'DepotHydrobio');
         $session->set('fonction', 'deposerReponse');
         $emSqe = $this->get('doctrine')->getManager('sqe');
         $em = $this->get('doctrine')->getManager();
@@ -234,13 +286,13 @@ class EchangeFichiersController extends Controller {
 
         $pgProgWebUser = $repoPgProgWebUsers->findOneByExtId($user->getId());
         $pgCmdDemande = $repoPgCmdDemande->findOneById($demandeId);
-        $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R10');
+        $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('DH10');
 
         // Récupération des valeurs du fichier
         $nomFichier = $_FILES["fichier"]["name"];
         if (substr($nomFichier, -3) != "zip") {
             $session->getFlashBag()->add('notice-error', 'Le fichier déposé n\'est pas un fichier zip');
-            return $this->redirect($this->generateUrl('AeagSqeBundle_echangefichiers_demandes', array('lotanId' => $pgCmdDemande->getLotan()->getId())));
+            return $this->redirect($this->generateUrl('AeagSqeBundle_depotHydrobio_demandes', array('lotanId' => $pgCmdDemande->getLotan()->getId())));
         }
 
         // Enregistrement des valeurs en base
@@ -248,44 +300,41 @@ class EchangeFichiersController extends Controller {
         $reponse->setDemande($pgCmdDemande);
         $reponse->setNomFichier($nomFichier);
         $reponse->setDateDepot(new \DateTime());
-        $reponse->setTypeFichier('RPS');
+        $reponse->setTypeFichier('EXL');
         $reponse->setPhaseFichier($pgProgPhases);
         $reponse->setUser($pgProgWebUser);
         $reponse->setSuppr('N');
 
         $emSqe->persist($reponse);
-        $emSqe->flush();
+
 
         // Enregistrement du fichier sur le serveur
-        $chemin = $this->getParameter('repertoire_echange');
+        $chemin = $this->getParameter('repertoire_depotHydrobio');
         $pathBase = $this->get('aeag_sqe.process_rai')->getCheminEchange($chemin, $pgCmdDemande, $reponse->getId());
-        if (!mkdir($pathBase)) {
+
+        if (!mkdir($pathBase, 0755, true)) {
             $session->getFlashBag()->add('notice-error', 'Le répertoire n\'a pas pu être créé');
         }
+
+        $emSqe->flush();
 
         if (move_uploaded_file($_FILES['fichier']['tmp_name'], $pathBase . '/' . $nomFichier)) {
 
             // Envoi du fichier sur le serveur du sandre pour validationFormat
-            if ($this->get('aeag_sqe.process_rai')->envoiFichierValidationFormat($emSqe, $reponse, $pathBase . '/' . $nomFichier, $session)) {
-                // Changement de la phase de la réponse 
-                $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R15');
-                $reponse->setPhaseFichier($pgProgPhases);
-                $emSqe->persist($reponse);
-                $emSqe->flush();
-
+            if ($this->get('aeag_sqe.depotHydrobio')->extraireFichier($emSqe, $reponse, $pathBase, $nomFichier, $session)) {
+           
                 // Envoi d'un mail
-                $objetMessage = "RAI " . $reponse->getId() . " soumise et en cours de validation";
-                $txtMessage = "Votre RAI (id " . $reponse->getId() . ") concernant la DAI " . $pgCmdDemande->getCodeDemandeCmd() . " a été soumise. Le fichier " . $reponse->getNomFichier() . " est en cours de validation. "
-                        . "Vous serez informé lorsque celle-ci sera validée. ";
+                $objetMessage = "Dépôt Hydrobio  " . $reponse->getId() . " soumis et en cours de traitement";
+                $txtMessage = "Votre dépôt hydrobio (id " . $reponse->getId() . ") concernant la DAI " . $pgCmdDemande->getCodeDemandeCmd() . " a été soumis. Le fichier " . $reponse->getNomFichier() . " est en cours de traitement. "
+                        . "Vous serez informé lorsque celui-ci sera terminé. ";
                 $mailer = $this->get('mailer');
                 if ($this->get('aeag_sqe.message')->envoiMessage($em, $mailer, $txtMessage, $pgProgWebUser, $objetMessage)) {
                     $session->getFlashBag()->add('notice-success', 'Le fichier ' . $nomFichier . ' a été traité, un email vous a été envoyé');
                 } else {
                     $session->getFlashBag()->add('notice-warning', 'Le fichier ' . $nomFichier . ' a été traité, mais l\'email n\'a pas pu être envoyé');
                 }
-                
             } else {
-                $session->getFlashBag()->add('notice-error', 'Le fichier ' . $nomFichier . ' a rencontré une erreur lors de la validation auprès du Sandre. Merci de réessayer plus tard.');
+                $session->getFlashBag()->add('notice-error', 'Le fichier ' . $nomFichier . ' a rencontré une erreur lors du tratement. Merci de réessayer plus tard.');
                 $this->_rmdirRecursive($pathBase);
                 $emSqe->remove($reponse);
                 $emSqe->flush();
@@ -296,17 +345,17 @@ class EchangeFichiersController extends Controller {
 
             $session->getFlashBag()->add('notice-error', 'Erreur lors du téléchargement du fichier ' . $nomFichier);
         }
-        return $this->redirect($this->generateUrl('AeagSqeBundle_echangefichiers_demandes', array('lotanId' => $pgCmdDemande->getLotan()->getId())));
+        return $this->redirect($this->generateUrl('AeagSqeBundle_depotHydrobio_demandes', array('lotanId' => $pgCmdDemande->getLotan()->getId())));
     }
 
     public function telechargerReponseAction($reponseId, $typeFichier) {
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'donnees');
-        $session->set('controller', 'EchangeFichier');
+        $session->set('controller', 'DepotHydrobio');
         $session->set('fonction', 'telechargerReponse');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
@@ -317,20 +366,16 @@ class EchangeFichiersController extends Controller {
         $pgCmdFichiersRps = $repoPgCmdFichiersRps->findOneById($reponseId);
 
         // Récupération du fichier
-        $chemin = $this->getParameter('repertoire_echange');
+        $chemin = $this->getParameter('repertoire_depotHydrobio');
         $pathBase = $this->get('aeag_sqe.process_rai')->getCheminEchange($chemin, $pgCmdFichiersRps->getDemande(), $reponseId);
         switch ($typeFichier) {
-            case "RPS" :
+            case "EXL" :
                 $contentType = "application/zip";
                 $fileName = $pgCmdFichiersRps->getNomFichier();
                 break;
             case "CR" :
                 $contentType = "application/octet-stream";
                 $fileName = $pgCmdFichiersRps->getNomFichierCompteRendu();
-                break;
-            case "DB" :
-                $contentType = "application/octet-stream";
-                $fileName = $pgCmdFichiersRps->getNomFichierDonneesBrutes();
                 break;
         }
         // On log le téléchargement
@@ -353,27 +398,27 @@ class EchangeFichiersController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'donnees');
-        $session->set('controller', 'EchangeFichier');
+        $session->set('controller', 'DepotHydrobio');
         $session->set('fonction', 'deposerReponse');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
         $repoPgCmdFichiersRps = $emSqe->getRepository('AeagSqeBundle:PgCmdFichiersRps');
 
         $pgCmdFichiersRps = $repoPgCmdFichiersRps->findOneById($reponseId);
-
+      
         // Suppression physique des fichiers
-        $chemin = $this->getParameter('repertoire_echange');
+        $chemin = $this->getParameter('repertoire_depotHydrobio');
         $pathBase = $this->get('aeag_sqe.process_rai')->getCheminEchange($chemin, $pgCmdFichiersRps->getDemande(), $reponseId);
         if (file_exists($pathBase)) {
             if ($this->_rmdirRecursive($pathBase)) {
                 // Suppression en base
                 $pgCmdFichiersRps->setSuppr('O');
                 $emSqe->persist($pgCmdFichiersRps);
-                $emSqe->flush();
+                 $emSqe->flush();
             }
         } else {
             $pgCmdFichiersRps->setSuppr('O');
@@ -381,7 +426,7 @@ class EchangeFichiersController extends Controller {
             $emSqe->flush();
         }
 
-        return $this->redirect($this->generateUrl('AeagSqeBundle_echangefichiers_demandes', array('lotanId' => $pgCmdFichiersRps->getDemande()->getLotan()->getId())));
+        return $this->redirect($this->generateUrl('AeagSqeBundle_depotHydrobio_demandes', array('lotanId' => $pgCmdFichiersRps->getDemande()->getLotan()->getId())));
     }
 
     private function _rmdirRecursive($dir) {
@@ -401,7 +446,7 @@ class EchangeFichiersController extends Controller {
                     }
                     //Cette entrée est un dossier, on recommence sur ce dossier
                     else {
-                       $this->_rmdirRecursive($entry);
+                        $this->_rmdirRecursive($entry);
                     }
                 }
             }
@@ -409,8 +454,8 @@ class EchangeFichiersController extends Controller {
         //On a bien effacé toutes les entrées du dossier, on peut à présent l'effacer
         return rmdir($dir);
     }
-    
-     protected function unzip($file, $path = '', $effacer_zip = false) {/* Méthode qui permet de décompresser un fichier zip $file dans un répertoire de destination $path 
+
+    protected function unzip($file, $path = '', $effacer_zip = false) {/* Méthode qui permet de décompresser un fichier zip $file dans un répertoire de destination $path 
       et qui retourne un tableau contenant la liste des fichiers extraits
       Si $effacer_zip est égal à true, on efface le fichier zip d'origine $file */
 
@@ -466,6 +511,5 @@ class EchangeFichiersController extends Controller {
 
         return $tab_liste_fichiers;
     }
-
 
 }
