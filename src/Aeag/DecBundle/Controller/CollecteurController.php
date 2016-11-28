@@ -2655,8 +2655,11 @@ class CollecteurController extends Controller {
                 $ok = $this->majStatutDeclarationCollecteursAction($declarationCollecteur->getid(), $user, $emDec, $session);
                 $ok = $this->majStatutDeclarationProducteursAction($declarationProducteur->getId(), $user, $emDec, $session);
 
-                $session->getFlashBag()->add('notice-success', "Le producteur " . $producteur->getLibelle() . " a été retiré de la déclaration n° " . $sousDeclarationCollecteur->getNumero() . " !");
-
+                if ($producteur) {
+                    $session->getFlashBag()->add('notice-success', "Le producteur " . $producteur->getLibelle() . " a été retiré de la déclaration n° " . $sousDeclarationCollecteur->getNumero() . " !");
+                } else {
+                    $session->getFlashBag()->add('notice-success', "Le producteur sans siret  a été retiré de la déclaration n° " . $sousDeclarationCollecteur->getNumero() . " !");
+                }
                 $emDec->flush();
             } else {
                 $session->getFlashBag()->add('notice-warning', "Le producteur " . $producteur->getLibelle() . " ne peut être retiré de la déclaration n° " . $sousDeclarationCollecteur->getNumero() . " !");
