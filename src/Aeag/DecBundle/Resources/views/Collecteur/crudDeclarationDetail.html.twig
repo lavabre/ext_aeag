@@ -7,7 +7,9 @@
            {%if crud == 'C' %}
                Nouveau 
           {%else%}
-               {{ producteur.siretLibelle}}</a>
+              {% if  producteur | length %}
+               {{ producteur.siretLibelle}}
+               {% endif %}
           {%endif%} 
         </li>
 {% endblock breadcrumb %}
@@ -18,9 +20,9 @@
        {%if crud == 'C' %}
              Ajout d'une ligne
         {%elseif crud == 'R' %}
-             Consultation de la ligne {{ producteur.siretLibelle}}
+             Consultation de la ligne {% if  producteur | length %}{{ producteur.siretLibelle}} {% endif %}
         {% else %}
-             Mise à jour de la ligne {{ producteur.siretLibelle}}
+             Mise à jour de la ligne {% if  producteur | length %}{{ producteur.siretLibelle}} {% endif %}
         {%endif%}
     </h3>
 {%endblock panel_heading %}
@@ -100,7 +102,7 @@
                             {%endif%}
                       </div> #}
              
-                 {%if crud == 'C' %}
+                 {%if crud == 'C'  or producteur | length == 0%}
                     <div class="form-group">
                         <div class="row">
                            <div class="col-xs-4 text-right">
