@@ -402,7 +402,7 @@ class PgTmpValidEdilaboRepository extends EntityRepository {
         $query .= " where demande_id = :demande and fichier_rps_id = :reponse and code_prelevement = :codePrelevement) dmd";
         $query .= " left join (select distinct code_parametre, code_fraction from pg_tmp_valid_edilabo";
         $query .= " where demande_id = :demande and fichier_rps_id is null and code_prelevement = :codePrelevement) rps";
-        $query .= " on  dmd.code_parametre = rps.code_parametre and ((dmd.code_fraction is null and rps.code_fraction is null) or (dmd.code_fraction = rps.code_fraction))";
+        $query .= " on  dmd.code_parametre = rps.code_parametre";
         $query .= " where rps.code_parametre is null";
         
         $stmt = $this->_em->getConnection()->prepare($query);
