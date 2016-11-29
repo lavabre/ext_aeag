@@ -74,6 +74,13 @@ class PgProgLotPeriodeProg {
     /**
      * @var string
      *
+     * @ORM\Column(name="rsx_id", type="decimal", precision=38, scale=0, nullable=true)
+     */
+    private $rsxId;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="statut", type="string", length=1, nullable=false)
      */
     private $statut;
@@ -169,6 +176,14 @@ class PgProgLotPeriodeProg {
      */
     public function getPprogCompl() {
         return $this->pprogCompl;
+    }
+
+    function getRsxId() {
+        return $this->rsxId;
+    }
+
+    function setRsxId($rsxId) {
+        $this->rsxId = $rsxId;
     }
 
     function getStatut() {

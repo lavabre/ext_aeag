@@ -589,8 +589,8 @@ class ProgrammationPeriodeController extends Controller {
         $emSqe->flush();
 
         $pgProgLotPeriodeAns = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnByLotan($pgProgLotAn);
-        
-         $tabGrparAns = array();
+
+        $tabGrparAns = array();
         $i = 0;
         foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
             $tabGrparAns[$i]["groupe"] = $pgProgLotGrparAn;
@@ -1922,6 +1922,9 @@ class ProgrammationPeriodeController extends Controller {
         $repoPgSandreSupport = $emSqe->getRepository('AeagSqeBundle:PgSandreSupports');
         $repoPgRefSitePrelevement = $emSqe->getRepository('AeagSqeBundle:PgRefSitePrelevement');
         $repoPgProgGrparRefLstParam = $emSqe->getRepository('AeagSqeBundle:PgProgGrparRefLstParam');
+        $repoPgProgWebusers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
+        $repoPgProgWebuserRsx = $emSqe->getRepository('AeagSqeBundle:PgProgWebuserRsx');
+        $repoPgProgLotPeriodeProg = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeProg');
 
 //recupération des parametres
         $request = $this->container->get('request');
@@ -1931,6 +1934,9 @@ class ProgrammationPeriodeController extends Controller {
 
         $annee = $session->get('critAnnee');
         $pgProgLotAn = $repoPgProgLotAn->getPgProgLotAnById($pgProgLotAnId);
+        $pgProgLot = $pgProgLotAn->getLot();
+        $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
+        $pgProgZoneGeoRef = $pgProgLot->getZgeoRef();
         $annee = $pgProgLotAn->getAnneeProg();
         $pgProgLotGrparAns = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotan($pgProgLotAn);
         $pgProgLotStationAns = $repoPgProgLotStationAn->getPgProgLotStationAnBylotan($pgProgLotAn);
@@ -1939,6 +1945,19 @@ class ProgrammationPeriodeController extends Controller {
         $pgProgPeriode = $repoPgProgPeriodes->getPgProgPeriodesById($periodeId);
         $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnBySLotanPeriode($pgProgLotAn, $pgProgPeriode);
         $pgRefSitePrelevements = $repoPgRefSitePrelevement->getPgRefSitePrelevementByOuvFoncId($pgProgLotStationAn->getStation()->getOuvFoncId());
+
+
+        if ($session->get('critWebuser')) {
+            $pgProgWebusers = $repoPgProgWebusers->getPgProgWebusersByid($session->get('critWebuser'));
+        } else {
+            $pgProgWebusers = $repoPgProgWebusers->getPgProgWebusersByLoginPassword($user->getUsername(), $user->getPassword());
+        }
+
+        if (count($pgProgWebusers) == 1) {
+            $pgProgWebuser = $pgProgWebusers;
+        } else {
+            $pgProgWebuser = null;
+        }
 
         $tabStationPeriode = array();
         $tabStationPeriode["station"] = $pgProgLotStationAn;
@@ -2051,10 +2070,58 @@ class ProgrammationPeriodeController extends Controller {
             }
         }
 
-
         $pgProgLotStationAn = $repoPgProgLotStationAn->getPgProgLotStationAnById($stationId);
         $pgProgPeriode = $repoPgProgPeriodes->getPgProgPeriodesById($periodeId);
         $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnBySLotanPeriode($pgProgLotAn, $pgProgPeriode);
+        $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByStationAnPeriodeAn($pgProgLotStationAn, $pgProgLotPeriodeAn);
+
+
+        // recuperatiion des reseaux de l'utilisateurs
+        $tabReseauxUsers = array();
+        $i = 0;
+        if ($pgProgWebuser and ( !$this->get('security.authorization_checker')->isGranted('ROLE_ADMINSQE'))) {
+            $pgProgWebuserRsx = $repoPgProgWebuserRsx->getPgProgWebuserRsxByWebuser($pgProgWebuser);
+        } else {
+            $pgProgWebuserRsx = $repoPgProgWebuserRsx->getPgProgWebuserRsx();
+        }
+        foreach ($pgProgWebuserRsx as $pgProgWebuserRs) {
+            $trouve = false;
+            for ($j = 0; $j < count($tabReseauxUsers); $j++) {
+                if ($tabReseauxUsers[$j] == $pgProgWebuserRs->getReseauMesure()) {
+                    $trouve = true;
+                    $j = count($tabReseauxUsers) + 1;
+                }
+            }
+            if ($trouve == false) {
+                $reseauMesure = $pgProgWebuserRs->getReseauMesure();
+                // print_r( 'categorie : ' . $reseauMesure->getCategorieMilieu() . ' pour le reseau : ' . $reseauMesure->getcodeAeagRsx() . ' ');
+                if ($reseauMesure->getCategorieMilieu() == $pgProgLot->getCodeMilieu()->getCategorieMilieu()) {
+                    $tabReseauxUsers[$i]['reseau'] = $reseauMesure;
+                    if ($pgProgLotStationAn->getRsxId() == $reseauMesure->getGroupementId()) {
+                        $tabReseauxUsers[$i]['cocher'] = 'O';
+                    } else {
+                        $tabReseauxUsers[$i]['cocher'] = 'N';
+                    }
+                    $i++;
+                }
+            }
+        }
+
+        foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
+            $trouve = false;
+            for ($i = 0; $i < count($tabReseauxUsers); $i++) {
+                if ($pgProgLotPeriodeProg->getRsxId() == $tabReseauxUsers[$i]['reseau']->getGroupementId()) {
+                    $tabReseauxUsers[$i]['cocher'] = 'O';
+                    $trouve = true;
+                } else {
+                    $tabReseauxUsers[$i]['cocher'] = 'N';
+                }
+            }
+            if ($trouve) {
+                break;
+            }
+        }
+
 
         //var_dump($tabgroupes);
 
@@ -2067,6 +2134,7 @@ class ProgrammationPeriodeController extends Controller {
                     'station' => $pgProgLotStationAn,
                     'groupes' => $tabgroupes,
                     'supports' => $tabSupports,
+                    'reseaux' => $tabReseauxUsers,
         ));
     }
 
@@ -2130,6 +2198,14 @@ class ProgrammationPeriodeController extends Controller {
             $i++;
         }
 
+        $selReseau = null;
+        if (!empty($_POST['optionsRadio_StationReseaux'])) {
+            $selReseau = $_POST['optionsRadio_StationReseaux'];
+            $ok = 'ok';
+        } else {
+           $selReseau = $pgProgLotStationAn->getRsxId();
+        }
+
         $selAutrePeriodeAns = Array();
         $i = 0;
         if (!empty($_POST['autrePeriodes'])) {
@@ -2139,7 +2215,7 @@ class ProgrammationPeriodeController extends Controller {
         $tabStations = Array();
         $tabGrparAns = Array();
 
-        $this->createProgrammation($emSqe, $optionGroupes, $repoPgProgLotStationAn, $repoPgRefReseauMesure, $repoPgProgLotPeriodeProg, $repoPgProgLotPeriodeAn, $repoPgProgLotGrparAn, $pgProgLotStationAn, $pgProgPeriode, $pgProgLotGrparAns, $pgProgLotAn, $pgProgLotPeriodeAns, $selAutrePeriodeAns, $selGroupes, $tabStations, $tabGrparAns, $logger);
+        $this->createProgrammation($emSqe, $optionGroupes, $repoPgProgLotStationAn, $repoPgRefReseauMesure, $repoPgProgLotPeriodeProg, $repoPgProgLotPeriodeAn, $repoPgProgLotGrparAn, $pgProgLotStationAn, $pgProgPeriode, $pgProgLotGrparAns, $pgProgLotAn, $pgProgLotPeriodeAns, $selAutrePeriodeAns, $selGroupes, $selReseau, $tabStations, $tabGrparAns, $logger);
 
 
         // Update PgProgLotAn
@@ -2186,7 +2262,7 @@ class ProgrammationPeriodeController extends Controller {
         ));
     }
 
-    private function createProgrammation($emSqe, $optionGroupes, $repoPgProgLotStationAn, $repoPgRefReseauMesure, $repoPgProgLotPeriodeProg, $repoPgProgLotPeriodeAn, $repoPgProgLotGrparAn, $pgProgLotStationAn, $pgProgPeriode, $pgProgLotGrparAns, $pgProgLotAn, $pgProgLotPeriodeAns, $selAutrePeriodeAns, $selGroupes, &$tabStations, &$tabGrparAns, $logger) {
+    private function createProgrammation($emSqe, $optionGroupes, $repoPgProgLotStationAn, $repoPgRefReseauMesure, $repoPgProgLotPeriodeProg, $repoPgProgLotPeriodeAn, $repoPgProgLotGrparAn, $pgProgLotStationAn, $pgProgPeriode, $pgProgLotGrparAns, $pgProgLotAn, $pgProgLotPeriodeAns, $selAutrePeriodeAns, $selGroupes, $selReseau, &$tabStations, &$tabGrparAns, $logger) {
 
         if (!$optionGroupes) {
             $optionGroupes = 'N';
@@ -2234,6 +2310,9 @@ class ProgrammationPeriodeController extends Controller {
             $pgProgLotPeriodeProg->setStationAn($pgProgLotStationAn);
             $pgProgLotPeriodeProg->setGrparAn($pgProgLotGrparAn);
             $pgProgLotPeriodeProg->setPeriodAn($pgProgLotPeriodeAn);
+            if ($selReseau) {
+                $pgProgLotPeriodeProg->setRsxId($selReseau);
+            }
 
             $trouve = false;
             if ($optionGroupes != 'N') {
@@ -2263,7 +2342,7 @@ class ProgrammationPeriodeController extends Controller {
                         $autrePeriodeAns = array($autrePeriodeAn);
                         $autreTabStations = array();
                         $autreTabGrparAns = array();
-                        $this->createProgrammation($emSqe, $optionGroupes, $repoPgProgLotStationAn, $repoPgRefReseauMesure, $repoPgProgLotPeriodeProg, $repoPgProgLotPeriodeAn, $repoPgProgLotGrparAn, $pgProgLotStationAn, $autrePeriodeAn->getPeriode(), $pgProgLotGrparAns, $pgProgLotAn, $autrePeriodeAns, array(), $selGroupes, $autreTabStations, $autreTabGrparAns, $logger);
+                        $this->createProgrammation($emSqe, $optionGroupes, $repoPgProgLotStationAn, $repoPgRefReseauMesure, $repoPgProgLotPeriodeProg, $repoPgProgLotPeriodeAn, $repoPgProgLotGrparAn, $pgProgLotStationAn, $autrePeriodeAn->getPeriode(), $pgProgLotGrparAns, $pgProgLotAn, $autrePeriodeAns, array(), $selGroupes, $selReseau, $autreTabStations, $autreTabGrparAns, $logger);
                     }
                 }
             }

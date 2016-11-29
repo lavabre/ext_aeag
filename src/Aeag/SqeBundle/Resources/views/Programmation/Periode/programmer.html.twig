@@ -125,6 +125,38 @@
             </div>
         </div>
     </div>
+     
+     <div class="row" id ="idRowReseaux">
+        <div class="col-md-offset-1 col-md-10">
+            <div class="small text-center">
+                 {% if reseaux | length %}
+                     <table class="table  table-bordered table-condensed table-advance table-check-cell" id="idTable_reseaux">
+                         <caption align=top><h4>Liste des réseaux disponibles</h4></caption>
+                       <thead>
+                          <tr>
+                                <th>Choisir</th>
+                                <th>Réseau</th>
+                            </tr>
+                       </thead>
+                       <tbody>
+                            {% for reseau in reseaux %}
+                               <tr>
+                                   <td align="center">
+                                       {% if reseau.cocher  == 'O'%}
+                                          <input type="radio" name="optionsRadio_StationReseaux" id="optionsRadio_StationReseau_{{ reseau.reseau.groupementId }}" value="{{ reseau.reseau.groupementId }}"  checked>
+                                      {% else %}
+                                           <input type="radio" name="optionsRadio_StationReseaux" id="optionsRadio_StationReseau_{{ reseau.reseau.groupementId }}" value="{{ reseau.reseau.groupementId }}" >
+                                      {% endif %}
+                                    </td> 
+                                    <td>{{ reseau.reseau.nomRsx }}</td>
+                               </tr>
+                           {% endfor %}
+                        </tbody>
+                   </table>
+              {% endif %}
+            </div>
+        </div>
+    </div>
                     
     <div class="row">
     <div class="col-md-2"></div>
@@ -217,6 +249,11 @@
 
 
 <script>
+    
+    {% if reseaux | length == 1 %}
+         $('#idRowReseaux').hide();
+    {% endif %}
+     
     
     {% if Compl == 'O'%}
         $('#optionGroupes').val('C');
