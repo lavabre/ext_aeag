@@ -2199,8 +2199,8 @@ class ProgrammationPeriodeController extends Controller {
         }
 
         $selReseau = null;
-        if (!empty($_POST['optionsRadio_StationReseaux'])) {
-            $selReseau = $_POST['optionsRadio_StationReseaux'];
+        if (!empty($_POST['reseau'])) {
+            $selReseau = $_POST['reseau'];
             $ok = 'ok';
         } else {
            $selReseau = $pgProgLotStationAn->getRsxId();
