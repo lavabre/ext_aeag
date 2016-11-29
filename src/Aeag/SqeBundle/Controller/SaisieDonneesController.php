@@ -426,8 +426,8 @@ class SaisieDonneesController extends Controller {
                         $tabPgCmdPrelevs[$ip]['nbSaisisParametresAnalyseIncorrect'] = 0;
                         $tabPgCmdPrelevs[$ip]['nbSaisisParametresAnalyseErreur'] = 0;
                         //$pgProgPrestaTypfic = $repoPgProgPrestaTypfic->getPgProgPrestaTypficByCodeMilieuPrestataireFormatFic($pgProgTypeMilieu, $pgCmdPrelev->getprestaPrel(), 'Saisie');
-						$pgProgPrestaTypfic = $repoPgProgPrestaTypfic->getPgProgPrestaTypficByCodeMilieuPrestataireFormatFic($pgProgTypeMilieu, $pgCmdDemande->getPrestataire(), 'Saisie');
-						if ($pgProgPrestaTypfic) {
+                        $pgProgPrestaTypfic = $repoPgProgPrestaTypfic->getPgProgPrestaTypficByCodeMilieuPrestataireFormatFic($pgProgTypeMilieu, $pgCmdDemande->getPrestataire(), 'Saisie');
+                        if ($pgProgPrestaTypfic) {
                             $nbParametresTerrain = 0;
                             $nbParametresAnalyse = 0;
                             foreach ($pgCmdPrelev->getPprog() as $pgProgLotPeriodeProg1) {
@@ -438,7 +438,7 @@ class SaisieDonneesController extends Controller {
 
                                         foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
                                             //if ($pgCmdPrelev->getprestaPrel()->getAdrCorId() == $pgProgLotParamAn->getPrestataire()->getAdrCorId()) {
-											if ($pgCmdDemande->getPrestataire()->getAdrCorId() == $pgProgLotParamAn->getPrestataire()->getAdrCorId()) {
+                                            if ($pgCmdDemande->getPrestataire()->getAdrCorId() == $pgProgLotParamAn->getPrestataire()->getAdrCorId()) {
                                                 if ($pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'ENV') {
                                                     $nbParametresTerrain++;
                                                 }
@@ -477,7 +477,7 @@ class SaisieDonneesController extends Controller {
                                     if ($pgCmdPrelev->getPhaseDmd()->getcodePhase() <= 'M40') {
                                         if ($userPrestataire) {
                                             //if ($pgCmdPrelev->getprestaPrel()->getAdrCorId() == $userPrestataire->getAdrCorId()) {
-											if ($pgCmdDemande->getPrestataire()->getAdrCorId() == $userPrestataire->getAdrCorId()) {
+                                            if ($pgCmdDemande->getPrestataire()->getAdrCorId() == $userPrestataire->getAdrCorId()) {
                                                 if (strtoupper($pgProgPrestaTypfic->getFormatFic()) == 'SAISIE_TA' or strtoupper($pgProgPrestaTypfic->getFormatFic()) == 'SAISIE_T') {
                                                     $tabPgCmdPrelevs[$ip]['saisieTerrain'] = 'O';
                                                 }
@@ -533,6 +533,387 @@ class SaisieDonneesController extends Controller {
                     'periodeAn' => $pgProgLotPeriodeAn,
                     'stations' => $tabStations,
                     'rapport' => $rapport));
+    }
+
+    public function lotPeriodeStationsValiderEnvAction($periodeAnId) {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'donnees');
+        $session->set('controller', 'SaisieDonnees');
+        $session->set('fonction', 'lotPeriodeStations');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
+        $repoPgProgLotPeriodeProg = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeProg');
+        $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
+        $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
+        $repoPgCmdPrelevPc = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelevPc');
+        $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
+        $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
+        $repoPgProgLotParamAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotParamAn');
+        $repoPgProgPrestaTypfic = $emSqe->getRepository('AeagSqeBundle:PgProgPrestaTypfic');
+        $repoPgCmdMesureEnv = $emSqe->getRepository('AeagSqeBundle:PgCmdMesureEnv');
+        $repoPgCmdAnalyse = $emSqe->getRepository('AeagSqeBundle:PgCmdAnalyse');
+        $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
+        $repoPgProgLotGrparAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotGrparAn');
+        $repoPgSandreUnites = $emSqe->getRepository('AeagSqeBundle:PgSandreUnites');
+
+        $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
+
+
+        $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($periodeAnId);
+        $pgProgLotAn = $pgProgLotPeriodeAn->getLotAn();
+        $pgProgLot = $pgProgLotAn->getLot();
+        $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
+        $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByPeriodeAnOrderByStation($pgProgLotPeriodeAn);
+        $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M40');
+
+        $now = date('Ymd');
+        $today = new \DateTime($now);
+
+        $userPrestataire = null;
+        if ($pgProgWebUser->getPrestataire()) {
+            $userPrestataire = $pgProgWebUser->getPrestataire();
+        } else {
+            $userPrestataire = null;
+        }
+
+
+
+        $tabStations = array();
+        $passage = 0;
+        $is = 0;
+        foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
+            $prestataire = $pgProgLotPeriodeProg->getGrparAn()->getPrestaDft();
+            $periode = $pgProgLotPeriodeProg->getPeriodan()->getPeriode();
+            $trouve = false;
+            if (count($tabStations) > 0) {
+                for ($k = 0; $k < count($tabStations); $k++) {
+                    if ($tabStations[$k]['station']->getOuvFoncId() == $pgProgLotPeriodeProg->getStationAn()->getStation()->getOuvFoncId()) {
+                        $trouve = true;
+                        break;
+                    }
+                }
+            }
+            if (!$trouve) {
+                $pgProgLotStationAn = $pgProgLotPeriodeProg->getStationAn();
+                $station = $pgProgLotStationAn->getStation();
+                $pgProgLotGrparAn = $pgProgLotPeriodeProg->getGrparAn();
+                $tabStations[$is]['stationAn'] = $pgProgLotStationAn;
+                $tabStations[$is]['station'] = $station;
+                $tabStations[$is]['passage'] = $passage;
+                if ($passage == 0) {
+                    $passage = 1;
+                } else {
+                    $passage = 0;
+                }
+                $tabStations[$is]['lien'] = '/sqe_fiches_stations/' . str_replace('/', '-', $pgProgLotPeriodeProg->getStationAn()->getStation()->getCode()) . '.pdf';
+                $tabStations[$is]['pgCmdDemandes'] = null;
+                $tabPgCmdDemandes = array();
+                $id = 0;
+                $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandesByLotanPeriode($pgProgLotAn, $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
+                foreach ($pgCmdDemandes as $pgCmdDemande) {
+                    $tabPgCmdDemandes[$id]['pgCmdDemande'] = $pgCmdDemande;
+                    $tabPgCmdDemandes[$id]['prestataire'] = $pgCmdDemande->getPrestataire();
+                    $tabPgCmdDemandes[$id]['pgCmdPrelevs'] = null;
+                    $tabPgCmdPrelevs = array();
+                    $ip = 0;
+                    $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByDemandeStationPeriode($pgCmdDemande, $station, $periode);
+                    foreach ($pgCmdPrelevs as $pgCmdPrelev) {
+                        $tabPgCmdPrelevs[$ip]['cmdPrelev'] = $pgCmdPrelev;
+                        //$pgProgPrestaTypfic = $repoPgProgPrestaTypfic->getPgProgPrestaTypficByCodeMilieuPrestataireFormatFic($pgProgTypeMilieu, $pgCmdPrelev->getprestaPrel(), 'Saisie');
+                        $pgProgPrestaTypfic = $repoPgProgPrestaTypfic->getPgProgPrestaTypficByCodeMilieuPrestataireFormatFic($pgProgTypeMilieu, $pgCmdDemande->getPrestataire(), 'Saisie');
+                        if ($pgProgPrestaTypfic) {
+                            $nbParametresTerrain = 0;
+                            $nbParametresAnalyse = 0;
+                            foreach ($pgCmdPrelev->getPprog() as $pgProgLotPeriodeProg1) {
+                                if ($station->getOuvFoncId() == $pgProgLotPeriodeProg1->getStationAn()->getStation()->getOuvFoncId()) {
+                                    $pgProgLotGrparAn = $pgProgLotPeriodeProg1->getGrparAn();
+                                    if ($pgProgLotGrparAn->getvalide() == 'O') {
+                                        $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
+                                        $tabParamAns = array();
+                                        $nbParamAns = 0;
+                                        foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
+                                            //if ($pgCmdPrelev->getprestaPrel()->getAdrCorId() == $pgProgLotParamAn->getPrestataire()->getAdrCorId()) {
+                                            if ($pgCmdDemande->getPrestataire()->getAdrCorId() == $pgProgLotParamAn->getPrestataire()->getAdrCorId()) {
+                                                if ($pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'SIT') {
+                                                    $nbParametresTerrain++;
+                                                }
+                                                if ($pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'ANA') {
+                                                    $nbParametresAnalyse++;
+                                                }
+                                                if ($pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'ENV') {
+                                                    $nbParametresTerrain++;
+                                                    $tabParamAns[$nbParamAns]['paramAn'] = $pgProgLotParamAn;
+                                                    $pgCmdMesureEnv = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParamProg($pgCmdPrelev, $pgProgLotParamAn);
+                                                    if (!$pgCmdMesureEnv) {
+                                                        $pgCmdMesureEnv = new PgCmdMesureEnv();
+                                                        $pgCmdMesureEnv->setDateMes($today);
+                                                        $pgCmdMesureEnv->setPrelev($pgCmdPrelev);
+                                                        $pgCmdMesureEnv->setParamProg($pgProgLotParamAn);
+                                                        $pgCmdMesureEnv->setCodeParametre($pgProgLotParamAn->getCodeParametre());
+                                                        $pgCmdMesureEnv->setResultat(null);
+                                                        $pgCmdMesureEnv->setCodeRemarque(0);
+                                                        $pgCmdMesureEnv->setCodeMethode('0');
+                                                        $pgCmdMesureEnv->setCodeStatut(1);
+                                                        $pgCmdMesureEnv->setLibelleStatut('Valeur absente');
+                                                        $unite = $pgProgLotParamAn->getCodeUnite();
+                                                        if ($unite) {
+                                                            $pgSandreUnites = $repoPgSandreUnites->getPgSandreUnitesByCodeUnite($unite);
+                                                            if ($pgSandreUnites) {
+                                                                $pgCmdMesureEnv->setCodeUnite($pgSandreUnites);
+                                                            } else {
+                                                                $pgCmdMesureEnv->setCodeUnite(null);
+                                                            }
+                                                        } else {
+                                                            $pgCmdMesureEnv->setCodeUnite(null);
+                                                        }
+                                                        $emSqe->persist($pgCmdMesureEnv);
+                                                    }
+                                                    $tabParamAns[$nbParamAns]['pgCmdMesureEnv'] = $pgCmdMesureEnv;
+                                                }
+                                            }
+                                            $nbParamAns++;
+                                        }
+                                        $tabPgCmdPrelevs[$ip]['pgProgLotParamAns'] = $tabParamAns;
+                                    }
+                                }
+                            }
+                            $emSqe->flush();
+
+
+                            $NbCmdMesureEnv = $repoPgCmdMesureEnv->getNbCmdMesureEnvByPrelev($pgCmdPrelev);
+                            $NbCmdMesureEnvCorrect = $repoPgCmdMesureEnv->getNbCmdMesureEnvByPrelevStatut($pgCmdPrelev, '0');
+                            $NbCmdMesureEnvIncorrect = $repoPgCmdMesureEnv->getNbCmdMesureEnvByPrelevStatut($pgCmdPrelev, '1');
+                            $NbCmdMesureEnvErreur = $repoPgCmdMesureEnv->getNbCmdMesureEnvByPrelevStatut($pgCmdPrelev, '2');
+                            $NbCmdAnalyseSitu = $repoPgCmdAnalyse->getNbCmdAnalyseSituByPrelev($pgCmdPrelev);
+                            $NbCmdAnalyseSituCorrect = $repoPgCmdAnalyse->getNbCmdAnalyseSituByPrelevStatut($pgCmdPrelev, '0');
+                            $NbCmdAnalyseSituIncorrect = $repoPgCmdAnalyse->getNbCmdAnalyseSituByPrelevStatut($pgCmdPrelev, '1');
+                            $NbCmdAnalyseSituErreur = $repoPgCmdAnalyse->getNbCmdAnalyseSituByPrelevStatut($pgCmdPrelev, '2');
+                            $NbCmdAnalyse = $repoPgCmdAnalyse->getNbCmdAnalyseAnaByPrelev($pgCmdPrelev);
+                            $NbCmdAnalyseCorrect = $repoPgCmdAnalyse->getNbCmdAnalyseAnaByPrelevStatut($pgCmdPrelev, '0');
+                            $NbCmdAnalyseIncorrect = $repoPgCmdAnalyse->getNbCmdAnalyseAnaByPrelevStatut($pgCmdPrelev, '1');
+                            $NbCmdAnalyseErreur = $repoPgCmdAnalyse->getNbCmdAnalyseAnaByPrelevStatut($pgCmdPrelev, '2');
+
+                            $nbTotalParametres = $nbParametresTerrain + $nbParametresAnalyse;
+                            $nbTotalParametresCorrectes = $NbCmdMesureEnvCorrect + $NbCmdAnalyseSituCorrect + $NbCmdAnalyseCorrect;
+                            $nbTotalParametresIncorrectes = $NbCmdMesureEnvIncorrect + $NbCmdAnalyseSituIncorrect + $NbCmdAnalyseIncorrect;
+                            $nbTotalParametresErreurs = $NbCmdMesureEnvErreur + $NbCmdAnalyseSituErreur + $NbCmdAnalyseErreur;
+                            $nbTotalParametresOk = $nbTotalParametresCorrectes + $nbTotalParametresIncorrectes;
+
+//
+//                            echo('station  : ' . $station->getCode() . '<br/>');
+//                            echo('NbCmdMesureEnv : ' . $NbCmdMesureEnv . '<br/>');
+//                            echo('NbCmdMesureEnvCorrect : ' . $NbCmdMesureEnvCorrect . '<br/>');
+//                            echo('NbCmdMesureEnvIncorrect : ' . $NbCmdMesureEnvIncorrect . '<br/>');
+//                            echo('NbCmdMesureEnvErreur : ' . $NbCmdMesureEnvErreur . '<br/>');
+//                            echo('<br/>');
+//                            echo('NbCmdAnalyseSitu : ' . $NbCmdAnalyseSitu . '<br/>');
+//                            echo('NbCmdAnalyseSituCorrect : ' . $NbCmdAnalyseSituCorrect . '<br/>');
+//                            echo('NbCmdAnalyseSituIncorrect : ' . $NbCmdAnalyseSituIncorrect . '<br/>');
+//                            echo('NbCmdAnalyseSituErreur : ' . $NbCmdAnalyseSituErreur . '<br/>');
+//                            echo('<br/>');
+//                            echo('NbCmdAnalyse : ' . $NbCmdAnalyse . '<br/>');
+//                            echo('NbCmdAnalyseCorrect : ' . $NbCmdAnalyseCorrect . '<br/>');
+//                            echo('NbCmdAnalyseIncorrect : ' . $NbCmdAnalyseIncorrect . '<br/>');
+//                            echo('NbCmdAnalyseErreur : ' . $NbCmdAnalyseErreur . '<br/>');
+//                            echo('<br/>');
+//                            echo('nbTotalParametresCorrecctes : ' . $nbTotalParametresCorrectes . '<br/>');
+//                            echo('nbTotalParametresIncorrectes : ' . $nbTotalParametresIncorrectes . '<br/>');
+//                            echo('nbTotalParametresErreurs : ' . $nbTotalParametresErreurs . '<br/>');
+//                            echo('<br/>');
+//                            echo('nbTotalParametres : ' . $nbTotalParametres . '<br/>');
+//                            echo('nbTotalParametresOk : ' . $nbTotalParametresOk . '<br/>');
+//                            echo('<br/>');
+//                            echo('<br/>');
+//                            if ($station->getCode() == '05122850') {
+//                                return new Response();
+//                            }
+
+                            if ($nbTotalParametres == $nbTotalParametresOk) {
+                                $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M30');
+                                $pgCmdPrelev->setRealise('O');
+                                $pgCmdPrelev->setPhaseDmd($pgProgPhases);
+                                $pgCmdPrelev->setDatePrelev($today);
+                            } else {
+                                $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M20');
+                                $pgCmdPrelev->setRealise('N');
+                                $pgCmdPrelev->setPhaseDmd($pgProgPhases);
+                            }
+                            $emSqe->persist($pgCmdPrelev);
+                        }
+                        $ip++;
+                    }
+                    $tabPgCmdDemandes[$id]['pgCmdPrelevs'] = $tabPgCmdPrelevs;
+                    $id++;
+                }
+                sort($tabPgCmdDemandes);
+                $tabStations[$is]['pgCmdDemandes'] = $tabPgCmdDemandes;
+
+                $is++;
+            }
+        }
+
+        $emSqe->flush();
+
+
+//        \Symfony\Component\VarDumper\VarDumper::dump($tabStations);
+//        return new Response('');
+
+
+        return $this->redirect($this->generateUrl('AeagSqeBundle_saisieDonnees_lot_periode_stations', array('periodeAnId' => $pgProgLotPeriodeAn->getId())));
+    }
+
+    public function lotPeriodeStationsValiderStationsAction($periodeAnId) {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'donnees');
+        $session->set('controller', 'SaisieDonnees');
+        $session->set('fonction', 'lotPeriodeStations');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
+        $repoPgProgLotPeriodeProg = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeProg');
+        $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
+        $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
+        $repoPgCmdPrelevPc = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelevPc');
+        $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
+        $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
+        $repoPgProgLotParamAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotParamAn');
+        $repoPgProgPrestaTypfic = $emSqe->getRepository('AeagSqeBundle:PgProgPrestaTypfic');
+        $repoPgCmdMesureEnv = $emSqe->getRepository('AeagSqeBundle:PgCmdMesureEnv');
+        $repoPgCmdAnalyse = $emSqe->getRepository('AeagSqeBundle:PgCmdAnalyse');
+        $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
+        $repoPgProgLotGrparAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotGrparAn');
+        $repoPgSandreUnites = $emSqe->getRepository('AeagSqeBundle:PgSandreUnites');
+
+        $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
+
+
+        $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($periodeAnId);
+        $pgProgLotAn = $pgProgLotPeriodeAn->getLotAn();
+        $pgProgLot = $pgProgLotAn->getLot();
+        $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
+        $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByPeriodeAnOrderByStation($pgProgLotPeriodeAn);
+        $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R45');
+
+        $now = date('Ymd');
+        $today = new \DateTime($now);
+
+        $userPrestataire = null;
+        if ($pgProgWebUser->getPrestataire()) {
+            $userPrestataire = $pgProgWebUser->getPrestataire();
+        } else {
+            $userPrestataire = null;
+        }
+
+
+
+        $tabStations = array();
+        $passage = 0;
+        $is = 0;
+        foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
+            $prestataire = $pgProgLotPeriodeProg->getGrparAn()->getPrestaDft();
+            $periode = $pgProgLotPeriodeProg->getPeriodan()->getPeriode();
+            $trouve = false;
+            if (count($tabStations) > 0) {
+                for ($k = 0; $k < count($tabStations); $k++) {
+                    if ($tabStations[$k]['station']->getOuvFoncId() == $pgProgLotPeriodeProg->getStationAn()->getStation()->getOuvFoncId()) {
+                        $trouve = true;
+                        break;
+                    }
+                }
+            }
+            if (!$trouve) {
+                $pgProgLotStationAn = $pgProgLotPeriodeProg->getStationAn();
+                $station = $pgProgLotStationAn->getStation();
+                $pgProgLotGrparAn = $pgProgLotPeriodeProg->getGrparAn();
+                $tabStations[$is]['stationAn'] = $pgProgLotStationAn;
+                $tabStations[$is]['station'] = $station;
+                $tabStations[$is]['passage'] = $passage;
+                if ($passage == 0) {
+                    $passage = 1;
+                } else {
+                    $passage = 0;
+                }
+                $tabStations[$is]['lien'] = '/sqe_fiches_stations/' . str_replace('/', '-', $pgProgLotPeriodeProg->getStationAn()->getStation()->getCode()) . '.pdf';
+                $tabStations[$is]['pgCmdDemandes'] = null;
+                $tabPgCmdDemandes = array();
+                $id = 0;
+                $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandesByLotanPeriode($pgProgLotAn, $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
+                foreach ($pgCmdDemandes as $pgCmdDemande) {
+                    $tabPgCmdDemandes[$id]['pgCmdDemande'] = $pgCmdDemande;
+                    $tabPgCmdDemandes[$id]['prestataire'] = $pgCmdDemande->getPrestataire();
+                    $tabPgCmdDemandes[$id]['pgCmdPrelevs'] = null;
+                    $tabPgCmdPrelevs = array();
+                    $ip = 0;
+                    $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByDemandeStationPeriode($pgCmdDemande, $station, $periode);
+                    foreach ($pgCmdPrelevs as $pgCmdPrelev) {
+                        if ($pgCmdPrelev->getPhaseDmd()->getCodePhase() == 'M30') {
+                            if (!$pgCmdPrelev->getFichierRps()) {
+                                $pgCmdFichiersRps = new PgCmdFichiersRps();
+                                $pgCmdFichiersRps->setDemande($pgCmdPrelev->getDemande());
+                                $pgCmdFichiersRps->setNomFichier('SAISIE_' . $pgCmdPrelev->getId());
+                                $pgCmdFichiersRps->setDateDepot(new \DateTime());
+                                $pgCmdFichiersRps->setTypeFichier('SAI');
+                                $pgCmdFichiersRps->setUser($pgProgWebUser);
+                                $pgCmdFichiersRps->setSuppr('N');
+                            } else {
+                                $pgCmdFichiersRps = $pgCmdPrelev->getFichierRps();
+                            }
+                            $pgCmdFichiersRps->setPhaseFichier($pgProgPhases);
+                            $emSqe->persist($pgCmdFichiersRps);
+                            $pgCmdPrelev->setFichierRps($pgCmdFichiersRps);
+
+                            $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M40');
+                            $pgCmdPrelev->setPhaseDmd($pgProgPhases);
+                            $emSqe->persist($pgCmdPrelev);
+                            $tabPgCmdPrelevs[$ip]['cmdPrelev'] = $pgCmdPrelev;
+                            $ip++;
+                        }
+                    }
+                    $tabPgCmdDemandes[$id]['pgCmdPrelevs'] = $tabPgCmdPrelevs;
+                    $id++;
+
+                    $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByDemande($pgCmdDemande);
+                    $nbPrelevs = count($pgCmdPrelevs);
+                    $nbPrelevM40 = 0;
+                    foreach ($pgCmdPrelevs as $pgCmdPrelev) {
+                        if ($pgCmdPrelev->getPhaseDmd() == 'M40') {
+                            $nbPrelevM40++;
+                        }
+                    }
+                    if ($nbPrelevs == $nbPrelevM40) {
+                        $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('D40');
+                        $pgCmdDemande->setPhaseDemande($pgProgPhases);
+                        $emSqe->persist($pgCmdDemande);
+                    } else {
+                        $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('D30');
+                        $pgCmdDemande->setPhaseDemande($pgProgPhases);
+                        $emSqe->persist($pgCmdDemande);
+                    }
+                }
+                sort($tabPgCmdDemandes);
+                $tabStations[$is]['pgCmdDemandes'] = $tabPgCmdDemandes;
+
+                $is++;
+            }
+        }
+
+        $emSqe->flush();
+
+
+//        \Symfony\Component\VarDumper\VarDumper::dump($tabStations);
+//        return new Response('');
+
+
+        return $this->redirect($this->generateUrl('AeagSqeBundle_saisieDonnees_lot_periode_stations', array('periodeAnId' => $pgProgLotPeriodeAn->getId())));
     }
 
     public function lotPeriodeStationSaisirCommentaireAction($periodeAnId = null, $prelevId = null, Request $request) {
@@ -2184,7 +2565,7 @@ class SaisieDonneesController extends Controller {
             }
 
 //        \Symfony\Component\VarDumper\VarDumper::dump($tabStations);
-//        return new Response ('');   
+//        return new Response ('');
 // Récupération des valeurs du fichier
 
             $name = $_FILES['file']['name'];
@@ -2339,7 +2720,7 @@ class SaisieDonneesController extends Controller {
                             } else {
                                 list( $annee, $mois, $jour, $heure, $min ) = sscanf($date, "%d-%d-%d %d:%d");
                                 try {
-                                    $datePrel = new \DateTime($annee . '-' . $mois . '-' . $jour . ' ' . $heure . ':' . $min );
+                                    $datePrel = new \DateTime($annee . '-' . $mois . '-' . $jour . ' ' . $heure . ':' . $min);
                                     if (!$datePrel) {
                                         $err = true;
                                         $contenu = 'ligne  ' . $ligne . '  :  date heure incorrecte (' . $date . '). Le format attendu est : YYYY-MM-DD HH:MM' . CHR(13) . CHR(10);
@@ -2464,13 +2845,14 @@ class SaisieDonneesController extends Controller {
                                 }
                             }
                         }
-                        
+
                         $pgCmdPrelev = $tabStations[$i]['prelev'];
-                        if (!$pgCmdPrelev){
-                             $err = true;
-                                    $contenu = 'ligne  ' . $ligne . '  :  Pas de prélevement pour la demande : ' . $tabStations[$i]['demande']->getCodeDemandeCmd() . ' de la station : ' . $tab[1]  . ' pour le prestataire : ' . $tabStations[$i]['prestataire']->getAncnum(). CHR(13) . CHR(10);;
-                                    $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                                    fputs($rapport, $contenu);
+                        if (!$pgCmdPrelev) {
+                            $err = true;
+                            $contenu = 'ligne  ' . $ligne . '  :  Pas de prélevement pour la demande : ' . $tabStations[$i]['demande']->getCodeDemandeCmd() . ' de la station : ' . $tab[1] . ' pour le prestataire : ' . $tabStations[$i]['prestataire']->getAncnum() . CHR(13) . CHR(10);
+                            ;
+                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                            fputs($rapport, $contenu);
                         }
 
                         if ($err) {
@@ -2685,7 +3067,7 @@ class SaisieDonneesController extends Controller {
                                 if ($user->hasRole('ROLE_ADMINSQE') or ( $prestataire == $pgProgLotParamAn->getPrestataire() and $userPrestataire == $prestataire)) {
 
                                     if ($pgProgGrpParamRef->getTypeGrp() == 'ENV') {
-                                         echo ('groupe: ' . $pgProgLotGrparAn->getId() . ' type : ' . $pgProgGrpParamRef->getTypeGrp() . '  pgCmdPrelev : ' . $pgCmdPrelev->getId() . ' parametre : ' . $pgProgLotParamAn->getId() . ' </br>');
+                                        echo ('groupe: ' . $pgProgLotGrparAn->getId() . ' type : ' . $pgProgGrpParamRef->getTypeGrp() . '  pgCmdPrelev : ' . $pgCmdPrelev->getId() . ' parametre : ' . $pgProgLotParamAn->getId() . ' </br>');
                                         $nbParametresEnvSit++;
                                         $pgCmdMesureEnv = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParamProg($pgCmdPrelev, $pgProgLotParamAn);
                                         if ($pgCmdMesureEnv) {
@@ -2750,7 +3132,7 @@ class SaisieDonneesController extends Controller {
                 fclose($fichier);
                 unlink($pathBase . '/' . $name);
 //            unlink($pathBase . '/donnees-' . $user->getId() . '.csv');
-                // envoi mail  aux presta connecte 
+                // envoi mail  aux presta connecte
                 $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
                 if ($pgProgWebUser) {
                     $objetMessage = "fichier de données ";

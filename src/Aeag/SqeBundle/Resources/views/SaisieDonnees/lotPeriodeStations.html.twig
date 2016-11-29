@@ -88,6 +88,18 @@
         </div>
      {% endif %}
      
+     {% if is_granted('ROLE_ADMINSQE') %}
+         <div class="row responsive">
+                   <a  class="btn btn-success"  href="{{path("AeagSqeBundle_saisieDonnees_lot_periode_stations_valider_env",{"periodeAnId": periodeAn.id })}}" title="Forcer données environnementales">
+                        <i class="fa fa-magic"> Forcer données environnementales</i> 
+                    </a>
+                    <a  class="btn btn-success"  href="{{path("AeagSqeBundle_saisieDonnees_lot_periode_stations_valider_stations",{"periodeAnId": periodeAn.id })}}" title="Valider toutes les stations correctes">
+                        <i class="fa fa-check"> Valider toutes les stations correctes</i> 
+                    </a>
+             </div>
+        </div>
+     {% endif %}
+     
 
     <div class="row responsive">
         <div class="col-xm-12">

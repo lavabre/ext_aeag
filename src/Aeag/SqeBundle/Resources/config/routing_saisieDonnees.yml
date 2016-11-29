@@ -10,6 +10,14 @@ AeagSqeBundle_saisieDonnees_lot_periode_stations:
     path: /stations/{periodeAnId}
     defaults: { _controller: AeagSqeBundle:SaisieDonnees:lotPeriodeStations, periodeAnId : null}
     
+AeagSqeBundle_saisieDonnees_lot_periode_stations_valider_env:
+    path: /valider/env/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SaisieDonnees:lotPeriodeStationsValiderEnv, periodeAnId : null}
+    
+AeagSqeBundle_saisieDonnees_lot_periode_stations_valider_stations:
+    path: /valider/stations/{periodeAnId}
+    defaults: { _controller: AeagSqeBundle:SaisieDonnees:lotPeriodeStationsValiderStations, periodeAnId : null}
+    
 AeagSqeBundle_saisieDonnees_lot_periode_station_saisir_commentaire:
     path:  /saisir/commentaire/{periodeAnId}/{prelevId}
     defaults: { _controller: AeagSqeBundle:SaisieDonnees:lotPeriodeStationSaisirCommentaire, periodeAnId : null, prelevId : null}

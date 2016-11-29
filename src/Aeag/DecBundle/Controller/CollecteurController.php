@@ -48,7 +48,7 @@ class CollecteurController extends Controller {
         if (is_object($user)) {
             $mes = AeagController::notificationAction($user, $em, $session);
             $mes1 = AeagController::messageAction($user, $em, $session);
-          }
+        }
 
         $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
         $repoDeclarationCollecteur = $emDec->getRepository('AeagDecBundle:DeclarationCollecteur');
@@ -818,7 +818,7 @@ class CollecteurController extends Controller {
 
                 if (!$err) {
                     $producteurs = $repoOuvrage->getOuvragesBySiretType($majProducteur->getSiret(), 'PDEC');
-                      if (count($producteurs) > 0) {
+                    if (count($producteurs) > 0) {
                         $producteur = $producteurs[0];
                     }
                     if (!$producteur) {
@@ -2287,7 +2287,7 @@ class CollecteurController extends Controller {
                                 $action = 'AJOUTER';
                             } else {
                                 $err = true;
-                                $message = $message . "dans le fichier CSV :  la ligne " . $ligne . " est en double  date ". $dateFacture->format('Y-m-d') .  "\n";
+                                $message = $message . "dans le fichier CSV :  la ligne " . $ligne . " est en double  date " . $dateFacture->format('Y-m-d') . "\n";
                                 $declarationDetail = $declarationDetail;
                                 $ancDeclarationDetail = clone($declarationDetail);
                                 if ($ancDeclarationDetail->getStatut()->getCode() == '11') {
@@ -2481,48 +2481,48 @@ class CollecteurController extends Controller {
 
 //                            if ($quantiteAide > 0) {
 
-                                $declarationDetail->setQuantiteReel($quantiteReel);
-                                $declarationDetail->setMontReel($montReel);
-                                $declarationDetail->setQuantiteRet($quantiteRet);
-                                $declarationDetail->setMontRet($montRet);
-                                $declarationDetail->setQuantiteAide($quantiteAide);
-                                $declarationDetail->setMontAide($montAide);
-                                $declarationDetail->setTauxAide($tauxAide);
-                                $declarationDetail->setBonnifie($bonnifie);
-                                $declarationDetail->setCoutFacture(round($tab[12], 5));
-                                $declarationDetail->setDossierAide($sousDeclarationCollecteur->getDossierAide());
-                                $declarationDetail->setMontantAp($sousDeclarationCollecteur->getMontantAp());
-                                $declarationDetail->setMontantApDispo($sousDeclarationCollecteur->getMontantAp() - $montAide);
-                                if ($declarationDetail->getMontantApDispo() <= 0) {
-                                    $declarationDetail->setMontantApDispo(0);
-                                    $err = true;
-                                    $message = $message . "dans le fichier CSV : l'enveloppe budgétaire (" . $declarationDetail->getMontantAp() . ") accordée par l'agence est atteinte pour l'annee " . $sousDeclarationCollecteur->getDeclarationCollecteur()->getAnnee() . " à la ligne " . $ligne . "\n";
-                                }
+                            $declarationDetail->setQuantiteReel($quantiteReel);
+                            $declarationDetail->setMontReel($montReel);
+                            $declarationDetail->setQuantiteRet($quantiteRet);
+                            $declarationDetail->setMontRet($montRet);
+                            $declarationDetail->setQuantiteAide($quantiteAide);
+                            $declarationDetail->setMontAide($montAide);
+                            $declarationDetail->setTauxAide($tauxAide);
+                            $declarationDetail->setBonnifie($bonnifie);
+                            $declarationDetail->setCoutFacture(round($tab[12], 5));
+                            $declarationDetail->setDossierAide($sousDeclarationCollecteur->getDossierAide());
+                            $declarationDetail->setMontantAp($sousDeclarationCollecteur->getMontantAp());
+                            $declarationDetail->setMontantApDispo($sousDeclarationCollecteur->getMontantAp() - $montAide);
+                            if ($declarationDetail->getMontantApDispo() <= 0) {
+                                $declarationDetail->setMontantApDispo(0);
+                                $err = true;
+                                $message = $message . "dans le fichier CSV : l'enveloppe budgétaire (" . $declarationDetail->getMontantAp() . ") accordée par l'agence est atteinte pour l'annee " . $sousDeclarationCollecteur->getDeclarationCollecteur()->getAnnee() . " à la ligne " . $ligne . "\n";
+                            }
 
 
-                                if ($err) {
-                                    $ok = false;
-                                    $statut = $repoStatut->getStatutByCode('11');
-                                    $declarationDetail->setMessage($message);
-                                    $erreur++;
-                                    $resume_nbErreurs++;
-                                } else {
-                                    $ok = true;
-                                    $statut = $repoStatut->getStatutByCode('10');
-                                }
-                                $resume_nbLignes++;
-                                $declarationDetail->setStatut($statut);
-                                $emDec->persist($declarationDetail);
+                            if ($err) {
+                                $ok = false;
+                                $statut = $repoStatut->getStatutByCode('11');
+                                $declarationDetail->setMessage($message);
+                                $erreur++;
+                                $resume_nbErreurs++;
+                            } else {
+                                $ok = true;
+                                $statut = $repoStatut->getStatutByCode('10');
+                            }
+                            $resume_nbLignes++;
+                            $declarationDetail->setStatut($statut);
+                            $emDec->persist($declarationDetail);
 
-                                $collecteurProducteur = $repoCollecteurProducteur->getCollecteurProducteurByCollecteurProducteur($collecteur->getId(), $producteur->getId());
-                                if (!$collecteurProducteur) {
-                                    $collecteurProducteur = new CollecteurProducteur();
-                                    $collecteurProducteur->setCollecteur($collecteur->getid());
-                                    $collecteurProducteur->setProducteur($producteur->getid());
-                                    $emDec->persist($collecteurProducteur);
-                                }
-                                $emDec->flush();
-                                $ok = $this->majStatutDeclarationProducteursAction($declarationDetail->getDeclarationProducteur()->getId(), $user, $emDec, $session);
+                            $collecteurProducteur = $repoCollecteurProducteur->getCollecteurProducteurByCollecteurProducteur($collecteur->getId(), $producteur->getId());
+                            if (!$collecteurProducteur) {
+                                $collecteurProducteur = new CollecteurProducteur();
+                                $collecteurProducteur->setCollecteur($collecteur->getid());
+                                $collecteurProducteur->setProducteur($producteur->getid());
+                                $emDec->persist($collecteurProducteur);
+                            }
+                            $emDec->flush();
+                            $ok = $this->majStatutDeclarationProducteursAction($declarationDetail->getDeclarationProducteur()->getId(), $user, $emDec, $session);
 //                            }
                         }
                     }
@@ -2631,7 +2631,11 @@ class CollecteurController extends Controller {
             }
             $declarationProducteur = $repoDeclarationProducteur->getDeclarationProducteurById($declarationDetail->getDeclarationProducteur()->getId());
             $producteur = $repoOuvrage->getOuvrageById($declarationProducteur->getProducteur());
-            $producteurTauxSpecial = $repoProducteurTauxSpecial->getProducteurTauxSpecialBySiret($producteur->getSiret());
+            if ($producteur) {
+                $producteurTauxSpecial = $repoProducteurTauxSpecial->getProducteurTauxSpecialBySiret($producteur->getSiret());
+            } else {
+                $producteurTauxSpecial = null;
+            }
             if ($producteurTauxSpecial) {
                 $tauxAide = $producteurTauxSpecial->getTaux() / 100;
                 $bonnifie = true;
@@ -2651,8 +2655,11 @@ class CollecteurController extends Controller {
                 $ok = $this->majStatutDeclarationCollecteursAction($declarationCollecteur->getid(), $user, $emDec, $session);
                 $ok = $this->majStatutDeclarationProducteursAction($declarationProducteur->getId(), $user, $emDec, $session);
 
-                $session->getFlashBag()->add('notice-success', "Le producteur " . $producteur->getLibelle() . " a été retiré de la déclaration n° " . $sousDeclarationCollecteur->getNumero() . " !");
-
+                if ($producteur) {
+                    $session->getFlashBag()->add('notice-success', "Le producteur " . $producteur->getLibelle() . " a été retiré de la déclaration n° " . $sousDeclarationCollecteur->getNumero() . " !");
+                } else {
+                    $session->getFlashBag()->add('notice-success', "Le producteur sans siret  a été retiré de la déclaration n° " . $sousDeclarationCollecteur->getNumero() . " !");
+                }
                 $emDec->flush();
             } else {
                 $session->getFlashBag()->add('notice-warning', "Le producteur " . $producteur->getLibelle() . " ne peut être retiré de la déclaration n° " . $sousDeclarationCollecteur->getNumero() . " !");
@@ -2671,7 +2678,9 @@ class CollecteurController extends Controller {
         $crudDeclarationDetail->setSousDeclarationCollecteur($sousDeclarationCollecteur);
 
         if ($crud != 'C') {
-            $crudDeclarationDetail->setProducteur($producteur->getId());
+            if ($producteur) {
+                $crudDeclarationDetail->setProducteur($producteur->getId());
+            }
             $crudDeclarationDetail->setDeclarationProducteur($declarationProducteur);
         }
         if ($declarationDetail->getStatut()) {
@@ -2769,7 +2778,11 @@ class CollecteurController extends Controller {
         if ($crud == 'C') {
             $form = $this->createForm(new CrudDeclarationDetailType(array($crud, $collecteur->getId(), $idCTT, $idCT, $idCD, null, $producteurs)), $crudDeclarationDetail);
         } else {
-            $form = $this->createForm(new CrudDeclarationDetailType(array($crud, $collecteur->getId(), $idCTT, $idCT, $idCD, $producteur->getId(), $producteurs)), $crudDeclarationDetail);
+            if ($producteur) {
+                $form = $this->createForm(new CrudDeclarationDetailType(array($crud, $collecteur->getId(), $idCTT, $idCT, $idCD, $producteur->getId(), $producteurs)), $crudDeclarationDetail);
+            } else {
+                $form = $this->createForm(new CrudDeclarationDetailType(array($crud, $collecteur->getId(), $idCTT, $idCT, $idCD, null, $producteurs)), $crudDeclarationDetail);
+            }
         }
 
         $message = null;
@@ -2906,7 +2919,7 @@ class CollecteurController extends Controller {
                                 $montReel = round((($crudDeclarationDetail->getQuantiteReel()) * $crudDeclarationDetail->getCoutFacture()), 2);
                                 $montRet = round((($crudDeclarationDetail->getQuantiteRet()) * $crudDeclarationDetail->getCoutFacture()), 2);
                                 $montAide = (($crudDeclarationDetail->getQuantiteRet()) * $crudDeclarationDetail->getCoutFacture() * $tauxAide);
-                               print_R('1 montant avant round : ' . $montAide);
+                                print_R('1 montant avant round : ' . $montAide);
                                 $montAide = round($montAide, 4);
                                 $montAide = round($montAide, 2);
                                 print_R('1 montant apres round : ' . $montAide);
