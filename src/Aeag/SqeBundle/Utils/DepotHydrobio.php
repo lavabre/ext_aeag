@@ -23,13 +23,14 @@ class DepotHydrobio {
 
         $tabTraitFichiers = array();
         $fic = 0;
-        
+
         foreach ($liste as $nomFichier) {
             $tabNomFichier = explode('.', $nomFichier);
             if ($tabNomFichier[1] == 'xls') {
                 $tabTraitFichiers[$fic]['fichier'] = $nomFichier;
-                $traitXls = $this->lireXls($excelObj, $nomFichier, $pathBase, $rapport, $session, $emSqe);
+                $traitXls = $this->lireXls($excelObj, $nomFichier, $pathBase, $rapport, $session, $emSqe, $tabTraitFichiers, $fic);
                 $tabTraitFichiers[$fic]['erreur'] = $traitXls;
+                $fic++;
             }
         }
 
@@ -103,7 +104,7 @@ class DepotHydrobio {
         return $tab_liste_fichiers;
     }
 
-    protected function lireXls($excelObj, $nomFichier, $pathBase, $rapport, $session, $emSqe) {
+    protected function lireXls($excelObj, $nomFichier, $pathBase, $rapport, $session, $emSqe, $tabTraitFichiers, $fic) {
 
         $session->set('fonction', 'lireXls');
 
@@ -119,8 +120,12 @@ class DepotHydrobio {
         // $fileExcel = \PHPExcel_IOFactory::load($pathBase . '/' . $nomFichier);
         $fileExcel = $excelObj->load($pathBase . '/' . $nomFichier);
 
+        $feuil = 0;
+        $tabFeuillets = array();
         foreach ($fileExcel->getWorksheetIterator() as $worksheet) {
             if ($worksheet->getCell('B22') == 'CODE STATION') {
+                $tabFeuillets[$feuil] = $worksheet->getTitle();
+                $feuil++;
                 $contenu = 'Feuillet - ' . $worksheet->getTitle() . CHR(13) . CHR(10) . CHR(13) . CHR(10);
                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                 fputs($rapport, $contenu);
@@ -217,7 +222,7 @@ class DepotHydrobio {
                 }
 
                 //  Substrats
-                 $tabG = array();
+                $tabG = array();
                 for ($i = 39; $i < 51; $i++) {
                     $G[$i] = $worksheet->getCell('G' . $i);
                     $pgSandreHnNomemclature = $repoPgSandreHbNomemclatures->getPgSandreHbNomemclaturesByCodeNomemclatureCodeElementCodeSupport('274', $G[$i]->getValue(), '13');
@@ -298,7 +303,7 @@ class DepotHydrobio {
                 }
 
                 //  Dénombrements : pour chaque ligne xx à partir de la ligne 88, et jusqu’à rencontrer une cellule vide dans la colonne D 
-                 $tabDenombrements = array();
+                $tabDenombrements = array();
                 for ($i = 88; $i < 1000; $i++) {
                     $tabDenombrements[$i] = $worksheet->getCell('D' . $i);
                     if ($tabDenombrements[$i]->getValue() != '') {
@@ -337,6 +342,8 @@ class DepotHydrobio {
                 }
             }
         }
+
+        $tabFichier[$fic]['feuillet'] = $tabFeuillets;
 
 
         return $erreur;
