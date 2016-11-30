@@ -68,12 +68,12 @@
                         <div class="panel-heading text-center"><h4>Programmation</h4></div>
                         <div class="panel-body">
                             <div class="btn-group-vertical col-md-offset-2">
-                                <a class="btn btn-primary  btn-group-justified" href="{{ path('Aeag_sqe_programmation_lots', {'action': 'V'}) }}" title="Consulter"><div class="text-left">Consulter</div></a>
-                                <a class="btn btn-primary  btn-group-justified" href="{{ path('Aeag_sqe_programmation_lots', {'action': 'P'}) }}" title="Programmer"><div class="text-left">Programmer</div></a>
+                                <a class="btn btn-primary  btn-group-justified" href="{{ path('Aeag_sqe_programmation_lots', {'action': 'V'}) }}" title="Consulter"><div class="text-left"><i class="fa fa-caret-right"></i> Consulter</div></a>
+                                <a class="btn btn-primary  btn-group-justified" href="{{ path('Aeag_sqe_programmation_lots', {'action': 'P'}) }}" title="Programmer"><div class="text-left"><i class="fa fa-caret-right"></i> Programmer</div></a>
                                 {% if  not app.session.get('evolution')%}
                                     {% if   is_granted('ROLE_ADMINSQE') %}
-                                        <a class="btn btn-primary btn-group-justified" data-toggle="modal" href="#modalCampagne" title="Avancement campagne"><div class="text-left">Avancement campagne</div></a>
-                                        <a class="btn btn-primary btn-group-justified" href="{{ path('AeagSqeBundle_programmation_avancement_programmation') }}" title="Avancement programmation"><div class="text-left">Avancement programmation</div></a>
+                                        <a class="btn btn-primary btn-group-justified" data-toggle="modal" href="#modalCampagne" title="Avancement campagne"><div class="text-left"><i class="fa fa-caret-right"></i> Avancement campagne</div></a>
+                                        <a class="btn btn-primary btn-group-justified" href="{{ path('AeagSqeBundle_programmation_avancement_programmation') }}" title="Avancement programmation"><div class="text-left"><i class="fa fa-caret-right"></i> Avancement programmation</div></a>
                                     {% endif %}
                                 {% endif %}
                             </div>
@@ -86,14 +86,14 @@
                         <div class="panel-heading text-center"><h4>Données</h4></div>
                         <div class="panel-body">
                             <div class="btn-group-vertical col-md-offset-2">
-                                <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_echangefichiers_index')}}" title="Echange EDI LABO"><div class="text-left">Echange EDI LABO</div></a>
+                                <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_echangefichiers_index')}}" title="Echange EDI LABO"><div class="text-left"><i class="fa fa-caret-right"></i> Echange EDI LABO</div></a>
                                 {% if  not app.session.get('evolution')%}
-                                    <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_depotHydrobio_index')}}" title="Dépôt Hydrobio"><div class="text-left">Dépôt Hydrobio</div></a>
+                                    <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_depotHydrobio_index')}}" title="Dépôt Hydrobio"><div class="text-left"><i class="fa fa-caret-right"></i> Dépôt Hydrobio</div></a>
                                 {% endif %}
                                 {% if app.session.get('suiviDonnees') %}
-                                    <a class="btn btn-primary btn-group-justified" href="{{ path('AeagSqeBundle_saisieDonnees_index')}}" title="Saisie Terrain / Labo"><div class="text-left">Saisie Terrain / Labo</div></a>
+                                    <a class="btn btn-primary btn-group-justified" href="{{ path('AeagSqeBundle_saisieDonnees_index')}}" title="Saisie Terrain / Labo"><div class="text-left"><i class="fa fa-caret-right"></i> Saisie Terrain / Labo</div></a>
                                 {% endif %}
-                                <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_exportdonneesbrutes_index')}}" title="Export des Données Brutes"><div class="text-left">Export des Données Brutes</div></a>
+                                <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_exportdonneesbrutes_index')}}" title="Export des Données Brutes"><div class="text-left"><i class="fa fa-caret-right"></i> Export des Données Brutes</div></a>
                             </div>
                         </div>
                     </div>
@@ -110,20 +110,20 @@
                             <div class="panel-body">
                                 <div class="btn-group-vertical col-md-offset-2">
                                     {% if app.session.get('suiviHb') %}
-                                        <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}" title="hydrobio"><div class="text-left">Hydrobio</div></a>
+                                        <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}" title="hydrobio"><div class="text-left"><i class="fa fa-caret-right"></i> Hydrobio</div></a>
                                     {% endif %}
                                     {% if app.session.get('suiviQHb') %}
-                                        <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_suiviHydrobio_synthese')}}" title="Qualification Hydrobio"><div class="text-left">Qualification Hydrobio</div></a>
+                                        <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_suiviHydrobio_synthese')}}" title="Qualification Hydrobio"><div class="text-left"><i class="fa fa-caret-right"></i> Qualification Hydrobio</div></a>
                                     {% endif %}
                                     {% if app.session.get('suiviSED') %}
-                                        <a class="btn btn-primary btn-group-justified" href="{{ path('AeagSqeBundle_suiviSediment_index')}}" title="Sédiment"><div class="text-left">Sédiment</div></a>
+                                        <a class="btn btn-primary btn-group-justified" href="{{ path('AeagSqeBundle_suiviSediment_index')}}" title="Sédiment"><div class="text-left"><i class="fa fa-caret-right"></i> Sédiment</div></a>
                                     {% endif %}
                                     {% if app.session.get('suiviEau') %}
-                                        <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_suiviEau_index')}}"title="Eau"><div class="text-left">Eau</div></a>
+                                        <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_suiviEau_index')}}"title="Eau"><div class="text-left"><i class="fa fa-caret-right"></i> Eau</div></a>
                                     {% endif %}
                                     {%if   is_granted('ROLE_ADMINSQE') %}
-                                        <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_planning_index', {'typeMilieu': 'HB'}) }}" title="Planning Hydrobio"><div class="text-left">Planning Hydrobio</div></a>
-                                        <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_planning_index', {'typeMilieu': 'PC'}) }}" title="Planning Autres"><div class="text-left">Planning Autres</div></a>
+                                        <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_planning_index', {'typeMilieu': 'HB'}) }}" title="Planning Hydrobio"><div class="text-left"><i class="fa fa-caret-right"></i> Planning Hydrobio</div></a>
+                                        <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_planning_index', {'typeMilieu': 'PC'}) }}" title="Planning Autres"><div class="text-left"><i class="fa fa-caret-right"></i> Planning Autres</div></a>
                                     {% endif %}
                                 </div>
                             </div>
@@ -172,12 +172,12 @@
                         <div class="panel-heading text-center"><h4>Données</h4></div>
                         <div class="panel-body">
                             <div class="btn-group-vertical col-md-offset-2">
-                                <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_echangefichiers_index')}}" title="Echange EDI LABO"><div class="text-left">Echange EDI LABO</div></a>
+                                <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_echangefichiers_index')}}" title="Echange EDI LABO"><div class="text-left"><i class="fa fa-caret-right"></i> Echange EDI LABO</div></a>
                                 {% if  not app.session.get('evolution')%}
-                                    <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_depotHydrobio_index')}}" title="Dépôt Hydrobio"><div class="text-left">Dépôt Hydrobio</div></a>
+                                    <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_depotHydrobio_index')}}" title="Dépôt Hydrobio"><div class="text-left"><i class="fa fa-caret-right"></i> Dépôt Hydrobio</div></a>
                                 {% endif %}
                                 {% if app.session.get('suiviDonnees') %}
-                                    <a class="btn btn-primary btn-group-justified" href="{{ path('AeagSqeBundle_saisieDonnees_index')}}" title="Saisie Terrain / Labo"><div class="text-left">Saisie Terrain / Labo</div></a>
+                                    <a class="btn btn-primary btn-group-justified" href="{{ path('AeagSqeBundle_saisieDonnees_index')}}" title="Saisie Terrain / Labo"><div class="text-left"><i class="fa fa-caret-right"></i> Saisie Terrain / Labo</div></a>
                                 {% endif %}
                             </div>
                         </div>
@@ -192,16 +192,16 @@
                             <div class="panel-body">
                                 <div class="btn-group-vertical col-md-offset-2">
                                     {% if app.session.get('suiviHb') %}
-                                        <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}" title="hydrobio"><div class="text-left">Hydrobio</div></a>
+                                        <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}" title="hydrobio"><div class="text-left"><i class="fa fa-caret-right"></i> Hydrobio</div></a>
                                     {% endif %}
                                     {% if app.session.get('suiviQHb') %}
-                                        <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_suiviHydrobio_synthese')}}" title="Qualification Hydrobio"><div class="text-left">Qualification Hydrobio</div></a>
+                                        <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_suiviHydrobio_synthese')}}" title="Qualification Hydrobio"><div class="text-left"><i class="fa fa-caret-right"></i> Qualification Hydrobio</div></a>
                                     {% endif %}
                                     {% if app.session.get('suiviSED') %}
-                                        <a class="btn btn-primary btn-group-justified" href="{{ path('AeagSqeBundle_suiviSediment_index')}}" title="Sédiment"><div class="text-left">Sédiment</div></a>
+                                        <a class="btn btn-primary btn-group-justified" href="{{ path('AeagSqeBundle_suiviSediment_index')}}" title="Sédiment"><div class="text-left"><i class="fa fa-caret-right"></i> Sédiment</div></a>
                                     {% endif %}
                                     {% if app.session.get('suiviEau') %}
-                                        <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_suiviEau_index')}}"title="Eau"><div class="text-left">Eau</div></a>
+                                        <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_suiviEau_index')}}"title="Eau"><div class="text-left"><i class="fa fa-caret-right"></i>Eau</div></a>
                                     {% endif %}
                                 </div>
                             </div>
@@ -256,12 +256,12 @@
                         <div class="panel-body">
                             <div class="btn-group-vertical col-md-offset-2">
                                 {% if app.session.get('suiviHb') %}
-                                    <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}" title="hydrobio"><div class="text-left">Hydrobio</div></a>
+                                    <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}" title="hydrobio"><div class="text-left"><i class="fa fa-caret-right"></i> Hydrobio</div></a>
                                 {% endif %}
                                 {% if app.session.get('suiviQHb') %}
-                                    <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_suiviHydrobio_synthese')}}" title="Qualification Hydrobio"><div class="text-left">Qualification Hydrobio</div></a>
+                                    <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_suiviHydrobio_synthese')}}" title="Qualification Hydrobio"><div class="text-left"><i class="fa fa-caret-right"></i>Qualification Hydrobio</div></a>
                                 {% endif %}
-                                <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_planning_index', {'typeMilieu': 'HB'}) }}" title="Planning Hydrobio"><div class="text-left">Planning Hydrobio</div></a>
+                                <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_planning_index', {'typeMilieu': 'HB'}) }}" title="Planning Hydrobio"><div class="text-left"><i class="fa fa-caret-right"></i> Planning Hydrobio</div></a>
                             </div>
                         </div>
                     </div>
