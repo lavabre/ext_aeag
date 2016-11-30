@@ -321,7 +321,8 @@ class DepotHydrobioController extends Controller {
         if (move_uploaded_file($_FILES['fichier']['tmp_name'], $pathBase . '/' . $nomFichier)) {
 
             // Envoi du fichier sur le serveur du sandre pour validationFormat
-            if ($this->get('aeag_sqe.depotHydrobio')->extraireFichier($emSqe, $reponse, $pathBase, $nomFichier, $session)) {
+             $excelObj = $this->get('xls.load_xls5');
+            if ($this->get('aeag_sqe.depotHydrobio')->extraireFichier($emSqe, $reponse, $pathBase, $nomFichier, $session, $excelObj)) {
            
                 // Envoi d'un mail
                 $objetMessage = "Dépôt Hydrobio  " . $reponse->getId() . " soumis et en cours de traitement";
