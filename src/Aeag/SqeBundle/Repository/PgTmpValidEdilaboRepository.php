@@ -396,14 +396,14 @@ class PgTmpValidEdilaboRepository extends EntityRepository {
     }
     
     public function getDiffCodeParametreAdd($codePrelevement, $demandeId, $reponseId) {
-        
+        //TODO A modifier comme le Missing
         $query = "select dmd.*, rps.* from";
-        $query .= " (select distinct code_parametre, code_fraction from pg_tmp_valid_edilabo";
+        $query .= " (select distinct code_parametre as codeparamdmd, code_fraction from pg_tmp_valid_edilabo";
         $query .= " where demande_id = :demande and fichier_rps_id = :reponse and code_prelevement = :codePrelevement) dmd";
-        $query .= " left join (select distinct code_parametre, code_fraction from pg_tmp_valid_edilabo";
+        $query .= " left join (select distinct code_parametre as codeparamrps, code_fraction from pg_tmp_valid_edilabo";
         $query .= " where demande_id = :demande and fichier_rps_id is null and code_prelevement = :codePrelevement) rps";
-        $query .= " on  dmd.code_parametre = rps.code_parametre";
-        $query .= " where rps.code_parametre is null";
+        $query .= " on  codeparamdmd = codeparamrps";
+        $query .= " where codeparamrps is null";
         
         $stmt = $this->_em->getConnection()->prepare($query);
         $stmt->bindValue('demande', $demandeId);
@@ -413,8 +413,8 @@ class PgTmpValidEdilaboRepository extends EntityRepository {
         $results = $stmt->fetchAll();
         $return = array();
         foreach($results as $result){
-            if (!is_null($result['code_parametre'])) {
-                $return[] = $result['code_parametre'];
+            if (!is_null($result['codeparamdmd'])) {
+                $return[] = $result['codeparamdmd'];
             }
         }
         
