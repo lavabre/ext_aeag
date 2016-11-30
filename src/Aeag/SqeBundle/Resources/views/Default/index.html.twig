@@ -58,46 +58,42 @@
 
 {% block content %}
 
-    {%if   is_granted('ROLE_PROGSQE') %}
+
+    {% if   is_granted('ROLE_PROGSQE') %}
+
         <div class="row responsive">
             <div class="col-xm-12">
-                <div class="small"> 
-                    <div class="col-md-offset-2 col-md-4">
-                        <div class="panel panel-primary">
-                            <div class="panel-heading text-center"><h3>Programmation</h3></div>
-                            <div class="panel-body">
-                                <ul class="list-group">
-                                    <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('Aeag_sqe_programmation_lots', {'action': 'V'}) }}" title="Consulter"><i class="fa fa-eye fa-2x"></i> Consulter</a></li>
-                                    <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('Aeag_sqe_programmation_lots', {'action': 'P'}) }}" title="Programmer"><i class="fa fa-edit fa-2x"></i> Programmer</a></li>
-                                        {% if  not app.session.get('evolution')%}
-                                            {%if   is_granted('ROLE_ADMINSQE') %}
-                                            <li class="list-group-item list-group-item-info">
-                                                <a class="btn btn-primary btn-xs" data-toggle="modal" href="#modalCampagne" title="Avancement campagne">
-                                                    <i class="fa fa-signal fa-2x"></i> Avancement campagne
-                                                </a>
-                                            </li>
-                                            <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_programmation_avancement_programmation') }}" title="Avancement programmation"><i class="fa fa-signal fa-2x"></i> Avancement programmation </a></li>
-                                            {% endif %}
-                                        {% endif %}
-                                </ul>
+                <div class="col-md-offset-2 col-md-4">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading text-center"><h4>Programmation</h4></div>
+                        <div class="panel-body">
+                            <div class="btn-group-vertical col-md-offset-2">
+                                <a class="btn btn-primary  btn-group-justified" href="{{ path('Aeag_sqe_programmation_lots', {'action': 'V'}) }}" title="Consulter"><div class="text-left">Consulter</div></a>
+                                <a class="btn btn-primary  btn-group-justified" href="{{ path('Aeag_sqe_programmation_lots', {'action': 'P'}) }}" title="Programmer"><div class="text-left">Programmer</div></a>
+                                {% if  not app.session.get('evolution')%}
+                                    {% if   is_granted('ROLE_ADMINSQE') %}
+                                        <a class="btn btn-primary btn-group-justified" data-toggle="modal" href="#modalCampagne" title="Avancement campagne"><div class="text-left">Avancement campagne</div></a>
+                                        <a class="btn btn-primary btn-group-justified" href="{{ path('AeagSqeBundle_programmation_avancement_programmation') }}" title="Avancement programmation"><div class="text-left">Avancement programmation</div></a>
+                                    {% endif %}
+                                {% endif %}
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="col-md-offset-1 col-md-4">
-                        <div class="panel panel-primary">
-                            <div class="panel-heading text-center"><h3>Données</h3></div>
-                            <div class="panel-body">
-                                <ul class="list-group">
-                                    <li class="list-group-item  list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_echangefichiers_index')}}" title="Echange EDI LABO"><i class="fa fa-download fa-2x"></i> Echange EDI LABO</a></li>
-                                        {% if  not app.session.get('evolution')%}
-                                        <li class="list-group-item  list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_depotHydrobio_index')}}" title="Dépôt Hydrobio"><i class="fa fa-download fa-2x"></i> Dépôt Hydrobio</a></li>
-                                        {% endif %}
-                                        {% if app.session.get('suiviDonnees') %}
-                                        <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_saisieDonnees_index')}}" title="'aisie Terrain / Labo"><i class="fa fa-dashboard fa-2x"></i> Saisie Terrain / Labo</a></li>
-                                        {% endif %}
-                                    <li class="list-group-item  list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_exportdonneesbrutes_index')}}" title="Export des Données Brutes"><i class="fa fa-upload fa-2x"></i> Export des Données Brutes</a></li>    
-                                </ul>
+                <div class="col-md-offset-1 col-md-4">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading text-center"><h4>Données</h4></div>
+                        <div class="panel-body">
+                            <div class="btn-group-vertical col-md-offset-2">
+                                <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_echangefichiers_index')}}" title="Echange EDI LABO"><div class="text-left">Echange EDI LABO</div></a>
+                                {% if  not app.session.get('evolution')%}
+                                    <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_depotHydrobio_index')}}" title="Dépôt Hydrobio"><div class="text-left">Dépôt Hydrobio</div></a>
+                                {% endif %}
+                                {% if app.session.get('suiviDonnees') %}
+                                    <a class="btn btn-primary btn-group-justified" href="{{ path('AeagSqeBundle_saisieDonnees_index')}}" title="Saisie Terrain / Labo"><div class="text-left">Saisie Terrain / Labo</div></a>
+                                {% endif %}
+                                <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_exportdonneesbrutes_index')}}" title="Export des Données Brutes"><div class="text-left">Export des Données Brutes</div></a>
                             </div>
                         </div>
                     </div>
@@ -108,178 +104,164 @@
         {% if  app.session.get('suiviHb') or app.session.get('suiviQHb') or app.session.get('suiviSED') or app.session.get('suiviEau')  %}
             <div class="row responsive">
                 <div class="col-xm-12">
-                    <div class="small "> 
-                        <div class="col-md-offset-2 col-md-4">
-                            <div class="panel panel-primary">
-                                <div class="panel-heading text-center"><h3>Suivi des prélèvements</h3></div>
-                                <div class="panel-body text-justify">
-                                    <ul class="list-group">
-                                        {% if app.session.get('suiviHb') %}
-                                            <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}" title="hydrobio"><i class="fa fa-calendar fa-2x"></i> Hydrobio</a></li>
-                                            {% endif %}
-                                            {% if app.session.get('suiviQHb') %}
-                                            <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_suiviHydrobio_synthese')}}" title="Qualification Hydrobio"><i class="fa fa-graduation-cap fa-2x"></i> Qualification Hydrobio</a></li>
-                                            {% endif %}
-                                            {% if app.session.get('suiviSED') %}
-                                            <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_suiviSediment_index')}}" title="Sédiment"><i class="fa fa-line-chart fa-2x"></i> Sédiment</a></li>
-                                            {% endif %}
-                                            {#{% if  not app.session.get('evolution')%}#}
-                                            {% if app.session.get('suiviEau') %}
-                                            <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs"  href="{{ path('AeagSqeBundle_suiviEau_index')}}"title="Eau"><i class="fa fa-bar-chart fa-2x"></i> Eau</a></li>
-                                            {% endif %}
-                                            {#{% endif %}#}
-                                            {%if   is_granted('ROLE_ADMINSQE') %}
-                                            <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_planning_index', {'typeMilieu': 'HB'}) }}" title="Planning Hydrobio"><i class="fa fa-area-chart fa-2x"></i> Planning Hydrobio</a></li>
-                                            <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_planning_index', {'typeMilieu': 'PC'}) }}" title="Planning Autres"><i class="fa fa-pie-chart fa-2x"></i> Planning Autres</a></li>
-                                            {% endif %}
-                                            {#  {% if app.session.get('suiviQHb') %}
-                                              {% if  not app.session.get('evolution')%}
-                                                <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_suiviHydrobio_synthese')}}" title="Qualification de l’avancement des suivis Hydrobio"><i class="fa fa-graduation-cap fa-2x"></i> Qualification suivis Hydrobio</a></li>
-                                              {% endif %}
-                                          {% endif %}#}
-
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-offset-1 col-md-4">
-                            <div class="panel panel-primary">
-                                <div class="panel-heading text-center"><h3>Aide</h3></div>
-                                <div class="panel-body">
-                                    <ul class="list-group">
-                                        <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur-prog.pdf') }}" target="_blank" title="Aide"><i class="fa fa-book fa-2x"></i> Aide programmation</a></li>
-                                        <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur.pdf') }}" target="_blank" title="Aide"><i class="fa fa-book fa-2x"></i> Aide utilisateur</a></li>
-                                    </ul>
+                    <div class="col-md-offset-2 col-md-4">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading text-center"><h4>Suivi des prélèvements</h4></div>
+                            <div class="panel-body">
+                                <div class="btn-group-vertical col-md-offset-2">
+                                    {% if app.session.get('suiviHb') %}
+                                        <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}" title="hydrobio"><div class="text-left">Hydrobio</div></a>
+                                    {% endif %}
+                                    {% if app.session.get('suiviQHb') %}
+                                        <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_suiviHydrobio_synthese')}}" title="Qualification Hydrobio"><div class="text-left">Qualification Hydrobio</div></a>
+                                    {% endif %}
+                                    {% if app.session.get('suiviSED') %}
+                                        <a class="btn btn-primary btn-group-justified" href="{{ path('AeagSqeBundle_suiviSediment_index')}}" title="Sédiment"><div class="text-left">Sédiment</div></a>
+                                    {% endif %}
+                                    {% if app.session.get('suiviEau') %}
+                                        <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_suiviEau_index')}}"title="Eau"><div class="text-left">Eau</div></a>
+                                    {% endif %}
+                                    {%if   is_granted('ROLE_ADMINSQE') %}
+                                        <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_planning_index', {'typeMilieu': 'HB'}) }}" title="Planning Hydrobio"><div class="text-left">Planning Hydrobio</div></a>
+                                        <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_planning_index', {'typeMilieu': 'PC'}) }}" title="Planning Autres"><div class="text-left">Planning Autres</div></a>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                 {#   <div class="col-md-offset-1 col-md-4">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading text-center"><h4>Aide</h4></div>
+                            <div class="panel-body">
+                                <div class="btn-group-vertical col-md-offset-2">
+                                    <a class="btn btn-primary  btn-group-justified" href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur-prog.pdf') }}" target="_blank" title="Aide programmation"><div class="text-left">Aide programmation</div></a>
+                                    <a class="btn btn-primary  btn-group-justified" href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur.pdf') }}" target="_blank" title="Aide utilisateur"><div class="text-left">Aide utilisateur</div></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>#}
+                                
                 </div>
             </div>
-        {% else %}
+       {# {% else %}
             <div class="row responsive">
                 <div class="col-xm-12">
-                    <div class="small "> 
-                        <div class="col-md-offset-2 col-md-4">
-                            <div class="panel panel-primary">
-                                <div class="panel-heading text-center"><h3>Aide</h3></div>
-                                <div class="panel-body">
-                                    <ul class="list-group">
-                                        <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur-prog.pdf') }}" target="_blank" title="Aide"><i class="fa fa-book fa-2x"></i> Aide programmation</a></li>
-                                        <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur.pdf') }}" target="_blank" title="Aide"><i class="fa fa-book fa-2x"></i> Aide utilisateur</a></li>
-                                    </ul>
+                    <div class="col-md-offset-2 col-md-4">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading text-center"><h4>Aide</h4></div>
+                            <div class="panel-body">
+                                <div class="btn-group-vertical col-md-offset-2">
+                                    <a class="btn btn-primary  btn-group-justified" href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur-prog.pdf') }}" target="_blank" title="Aide programmation"><div class="text-left">Aide programmation</div></a>
+                                    <a class="btn btn-primary  btn-group-justified" href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur.pdf') }}" target="_blank" title="Aide utilisateur"><div class="text-left">Aide utilisateur</div></a>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>#}
         {% endif %}
 
 
     {%elseif   is_granted('ROLE_PRESTASQE') %}
+
         <div class="row responsive">
             <div class="col-xm-12">
-                <div class="small "> 
+                <div class="col-md-offset-2 col-md-4">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading text-center"><h4>Données</h4></div>
+                        <div class="panel-body">
+                            <div class="btn-group-vertical col-md-offset-2">
+                                <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_echangefichiers_index')}}" title="Echange EDI LABO"><div class="text-left">Echange EDI LABO</div></a>
+                                {% if  not app.session.get('evolution')%}
+                                    <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_depotHydrobio_index')}}" title="Dépôt Hydrobio"><div class="text-left">Dépôt Hydrobio</div></a>
+                                {% endif %}
+                                {% if app.session.get('suiviDonnees') %}
+                                    <a class="btn btn-primary btn-group-justified" href="{{ path('AeagSqeBundle_saisieDonnees_index')}}" title="Saisie Terrain / Labo"><div class="text-left">Saisie Terrain / Labo</div></a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if  app.session.get('suiviHb') or app.session.get('suiviQHb') or app.session.get('suiviSED') or app.session.get('suiviEau') %}
+
+                    <div class="col-md-offset-1 col-md-4">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading text-center"><h4>Suivi des prélèvements</h4></div>
+                            <div class="panel-body">
+                                <div class="btn-group-vertical col-md-offset-2">
+                                    {% if app.session.get('suiviHb') %}
+                                        <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}" title="hydrobio"><div class="text-left">Hydrobio</div></a>
+                                    {% endif %}
+                                    {% if app.session.get('suiviQHb') %}
+                                        <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_suiviHydrobio_synthese')}}" title="Qualification Hydrobio"><div class="text-left">Qualification Hydrobio</div></a>
+                                    {% endif %}
+                                    {% if app.session.get('suiviSED') %}
+                                        <a class="btn btn-primary btn-group-justified" href="{{ path('AeagSqeBundle_suiviSediment_index')}}" title="Sédiment"><div class="text-left">Sédiment</div></a>
+                                    {% endif %}
+                                    {% if app.session.get('suiviEau') %}
+                                        <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_suiviEau_index')}}"title="Eau"><div class="text-left">Eau</div></a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        {#    <div class="row responsive">
+                <div class="col-xm-12">
+                    <div class="small "> 
+                        <div class="col-md-offset-2 col-md-4">
+                            <div class="panel panel-primary">
+                                <div class="panel-heading text-center"><h4>Aide</h4></div>
+                                <div class="panel-body">
+                                    <div class="btn-group-vertical col-md-offset-2">
+                                        <a class="btn btn-primary  btn-group-justified" href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur.pdf') }}" target="_blank" title="Aide utilisateur"><div class="text-left">Aide utilisateur</div></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>#}
+
+      {#  {% else %}
+
+            <div class="row responsive">
+                <div class="col-xm-12">
                     <div class="col-md-offset-2 col-md-4">
                         <div class="panel panel-primary">
-                            <div class="panel-heading text-center"><h3>Données</h3></div>
+                            <div class="panel-heading text-center"><h4>Aide</h4></div>
                             <div class="panel-body">
-                                <ul class="list-group">
-                                    <li class="list-group-item  list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_echangefichiers_index')}}" title="Echange EDI LABO"><i class="fa fa-download fa-2x"></i> Echange EDI LABO</a></li>
-                                        {% if app.session.get('suiviDonnees') %}
-                                        <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_saisieDonnees_index')}}" title="Saisie des données"><i class="fa fa-dashboard fa-2x"></i> Saisie Terrain / Labo</a></li>
-                                        {% endif %}
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    {% if  app.session.get('suiviHb') or app.session.get('suiviQHb') or app.session.get('suiviSED') or app.session.get('suiviEau') %}
-                        <div class="col-md-offset-1 col-md-4">
-                            <div class="panel panel-primary">
-                                <div class="panel-heading text-center"><h3>Suivi des prélèvements</h3></div>
-                                <div class="panel-body">
-                                    <ul class="list-group">
-                                        {% if app.session.get('suiviHb') %}
-                                            <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}" title="hydrobio"><i class="fa fa-calendar fa-2x"></i> Hydrobio</a></li>
-                                            {% endif %}
-                                            {% if app.session.get('suiviQHb') %}
-                                            <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_suiviHydrobio_synthese')}}" title="Qualification Hydrobio"><i class="fa fa-graduation-cap fa-2x"></i> Qualification Hydrobio</a></li>
-                                            {% endif %}
-                                            {% if app.session.get('suiviSED') %}
-                                            <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_suiviSediment_index')}}" title="Sédiment"><i class="fa fa-line-chart fa-2x"></i> Sédiment</a></li>
-                                            {% endif %}
-                                            {#{% if  not app.session.get('evolution')%}#}
-                                            {% if app.session.get('suiviEau') %}
-                                            <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs"  href="{{ path('AeagSqeBundle_suiviEau_index')}}"title="Eau"><i class="fa fa-bar-chart fa-2x"></i> Eau</a></li>
-                                            {% endif %}
-                                            {#{% endif %}#}
-                                    </ul>
+                                <div class="btn-group-vertical col-md-offset-2">
+                                    <a class="btn btn-primary  btn-group-justified" href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur.pdf') }}" target="_blank" title="Aide utilisateur"><div class="text-left">Aide utilisateur</div></a>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
-
-            <div class="row responsive">
-                <div class="col-xm-12">
-                    <div class="small "> 
-                        <div class="col-md-offset-2 col-md-4">
-                            <div class="panel panel-primary">
-                                <div class="panel-heading text-center"><h3>Aide</h3></div>
-                                <div class="panel-body">
-                                    <ul class="list-group">
-                                        {#<li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur-prog.pdf') }}" target="_blank" title="Aide"><i class="fa fa-book fa-2x"></i> Aide programmation</a></li>#}
-                                        <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur.pdf') }}" target="_blank" title="Aide"><i class="fa fa-book fa-2x"></i> Aide utilisateur</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        {% else %}
-            <div class="row responsive">
-                <div class="col-xm-12">
-                    <div class="small "> 
-                        <div class="col-md-offset-2 col-md-4">
-                            <div class="panel panel-primary">
-                                <div class="panel-heading text-center"><h3>Aide</h3></div>
-                                <div class="panel-body">
-                                    <ul class="list-group">
-                                        {#<li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur-prog.pdf') }}" target="_blank" title="Aide"><i class="fa fa-book fa-2x"></i> Aide programmation</a></li>#}
-                                        <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur.pdf') }}" target="_blank" title="Aide"><i class="fa fa-book fa-2x"></i> Aide utilisateur</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            </div>#}
         {% endif %}
 
     {%elseif   is_granted('ROLE_XHBIOSQE') %}
+
         <div class="row responsive">
             <div class="col-xm-12">
-                <div class="small "> 
-                    <div class="col-md-offset-2 col-md-4">
-                        <div class="panel panel-primary">
-                            <div class="panel-heading text-center"><h3>Suivi des prélèvements</h3></div>
-                            <div class="panel-body">
-                                <ul class="list-group">
-                                    {% if app.session.get('suiviHb') %}
-                                        <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}" title="hydrobio"><i class="fa fa-calendar fa-2x"></i> Hydrobio</a></li>
-                                        {% endif %}
-                                        {% if app.session.get('suiviQHb') %}
-                                        <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_suiviHydrobio_synthese')}}" title="Qualification Hydrobio"><i class="fa fa-graduation-cap fa-2x"></i> Qualification Hydrobio</a></li>
-                                        {% endif %}
-                                    <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_planning_index', {'typeMilieu': 'HB'}) }}" title="Planning Hydrobio"><i class="fa fa-area-chart fa-2x"></i> Planning Hydrobio</a></li>
-                                        {#<li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_suiviSediment_index')}}" title="Suivi hydrobio"><i class="fa fa-calendar fa-2x"></i> Suivi Sédiment</a></li>#}
-                                </ul>
+                <div class="col-md-offset-2 col-md-4">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading text-center"><h4>Suivi des prélèvements</h4></div>
+                        <div class="panel-body">
+                            <div class="btn-group-vertical col-md-offset-2">
+                                {% if app.session.get('suiviHb') %}
+                                    <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}" title="hydrobio"><div class="text-left">Hydrobio</div></a>
+                                {% endif %}
+                                {% if app.session.get('suiviQHb') %}
+                                    <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_suiviHydrobio_synthese')}}" title="Qualification Hydrobio"><div class="text-left">Qualification Hydrobio</div></a>
+                                {% endif %}
+                                <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_planning_index', {'typeMilieu': 'HB'}) }}" title="Planning Hydrobio"><div class="text-left">Planning Hydrobio</div></a>
                             </div>
                         </div>
                     </div>
@@ -287,41 +269,40 @@
             </div>
         </div>
 
-        <div class="row responsive">
+       {# <div class="row responsive">
             <div class="col-xm-12">
                 <div class="small "> 
                     <div class="col-md-offset-2 col-md-4">
                         <div class="panel panel-primary">
-                            <div class="panel-heading text-center"><h3>Aide</h3></div>
+                            <div class="panel-heading text-center"><h4>Aide</h4></div>
                             <div class="panel-body">
-                                <ul class="list-group">
-                                    {#<li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur-prog.pdf') }}" target="_blank" title="Aide"><i class="fa fa-book fa-2x"></i> Aide programmation</a></li>#}
-                                    <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur.pdf') }}" target="_blank" title="Aide"><i class="fa fa-book fa-2x"></i> Aide utilisateur</a></li>
-                                </ul>
+                                <div class="btn-group-vertical col-md-offset-2">
+                                    <a class="btn btn-primary  btn-group-justified" href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur.pdf') }}" target="_blank" title="Aide utilisateur"><div class="text-left">Aide utilisateur</div></a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    {% else %}
+        </div>#}
+
+    {#{% else %}
         <div class="row responsive">
             <div class="col-xm-12">
                 <div class="small "> 
                     <div class="col-md-offset-2 col-md-4">
                         <div class="panel panel-primary">
-                            <div class="panel-heading text-center"><h3>Aide</h3></div>
+                            <div class="panel-heading text-center"><h4>Aide</h4></div>
                             <div class="panel-body">
-                                <ul class="list-group">
-                                    {#<li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur-prog.pdf') }}" target="_blank" title="Aide"><i class="fa fa-book fa-2x"></i> Aide programmation</a></li>#}
-                                    <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur.pdf') }}" target="_blank" title="Aide"><i class="fa fa-book fa-2x"></i> Aide utilisateur</a></li>
-                                </ul>
+                                   <div class="btn-group-vertical col-md-offset-2">
+                                    <a class="btn btn-primary  btn-group-justified" href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur.pdf') }}" target="_blank" title="Aide utilisateur"><div class="text-left">Aide utilisateur</div></a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </div>#}
     {% endif %}
 
 

@@ -60,41 +60,43 @@
 
     <ul class="dropdown-menu">
         <li><a href="{{ path('AeagSqeBundle_echangefichiers_index')}}">Echange EDI LABO</a></li>
-         {% if  not app.session.get('evolution')%}
-        <li><a href="{{ path('AeagSqeBundle_depotHydrobio_index')}}">Dépôt Hydrobio</a></li>
-        {% endif %}   
-        <li><a href="{{ path('AeagSqeBundle_saisieDonnees_index')}}">Saisie Terrain / Labo</a></li>
+            {% if  not app.session.get('evolution')%}
+            <li><a href="{{ path('AeagSqeBundle_depotHydrobio_index')}}">Dépôt Hydrobio</a></li>
+            {% endif %}   
+            {% if app.session.get('suiviDonnees') %}
+            <li><a href="{{ path('AeagSqeBundle_saisieDonnees_index')}}">Saisie Terrain / Labo</a></li>
+            {% endif %}   
     </ul>
 </li>
 
 {% if app.session.get('suiviDonnees')  or app.session.get('suiviHb') or app.session.get('suiviQHb') or app.session.get('suiviSED') %}
- 
-{%if  app.session.get('menu') == 'syntheseHydrobio' or app.session.get('menu') == 'suiviHydrobio' or app.session.get('menu') == 'suiviSediment'%}
-    <li  class="active">
-    {% else %}
-    <li>
-    {% endif %}   
-    <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
-        {%if app.session.get('menu') == 'programmation'%}<span class="selected"></span>{%endif%}
-        Suivi des prélèvements
-        <i class="fa fa-angle-down"></i>     
-    </a>
 
-    <ul class="dropdown-menu">
-        <li><a href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}">Hydrobio</a></li>
-       {% if app.session.get('suiviQHb') %}
-        <li><a href="{{ path('AeagSqeBundle_suiviHydrobio_synthese')}}">Qualification Hydrobio</a></li>
-        {% endif %}
-        {% if app.session.get('suiviSED') %}
-        <li><a href="{{ path('AeagSqeBundle_suiviSediment_index')}}">Sédiment</a></li>
-        {% endif  %}
-        {# {% if  not app.session.get('evolution')%}#}
-                 {% if app.session.get('suiviEau') %}
-                           <li><a href="{{ path('AeagSqeBundle_suiviEau_index')}}">Eau</a></li>
-                 {% endif %}
-         {#{% endif %}#}
-       </ul>
-</li>
+    {%if  app.session.get('menu') == 'syntheseHydrobio' or app.session.get('menu') == 'suiviHydrobio' or app.session.get('menu') == 'suiviSediment'%}
+        <li  class="active">
+        {% else %}
+        <li>
+        {% endif %}   
+        <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+            {%if app.session.get('menu') == 'programmation'%}<span class="selected"></span>{%endif%}
+            Suivi des prélèvements
+            <i class="fa fa-angle-down"></i>     
+        </a>
+
+        <ul class="dropdown-menu">
+            <li><a href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}">Hydrobio</a></li>
+                {% if app.session.get('suiviQHb') %}
+                <li><a href="{{ path('AeagSqeBundle_suiviHydrobio_synthese')}}">Qualification Hydrobio</a></li>
+                {% endif %}
+                {% if app.session.get('suiviSED') %}
+                <li><a href="{{ path('AeagSqeBundle_suiviSediment_index')}}">Sédiment</a></li>
+                {% endif  %}
+                {# {% if  not app.session.get('evolution')%}#}
+                {% if app.session.get('suiviEau') %}
+                <li><a href="{{ path('AeagSqeBundle_suiviEau_index')}}">Eau</a></li>
+                {% endif %}
+                {#{% endif %}#}
+        </ul>
+    </li>
 {% endif %}
 
 

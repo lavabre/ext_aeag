@@ -21,10 +21,15 @@ class DepotHydrobio {
         $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
         fputs($rapport, $contenu);
 
+        $tabTraitFichiers = array();
+        $fic = 0;
+        
         foreach ($liste as $nomFichier) {
             $tabNomFichier = explode('.', $nomFichier);
             if ($tabNomFichier[1] == 'xls') {
+                $tabTraitFichiers[$fic]['fichier'] = $nomFichier;
                 $traitXls = $this->lireXls($excelObj, $nomFichier, $pathBase, $rapport, $session, $emSqe);
+                $tabTraitFichiers[$fic]['erreur'] = $traitXls;
             }
         }
 
@@ -38,7 +43,7 @@ class DepotHydrobio {
         $emSqe->flush();
 
 
-        return true;
+        return $tabTraitFichiers;
     }
 
     protected function unzip($file, $path = '', $effacer_zip = false) {/* Méthode qui permet de décompresser un fichier zip $file dans un répertoire de destination $path 
@@ -104,6 +109,7 @@ class DepotHydrobio {
 
         // Récupération des programmations
         $repoPgSandreHbNomemclatures = $emSqe->getRepository('AeagSqeBundle:PgSandreHbNomemclatures');
+        $repoPgSandreAppellationTaxon = $emSqe->getRepository('AeagSqeBundle:PgSandreAppellationTaxon');
 
 
         $contenu = 'Traitement du fichier excel   ' . $nomFichier . CHR(13) . CHR(10) . CHR(13) . CHR(10);
@@ -119,12 +125,15 @@ class DepotHydrobio {
                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                 fputs($rapport, $contenu);
 
+                $avertissement = false;
+                $erreur = false;
+
                 // Coordonnées : cellules K24, L24, M24, N24 doivent être non vides, au format numérique et avec une valeur > 0
                 $K24 = $worksheet->getCell('K24')->getValue();
                 $L24 = $worksheet->getCell('L24')->getValue();
                 $M24 = $worksheet->getCell('M24')->getValue();
                 $N24 = $worksheet->getCell('N24')->getValue();
-                $avertissement = false;
+
                 if (is_null($K24) or is_null($L24) or is_null($M24) or is_null($N24)) {
                     $avertissement = true;
                     $contenu = '    Avertissement  - Coordonnées Lambert 93 incorrectes ou non renseignées. ' . CHR(13) . CHR(10);
@@ -143,86 +152,84 @@ class DepotHydrobio {
                     fputs($rapport, $contenu);
                 }
 
-                //  if ($avertissement) {
-                // Coordonnées : cellules K23, L23, M23, N23 doivent être non vides, au format numérique et avec une valeur > 0
-                $K23 = $worksheet->getCell('K23');
-                $L23 = $worksheet->getCell('L23');
-                $M23 = $worksheet->getCell('M23');
-                $N23 = $worksheet->getCell('N23');
-                $avertissement = false;
-                if (is_null($K23) or is_null($L23) or is_null($M23) or is_null($N23)) {
-                    $avertissement = true;
-                    $contenu = '    Avertissement  - Coordonnées Lambert II incorrectes ou non renseignées. ' . CHR(13) . CHR(10);
-                    $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                    fputs($rapport, $contenu);
-                } elseif (!is_numeric($K23->getValue()) or ! is_numeric($L23->getValue()) or ! is_numeric($M23->getValue()) or ! is_numeric($N23->getValue())) {
-                    $avertissement = true;
-                    $contenu = '    Avertissement  - Coordonnées Lambert II incorrectes ou non renseignées. ';
-                    $contenu = $contenu . ' K23 : ' . $K23->getValue() . ' L23 : ' . $L23->getValue() . ' M23 : ' . $M23->getValue() . ' N23 : ' . $N23->getValue() . CHR(13) . CHR(10);
-                    $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                    fputs($rapport, $contenu);
-                } elseif ($K23->getValue() == 0 or $L23->getValue() == 0 or $M23->getValue() == 0 or $N23->getValue() == 0) {
-                    $avertissement = true;
-                    $contenu = '    Avertissement  - Coordonnées Lambert II incorrectes ou non renseignées. ' . CHR(13) . CHR(10);
-                    $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                    fputs($rapport, $contenu);
+                if ($avertissement) {
+                    // Coordonnées : cellules K23, L23, M23, N23 doivent être non vides, au format numérique et avec une valeur > 0
+                    $K23 = $worksheet->getCell('K23');
+                    $L23 = $worksheet->getCell('L23');
+                    $M23 = $worksheet->getCell('M23');
+                    $N23 = $worksheet->getCell('N23');
+                    if (is_null($K23) or is_null($L23) or is_null($M23) or is_null($N23)) {
+                        $erreur = true;
+                        $contenu = '    Avertissement  - Coordonnées Lambert II incorrectes ou non renseignées. ' . CHR(13) . CHR(10);
+                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                        fputs($rapport, $contenu);
+                    } elseif (!is_numeric($K23->getValue()) or ! is_numeric($L23->getValue()) or ! is_numeric($M23->getValue()) or ! is_numeric($N23->getValue())) {
+                        $erreur = true;
+                        $contenu = '    Avertissement  - Coordonnées Lambert II incorrectes ou non renseignées. ';
+                        $contenu = $contenu . ' K23 : ' . $K23->getValue() . ' L23 : ' . $L23->getValue() . ' M23 : ' . $M23->getValue() . ' N23 : ' . $N23->getValue() . CHR(13) . CHR(10);
+                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                        fputs($rapport, $contenu);
+                    } elseif ($K23->getValue() == 0 or $L23->getValue() == 0 or $M23->getValue() == 0 or $N23->getValue() == 0) {
+                        $erreur = true;
+                        $contenu = '    Avertissement  - Coordonnées Lambert II incorrectes ou non renseignées. ' . CHR(13) . CHR(10);
+                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                        fputs($rapport, $contenu);
+                    }
                 }
-                //   }
+
+
                 //	Autres valeurs du prélèvement : cellules P23, E39, O23 doivent être non vide, au format numérique
                 $P23 = $worksheet->getCell('P23');
                 $E39 = $worksheet->getCell('E39');
                 $O23 = $worksheet->getCell('O23');
-                $avertissement = false;
                 if (is_null($P23)) {
                     $avertissement = true;
-                    $contenu = '    Avertissement  - cellule P23 non renseignée. ' . CHR(13) . CHR(10);
+                    $contenu = '    Avertissement  - cellule ' . $P23->getCoordinate() . ' non renseignée. ' . CHR(13) . CHR(10);
                     $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                     fputs($rapport, $contenu);
                 } elseif (!is_numeric(intval($P23->getValue()))) {
                     $avertissement = true;
-                    $contenu = '    Avertissement  - cellule P23 incorrecte. ' . CHR(13) . CHR(10);
+                    $contenu = '    Avertissement  - cellule ' . $P23->getCoordinate() . 'incorrecte. ' . CHR(13) . CHR(10);
                     $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                     fputs($rapport, $contenu);
                 }
                 if (is_null($E39)) {
                     $avertissement = true;
-                    $contenu = '    Avertissement  - cellule E39  incorrecte ou non renseignée. ' . CHR(13) . CHR(10);
+                    $contenu = '    Avertissement  - cellule ' . $E39->getCoordinate() . ' incorrecte ou non renseignée. ' . CHR(13) . CHR(10);
                     $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                     fputs($rapport, $contenu);
                 } elseif (!is_numeric(intval($E39->getValue()))) {
                     $avertissement = true;
-                    $contenu = '    Avertissement  - cellule E39 incorrecte. ' . CHR(13) . CHR(10);
+                    $contenu = '    Avertissement  - cellule ' . $PE39->getCoordinate() . 'incorrecte. ' . CHR(13) . CHR(10);
                     $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                     fputs($rapport, $contenu);
                 }
                 if (is_null($O23)) {
                     $avertissement = true;
-                    $contenu = '    Avertissement  - cellule  O23  incorrecte ou non renseignée. ' . CHR(13) . CHR(10);
+                    $contenu = '    Avertissement  - cellule ' . $PO23->getCoordinate() . 'incorrecte ou non renseignée. ' . CHR(13) . CHR(10);
                     $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                     fputs($rapport, $contenu);
                 } elseif (!is_numeric(intval($O23->getValue()))) {
                     $avertissement = true;
-                    $contenu = '    Avertissement  - cellule O23 incorrecte. ' . CHR(13) . CHR(10);
+                    $contenu = '    Avertissement  - cellule ' . $PO23->getCoordinate() . 'incorrecte. ' . CHR(13) . CHR(10);
                     $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                     fputs($rapport, $contenu);
                 }
 
                 //  Substrats
-                $avertissement = false;
-                $tabG = array();
+                 $tabG = array();
                 for ($i = 39; $i < 51; $i++) {
                     $G[$i] = $worksheet->getCell('G' . $i);
                     $pgSandreHnNomemclature = $repoPgSandreHbNomemclatures->getPgSandreHbNomemclaturesByCodeNomemclatureCodeElementCodeSupport('274', $G[$i]->getValue(), '13');
                     if (!$pgSandreHnNomemclature) {
-                        $avertissement = true;
-                        $contenu = '    Avertissement  - substrat ' . $G[$i]->getValue() . ' impossible. ' . CHR(13) . CHR(10);
+                        $erreur = true;
+                        $contenu = '    Avertissement  - cellule ' . $G[$i]->getCoordinate() . ' : substrat ' . $G[$i]->getValue() . ' impossible. ' . CHR(13) . CHR(10);
                         $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                         fputs($rapport, $contenu);
                     }
                 }
 
                 //  Recouvrements :  Cellules H39 à H50, les valeurs doivent être numériques si non vides
-                $avertissement = false;
                 $tabH = array();
                 $totRecouvrement = 0;
                 for ($i = 39; $i < 51; $i++) {
@@ -230,7 +237,7 @@ class DepotHydrobio {
                     if (!is_null($H[$i])) {
                         if (!is_numeric(intval($H[$i]->getValue()))) {
                             $avertissement = true;
-                            $contenu = '    Avertissement  - cellule recouvrement H' . $i . ' valeur non numérique. ' . CHR(13) . CHR(10);
+                            $contenu = '    Avertissement  - cellule ' . $H[$i]->getCoordinate() . ' : recouvrement ' . $H[$i]->getValue() . ' valeur non numérique. ' . CHR(13) . CHR(10);
                             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                             fputs($rapport, $contenu);
                         } else {
@@ -239,22 +246,21 @@ class DepotHydrobio {
                     }
                 }
                 if ($totRecouvrement != 100) {
-                    $avertissement = true;
+                    $erreur = true;
                     $contenu = '    Avertissement  - la somme des recouvrements doit être égale à 100%. ' . CHR(13) . CHR(10);
                     $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                     fputs($rapport, $contenu);
                 }
 
                 // 	Substrats (encore) : Cellules D66 à D79, les valeurs doivent être dans la liste des substrats possibles 
-                $avertissement = false;
                 $tabD = array();
                 for ($i = 66; $i < 80; $i++) {
                     $D[$i] = $worksheet->getCell('D' . $i);
                     if ($D[$i]->getValue() != '') {
                         $pgSandreHnNomemclature = $repoPgSandreHbNomemclatures->getPgSandreHbNomemclaturesByCodeNomemclatureCodeElementCodeSupport('274', $D[$i]->getValue(), '13');
                         if (!$pgSandreHnNomemclature) {
-                            $avertissement = true;
-                            $contenu = '    Avertissement  - substrat ' . $D[$i]->getValue() . ' impossible. ' . CHR(13) . CHR(10);
+                            $erreur = true;
+                            $contenu = '    Avertissement  - cellule ' . $D[$i]->getCoordinate() . ' :  substrat ' . $D[$i]->getValue() . ' impossible. ' . CHR(13) . CHR(10);
                             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                             fputs($rapport, $contenu);
                         }
@@ -262,37 +268,51 @@ class DepotHydrobio {
                 }
 
                 // 	Vitesses : Cellules E66 à E79, les valeurs doivent être dans la liste des vitesses possibles
-                $avertissement = false;
                 $tabE = array();
                 for ($i = 66; $i < 80; $i++) {
                     $E[$i] = $worksheet->getCell('E' . $i);
                     if ($E[$i]->getValue() != '') {
                         $pgSandreHnNomemclature = $repoPgSandreHbNomemclatures->getPgSandreHbNomemclaturesByCodeNomemclatureCodeElementCodeSupport('278', $E[$i]->getValue(), '13');
                         if (!$pgSandreHnNomemclature) {
-                            $avertissement = true;
-                            $contenu = '    Avertissement  - classe vitesse ' . $E[$i]->getValue() . ' impossible. ' . CHR(13) . CHR(10);
-                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                            fputs($rapport, $contenu);
-                        }
-                    }
-                }
-                
-                // 	Phases : Cellules F66 à F79, les valeurs doivent être dans la liste des phases possibles
-                 $avertissement = false;
-                $tabF = array();
-                for ($i = 66; $i < 80; $i++) {
-                    $F[$i] = $worksheet->getCell('F' . $i);
-                    if ($F[$i]->getValue() != '') {
-                        $pgSandreHnNomemclature = $repoPgSandreHbNomemclatures->getPgSandreHbNomemclaturesByCodeNomemclatureCodeElementCodeSupport('480', $F[$i]->getValue(), '13');
-                        if (!$pgSandreHnNomemclature) {
-                            $avertissement = true;
-                            $contenu = '    Avertissement  - phase ' . $F[$i]->getValue() . ' impossible. ' . CHR(13) . CHR(10);
+                            $erreur = true;
+                            $contenu = '    Avertissement  - cellule ' . $E[$i]->getCoordinate() . ' :  classe vitesse ' . $E[$i]->getValue() . ' impossible. ' . CHR(13) . CHR(10);
                             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                             fputs($rapport, $contenu);
                         }
                     }
                 }
 
+                // 	Phases : Cellules F66 à F79, les valeurs doivent être dans la liste des phases possibles
+                $tabF = array();
+                for ($i = 66; $i < 80; $i++) {
+                    $F[$i] = $worksheet->getCell('F' . $i);
+                    if ($F[$i]->getValue() != '') {
+                        $pgSandreHnNomemclature = $repoPgSandreHbNomemclatures->getPgSandreHbNomemclaturesByCodeNomemclatureCodeElementCodeSupport('480', $F[$i]->getValue(), '13');
+                        if (!$pgSandreHnNomemclature) {
+                            $erreur = true;
+                            $contenu = '    Avertissement  - cellule ' . $F[$i]->getCoordinate() . ' :  phase ' . $F[$i]->getValue() . ' impossible. ' . CHR(13) . CHR(10);
+                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                            fputs($rapport, $contenu);
+                        }
+                    }
+                }
+
+                //  Dénombrements : pour chaque ligne xx à partir de la ligne 88, et jusqu’à rencontrer une cellule vide dans la colonne D 
+                 $tabDenombrements = array();
+                for ($i = 88; $i < 1000; $i++) {
+                    $tabDenombrements[$i] = $worksheet->getCell('D' . $i);
+                    if ($tabDenombrements[$i]->getValue() != '') {
+                        $pgSandreAppellationTaxon = $repoPgSandreAppellationTaxon->getPgSandreAppellationTaxonByCodeAppelTaxonCodeSupport($tabDenombrements[$i]->getValue(), '13');
+                        if (!$pgSandreAppellationTaxon) {
+                            $erreur = true;
+                            $contenu = '    Avertissement  - cellule ' . $tabDenombrements[$i]->getCoordinate() . ' : le code Sandre ' . $tabDenombrements[$i]->getValue() . ' ne faire partie de la liste des codes possibles pour le support 13. ' . CHR(13) . CHR(10);
+                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                            fputs($rapport, $contenu);
+                        }
+                    } else {
+                        break;
+                    }
+                }
 
 
 
@@ -319,7 +339,7 @@ class DepotHydrobio {
         }
 
 
-        return 'ok';
+        return $erreur;
     }
 
 }

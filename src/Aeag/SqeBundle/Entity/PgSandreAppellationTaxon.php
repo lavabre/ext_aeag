@@ -58,7 +58,7 @@ class PgSandreAppellationTaxon {
         $this->nomAppelTaxon = $nomAppelTaxon;
     }
 
-    function setCodeSupport(\PgSandreSupports $codeSupport) {
+    function setCodeSupport($codeSupport) {
         $this->codeSupport = $codeSupport;
     }
 

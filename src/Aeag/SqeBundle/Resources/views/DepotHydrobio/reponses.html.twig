@@ -17,7 +17,11 @@
         </thead>
         <tbody>
             {% for reponse in reponses %}
-                <tr>
+                {% if reponse.phaseFichier.codePhase == 'DH40' %}
+                    <tr class="warning">
+                    {% else %}
+                    <tr> 
+                    {% endif %}
                     <td width="1%" align="center" nowrap>
                         <a id="id_{{reponse.id}}" class="btn btn-success btn-telecharger" href="{{path("AeagSqeBundle_depotHydrobio_reponses_telecharger",{"reponseId":  reponse.id, "typeFichier" : "EXL"})}}" title="Télécharger le dépôt">
                             <i class="fa fa-download"></i> 
@@ -33,9 +37,9 @@
                             </a>
                         {% endif %}
                     </td>
-                    <td>{{reponse.dateDepot | date("d/m/Y H:i")}}</td>
-                    <td>{{reponse.nomFichier}}</td>
-                    <td>{{reponse.phaseFichier.libellePhase}}</td>
+                    <td nowrap>{{reponse.dateDepot | date("d/m/Y H:i")}}</td>
+                    <td nowrap>{{reponse.nomFichier}}</td>
+                    <td nowrap>{{reponse.phaseFichier.libellePhase}}</td>
                 </tr>
             {% endfor %}
         </tbody>
