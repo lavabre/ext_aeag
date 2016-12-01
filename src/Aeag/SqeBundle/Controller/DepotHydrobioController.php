@@ -322,10 +322,17 @@ class DepotHydrobioController extends Controller {
 
             // Envoi du fichier sur le serveur du sandre pour validationFormat
             $excelObj = $this->get('xls.load_xls5');
-            $tabFichiers = $this->get('aeag_sqe.depotHydrobio')->extraireFichier($emSqe, $reponse, $pathBase, $nomFichier, $session, $excelObj);
+            $tabFichiers = $this->get('aeag_sqe.depotHydrobio')->extraireFichier($demandeId, $emSqe, $reponse, $pathBase, $nomFichier, $session, $excelObj);
+            
+//             \Symfony\Component\VarDumper\VarDumper::dump($tabFichiers);
+//              return new Response ('');   
+            
+            
             $erreur = false;
             for ($i = 0; $i < count($tabFichiers); $i++) {
-                $erreur = $tabFichiers[$i]['erreur'];
+                for ($j = 0; $j < count($tabFichiers[$i]['feuillet']); $j++) {
+                    $erreur = $tabFichiers[$i]['feuillet'][$j]['erreur'];
+                }
             }
 
             if (!$erreur) {
@@ -343,7 +350,10 @@ class DepotHydrobioController extends Controller {
                     $txtMessage = $txtMessage . " fichiers :  <br/><br/>";
                 }
                 for ($i = 0; $i < count($tabFichiers); $i++) {
-                    $txtMessage = $txtMessage . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- ' . $tabFichiers[$i]['fichier'] . ' --> Correct <br/>';
+                    $txtMessage = $txtMessage . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- ' . $tabFichiers[$i]['fichier'] . '<br/>';
+                    for ($j = 0; $j < count($tabFichiers[$i]['feuillet']); $j++) {
+                        $txtMessage = $txtMessage . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - ' . $tabFichiers[$i]['feuillet'][$j]['feuillet'] . '  Correct <br/>';
+                    }
                 }
                 $mailer = $this->get('mailer');
                 if ($this->get('aeag_sqe.message')->envoiMessage($em, $mailer, $txtMessage, $pgProgWebUser, $objetMessage)) {
@@ -365,11 +375,13 @@ class DepotHydrobioController extends Controller {
                     $txtMessage = $txtMessage . " fichiers :  <br/><br/>";
                 }
                 for ($i = 0; $i < count($tabFichiers); $i++) {
-                    $txtMessage = $txtMessage . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - ' . $tabFichiers[$i]['fichier'];
-                    if (!$tabFichiers[$i]['erreur']) {
-                        $txtMessage = $txtMessage . '&nbsp; --> Correct <br/>';
-                    } else {
-                        $txtMessage = $txtMessage . '&nbsp; --> Incorrect <br/>';
+                    $txtMessage = $txtMessage . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - ' . $tabFichiers[$i]['fichier'] . '<br/>';
+                    for ($j = 0; $j < count($tabFichiers[$i]['feuillet']); $j++) {
+                        if (!$tabFichiers[$i]['feuillet'][$j]['erreur']) {
+                            $txtMessage = $txtMessage . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - ' . $tabFichiers[$i]['feuillet'][$j]['feuillet'] . '  Correct <br/>';
+                        } else {
+                            $txtMessage = $txtMessage . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - ' . $tabFichiers[$i]['feuillet'][$j]['feuillet'] . '  Incorrect <br/>';
+                        }
                     }
                 }
                 $mailer = $this->get('mailer');

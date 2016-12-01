@@ -30,7 +30,7 @@
                                         <ul class="list-group">
                                             <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_programmation_avancement_hydro') }}" title="Avancement campagne Hydrobio"><i class="fa fa-signal fa-2x"></i> Hydrobio </a></li>
                                             <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_programmation_avancement_analyse') }}" title="Avancement campagne Analyses"><i class="fa fa-signal fa-2x"></i> Analyses  </a></li>
-                                            <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_programmation_avancement_prelevement') }}" title="Avancement campagne Prélèvements"><i class="fa fa-signal fa-2x"></i> Prélèvements  </a></li>
+                                            <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_programmation_avancement_prelevement') }}" title="Avancement campagne Global"><i class="fa fa-signal fa-2x"></i> Global </a></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -70,12 +70,12 @@
                             <div class="btn-group-vertical col-md-offset-2">
                                 <a class="btn btn-primary  btn-group-justified" href="{{ path('Aeag_sqe_programmation_lots', {'action': 'V'}) }}" title="Consulter"><div class="text-left"><i class="fa fa-caret-right"></i> Consulter</div></a>
                                 <a class="btn btn-primary  btn-group-justified" href="{{ path('Aeag_sqe_programmation_lots', {'action': 'P'}) }}" title="Programmer"><div class="text-left"><i class="fa fa-caret-right"></i> Programmer</div></a>
-                                {% if  not app.session.get('evolution')%}
+                             {#   {% if  not app.session.get('evolution')%}#}
                                     {% if   is_granted('ROLE_ADMINSQE') %}
                                         <a class="btn btn-primary btn-group-justified" data-toggle="modal" href="#modalCampagne" title="Avancement campagne"><div class="text-left"><i class="fa fa-caret-right"></i> Avancement campagne</div></a>
                                         <a class="btn btn-primary btn-group-justified" href="{{ path('AeagSqeBundle_programmation_avancement_programmation') }}" title="Avancement programmation"><div class="text-left"><i class="fa fa-caret-right"></i> Avancement programmation</div></a>
                                     {% endif %}
-                                {% endif %}
+                             {#   {% endif %}#}
                             </div>
                         </div>
                     </div>
