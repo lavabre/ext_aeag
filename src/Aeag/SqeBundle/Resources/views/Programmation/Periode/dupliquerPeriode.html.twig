@@ -44,7 +44,7 @@
     </div>
 </div>
 <div class="modal-footer">
-    <button id="idValiderDupliquerPeriode" type="submit" class="btn btn-success">
+    <button id="idValiderDupliquerPeriode_{{  periode.id }}" type="submit" class="btn btn-success">
         <i class="fa fa-check"> Valider</i>
     </button>
     <button id="idAnnulerDupliquerPeriode" type="button" class="btn btn-default" data-dismiss="modal">
@@ -97,29 +97,7 @@
             $('#modalConfirmerDupliquerPeriode').modal('hide');
         });
 
-         $(document).on('click', '#idValiderDupliquerPeriode',function(e){
-                $('#modalTraitementEncours').modal('toggle');
-                e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                var $this = $('#idFormDupliquerPeriode'); // L'objet jQuery du formulaire
-                var url = '{{ path("AeagSqeBundle_programmation_periode_dupliquer_valider",{"periodeId":  "par1","action": "par2","maj":"par3","lotan":"par4"}) }}', // Le nom du fichier indiqué dans le formulaire
-                url = url.replace("par1", {{ periode.id }});
-                url = url.replace("par2", '{{ action }}');
-                url = url.replace("amp;","");
-                url = url.replace("par3", '{{ maj }}');
-                url = url.replace("amp;","");
-                url = url.replace("par4", '{{ lotan.id }}');
-                url = url.replace("amp;","");
-                $.ajax({
-                url: url,
-                type: 'post', // La méthode indiquée dans le formulaire (get ou post)
-                data: $this.serialize(),
-                success: function(html) { // Je récupère la réponse du fichier PHP
-                $('#idTableau_station').empty().append(html);
-                $('#modalConfirmerDupliquerPeriode').modal('hide');
-                $('#modalTraitementEncours').modal('hide');
-                }
-                });
-                });
+        
 
 
         /* Nombre de periodes cocheées*/
@@ -144,6 +122,37 @@
             table_TableDupliquerPeriode.page(info.page).draw(false);
         };
         nbcocherPeriodes();
+        
+         $(document).on('click', '#idValiderDupliquerPeriode_{{  periode.id}}',function(e){
+                e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                $('#modal_gestion_periode').modal('hide');
+                $('#modalConfirmerDupliquerPeriode').modal('hide');
+                $('#modalTraitementEncours').modal('toggle');
+                var $this = $('#idFormDupliquerPeriode'); // L'objet jQuery du formulaire
+                var url = '{{ path("AeagSqeBundle_programmation_periode_dupliquer_valider",{"periodeId":  "par1","action": "par2","maj":"par3","lotan":"par4"}) }}', // Le nom du fichier indiqué dans le formulaire
+                url = url.replace("par1", {{ periode.id }});
+                url = url.replace("par2", '{{ action }}');
+                url = url.replace("amp;","");
+                url = url.replace("par3", '{{ maj }}');
+                url = url.replace("amp;","");
+                url = url.replace("par4", '{{ lotan.id }}');
+                url = url.replace("amp;","");
+                $.ajax({
+                url: url,
+                type: 'post', // La méthode indiquée dans le formulaire (get ou post)
+                data: $this.serialize(),
+                success: function(html) { // Je récupère la réponse du fichier PHP
+              {#  $('#idTableau_station').empty().append(html);
+                $('#modalConfirmerDupliquerPeriode').modal('hide');
+                $('#modalTraitementEncours').modal('hide');#}
+                 var url = '{{ path("AeagSqeBundle_programmation_periodes",{"lotan": "par1","action": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
+                url = url.replace("par1", {{ lotan.id }}); 
+                url = url.replace("par2", '{{ action }}');
+                 url = url.replace("amp;","");
+                window.location.replace(url);
+                }
+                });
+                });
 
 
 </script>

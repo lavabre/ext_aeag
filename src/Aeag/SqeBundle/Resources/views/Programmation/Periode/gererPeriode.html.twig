@@ -2,10 +2,10 @@
             {% for periode in periodeAns %}
                  <tr>
                      <td nowrap> 
-                         <a id="idDupliquerPeriode_{{ periode.periode.id }}" data-toggle="modal" href="#" class="btn btn-primary" href="#" title="dupliquer la période sur les autres periodes">
+                         <a id="idDupliquerPeriode" data-periode="{{ periode.periode.id }}" data-toggle="modal" href="#" class="btn btn-primary" href="#" title="dupliquer la période sur les autres periodes">
                              <i class="fa fa-sitemap"></i> 
                          </a>
-                         <a id="idInitialiserPeriode_{{ periode.periode.id }}"  class="btn btn-danger" data-toggle="modal" href="#" title="Supprimer la période">
+                         <a id="idInitialiserPeriode"  class="btn btn-danger" data-periode="{{ periode.periode.id }}" data-toggle="modal" href="#" title="Supprimer la période">
                              <i class="fa fa-eraser"></i> 
                          </a>
                      </td> 
@@ -17,84 +17,8 @@
         
  <script>
    
-     {%if periodeAns | length%}  
-            {% for periode in periodeAns %}
-                    $(document).on('click','#idDupliquerPeriode_{{ periode.periode.id }}',function(e){
-                            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                            $('#modalTraitementEncours').modal('toggle');
-                            var url = '{{ path("AeagSqeBundle_programmation_periode_dupliquer",{"periodeId":  "par1","action": "par2","maj":"par3","lotan":"par4"}) }}', // Le nom du fichier indiqué dans le formulaire
-                            url = url.replace("par1", {{ periode.periode.id }});
-                            url = url.replace("par2", '{{ action }}');
-                            url = url.replace("amp;","");
-                            url = url.replace("par3", '{{ maj }}');
-                            url = url.replace("amp;","");
-                            url = url.replace("par4", '{{ lotan.id }}');
-                            url = url.replace("amp;","");
-                            {#var nbRecords = $('#idTable_gestion_periodes_length option:selected').val();
-                            table_gestion_periodes.page.len( -1 ).draw();#}
-                            $.ajax({
-                            url: url,
-                            type: 'get', // La méthode indiquée dans le formulaire (get ou post)
-                            success: function(html) { // Je récupère la réponse du fichier PHP
-                            $('#idModalContentDupliquerPeriode').empty().append(html);
-                            $('#modalDupliquerPeriode').modal();
-                            $('#modalDupliquerPeriode').show();
-                            $('#modalTraitementEncours').modal('hide');
-                            }
-                            });
-                            {#table_gestion_periodes.page.len( nbRecords ).draw();#}
-                            });
-                            
-                  $(document).on('click','#idInitialiserPeriode_{{ periode.periode.id }}',function(e){
-                            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                            var html = '<div class="modal-header">';
-                                html = html + '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>';
-                                html = html + '<h4 class="modal-title">Suppression de la periode {{ periode.periode.labelPeriode}} du {{ periode.periode.dateDeb | date("d/m/Y") }} au {{ periode.periode.dateFin | date("d/m/Y") }} </h4>';
-                                html = html + '</div>';
-                            html = html + '<div class="modal-body">';
-                                html = html + '<h4>Cliquer sur "Supprimer" pour supprimer la période</h4>';
-                                html = html + '<br/><br/>';
-                                html = html + '<div class="alert alert-danger">Attention : Une fois supprimée, la programmation de la période sera perdue</div>';
-                                html = html + '</div>';
-                            html = html + '<div class="modal-footer">';
-                                html = html + '<a  id="idValiderInitialiserPeriode_{{ periode.periode.id }}" class="btn btn-danger"  href="#" title="Supprimer">';
-                                    html = html + '<i class="fa fa-eraser"> Supprimer</i>';
-                                    html = html + '</a>';
-                                html = html + '<button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>';
-                                html = html + '</div>';
-                            $('#idModalContentInitialiserPeriode').empty().append(html);
-                            $('#modalInitialiserPeriode').modal();
-                            $('#modalInitialiserPeriode').show();
-                            });
-                            
-                  {# valider Initialisation de la période #}
-                   $(document).on('click', '#idValiderInitialiserPeriode_{{ periode.periode.id }}',function(e){
-                            $('#modalTraitementEncours').modal('toggle');
-                            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                            var $this = $('#idForm_dupliquerPeriode_{{ periode.periode.id }}'); // L'objet jQuery du formulaire
-                            var url = '{{ path("AeagSqeBundle_programmation_periode_supprimer",{"periodeId":  "par1","action": "par2","maj":"par3","lotan":"par4"}) }}', // Le nom du fichier indiqué dans le formulaire
-                            url = url.replace("par1", {{ periode.periode.id }});
-                            url = url.replace("par2", '{{ action }}');
-                            url = url.replace("amp;","");
-                            url = url.replace("par3", '{{ maj }}');
-                            url = url.replace("amp;","");
-                            url = url.replace("par4", '{{ lotan.id }}');
-                            url = url.replace("amp;","");
-                            $.ajax({
-                            url: url,
-                            type: 'post', // La méthode indiquée dans le formulaire (get ou post)
-                            data: $this.serialize(),
-                            success: function(html) { // Je récupère la réponse du fichier PHP
-                            $('#idTableau_station').empty().append(html);
-                            $('#modalInitialiserPeriode').modal('hide');
-                            $('#modalTraitementEncours').modal('hide');
-                            }
-                            });
-                            });
              
-         {%endfor %}
-     {% endif %}
-         
+     
       html = '';
       html = html + '<a id="idSuivantPeriode" href="#">Périodes';
       html = html + '<span class="btn btn-danger">';
