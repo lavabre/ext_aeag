@@ -66,6 +66,8 @@ class LivreOrController extends Controller {
         $session->set('fonction', 'create');
         $em = $this->get('doctrine')->getManager();
 
+        $repoUsers = $em->getRepository('AeagUserBundle:User');
+
         $entity = new LivreOr();
         $form = $this->createCreateForm($entity);
         $form->handleRequest($request);
@@ -75,6 +77,21 @@ class LivreOrController extends Controller {
             $entity->setApplication($session->get('appli'));
             $em->persist($entity);
             $em->flush();
+
+            // Récupération du service.
+            $mailer = $this->get('mailer');
+
+            // Création de l'e-mail : le service mailer utilise SwiftMailer, donc nous créons une instance de Swift_Message.
+            $message = \Swift_Message::newInstance()
+                    ->setSubject('Livre d\'or  :  nouveau message')
+                    ->setFrom('automate@eau-adour-garonne.fr')
+                    ->setTo('jle@eau-adour-garonne.fr')
+                    ->setBody($this->renderView('AeagAeagBundle:LivreOr:accuseResponsableEmail.txt.twig', array(
+                        'entity' => $entity,
+                        'user' => $user)));
+
+            // Retour au service mailer, nous utilisons sa méthode « send() » pour envoyer notre $message.
+            $mailer->send($message);
 
             return $this->redirect($this->generateUrl('livreor'));
         }
@@ -121,93 +138,6 @@ class LivreOrController extends Controller {
      * Finds and displays a LivreOr entity.
      *
      */
-    public function showAction($id) {
-        $em = $this->getDoctrine()->getManager();
-
-        $entity = $em->getRepository('AeagAeagBundle:LivreOr')->find($id);
-
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find LivreOr entity.');
-        }
-
-        $deleteForm = $this->createDeleteForm($id);
-
-        return $this->render('AeagAeagBundle:LivreOr:show.html.twig', array(
-                    'entity' => $entity,
-                    'delete_form' => $deleteForm->createView(),
-        ));
-    }
-
-    /**
-     * Displays a form to edit an existing LivreOr entity.
-     *
-     */
-    public function editAction($id) {
-        $em = $this->getDoctrine()->getManager();
-
-        $entity = $em->getRepository('AeagAeagBundle:LivreOr')->find($id);
-
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find LivreOr entity.');
-        }
-
-        $editForm = $this->createEditForm($entity);
-        $deleteForm = $this->createDeleteForm($id);
-
-        return $this->render('AeagAeagBundle:LivreOr:edit.html.twig', array(
-                    'entity' => $entity,
-                    'edit_form' => $editForm->createView(),
-                    'delete_form' => $deleteForm->createView(),
-        ));
-    }
-
-    /**
-     * Creates a form to edit a LivreOr entity.
-     *
-     * @param LivreOr $entity The entity
-     *
-     * @return \Symfony\Component\Form\Form The form
-     */
-    private function createEditForm(LivreOr $entity) {
-        $form = $this->createForm(new LivreOrType(), $entity, array(
-            'action' => $this->generateUrl('livreor_update', array('id' => $entity->getId())),
-            'method' => 'PUT',
-        ));
-
-        $form->add('submit', 'submit', array('label' => 'Update'));
-
-        return $form;
-    }
-
-    /**
-     * Edits an existing LivreOr entity.
-     *
-     */
-    public function updateAction(Request $request, $id) {
-        $em = $this->getDoctrine()->getManager();
-
-        $entity = $em->getRepository('AeagAeagBundle:LivreOr')->find($id);
-
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find LivreOr entity.');
-        }
-
-        $deleteForm = $this->createDeleteForm($id);
-        $editForm = $this->createEditForm($entity);
-        $editForm->handleRequest($request);
-
-        if ($editForm->isValid()) {
-            $em->flush();
-
-            return $this->redirect($this->generateUrl('livreor_edit', array('id' => $id)));
-        }
-
-        return $this->render('AeagAeagBundle:LivreOr:edit.html.twig', array(
-                    'entity' => $entity,
-                    'edit_form' => $editForm->createView(),
-                    'delete_form' => $deleteForm->createView(),
-        ));
-    }
 
     /**
      * Deletes a LivreOr entity.
