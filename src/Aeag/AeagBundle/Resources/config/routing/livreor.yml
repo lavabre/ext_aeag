@@ -1,0 +1,30 @@
+livreor:
+    path:     /
+    defaults: { _controller: "AeagAeagBundle:LivreOr:index" }
+
+livreor_show:
+    path:     /{id}/show
+    defaults: { _controller: "AeagAeagBundle:LivreOr:show" }
+
+livreor_new:
+    path:     /new
+    defaults: { _controller: "AeagAeagBundle:LivreOr:new" }
+
+livreor_create:
+    path:     /create
+    defaults: { _controller: "AeagAeagBundle:LivreOr:create" }
+    methods:  POST
+
+livreor_edit:
+    path:     /{id}/edit
+    defaults: { _controller: "AeagAeagBundle:LivreOr:edit" }
+
+livreor_update:
+    path:     /{id}/update
+    defaults: { _controller: "AeagAeagBundle:LivreOr:update" }
+    methods:  [POST, PUT]
+
+livreor_delete:
+    path:     /{id}/delete
+    defaults: { _controller: "AeagAeagBundle:LivreOr:delete" }
+    methods:  [POST,GET]

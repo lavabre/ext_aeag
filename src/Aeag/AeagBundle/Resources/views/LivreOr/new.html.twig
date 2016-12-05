@@ -1,0 +1,76 @@
+{% extends "AeagAeagBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+    <li>
+        <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+    </li>
+    <li>
+        <a href="{{ path('livreor') }}">Livre d'or</a> 
+    </li>
+    <li class="active">
+        Nouveau message
+    </li>
+{% endblock breadcrumb %}
+
+{% block panel_heading %}
+    <h3>
+        Nouveau message
+    </h3>
+{% endblock panel_heading %}
+
+{%block content %}
+
+    <div class="row">
+        
+        <div class="well text-center">
+            <h3>Une suggestion ? Une remarque ? merci de laisser un message</h3>
+         </div>
+
+        <form class="form-horizontal" role="form" action="{{ path('livreor_create') }}" class="form-horizontal" method="post" {{ form_enctype(form) }}>
+
+            <div class="col-xm-offset-3 col-xm-5">
+
+                {% spaceless %}
+                    {% if not form.vars.valid %}
+                        <div class="alert alert-danger">
+                            {% for children in form.children %}
+                                {% if not children.vars.valid %}
+                                    {{ form_errors(children) }}
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endspaceless %}
+
+                <div class="form-group">
+                    <label class="col-xs-3 control-label">Message</label>
+                    {%if form_errors(form.message) %}
+                        <div class="col-xs-8 input-group has-error has-feedback">
+                        {% else %}
+                            <div class="col-xs-8 input-group">
+                            {% endif %}
+                            {{ form_widget(form.message, { 'attr': {'class': 'form-control ', 'placeholder': 'Message', 'rows':'10','cols':'80'} }) }}
+                        </div>
+                    </div> 
+
+                </div>
+
+                <div class="col-md-offset-3 col-md-8">
+                    <button type="submit" class="btn btn-success"> 
+                        <i class="fa fa-check"> Enregister</i>
+                    </button>
+                    <a class="btn btn-danger" href="{{ path('livreor') }}">
+                        <i class="fa fa-home"> Retour</i>
+                    </a>
+                </div>
+
+                <div class="hide">
+                    {{ form_rest(form) }}
+                </div>
+
+        </form>
+
+
+    </div>
+
+{% endblock %}

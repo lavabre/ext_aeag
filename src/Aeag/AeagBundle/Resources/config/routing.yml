@@ -1,3 +1,7 @@
+aeag_aeag_livreor:
+    resource: "@AeagAeagBundle/Resources/config/routing/livreor.yml"
+    prefix:   /livreor
+
 aeag_homepage:
     path:  /
     defaults: { _controller: AeagAeagBundle:Aeag:index }

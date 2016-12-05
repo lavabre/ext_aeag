@@ -371,6 +371,17 @@
           {#       Visiteurs :  <script type="text/javascript" src="http://www.abcompteur.com/cpt/?code=6/33/16283/1/2&ID=4349583530"></script>#}
             
         {%endblock statistiques %}
+        
+         {% block livreOr %}
+            {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                <a  id="idLivreOr" href="{{ path('livreor') }}">
+                    <button class="btn btn-primary btn-xs" type="button">
+                        <i class="fa fa-gratipay"></i>&nbsp; Livre d'or
+                       </button>
+                 </a>
+            {% endif %}
+        {%endblock livreOr %}
+        
         {# &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;   Webmaster : {{ webmaster }}#}
         {# &nbsp; &nbsp; &nbsp; &nbsp; Symfony : {{ symfony }}#}
         {# &nbsp; &nbsp; &nbsp; &nbsp; version : {{ version }}#}
