@@ -498,6 +498,13 @@
         <div id="idResultatDupliquerPeriode"></div>
         <div id="idResultatInitialiserPeriode"></div>
         <div id="idResultatBilan"></div>
+        
+        <div class="hide">
+            <input type="text" id="idNbEncours" value="0">
+            <input type="text" id="idNbTotal" value="100">       
+        </div>
+        
+        
     </div>
 {% endblock content %}
 
@@ -1292,9 +1299,10 @@
                   {# valider Initialisation de la période #}
                    $(document).on('click', '#idValiderInitialiserPeriode',function(e){
                             e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                            $('#modaProgression').modal('toggle');
+                             rafraichir();
                             $('#modalInitialiserPeriode').modal('hide');
-                            $('#modalTraitementEncours').modal('toggle');
-                            var periodeId = $(this).data('periode');
+                           var periodeId = $(this).data('periode');
                            var $this = $('#idForm_dupliquerPeriode'); // L'objet jQuery du formulaire
                             var url = '{{ path("AeagSqeBundle_programmation_periode_supprimer",{"periodeId":  "par1","action": "par2","maj":"par3","lotan":"par4"}) }}', // Le nom du fichier indiqué dans le formulaire
                             url = url.replace("par1", periodeId );
@@ -1309,14 +1317,40 @@
                             type: 'post', // La méthode indiquée dans le formulaire (get ou post)
                             data: $this.serialize(),
                             success: function(html) { // Je récupère la réponse du fichier PHP
-                            $('#idTableau_station').empty().append(html);
+                          {#  $('#idTableau_station').empty().append(html);
                             $('#modalInitialiserPeriode').modal('hide');
-                            $('#modalTraitementEncours').modal('hide');
+                            $('#modaProgression').modal('hide');#}
+                             var url = '{{ path("AeagSqeBundle_programmation_periodes",{"lotan": "par1","action": "par2"}) }}';
+                            url = url.replace("par1", {{ lotan.id }});
+                            url = url.replace("par2", '{{ action }}');
+                            url = url.replace("amp;", "");
+                            window.location.replace(url);
                             }
                             });
                             });
                             
-               
+      function rafraichir() {
+            var nbEncours = parseInt($('#idNbEncours').val()) + 1;
+            var nbTotal = parseInt($('#idNbTotal').val());
+            if (nbEncours > nbTotal) {
+                nbEncours = 0;
+            }
+            ;
+            $('#idNbEncours').val(nbEncours);
+            html = '<div class="progress-bar progress-bar-success progress-bar-striped"';
+            html = html + ' role="progressbar"';
+            html = html + ' aria-valuenow="' + nbEncours + '"';
+            html = html + ' aria-valuemin="0"';
+            html = html + ' aria-valuemax="' + nbTotal + '"';
+            html = html + 'style="min-width: 2em;';
+            html = html + ' width: ' + ((nbEncours / nbTotal) * 100) + '%;">';
+            {#html = html + nbEncours  + '/' + nbTotal;#}
+            html = html + '</div>';
+            {# alert(html)#};
+            $('#idProgress').empty().append(html);
+            {#alert( 'nbEncours : ' + nbEncours + ' nbTotal : ' + nbTotal);#}
+            setTimeout(rafraichir, 50); // puis on relance la fonction
+          }
 
 
     });

@@ -20,23 +20,23 @@
                             <th width="1%" align="center">
                                 <a class="btn btn-success" id="idCocherToutesLesPeriodesDisponibles"  href="#"><i class="fa fa-check fa-lg"></i></a>
                             </th>
-                             <th width="5%">Périodes</th>
+                            <th width="5%">Périodes</th>
                             <th>Intervalles</th>
                         </tr>
                     </thead>
                     <tbody id="idListePeriodesSelectionnes">
                         {% for periodeAnAutre in periodeAns %}
-                                 <tr>
-                                   <td align="center">
-                                        <div class="checbox">
-                                            <input type="checkbox" id="checkDupliquerPeriode_{{ periodeAnAutre.periode.id }}" name="checkDupliquerPeriode[]" value="{{ periodeAnAutre.periode.id }}" >
-                                        </div>
-                                    </td> 
-                                     <td nowrap>{{ periodeAnAutre.periode.labelPeriode }}</td>
-                                    <td nowrap>du {{ periodeAnAutre.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;au&nbsp;&nbsp; {{ periodeAnAutre.periode.dateFin | date("d/m/Y") }}</td>
-                                          
-                                </tr>
-                         {% endfor %}
+                            <tr>
+                                <td align="center">
+                                    <div class="checbox">
+                                        <input type="checkbox" id="checkDupliquerPeriode_{{ periodeAnAutre.periode.id }}" name="checkDupliquerPeriode[]" value="{{ periodeAnAutre.periode.id }}" >
+                                    </div>
+                                </td> 
+                                <td nowrap>{{ periodeAnAutre.periode.labelPeriode }}</td>
+                                <td nowrap>du {{ periodeAnAutre.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;au&nbsp;&nbsp; {{ periodeAnAutre.periode.dateFin | date("d/m/Y") }}</td>
+
+                            </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
@@ -51,6 +51,7 @@
         <i class="fa fa-undo"> Annuler</i>
     </button>
 </div>
+
 
 <script>
 
@@ -87,72 +88,96 @@
 
     {# initialiser la liste des stations disponibles pour dupliquer #}
     {% for periodeAnAutre in periodeAns %}
-            $('#checkDupliquerPeriode_{{ periodeAnAutre.periode.id }}').prop("checked", false);
-             $(document).on('click', '#checkDupliquerPeriode_{{ periodeAnAutre.periode.id }}', function (e) {
-                nbcocherPeriodes();
-              });
-     {% endfor %}
-        
-        $(document).on('click', '#idAnnulerDupliquerPeriode', function (e) {
-            $('#modalConfirmerDupliquerPeriode').modal('hide');
+        $('#checkDupliquerPeriode_{{ periodeAnAutre.periode.id }}').prop("checked", false);
+        $(document).on('click', '#checkDupliquerPeriode_{{ periodeAnAutre.periode.id }}', function (e) {
+            nbcocherPeriodes();
         });
+    {% endfor %}
 
-        
+         $(document).on('click', '#idAnnulerDupliquerPeriode', function (e) {
+             $('#modalConfirmerDupliquerPeriode').modal('hide');
+         });
 
 
-        /* Nombre de periodes cocheées*/
-        var nbcocherPeriodes = function () {
-            var info = table_TableDupliquerPeriode.page.info();
-            var nbRecords = $('#idTableDupliquerPeriode_length option:selected').val();
-            var filtre = $('#idTableDupliquerPeriode_filter input').val();
-            if (filtre != '') {
-                var initval = '';
-                table_TableDupliquerPeriode.search(initval).draw();
-            }
-            ;
-            table_TableDupliquerPeriode.page.len(-1).draw();
-            var n = $("#idTableDupliquerPeriode input:checked").length;
-            html = "Périodes cochées  : <span class='badge'>" + n + "</span>";
-            $("#idNbCocherPeriodes p").html(html);
-            if (filtre != '') {
-                table_TableDupliquerPeriode.search(filtre).draw();
-            }
-            ;
-            table_TableDupliquerPeriode.page.len(nbRecords).draw();
-            table_TableDupliquerPeriode.page(info.page).draw(false);
-        };
-        nbcocherPeriodes();
-        
-         $(document).on('click', '#idValiderDupliquerPeriode_{{  periode.id}}',function(e){
-                e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                $('#modal_gestion_periode').modal('hide');
-                $('#modalConfirmerDupliquerPeriode').modal('hide');
-                $('#modalTraitementEncours').modal('toggle');
-                var $this = $('#idFormDupliquerPeriode'); // L'objet jQuery du formulaire
-                var url = '{{ path("AeagSqeBundle_programmation_periode_dupliquer_valider",{"periodeId":  "par1","action": "par2","maj":"par3","lotan":"par4"}) }}', // Le nom du fichier indiqué dans le formulaire
-                url = url.replace("par1", {{ periode.id }});
-                url = url.replace("par2", '{{ action }}');
-                url = url.replace("amp;","");
-                url = url.replace("par3", '{{ maj }}');
-                url = url.replace("amp;","");
-                url = url.replace("par4", '{{ lotan.id }}');
-                url = url.replace("amp;","");
-                $.ajax({
-                url: url,
-                type: 'post', // La méthode indiquée dans le formulaire (get ou post)
-                data: $this.serialize(),
-                success: function(html) { // Je récupère la réponse du fichier PHP
-              {#  $('#idTableau_station').empty().append(html);
-                $('#modalConfirmerDupliquerPeriode').modal('hide');
-                $('#modalTraitementEncours').modal('hide');#}
-                 var url = '{{ path("AeagSqeBundle_programmation_periodes",{"lotan": "par1","action": "par2"}) }}', // Le nom du fichier indiqué dans le formulaire
-                url = url.replace("par1", {{ lotan.id }}); 
-                url = url.replace("par2", '{{ action }}');
-                 url = url.replace("amp;","");
-                window.location.replace(url);
-                }
-                });
-                });
+
+
+         /* Nombre de periodes cocheées*/
+         var nbcocherPeriodes = function () {
+             var info = table_TableDupliquerPeriode.page.info();
+             var nbRecords = $('#idTableDupliquerPeriode_length option:selected').val();
+             var filtre = $('#idTableDupliquerPeriode_filter input').val();
+             if (filtre != '') {
+                 var initval = '';
+                 table_TableDupliquerPeriode.search(initval).draw();
+             }
+             ;
+             table_TableDupliquerPeriode.page.len(-1).draw();
+             var n = $("#idTableDupliquerPeriode input:checked").length;
+             html = "Périodes cochées  : <span class='badge'>" + n + "</span>";
+             $("#idNbCocherPeriodes p").html(html);
+             if (filtre != '') {
+                 table_TableDupliquerPeriode.search(filtre).draw();
+             }
+             ;
+             table_TableDupliquerPeriode.page.len(nbRecords).draw();
+             table_TableDupliquerPeriode.page(info.page).draw(false);
+         };
+         nbcocherPeriodes();
+
+$(document).on('click', '#idValiderDupliquerPeriode_{{  periode.id}}', function (e) {
+    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+    $('#modaProgression').modal('toggle');
+    rafraichir();
+    $('#modal_gestion_periode').modal('hide');
+    $('#modalConfirmerDupliquerPeriode').modal('hide');
+    var $this = $('#idFormDupliquerPeriode'); // L'objet jQuery du formulaire
+    var url = '{{ path("AeagSqeBundle_programmation_periode_dupliquer_valider",{"periodeId":  "par1","action": "par2","maj":"par3","lotan":"par4"}) }}', // Le nom du fichier indiqué dans le formulaire
+            url = url.replace("par1", {{ periode.id }});
+            url = url.replace("par2", '{{ action }}');
+    url = url.replace("amp;", "");
+    url = url.replace("par3", '{{ maj }}');
+    url = url.replace("amp;", "");
+    url = url.replace("par4", '{{ lotan.id }}');
+    url = url.replace("amp;", "");
+    $.ajax({
+        url: url,
+        type: 'post', // La méthode indiquée dans le formulaire (get ou post)
+        data: $this.serialize(),
+        success: function (html) { // Je récupère la réponse du fichier PHP
+{#  $('#idTableau_station').empty().append(html);
+$('#modalConfirmerDupliquerPeriode').modal('hide');
+$('#modalTraitementEncours').modal('hide');#}
+            var url = '{{ path("AeagSqeBundle_programmation_periodes",{"lotan": "par1","action": "par2"}) }}';
+            url = url.replace("par1", {{ lotan.id }});
+            url = url.replace("par2", '{{ action }}');
+            url = url.replace("amp;", "");
+            window.location.replace(url);
+                   }
+      });
+ });
+
+                    function rafraichir() {
+                        var nbEncours = parseInt($('#idNbEncours').val()) + 1;
+                        var nbTotal = parseInt($('#idNbTotal').val());
+                        if (nbEncours > nbTotal) {
+                            nbEncours = 0;
+                        }
+                        ;
+                        $('#idNbEncours').val(nbEncours);
+                        html = '<div class="progress-bar progress-bar-success progress-bar-striped"';
+                        html = html + ' role="progressbar"';
+                        html = html + ' aria-valuenow="' + nbEncours + '"';
+                        html = html + ' aria-valuemin="0"';
+                        html = html + ' aria-valuemax="' + nbTotal + '"';
+                        html = html + 'style="min-width: 2em;';
+                        html = html + ' width: ' + ((nbEncours / nbTotal) * 100) + '%;">';
+    {#html = html + nbEncours  + '/' + nbTotal;#}
+               html = html + '</div>';
+    {# alert(html)#};
+              $('#idProgress').empty().append(html);
+    {#alert( 'nbEncours : ' + nbEncours + ' nbTotal : ' + nbTotal);#}
+              setTimeout(rafraichir, 50); // puis on relance la fonction
+          }
 
 
 </script>
