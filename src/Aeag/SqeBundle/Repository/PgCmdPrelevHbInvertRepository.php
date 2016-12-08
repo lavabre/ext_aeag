@@ -16,7 +16,7 @@ class PgCmdPrelevHbInvertRepository extends EntityRepository {
      */
     public function getPgCmdPrelevHbInverts() {
         $query = "select c";
-        $query = $query . " from Aeag\SqeBundle\Entity\PPgCmdPrelevHbInvert c";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelevHbInvert c";
         $qb = $this->_em->createQuery($query);
         //print_r($query);
         return $qb->getResult();
@@ -27,11 +27,11 @@ class PgCmdPrelevHbInvertRepository extends EntityRepository {
      */
     public function getPgCmdPrelevHbInvertByPrelev($pgCmdPrelev) {
         $query = "select c";
-        $query = $query . " from Aeag\SqeBundle\Entity\PPgCmdPrelevHbInvert c";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelevHbInvert c";
         $query = $query . " where c.prelev = " . $pgCmdPrelev->getId() ;
         $qb = $this->_em->createQuery($query);
         //print_r($query);
-        return $qb->getResult();
+        return $qb->getOneOrNullResult();
     }
     
     

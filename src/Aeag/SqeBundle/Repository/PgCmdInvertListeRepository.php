@@ -16,7 +16,7 @@ class PgCmdInvertListeRepository extends EntityRepository {
      */
     public function getPgCmdInvertListes() {
         $query = "select c";
-        $query = $query . " from Aeag\SqeBundle\Entity\PPgCmdInvertListe c";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdInvertListe c";
         $qb = $this->_em->createQuery($query);
         //print_r($query);
         return $qb->getResult();
@@ -27,11 +27,27 @@ class PgCmdInvertListeRepository extends EntityRepository {
      */
     public function getPgCmdInvertListeByPrelev($pgCmdPrelevHbInvert) {
         $query = "select c";
-        $query = $query . " from Aeag\SqeBundle\Entity\PPgCmdInvertListe c";
-        $query = $query . " where c.prelev = " . $pgCmdPrelevHbInvert->getPrelev() ;
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdInvertListe c";
+        $query = $query . " where c.prelev = " . $pgCmdPrelevHbInvert->getPrelev()->getId() ;
+        $query = $query . " order by c.phase,c.prelem, c.codeSandre";
         $qb = $this->_em->createQuery($query);
         //print_r($query);
         return $qb->getResult();
+    }
+    
+     /**
+     * @return array
+     */
+    public function getPgCmdInvertListeByPrelevPrelemPhaseCodeSandre($pgCmdPrelevHbInvert, $prelem, $phase, $codeSandre) {
+        $query = "select c";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdInvertListe c";
+        $query = $query . " where c.prelev = " . $pgCmdPrelevHbInvert->getPrelev()->getId() ;
+        $query = $query . " and c.prelem = '" . $prelem  . "'";
+        $query = $query . " and c.phase = '" . $phase  . "'";
+        $query = $query . " and c.codeSandre = '" . $codeSandre  . "'";
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+         return $qb->getOneOrNullResult();
     }
     
     

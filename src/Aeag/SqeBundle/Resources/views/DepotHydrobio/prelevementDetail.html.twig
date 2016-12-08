@@ -1,0 +1,193 @@
+{% extends "AeagSqeBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+    <li>
+        <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+    </li>
+    <li>
+        <a href="{{ path('AeagSqeBundle_depotHydrobio_index') }}">Lots</a> 
+    </li>
+    <li>
+        <a href="{{ path('AeagSqeBundle_depotHydrobio_demandes',{'lotanId' : demande.lotan.id}) }}">DAI</a> 
+    </li>
+    <li>
+        <a href="{{ path('AeagSqeBundle_depotHydrobio_prelevements',{'demandeId' : demande.id}) }}">PrélèvementsI</a> 
+    </li>
+    <li class="active">
+        Détail 
+    </li>
+{% endblock breadcrumb %} 
+
+{%block panel_heading %}
+    <h3 class="page-title text-center">
+        Dépôt Hydrobio - Détail du prélèvement {{ prelev.codePrelevCmd }} sur la station {{ prelev.station.code  }} {{ prelev.station.libelle  }} <br/>
+        pour la période {{ prelev.periode.labelPeriode}}
+        de la  DAI  {{ demande.codeDemandeCmd }} <br/>
+        du lot  {{ demande.lotan.lot.nomLot }} - {{  demande.lotan.anneeProg }}
+    </h3>
+{%endblock panel_heading %}
+
+{%block content %}
+    <div class="form-body">    
+
+        <table class="table table-bordered table-condensed table-advance" id="idTable_detail">
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Cours d'eau</th>
+                    <th>Station</th>
+                    <th>Commune</th>
+                    <th>Code Insee</th>
+                    <th>Longitude X amont</th>
+                    <th>Latitude Y amont</th>
+                    <th>Longitude X aval</th>
+                    <th>Latitude Y aval</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ prelev.station.code  }}</td>
+                    <td>{{ prelev.station.nomCoursEau  }}</td>
+                    <td>{{ prelev.station.libelle  }}</td>
+                    <td>{{ prelev.station.nomCommune  }}</td>
+                    <td>{{ prelev.station.inseeCommune  }}</td>
+                    <td>{{ pgCmdPrelevHbInvert.xAmont  }}</td>
+                    <td>{{ pgCmdPrelevHbInvert.yAmont  }}</td>
+                    <td>{{ pgCmdPrelevHbInvert.xAval  }}</td>
+                    <td>{{ pgCmdPrelevHbInvert.yAval  }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="row responsive">
+            <div class="col-xm-12">
+                <div class="small ">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <ul  class="nav nav-pills nav-justified" role="tablist">
+                                <li class="active"><a id="idTab_1" href="#tab_1_1" data-toggle="tab"><h4>Informations sur le site</h4></a></li>
+                                <li class=""><a id="idTab_2" href="#tab_1_2" data-toggle="tab"><h4>Informations sur l'échantillon  {{ pgCmdInvertPrelems | length }}</h4></a></li>
+                                <li class=""><a id="idTab_3" href="#tab_1_3" data-toggle="tab"><h4>Quantification de l'information</h4></a></li>
+                            </ul>
+                            <div  class="tab-content">
+                                <div class="tab-pane fade active in" id="tab_1_1">
+                                    <table class="table table-bordered table-condensed table-advance" id="idTable_detail">
+                                        <thead>
+                                            <tr>
+                                                <th>Substrat</th>
+                                                <th>Sandre</th>
+                                                <th>Recouvrement</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for pgCmdInvertRecouv in pgCmdInvertRecouvs %}
+                                                <tr>
+                                                    <td>{{  pgCmdInvertRecouv.nomenclature.libElement }}
+                                                    <td>{{  pgCmdInvertRecouv.recouv.substrat  }}</td>
+                                                    <td>{{ pgCmdInvertRecouv.recouv.recouvNum }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="tab-pane fade" id="tab_1_2">
+                                    <table class="table table-bordered table-condensed table-advance" id="idTable_detail">
+                                        <thead>
+                                            <tr>
+                                                <th>Micorprélevement</th>
+                                                <th>Substrat</th>
+                                                <th>Sandre</th>
+                                                <th>Classe vitesse</th>
+                                                <th>Phase</th>
+                                                <th>Hauteur d'eau</th>
+                                                <th>Intensité du colmatage</th>
+                                                <th>Stabilité</th>
+                                                <th>Nature végétation</th>
+                                                <th>Abondance végétation</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for pgCmdInvertPrelem in pgCmdInvertPrelems %}
+                                                <tr>
+                                                    <td>{{  pgCmdInvertPrelem.prelem.prelem }}</td>
+                                                    <td>{{  pgCmdInvertPrelem.nomenclature.libElement }}</td>
+                                                    <td>{{  pgCmdInvertPrelem.prelem.substrat  }}</td>
+                                                    <td>{{ pgCmdInvertPrelem.prelem.vitesse }}</td>
+                                                    <td>{{ pgCmdInvertPrelem.prelem.phase }}</td>
+                                                    <td>{{ pgCmdInvertPrelem.prelem.hauteurEau }}</td>
+                                                    <td>{{ pgCmdInvertPrelem.prelem.colmatage }}</td>
+                                                    <td>{{ pgCmdInvertPrelem.prelem.stabilite }}</td>
+                                                    <td>{{ pgCmdInvertPrelem.prelem.natureVeget }}</td>
+                                                    <td>{{ pgCmdInvertPrelem.prelem.abondVeget }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="tab-pane fade" id="tab_1_3"></div>
+                            </div>
+                            <div id="idCache"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> 
+
+    </div>
+{%endblock content %}    
+
+
+{% block scripts %}
+
+    jQuery(document).ready(function() {
+
+
+    var table = $('#idTable_prelevements').DataTable(
+    {"stateSave": true,
+    "order": [[ 1, 'asc' ], [ 2, 'asc' ]],
+    "oLanguage": {
+    "sSearch": "Filtre",
+    "sFirst": "1ere page",
+    "sLast": "Dernière page",
+    "sNext": "Prochaine page",
+    "sPrevious": "Page précédente",
+    "EmptyTable": "Pas de données",
+    "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+    "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+    "sZeroRecords": "Pas d'enregistrement à afficher",
+    "sInfoEmpty": "Pas d'enregistrement à afficher",
+    "sInfoThousands": " ",
+    "sLengthMenu": 'Afficher <select id="select-length-menu">' +
+        '<option value="10">10</option>' +
+        '<option value="20">20</option>' +
+        '<option value="30">30</option>' +
+        '<option value="40">40</option>' +
+        '<option value="50">50</option>' +
+        '<option value="-1">Tous</option>' +
+        '</select> enregistrements',
+    "sPaginationType": "full_numbers"
+    }
+    }
+    );
+
+    $("#idTable_demandes thead td").each( function ( i ) {
+
+    if (i != 0){
+    var select = $('<select><option value=""></option></select>')
+    .appendTo( $(this).empty() )
+    .on( 'change', function () {
+    table.column( i )
+    .search( $(this).val() )
+    .draw();
+    });
+
+    table.column( i ).data().unique().sort().each( function ( d, j ) {
+    select.append( '<option value="'+d+'">'+d+'</option>' )
+    });
+    };
+    }); 
+
+    $('#select-length-menu').val("-1");
+    });
+
+{%endblock scripts %}    

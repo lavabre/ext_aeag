@@ -10,6 +10,10 @@ AeagSqeBundle_depotHydrobio_prelevements:
     path:  /prelevement/{demandeId}
     defaults: { _controller: AeagSqeBundle:DepotHydrobio:prelevements, demandeId : null }
     
+AeagSqeBundle_depotHydrobio_prelevement_detail:
+    path:  /prelevement/detail/{prelevId}
+    defaults: { _controller: AeagSqeBundle:DepotHydrobio:prelevementDetail, prelevId : null }
+    
 AeagSqeBundle_depotHydrobio_telecharger:
     path:  /telecharger/{demandeId}
     defaults: { _controller: AeagSqeBundle:DepotHydrobio:telecharger, demandeId : null }

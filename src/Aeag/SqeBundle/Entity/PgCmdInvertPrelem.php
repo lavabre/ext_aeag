@@ -17,8 +17,7 @@ class PgCmdInvertPrelem
      * @var string
      *
      * @ORM\Column(name="prelem", type="string", length=3, nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
+  
      */
     private $prelem;
 
@@ -344,7 +343,7 @@ class PgCmdInvertPrelem
      *
      * @param \Aeag\SqeBundle\Entity\PgCmdPrelevHbInvert $prelev
      *
-     * @return PgCmdInvertPrelem
+     * @return PgCmdInvertRecouv
      */
     public function setPrelev(\Aeag\SqeBundle\Entity\PgCmdPrelevHbInvert $prelev)
     {

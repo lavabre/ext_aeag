@@ -123,6 +123,66 @@ class DepotHydrobioController extends Controller {
                     'demande' => $pgCmdDemande,
                     'prelevs' => $pgCmdPrelevs,));
     }
+    
+    public function prelevementDetailAction($prelevId) {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+        $session = $this->get('session');
+        $session->set('menu', 'donnees');
+        $session->set('controller', 'DepotHydrobio');
+        $session->set('fonction', 'prelevementDetail');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+
+        $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
+        $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
+        $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
+        $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
+        $repoPgCmdPrelevHbInvert = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelevHbInvert');
+        $repoPgCmdInvertRecouv = $emSqe->getRepository('AeagSqeBundle:PgCmdInvertRecouv');
+        $repoPgCmdInvertPrelem = $emSqe->getRepository('AeagSqeBundle:PgCmdInvertPrelem');
+        $repoPgCmdInvertListe = $emSqe->getRepository('AeagSqeBundle:PgCmdInvertListe');
+        $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
+        $repoPgSandreHbNomemclatures = $emSqe->getRepository('AeagSqeBundle:PgSandreHbNomemclatures');
+
+        $pgProgWebUser = $repoPgProgWebUsers->findOneByExtId($user->getId());
+        $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevById($prelevId);
+        $pgCmdDemande = $pgCmdPrelev->getdemande();
+        
+         $pgCmdPrelevHbInvert = $repoPgCmdPrelevHbInvert->getPgCmdPrelevHbInvertByPrelev($pgCmdPrelev);
+//           \Symfony\Component\VarDumper\VarDumper::dump($pgCmdPrelevHbInvert);
+         $pgCmdInvertRecouvs = $repoPgCmdInvertRecouv->getPgCmdInvertRecouvByPrelev($pgCmdPrelevHbInvert);
+//           \Symfony\Component\VarDumper\VarDumper::dump($pgCmdInvertRecouvs);
+         $tabRecouvs = array();
+         $i = 0;
+         foreach($pgCmdInvertRecouvs as $pgCmdInvertRecouv){
+             $tabRecouvs[$i]['recouv'] =  $pgCmdInvertRecouv;
+             $pgSandreHbNomemclature = $repoPgSandreHbNomemclatures->getPgSandreHbNomemclaturesByCodeNomemclatureCodeElement(274, $pgCmdInvertRecouv->getSubstrat());
+             $tabRecouvs[$i]['nomenclature'] = $pgSandreHbNomemclature;
+             $i++;
+         }
+         $pgCmdInvertPrelems = $repoPgCmdInvertPrelem->getPgCmdInvertPrelemByPrelev($pgCmdPrelevHbInvert);
+//          \Symfony\Component\VarDumper\VarDumper::dump($pgCmdInvertPrelems);
+//         return new response ('nb recouv : ' . count($pgCmdInvertRecouvs) . ' nb prelem :  ' . count($pgCmdInvertPrelems));
+        $tabPrelems = array();
+         $i = 0;
+         foreach($pgCmdInvertPrelems as $pgCmdInvertPrelem){
+             $tabPrelems[$i]['prelem'] = $pgCmdInvertPrelem;
+               $pgSandreHbNomemclature = $repoPgSandreHbNomemclatures->getPgSandreHbNomemclaturesByCodeNomemclatureCodeElement(274, $pgCmdInvertPrelem->getSubstrat());
+             $tabPrelems[$i]['nomenclature'] = $pgSandreHbNomemclature;
+             $i++;
+         }
+         $pgCmdInvertListes = $repoPgCmdInvertListe->getPgCmdInvertListeByPrelev($pgCmdPrelevHbInvert);
+      
+        return $this->render('AeagSqeBundle:DepotHydrobio:prelevementDetail.html.twig', array('user' => $pgProgWebUser,
+                    'demande' => $pgCmdDemande,
+                    'prelev' => $pgCmdPrelev,
+                    'pgCmdPrelevHbInvert' => $pgCmdPrelevHbInvert,
+                    'pgCmdInvertRecouvs' => $tabRecouvs,
+                    'pgCmdInvertPrelems' => $tabPrelems,
+                    'pgCmdInvertListes' => $pgCmdInvertListes ));
+    }
 
     public function telechargerAction($demandeId) {
         $user = $this->getUser();
@@ -282,6 +342,7 @@ class DepotHydrobioController extends Controller {
 
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
         $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
+        $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
         $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
 
         $pgProgWebUser = $repoPgProgWebUsers->findOneByExtId($user->getId());
@@ -323,11 +384,11 @@ class DepotHydrobioController extends Controller {
             // Envoi du fichier sur le serveur du sandre pour validationFormat
             $excelObj = $this->get('xls.load_xls5');
             $tabFichiers = $this->get('aeag_sqe.depotHydrobio')->extraireFichier($demandeId, $emSqe, $reponse, $pathBase, $nomFichier, $session, $excelObj);
-            
+
 //             \Symfony\Component\VarDumper\VarDumper::dump($tabFichiers);
 //              return new Response ('');   
-            
-            
+
+
             $erreur = false;
             for ($i = 0; $i < count($tabFichiers); $i++) {
                 for ($j = 0; $j < count($tabFichiers[$i]['feuillet']); $j++) {
@@ -401,6 +462,26 @@ class DepotHydrobioController extends Controller {
 
             $session->getFlashBag()->add('notice-error', 'Erreur lors du téléchargement du fichier ' . $nomFichier);
         }
+
+        $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByDemande($pgCmdDemande);
+        $nbPrelevs = count($pgCmdPrelevs);
+        $nbPrelevM40 = 0;
+        foreach ($pgCmdPrelevs as $pgCmdPrelev) {
+            if ($pgCmdPrelev->getPhaseDmd()->getCodePhase() == 'M40') {
+                $nbPrelevM40++;
+            }
+        }
+        if ($nbPrelevs == $nbPrelevM40) {
+            $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('D40');
+            $pgCmdDemande->setPhaseDemande($pgProgPhases);
+        } else {
+            $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('D30');
+            $pgCmdDemande->setPhaseDemande($pgProgPhases);
+       }
+        $emSqe->persist($pgCmdDemande);
+        $emSqe->flush();
+
+
         return $this->redirect($this->generateUrl('AeagSqeBundle_depotHydrobio_demandes', array('lotanId' => $pgCmdDemande->getLotan()->getId())));
     }
 
@@ -463,8 +544,11 @@ class DepotHydrobioController extends Controller {
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
         $repoPgCmdFichiersRps = $emSqe->getRepository('AeagSqeBundle:PgCmdFichiersRps');
+        $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
 
         $pgCmdFichiersRps = $repoPgCmdFichiersRps->findOneById($reponseId);
+        $pgCmdDemande = $pgCmdFichiersRps->getDemande();
+        $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
 
         // Suppression physique des fichiers
         $chemin = $this->getParameter('repertoire_depotHydrobio');
@@ -481,6 +565,18 @@ class DepotHydrobioController extends Controller {
             $emSqe->persist($pgCmdFichiersRps);
             $emSqe->flush();
         }
+
+        $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByDemande($pgCmdDemande);
+        $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M10');
+        foreach ($pgCmdPrelevs as $pgCmdPrelev) {
+            $pgCmdPrelev->setPhaseDmd($pgProgPhases);
+            $emSqe->persist($pgCmdPrelev);
+        }
+        $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('D30');
+        $pgCmdDemande->setPhaseDemande($pgProgPhases);
+        $emSqe->persist($pgCmdDemande);
+
+        $emSqe->flush();
 
         return $this->redirect($this->generateUrl('AeagSqeBundle_depotHydrobio_demandes', array('lotanId' => $pgCmdFichiersRps->getDemande()->getLotan()->getId())));
     }

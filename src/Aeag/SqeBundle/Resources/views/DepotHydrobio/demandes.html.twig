@@ -5,10 +5,10 @@
         <a href="{{ path('aeag_homepage') }}">Accueil</a> 
     </li>
     <li>
-           <a href="{{ path('AeagSqeBundle_depotHydrobio_index') }}">Lots</a> 
+        <a href="{{ path('AeagSqeBundle_depotHydrobio_index') }}">Lots</a> 
     </li>
     <li class="active">
-          Demandes
+        Demandes
     </li>
 {% endblock breadcrumb %} 
 
@@ -35,13 +35,13 @@
                 </tr>
             </thead>
             <tbody>
-                 {%if demandes | length%} 
+                {%if demandes | length%} 
                     {% for demande in demandes %}
-                       {% if demande.prestataire == user.prestataire %} 
-                       <tr style="background-color: #aac3f1">
-                        {% else %}
+                        {% if demande.phaseDemande.codePhase == 'D40' %} 
+                            <tr class="success">
+                            {% else %}
                             <tr>
-                        {% endif %}
+                            {% endif %}
                             <td align="center" nowrap>
                                 <a id="id_{{demande.id}}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_depotHydrobio_prelevements',{'demandeId' : demande.id})}}" title="Liste des prélèvements">
                                     <i class="fa fa-eye"></i> 
@@ -64,18 +64,27 @@
                             <td>{{ demande.phaseDemande.libellePhase }}</td>
                             <td>{{ demande.formatFichier }}</td>
                             <td align="center" nowrap>
-                                 {% if reponses[demande.id] | length %}
-                                       <a id="{{demande.id}}" class="btn btn-info btn-voir-reponses" data-toggle="modal" href="#" title="Voir les dépôts">
-                                         <span class="badge">{{ reponses[demande.id] | length}}</span>
-                                       </a>
-                                    {% endif %}
+                                {% if reponses[demande.id] | length %}
+                                    <a id="{{demande.id}}" class="btn btn-info btn-voir-reponses" data-toggle="modal" href="#" title="Voir les dépôts">
+                                        <span class="badge">{{ reponses[demande.id] | length}}</span>
+                                    </a>
+                                {% endif %}
                             </td>
                         </tr>
                     {% endfor %}
                 {% endif %}
             </tbody>
         </table>
-       
+
+        <div class="row">
+            <div class="col-md-12 pull-right text-info">
+                <ul class="list-inline">
+                    <li><span class="label label-success">Correct</span></li>
+                        {# <li><span class="label label-danger"><i class="fa fa-exclamation-triangle"> En cours de développement</i></span></li>#}
+                </ul>  
+            </div>
+        </div>      
+
     </div>
 {%endblock content %}    
 
@@ -86,7 +95,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="modal modal-reponse fade" id="modal_reponses_selection">
         <div class="modal-dialog">
             <div class="modal-content" id="modal-reponses-selection-content">
@@ -96,92 +105,92 @@
 {%endblock modal %}
 
 {% block scripts %}
-    
+
     jQuery(document).ready(function() {
-        $('.btn-telecharger').click(function (){
-            setTimeout("window.location.reload()",2000);//or other value
-        });
-        
-         $('.btn-deposer-reponse').click(function (e){
-         e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-           $('#modalTraitementEncours').modal('toggle');
-            var url = '{{ path("AeagSqeBundle_depotHydrobio_reponses_selectionner",{"demandeId":  "par1" }) }}';
-            var demandeId = $(this).data('id');
-            url = url.replace("par1", demandeId);
-           $.ajax({
-                url: url,
-                type: 'get',
-                success: function(html) {
-                    $('#modal-reponses-selection-content').empty().append(html);
-                    $('#modalTraitementEncours').modal('hide');
-                    $('#modal_reponses_selection').modal();
-                }
-            });
-         });
-            
-           
-        $('.btn-voir-reponses').click(function (){
-            $('#modalTraitementEncours').modal();
-            var url = '{{ path("AeagSqeBundle_depotHydrobio_reponses",{"demandeId":  "par1" }) }}';
-            url = url.replace("par1", $(this).attr('id'));
-            $.ajax({
-                url: url,
-                type: 'get',
-                success: function(html) {
-                    $('#modal-reponses-content').empty().append(html);
-                    $('#modalTraitementEncours').modal('hide');
-                    $('#modal_reponses').modal();
-                }
-            });
-            
-        });
-    
-        var table = $('#idTable_demandes').DataTable(
-            {"stateSave": true,
-             "order": [[ 1, 'asc' ], [ 2, 'asc' ]],
-            "oLanguage": {
-            "sSearch": "Filtre",
-            "sFirst": "1ere page",
-            "sLast": "Dernière page",
-            "sNext": "Prochaine page",
-            "sPrevious": "Page précédente",
-            "EmptyTable": "Pas de données",
-            "sInfo": "Nombre d'enregistrements :  _TOTAL_",
-            "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
-            "sZeroRecords": "Pas d'enregistrement à afficher",
-            "sInfoEmpty": "Pas d'enregistrement à afficher",
-            "sInfoThousands": " ",
-            "sLengthMenu": 'Afficher <select id="select-length-menu">' +
-                '<option value="10">10</option>' +
-                '<option value="20">20</option>' +
-                '<option value="30">30</option>' +
-                '<option value="40">40</option>' +
-                '<option value="50">50</option>' +
-                '<option value="-1">Tous</option>' +
-                '</select> enregistrements',
-            "sPaginationType": "full_numbers"
-            }
-            }
-            );
-
-            $("#idTable_demandes thead td").each( function ( i ) {
-
-            if (i != 0){
-            var select = $('<select><option value=""></option></select>')
-            .appendTo( $(this).empty() )
-            .on( 'change', function () {
-            table.column( i )
-            .search( $(this).val() )
-            .draw();
-            });
-
-            table.column( i ).data().unique().sort().each( function ( d, j ) {
-                select.append( '<option value="'+d+'">'+d+'</option>' )
-            });
-            };
-            }); 
-            
-            $('#select-length-menu').val("-1");
+    $('.btn-telecharger').click(function (){
+    setTimeout("window.location.reload()",2000);//or other value
     });
-    
+
+    $('.btn-deposer-reponse').click(function (e){
+    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+    $('#modalTraitementEncours').modal('toggle');
+    var url = '{{ path("AeagSqeBundle_depotHydrobio_reponses_selectionner",{"demandeId":  "par1" }) }}';
+    var demandeId = $(this).data('id');
+    url = url.replace("par1", demandeId);
+    $.ajax({
+    url: url,
+    type: 'get',
+    success: function(html) {
+    $('#modal-reponses-selection-content').empty().append(html);
+    $('#modalTraitementEncours').modal('hide');
+    $('#modal_reponses_selection').modal();
+    }
+    });
+    });
+
+
+    $('.btn-voir-reponses').click(function (){
+    $('#modalTraitementEncours').modal();
+    var url = '{{ path("AeagSqeBundle_depotHydrobio_reponses",{"demandeId":  "par1" }) }}';
+    url = url.replace("par1", $(this).attr('id'));
+    $.ajax({
+    url: url,
+    type: 'get',
+    success: function(html) {
+    $('#modal-reponses-content').empty().append(html);
+    $('#modalTraitementEncours').modal('hide');
+    $('#modal_reponses').modal();
+    }
+    });
+
+    });
+
+    var table = $('#idTable_demandes').DataTable(
+    {"stateSave": true,
+    "order": [[ 1, 'asc' ], [ 2, 'asc' ]],
+    "oLanguage": {
+    "sSearch": "Filtre",
+    "sFirst": "1ere page",
+    "sLast": "Dernière page",
+    "sNext": "Prochaine page",
+    "sPrevious": "Page précédente",
+    "EmptyTable": "Pas de données",
+    "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+    "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+    "sZeroRecords": "Pas d'enregistrement à afficher",
+    "sInfoEmpty": "Pas d'enregistrement à afficher",
+    "sInfoThousands": " ",
+    "sLengthMenu": 'Afficher <select id="select-length-menu">' +
+        '<option value="10">10</option>' +
+        '<option value="20">20</option>' +
+        '<option value="30">30</option>' +
+        '<option value="40">40</option>' +
+        '<option value="50">50</option>' +
+        '<option value="-1">Tous</option>' +
+        '</select> enregistrements',
+    "sPaginationType": "full_numbers"
+    }
+    }
+    );
+
+    $("#idTable_demandes thead td").each( function ( i ) {
+
+    if (i != 0){
+    var select = $('<select><option value=""></option></select>')
+    .appendTo( $(this).empty() )
+    .on( 'change', function () {
+    table.column( i )
+    .search( $(this).val() )
+    .draw();
+    });
+
+    table.column( i ).data().unique().sort().each( function ( d, j ) {
+    select.append( '<option value="'+d+'">'+d+'</option>' )
+    });
+    };
+    }); 
+
+    $('#select-length-menu').val("-1");
+    });
+
 {%endblock scripts %}    

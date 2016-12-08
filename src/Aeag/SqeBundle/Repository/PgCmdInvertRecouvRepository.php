@@ -9,14 +9,13 @@ use Doctrine\ORM\EntityRepository;
  * @package Aeag\SqeBundle\Repository
  */
 class PgCmdInvertRecouvRepository extends EntityRepository {
-    
-      
+
     /**
      * @return array
      */
-    public function getPPgCmdInvertRecouvs() {
+    public function getPgCmdInvertRecouvs() {
         $query = "select c";
-        $query = $query . " from Aeag\SqeBundle\Entity\PPgCmdInvertRecouv c";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdInvertRecouv c";
         $qb = $this->_em->createQuery($query);
         //print_r($query);
         return $qb->getResult();
@@ -25,14 +24,27 @@ class PgCmdInvertRecouvRepository extends EntityRepository {
     /**
      * @return array
      */
-    public function getPPgCmdInvertRecouvByPrelev($pgCmdPrelevHbInvert) {
+    public function getPgCmdInvertRecouvByPrelev($pgCmdPrelevHbInvert) {
         $query = "select c";
-        $query = $query . " from Aeag\SqeBundle\Entity\PPgCmdInvertRecouv c";
-        $query = $query . " where c.prelev = " . $pgCmdPrelevHbInvert->getPrelev() ;
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdInvertRecouv c";
+        $query = $query . " where c.prelev = " . $pgCmdPrelevHbInvert->getPrelev()->getId();
+         $query = $query . " order by c.substrat";
         $qb = $this->_em->createQuery($query);
-        //print_r($query);
+        print_r($query . '<br/>');
         return $qb->getResult();
     }
-    
-    
+
+    /**
+     * @return array
+     */
+    public function getPgCmdInvertRecouvByPrelevSubstrat($pgCmdPrelevHbInvert, $substrat) {
+        $query = "select c";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdInvertRecouv c";
+        $query = $query . " where c.prelev = " . $pgCmdPrelevHbInvert->getPrelev()->getId();
+        $query = $query . " and c.substrat = '" . $substrat . "'";
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+        return $qb->getOneOrNullResult();
+    }
+
 }
