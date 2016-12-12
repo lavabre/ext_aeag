@@ -1714,19 +1714,24 @@ class ProgrammationLotController extends Controller {
                 $i = 0;
                 foreach ($tabLotBis as $lot) {
                     $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByAnneeLot($critAnnee, $lot);
-                    foreach ($pgProgLotAns as $pgProgLotAn) {
-                        if ($pgProgLotAn) {
-                            $trouve = false;
-                            for ($j = 0; $j < count($tabLots); $j++) {
-                                if ($tabLots[$j]->getId() == $lot->getId()) {
-                                    $trouve = true;
+                    if (count($pgProgLotAns) > 0) {
+                        foreach ($pgProgLotAns as $pgProgLotAn) {
+                            if ($pgProgLotAn) {
+                                $trouve = false;
+                                for ($j = 0; $j < count($tabLots); $j++) {
+                                    if ($tabLots[$j]->getId() == $lot->getId()) {
+                                        $trouve = true;
+                                    }
+                                }
+                                if (!$trouve) {
+                                    $tabLots[$i] = $lot;
+                                    $i++;
                                 }
                             }
-                            if (!$trouve) {
-                                $tabLots[$i] = $lot;
-                                $i++;
-                            }
                         }
+                    } else {
+                        $tabLots[$i] = $lot;
+                        $i++;
                     }
                 }
             }
