@@ -27,10 +27,10 @@ class PgCmdInvertPrelemRepository extends EntityRepository {
     public function getPgCmdInvertPrelemByPrelev($pgCmdPrelevHbInvert) {
         $query = "select c";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdInvertPrelem c";
-        $query = $query . " where c.prelev = " . $pgCmdPrelevHbInvert->getPrelev()->getId();
-        $query = $query . " order by c.prelem";
+       $query = $query . " where c.prelev = " . $pgCmdPrelevHbInvert->getPrelev()->getId();
+       $query = $query . " order by c.prelem";
         $qb = $this->_em->createQuery($query);
-        print_r($query . '<br/>');
+        //print_r($query . '<br/>');
         return $qb->getResult();
     }
 

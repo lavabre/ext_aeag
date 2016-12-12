@@ -145,15 +145,14 @@ class DepotHydrobioController extends Controller {
         $repoPgCmdInvertListe = $emSqe->getRepository('AeagSqeBundle:PgCmdInvertListe');
         $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
         $repoPgSandreHbNomemclatures = $emSqe->getRepository('AeagSqeBundle:PgSandreHbNomemclatures');
+        $repoPgSandreAppellationTaxon = $emSqe->getRepository('AeagSqeBundle:PgSandreAppellationTaxon');
 
         $pgProgWebUser = $repoPgProgWebUsers->findOneByExtId($user->getId());
         $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevById($prelevId);
         $pgCmdDemande = $pgCmdPrelev->getdemande();
         
          $pgCmdPrelevHbInvert = $repoPgCmdPrelevHbInvert->getPgCmdPrelevHbInvertByPrelev($pgCmdPrelev);
-//           \Symfony\Component\VarDumper\VarDumper::dump($pgCmdPrelevHbInvert);
-         $pgCmdInvertRecouvs = $repoPgCmdInvertRecouv->getPgCmdInvertRecouvByPrelev($pgCmdPrelevHbInvert);
-//           \Symfony\Component\VarDumper\VarDumper::dump($pgCmdInvertRecouvs);
+           $pgCmdInvertRecouvs = $repoPgCmdInvertRecouv->getPgCmdInvertRecouvByPrelev($pgCmdPrelevHbInvert);
          $tabRecouvs = array();
          $i = 0;
          foreach($pgCmdInvertRecouvs as $pgCmdInvertRecouv){
@@ -163,8 +162,8 @@ class DepotHydrobioController extends Controller {
              $i++;
          }
          $pgCmdInvertPrelems = $repoPgCmdInvertPrelem->getPgCmdInvertPrelemByPrelev($pgCmdPrelevHbInvert);
-//          \Symfony\Component\VarDumper\VarDumper::dump($pgCmdInvertPrelems);
-//         return new response ('nb recouv : ' . count($pgCmdInvertRecouvs) . ' nb prelem :  ' . count($pgCmdInvertPrelems));
+  //        \Symfony\Component\VarDumper\VarDumper::dump($pgCmdInvertPrelems);
+ //        return new response ('nb recouv : ' . count($pgCmdInvertRecouvs) . ' nb prelem :  ' . count($pgCmdInvertPrelems));
         $tabPrelems = array();
          $i = 0;
          foreach($pgCmdInvertPrelems as $pgCmdInvertPrelem){
@@ -174,6 +173,14 @@ class DepotHydrobioController extends Controller {
              $i++;
          }
          $pgCmdInvertListes = $repoPgCmdInvertListe->getPgCmdInvertListeByPrelev($pgCmdPrelevHbInvert);
+         $tabListes = array();
+         $i = 0;
+         foreach($pgCmdInvertListes as $pgCmdInvertListe){
+             $tabListes[$i]['liste'] = $pgCmdInvertListe;
+             $pgSandreAppellationTaxon = $repoPgSandreAppellationTaxon->getPgSandreAppellationTaxonByCodeAppelTaxonCodeSupport($pgCmdInvertListe->getTaxon(), '13');
+             $tabListes[$i]['taxon']  =  $pgSandreAppellationTaxon;    
+             $i++;
+         }
       
         return $this->render('AeagSqeBundle:DepotHydrobio:prelevementDetail.html.twig', array('user' => $pgProgWebUser,
                     'demande' => $pgCmdDemande,
@@ -181,7 +188,7 @@ class DepotHydrobioController extends Controller {
                     'pgCmdPrelevHbInvert' => $pgCmdPrelevHbInvert,
                     'pgCmdInvertRecouvs' => $tabRecouvs,
                     'pgCmdInvertPrelems' => $tabPrelems,
-                    'pgCmdInvertListes' => $pgCmdInvertListes ));
+                    'pgCmdInvertListes' => $tabListes ));
     }
 
     public function telechargerAction($demandeId) {

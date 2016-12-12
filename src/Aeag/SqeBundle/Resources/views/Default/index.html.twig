@@ -87,9 +87,9 @@
                         <div class="panel-body">
                             <div class="btn-group-vertical col-md-offset-2">
                                 <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_echangefichiers_index')}}" title="Echange EDI LABO"><div class="text-left"><i class="fa fa-caret-right"></i> Echange EDI LABO</div></a>
-                                {% if  not app.session.get('evolution')%}
+                              {#  {% if  not app.session.get('evolution')%}#}
                                     <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_depotHydrobio_index')}}" title="Dépôt Hydrobio"><div class="text-left"><i class="fa fa-caret-right"></i> Dépôt Hydrobio</div></a>
-                                {% endif %}
+                                {#{% endif %}#}
                                 {% if app.session.get('suiviDonnees') %}
                                     <a class="btn btn-primary btn-group-justified" href="{{ path('AeagSqeBundle_saisieDonnees_index')}}" title="Saisie Terrain / Labo"><div class="text-left"><i class="fa fa-caret-right"></i> Saisie Terrain / Labo</div></a>
                                 {% endif %}
@@ -173,9 +173,9 @@
                         <div class="panel-body">
                             <div class="btn-group-vertical col-md-offset-2">
                                 <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_echangefichiers_index')}}" title="Echange EDI LABO"><div class="text-left"><i class="fa fa-caret-right"></i> Echange EDI LABO</div></a>
-                                {% if  not app.session.get('evolution')%}
+                                {#{% if  not app.session.get('evolution')%}#}
                                     <a class="btn btn-primary  btn-group-justified" href="{{ path('AeagSqeBundle_depotHydrobio_index')}}" title="Dépôt Hydrobio"><div class="text-left"><i class="fa fa-caret-right"></i> Dépôt Hydrobio</div></a>
-                                {% endif %}
+                               {# {% endif %}#}
                                 {% if app.session.get('suiviDonnees') %}
                                     <a class="btn btn-primary btn-group-justified" href="{{ path('AeagSqeBundle_saisieDonnees_index')}}" title="Saisie Terrain / Labo"><div class="text-left"><i class="fa fa-caret-right"></i> Saisie Terrain / Labo</div></a>
                                 {% endif %}

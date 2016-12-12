@@ -84,7 +84,9 @@
                                             </div>
                                         {% else %}
                                             <div id="idGroupeCocher_{{ groupe.groupe.id }}">
-                                                <span class="glyphicon glyphicon-check" aria-hidden="true"></span>
+                                                  {% if groupe.renseigne == 'O' %}
+                                                     <span class="glyphicon glyphicon-check" aria-hidden="true"></span>
+                                                 {% endif %}
                                             </div>
                                         {% endif %}
                                     </td> 
