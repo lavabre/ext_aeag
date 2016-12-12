@@ -34,7 +34,9 @@
                         </a>
                     {% endif %}    
                 </td>
-                <td>{{reponse.dateDepot | date("d/m/Y H:i")}}</td>
+                <td><span class="hidden">{{reponse.dateDepot | date("Y/m/d H:i") }}</span>
+                    {{reponse.dateDepot | date("d/m/Y H:i") }}
+                </td>
                 <td>{{reponse.nomFichier}}</td>
                 <td>{{reponse.phaseFichier.libellePhase}}</td>
                 <td>
@@ -64,7 +66,22 @@
 
 
 <script>
-    var table1 = $('#idTable_reponses').DataTable(
+    
+    var table1 = $('#idTable_reponses').DataTable( {
+        "stateSave": true,
+        "order": [[ 1, "asc" ]],
+        
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
+        },
+        "aLengthMenu": [
+            [10, 25, 50, 100, -1],
+            [10, 25, 50, 100, "Tous"]
+        ],
+        "iDisplayLength": -1
+    } );
+    
+    /*var table1 = $('#idTable_reponses').DataTable(
             {"stateSave": true,
                 "order": [[1, "desc"]],
                 "oLanguage": {
@@ -88,27 +105,43 @@
                             '<option value="-1">Tous</option>' +
                             '</select> enregistrements',
                     "sPaginationType": "full_numbers"
-                }
+                },
+                "columnDefs": [ {
+                    "type": "date-uk", 
+                    "targets": 1,
+                    "sort" : "asc"
+                }]
             }
     );
+    
+    $.extend(jQuery.fn.dataTableExt.oSort, {
+        "date-uk-pre": function (a) {
+            var x;
+            try {
+                var dateA = a.replace(/ /g, '').split("/");
+                var day = parseInt(dateA[0], 10);
+                var month = parseInt(dateA[1], 10);
+                var year = parseInt(dateA[2], 10);
+                var date = new Date(year, month - 1, day);
+                x = date.getTime();
+                console.log('yaya');
+            }
+            catch (err) {
+                console.log('erf');
+                x = new Date().getTime();
+            }
+            console.log(x);
+            return x;
+        },
 
-    $("idTable_reponses thead td").each(function (i) {
+        "date-uk-asc": function (a, b) {
+            return a - b;
+        },
 
-        if (i != 0) {
-            var select = $('<select><option value=""></option></select>')
-                    .appendTo($(this).empty())
-                    .on('change', function () {
-                        table1.column(i)
-                                .search($(this).val())
-                                .draw();
-                    });
-
-            table1.column(i).data().unique().sort().each(function (d, j) {
-                select.append('<option value="' + d + '">' + d + '</option>')
-            });
+        "date-uk-desc": function (a, b) {
+            return b - a;
         }
-        ;
-    });
+    });*/
     
     $('#btn-deposer-reponse').click(function (){
         $('#modalTraitementEncours').modal();
