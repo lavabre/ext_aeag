@@ -15,7 +15,7 @@ class PgCmdInvertPrelem
 {
     /**
      * @var string
-     *
+     * @ORM\Id
      * @ORM\Column(name="prelem", type="string", length=3, nullable=false)
   
      */

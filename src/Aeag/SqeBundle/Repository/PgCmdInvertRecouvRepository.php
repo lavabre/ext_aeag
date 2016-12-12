@@ -30,7 +30,7 @@ class PgCmdInvertRecouvRepository extends EntityRepository {
         $query = $query . " where c.prelev = " . $pgCmdPrelevHbInvert->getPrelev()->getId();
          $query = $query . " order by c.substrat";
         $qb = $this->_em->createQuery($query);
-        print_r($query . '<br/>');
+        //print_r($query . '<br/>');
         return $qb->getResult();
     }
 

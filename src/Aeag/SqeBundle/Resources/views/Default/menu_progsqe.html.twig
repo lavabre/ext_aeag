@@ -33,9 +33,9 @@
 
     <ul class="dropdown-menu">
         <li><a href="{{ path('AeagSqeBundle_echangefichiers_index')}}">Echange EDI LABO</a></li>
-        {% if  not app.session.get('evolution')%}
+       {# {% if  not app.session.get('evolution')%}#}
         <li><a href="{{ path('AeagSqeBundle_depotHydrobio_index')}}">Dépôt Hydrobio</a></li>
-        {% endif %}   
+       {# {% endif %}   #}
         {% if app.session.get('suiviDonnees') %}
                 <li><a  href="{{ path('AeagSqeBundle_saisieDonnees_index')}}" title="Saisie Terrain / Labo">Saisie Terrain / Labo</a></li>
         {% endif %}

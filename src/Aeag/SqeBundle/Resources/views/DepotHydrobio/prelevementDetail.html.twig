@@ -66,12 +66,12 @@
                         <div class="panel-body">
                             <ul  class="nav nav-pills nav-justified" role="tablist">
                                 <li class="active"><a id="idTab_1" href="#tab_1_1" data-toggle="tab"><h4>Informations sur le site</h4></a></li>
-                                <li class=""><a id="idTab_2" href="#tab_1_2" data-toggle="tab"><h4>Informations sur l'échantillon  {{ pgCmdInvertPrelems | length }}</h4></a></li>
+                                <li class=""><a id="idTab_2" href="#tab_1_2" data-toggle="tab"><h4>Informations sur l'échantillon</h4></a></li>
                                 <li class=""><a id="idTab_3" href="#tab_1_3" data-toggle="tab"><h4>Quantification de l'information</h4></a></li>
                             </ul>
                             <div  class="tab-content">
                                 <div class="tab-pane fade active in" id="tab_1_1">
-                                    <table class="table table-bordered table-condensed table-advance" id="idTable_detail">
+                                    <table class="table table-bordered table-condensed table-advance" id="idTable_recouv">
                                         <thead>
                                             <tr>
                                                 <th>Substrat</th>
@@ -91,7 +91,7 @@
                                     </table>
                                 </div>
                                 <div class="tab-pane fade" id="tab_1_2">
-                                    <table class="table table-bordered table-condensed table-advance" id="idTable_detail">
+                                    <table class="table table-bordered table-condensed table-advance" id="idTable_prelem">
                                         <thead>
                                             <tr>
                                                 <th>Micorprélevement</th>
@@ -124,7 +124,26 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                <div class="tab-pane fade" id="tab_1_3"></div>
+                                <div class="tab-pane fade" id="tab_1_3">
+                                    <table class="table table-bordered table-condensed table-advance" id="idTable_liste">
+                                        <thead>
+                                            <tr>
+                                                <th>Taxon</th>
+                                                <th>Sandre</th>
+                                                <th>Dénombrement</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for pgCmdInvertListe in pgCmdInvertListes %}
+                                                <tr>
+                                                    <td>{{  pgCmdInvertListe.liste.taxon }}
+                                                    <td>{{  pgCmdInvertListe.liste.codeSandre  }}</td>
+                                                    <td>{{ pgCmdInvertListe.liste.denombrement }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                             <div id="idCache"></div>
                         </div>
@@ -141,10 +160,65 @@
 
     jQuery(document).ready(function() {
 
-
-    var table = $('#idTable_prelevements').DataTable(
+   var table_recouv = $('#idTable_recouv').DataTable(
     {"stateSave": true,
-    "order": [[ 1, 'asc' ], [ 2, 'asc' ]],
+    "order": [[ 0, 'asc' ]],
+    "oLanguage": {
+    "sSearch": "Filtre",
+    "sFirst": "1ere page",
+    "sLast": "Dernière page",
+    "sNext": "Prochaine page",
+    "sPrevious": "Page précédente",
+    "EmptyTable": "Pas de données",
+    "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+    "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+    "sZeroRecords": "Pas d'enregistrement à afficher",
+    "sInfoEmpty": "Pas d'enregistrement à afficher",
+    "sInfoThousands": " ",
+    "sLengthMenu": 'Afficher <select id="select-length-menu">' +
+        '<option value="10">10</option>' +
+        '<option value="20">20</option>' +
+        '<option value="30">30</option>' +
+        '<option value="40">40</option>' +
+        '<option value="50">50</option>' +
+        '<option value="-1">Tous</option>' +
+        '</select> enregistrements',
+    "sPaginationType": "full_numbers"
+    }
+    }
+    );
+    
+     var table_prelem = $('#idTable_prelem').DataTable(
+    {"stateSave": true,
+    "order": [[ 0, 'asc' ], [ 1, 'asc' ]],
+    "oLanguage": {
+    "sSearch": "Filtre",
+    "sFirst": "1ere page",
+    "sLast": "Dernière page",
+    "sNext": "Prochaine page",
+    "sPrevious": "Page précédente",
+    "EmptyTable": "Pas de données",
+    "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+    "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+    "sZeroRecords": "Pas d'enregistrement à afficher",
+    "sInfoEmpty": "Pas d'enregistrement à afficher",
+    "sInfoThousands": " ",
+    "sLengthMenu": 'Afficher <select id="select-length-menu">' +
+        '<option value="10">10</option>' +
+        '<option value="20">20</option>' +
+        '<option value="30">30</option>' +
+        '<option value="40">40</option>' +
+        '<option value="50">50</option>' +
+        '<option value="-1">Tous</option>' +
+        '</select> enregistrements',
+    "sPaginationType": "full_numbers"
+    }
+    }
+    );
+    
+     var table_liste = $('#idTable_liste').DataTable(
+    {"stateSave": true,
+    "order": [[ 0, 'asc' ], [ 1, 'asc' ]],
     "oLanguage": {
     "sSearch": "Filtre",
     "sFirst": "1ere page",
@@ -170,24 +244,7 @@
     }
     );
 
-    $("#idTable_demandes thead td").each( function ( i ) {
-
-    if (i != 0){
-    var select = $('<select><option value=""></option></select>')
-    .appendTo( $(this).empty() )
-    .on( 'change', function () {
-    table.column( i )
-    .search( $(this).val() )
-    .draw();
     });
 
-    table.column( i ).data().unique().sort().each( function ( d, j ) {
-    select.append( '<option value="'+d+'">'+d+'</option>' )
-    });
-    };
-    }); 
-
-    $('#select-length-menu').val("-1");
-    });
 
 {%endblock scripts %}    
