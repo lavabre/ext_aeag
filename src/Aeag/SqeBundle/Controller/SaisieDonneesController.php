@@ -737,7 +737,7 @@ class SaisieDonneesController extends Controller {
                                 $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M30');
                                 $pgCmdPrelev->setRealise('O');
                                 $pgCmdPrelev->setPhaseDmd($pgProgPhases);
-                                $pgCmdPrelev->setDatePrelev($today);
+                              //  $pgCmdPrelev->setDatePrelev($today);
                             } else {
                                 $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M20');
                                 $pgCmdPrelev->setRealise('N');
@@ -750,7 +750,7 @@ class SaisieDonneesController extends Controller {
                     $tabPgCmdDemandes[$id]['pgCmdPrelevs'] = $tabPgCmdPrelevs;
                     $id++;
                 }
-                sort($tabPgCmdDemandes);
+            //    sort($tabPgCmdDemandes);
                 $tabStations[$is]['pgCmdDemandes'] = $tabPgCmdDemandes;
 
                 $is++;

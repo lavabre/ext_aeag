@@ -373,13 +373,13 @@
         {%endblock statistiques %}
         
          {% block livreOr %}
-            {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+      {#      {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
                 <a  id="idLivreOr" href="{{ path('livreor') }}">
                     <button class="btn btn-primary btn-xs" type="button">
                         <i class="fa fa-gratipay"></i>&nbsp; Livre d'or
                        </button>
                  </a>
-            {% endif %}
+            {% endif %}#}
         {%endblock livreOr %}
         
         {# &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;   Webmaster : {{ webmaster }}#}
