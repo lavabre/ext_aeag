@@ -25,7 +25,7 @@ class RelanceMailCommand extends AeagCommand {
         $this->output->writeln($date->format('d/m/Y H:i:s') . ' - Relance mail : Début');
         
         // Envoi de mails lorsque la DAI est déposé
-        $this->sendEmailDai();
+        //$this->sendEmailDai();
 
         // ANALYSE
         // Envoi des mails a J-7

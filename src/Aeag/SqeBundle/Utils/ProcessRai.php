@@ -97,13 +97,16 @@ class ProcessRai {
 
     public function getVersionEdilabo($xmlFileName) {
         $raiTab = json_decode(json_encode(\simplexml_load_file($xmlFileName)), true);
-        //labodest
-        //$codeScenario = $raiTab['Scenario']['CodeScenario'];
+        
         $codeScenario = "LABO_DEST";
+        if ($raiTab['Scenario']['CodeScenario'] == 'QUESU_PHY') {
+            $codeScenario = $raiTab['Scenario']['CodeScenario'];
+        }
+        
         // si 1.1 => 1.1 sinon 1
         $versionScenario = "1";
         if (isset($raiTab['Scenario']['VersionScenario'])) {
-            if ($raiTab['Scenario']['VersionScenario'] == "1.1") {
+            if ($raiTab['Scenario']['VersionScenario'] == "1.1" || $codeScenario == "QUESU_PHY") {
                 $versionScenario = $raiTab['Scenario']['VersionScenario'];
             }
         }
