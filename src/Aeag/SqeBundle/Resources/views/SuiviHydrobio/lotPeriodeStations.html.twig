@@ -200,7 +200,7 @@
 
     <div class="row responsive">
         <div class="col-xm-12">
-            <div class="small ">     
+            <div class="small">     
                 <table class="table table-bordered table-condensed table-advance table-responsive table-striped" id="idTable_demandes">
                     <thead>
                         <tr>
@@ -208,12 +208,14 @@
                             <th>Station</th>
                             <th>Libellé</th>
                             <th>Réseau</th>
+                            <th>Support</th>
                             <th>Autres prélèvements</th>
                             <th>Date</th>
                             <th>Statut</th>
                             <th>Validation</th>
                         </tr>
                          <tr>
+                            <td></td>
                             <td></td>
                             <td></td>
                             <td></td>
@@ -281,6 +283,9 @@
                                             </td>
                                             <td>
                                                 {{ station.reseau.nomRsx }}
+                                            </td>
+                                             <td>
+                                                {{ cmdPrelev.cmdPrelev.codeSupport.nomSupport }}
                                             </td>
                                             <td>
                                                 {%if  cmdPrelev.autrePrelevs %}
@@ -382,7 +387,7 @@
 
                          {#  api.columns().indexes().flatten().each( function ( i ) {#}
                          $("#idTable_demandes thead td").each( function ( i ) {
-                                 if (i != 0 && i != 1 && i != 2 && i != 4 && i != 5){
+                                 if (i != 0 && i != 1 && i != 2  && i != 5  && i != 6){
 
                                      var column =  api.column( i );
                                      var select = $('<select><option value=""></option></select>')

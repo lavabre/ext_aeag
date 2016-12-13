@@ -35,6 +35,19 @@ class PgCmdPrelevPcRepository extends EntityRepository {
         return $qb->getResult();
     }
     
+    /**
+     * @return array
+     */
+    public function getPgCmdPrelevPcByPrelevOrderByProfondeur($pgCmdPrelev) {
+        $query = "select c";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelevPc c";
+        $query = $query . " where c.prelev = " . $pgCmdPrelev->getId() ;
+        $query = $query . "order by c.profondeur " ;
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+        return $qb->getResult();
+    }
+    
      /**
      * @return array
      */

@@ -737,7 +737,7 @@ class SaisieDonneesController extends Controller {
                                 $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M30');
                                 $pgCmdPrelev->setRealise('O');
                                 $pgCmdPrelev->setPhaseDmd($pgProgPhases);
-                              //  $pgCmdPrelev->setDatePrelev($today);
+                                //  $pgCmdPrelev->setDatePrelev($today);
                             } else {
                                 $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M20');
                                 $pgCmdPrelev->setRealise('N');
@@ -750,7 +750,7 @@ class SaisieDonneesController extends Controller {
                     $tabPgCmdDemandes[$id]['pgCmdPrelevs'] = $tabPgCmdPrelevs;
                     $id++;
                 }
-            //    sort($tabPgCmdDemandes);
+                //    sort($tabPgCmdDemandes);
                 $tabStations[$is]['pgCmdDemandes'] = $tabPgCmdDemandes;
 
                 $is++;
@@ -3498,7 +3498,7 @@ class SaisieDonneesController extends Controller {
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevById($prelevId);
         $pgCmdDemande = $pgCmdPrelev->getDemande();
-        $pgCmdPrelevPcAll = $repoPgCmdPrelevPc->getPgCmdPrelevPcByPrelev($pgCmdPrelev);
+        $pgCmdPrelevPcAll = $repoPgCmdPrelevPc->getPgCmdPrelevPcByPrelevOrderByProfondeur($pgCmdPrelev);
         $pgCmdPrelevPc = $pgCmdPrelevPcAll[0];
 
         $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($periodeAnId);
@@ -3874,6 +3874,8 @@ class SaisieDonneesController extends Controller {
         $pgCmdPrelev->setProfMax($profMax);
         $emSqe->persist($pgCmdPrelev);
 
+
+
         $autresDemandes = $repoPgCmdDemande->getPgCmdDemandesByLotanPeriode($pgProgLotAn, $pgProgPeriodes);
         foreach ($autresDemandes as $autreDemande) {
             $autrePrelevs = $repoPgCmdPrelev->getPgCmdPrelevByDemandeStationPeriode($autreDemande, $pgRefStationMesure, $pgProgPeriodes);
@@ -3885,21 +3887,21 @@ class SaisieDonneesController extends Controller {
                     foreach ($pgCmdPrelevPcs as $autrePrelevPc) {
                         if (isset($_POST['nonRealise_' . $autrePrelevPc->getZoneVerticale()->getcodeZone() . '_' . $autrePrelev->getCodeSupport()->getCodeSupport()])) {
                             $autrePrelev = $autrePrelevPc->getPrelev();
-                            $autrePrelev->setRealise('O');
-                            $pgProgPhase = $repoPgProgPhases->getPgProgPhasesByCodePhase('M50');
-                            $autrePrelev->setPhaseDmd($pgProgPhase);
-                            $emSqe->persist($autrePrelev);
-                        } else {
-                            $autrePrelev = $autrePrelevPc->getPrelev();
                             $autrePrelev->setRealise('N');
                             $pgProgPhase = $repoPgProgPhases->getPgProgPhasesByCodePhase('M20');
                             $autrePrelev->setPhaseDmd($pgProgPhase);
                             $emSqe->persist($autrePrelev);
-                            if (isset($_POST['profAna_' . $autrePrelevPc->getZoneVerticale()->getcodeZone() . '_' . $autrePrelev->getCodeSupport()->getCodeSupport()])) {
-                                $profAna = $_POST['profAna_' . $autrePrelevPc->getZoneVerticale()->getcodeZone() . '_' . $autrePrelev->getCodeSupport()->getCodeSupport()];
-                                $autrePrelevPc->setProfondeur($profAna);
-                                $emSqe->persist($autrePrelevPc);
-                            }
+                        } else {
+                            $autrePrelev = $autrePrelevPc->getPrelev();
+                            $autrePrelev->setRealise('O');
+                            $pgProgPhase = $repoPgProgPhases->getPgProgPhasesByCodePhase('M50');
+                            $autrePrelev->setPhaseDmd($pgProgPhase);
+                            $emSqe->persist($autrePrelev);
+                        }
+                       if (isset($_POST['profAna_' . $autrePrelevPc->getZoneVerticale()->getcodeZone() . '_' . $autrePrelev->getCodeSupport()->getCodeSupport()])) {
+                            $profAna = $_POST['profAna_' . $autrePrelevPc->getZoneVerticale()->getcodeZone() . '_' . $autrePrelev->getCodeSupport()->getCodeSupport()];
+                            $autrePrelevPc->setProfondeur($profAna);
+                            $emSqe->persist($autrePrelevPc);
                         }
                     }
                 }
