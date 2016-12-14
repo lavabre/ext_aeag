@@ -3069,9 +3069,11 @@ class SaisieDonneesController extends Controller {
                                     if ($pgProgGrpParamRef->getTypeGrp() == 'ENV') {
                                         echo ('groupe: ' . $pgProgLotGrparAn->getId() . ' type : ' . $pgProgGrpParamRef->getTypeGrp() . '  pgCmdPrelev : ' . $pgCmdPrelev->getId() . ' parametre : ' . $pgProgLotParamAn->getId() . ' </br>');
                                         $nbParametresEnvSit++;
-                                        $pgCmdMesureEnv = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParamProg($pgCmdPrelev, $pgProgLotParamAn);
-                                        if ($pgCmdMesureEnv) {
-                                            $nbSaisieParametresEnv ++;
+                                        if ($pgCmdPrelev) {
+                                            $pgCmdMesureEnv = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParamProg($pgCmdPrelev, $pgProgLotParamAn);
+                                            if ($pgCmdMesureEnv) {
+                                                $nbSaisieParametresEnv ++;
+                                            }
                                         }
                                     }
 
@@ -3079,9 +3081,11 @@ class SaisieDonneesController extends Controller {
                                         if ($prestataire == $pgProgLotParamAn->getPrestataire() and $userPrestataire == $prestataire) {
                                             //echo ('groupe: ' . $pgProgLotGrparAn->getId() . ' type : ' . $pgProgGrpParamRef->getTypeGrp() . '  pgCmdPrelev : ' . $pgCmdPrelev->getId() . ' parametre : ' . $pgProgLotParamAn->getId() . ' </br>');
                                             $nbParametresEnvSit++;
-                                            $pgCmdAnalyse = $repoPgCmdAnalyse->getPgCmdAnalysesByPrelevParamProg($pgCmdPrelev, $pgProgLotParamAn);
-                                            if ($pgCmdAnalyse) {
-                                                $nbSaisieParametresSit ++;
+                                            if ($pgCmdPrelev) {
+                                                $pgCmdAnalyse = $repoPgCmdAnalyse->getPgCmdAnalysesByPrelevParamProg($pgCmdPrelev, $pgProgLotParamAn);
+                                                if ($pgCmdAnalyse) {
+                                                    $nbSaisieParametresSit ++;
+                                                }
                                             }
                                         }
                                     }
@@ -3091,9 +3095,11 @@ class SaisieDonneesController extends Controller {
                                     if ($pgProgGrpParamRef->getTypeGrp() == 'ANA') {
                                         //echo ('groupe: ' . $pgProgLotGrparAn->getId() . ' type : ' . $pgProgGrpParamRef->getTypeGrp() . '  pgCmdPrelev : ' . $pgCmdPrelev->getId() . ' parametre : ' . $pgProgLotParamAn->getId() . ' </br>');
                                         $nbParametresAna++;
-                                        $pgCmdAnalyse = $repoPgCmdAnalyse->getPgCmdAnalysesByPrelevParamProg($pgCmdPrelev, $pgProgLotParamAn);
-                                        if ($pgCmdAnalyse) {
-                                            $nbSaisieParametresAna ++;
+                                        if ($pgCmdPrelev) {
+                                            $pgCmdAnalyse = $repoPgCmdAnalyse->getPgCmdAnalysesByPrelevParamProg($pgCmdPrelev, $pgProgLotParamAn);
+                                            if ($pgCmdAnalyse) {
+                                                $nbSaisieParametresAna ++;
+                                            }
                                         }
                                     }
                                 }
@@ -3898,7 +3904,7 @@ class SaisieDonneesController extends Controller {
                             $autrePrelev->setPhaseDmd($pgProgPhase);
                             $emSqe->persist($autrePrelev);
                         }
-                       if (isset($_POST['profAna_' . $autrePrelevPc->getZoneVerticale()->getcodeZone() . '_' . $autrePrelev->getCodeSupport()->getCodeSupport()])) {
+                        if (isset($_POST['profAna_' . $autrePrelevPc->getZoneVerticale()->getcodeZone() . '_' . $autrePrelev->getCodeSupport()->getCodeSupport()])) {
                             $profAna = $_POST['profAna_' . $autrePrelevPc->getZoneVerticale()->getcodeZone() . '_' . $autrePrelev->getCodeSupport()->getCodeSupport()];
                             $autrePrelevPc->setProfondeur($profAna);
                             $emSqe->persist($autrePrelevPc);
