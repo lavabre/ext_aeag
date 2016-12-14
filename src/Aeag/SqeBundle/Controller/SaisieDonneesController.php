@@ -3113,17 +3113,20 @@ class SaisieDonneesController extends Controller {
 
                     // return new Response('');
 
-                    if ($nbParametresTotal == $nbSaisieParametresTotal) {
-                        $okPhase = true;
-                        $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M30');
-                        $pgCmdPrelev->setRealise('O');
-                        $pgCmdPrelev->setPhaseDmd($pgProgPhases);
-                    } else {
-                        $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M20');
-                        $pgCmdPrelev->setRealise('N');
-                        $pgCmdPrelev->setPhaseDmd($pgProgPhases);
+                    if ($pgCmdPrelev) {
+
+                        if ($nbParametresTotal == $nbSaisieParametresTotal) {
+                            $okPhase = true;
+                            $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M30');
+                            $pgCmdPrelev->setRealise('O');
+                            $pgCmdPrelev->setPhaseDmd($pgProgPhases);
+                        } else {
+                            $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M20');
+                            $pgCmdPrelev->setRealise('N');
+                            $pgCmdPrelev->setPhaseDmd($pgProgPhases);
+                        }
+                        $emSqe->persist($pgCmdPrelev);
                     }
-                    $emSqe->persist($pgCmdPrelev);
                 }
 
                 $emSqe->flush();
