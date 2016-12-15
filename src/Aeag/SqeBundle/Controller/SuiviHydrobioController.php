@@ -187,12 +187,20 @@ class SuiviHydrobioController extends Controller {
         $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($periodeAnId);
         $pgProgLotAn = $pgProgLotPeriodeAn->getLotAn();
         $pgProgLot = $pgProgLotAn->getLot();
-        
-        if ($pgProgLot->getTitulaire() != $pgProgWebUser->getPrestataire()  and   !$user->hasRole('ROLE_ADMINSQE')){
+
+        $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandeByLotan($pgProgLotAn);
+        $autoriser = false;
+        foreach ($pgCmdDemandes as $pgCmdDemande) {
+            if ($pgCmdDemande->getPrestataire() == $pgProgWebUser->getPrestataire()) {
+                $autoriser = true;
+                break;
+            }
+        }
+        if (!$autoriser and $user->hasRole('ROLE_PRESTASQE')) {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
-        
-        
+
+
         $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
         $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByPeriodeAn($pgProgLotPeriodeAn);
         $tabStations = array();
@@ -2795,7 +2803,7 @@ class SuiviHydrobioController extends Controller {
         if ($presta) {
             $pgRefCorresPresta = $repoPgRefCorresPresta->getPgRefCorresPrestaByAdrCorId($presta);
             $session->set('suiviHydrobio_prestataire', $pgRefCorresPresta->getNomCorres());
-        }else{
+        } else {
             $session->remove('suiviHydrobio_prestataire');
         }
         if ($avis) {
@@ -2805,7 +2813,7 @@ class SuiviHydrobioController extends Controller {
             if ($avis == 'D') {
                 $session->set('suiviHydrobio_avis', 'Défavorable');
             }
-        }else{
+        } else {
             $session->remove('suiviHydrobio_avis');
         }
         if ($statut) {
@@ -2815,10 +2823,10 @@ class SuiviHydrobioController extends Controller {
             if ($statut == 'F') {
                 $session->set('suiviHydrobio_statut', 'Effectué');
             }
-             if ($statut == 'N') {
+            if ($statut == 'N') {
                 $session->set('suiviHydrobio_statut', 'Non effectué');
             }
-        }else{
+        } else {
             $session->remove('suiviHydrobio_statut');
         }
         if ($validation) {
@@ -2828,13 +2836,13 @@ class SuiviHydrobioController extends Controller {
             if ($validation == 'R') {
                 $session->set('suiviHydrobio_validation', 'Refusé');
             }
-             if ($validation == 'E') {
+            if ($validation == 'E') {
                 $session->set('suiviHydrobio_validation', 'En attente');
             }
-        }else{
+        } else {
             $session->remove('suiviHydrobio_validation');
         }
-      
+
         $tabResultats = $repoPgCmdPrelev->getPgCmdPrelevBySupportPrestaAvisStatutValidation($pgSandreSupport, $presta, $avis, $statut, $validation);
         $tabStations = array();
         $i = 0;
