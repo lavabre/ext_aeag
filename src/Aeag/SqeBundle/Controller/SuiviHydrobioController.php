@@ -188,7 +188,7 @@ class SuiviHydrobioController extends Controller {
         $pgProgLotAn = $pgProgLotPeriodeAn->getLotAn();
         $pgProgLot = $pgProgLotAn->getLot();
         
-        if ($pgProgLot->getTitulaire() != $pgProgWebUser  and   !$user->hasRole('ROLE_ADMINSQE')){
+        if ($pgProgLot->getTitulaire() != $pgProgWebUser->getPrestataire()  and   !$user->hasRole('ROLE_ADMINSQE')){
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         
