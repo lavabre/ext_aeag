@@ -2555,11 +2555,14 @@ class SaisieDonneesController extends Controller {
             for ($i = 0; $i < count($tabStations); $i++) {
                 foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
                     $prestataire = $tabStations[$i]['prestataire'];
-                    $pgCmdDemande = $repoPgCmdDemande->getPgCmdDemandeByLotanPrestatairePeriode($pgProgLotAn, $prestataire, $pgProgPeriode);
-                    if ($pgCmdDemande) {
+                    $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandesByLotanPeriode($pgProgLotAn, $pgProgPeriode);
+                    $k = 0;
+                    foreach ($pgCmdDemandes as $pgCmdDemande) {
+                        $prestataire = $pgCmdDemande->getPrestataire();
                         $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevUniqueByPrestaPrelDemandeStationPeriode($prestataire, $pgCmdDemande, $tabStations[$i]['station'], $pgProgPeriode);
-                        $tabStations[$i]['demande'] = $pgCmdDemande;
-                        $tabStations[$i]['prelev'] = $pgCmdPrelev;
+                        $tabStations[$i]['demande'][$k]['demande'] = $pgCmdDemande;
+                        $tabStations[$i]['demande'][$k]['prelev'] = $pgCmdPrelev;
+                        $k++;
                     }
                 }
             }
@@ -2697,6 +2700,13 @@ class SaisieDonneesController extends Controller {
                             $contenu = 'ligne  ' . $ligne . '  :  Siret préleveur inconnu (' . $tab[5] . ')' . CHR(13) . CHR(10);
                             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                             fputs($rapport, $contenu);
+                        } else {
+                            for ($j = 0; $j < count($tabStations[$i]['demande']); $j++) {
+                                if ($tabStations[$i]['demande'][$j]['demande']->getPrestataire() == $pgRefCorresPresta) {
+                                    $pgCmdDemande = $tabStations[$i]['demande'][$j]['demande'];
+                                    $pgCmdPrelev = $tabStations[$i]['demande'][$j]['prelev'];
+                                }
+                            }
                         }
 
                         $dateActuel = new \DateTime();
@@ -2846,10 +2856,10 @@ class SaisieDonneesController extends Controller {
                             }
                         }
 
-                        $pgCmdPrelev = $tabStations[$i]['prelev'];
+                        //$pgCmdPrelev = $tabStations[$i]['prelev'];
                         if (!$pgCmdPrelev) {
                             $err = true;
-                            $contenu = 'ligne  ' . $ligne . '  :  Pas de prélevement pour la demande : ' . $tabStations[$i]['demande']->getCodeDemandeCmd() . ' de la station : ' . $tab[1] . ' pour le prestataire : ' . $tabStations[$i]['prestataire']->getAncnum() . CHR(13) . CHR(10);
+                            $contenu = 'ligne  ' . $ligne . '  :  Pas de prélevement pour la demande : ' . $pgCmdDemande->getCodeDemandeCmd() . ' de la station : ' . $tab[1] . ' pour le prestataire : ' . $prestataire->getAncnum() . CHR(13) . CHR(10);
                             ;
                             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                             fputs($rapport, $contenu);
@@ -2862,7 +2872,7 @@ class SaisieDonneesController extends Controller {
                             $remarque = $tab[19];
                             $valeur = $tab[20];
 
-                            $pgCmdPrelev = $tabStations[$i]['prelev'];
+                            // $pgCmdPrelev = $tabStations[$i]['prelev'];
 
                             $okControleVraisemblance = 0;
                             $okControlesSpecifiques = 0;
@@ -3053,10 +3063,16 @@ class SaisieDonneesController extends Controller {
                     $nbSaisieParametresAna = 0;
                     $nbParametresEnvSit = 0;
                     $nbParametresAna = 0;
+
+                    for ($j = 0; $j < count($tabStations[$i]['demande']); $j++) {
+                        if ($tabStations[$i]['demande'][$j]['demande']->getPrestataire() == $pgRefCorresPresta) {
+                            $prestataire = $tabStations[$i]['demande'][$j]['demande']->getPrestataire();
+                            $pgCmdDemande = $tabStations[$i]['demande'][$j]['demande'];
+                            $pgCmdPrelev = $tabStations[$i]['demande'][$j]['prelev'];
+                        }
+                    }
+
                     foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
-                        $prestataire = $tabStations[$i]['prestataire'];
-                        $pgCmdDemande = $tabStations[$i]['demande'];
-                        $pgCmdPrelev = $tabStations[$i]['prelev'];
 
                         $pgProgLotGrparAn = $pgProgLotPeriodeProg->getGrparAn();
                         $pgProgGrpParamRef = $pgProgLotGrparAn->getGrparRef();
@@ -3129,7 +3145,7 @@ class SaisieDonneesController extends Controller {
                     }
                 }
 
-                $emSqe->flush();
+                $emSqe->flush(); 
 
                 $contenu = CHR(13) . CHR(10) . 'nombre de lignes traitées  : ' . $ligne . CHR(13) . CHR(10);
                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);

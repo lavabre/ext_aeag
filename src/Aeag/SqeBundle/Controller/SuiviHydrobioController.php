@@ -187,6 +187,12 @@ class SuiviHydrobioController extends Controller {
         $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($periodeAnId);
         $pgProgLotAn = $pgProgLotPeriodeAn->getLotAn();
         $pgProgLot = $pgProgLotAn->getLot();
+        
+        if ($pgProgLot->getTitulaire() != $pgProgWebUser  and   !$user->hasRole('ROLE_ADMINSQE')){
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+        
+        
         $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
         $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByPeriodeAn($pgProgLotPeriodeAn);
         $tabStations = array();
