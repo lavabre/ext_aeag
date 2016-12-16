@@ -149,8 +149,12 @@
                                     <td>
                                         <div class="checkbox">
                                             <label>
-                                              <input type="checkbox" id="nonRealise_{{ autrePrelev.prelevPc.zoneVerticale.codeZone }}_{{ autrePrelev.prelev.codeSupport.codeSupport }}" name="nonRealise_{{ autrePrelev.prelevPc.zoneVerticale.codeZone }}_{{ autrePrelev.prelev.codeSupport.codeSupport }}"   class="form-control" placeholder="Non réalisé" value="N">
-                                            </label>
+                                                {% if autrePrelev.prelev.realise == 'N' %}
+                                                        <input type="checkbox" id="nonRealise_{{ autrePrelev.prelevPc.zoneVerticale.codeZone }}_{{ autrePrelev.prelev.codeSupport.codeSupport }}" name="nonRealise_{{ autrePrelev.prelevPc.zoneVerticale.codeZone }}_{{ autrePrelev.prelev.codeSupport.codeSupport }}"   class="form-control" placeholder="Non réalisé"  checked>
+                                                {% else %}
+                                                        <input type="checkbox" id="nonRealise_{{ autrePrelev.prelevPc.zoneVerticale.codeZone }}_{{ autrePrelev.prelev.codeSupport.codeSupport }}" name="nonRealise_{{ autrePrelev.prelevPc.zoneVerticale.codeZone }}_{{ autrePrelev.prelev.codeSupport.codeSupport }}"   class="form-control" placeholder="Non réalisé" >
+                                                {% endif %}
+                                                </label>
                                        </div>
                                     </td>
                                     <td>

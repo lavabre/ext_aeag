@@ -38,10 +38,12 @@
                     <th>Station</th>
                     <th>Commune</th>
                     <th>Code Insee</th>
-                    <th>Longitude X amont</th>
-                    <th>Latitude Y amont</th>
-                    <th>Longitude X aval</th>
-                    <th>Latitude Y aval</th>
+                        {% if  pgCmdPrelevHbInvert | length %}
+                        <th>Longitude X amont</th>
+                        <th>Latitude Y amont</th>
+                        <th>Longitude X aval</th>
+                        <th>Latitude Y aval</th>
+                        {% endif%}
                 </tr>
             </thead>
             <tbody>
@@ -51,10 +53,12 @@
                     <td>{{ prelev.station.libelle  }}</td>
                     <td>{{ prelev.station.nomCommune  }}</td>
                     <td>{{ prelev.station.inseeCommune  }}</td>
-                    <td>{{ pgCmdPrelevHbInvert.xAmont  }}</td>
-                    <td>{{ pgCmdPrelevHbInvert.yAmont  }}</td>
-                    <td>{{ pgCmdPrelevHbInvert.xAval  }}</td>
-                    <td>{{ pgCmdPrelevHbInvert.yAval  }}</td>
+                    {% if  pgCmdPrelevHbInvert | length %}
+                        <td>{{ pgCmdPrelevHbInvert.xAmont  }}</td>
+                        <td>{{ pgCmdPrelevHbInvert.yAmont  }}</td>
+                        <td>{{ pgCmdPrelevHbInvert.xAval  }}</td>
+                        <td>{{ pgCmdPrelevHbInvert.yAval  }}</td>
+                    {% endif %}
                 </tr>
             </tbody>
         </table>
@@ -160,7 +164,7 @@
 
     jQuery(document).ready(function() {
 
-   var table_recouv = $('#idTable_recouv').DataTable(
+    var table_recouv = $('#idTable_recouv').DataTable(
     {"stateSave": true,
     "order": [[ 0, 'asc' ]],
     "oLanguage": {
@@ -187,8 +191,8 @@
     }
     }
     );
-    
-     var table_prelem = $('#idTable_prelem').DataTable(
+
+    var table_prelem = $('#idTable_prelem').DataTable(
     {"stateSave": true,
     "order": [[ 0, 'asc' ], [ 1, 'asc' ]],
     "oLanguage": {
@@ -215,8 +219,8 @@
     }
     }
     );
-    
-     var table_liste = $('#idTable_liste').DataTable(
+
+    var table_liste = $('#idTable_liste').DataTable(
     {"stateSave": true,
     "order": [[ 0, 'asc' ], [ 1, 'asc' ]],
     "oLanguage": {

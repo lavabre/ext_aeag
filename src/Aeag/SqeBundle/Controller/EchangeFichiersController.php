@@ -10,10 +10,10 @@ use Aeag\AeagBundle\Controller\AeagController;
 class EchangeFichiersController extends Controller {
 
     public function indexAction() {
-        
+
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'donnees');
@@ -39,7 +39,7 @@ class EchangeFichiersController extends Controller {
     public function demandesAction($lotanId) {
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'donnees');
@@ -55,12 +55,22 @@ class EchangeFichiersController extends Controller {
         $pgProgWebUser = $repoPgProgWebUsers->findOneByExtId($user->getId());
         $pgProgLotAn = $repoPgProgLotAn->findOneById($lotanId);
         $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandeByLotan($pgProgLotAn);
-        
+        $autoriser = false;
+        foreach ($pgCmdDemandes as $pgCmdDemande) {
+            if ($pgCmdDemande->getPrestataire() == $pgProgWebUser->getPrestataire()) {
+                $autoriser = true;
+                break;
+            }
+        }
+        if (!$autoriser and $user->hasRole('ROLE_PRESTASQE')) {
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+        }
+
         $reponses = array();
         $reponsesMax = array();
         foreach ($pgCmdDemandes as $pgCmdDemande) {
             $reponses[$pgCmdDemande->getId()] = $repoPgCmdFichiersRps->getReponsesValidesByDemande($pgCmdDemande->getId());
-            $reponsesMax[$pgCmdDemande->getId()] = $repoPgCmdFichiersRps->findBy(array('demande' => $pgCmdDemande->getId(), 'typeFichier' => 'RPS','suppr' => 'N'));
+            $reponsesMax[$pgCmdDemande->getId()] = $repoPgCmdFichiersRps->findBy(array('demande' => $pgCmdDemande->getId(), 'typeFichier' => 'RPS', 'suppr' => 'N'));
         }
         return $this->render('AeagSqeBundle:EchangeFichiers:demandes.html.twig', array('user' => $pgProgWebUser,
                     'demandes' => $pgCmdDemandes,
@@ -68,11 +78,11 @@ class EchangeFichiersController extends Controller {
                     'reponses' => $reponses,
                     'reponsesMax' => $reponsesMax));
     }
-    
+
     public function telechargerAction($demandeId) {
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'donnees');
@@ -109,7 +119,7 @@ class EchangeFichiersController extends Controller {
             $log->setDate(new \DateTime());
             $emSqe->persist($log);
             $emSqe->flush();
-            
+
             header('Content-Type', 'application/zip');
             header('Content-disposition: attachment; filename="' . $zipName . '"');
             header('Content-Length: ' . filesize($pathBase . $zipName));
@@ -118,12 +128,10 @@ class EchangeFichiersController extends Controller {
         }
     }
 
-    
-    
-     public function telechargerFichierAction($demandeId = null, $nomFichier = null) {
+    public function telechargerFichierAction($demandeId = null, $nomFichier = null) {
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'donnees');
@@ -151,7 +159,7 @@ class EchangeFichiersController extends Controller {
                     $emSqe->flush();
                 }
             }
-            
+
             $type = substr($nomFichier, -3);
 
             // On log le téléchargement
@@ -161,10 +169,10 @@ class EchangeFichiersController extends Controller {
             $log->setDate(new \DateTime());
             $emSqe->persist($log);
             $emSqe->flush();
-           
-            
 
-            header('Content-Type', "'application/" . $type ."'");
+
+
+            header('Content-Type', "'application/" . $type . "'");
             header('Content-disposition: attachment; filename="' . $nomFichier . '"');
             header('Content-Length: ' . filesize($pathBase . $nomFichier));
             readfile($pathBase . $nomFichier);
@@ -175,7 +183,7 @@ class EchangeFichiersController extends Controller {
     public function reponsesAction($demandeId) {
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'donnees');
@@ -201,7 +209,7 @@ class EchangeFichiersController extends Controller {
     public function selectionnerReponseAction($demandeId) {
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'donnees');
@@ -219,7 +227,7 @@ class EchangeFichiersController extends Controller {
     public function deposerReponseAction($demandeId) {
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'donnees');
@@ -283,7 +291,6 @@ class EchangeFichiersController extends Controller {
                 } else {
                     $session->getFlashBag()->add('notice-warning', 'Le fichier ' . $nomFichier . ' a été traité, mais l\'email n\'a pas pu être envoyé');
                 }
-                
             } else {
                 $session->getFlashBag()->add('notice-error', 'Le fichier ' . $nomFichier . ' a rencontré une erreur lors de la validation auprès du Sandre. Merci de réessayer plus tard.');
                 $this->_rmdirRecursive($pathBase);
@@ -302,7 +309,7 @@ class EchangeFichiersController extends Controller {
     public function telechargerReponseAction($reponseId, $typeFichier) {
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'donnees');
@@ -353,7 +360,7 @@ class EchangeFichiersController extends Controller {
 
         $user = $this->getUser();
         if (!$user) {
-             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
+            return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
         $session->set('menu', 'donnees');
@@ -401,7 +408,7 @@ class EchangeFichiersController extends Controller {
                     }
                     //Cette entrée est un dossier, on recommence sur ce dossier
                     else {
-                       $this->_rmdirRecursive($entry);
+                        $this->_rmdirRecursive($entry);
                     }
                 }
             }
@@ -409,8 +416,8 @@ class EchangeFichiersController extends Controller {
         //On a bien effacé toutes les entrées du dossier, on peut à présent l'effacer
         return rmdir($dir);
     }
-    
-     protected function unzip($file, $path = '', $effacer_zip = false) {/* Méthode qui permet de décompresser un fichier zip $file dans un répertoire de destination $path 
+
+    protected function unzip($file, $path = '', $effacer_zip = false) {/* Méthode qui permet de décompresser un fichier zip $file dans un répertoire de destination $path 
       et qui retourne un tableau contenant la liste des fichiers extraits
       Si $effacer_zip est égal à true, on efface le fichier zip d'origine $file */
 
@@ -466,6 +473,5 @@ class EchangeFichiersController extends Controller {
 
         return $tab_liste_fichiers;
     }
-
 
 }

@@ -42,10 +42,10 @@ class DepotHydrobioController extends Controller {
         foreach ($pgProgLotAns as $pgProgLotAn) {
             $pgProgLot = $pgProgLotAn->getLot();
             $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
-            if (substr($pgProgTypeMilieu->getCodeMilieu(), 1, 2) === 'HB' or $pgProgTypeMilieu->getCodeMilieu() === 'RHM') {
+            $trouve = false;
+            if ($pgProgTypeMilieu->getCodeMilieu() == 'RHB') {
                 $pgProgLotPeriodeAns = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnByLotan($pgProgLotAn);
                 if (count($pgProgLotPeriodeAns) > 0) {
-                    $trouve = false;
                     foreach ($pgProgLotPeriodeAns as $pgProgLotPeriodeAn) {
                         $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByPeriodeAn($pgProgLotPeriodeAn);
                         if (count($pgProgLotPeriodeProgs) > 0) {
@@ -61,8 +61,11 @@ class DepotHydrobioController extends Controller {
             }
         }
 
+        //     \Symfony\Component\VarDumper\VarDumper::dump($tabProglotAns);
+        //   return new response ('nb lotan : ' . count($tabProglotAns) );
+
         return $this->render('AeagSqeBundle:DepotHydrobio:index.html.twig', array('user' => $user,
-                    'lotans' => $pgProgLotAns));
+                    'lotans' => $tabProglotAns));
     }
 
     public function demandesAction($lotanId) {
@@ -123,7 +126,7 @@ class DepotHydrobioController extends Controller {
                     'demande' => $pgCmdDemande,
                     'prelevs' => $pgCmdPrelevs,));
     }
-    
+
     public function prelevementDetailAction($prelevId) {
         $user = $this->getUser();
         if (!$user) {
@@ -150,45 +153,48 @@ class DepotHydrobioController extends Controller {
         $pgProgWebUser = $repoPgProgWebUsers->findOneByExtId($user->getId());
         $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevById($prelevId);
         $pgCmdDemande = $pgCmdPrelev->getdemande();
-        
-         $pgCmdPrelevHbInvert = $repoPgCmdPrelevHbInvert->getPgCmdPrelevHbInvertByPrelev($pgCmdPrelev);
-           $pgCmdInvertRecouvs = $repoPgCmdInvertRecouv->getPgCmdInvertRecouvByPrelev($pgCmdPrelevHbInvert);
-         $tabRecouvs = array();
-         $i = 0;
-         foreach($pgCmdInvertRecouvs as $pgCmdInvertRecouv){
-             $tabRecouvs[$i]['recouv'] =  $pgCmdInvertRecouv;
-             $pgSandreHbNomemclature = $repoPgSandreHbNomemclatures->getPgSandreHbNomemclaturesByCodeNomemclatureCodeElement(274, $pgCmdInvertRecouv->getSubstrat());
-             $tabRecouvs[$i]['nomenclature'] = $pgSandreHbNomemclature;
-             $i++;
-         }
-         $pgCmdInvertPrelems = $repoPgCmdInvertPrelem->getPgCmdInvertPrelemByPrelev($pgCmdPrelevHbInvert);
-  //        \Symfony\Component\VarDumper\VarDumper::dump($pgCmdInvertPrelems);
- //        return new response ('nb recouv : ' . count($pgCmdInvertRecouvs) . ' nb prelem :  ' . count($pgCmdInvertPrelems));
+
+        $tabRecouvs = array();
         $tabPrelems = array();
-         $i = 0;
-         foreach($pgCmdInvertPrelems as $pgCmdInvertPrelem){
-             $tabPrelems[$i]['prelem'] = $pgCmdInvertPrelem;
-               $pgSandreHbNomemclature = $repoPgSandreHbNomemclatures->getPgSandreHbNomemclaturesByCodeNomemclatureCodeElement(274, $pgCmdInvertPrelem->getSubstrat());
-             $tabPrelems[$i]['nomenclature'] = $pgSandreHbNomemclature;
-             $i++;
-         }
-         $pgCmdInvertListes = $repoPgCmdInvertListe->getPgCmdInvertListeByPrelev($pgCmdPrelevHbInvert);
-         $tabListes = array();
-         $i = 0;
-         foreach($pgCmdInvertListes as $pgCmdInvertListe){
-             $tabListes[$i]['liste'] = $pgCmdInvertListe;
-             $pgSandreAppellationTaxon = $repoPgSandreAppellationTaxon->getPgSandreAppellationTaxonByCodeAppelTaxonCodeSupport($pgCmdInvertListe->getTaxon(), '13');
-             $tabListes[$i]['taxon']  =  $pgSandreAppellationTaxon;    
-             $i++;
-         }
-      
+        $tabListes = array();
+
+        $pgCmdPrelevHbInvert = $repoPgCmdPrelevHbInvert->getPgCmdPrelevHbInvertByPrelev($pgCmdPrelev);
+        if ($pgCmdPrelevHbInvert) {
+            $pgCmdInvertRecouvs = $repoPgCmdInvertRecouv->getPgCmdInvertRecouvByPrelev($pgCmdPrelevHbInvert);
+           $i = 0;
+            foreach ($pgCmdInvertRecouvs as $pgCmdInvertRecouv) {
+                $tabRecouvs[$i]['recouv'] = $pgCmdInvertRecouv;
+                $pgSandreHbNomemclature = $repoPgSandreHbNomemclatures->getPgSandreHbNomemclaturesByCodeNomemclatureCodeElement(274, $pgCmdInvertRecouv->getSubstrat());
+                $tabRecouvs[$i]['nomenclature'] = $pgSandreHbNomemclature;
+                $i++;
+            }
+            $pgCmdInvertPrelems = $repoPgCmdInvertPrelem->getPgCmdInvertPrelemByPrelev($pgCmdPrelevHbInvert);
+            //        \Symfony\Component\VarDumper\VarDumper::dump($pgCmdInvertPrelems);
+            //        return new response ('nb recouv : ' . count($pgCmdInvertRecouvs) . ' nb prelem :  ' . count($pgCmdInvertPrelems));
+            $i = 0;
+            foreach ($pgCmdInvertPrelems as $pgCmdInvertPrelem) {
+                $tabPrelems[$i]['prelem'] = $pgCmdInvertPrelem;
+                $pgSandreHbNomemclature = $repoPgSandreHbNomemclatures->getPgSandreHbNomemclaturesByCodeNomemclatureCodeElement(274, $pgCmdInvertPrelem->getSubstrat());
+                $tabPrelems[$i]['nomenclature'] = $pgSandreHbNomemclature;
+                $i++;
+            }
+            $pgCmdInvertListes = $repoPgCmdInvertListe->getPgCmdInvertListeByPrelev($pgCmdPrelevHbInvert);
+            $i = 0;
+            foreach ($pgCmdInvertListes as $pgCmdInvertListe) {
+                $tabListes[$i]['liste'] = $pgCmdInvertListe;
+                $pgSandreAppellationTaxon = $repoPgSandreAppellationTaxon->getPgSandreAppellationTaxonByCodeAppelTaxonCodeSupport($pgCmdInvertListe->getTaxon(), '13');
+                $tabListes[$i]['taxon'] = $pgSandreAppellationTaxon;
+                $i++;
+            }
+        }
+
         return $this->render('AeagSqeBundle:DepotHydrobio:prelevementDetail.html.twig', array('user' => $pgProgWebUser,
                     'demande' => $pgCmdDemande,
                     'prelev' => $pgCmdPrelev,
                     'pgCmdPrelevHbInvert' => $pgCmdPrelevHbInvert,
                     'pgCmdInvertRecouvs' => $tabRecouvs,
                     'pgCmdInvertPrelems' => $tabPrelems,
-                    'pgCmdInvertListes' => $tabListes ));
+                    'pgCmdInvertListes' => $tabListes));
     }
 
     public function telechargerAction($demandeId) {
@@ -484,7 +490,7 @@ class DepotHydrobioController extends Controller {
         } else {
             $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('D30');
             $pgCmdDemande->setPhaseDemande($pgProgPhases);
-       }
+        }
         $emSqe->persist($pgCmdDemande);
         $emSqe->flush();
 
