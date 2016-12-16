@@ -100,15 +100,20 @@ class ProcessRai {
         
         $codeScenario = "LABO_DEST";
         if ($raiTab['Scenario']['CodeScenario'] == 'QUESU_PHY') {
-            $codeScenario = $raiTab['Scenario']['CodeScenario'];
+            $codeScenario = "QUESU";
         }
         
         // si 1.1 => 1.1 sinon 1
         $versionScenario = "1";
         if (isset($raiTab['Scenario']['VersionScenario'])) {
-            if ($raiTab['Scenario']['VersionScenario'] == "1.1" || $codeScenario == "QUESU_PHY") {
+            if ($raiTab['Scenario']['VersionScenario'] == "1.1") {
                 $versionScenario = $raiTab['Scenario']['VersionScenario'];
             }
+            
+            if ($codeScenario == "QUESU") {
+                $versionScenario = "2.0";
+            }
+            
         }
 
         return $codeScenario . ';' . $versionScenario;

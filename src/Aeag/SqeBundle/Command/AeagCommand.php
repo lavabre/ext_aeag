@@ -46,6 +46,7 @@ class AeagCommand extends ContainerAwareCommand {
     
     protected $controleVraisemblaceService;
     
+    protected $evolution;
 
     protected function configure() {
         $this
@@ -92,6 +93,7 @@ class AeagCommand extends ContainerAwareCommand {
         $this->repoPgProgWebuserTypmil = $this->emSqe->getRepository('AeagSqeBundle:PgProgWebuserTypmil');
         $this->repoPgProgBornesParams = $this->emSqe->getRepository('AeagSqeBundle:PgProgBornesParams');
         $this->repoPgProgPrestaTypfic = $this->emSqe->getRepository('AeagSqeBundle:PgProgPrestaTypfic');
+        $this->repoParametre = $this->emSqe->getRepository('AeagSqeBundle:Parametre');
 
         // Chargement des fichiers csv dans des tableaux 
         $cheminCourant = __DIR__ . '/../../../../';
@@ -99,6 +101,8 @@ class AeagCommand extends ContainerAwareCommand {
         $this->detectionCodeRemarqueMoitie = $this->_csvToArray($cheminCourant . "/web/tablesCorrespondancesRai/detectionCodeRemarqueMoitie.csv");
         
         $this->controleVraisemblaceService = $this->getContainer()->get('aeag_sqe.controle_vraisemblance');
+        
+        $this->setEvolution($this->repoParametre->getParametreByCode('EVOLUTION'));
     }
 
     protected function _updatePhaseFichierRps(\Aeag\SqeBundle\Entity\PgCmdFichiersRps $pgCmdFichierRps, $phase, $phase82atteinte = false) {
@@ -273,6 +277,14 @@ class AeagCommand extends ContainerAwareCommand {
         }
 
         $this->emSqe->flush();
+    }
+    
+    public function getEvolution() {
+        return $this->evolution;
+    }
+
+    public function setEvolution($evolution) {
+        $this->evolution = $evolution;
     }
 
 }

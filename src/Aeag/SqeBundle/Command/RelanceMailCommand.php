@@ -25,7 +25,9 @@ class RelanceMailCommand extends AeagCommand {
         $this->output->writeln($date->format('d/m/Y H:i:s') . ' - Relance mail : Début');
         
         // Envoi de mails lorsque la DAI est déposé
-        //$this->sendEmailDai();
+        if ($this->getEvolution()->getLibelle() == "false") {
+            $this->sendEmailDai();
+        } 
 
         // ANALYSE
         // Envoi des mails a J-7
@@ -60,9 +62,11 @@ class RelanceMailCommand extends AeagCommand {
         
         foreach ($pgCmdDemandes as $pgCmdDemande) {
             $codeMilieu = $pgCmdDemande->getLotan()->getLot()->getCodeMilieu()->getCodeMilieu();
+            $prestataire = $pgCmdDemande->getLotan()->getLot()->getTitulaire();
             $objetMessage = "SQE : DAI générée - " . $pgCmdDemande->getLotan()->getLot()->getNomLot();
-            $pgProgPrestaTypfics = $this->repoPgProgPrestaTypfic->findBy(array('codeMilieu' => $codeMilieu));
-            foreach($pgProgPrestaTypfics as $pgProgPrestaTypfic) {
+            $pgProgPrestaTypfic = $this->repoPgProgPrestaTypfic->findOneBy(array('codeMilieu' => $codeMilieu, 'prestataire' => $prestataire));
+            
+            if (!is_null($pgProgPrestaTypfic)) {
                 if (strpos($codeMilieu,"PC") !== false) {
                     if (strpos($pgProgPrestaTypfic->getFormatFic(), "EDILABO") !== false) {
                         $url = $this->getContainer()->get('router')->generate('AeagSqeBundle_echangefichiers_demandes', array("lotanId" => $pgCmdDemande->getLotan()->getId()), UrlGeneratorInterface::ABSOLUTE_URL);
@@ -80,13 +84,11 @@ class RelanceMailCommand extends AeagCommand {
                         $txtMessage .= 'Vous pouvez renseigner le suivi des prélèvements sur SQE : <a href="'.$url.'">Cliquez ici</a>. <br/>';
                     }
                 }
-                
-                if (isset($txtMessage)) {
-                    $prestataire = $pgProgPrestaTypfic->getPrestataire();
-                    $utilisateurs = $this->repoPgProgWebUsers->findByPrestataire($prestataire);
-                    foreach ($utilisateurs as $utilisateur) {
-                        $this->sendEmail($utilisateur, $txtMessage, $objetMessage);
-                    }
+            }
+            if (isset($txtMessage)) {
+                $utilisateurs = $this->repoPgProgWebUsers->findByPrestataire($prestataire);
+                foreach ($utilisateurs as $utilisateur) {
+                    $this->sendEmail($utilisateur, $txtMessage, $objetMessage);
                 }
             }
             //Mise à jour de la phase
