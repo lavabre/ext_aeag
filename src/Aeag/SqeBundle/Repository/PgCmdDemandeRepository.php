@@ -161,11 +161,13 @@ class PgCmdDemandeRepository extends EntityRepository {
         $query .= " join dmd.periode periode";
         $query .= " join lot.codeMilieu milieu";
         $query .= " join lot.marche marche";
+        $query .= " join dmd.phaseDemande phase";
         $query .= " left join Aeag\SqeBundle\Entity\PgCmdFichiersRps rps with dmd.id = rps.demande where rps.demande is null";
         //$query .= " and DATE_ADD(periode.dateDeb, (COALESCE(lot.delaiLot, 30) + COALESCE(lot.delaiPrel, 7)), 'day') = DATE_ADD(CURRENT_TIMESTAMP(), 7, 'day')";
         $query .= " and DATE_DIFF(CURRENT_DATE(), periode.dateDeb) = (COALESCE(lot.delaiLot, 30) + COALESCE(lot.delaiPrel, 7) + 7)";
         $query .= " and milieu.codeMilieu like '%PC'";
         $query .= " and marche.typeMarche = 'MOA'";
+        $query .= " and phase.codePhase NOT IN ('D40','D50')";
         $query .= " order by dmd.id";
         $qb = $this->_em->createQuery($query);
         return $qb->getResult();
@@ -179,11 +181,13 @@ class PgCmdDemandeRepository extends EntityRepository {
         $query .= " join dmd.periode periode";
         $query .= " join lot.codeMilieu milieu";
         $query .= " join lot.marche marche";
+        $query .= " join dmd.phaseDemande phase";
         $query .= " left join Aeag\SqeBundle\Entity\PgCmdFichiersRps rps with dmd.id = rps.demande where rps.demande is null";
         //$query .= " and DATE_ADD(periode.dateDeb, (COALESCE(lot.delaiLot, 30) + COALESCE(lot.delaiPrel, 7)), 'day') = DATE_SUB(CURRENT_TIMESTAMP(), 1, 'day')";
         $query .= " and DATE_DIFF(CURRENT_DATE(), periode.dateDeb) = (COALESCE(lot.delaiLot, 30) + COALESCE(lot.delaiPrel, 7) - 1)";
         $query .= " and milieu.codeMilieu like '%PC'";
         $query .= " and marche.typeMarche = 'MOA'";
+        $query .= " and phase.codePhase NOT IN ('D40','D50')";
         $query .= " order by dmd.id";
         $qb = $this->_em->createQuery($query);
         return $qb->getResult();
