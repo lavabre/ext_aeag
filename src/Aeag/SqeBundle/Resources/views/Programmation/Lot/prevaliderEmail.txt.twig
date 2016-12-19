@@ -2,6 +2,10 @@
 Bonjour ,
 
 la programmation {{ lotan.anneeprog }} version {{ lotan.version }} du lot : {{ lotan.lot.nomLot }}
-vient d'être validée par {{ emetteur.nom }} le {{ lotan.dateModif | date("d/m/Y") }}
+vient d'être validée par {{ emetteur.nom }} le {{ lotan.dateModif | date("d/m/Y") }}.
+
+ {% if lotan.phase.codePhase == 'P24' %}
+      ATTENTION : Il y a des prestataires fictifs dans cette programmation. 
+ {% endif %}
 
 Cordialement.
