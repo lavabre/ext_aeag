@@ -166,7 +166,7 @@
                                         </a>
                                         {% if action == 'P'  and maj != 'V' %}
                                             {%if  is_granted('ROLE_PROGSQE') %}
-                                                {% if lotan.phase.codePhase == 'P20' %}
+                                                {% if lotan.phase.codePhase == 'P19'  or lotan.phase.codePhase == 'P20'%}
                                                      <a class="btn btn-success" data-toggle="modal" href="#val" title="Soumettre à la validation">
                                                          <i class="fa fa-lock"> Soumettre à la validation</i>
                                                      </a>

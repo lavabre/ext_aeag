@@ -1428,6 +1428,12 @@ class ProgrammationGroupeController extends Controller {
                     $ok = 'ko';
                 }
             }
+            $doublons = $repoPgProgLotParamAn->getNbDoublonsByLotanParametre($pgProgLotAn,$pgProgGrparRefLstParam);
+            if ($doublons > 1){
+                   $tabMessage[$i] = "Le parametre : " . $codeParametre  . " est dejà sélectionné dans un autre groupe";
+                    $i++;
+                    $ok = 'ko';
+            }
         }
 
 

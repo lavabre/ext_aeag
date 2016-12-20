@@ -2263,32 +2263,33 @@ class ProgrammationLotController extends Controller {
         }
 
 
+        if ($critAnnee) {
+            $tabLotBis = array();
+            $i = 0;
+            foreach ($tabLots as $lot) {
+                $tabLotBis[$i] = $lot;
+                $i++;
+            }
 
-        $tabLotBis = array();
-        $i = 0;
-        foreach ($tabLots as $lot) {
-            $tabLotBis[$i] = $lot;
-            $i++;
-        }
-
-        $tabLots = array();
-        $i = 0;
-        foreach ($tabLotBis as $lot) {
-            $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByAnneeLot($critAnnee, $lot);
-            if (count($pgProgLotAns) > 0) {
-                foreach ($pgProgLotAns as $pgProgLotAn) {
+            $tabLots = array();
+            $i = 0;
+            foreach ($tabLotBis as $lot) {
+                $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByAnneeLot($critAnnee, $lot);
+                if (count($pgProgLotAns) > 0) {
+                    foreach ($pgProgLotAns as $pgProgLotAn) {
+                        $tabLots[$i]['lot'] = $lot;
+                        $typeMilieu = $lot->getCodeMilieu();
+                        $tabLots[$i]['typeMilieu'] = $typeMilieu;
+                        $tabLots[$i]['lotAn'] = $pgProgLotAn;
+                        $i++;
+                    }
+                } else {
                     $tabLots[$i]['lot'] = $lot;
                     $typeMilieu = $lot->getCodeMilieu();
                     $tabLots[$i]['typeMilieu'] = $typeMilieu;
-                    $tabLots[$i]['lotAn'] = $pgProgLotAn;
+                    $tabLots[$i]['lotAn'] = null;
                     $i++;
                 }
-            } else {
-                $tabLots[$i]['lot'] = $lot;
-                $typeMilieu = $lot->getCodeMilieu();
-                $tabLots[$i]['typeMilieu'] = $typeMilieu;
-                $tabLots[$i]['lotAn'] = null;
-                $i++;
             }
         }
 
@@ -2365,7 +2366,12 @@ class ProgrammationLotController extends Controller {
 
         $pgProgLotAn = $repoPgProgLotAn->getPgProgLotAnById($lotAnId);
 
-        $pgProgPhase = $repoPgProgPhases->getPgProgPhasesByCodePhase('P25');
+        if ($pgProgLotAn->getPhase()->getCodePhase() == 'P19') {
+            $pgProgPhase = $repoPgProgPhases->getPgProgPhasesByCodePhase('P24');
+        } else {
+            $pgProgPhase = $repoPgProgPhases->getPgProgPhasesByCodePhase('P25');
+        }
+
         $pgProgLotAn->setPhase($pgProgPhase);
         $pgProgStatut = $repoPgProgStatut->getPgProgStatutByCodeStatut('UPD');
         $pgProgLotAn->setCodeStatut($pgProgStatut);
@@ -2421,6 +2427,10 @@ class ProgrammationLotController extends Controller {
                     $texte = $texte . "La programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL;
                     $texte = $texte . " a été soumise à la validation par " . $pgProgWebuser->getNom() . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y') . PHP_EOL;
                     $texte = $texte . " " . PHP_EOL;
+                     if ($pgProgLotAn->getPhase()->getCodePhase() == 'P24') {
+                     $texte = $texte . "ATTENTION : Il y a des prestataires fictifs dans cette programmation " . PHP_EOL;
+                      $texte = $texte . " " . PHP_EOL;
+                     }
                     $texte = $texte . "Cordialement.";
                     $message->setMessage($texte);
                     $em->persist($message);

@@ -76,7 +76,11 @@ class ProgrammationBilanController extends Controller {
 //                if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMINSQE')) {
 //                    $pgProgPhase = $repoPgProgPhases->getPgProgPhasesByCodePhase('P25');
 //                } else {
-                $pgProgPhase = $repoPgProgPhases->getPgProgPhasesByCodePhase('P20');
+                if ($tabControle['fictif']['ok']) {
+                    $pgProgPhase = $repoPgProgPhases->getPgProgPhasesByCodePhase('P20');
+                } else {
+                    $pgProgPhase = $repoPgProgPhases->getPgProgPhasesByCodePhase('P19');
+                }
 //                }
             } else {
                 if ($tabControle['station']['ok'] or $tabControle['groupe']['ok'] or $tabControle['periode']['ok']) {
@@ -432,10 +436,10 @@ class ProgrammationBilanController extends Controller {
                                         }
                                     }
                                     if (!$trouve) {
-                                        if ($pgProglotPeriodeProg->getStatut() != 'I'){
-                                        $tabPrestaDftAll[$i]['type'] = $pgProglotPeriodeProg->getStatut();
-                                        $tabPrestaDftAll[$i]['presta'] = $presta;
-                                        $i++;
+                                        if ($pgProglotPeriodeProg->getStatut() != 'I') {
+                                            $tabPrestaDftAll[$i]['type'] = $pgProglotPeriodeProg->getStatut();
+                                            $tabPrestaDftAll[$i]['presta'] = $presta;
+                                            $i++;
                                         }
                                     }
                                 }
@@ -446,7 +450,7 @@ class ProgrammationBilanController extends Controller {
             }
         }
 
-   
+
 
         $tabPrestas = array();
         $k = 0;
@@ -465,7 +469,7 @@ class ProgrammationBilanController extends Controller {
             }
         }
 
-  
+
         $tabMessage = array();
         $tabPrestataires = array();
         $i = 0;
@@ -1668,9 +1672,12 @@ class ProgrammationBilanController extends Controller {
         $repoPgProgLotStationAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotStationAn');
         $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
         $repoPgProgLotPeriodeProg = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeProg');
+        $repoPgProgLotParamAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotParamAn');
+        $repoPgRefCorresPresta = $emSqe->getRepository('AeagSqeBundle:PgRefCorresPresta');
 
 
         $pgProgLotAn = $repoPgProgLotAn->getPgProgLotAnById($lotanId);
+        $pgRefCorresPrestaFictif = $repoPgRefCorresPresta->getPgRefCorresPrestaByAncnum('00000000A');
 
         $pgProgLotGrparAns = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotan($pgProgLotAn);
         $pgProgLotStationAns = $repoPgProgLotStationAn->getPgProgLotStationAnBylotan($pgProgLotAn);
@@ -1699,11 +1706,24 @@ class ProgrammationBilanController extends Controller {
 
         $okGroupe = true;
         $nbGroupe = 0;
+        $nbFictif = 0;
         foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
             $nb = $repoPgProgLotPeriodeProg->countPgProgLotPeriodeProgByGrparAn($pgProgLotGrparAn);
             if ($nb == 0) {
                 $okGroupe = false;
             } else {
+                //controle si prestataire non fictif
+                $fictif = false;
+                if ($pgRefCorresPrestaFictif) {
+                    $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
+                    foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
+                        if ($pgProgLotParamAn->getPrestataire()->getAdrCorId() == $pgRefCorresPrestaFictif->getAdrCorId()) {
+                            $fictif = true;
+                            $nbFictif++;
+                            break;
+                        }
+                    }
+                }
                 $nbGroupe++;
             }
         }
@@ -1752,7 +1772,11 @@ class ProgrammationBilanController extends Controller {
         $tabControle['periode']['ok'] = $okPeriode;
         $tabControle['periode']['nb'] = $nbPgProgLotPeriodeAn;
         $tabControle['periode']['nbOk'] = $nbPeriode;
-
+        if ($nbFictif == 0) {
+            $tabControle['fictif']['ok'] = true;
+        } else {
+            $tabControle['fictif']['ok'] = false;
+        }
         return $tabControle;
     }
 
