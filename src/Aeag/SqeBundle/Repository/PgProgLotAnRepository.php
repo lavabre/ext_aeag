@@ -117,7 +117,7 @@ class PgProgLotAnRepository extends EntityRepository {
         $query .= " and lotan.codeStatut <> 'INV'";
         $query .= " and lotan.phase >= 5 and lotan.phase <= 8";
         $query .= " and pean.codeStatut <> 'INV'";
-        $query .= " and milieu.codeMilieu LIKE '%PC'";
+        //$query .= " and milieu.codeMilieu LIKE '%PC'";
 
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('aeagUser', $user->getId()); // Id de l'utilisateur 
@@ -168,7 +168,7 @@ class PgProgLotAnRepository extends EntityRepository {
         $query .= " and lotan.phase >= 5 and lotan.phase <= 8";
         $query .= " and pean.codeStatut <> 'INV'";
         $query .= " and pean.codeStatut <> 'INV'";
-        $query .= " and milieu.codeMilieu LIKE '%PC'";
+       // $query .= " and milieu.codeMilieu LIKE '%PC'";
 
         $qb = $this->_em->createQuery($query);
 
@@ -185,7 +185,7 @@ class PgProgLotAnRepository extends EntityRepository {
         $query .= " and lotan.codeStatut <> 'INV'";
         // $query .= " and lotan.phase >= 5 and lotan.phase <= 8";
         $query .= " and pean.codeStatut <> 'INV'";
-        $query .= " and milieu.codeMilieu LIKE '%PC'";
+       // $query .= " and milieu.codeMilieu LIKE '%PC'";
 
         $qb = $this->_em->createQuery($query);
 
@@ -205,7 +205,7 @@ class PgProgLotAnRepository extends EntityRepository {
         $query .= " and lotan.phase >= 5 and lotan.phase <= 8";
         $query .= " and users.extId = :aeagUser";
         $query .= " and pean.codeStatut <> 'INV'";
-        $query .= " and milieu.codeMilieu LIKE '%PC'";
+       // $query .= " and milieu.codeMilieu LIKE '%PC'";
 
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('aeagUser', $user->getId()); // Id de l'utilisateur 
