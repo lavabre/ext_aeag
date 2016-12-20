@@ -101,7 +101,7 @@ class PgProgLotAnRepository extends EntityRepository {
         return $qb->getSingleScalarResult();
     }
 
-    public function getPgProgLotAnByPresta($user) {
+    public function getPgProgLotAnByPresta($user, $codeMilieu = null) {
 
         $query = "select distinct lotan";
         $query .= " from Aeag\SqeBundle\Entity\PgProgLotParamAn paran, Aeag\SqeBundle\Entity\PgRefCorresPresta presta, Aeag\SqeBundle\Entity\PgProgWebusers users, Aeag\SqeBundle\Entity\PgProgLotGrparAn gran, Aeag\SqeBundle\Entity\PgProgLotAn lotan, Aeag\SqeBundle\Entity\PgProgLot lot, Aeag\SqeBundle\Entity\PgCmdDemande dmd, Aeag\SqeBundle\Entity\PgProgLotPeriodeAn pean, Aeag\SqeBundle\Entity\PgProgTypeMilieu milieu";
@@ -117,10 +117,18 @@ class PgProgLotAnRepository extends EntityRepository {
         $query .= " and lotan.codeStatut <> 'INV'";
         $query .= " and lotan.phase >= 5 and lotan.phase <= 8";
         $query .= " and pean.codeStatut <> 'INV'";
-        $query .= " and milieu.codeMilieu LIKE '%PC'";
+        
+        if (!is_null($codeMilieu)) {
+            $query .= " and milieu.codeMilieu LIKE :codemilieu";
+        }
+        
 
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('aeagUser', $user->getId()); // Id de l'utilisateur 
+        
+        if (!is_null($codeMilieu)) {
+            $qb->setParameter('codemilieu', '%'.$codeMilieu); 
+        }
         //print_r($query);
         return $qb->getResult();
     }
@@ -157,7 +165,7 @@ class PgProgLotAnRepository extends EntityRepository {
         return $qb->getResult();
     }
 
-    public function getPgProgLotAnByAdmin() {
+    public function getPgProgLotAnByAdmin($codeMilieu = null) {
         $query = "select distinct lotan";
         $query .= " from Aeag\SqeBundle\Entity\PgProgLotAn lotan, Aeag\SqeBundle\Entity\PgProgLot lot, Aeag\SqeBundle\Entity\PgCmdDemande dmd, Aeag\SqeBundle\Entity\PgProgLotPeriodeAn pean, Aeag\SqeBundle\Entity\PgProgTypeMilieu milieu";
         $query .= " where lotan.lot = lot.id";
@@ -168,14 +176,19 @@ class PgProgLotAnRepository extends EntityRepository {
         $query .= " and lotan.phase >= 5 and lotan.phase <= 8";
         $query .= " and pean.codeStatut <> 'INV'";
         $query .= " and pean.codeStatut <> 'INV'";
-        $query .= " and milieu.codeMilieu LIKE '%PC'";
+        if (!is_null($codeMilieu)) {
+            $query .= " and milieu.codeMilieu LIKE :codemilieu";
+        }
 
         $qb = $this->_em->createQuery($query);
+        if (!is_null($codeMilieu)) {
+            $qb->setParameter('codemilieu', '%'.$codeMilieu); 
+        }
 
         return $qb->getResult();
     }
 
-    public function getPgProgLotAnByAdmin1() {
+    public function getPgProgLotAnByAdmin1($codeMilieu = null) {
         $query = "select distinct lotan";
         $query .= " from Aeag\SqeBundle\Entity\PgProgLotAn lotan, Aeag\SqeBundle\Entity\PgProgLot lot, Aeag\SqeBundle\Entity\PgCmdDemande dmd, Aeag\SqeBundle\Entity\PgProgLotPeriodeAn pean, Aeag\SqeBundle\Entity\PgProgTypeMilieu milieu";
         $query .= " where lotan.lot = lot.id";
@@ -185,14 +198,20 @@ class PgProgLotAnRepository extends EntityRepository {
         $query .= " and lotan.codeStatut <> 'INV'";
         // $query .= " and lotan.phase >= 5 and lotan.phase <= 8";
         $query .= " and pean.codeStatut <> 'INV'";
-        $query .= " and milieu.codeMilieu LIKE '%PC'";
+        if (!is_null($codeMilieu)) {
+            $query .= " and milieu.codeMilieu LIKE :codemilieu";
+        }
 
         $qb = $this->_em->createQuery($query);
+        
+        if (!is_null($codeMilieu)) {
+            $qb->setParameter('codemilieu', '%'.$codeMilieu); 
+        }
 
         return $qb->getResult();
     }
 
-    public function getPgProgLotAnByProg($user) {
+    public function getPgProgLotAnByProg($user, $codeMilieu = null) {
         $query = "select distinct lotan";
         $query .= " from Aeag\SqeBundle\Entity\PgProgMarcheUser mu, Aeag\SqeBundle\Entity\PgProgWebusers users, Aeag\SqeBundle\Entity\PgProgLotAn lotan, Aeag\SqeBundle\Entity\PgProgLot lot, Aeag\SqeBundle\Entity\PgCmdDemande dmd, Aeag\SqeBundle\Entity\PgProgLotPeriodeAn pean, Aeag\SqeBundle\Entity\PgProgTypeMilieu milieu";
         $query .= " where lotan.lot = lot.id";
@@ -205,10 +224,16 @@ class PgProgLotAnRepository extends EntityRepository {
         $query .= " and lotan.phase >= 5 and lotan.phase <= 8";
         $query .= " and users.extId = :aeagUser";
         $query .= " and pean.codeStatut <> 'INV'";
-        $query .= " and milieu.codeMilieu LIKE '%PC'";
+        if (!is_null($codeMilieu)) {
+            $query .= " and milieu.codeMilieu LIKE :codemilieu";
+        }
 
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('aeagUser', $user->getId()); // Id de l'utilisateur 
+        
+        if (!is_null($codeMilieu)) {
+            $qb->setParameter('codemilieu', '%'.$codeMilieu); 
+        }
 
         return $qb->getResult();
     }

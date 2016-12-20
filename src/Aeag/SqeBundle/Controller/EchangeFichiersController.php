@@ -25,11 +25,11 @@ class EchangeFichiersController extends Controller {
         $repoPgProgLotAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotAn');
         $pgProgLotAns = array();
         if ($user->hasRole('ROLE_ADMINSQE')) {
-            $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByAdmin();
+            $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByAdmin('PC');
         } else if ($user->hasRole('ROLE_PRESTASQE')) {
-            $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByPresta($user);
+            $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByPresta($user,'PC');
         } else if ($user->hasRole('ROLE_PROGSQE')) {
-            $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByProg($user);
+            $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByProg($user,'PC');
         }
 
         return $this->render('AeagSqeBundle:EchangeFichiers:index.html.twig', array('user' => $user,
