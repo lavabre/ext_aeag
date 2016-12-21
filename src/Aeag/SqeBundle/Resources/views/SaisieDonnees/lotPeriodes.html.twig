@@ -36,13 +36,13 @@
                     <tbody>
                         {%if periodeAns | length%} 
                             {% for periodeAn in periodeAns %}
-                                {% if  periodeAn.nbStationCorrectes == periodeAn.nbStations %}
+                                {% if  periodeAn.nbStationCorrectes == periodeAn.nbStations and periodeAn.stations | length > 0 %}
                                     <tr class="success">
                                     {% else %}
                                     <tr> 
                                     {% endif %}
                                     <td align="center" nowrap> 
-                                        {%  if periodeAn.nbStations > 0 %}
+                                        {#{%  if periodeAn.nbStations > 0 %}#}
                                             {% if typeMilieu.codeMilieu != 'LPC' %}
                                                 <ul class="list-inline">
                                                     <li>
@@ -50,7 +50,7 @@
                                                             <i class="fa fa-eye"></i> 
                                                         </a>
                                                     </li>
-                                                    {% if  periodeAn.nbStationCorrectes == periodeAn.nbStations %}
+                                                    {% if  periodeAn.nbStationCorrectes == periodeAn.nbStations and periodeAn.stations | length > 0 %}
                                                         <li>
                                                             <a id="idTelechargerSuivi{{ periodeAn.pgProgLotPeriodeAn.id }}" class="btn btn-success btn-telecharger" href="{{ path('AeagSqeBundle_saisieDonnees_lot_periode_telecharger',{ 'periodeAnId': periodeAn.pgProgLotPeriodeAn.id })}}" title="Télécharger les resultats">
                                                                 <i class="fa fa-upload"></i> 
@@ -80,7 +80,7 @@
                                                     {% endif %}
                                                 </ul>
                                             {% endif %}
-                                        {% endif %}
+                                      {#  {% endif %}#}
                                     </td>
                                     <td>
                                         {% if  periodeAn.pgProgLotPeriodeAn %}
