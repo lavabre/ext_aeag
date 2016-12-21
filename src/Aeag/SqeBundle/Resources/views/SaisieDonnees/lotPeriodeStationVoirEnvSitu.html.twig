@@ -106,7 +106,7 @@
                                                     <li><span  class="label label-success">{{ groupe.correct}}</li>
                                                     <li><span  class="label label-warning">{{ groupe.warning}}</li>
                                                     <li><span  class="label label-danger">{{ groupe.erreur}}</li>
-                                                    <li><span  class="label label-primary"><span id="paramSaisis{{ groupe.grparAn.id}}">0</span>/{{ groupe.paramAns | length}}</span></li>
+                                                    <li><span  class="label label-primary"><span id="paramSaisis{{ groupe.grparAn.id}}">0</span>/{{ groupe.nbDft}}</span></li>
                                                 </ul>  
                                             </div>
                                         </div>            
@@ -128,7 +128,11 @@
                                                     <li><span  class="label label-success">{{ groupe.correct}}</li>
                                                     <li><span  class="label label-warning">{{ groupe.warning}}</li>
                                                     <li><span  class="label label-danger">{{ groupe.erreur}}</li>
-                                                    <li><span  class="label label-primary"><span id="paramSaisis{{ groupe.grparAn.id}}">0</span>/{{ groupe.paramAns | length}}</span></li>
+                                                     {% if is_granted('ROLE_ADMINSQE') %}
+                                                        <li><span  class="label label-primary"><span id="paramSaisis{{ groupe.grparAn.id}}">0</span>/{{ groupe.nbDft + groupe.nbAutres}}</span></li>
+                                                        {% else %}
+                                                         <li><span  class="label label-primary"><span id="paramSaisis{{ groupe.grparAn.id}}">0</span>/{{ groupe.nbDft + groupe.nbAutres}}</span></li>
+                                                        {% endif %}
                                                 </ul>  
                                             </div>
                                         </div>            
@@ -140,6 +144,7 @@
                                     <table class="table table-bordered " id="idTable{{ groupe.grparAn.id}}">
                                         <thead>
                                             <tr>
+                                                <th>Prestataire</th> 
                                                 <th>Code</th> 
                                                 <th>Libelle</th> 
                                                 <th>Remarque</th> 
@@ -153,7 +158,7 @@
                                                 {% if  paramAn.paramAn %}
                                                     {% set nbTr = nbTr + 1 %}
 
-                                                    {% if is_granted('ROLE_ADMINSQE') or  (user.prestataire.adrCorId == paramAn.paramAn.prestataire.adrCorId)  %}
+                                                   {# {% if is_granted('ROLE_ADMINSQE') or  (user.prestataire.adrCorId == paramAn.paramAn.prestataire.adrCorId)  %}#}
 
                                                         {% if groupe.grparAn.grparRef.typeGrp == 'ENV'  %}
                                                             {% if paramAn.pgCmdMesureEnv %}
@@ -167,6 +172,8 @@
                                                                 {% else %}
                                                                 <tr id='tr_{{ nbTr }}'>
                                                                 {% endif %}
+                                                                {% set nbTd = nbTd + 1 %}
+                                                                <td id='td_{{ nbTd }}' nowrap>{{ paramAn.paramAn.prestataire.nomCorres }} </td>
                                                                 {% set nbTd = nbTd + 1 %}
                                                                 <td id='td_{{ nbTd }}' nowrap>{{ paramAn.paramAn.codeParametre.codeParametre }}</td>
                                                                 {% set nbTd = nbTd + 1 %}
@@ -262,7 +269,8 @@
                                                                 {% else %}
                                                                 <tr id='tr_{{ nbTr }}'>
                                                                 {% endif %}
-
+                                                                {% set nbTd = nbTd + 1 %}
+                                                                <td id='td_{{ nbTd }}' nowrap>{{ paramAn.paramAn.prestataire.nomCorres }} </td>
                                                                 {% set nbTd = nbTd + 1 %}
                                                                 <td id='td_{{ nbTd }}'nowrap>{{ paramAn.paramAn.codeParametre.codeParametre }}</td>
                                                                 {% set nbTd = nbTd + 1 %}
@@ -343,7 +351,7 @@
 
                                                             </tr>
                                                         {% endif %}
-                                                    {% endif %}
+                                               {#     {% endif %}#}
                                                 {% endif %}
                                             {% endfor %}
                                         </tbody>
@@ -425,7 +433,7 @@
 
         var table{{groupe.grparAn.id }} = $('#idTable{{ groupe.grparAn.id }}').DataTable(
         {"stateSave": false,
-        "order": [[ 0, "asc" ]],
+        "order": [[ 1, "asc" ]],
         "language": {
         "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
         },
@@ -448,7 +456,7 @@
                 e.preventDefault();
                 var tdEnCours =$(this).parent().parent().parent().attr('id');
                 nbEncours = tdEnCours.substring(3);
-                nbSuivant = parseInt(nbEncours) + 6;
+                nbSuivant = parseInt(nbEncours) + 7;
                 $('#td_' + nbSuivant + '> div> div>:nth-child(1)').focus();
                 };
                 });
@@ -536,7 +544,7 @@
                 e.preventDefault();
                 var tdEnCours =$(this).parent().parent().parent().attr('id');
                 nbEncours = tdEnCours.substring(3);
-                nbSuivant = parseInt(nbEncours) + 6;
+                nbSuivant = parseInt(nbEncours) + 7;
                 $('#td_' + nbSuivant + '> div> div>:nth-child(1)').focus();
                 };
                 });

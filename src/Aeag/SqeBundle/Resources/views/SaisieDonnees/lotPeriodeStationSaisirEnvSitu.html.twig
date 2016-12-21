@@ -107,7 +107,7 @@
                 <div id="idGenerer{{ groupe.grparAn.id}}"
                      <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            {% if user.prestataire and (user.prestataire.adrCorId == groupe.grparAn.prestaDft.adrCorId)  %}
+                            {% if user.prestataire and (user.prestataire.adrCorId == prestataire.adrCorId)  %}
                                 <div class="panel-heading" role="tab" id="heading{{groupe.grparAn.id}}">
                                     <h4 class="panel-title h4-default">
                                         <div class="row">
@@ -122,7 +122,7 @@
                                                     <li><span  class="label label-success">{{ groupe.correct}}</li>
                                                     <li><span  class="label label-warning">{{ groupe.warning}}</li>
                                                     <li><span  class="label label-danger">{{ groupe.erreur}}</li>
-                                                    <li><span  class="label label-primary"><span id="paramSaisis{{ groupe.grparAn.id}}">0</span>/{{ groupe.paramAns | length}}</span></li>
+                                                    <li><span  class="label label-primary"><span id="paramSaisis{{ groupe.grparAn.id}}">0</span>/{{ groupe.nbDft}}</span></li>
                                                 </ul>  
                                             </div>
                                         </div>            
@@ -136,7 +136,7 @@
                                                 <a id="idCollapse{{ groupe.grparAn.id}}" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ groupe.grparAn.id}}" aria-expanded="true" aria-controls="collapse{{ groupe.grparAn.id}}">
                                                     <i id="idCollapseI{{ groupe.grparAn.id}}" class="btn btn-default fa fa-compress text-center"></i>
                                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ groupe.grparAn.grparRef.codeGrp }} {{ groupe.grparAn.grparRef.libelleGrp }}
-                                                    &nbsp;renseigné par le prestataire {{ groupe.grparAn.prestaDft.nomCorres }}
+                                                    &nbsp;renseigné par le prestataire {{ prestataire.nomCorres }}
                                                 </a>
                                             </div>
                                             <div class="col-md-3 pull-right text-info">
@@ -144,8 +144,8 @@
                                                     <li><span  class="label label-success">{{ groupe.correct}}</li>
                                                     <li><span  class="label label-warning">{{ groupe.warning}}</li>
                                                     <li><span  class="label label-danger">{{ groupe.erreur}}</li>
-                                                    <li><span  class="label label-primary"><span id="paramSaisis{{ groupe.grparAn.id}}">0</span>/{{ groupe.paramAns | length}}</span></li>
-                                                </ul>  
+                                                    <li><span  class="label label-primary"><span id="paramSaisis{{ groupe.grparAn.id}}">0</span>/{{ groupe.nbDft}}</span></li>
+                                                 </ul>  
                                             </div>
                                         </div>            
                                     </h4>
@@ -167,10 +167,10 @@
                                         <tbody>
                                             {% for paramAn in groupe.paramAns %}
                                                 {% if  paramAn.paramAn %}
-                                                    {% set nbTr = nbTr + 1 %}
-
-                                                    {% if is_granted('ROLE_ADMINSQE') or  (user.prestataire.adrCorId == paramAn.paramAn.prestataire.adrCorId)  %}
-
+                                                    
+                                                    {#{% if is_granted('ROLE_ADMINSQE') or  (user.prestataire.adrCorId == paramAn.paramAn.prestataire.adrCorId)  %}#}
+                                                    {% if prestataire.adrCorId == paramAn.paramAn.prestataire.adrCorId  %}
+                                                        {% set nbTr = nbTr + 1 %}
                                                         {% if groupe.grparAn.grparRef.typeGrp == 'ENV'  %}
                                                             {% if paramAn.pgCmdMesureEnv %}
                                                                 {% if paramAn.pgCmdMesureEnv.codeStatut == '0' %}
@@ -278,8 +278,7 @@
                                                                 {% else %}
                                                                 <tr id='tr_{{ nbTr }}'>
                                                                 {% endif %}
-
-                                                                {% set nbTd = nbTd + 1 %}
+                                                                 {% set nbTd = nbTd + 1 %}
                                                                 <td id='td_{{ nbTd }}'nowrap>{{ paramAn.paramAn.codeParametre.codeParametre }}</td>
                                                                 {% set nbTd = nbTd + 1 %}
                                                                 <td id='td_{{ nbTd }}' align="left">{{ paramAn.paramAn.codeParametre.nomParametre }}</td>

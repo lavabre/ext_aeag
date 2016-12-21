@@ -94,7 +94,7 @@ class PgCmdAnalyseRepository extends EntityRepository {
         $query = $query . " where c.prelevId = " . $pgCmdPrelev->getId() ;
         $query = $query . " and  c.paramProg = " .$pgProgLotParamAn->getId() ;
         $qb = $this->_em->createQuery($query);
-        //print_r($query);
+       // print_r($query);
        return $qb->getOneOrNullResult();
     }
     
@@ -104,7 +104,7 @@ class PgCmdAnalyseRepository extends EntityRepository {
         $query = $query . " where c.prelevId = " . $pgCmdPrelev->getId() ;
         $query = $query . " and  c.paramProg = " .$pgProgLotParamAn->getId() ;
         $qb = $this->_em->createQuery($query);
-        //print_r($query);
+      // print_r($query);
        return $qb->getResult();
     }
     

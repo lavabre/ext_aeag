@@ -141,10 +141,12 @@ class PgProgLotParamAnRepository extends EntityRepository {
         $query = $query . " and gran.lotan  = lotan.id";
         $query = $query . " and par.grparan  = gran.id";
         $query = $query . " and par.codeParametre = '" . $pgProgGrparRefLstParam->getCodeParametre()->getCodeParametre() . "'";
-        $query = $query . " and par.codeFraction = '" . $pgProgGrparRefLstParam->getCodeFraction()->getCodeFraction() . "'";
+        if ($pgProgGrparRefLstParam->getCodeFraction()) {
+            $query = $query . " and par.codeFraction = '" . $pgProgGrparRefLstParam->getCodeFraction()->getCodeFraction() . "'";
+        }
         $qb = $this->_em->createQuery($query);
-      // print_r($query);
-       return $qb->getSingleScalarResult();
+        // print_r($query);
+        return $qb->getSingleScalarResult();
     }
 
 }
