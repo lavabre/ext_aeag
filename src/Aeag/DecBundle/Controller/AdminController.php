@@ -401,6 +401,7 @@ class AdminController extends Controller {
         $message = "";
         $fic = fopen($fic_import, "w");
         foreach ($declarationDetails as $entity) {
+            //print_r('detail : ' . $entity->getId() . '<br/>');
             $producteur = $repoOuvrage->getOuvrageById($entity->getDeclarationproducteur()->getProducteur());
             $contenu = $producteur->getSiret() . ';';
             $contenu = $contenu . substr($producteur->getLibelle(), 0, 31) . ';';
@@ -420,7 +421,7 @@ class AdminController extends Controller {
             $contenu = $contenu . $entity->getQuantiteRet() . ';';
             $contenu = $contenu . $entity->getFiliere()->getCode() . ';';
             $contenu = $contenu . $entity->getCoutFacture() . ';';
-            $contenu = $contenu . $entity->getMontAide() . ';';
+           $contenu = $contenu . $entity->getMontAide() . ';';
             if ($entity->getCentreDepot()) {
                 $centreDepot = $repoOuvrage->getOuvrageById($entity->getCentreDepot());
                 $contenu = $contenu . $centreDepot->getSiret() . ';';
@@ -433,7 +434,8 @@ class AdminController extends Controller {
             } else {
                 $contenu = $contenu . ';';
             }
-            $contenu = $contenu . date('d/m/Y H:i') . "\n";
+            $contenu = $contenu . date('d/m/Y H:i') . ';';
+            $contenu = $contenu . $entity->getTauxAide() . "\n";
             fputs($fic, $contenu);
             $entity->setStatut($statut);
             $emDec->persist($entity);
