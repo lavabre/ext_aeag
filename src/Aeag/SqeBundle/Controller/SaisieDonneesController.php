@@ -1628,7 +1628,7 @@ class SaisieDonneesController extends Controller {
             $nbSaisieParametresTotal = $nbSaisieParametresEnvSit + $nbSaisieParametresAna;
             echo ('$nbSaisieParametresTotal : ' . $nbSaisieParametresTotal . ' </br>');
 
-           //return new Response('');
+            //return new Response('');
 
             if ($nbParametresTotal == $nbSaisieParametresTotal) {
                 $okPhase = true;
@@ -1668,7 +1668,7 @@ class SaisieDonneesController extends Controller {
 
 //  return new Response(  \Symfony\Component\VarDumper\VarDumper::dump($tabParamAns));
 //return new Response ('');
-        if ($nbErreurs == 0) {  
+        if ($nbErreurs == 0) {
             if ($okPhase) {
                 return $this->redirect($this->generateUrl('AeagSqeBundle_saisieDonnees_lot_periode_station_saisir_env_situ', array(
                                     'prelevId' => $pgCmdPrelev->getId(),
@@ -2654,9 +2654,14 @@ class SaisieDonneesController extends Controller {
                     $k = 0;
                     foreach ($pgCmdDemandes as $pgCmdDemande) {
                         $prestataire = $pgCmdDemande->getPrestataire();
-                        $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevUniqueByPrestaPrelDemandeStationPeriode($prestataire, $pgCmdDemande, $tabStations[$i]['station'], $pgProgPeriode);
+                        //print_r('prestataire : ' . $prestataire->getAdrCorId() . ' demande : ' . $pgCmdDemande->getid() . ' station : ' .  $tabStations[$i]['station']->getOuvFoncId() . ' periode : ' . $pgProgPeriode->getid() . '<br/>');
+                        $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($prestataire, $pgCmdDemande, $tabStations[$i]['station'], $pgProgPeriode);
                         $tabStations[$i]['demande'][$k]['demande'] = $pgCmdDemande;
-                        $tabStations[$i]['demande'][$k]['prelev'] = $pgCmdPrelev;
+                        $tabStations[$i]['demande'][$k]['prelevs'] = array();
+                        for ($l = 0; $l < count($pgCmdPrelevs); $l++) {
+                            $pgCmdPrelev = $pgCmdPrelevs[$l];
+                            $tabStations[$i]['demande'][$k]['prelevs'][$l] = $pgCmdPrelev;
+                        }
                         $k++;
                     }
                 }
@@ -2791,6 +2796,7 @@ class SaisieDonneesController extends Controller {
 
                         $siret_prestataire = $tab[5];
                         $pgRefCorresPresta = $repoPgRefCorresPresta->getPgRefCorresPrestaByCodeSiret($siret_prestataire);
+                        $pgCmdPrelevs = array();
                         if (!$pgRefCorresPresta) {
                             $err = true;
                             $contenu = 'ligne  ' . $ligne . '  :  Siret préleveur inconnu (' . $tab[5] . ')' . CHR(13) . CHR(10);
@@ -2800,7 +2806,11 @@ class SaisieDonneesController extends Controller {
                             for ($j = 0; $j < count($tabStations[$i]['demande']); $j++) {
                                 if ($tabStations[$i]['demande'][$j]['demande']->getPrestataire() == $pgRefCorresPresta) {
                                     $pgCmdDemande = $tabStations[$i]['demande'][$j]['demande'];
-                                    $pgCmdPrelev = $tabStations[$i]['demande'][$j]['prelev'];
+                                    $pgCmdPrelevs = array();
+                                    for ($k = 0; $k < count($tabStations[$i]['demande'][$j]['prelevs']); $k++) {
+                                        $pgCmdPrelevs[$k] = $tabStations[$i]['demande'][$j]['prelevs'][$k];
+                                    }
+                                    //  $pgCmdPrelev = $tabStations[$i]['demande'][$j]['prelev'];
                                 }
                             }
                         }
@@ -2897,7 +2907,7 @@ class SaisieDonneesController extends Controller {
                         $codeFraction = $tab[15];
                         if ($codeFraction) {
                             $pgSandreFraction = $repoPgSandreFractions->getPgSandreFractionsByCodeFraction($codeFraction);
-                            if (!$pgSandreSupport) {
+                            if (!$pgSandreFraction) {
                                 $err = true;
                                 $contenu = 'ligne  ' . $ligne . '  :  Code fraction inconnu (' . $tab[15] . ')' . CHR(13) . CHR(10);
                                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
@@ -2960,14 +2970,27 @@ class SaisieDonneesController extends Controller {
                             }
                         }
 
+                        if (count($pgCmdPrelevs) == 1) {
+                            $pgCmdPrelev = $pgCmdPrelevs[0];
+                        } else {
+                            for ($k = 0; $k < count($pgCmdPrelevs); $k++) {
+                                if ($pgCmdPrelevs[$k]->getCodeSupport()->getCodeSupport() == $pgSandreSupport->getCodeSupport()) {
+                                    $pgCmdPrelev = $pgCmdPrelevs[$k];
+                                 }
+                            }
+                        }
                         //$pgCmdPrelev = $tabStations[$i]['prelev'];
                         if (!$pgCmdPrelev) {
                             $err = true;
                             $contenu = 'ligne  ' . $ligne . '  :  Pas de prélevement pour la demande : ' . $pgCmdDemande->getCodeDemandeCmd() . ' de la station : ' . $tab[1] . ' pour le prestataire : ' . $prestataire->getAncnum() . CHR(13) . CHR(10);
-                            ;
                             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                             fputs($rapport, $contenu);
                         }
+                        
+//                        $contenu = 'ligne  ' . $ligne . '  : paramètre (' . $tab[8] . ')'  . ' prelev : ' . $pgCmdPrelev->getId()  . CHR(13) . CHR(10);
+//                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+//                        fputs($rapport, $contenu);
+//                        $err = true;
 
                         if ($err) {
                             $erreur++;
@@ -3275,8 +3298,9 @@ class SaisieDonneesController extends Controller {
 
                                 $pgCmdPrelev->setDatePrelev($datePrel);
                                 $emSqe->persist($pgCmdPrelev);
+                                
                                 $emSqe->flush();
-                            }
+                             }
                         }
                     }
                 }
@@ -3292,7 +3316,17 @@ class SaisieDonneesController extends Controller {
                         if ($tabStations[$i]['demande'][$j]['demande']->getPrestataire() == $pgRefCorresPresta) {
                             $prestataire = $tabStations[$i]['demande'][$j]['demande']->getPrestataire();
                             $pgCmdDemande = $tabStations[$i]['demande'][$j]['demande'];
-                            $pgCmdPrelev = $tabStations[$i]['demande'][$j]['prelev'];
+                            $pgCmdPrelevs = $tabStations[$i]['demande'][$j]['prelevs'];
+                            if (count($pgCmdPrelevs) == 1) {
+                                $pgCmdPrelev = $pgCmdPrelevs[0];
+                            } else {
+                                for ($k = 0; $k < count($pgCmdPrelevs); $k++) {
+                                    if ($pgCmdPrelevs[$k]->getCodeSupport()->getCodeSupport() == $pgSandreSupport->getCodeSupport()) {
+                                        $pgCmdPrelev = $pgCmdPrelevs[$j];
+                                        break;
+                                    }
+                                }
+                            }
                         }
                     }
 

@@ -156,9 +156,10 @@ class PgCmdPrelevRepository extends EntityRepository {
         $query = $query . " and p.station = " . $pgRefStationMesure->getOuvFoncId();
         $query = $query . " and p.periode = " . $pgProgPeriodes->getId();
         $qb = $this->_em->createQuery($query);
-        //print_r($query);
+        //print_r($query . '<br/>');
         return $qb->getOneOrNullResult();
     }
+   
 
     public function getPgCmdPrelevByCodePrelevCodeDmdAndPhase($pgCmdPrelev, $pgCmdDemande, $pgProgPhase) {
         $query = "select p";
@@ -171,7 +172,7 @@ class PgCmdPrelevRepository extends EntityRepository {
         $qb->setParameter('demande', $pgCmdDemande);
         $qb->setParameter('codeprelev', $pgCmdPrelev->getCodePrelevCmd());
         $qb->setParameter('phase', $pgProgPhase);
-        //print_r($query);
+       // print_r($query . '<br/>');
         return $qb->getResult();
     }
 
