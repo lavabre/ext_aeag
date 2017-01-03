@@ -1668,7 +1668,7 @@ class SaisieDonneesController extends Controller {
 
 //  return new Response(  \Symfony\Component\VarDumper\VarDumper::dump($tabParamAns));
 //return new Response ('');
-        if ($nbErreurs == 0) {
+        if ($nbErreurs == 0) {  
             if ($okPhase) {
                 return $this->redirect($this->generateUrl('AeagSqeBundle_saisieDonnees_lot_periode_station_saisir_env_situ', array(
                                     'prelevId' => $pgCmdPrelev->getId(),
