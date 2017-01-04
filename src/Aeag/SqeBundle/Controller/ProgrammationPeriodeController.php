@@ -471,6 +471,17 @@ class ProgrammationPeriodeController extends Controller {
         $pgProgLotGrparAns = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotan($pgProgLotAn);
         $pgProgLotStationAns = $repoPgProgLotStationAn->getPgProgLotStationAnBylotan($pgProgLotAn);
         $pgProgPeriodes = $repoPgProgPeriodes->getPgProgPeriodesByAnneeTypePeriode($annee, $pgProgTypeMilieu->getTypePeriode());
+        
+         foreach ($pgProgPeriodes as $pgProgPeriode) {
+            if ($pgProgLot->getDelaiPrel()) {
+                $dateFin = clone($pgProgPeriode->getDateDeb());
+                $delai = $pgProgLot->getDelaiPrel();
+                $dateFin->add(new \DateInterval('P' . $delai . 'D'));
+            } else {
+                $dateFin = $pgProgPeriode->getDateFin();
+            }
+            $pgProgPeriode->setDateFin($dateFin);
+        }
 
         $tabProgPeriodes = array();
         $i = 0;
@@ -740,11 +751,21 @@ class ProgrammationPeriodeController extends Controller {
         $maj = $request->get('maj');
 
         $pgProgLotAn = $repoPgProgLotAn->getPgProgLotAnById($pgProgLotAnId);
+        $pgProgLot = $pgProgLotAn->getLot();
         $pgProgLotPeriodeAns = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnByLotan($pgProgLotAn);
-
+        
+       
         $tabPeriodeAns = array();
         $i = 0;
         foreach ($pgProgLotPeriodeAns as $pgProgLotPeriodeAn) {
+             if ($pgProgLot->getDelaiPrel()) {
+                $dateFin = clone($pgProgLotPeriodeAn->getPeriode()->getDateDeb());
+                $delai = $pgProgLot->getDelaiPrel();
+                $dateFin->add(new \DateInterval('P' . $delai . 'D'));
+            } else {
+                $dateFin = $pgProgLotPeriodeAn->getPeriode()->getDateFin();
+            }
+            $pgProgLotPeriodeAn->getPeriode()->setDateFin($dateFin);
             $tabPeriodeAns[$i] = $pgProgLotPeriodeAn;
             $i++;
         }
