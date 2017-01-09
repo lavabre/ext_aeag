@@ -121,7 +121,23 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
                         $pgCmdPrelev->setDatePrelev($datePrel);
                     }
                     $pgCmdPrelev->setCodeMethode($pgTmpValidEdilabo->getMethPrel());
-                    $pgCmdPrelev->setRealise("1");
+                    if ($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getCodeMilieu()->getCodeMilieu() == 'RPC') {
+                        $meSituHydro = $this->getMesureByCodeParametre(1726, $demandeId, $reponseId, $codePrelevement);
+                        if (!is_null($meSituHydro) && $meSituHydro <= 2) {
+                            $pgCmdPrelev->setRealise("0");
+                        } else {
+                            $pgCmdPrelev->setRealise("1");
+                        }
+                    } else {
+                        $codesRqValides = $this->repoPgTmpValidEdilabo->getCodeRqValideByCodePrelevement($demandeId, $reponseId, $codePrelevement);
+                        if (count($codesRqValides) == 0) {
+                            $this->_addLog('warning', $demandeId, $reponseId, "Toutes les analyses ont un code rq = 0");
+                            $pgCmdPrelev->setRealise("0");
+                        } else {
+                            $pgCmdPrelev->setRealise("1");
+                        }
+                        
+                    }
                     $this->emSqe->persist($pgCmdPrelev);
                     // Cas particulier selon num_ordre => creer une nouvelle ligne
                     if ($pgTmpValidEdilabo->getNumOrdre() == 1) {
@@ -238,7 +254,7 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
                                 $pgCmdAnalyse->setCodeUnite($pgSandreUnites);
                             }
                             $pgCmdAnalyse->setCodeRemarque($pgTmpValidEdilabo->getCodeRqM());
-                            if ($pgTmpValidEdilabo->getResM() == "") {
+                            if ($pgTmpValidEdilabo->getLqM() == "") {
                                 $pgCmdAnalyse->setLqAna(null);
                             } else {
                                 $pgCmdAnalyse->setLqAna($pgTmpValidEdilabo->getLqM());
