@@ -96,12 +96,14 @@ class PgTmpValidEdilaboRepository extends EntityRepository {
             $qb->setParameter('reponse', $reponseId);
         }
         $qb->setParameter('codePrelevement', $codePrelevement);
-        try {
-            $result = $qb->getOneOrNullResult();
-        } catch (Doctrine\ORM\NonUniqueResultException $ex) {
-            var_dump('Le code prelev '.$codePrelevement.' possède plusieurs date de prelevement');
-        }
-        return $result;
+        
+        $result = $qb->getResult();
+        if (count($result) > 1) {
+            return -1;
+        } else if (count($result) == 0) {
+            return null;
+        }         
+        return $result[0];
     }
     
     public function getDiffLabo($codePrelevement, $demandeId, $reponseId) {
@@ -212,12 +214,14 @@ class PgTmpValidEdilaboRepository extends EntityRepository {
             $qb->setParameter('codeFraction', $codeFraction);    
         }
         
-        try {
-            $result = $qb->getOneOrNullResult();
-        } catch (Doctrine\ORM\NonUniqueResultException $ex) {
-            var_dump('Le code paramètre '.$codeParametre.' possède plusieurs mesures(s) ('.$codePrelevement.')');
+        $result = $qb->getResult();
+        if (count($result) > 1) {
+            return -1;
+        } else if (count($result) == 0) {
+            return null;
         }
-        return $result;
+        return $result[0];
+
     }
     
     public function getMesureByCodeParametre($codeParametre, $demandeId, $reponseId, $codePrelevement, $codeFraction = null) {
@@ -239,16 +243,14 @@ class PgTmpValidEdilaboRepository extends EntityRepository {
         if (!is_null($codeFraction)) {
             $qb->setParameter('codeFraction', $codeFraction);
         }
-        try {
-            $result = $qb->getOneOrNullResult();
-            if (!is_null($result)) {
-                $result = $result['resM'];
-            }
-            return $result;
-        } catch (Doctrine\ORM\NonUniqueResultException $ex) {
-            var_dump('Le code paramètre '.$codeParametre.' possède plusieurs mesures ('.$codePrelevement.')');
+        
+        $result = $qb->getResult();
+        if (count($result) > 1) {
+            return -1;
+        } else if (count($result) == 0) {
             return null;
         }
+        return $result[0]['resM'];
         
     }
     
@@ -366,15 +368,14 @@ class PgTmpValidEdilaboRepository extends EntityRepository {
         if (!is_null($codeFraction)){
             $qb->setParameter('codeFraction', $codeFraction);
         }
-        try {
-            $result = $qb->getOneOrNullResult();
-        } catch (Doctrine\ORM\NonUniqueResultException $ex) {
-            var_dump('Le code paramètre '.$codeParametre.' possède plusieurs code remarque ('.$codePrelevement.')');
+        
+        $result = $qb->getResult();
+        if (count($result) > 1) {
+            return -1;
+        } else if (count($result) == 0) {
+            return null;
         }
-        if (!is_null($result)) {
-            $result = $result['codeRqM'];
-        }
-        return $result;
+        return $result[0]['codeRqM'];
     }
     
     public function getCodeRqValideByCodePrelevement($demandeId, $reponseId, $codePrelevement) {

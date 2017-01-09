@@ -150,10 +150,10 @@ class ProcessRaiCommand extends AeagCommand {
             $prelevRealise = true;
 
             // Vérification de la date de prélèvement
-            $datePrelRps = $this->repoPgTmpValidEdilabo->getDatePrelevement($codePrelev["codePrelevement"], $demandeId, $reponseId);
+            $datePrelRps = $this->getDatePrelevement($codePrelev["codePrelevement"], $demandeId, $reponseId);
             $datePrelRps = new \DateTime($datePrelRps["datePrel"]);
 
-            $datePrelDmd = $this->repoPgTmpValidEdilabo->getDatePrelevement($codePrelev["codePrelevement"], $demandeId);
+            $datePrelDmd = $this->getDatePrelevement($codePrelev["codePrelevement"], $demandeId);
             $datePrelDmdMin = new \DateTime($datePrelDmd["datePrel"]);
 
             $delaiPrel = $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getDelaiPrel();
@@ -197,7 +197,7 @@ class ProcessRaiCommand extends AeagCommand {
             }
 
             //test si prelevement ok
-            $meSituHydro = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1726, $demandeId, $reponseId, $codePrelev["codePrelevement"]);
+            $meSituHydro = $this->getMesureByCodeParametre(1726, $demandeId, $reponseId, $codePrelev["codePrelevement"]);
             if (!is_null($meSituHydro) && $meSituHydro <= 2) {
                 $prelevRealise = false;
             }
@@ -210,7 +210,7 @@ class ProcessRaiCommand extends AeagCommand {
                 $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : RAI ' . $pgCmdFichierRps->getId() . ' - ' . $codePrelev["codePrelevement"] . ' - ' . count($mesuresRps) . ' mesures');
                 if (count($mesuresRps) > 0) {
                     foreach ($mesuresRps as $mesureRps) {
-                        $mesureDmd = $this->repoPgTmpValidEdilabo->getMesuresByCodeParametre($mesureRps['codeParametre'], $codePrelev["codePrelevement"], $demandeId, null, $mesureRps['codeFraction']);
+                        $mesureDmd = $this->getMesuresByCodeParametre($mesureRps['codeParametre'], $codePrelev["codePrelevement"], $demandeId, null, $mesureRps['codeFraction']);
                         if ((count($mesureDmd) == 1) && ($mesureRps['codeUnite'] != $mesureDmd['codeUnite'])) {
                             $pgSandreFractions = $this->repoPgSandreFractions->findOneByCodeFraction($mesureRps['codeFraction']);
                             $pgProgUnitesPossiblesParam = $this->repoPgProgUnitesPossiblesParam->findOneBy(array('codeParametre' => $mesureRps['codeParametre'], 'codeUnite' => $mesureRps['codeUnite'], 'natureFraction' => $pgSandreFractions->getNatureFraction()));
@@ -266,6 +266,7 @@ class ProcessRaiCommand extends AeagCommand {
         $date = new \DateTime();
         $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : RAI ' . $pgCmdFichierRps->getId() . ' - Fin cohérence RAI/DAI');
     }
+    
 
     protected function _existePresta($codeIntervenants) {
         foreach ($codeIntervenants as $codeIntervenant) {
@@ -296,7 +297,7 @@ class ProcessRaiCommand extends AeagCommand {
         foreach ($codePrelevements as $codePrelevement) {
             $codePrelevement = $codePrelevement['codePrelevement'];
 
-            $meSituHydro = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1726, $demandeId, $reponseId, $codePrelevement);
+            $meSituHydro = $this->getMesureByCodeParametre(1726, $demandeId, $reponseId, $codePrelevement);
 
             if (!is_null($meSituHydro) && $meSituHydro <= 2) {
                 $this->_addLog('warning', $demandeId, $reponseId, "Situation Hydro = " . $meSituHydro, $codePrelevement, 1726);
@@ -391,46 +392,46 @@ class ProcessRaiCommand extends AeagCommand {
         $reponseId = $pgCmdFichierRps->getId();
 
         // III.6 1 < pH(1302) < 14
-        $mPh = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1302, $demandeId, $reponseId, $codePrelevement, 23);
+        $mPh = $this->getMesureByCodeParametre(1302, $demandeId, $reponseId, $codePrelevement, 23);
         if (($result = $this->controleVraisemblaceService->pH($mPh)) != true) {
             $this->_addLog($result[0], $demandeId, $reponseId, $result[1], $codePrelevement);
         }
         
         // III.7 modèle  de WEISS : cohérence Teau, % O2, Concentration O2  sauf si Conductivité > 10 000
-        $mConductivite = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1303, $demandeId, $reponseId, $codePrelevement, 23);
+        $mConductivite = $this->getMesureByCodeParametre(1303, $demandeId, $reponseId, $codePrelevement, 23);
         if ($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getCodeMilieu()->getCodeMilieu() !== 'LPC') {
-            $mTxSatOx = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1312, $demandeId, $reponseId, $codePrelevement, 23);
-            $mOxDiss = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1311, $demandeId, $reponseId, $codePrelevement, 23);
-            $mTEau = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1301, $demandeId, $reponseId, $codePrelevement, 23);
+            $mTxSatOx = $this->getMesureByCodeParametre(1312, $demandeId, $reponseId, $codePrelevement, 23);
+            $mOxDiss = $this->getMesureByCodeParametre(1311, $demandeId, $reponseId, $codePrelevement, 23);
+            $mTEau = $this->getMesureByCodeParametre(1301, $demandeId, $reponseId, $codePrelevement, 23);
             if (($result = $this->controleVraisemblaceService->modeleWeiss($mTxSatOx, $mOxDiss, $mTEau, $mConductivite)) != true) {
                 $this->_addLog($result[0], $demandeId, $reponseId, $result[1], $codePrelevement);
             }
         }
 
         // III.8 Balance ionique (meq) sauf si tous les résultats < LQ
-        $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1367, $demandeId, $reponseId, $codePrelevement, 3);
-        $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1375, $demandeId, $reponseId, $codePrelevement, 3);
-        $cCationParams = array(1374 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1374, $demandeId, $reponseId, $codePrelevement, 3),
-            1335 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1335, $demandeId, $reponseId, $codePrelevement, 3),
-            1372 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1372, $demandeId, $reponseId, $codePrelevement, 3),
-            1367 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1367, $demandeId, $reponseId, $codePrelevement, 3),
-            1375 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1375, $demandeId, $reponseId, $codePrelevement, 3)
+        /*$this->getMesureByCodeParametre(1367, $demandeId, $reponseId, $codePrelevement, 3);
+        $this->getMesureByCodeParametre(1375, $demandeId, $reponseId, $codePrelevement, 3);*/
+        $cCationParams = array(1374 => $this->getMesureByCodeParametre(1374, $demandeId, $reponseId, $codePrelevement, 3),
+            1335 => $this->getMesureByCodeParametre(1335, $demandeId, $reponseId, $codePrelevement, 3),
+            1372 => $this->getMesureByCodeParametre(1372, $demandeId, $reponseId, $codePrelevement, 3),
+            1367 => $this->getMesureByCodeParametre(1367, $demandeId, $reponseId, $codePrelevement, 3),
+            1375 => $this->getMesureByCodeParametre(1375, $demandeId, $reponseId, $codePrelevement, 3)
         );
-        $cAnionParams = array(1433 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1433, $demandeId, $reponseId, $codePrelevement, 3),
-            1340 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1340, $demandeId, $reponseId, $codePrelevement, 3),
-            1338 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1338, $demandeId, $reponseId, $codePrelevement, 3),
-            1337 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1337, $demandeId, $reponseId, $codePrelevement, 3),
-            1327 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1327, $demandeId, $reponseId, $codePrelevement, 3),
-            1339 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1339, $demandeId, $reponseId, $codePrelevement, 3)
+        $cAnionParams = array(1433 => $this->getMesureByCodeParametre(1433, $demandeId, $reponseId, $codePrelevement, 3),
+            1340 => $this->getMesureByCodeParametre(1340, $demandeId, $reponseId, $codePrelevement, 3),
+            1338 => $this->getMesureByCodeParametre(1338, $demandeId, $reponseId, $codePrelevement, 3),
+            1337 => $this->getMesureByCodeParametre(1337, $demandeId, $reponseId, $codePrelevement, 3),
+            1327 => $this->getMesureByCodeParametre(1327, $demandeId, $reponseId, $codePrelevement, 3),
+            1339 => $this->getMesureByCodeParametre(1339, $demandeId, $reponseId, $codePrelevement, 3)
         );
 
         $codeRqCationParams = array();
         $codeRqAnionParams = array();
         foreach ($cCationParams as $idx => $cCationParam) {
-            $codeRqCationParams[$idx] = $this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre($idx, $demandeId, $reponseId, $codePrelevement, 3);
+            $codeRqCationParams[$idx] = $this->getCodeRqByCodeParametre($idx, $demandeId, $reponseId, $codePrelevement, 3);
         }
         foreach ($cAnionParams as $idx => $cAnionParam) {
-            $codeRqAnionParams[$idx] = $this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre($idx, $demandeId, $reponseId, $codePrelevement, 3);
+            $codeRqAnionParams[$idx] = $this->getCodeRqByCodeParametre($idx, $demandeId, $reponseId, $codePrelevement, 3);
         }
         if (($result = $this->controleVraisemblaceService->balanceIonique($cCationParams, $cAnionParams, $codeRqCationParams, $codeRqAnionParams)) != true) {
             $this->_addLog($result[0], $demandeId, $reponseId, $result[1], $codePrelevement);
@@ -442,19 +443,19 @@ class ProcessRaiCommand extends AeagCommand {
         }
 
         // III.10 [PO4] (1433) en P < [P total](1350) 
-        $mPo4 = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1433, $demandeId, $reponseId, $codePrelevement, 3);
-        $mP = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1350, $demandeId, $reponseId, $codePrelevement, 23);
-        $codeRqPo4 = $this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre(1433, $demandeId, $reponseId, $codePrelevement, 3);
-        $codeRqP = $this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre(1350, $demandeId, $reponseId, $codePrelevement, 23);
+        $mPo4 = $this->getMesureByCodeParametre(1433, $demandeId, $reponseId, $codePrelevement, 3);
+        $mP = $this->getMesureByCodeParametre(1350, $demandeId, $reponseId, $codePrelevement, 23);
+        $codeRqPo4 = $this->getCodeRqByCodeParametre(1433, $demandeId, $reponseId, $codePrelevement, 3);
+        $codeRqP = $this->getCodeRqByCodeParametre(1350, $demandeId, $reponseId, $codePrelevement, 23);
         if (($result = $this->controleVraisemblaceService->orthophosphate($mPo4, $mP, $codeRqPo4, $codeRqP)) != true) {
             $this->_addLog($result[0], $demandeId, $reponseId, $result[1], $codePrelevement);
         }
 
         // III.11 NH4 (1335) en N < Nkj (1319)
-        $mNh4 = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1335, $demandeId, $reponseId, $codePrelevement, 3);
-        $mNkj = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1319, $demandeId, $reponseId, $codePrelevement, 23);
-        $codeRqNh4 = $this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre(1335, $demandeId, $reponseId, $codePrelevement, 3);
-        $codeRqNkj = $this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre(1319, $demandeId, $reponseId, $codePrelevement, 23);
+        $mNh4 = $this->getMesureByCodeParametre(1335, $demandeId, $reponseId, $codePrelevement, 3);
+        $mNkj = $this->getMesureByCodeParametre(1319, $demandeId, $reponseId, $codePrelevement, 23);
+        $codeRqNh4 = $this->getCodeRqByCodeParametre(1335, $demandeId, $reponseId, $codePrelevement, 3);
+        $codeRqNkj = $this->getCodeRqByCodeParametre(1319, $demandeId, $reponseId, $codePrelevement, 23);
         if (($result = $this->controleVraisemblaceService->ammonium($mNh4, $mNkj, $codeRqNh4, $codeRqNkj)) != true) {
             $this->_addLog($result[0], $demandeId, $reponseId, $result[1], $codePrelevement);
         }
@@ -470,28 +471,28 @@ class ProcessRaiCommand extends AeagCommand {
         }
 
         // III.13 Somme des paramètres distincts (1200+1201+1202+1203=5537; 1178+1179 = 1743; 1144+1146+ 1147+1148 = 7146; 2925 + 1292 =  1780) à  (+/- 20%)
-        $sommeParams = array(0 => array(1200 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1200, $demandeId, $reponseId, $codePrelevement, 23),
-                1201 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1201, $demandeId, $reponseId, $codePrelevement, 23),
-                1202 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1202, $demandeId, $reponseId, $codePrelevement, 23),
-                1203 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1203, $demandeId, $reponseId, $codePrelevement, 23)
+        $sommeParams = array(0 => array(1200 => $this->getMesureByCodeParametre(1200, $demandeId, $reponseId, $codePrelevement, 23),
+                1201 => $this->getMesureByCodeParametre(1201, $demandeId, $reponseId, $codePrelevement, 23),
+                1202 => $this->getMesureByCodeParametre(1202, $demandeId, $reponseId, $codePrelevement, 23),
+                1203 => $this->getMesureByCodeParametre(1203, $demandeId, $reponseId, $codePrelevement, 23)
             ),
-            1 => array(1178 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1178, $demandeId, $reponseId, $codePrelevement, 23),
-                1179 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1179, $demandeId, $reponseId, $codePrelevement, 23)
+            1 => array(1178 => $this->getMesureByCodeParametre(1178, $demandeId, $reponseId, $codePrelevement, 23),
+                1179 => $this->getMesureByCodeParametre(1179, $demandeId, $reponseId, $codePrelevement, 23)
             ),
-            2 => array(1144 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1144, $demandeId, $reponseId, $codePrelevement, 23),
-                1146 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1146, $demandeId, $reponseId, $codePrelevement, 23),
-                1147 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1147, $demandeId, $reponseId, $codePrelevement, 23),
-                1148 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1148, $demandeId, $reponseId, $codePrelevement, 23)
+            2 => array(1144 => $this->getMesureByCodeParametre(1144, $demandeId, $reponseId, $codePrelevement, 23),
+                1146 => $this->getMesureByCodeParametre(1146, $demandeId, $reponseId, $codePrelevement, 23),
+                1147 => $this->getMesureByCodeParametre(1147, $demandeId, $reponseId, $codePrelevement, 23),
+                1148 => $this->getMesureByCodeParametre(1148, $demandeId, $reponseId, $codePrelevement, 23)
             ),
-            3 => array(2925 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(2925, $demandeId, $reponseId, $codePrelevement, 23),
-                1292 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1292, $demandeId, $reponseId, $codePrelevement, 23)
+            3 => array(2925 => $this->getMesureByCodeParametre(2925, $demandeId, $reponseId, $codePrelevement, 23),
+                1292 => $this->getMesureByCodeParametre(1292, $demandeId, $reponseId, $codePrelevement, 23)
             ),
         );
 
-        $resultParams = array(0 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(5537, $demandeId, $reponseId, $codePrelevement, 23),
-            1 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1743, $demandeId, $reponseId, $codePrelevement, 23),
-            2 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(7146, $demandeId, $reponseId, $codePrelevement, 23),
-            3 => $this->repoPgTmpValidEdilabo->getMesureByCodeParametre(1780, $demandeId, $reponseId, $codePrelevement, 23));
+        $resultParams = array(0 => $this->getMesureByCodeParametre(5537, $demandeId, $reponseId, $codePrelevement, 23),
+            1 => $this->getMesureByCodeParametre(1743, $demandeId, $reponseId, $codePrelevement, 23),
+            2 => $this->getMesureByCodeParametre(7146, $demandeId, $reponseId, $codePrelevement, 23),
+            3 => $this->getMesureByCodeParametre(1780, $demandeId, $reponseId, $codePrelevement, 23));
 
         $params = array(5537, 1743, 7146, 1780);
         if (($results = $this->controleVraisemblaceService->sommeParametresDistincts($sommeParams, $resultParams, $params)) != true) {
@@ -551,7 +552,7 @@ class ProcessRaiCommand extends AeagCommand {
             $nbCodeRq1 = 0;
             foreach ($codesParams as $codeParam) {
                 if (in_array($codeParam, $this->detectionCodeRemarqueComplet)) {
-                    $codeRq = $this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre($codeParam, $demandeId, $reponseId, $codePrelevement);
+                    $codeRq = $this->getCodeRqByCodeParametre($codeParam, $demandeId, $reponseId, $codePrelevement);
                     if ($codeRq == 1) {
                         $nbCodeRq1++;
                     }
@@ -581,7 +582,7 @@ class ProcessRaiCommand extends AeagCommand {
             $nbCodeRq10 = 0;
             foreach ($codesParams as $codeParam) {
                 if (in_array($codeParam, $this->detectionCodeRemarqueMoitie)) {
-                    $codeRq = $this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre($codeParam, $demandeId, $reponseId, $codePrelevement);
+                    $codeRq = $this->getCodeRqByCodeParametre($codeParam, $demandeId, $reponseId, $codePrelevement);
                     if ($codeRq == 10) {
                         $nbCodeRq10++;
                     }
@@ -637,5 +638,43 @@ class ProcessRaiCommand extends AeagCommand {
             }
         }
     }
+    
+    // Méthodes permettant la gestion des doublons
+    public function getCodeRqByCodeParametre($codeParametre, $demandeId, $reponseId, $codePrelevement, $codeFraction = null) {
+        $codeRq = $this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre($codeParametre, $demandeId, $reponseId, $codePrelevement, $codeFraction);
+        if ($codeRq == -1) {
+            $this->_addLog('error', $demandeId, $reponseId, 'Présence de doublon du code remarque', $codePrelevement, $codeParametre);
+            return null;
+        } 
+        return $codeRq;
+    }
+    
+    public function getMesureByCodeParametre($codeParametre, $demandeId, $reponseId, $codePrelevement, $codeFraction = null) {
+        $mesure = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre($codeParametre, $demandeId, $reponseId, $codePrelevement, $codeFraction);
+         if ($mesure == -1) {
+            $this->_addLog('error', $demandeId, $reponseId, 'Présence de doublon de la mesure', $codePrelevement, $codeParametre);
+            return null;
+        } 
+        return $mesure;
+    }
+    
+    public function getMesuresByCodeParametre($codeParametre, $codePrelevement, $demandeId, $reponseId = null, $codeFraction = null) {
+        $mesures = $this->repoPgTmpValidEdilabo->getMesuresByCodeParametre($codeParametre, $codePrelevement, $demandeId, $reponseId, $codeFraction);
+         if ($mesures == -1) {
+            $this->_addLog('error', $demandeId, $reponseId, 'Présence de doublon des mesures', $codePrelevement, $codeParametre);
+            return null;
+        } 
+        return $mesures;
+    }
+    
+    public function getDatePrelevement($codePrelevement, $demandeId, $reponseId = null) {
+        $datePrelev = $this->repoPgTmpValidEdilabo->getDatePrelevement($codePrelevement, $demandeId, $reponseId);
+         if ($datePrelev == -1) {
+            $this->_addLog('error', $demandeId, $reponseId, 'Présence de doublon de la date de prelevement', $codePrelevement);
+            return null;
+        } 
+        return $datePrelev;
+    }
+    
 
 }
