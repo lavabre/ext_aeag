@@ -27,7 +27,7 @@ class PgSandreUnitesPossiblesParam {
 
    /**
      * @var \PgSandreUnites
-     *
+     * @ORM\Id
      * @ORM\ManyToOne(targetEntity="PgSandreUnites")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="code_unite", referencedColumnName="code_unite")

@@ -32,7 +32,7 @@ class PgSandreUnitesPossiblesParamRepository extends EntityRepository {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgSandreUnitesPossiblesParam p";
         $query = $query . " where p.codeParametre = '" . $codeParametre . "'";
-         $query = $query . " order by  p.valeur";
+         $query = $query . " order by  p.codeUnite";
         $qb = $this->_em->createQuery($query);
         //print_r($query);
         return $qb->getResult();

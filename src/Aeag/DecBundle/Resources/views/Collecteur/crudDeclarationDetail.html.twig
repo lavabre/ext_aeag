@@ -246,7 +246,7 @@
                              <div class="form-group">
                                  <label  class="col-xs-4 control-label">Quantité pesée (kg) <i class="fa fa-asterisk text-danger btn-xs"></i></label>
                                  <div class="col-xs-2 input-group has-error has-feedback">
-                                 {{ form_widget(form.quantiteReel, { 'attr': { 'class': 'form-control input-small', 'number': 'true'} }) }}
+                                 {{ form_widget(form.quantiteReel, { 'attr': { 'class': 'form-control input-small', 'digits': 'true'} }) }}
                                  </div>
                                  <div class="col-xs-offset-4 col-xs-2 alert alert-warning">
                                 {{ message2 }}
@@ -260,7 +260,7 @@
                                 {% else %}
                                 <div class="col-xs-2 input-group">
                                 {% endif %} 
-                                {{ form_widget(form.quantiteReel, { 'attr': { 'class': 'form-control input-small', 'number': 'true'} }) }}
+                                {{ form_widget(form.quantiteReel, { 'attr': { 'class': 'form-control input-small', 'digits': 'true'} }) }}
                                 </div>
                             </div>
                       {%endif%}

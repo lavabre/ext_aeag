@@ -21,6 +21,7 @@ security:
            
         # Firewall principal pour le reste de notre site
         main:
+            switch_user: true
             pattern : ^/
             anonymous: true
             provider: main
@@ -37,7 +38,7 @@ security:
                path: logout
                target: /
                invalidate_session: true
-     
+       
     role_hierarchy:
         ROLE_ODEC: [ROLE_AEAG]
         ROLE_FRD: [ROLE_AEAG]
@@ -54,7 +55,7 @@ security:
         ROLE_XHBIOSQE: [ROLE_SQE]
         ROLE_ADMINEDL:  [ROLE_SUPERVISEUREDL]       # On a dit que l'admin héritait des droits d'auteur et de modérateur
         ROLE_ADMINDIE:  [ROLE_DIE] 
-        ROLE_ADMIN: [ROLE_ADMINDEC, ROLE_ADMINFRD, ROLE_ADMINSQE, ROLE_ADMINEDL, ROLE_ADMINDIE]
+        ROLE_ADMIN: [ROLE_ADMINDEC, ROLE_ADMINFRD, ROLE_ADMINSQE, ROLE_ADMINEDL, ROLE_ADMINDIE,ROLE_ALLOWED_TO_SWITCH]
         ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
 
 

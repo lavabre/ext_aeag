@@ -132,7 +132,7 @@ class PgProgLotParamAnRepository extends EntityRepository {
         return $qb->getSingleScalarResult();
     }
 
-    public function getNbDoublonsByLotanParametre($pgProgLotAn, $pgProgGrparRefLstParam) {
+    public function getNbDoublonsByLotanParametre($pgProgLotAn, $pgProgLotGrparAn, $pgProgGrparRefLstParam) {
         $query = "select count(par.id)";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotParamAn par";
         $query = $query . " , Aeag\SqeBundle\Entity\PgProgLotGrparAn gran";
@@ -140,11 +140,14 @@ class PgProgLotParamAnRepository extends EntityRepository {
         $query = $query . " where lotan.id = " . $pgProgLotAn->getId();
         $query = $query . " and gran.lotan  = lotan.id";
         $query = $query . " and par.grparan  = gran.id";
+        $query = $query . " and par.grparan  <> "  . $pgProgLotGrparAn->getId();
         $query = $query . " and par.codeParametre = '" . $pgProgGrparRefLstParam->getCodeParametre()->getCodeParametre() . "'";
-        $query = $query . " and par.codeFraction = '" . $pgProgGrparRefLstParam->getCodeFraction()->getCodeFraction() . "'";
+        if ($pgProgGrparRefLstParam->getCodeFraction()) {
+            $query = $query . " and par.codeFraction = '" . $pgProgGrparRefLstParam->getCodeFraction()->getCodeFraction() . "'";
+        }
         $qb = $this->_em->createQuery($query);
-      // print_r($query);
-       return $qb->getSingleScalarResult();
+        // print_r($query);
+        return $qb->getSingleScalarResult();
     }
 
 }

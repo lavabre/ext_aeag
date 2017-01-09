@@ -64,6 +64,17 @@ class PgCmdAnalyseRepository extends EntityRepository {
          return $qb->getSingleScalarResult();
      }
      
+     public function getNbCmdAnalyseAnaByPrestatairePrelev($prestataire, $pgCmdPrelev) {
+        $query = "select count(p.prelevId)";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdAnalyse p";
+        $query = $query . " where p.prelevId = " . $pgCmdPrelev->getId() ;
+        $query = $query . " and p.lieuAna = '2'" ;
+         $query = $query . " and  p.codeStatut <> '3'";
+        $qb = $this->_em->createQuery($query);
+        //print_r($query);
+         return $qb->getSingleScalarResult();
+     }
+     
      public function getNbCmdAnalyseAnaByPrelevStatut($pgCmdPrelev, $statut) {
         $query = "select count(p.prelevId)";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdAnalyse p";
@@ -94,7 +105,7 @@ class PgCmdAnalyseRepository extends EntityRepository {
         $query = $query . " where c.prelevId = " . $pgCmdPrelev->getId() ;
         $query = $query . " and  c.paramProg = " .$pgProgLotParamAn->getId() ;
         $qb = $this->_em->createQuery($query);
-        //print_r($query);
+       // print_r($query);
        return $qb->getOneOrNullResult();
     }
     
@@ -104,7 +115,7 @@ class PgCmdAnalyseRepository extends EntityRepository {
         $query = $query . " where c.prelevId = " . $pgCmdPrelev->getId() ;
         $query = $query . " and  c.paramProg = " .$pgProgLotParamAn->getId() ;
         $qb = $this->_em->createQuery($query);
-        //print_r($query);
+      // print_r($query);
        return $qb->getResult();
     }
     

@@ -177,6 +177,7 @@
                                 <th>Quantité pesée (en Kg)</th>
                                 <th>Code conditionnement</th>
                                 <th>Coût facturé (€/kg)</th>
+                                <th>Taux aide agence</th>
                                 <th>Montant d'aide (€)</th>
                                 <th>Centre d'entreposage</th>
                                 <th>Centre de transit</th>
@@ -197,6 +198,7 @@
                                 <td></td>
                                 <td></td>
                                 <td></td>
+                                 <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
@@ -246,6 +248,7 @@
                                 <td align="right">{{ (entity.quantiteReel) | number_format(0,'.',' ')}}</td>
                                 <td>{{ entity.filiere}}</td>
                                 <td align="right">{{ entity.coutFacture | number_format(4,'.',' ')}}</td>
+                                <td align="right">{{ entity.tauxAide | number_format(2,'.',' ')}}</td>
                                 <td align="right">{{ entity.montAide | number_format(2,'.',' ')}}</td>
                                 <td>{{ entity.centreDepot}}</td>
                                 <td>{{ entity.centreTransit}}</td>
