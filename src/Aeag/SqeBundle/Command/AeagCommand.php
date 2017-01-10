@@ -279,6 +279,43 @@ class AeagCommand extends ContainerAwareCommand {
         $this->emSqe->flush();
     }
     
+     // Méthodes permettant la gestion des doublons
+    public function getCodeRqByCodeParametre($codeParametre, $demandeId, $reponseId, $codePrelevement, $codeFraction = null) {
+        $codeRq = $this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre($codeParametre, $demandeId, $reponseId, $codePrelevement, $codeFraction);
+        if ($codeRq == -1) {
+            $this->_addLog('error', $demandeId, $reponseId, 'Présence de doublon du code remarque', $codePrelevement, $codeParametre);
+            return null;
+        } 
+        return $codeRq;
+    }
+    
+    public function getMesureByCodeParametre($codeParametre, $demandeId, $reponseId, $codePrelevement, $codeFraction = null) {
+        $mesure = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre($codeParametre, $demandeId, $reponseId, $codePrelevement, $codeFraction);
+         if ($mesure == -1) {
+            $this->_addLog('error', $demandeId, $reponseId, 'Présence de doublon de la mesure', $codePrelevement, $codeParametre);
+            return null;
+        } 
+        return $mesure;
+    }
+    
+    public function getMesuresByCodeParametre($codeParametre, $codePrelevement, $demandeId, $reponseId = null, $codeFraction = null) {
+        $mesures = $this->repoPgTmpValidEdilabo->getMesuresByCodeParametre($codeParametre, $codePrelevement, $demandeId, $reponseId, $codeFraction);
+         if ($mesures == -1) {
+            $this->_addLog('error', $demandeId, $reponseId, 'Présence de doublon des mesures', $codePrelevement, $codeParametre);
+            return null;
+        } 
+        return $mesures;
+    }
+    
+    public function getDatePrelevement($codePrelevement, $demandeId, $reponseId = null) {
+        $datePrelev = $this->repoPgTmpValidEdilabo->getDatePrelevement($codePrelevement, $demandeId, $reponseId);
+         if ($datePrelev == -1) {
+            $this->_addLog('error', $demandeId, $reponseId, 'Présence de doublon de la date de prelevement', $codePrelevement);
+            return null;
+        } 
+        return $datePrelev;
+    }
+    
     public function getEvolution() {
         return $this->evolution;
     }
@@ -286,5 +323,7 @@ class AeagCommand extends ContainerAwareCommand {
     public function setEvolution($evolution) {
         $this->evolution = $evolution;
     }
+    
+    
 
 }
