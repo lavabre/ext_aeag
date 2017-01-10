@@ -2242,6 +2242,9 @@ class SaisieDonneesController extends Controller {
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($periodeAnId);
         $pgProgLotAn = $pgProgLotPeriodeAn->getLotan();
+        $pgProgLot = $pgProgLotAn->getLot();
+        $pgProgMarche = $pgProgLot->getMarche();
+        $producteur = $pgProgMarche->getRespAdrCor();
         $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevById($prelevId);
         $pgCmdDemande = $pgCmdPrelev->getDemande();
 
@@ -2339,56 +2342,89 @@ class SaisieDonneesController extends Controller {
             }
         }
         if ($nbStations == $nbStationCorrectes) {
+            $tabDestinataires = array();
+            $i = 0;
             $userAdmins = $repoUsers->getUsersByRole('ROLE_ADMINSQE');
             foreach ($userAdmins as $userAdmin) {
                 $pgProgWebuserTypmils = $repoPgProgWebuserTypmil->getPgProgWebuserTypmilByWebuser($pgProgWebUser);
                 $trouve = false;
                 foreach ($pgProgWebuserTypmils as $pgProgWebuserTypmil) {
                     if ($pgProgLotAn->getLot()->getCodeMilieu()->getCodeMilieu() == $pgProgWebuserTypmil->getTypmil()->getCodeMilieu()) {
-                        $trouve = true;
-                        break;
+                        $trouve = false;
+                        for ($j = 0; $j < count($tabDestinataires); $j++) {
+                            if ($tabDestinataires[$j] == $userAdmin->getEmail()) {
+                                $trouve = true;
+                                break;
+                            }
+                        }
+                        if (!$trouve) {
+                            $tabDestinataires[$i] == $userAdmin;
+                            $i++;
+                        }
                     }
                 }
-                if ($trouve) {
-                    $message = new Message();
-                    $message->setRecepteur($userAdmin->getId());
-                    $message->setEmetteur($user->getid());
-                    $message->setNouveau(true);
-                    $message->setIteration(2);
-                    $texte = "Bonjour ," . PHP_EOL;
-                    $texte = $texte . 'La saisie des données des ' . $nbStations . ' stations de la période du ' . date_format($pgProgLotPeriodeAn->getPeriode()->getDateDeb(), 'd/m/Y') . ' au ' . date_format($pgProgLotPeriodeAn->getPeriode()->getDateFin(), 'd/m/Y');
-                    $texte = $texte . "de la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL;
-                    $texte = $texte . "vient d'être validée par  " . $pgProgWebUser->getNom() . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y') . PHP_EOL;
-                    $texte = $texte . " " . PHP_EOL;
-                    $texte = $texte . "Cordialement.";
-                    $message->setMessage($texte);
-                    $em->persist($message);
+            }
 
-                    $notification = new Notification();
-                    $notification->setRecepteur($userAdmin->getId());
-                    $notification->setEmetteur($user->getId());
-                    $notification->setNouveau(true);
-                    $notification->setIteration(2);
-                    $notification->setMessage($texte);
-                    $em->persist($notification);
-                    // Récupération du service.
-                    $mailer = $this->get('mailer');
-                    // Création de l'e-mail : le service mailer utilise SwiftMailer, donc nous créons une instance de Swift_Message.
-                    $mail = \Swift_Message::newInstance('Wonderful Subject')
-                            ->setSubject('Saisie des données des ' . $nbStations . ' stations de la période du ' . date_format($pgProgLotPeriodeAn->getPeriode()->getDateDeb(), 'd/m/Y') . ' au ' . date_format($pgProgLotPeriodeAn->getPeriode()->getDateFin(), 'd/m/Y') . '  valider')
-                            ->setFrom('automate@eau-adour-garonne.fr')
-                            ->setTo($userAdmin->getEmail())
-                            ->setBody($this->renderView('AeagSqeBundle:SaisieDonnees:validerParPeriodeEmail.txt.twig', array(
-                                'emetteur' => $pgProgWebUser,
-                                'lotPeriodeAn' => $pgProgLotPeriodeAn,
-                                'lotan' => $pgProgLotAn,
-                                'nbStations' => $nbStations
-                    )));
-
-// Retour au service mailer, nous utilisons sa méthode « send() » pour envoyer notre $message.
-                    $mailer->send($mail);
+            $pgProgWebUsers = $repoPgProgWebUsers->getNotAdminPgProgWebusersByProducteur($producteur);
+            foreach ($pgProgWebUsers as $pgProgWebUser) {
+                if ($pgProgWebUser->getExtId()) {
+                    $userAdmin = $repoUsers->getUserById($pgProgWebUser->getExtId());
+                    $trouve = false;
+                    for ($j = 0; $j < count($tabDestinataires); $j++) {
+                        if ($tabDestinataires[$j] == $userAdmin->getEmail()) {
+                            $trouve = true;
+                            break;
+                        }
+                    }
+                    if (!$trouve) {
+                        $tabDestinataires[$i] == $userAdmin;
+                        $i++;
+                    }
                 }
             }
+
+
+            for ($i = 0; $i < count($tabDestinataires); $i++) {
+                $userAdmin = $tabDestinataires[$i];
+                $message = new Message();
+                $message->setRecepteur($userAdmin->getId());
+                $message->setEmetteur($user->getid());
+                $message->setNouveau(true);
+                $message->setIteration(2);
+                $texte = "Bonjour ," . PHP_EOL;
+                $texte = $texte . 'La saisie des données des ' . $nbStations . ' stations de la période du ' . date_format($pgProgLotPeriodeAn->getPeriode()->getDateDeb(), 'd/m/Y') . ' au ' . date_format($pgProgLotPeriodeAn->getPeriode()->getDateFin(), 'd/m/Y');
+                $texte = $texte . "de la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL;
+                $texte = $texte . "vient d'être validée par  " . $pgProgWebUser->getNom() . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y') . PHP_EOL;
+                $texte = $texte . " " . PHP_EOL;
+                $texte = $texte . "Cordialement.";
+                $message->setMessage($texte);
+                $em->persist($message);
+
+                $notification = new Notification();
+                $notification->setRecepteur($userAdmin->getId());
+                $notification->setEmetteur($user->getId());
+                $notification->setNouveau(true);
+                $notification->setIteration(2);
+                $notification->setMessage($texte);
+                $em->persist($notification);
+                // Récupération du service.
+                $mailer = $this->get('mailer');
+                // Création de l'e-mail : le service mailer utilise SwiftMailer, donc nous créons une instance de Swift_Message.
+                $mail = \Swift_Message::newInstance('Wonderful Subject')
+                        ->setSubject('Saisie des données des ' . $nbStations . ' stations de la période du ' . date_format($pgProgLotPeriodeAn->getPeriode()->getDateDeb(), 'd/m/Y') . ' au ' . date_format($pgProgLotPeriodeAn->getPeriode()->getDateFin(), 'd/m/Y') . '  valider')
+                        ->setFrom('automate@eau-adour-garonne.fr')
+                        ->setTo($userAdmin->getEmail())
+                        ->setBody($this->renderView('AeagSqeBundle:SaisieDonnees:validerParPeriodeEmail.txt.twig', array(
+                            'emetteur' => $pgProgWebUser,
+                            'lotPeriodeAn' => $pgProgLotPeriodeAn,
+                            'lotan' => $pgProgLotAn,
+                            'nbStations' => $nbStations
+                )));
+
+// Retour au service mailer, nous utilisons sa méthode « send() » pour envoyer notre $message.
+                $mailer->send($mail);
+            }
+
 
             $em->flush();
         }
@@ -2976,7 +3012,7 @@ class SaisieDonneesController extends Controller {
                             for ($k = 0; $k < count($pgCmdPrelevs); $k++) {
                                 if ($pgCmdPrelevs[$k]->getCodeSupport()->getCodeSupport() == $pgSandreSupport->getCodeSupport()) {
                                     $pgCmdPrelev = $pgCmdPrelevs[$k];
-                                 }
+                                }
                             }
                         }
                         //$pgCmdPrelev = $tabStations[$i]['prelev'];
@@ -2986,7 +3022,7 @@ class SaisieDonneesController extends Controller {
                             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                             fputs($rapport, $contenu);
                         }
-                        
+
 //                        $contenu = 'ligne  ' . $ligne . '  : paramètre (' . $tab[8] . ')'  . ' prelev : ' . $pgCmdPrelev->getId()  . CHR(13) . CHR(10);
 //                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
 //                        fputs($rapport, $contenu);
@@ -3298,9 +3334,9 @@ class SaisieDonneesController extends Controller {
 
                                 $pgCmdPrelev->setDatePrelev($datePrel);
                                 $emSqe->persist($pgCmdPrelev);
-                                
+
                                 $emSqe->flush();
-                             }
+                            }
                         }
                     }
                 }
