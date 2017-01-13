@@ -817,6 +817,7 @@ class CollecteurController extends Controller {
 
 
                 if (!$err) {
+                    $producteur = null;
                     $producteurs = $repoOuvrage->getOuvragesBySiretType($majProducteur->getSiret(), 'PDEC');
                     if (count($producteurs) > 0) {
                         $producteur = $producteurs[0];
