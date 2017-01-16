@@ -28,8 +28,8 @@ class FiliereAideRepository extends EntityRepository {
         //print_r($query);
         return $qb->getResult();
     }
-    
-     /**
+
+    /**
      * @return array
      */
     public function getFiliereAides() {
@@ -47,8 +47,9 @@ class FiliereAideRepository extends EntityRepository {
     public function getFiliereByCode($code) {
         $query = "select f";
         $query = $query . " from Aeag\DecBundle\Entity\FiliereAide f";
-        $query = $query . " where f.code = '" . $code . "'";
+        $query = $query . " where f.code =:code";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('code', $code);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }

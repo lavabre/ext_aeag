@@ -27,9 +27,10 @@ class PgCmdInvertRecouvRepository extends EntityRepository {
     public function getPgCmdInvertRecouvByPrelev($pgCmdPrelevHbInvert) {
         $query = "select c";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdInvertRecouv c";
-        $query = $query . " where c.prelev = " . $pgCmdPrelevHbInvert->getPrelev()->getId();
-         $query = $query . " order by c.substrat";
+        $query = $query . " where c.prelev = :pgCmdPrelevHbInvert";
+        $query = $query . " order by c.substrat";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgCmdPrelevHbInvert', $pgCmdPrelevHbInvert->getPrelev()->getId());
         //print_r($query . '<br/>');
         return $qb->getResult();
     }
@@ -40,9 +41,11 @@ class PgCmdInvertRecouvRepository extends EntityRepository {
     public function getPgCmdInvertRecouvByPrelevSubstrat($pgCmdPrelevHbInvert, $substrat) {
         $query = "select c";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdInvertRecouv c";
-        $query = $query . " where c.prelev = " . $pgCmdPrelevHbInvert->getPrelev()->getId();
-        $query = $query . " and c.substrat = '" . $substrat . "'";
+        $query = $query . " where c.prelev = :pgCmdPrelevHbInvert";
+        $query = $query . " and c.substrat = ':substrat";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgCmdPrelevHbInvert', $pgCmdPrelevHbInvert->getPrelev()->getId());
+        $qb->setParameter('substrat', $substrat);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }

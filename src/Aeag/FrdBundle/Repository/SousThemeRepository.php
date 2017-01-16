@@ -14,15 +14,12 @@ use Doctrine\ORM\EntityRepository;
  * Class SousThemeRepository
  * @package Aeag\FrdBundle\Repository
  */
-class SousThemeRepository extends EntityRepository
-{
-
+class SousThemeRepository extends EntityRepository {
 
     /**
      * @return array
      */
-    public function getSousThemes()
-    {
+    public function getSousThemes() {
 
         $query = "select d";
         $query = $query . " from Aeag\FrdBundle\Entity\SousTheme d";
@@ -38,35 +35,34 @@ class SousThemeRepository extends EntityRepository
      * @param $code
      * @return mixed
      */
-    public function getSousThemeByCode($code)
-    {
+    public function getSousThemeByCode($code) {
 
         $query = "select d";
         $query = $query . " from Aeag\FrdBundle\Entity\SousTheme d";
-        $query = $query . " where d.code = '" . $code . "'";
+        $query = $query . " where d.code = :code";
 
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('code', $code);
 
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-    
-     /**
+
+    /**
      * @param $finalite
      * @return mixed
      */
-    public function getSousThemeByFinalite($finalite)
-    {
+    public function getSousThemeByFinalite($finalite) {
 
         $query = "select d";
         $query = $query . " from Aeag\FrdBundle\Entity\SousTheme d";
-        $query = $query . " where d.finalite = '" . $finalite . "'";
+        $query = $query . " where d.finalite = :finalite";
 
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('finalite', $finalite);
 
         //print_r($query);
         return $qb->getResult();
     }
-
 
 }

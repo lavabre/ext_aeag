@@ -31,8 +31,9 @@ class PgProgLotAnRepository extends EntityRepository {
     public function getPgProgLotAnById($id) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotAn p";
-        $query = $query . " where p.id = " . $id;
+        $query = $query . " where p.id = :id";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('id', $id);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
@@ -41,10 +42,13 @@ class PgProgLotAnRepository extends EntityRepository {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotAn p";
         if ($anneeProg) {
-            $query = $query . " where p.anneeProg = " . $anneeProg;
+            $query = $query . " where p.anneeProg = :anneeProg";
         }
         $query = $query . " order by p.anneeProg, p.lot, p.version";
         $qb = $this->_em->createQuery($query);
+        if ($anneeProg) {
+        $qb->setParameter('anneeProg', $anneeProg);
+        }
         //print_r($query);
         return $qb->getResult();
     }
@@ -52,9 +56,10 @@ class PgProgLotAnRepository extends EntityRepository {
     public function getPgProgLotAnByLot($pgProgLot) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotAn p";
-        $query = $query . " where p.lot = " . $pgProgLot->getId();
+        $query = $query . " where p.lot = :pgProgLot";
         $query = $query . " order by p.anneeProg, p.version";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgProgLot',  $pgProgLot->getId());
         //print_r($query);
         return $qb->getResult();
     }
@@ -62,9 +67,11 @@ class PgProgLotAnRepository extends EntityRepository {
     public function getPgProgLotAnByAnneeLot($annee, $pgProgLot) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotAn p";
-        $query = $query . " where p.anneeProg = " . $annee;
-        $query = $query . " and p.lot = " . $pgProgLot->getId();
+        $query = $query . " where p.anneeProg = :annee";
+        $query = $query . " and p.lot = :pgProgLot";
         $qb = $this->_em->createQuery($query);
+         $qb->setParameter('annee',  $annee);
+          $qb->setParameter('pgProgLot',  $pgProgLot->getId());
         //print_r($query);
         return $qb->getResult();
     }
@@ -72,10 +79,12 @@ class PgProgLotAnRepository extends EntityRepository {
     public function getPgProgLotAnByLotVersion($pgProgLot, $version) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotAn p";
-        $query = $query . " where p.lot = " . $pgProgLot->getId();
-        $query = $query . " and p.version = " . $version;
+        $query = $query . " where p.lot = :pgProgLot";
+        $query = $query . " and p.version = :version";
         $query = $query . " order by p.anneeProg, p.version";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgProgLot',  $pgProgLot->getId());
+        $qb->setParameter('version',  $version);
         // print_r($query);
         return $qb->getResult();
     }
@@ -83,10 +92,13 @@ class PgProgLotAnRepository extends EntityRepository {
     public function getPgProgLotAnByAnneeLotVersion($annee, $pgProgLot, $version) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotAn p";
-        $query = $query . " where p.anneeProg = " . $annee;
-        $query = $query . " and p.lot = " . $pgProgLot->getId();
-        $query = $query . " and p.version = " . $version;
+        $query = $query . " where p.anneeProg = :annee";
+        $query = $query . " and p.lot = :pgProgLot";
+        $query = $query . " and p.version = :version";
         $qb = $this->_em->createQuery($query);
+         $qb->setParameter('annee',  $annee);
+          $qb->setParameter('pgProgLot',  $pgProgLot->getId());
+          $qb->setParameter('version',  $version);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
@@ -94,9 +106,11 @@ class PgProgLotAnRepository extends EntityRepository {
     public function getMaxVersionByAnneeLot($annee, $pgProgLot) {
         $query = "select max(p.version)";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotAn p";
-        $query = $query . " where p.anneeProg = " . $annee;
-        $query = $query . " and p.lot = " . $pgProgLot->getId();
+        $query = $query . " where p.anneeProg = :annee";
+        $query = $query . " and p.lot = :pgProgLot";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('annee', $annee);
+        $qb->setParameter('pgProgLot',  $pgProgLot->getId());
         //print_r($query);
         return $qb->getSingleScalarResult();
     }
@@ -117,17 +131,63 @@ class PgProgLotAnRepository extends EntityRepository {
         $query .= " and lotan.codeStatut <> 'INV'";
         $query .= " and lotan.phase >= 5 and lotan.phase <= 8";
         $query .= " and pean.codeStatut <> 'INV'";
-        
+
         if (!is_null($codeMilieu)) {
             $query .= " and milieu.codeMilieu LIKE :codemilieu";
         }
-        
+
 
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('aeagUser', $user->getId()); // Id de l'utilisateur 
-        
+
         if (!is_null($codeMilieu)) {
-            $qb->setParameter('codemilieu', '%'.$codeMilieu); 
+            $qb->setParameter('codemilieu', '%' . $codeMilieu);
+        }
+        //print_r($query);
+        return $qb->getResult();
+    }
+    
+     public function getPgProgLotAnSaisieDonneesByPresta($user, $codeMilieu = null) {
+
+        $query = "select distinct lotan";
+        $query .= " from Aeag\SqeBundle\Entity\PgProgLotParamAn paran,";
+        $query .= "         Aeag\SqeBundle\Entity\PgRefCorresPresta presta, ";
+        $query .= "         Aeag\SqeBundle\Entity\PgProgWebusers users,";
+        $query .= "         Aeag\SqeBundle\Entity\PgProgLotGrparAn gran,";
+        $query .= "         Aeag\SqeBundle\Entity\PgProgLotAn lotan,";
+        $query .= "         Aeag\SqeBundle\Entity\PgProgLot lot,";
+        $query .= "         Aeag\SqeBundle\Entity\PgCmdDemande dmd,";
+         $query .= "         Aeag\SqeBundle\Entity\PgProgLotPeriodeAn pean,";
+        if ($codeMilieu) {
+            $query .= "         Aeag\SqeBundle\Entity\PgProgTypeMilieu milieu,";
+        }
+        $query .= "          Aeag\SqeBundle\Entity\PgProgPrestaTypfic typFic";
+        $query .= " where paran.prestataire = presta.adrCorId";
+        $query .= " and users.prestataire = presta.adrCorId";
+        $query .= " and gran.id = paran.grparan";
+        $query .= " and lotan.id = gran.lotan";
+        $query .= " and lotan.lot = lot.id";
+        $query .= " and dmd.lotan = lotan.id";
+        $query .= " and pean.lotan = lotan.id";
+        $query .= " and lot.codeMilieu = milieu.codeMilieu";
+        $query .= " and users.extId = :aeagUser";
+        $query .= " and lotan.codeStatut <> 'INV'";
+        $query .= " and lotan.phase >= 5 and lotan.phase <= 8";
+        $query .= " and pean.codeStatut <> 'INV'";
+        $query .= " and typFic.codeMilieu = lot.codeMilieu";
+        $query .= " and typFic.prestataire = presta.adrCorIdl";
+        $query .= " and typFic.formatFic like '%Saisie%'";
+
+        if (!is_null($codeMilieu)) {
+            $query .= " and milieu.codeMilieu LIKE :codemilieu";
+        }
+
+
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('aeagUser', $user->getId()); // Id de l'utilisateur 
+
+        if (!is_null($codeMilieu)) {
+            $qb->setParameter('codemilieu', '%' . $codeMilieu);
         }
         //print_r($query);
         return $qb->getResult();
@@ -167,24 +227,67 @@ class PgProgLotAnRepository extends EntityRepository {
 
     public function getPgProgLotAnByAdmin($codeMilieu = null) {
         $query = "select distinct lotan";
-        $query .= " from Aeag\SqeBundle\Entity\PgProgLotAn lotan, Aeag\SqeBundle\Entity\PgProgLot lot, Aeag\SqeBundle\Entity\PgCmdDemande dmd, Aeag\SqeBundle\Entity\PgProgLotPeriodeAn pean, Aeag\SqeBundle\Entity\PgProgTypeMilieu milieu";
+        if ($codeMilieu) {
+            $query .= " from Aeag\SqeBundle\Entity\PgProgLotAn lotan, Aeag\SqeBundle\Entity\PgProgLot lot, Aeag\SqeBundle\Entity\PgCmdDemande dmd, Aeag\SqeBundle\Entity\PgProgLotPeriodeAn pean, Aeag\SqeBundle\Entity\PgProgTypeMilieu milieu";
+        } else {
+            $query .= " from Aeag\SqeBundle\Entity\PgProgLotAn lotan, Aeag\SqeBundle\Entity\PgProgLot lot, Aeag\SqeBundle\Entity\PgCmdDemande dmd, Aeag\SqeBundle\Entity\PgProgLotPeriodeAn pean";
+        }
         $query .= " where lotan.lot = lot.id";
         $query .= " and dmd.lotan = lotan.id";
         $query .= " and pean.lotan = lotan.id";
-        $query .= " and lot.codeMilieu = milieu.codeMilieu";
         $query .= " and lotan.codeStatut <> 'INV'";
         $query .= " and lotan.phase >= 5 and lotan.phase <= 8";
         $query .= " and pean.codeStatut <> 'INV'";
-        $query .= " and pean.codeStatut <> 'INV'";
+
         if (!is_null($codeMilieu)) {
+            $query .= " and lot.codeMilieu = milieu.codeMilieu";
             $query .= " and milieu.codeMilieu LIKE :codemilieu";
         }
 
         $qb = $this->_em->createQuery($query);
         if (!is_null($codeMilieu)) {
-            $qb->setParameter('codemilieu', '%'.$codeMilieu); 
+            $qb->setParameter('codemilieu', '%' . $codeMilieu);
         }
 
+        return $qb->getResult();
+    }
+
+    public function getPgProgLotAnSaisieDonneesByAdmin($codeMilieu = null) {
+
+        $query = "select distinct ltan";
+        $query .= " from Aeag\SqeBundle\Entity\PgCmdPrelev prel,";
+        $query .= "         Aeag\SqeBundle\Entity\PgCmdDemande dmd,";
+        $query .= "         Aeag\SqeBundle\Entity\PgProgLotAn ltan,";
+        $query .= "         Aeag\SqeBundle\Entity\PgProgLot lot,";
+        $query .= "         Aeag\SqeBundle\Entity\PgProgLotStationAn stan,";
+        $query .= "         Aeag\SqeBundle\Entity\PgProgLotPeriodeAn pean,";
+        if ($codeMilieu) {
+            $query .= "         Aeag\SqeBundle\Entity\PgProgTypeMilieu milieu,";
+        }
+        $query .= "          Aeag\SqeBundle\Entity\PgProgPrestaTypfic typFic";
+        $query .= " where ltan.codeStatut <> 'INV'";
+        $query .= " and ltan.phase >= 5 and ltan.phase <= 8";
+        $query .= " and ltan.id = stan.lotan";
+        $query .= " and ltan.id = pean.lotan";
+        $query .= " and pean.codeStatut !='INV'";
+        $query .= " and lot.id = ltan.lot";
+        $query .= " and ltan.id = dmd.lotan";
+        $query .= " and dmd.id = prel.demande";
+        $query .= " and dmd.typeDemande != '2'";
+        $query .= " and typFic.codeMilieu = lot.codeMilieu";
+        $query .= " and typFic.prestataire = prel.prestaPrel";
+        $query .= " and typFic.formatFic like '%Saisie%'";
+        $query .= " and  prel.station = stan.station";
+        $query .= " and prel.periode = pean.periode";
+         if (!is_null($codeMilieu)) {
+            $query .= " and lot.codeMilieu = milieu.codeMilieu";
+            $query .= " and milieu.codeMilieu LIKE :codemilieu";
+        }
+        $qb = $this->_em->createQuery($query);
+         if (!is_null($codeMilieu)) {
+            $qb->setParameter('codemilieu', '%' . $codeMilieu);
+        }
+        //print_r($query);
         return $qb->getResult();
     }
 
@@ -203,9 +306,9 @@ class PgProgLotAnRepository extends EntityRepository {
         }
 
         $qb = $this->_em->createQuery($query);
-        
+
         if (!is_null($codeMilieu)) {
-            $qb->setParameter('codemilieu', '%'.$codeMilieu); 
+            $qb->setParameter('codemilieu', '%' . $codeMilieu);
         }
 
         return $qb->getResult();
@@ -230,14 +333,14 @@ class PgProgLotAnRepository extends EntityRepository {
 
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('aeagUser', $user->getId()); // Id de l'utilisateur 
-        
+
         if (!is_null($codeMilieu)) {
-            $qb->setParameter('codemilieu', '%'.$codeMilieu); 
+            $qb->setParameter('codemilieu', '%' . $codeMilieu);
         }
 
         return $qb->getResult();
     }
-    
+
     /**
      * @return array
      */

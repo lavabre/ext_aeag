@@ -16,54 +16,58 @@ use Doctrine\ORM\EntityRepository;
  */
 class PgProgGrparRefZoneVertRepository extends EntityRepository {
 
-    
-
-    public function getPgProgGrparRefZoneVertByGrparRef($PgProgGrpParamRef) {
+    public function getPgProgGrparRefZoneVertByGrparRef($pgProgGrpParamRef) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgGrparRefZoneVert p";
-        $query = $query . " where p.grparRef = " . $PgProgGrpParamRef->getid();
+        $query = $query . " where p.grparRef = :pgProgGrpParamRef";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgProgGrpParamRef', $pgProgGrpParamRef->getid());
         //print_r($query);
         return $qb->getResult();
     }
-    
-    public function getNbPgProgGrparRefZoneVertByGrparRef($PgProgGrpParamRef) {
+
+    public function getNbPgProgGrparRefZoneVertByGrparRef($pgProgGrpParamRef) {
         $query = "select count(p)";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgGrparRefZoneVert p";
-        $query = $query . " where p.grparRef = " . $PgProgGrpParamRef->getid();
+        $query = $query . " where p.grparRef = :pgProgGrpParamRef";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgProgGrpParamRef', $pgProgGrpParamRef->getid());
         //print_r($query);
         return $qb->getSingleScalarResult();
     }
-    
-     public function getPgProgGrparRefZoneVertByPgSandreZoneVerticaleProspectee($pgSandreZoneVerticaleProspectee) {
+
+    public function getPgProgGrparRefZoneVertByPgSandreZoneVerticaleProspectee($pgSandreZoneVerticaleProspectee) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgGrparRefZoneVert p";
-        $query = $query . " where p.pgSandreZoneVerticaleProspectee = '" . $pgSandreZoneVerticaleProspectee->getCodeZone() . "'";
+        $query = $query . " where p.pgSandreZoneVerticaleProspectee = :pgSandreZoneVerticaleProspectee";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgSandreZoneVerticaleProspectee', $pgSandreZoneVerticaleProspectee->getCodeZone());
         //print_r($query);
         return $qb->getResult();
     }
-    
-     public function getPgProgGrparRefZoneVertByGrparRefPgSandreZoneVerticaleProspectee($pgProgGrpParamRef, $pgSandreZoneVerticaleProspectee) {
+
+    public function getPgProgGrparRefZoneVertByGrparRefPgSandreZoneVerticaleProspectee($pgProgGrpParamRef, $pgSandreZoneVerticaleProspectee) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgGrparRefZoneVert p";
-        $query = $query . " where p.pgProgGrpParamRef = " . $pgProgGrpParamRef->getid();
-        $query = $query . " and p.pgSandreZoneVerticaleProspectee = '" . $pgSandreZoneVerticaleProspectee->getCodeZone() . "'";
+        $query = $query . " where p.pgProgGrpParamRef = :pgProgGrpParamRef";
+        $query = $query . " and p.pgSandreZoneVerticaleProspectee = :pgSandreZoneVerticaleProspectee";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgProgGrpParamRef', $pgProgGrpParamRef->getid());
+        $qb->setParameter('pgSandreZoneVerticaleProspectee', $pgSandreZoneVerticaleProspectee->getCodeZone());
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
 
-     public function getNbPgProgGrparRefZoneVertByGrparRefPgSandreZoneVerticaleProspectee($pgProgGrpParamRef, $pgSandreZoneVerticaleProspectee) {
+    public function getNbPgProgGrparRefZoneVertByGrparRefPgSandreZoneVerticaleProspectee($pgProgGrpParamRef, $pgSandreZoneVerticaleProspectee) {
         $query = "select count(p.typClassProf)";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgGrparRefZoneVert p";
-        $query = $query . " where p.pgProgGrpParamRef = " . $pgProgGrpParamRef->getid();
-        $query = $query . " and p.pgSandreZoneVerticaleProspectee = '" . $pgSandreZoneVerticaleProspectee->getCodeZone() . "'";
+        $query = $query . " where p.pgProgGrpParamRef = :pgProgGrpParamRef";
+        $query = $query . " and p.pgSandreZoneVerticaleProspectee = :pgSandreZoneVerticaleProspecte";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgProgGrpParamRef', $pgProgGrpParamRef->getid());
+        $qb->setParameter('pgSandreZoneVerticaleProspectee', $pgSandreZoneVerticaleProspectee->getCodeZone());
         //print_r($query);
-         return $qb->getSingleScalarResult();
+        return $qb->getSingleScalarResult();
     }
-  
 
 }

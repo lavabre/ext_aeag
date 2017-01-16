@@ -14,35 +14,31 @@ use Doctrine\ORM\EntityRepository;
  * Class PhaseRepository
  * @package Aeag\FrdBundle\Repository
  */
-class PhaseRepository extends EntityRepository
-{
-    
-     /**
+class PhaseRepository extends EntityRepository {
+
+    /**
      * @return array
      */
-    public function getPhases()
-    {
+    public function getPhases() {
         $query = "select c";
         $query = $query . " from Aeag\FrdBundle\Entity\Phase c";
         $query = $query . " order by c.code";
         $qb = $this->_em->createQuery($query);
         //print_r($query);
-        return $qb->getResult();    }
-    
+        return $qb->getResult();
+    }
+
     /**
      * @return array
      */
-    public function getPhaseByCode($code)
-    {
+    public function getPhaseByCode($code) {
         $query = "select c";
         $query = $query . " from Aeag\FrdBundle\Entity\Phase c";
-        $query = $query . " where c.code = '" . $code . "'";
+        $query = $query . " where c.code = :code";
         $qb = $this->_em->createQuery($query);
-         //print_r($query);
+        $qb->setParameter('code', $code);
+        //print_r($query);
         return $qb->getOneOrNullResult();
     }
-
-  
-     
 
 }

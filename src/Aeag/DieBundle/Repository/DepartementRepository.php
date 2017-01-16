@@ -14,15 +14,12 @@ use Doctrine\ORM\EntityRepository;
  * Class DepartementRepository
  * @package Aeag\DieBundle\Repository
  */
-class DepartementRepository extends EntityRepository
-{
-
+class DepartementRepository extends EntityRepository {
 
     /**
      * @return array
      */
-    public function getDepartements()
-    {
+    public function getDepartements() {
 
         $query = "select d";
         $query = $query . " from Aeag\DieBundle\Entity\Departement d";
@@ -33,42 +30,39 @@ class DepartementRepository extends EntityRepository
         //print_r($query);
         return $qb->getResult();
     }
-    
- 
 
     /**
      * @param $dept
      * @return mixed
      */
-    public function getDepartementByDept($dept)
-    {
+    public function getDepartementByDept($dept) {
 
         $query = "select d";
         $query = $query . " from Aeag\DieBundle\Entity\Departement d";
-        $query = $query . " where d.dept = '" . $dept . "'";
+        $query = $query . " where d.dept = :dept";
 
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('dept', $dept);
 
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-    
-      /**
+
+    /**
      * @param $dept
      * @return mixed
      */
-    public function getDepartementByLibelle($libelle)
-    {
+    public function getDepartementByLibelle($libelle) {
 
         $query = "select d";
         $query = $query . " from Aeag\DieBundle\Entity\Departement d";
-        $query = $query . " where d.libelle = '" . $libelle . "'";
+        $query = $query . " where d.libelle = :libelle";
 
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('libelle', $libelle);
 
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-
 
 }

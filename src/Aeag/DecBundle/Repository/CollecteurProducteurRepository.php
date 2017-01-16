@@ -34,8 +34,9 @@ class CollecteurProducteurRepository extends EntityRepository {
     public function getCollecteurProducteurByCollecteur($collecteur) {
         $query = "select c";
         $query = $query . " from Aeag\DecBundle\Entity\CollecteurProducteur c";
-        $query = $query . " where c.Collecteur = " . $collecteur;
+        $query = $query . " where c.Collecteur = :collecteur";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('collecteur', $collecteur);
         //print_r($query);
         return $qb->getResult();
     }
@@ -46,20 +47,22 @@ class CollecteurProducteurRepository extends EntityRepository {
     public function getCollecteurProducteurByProducteur($producteur) {
         $query = "select c";
         $query = $query . " from Aeag\DecBundle\Entity\CollecteurProducteur c";
-        $query = $query . " where c.Producteur = " . $producteur;
+        $query = $query . " where c.Producteur = :producteur";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('producteur', $producteur);
         //print_r($query);
         return $qb->getResult();
     }
-    
+
     /**
      * @return array
      */
     public function getNbCollecteurProducteurByProducteur($producteur) {
         $query = "select count(c.id)";
         $query = $query . " from Aeag\DecBundle\Entity\CollecteurProducteur c";
-        $query = $query . " where c.Producteur = " . $producteur;
+        $query = $query . " where c.Producteur = :producteur";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('producteur', $producteur);
         //print_r($query);
         return $qb->getSingleScalarResult();
     }
@@ -70,9 +73,11 @@ class CollecteurProducteurRepository extends EntityRepository {
     public function getCollecteurProducteurByCollecteurProducteur($collecteur, $producteur) {
         $query = "select distinct c";
         $query = $query . " from Aeag\DecBundle\Entity\CollecteurProducteur c";
-        $query = $query . " where c.Collecteur = " . $collecteur;
-        $query = $query . " and c.Producteur = " . $producteur;
+        $query = $query . " where c.Collecteur =:collecteur";
+        $query = $query . " and c.Producteur = :producteur";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('collecteur', $collecteur);
+        $qb->setParameter('producteur', $producteur);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }

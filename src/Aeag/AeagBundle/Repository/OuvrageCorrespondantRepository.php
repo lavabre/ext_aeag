@@ -34,8 +34,9 @@ class OuvrageCorrespondantRepository extends EntityRepository {
     public function getOuvrageCorrespondantByOuvrage($ouvrage) {
         $query = "select c";
         $query = $query . " from Aeag\AeagBundle\Entity\OuvrageCorrespondant c";
-        $query = $query . " where c.Ouvrage = " . $ouvrage;
+        $query = $query . " where c.Ouvrage = :ouvrage";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('ouvrage', $ouvrage);
         //print_r($query);
         return $qb->getResult();
     }
@@ -46,8 +47,9 @@ class OuvrageCorrespondantRepository extends EntityRepository {
     public function getOuvrageCorrespondantByCorrespondant($correspondant) {
         $query = "select c";
         $query = $query . " from Aeag\AeagBundle\Entity\OuvrageCorrespondant c";
-        $query = $query . " where c.Correspondant = '" . $correspondant . "'";
+        $query = $query . " where c.Correspondant = :correspondant";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('correspondant', $correspondant);
         //print_r($query);
         return $qb->getResult();
     }
@@ -58,24 +60,28 @@ class OuvrageCorrespondantRepository extends EntityRepository {
     public function getOuvrageCorrespondantByOuvrageCorrespondant($ouvrage, $correspondant) {
         $query = "select c";
         $query = $query . " from Aeag\AeagBundle\Entity\OuvrageCorrespondant c";
-        $query = $query . " where c.Ouvrage = '" . $ouvrage . "'";
-        $query = $query . " and c.Correspondant = '" . $correspondant . "'";
+        $query = $query . " where c.Ouvrage = :ouvrage";
+        $query = $query . " and c.Correspondant = :correspondant";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('ouvrage', $ouvrage);
+        $qb->setParameter('correspondant', $correspondant);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-    
-     /**
+
+    /**
      * @return array
      */
-    public function getOuvrageByCorrespondantType($correspondant,$type) {
+    public function getOuvrageByCorrespondantType($correspondant, $type) {
         $query = "select o";
         $query = $query . " from Aeag\AeagBundle\Entity\OuvrageCorrespondant c,";
         $query = $query . "   Aeag\AeagBundle\Entity\Ouvrage o";
-        $query = $query . " where c.Correspondant = '" . $correspondant . "'";
+        $query = $query . " where c.Correspondant = :correspondant";
         $query = $query . " and o.id = c.Ouvrage";
-        $query = $query . " and o.type = '" . $type . "'";
+        $query = $query . " and o.type = :type";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('correspondant', $correspondant);
+        $qb->setParameter('type', $type);
         //print_r($query);
         return $qb->getResult();
     }

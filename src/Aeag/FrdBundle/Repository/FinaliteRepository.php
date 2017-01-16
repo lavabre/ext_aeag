@@ -14,15 +14,12 @@ use Doctrine\ORM\EntityRepository;
  * Class FinaliteRepository
  * @package Aeag\FrdBundle\Repository
  */
-class FinaliteRepository extends EntityRepository
-{
-
+class FinaliteRepository extends EntityRepository {
 
     /**
      * @return array
      */
-    public function getFinalites()
-    {
+    public function getFinalites() {
 
         $query = "select d";
         $query = $query . " from Aeag\FrdBundle\Entity\Finalite d";
@@ -38,18 +35,17 @@ class FinaliteRepository extends EntityRepository
      * @param $code
      * @return mixed
      */
-    public function getFinaliteByCode($code)
-    {
+    public function getFinaliteByCode($code) {
 
         $query = "select d";
         $query = $query . " from Aeag\FrdBundle\Entity\Finalite d";
-        $query = $query . " where d.code = '" . $code . "'";
+        $query = $query . " where d.code = :code";
 
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('code', $code);
 
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-
 
 }

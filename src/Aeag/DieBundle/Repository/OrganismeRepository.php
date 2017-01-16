@@ -27,17 +27,18 @@ class OrganismeRepository extends EntityRepository {
         //print_r($query);
         return $qb->getResult();
     }
-    
+
     /**
      * @return array
      */
     public function getOrganismesByOrganisme($organisme) {
         $query = "select c";
         $query = $query . " from Aeag\DieBundle\Entity\Organisme c";
-        $query = $query . " where c.organisme = '" . $organisme . "'";
+        $query = $query . " where c.organisme = :organisme";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('organisme', $organisme);
         //print_r($query);
-       return $qb->getOneOrNullResult();
+        return $qb->getOneOrNullResult();
     }
 
     /**
@@ -46,8 +47,9 @@ class OrganismeRepository extends EntityRepository {
     public function getOrganismeById($id) {
         $query = "select c";
         $query = $query . " from Aeag\DieBundle\Entity\Organisme c";
-        $query = $query . " where c.id = " . $id;
+        $query = $query . " where c.id = :id";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('id', $id);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }

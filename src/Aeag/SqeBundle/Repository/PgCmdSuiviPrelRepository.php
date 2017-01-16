@@ -28,8 +28,9 @@ class PgCmdSuiviPrelRepository extends EntityRepository {
     public function getPgCmdSuiviPrelById($id) {
         $query = "select c";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdSuiviPrel c";
-        $query = $query . " where c.id = " . $id;
+        $query = $query . " where c.id = :id";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('id', $id);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
@@ -40,8 +41,9 @@ class PgCmdSuiviPrelRepository extends EntityRepository {
     public function getPgCmdSuiviPrelByPrelev($pgCmdPrelev) {
         $query = "select c";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdSuiviPrel c";
-        $query = $query . " where c.prelev = " . $pgCmdPrelev->getId() ;
+        $query = $query . " where c.prelev = :pgCmdPrelev";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgCmdPrelev', $pgCmdPrelev->getId());
         //print_r($query);
         return $qb->getResult();
     }
@@ -52,9 +54,10 @@ class PgCmdSuiviPrelRepository extends EntityRepository {
     public function getPgCmdSuiviPrelByPrelevOrderDate($pgCmdPrelev) {
         $query = "select c";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdSuiviPrel c";
-        $query = $query . " where c.prelev = " . $pgCmdPrelev->getId() ;
+        $query = $query . " where c.prelev = :pgCmdPrelev";
         $query = $query .  " order by c.datePrel desc, c.id desc";
         $qb = $this->_em->createQuery($query);
+         $qb->setParameter('pgCmdPrelev', $pgCmdPrelev->getId());
         //print_r($query);
         return $qb->getResult();
     }
@@ -65,9 +68,10 @@ class PgCmdSuiviPrelRepository extends EntityRepository {
     public function getPgCmdSuiviPrelByPrelevOrderId($pgCmdPrelev) {
         $query = "select c";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdSuiviPrel c";
-        $query = $query . " where c.prelev = " . $pgCmdPrelev->getId() ;
+        $query = $query . " where c.prelev = :pgCmdPrelev";
         $query = $query .  " order by c.id desc";
         $qb = $this->_em->createQuery($query);
+         $qb->setParameter('pgCmdPrelev', $pgCmdPrelev->getId());
         //print_r($query);
         return $qb->getResult();
     }
@@ -79,8 +83,9 @@ class PgCmdSuiviPrelRepository extends EntityRepository {
         $query = "select c";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdSuiviPrel c";
          $query = $query . " where c.id in (select max(s.id) from Aeag\SqeBundle\Entity\PgCmdSuiviPrel s";
-        $query = $query . " where s.prelev = " . $pgCmdPrelev->getId()  . ")";
+        $query = $query . " where s.prelev = :pgCmdPrelev)";
         $qb = $this->_em->createQuery($query);
+         $qb->setParameter('pgCmdPrelev', $pgCmdPrelev->getId());
         //print_r($query);
        return $qb->getOneOrNullResult();
     }
@@ -91,9 +96,11 @@ class PgCmdSuiviPrelRepository extends EntityRepository {
     public function getPgCmdSuiviPrelByPrelevStatutPrel($pgCmdPrelev, $statutPrel) {
         $query = "select c";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdSuiviPrel c";
-        $query = $query . " where c.prelev = " . $pgCmdPrelev->getId() ;
-        $query = $query . " and c.statutPrel = '" . $statutPrel . "'" ;
+        $query = $query . " where c.prelev = :pgCmdPrelev";
+        $query = $query . " and c.statutPrel = :statutPrel" ;
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgCmdPrelev', $pgCmdPrelev->getId());
+        $qb->setParameter('statutPrel', $statutPrel);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
@@ -219,7 +226,7 @@ class PgCmdSuiviPrelRepository extends EntityRepository {
         $query .= " order by mil.nomMilieu asc";
         
         $qb = $this->_em->createQuery($query);
-        $qb->setParameter('codeMilieu', '%'.$codeMilieu);
+        $qb->setParameter('codeMilieu', '%' . $codeMilieu);
         return $qb->getResult();
         
     }

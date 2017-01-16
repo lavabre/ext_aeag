@@ -34,8 +34,9 @@ class PgCmdDiatoListeRepository extends EntityRepository {
     public function getPgCmdDiatoListeByCodeSandre($codeSandre) {
         $query = "select c";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdDiatoListe c";
-        $query = $query . " where c.codeSandre = '" . $codeSandre . "'";
+        $query = $query . " where c.codeSandre = :codeSandre";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('codeSandre', $codeSandre);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }

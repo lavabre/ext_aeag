@@ -27,33 +27,35 @@ class OuvrageRepository extends EntityRepository {
         //print_r($query);
         return $qb->getResult();
     }
-    
-     /**
+
+    /**
      * @return array
      */
-    public function getOuvrageById($Id) {
+    public function getOuvrageById($id) {
         $query = "select c";
         $query = $query . " from Aeag\AeagBundle\Entity\Ouvrage c";
-        $query = $query . " where c.id = " . $Id;
+        $query = $query . " where c.id = :id";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('id', $id);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-    
-     /**
+
+    /**
      * @return array
      */
     public function getOuvragesByType($type) {
         $query = "select c";
         $query = $query . " from Aeag\AeagBundle\Entity\Ouvrage c";
-        $query = $query . " where c.type = '" . $type . "'";
+        $query = $query . " where c.type = :type";
         $query = $query . " order by c.numero";
         $qb = $this->_em->createQuery($query);
-        //print_r($query);
+        $qb->setParameter('type',$type);
+       // print_r($query);
         return $qb->getResult();
     }
-    
-     public function getAllProducteurs() {
+
+    public function getAllProducteurs() {
         $query = "select c";
         $query = $query . " from Aeag\AeagBundle\Entity\Ouvrage c";
         $query = $query . " where c.type = 'PDEC'";
@@ -63,97 +65,108 @@ class OuvrageRepository extends EntityRepository {
         return $qb->getResult();
     }
 
-
     /**
      * @return array
      */
     public function getOuvrageByNumero($numero) {
         $query = "select c";
         $query = $query . " from Aeag\AeagBundle\Entity\Ouvrage c";
-        $query = $query . " where c.numero = '" . $numero . "'";
+        $query = $query . " where c.numero = :numero";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('numero', $numero);
         //print_r($query);
-       return $qb->getResult();
+        return $qb->getResult();
     }
-    
+
     /**
      * @return array
      */
-    public function getOuvrageByNumeroType($numero,$type) {
+    public function getOuvrageByNumeroType($numero, $type) {
         $query = "select c";
         $query = $query . " from Aeag\AeagBundle\Entity\Ouvrage c";
-        $query = $query . " where c.numero = '" . $numero . "'";
-        $query = $query . " and c.type = '" . $type . "'";
+        $query = $query . " where c.numero = :numero";
+        $query = $query . " and c.type = :type";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('numero', $numero);
+        $qb->setParameter('type', $type);
+
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-    
-     /**
+
+    /**
      * @return array
      */
     public function getOuvrageByOuvId($ouvId) {
         $query = "select c";
         $query = $query . " from Aeag\AeagBundle\Entity\Ouvrage c";
-        $query = $query . " where c.ouvId = " . $ouvId;
+        $query = $query . " where c.ouvId = :ouvId";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('ouvId', $ouvId);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-    
-     /**
+
+    /**
      * @return array
      */
-    public function getOuvrageByOuvIdType($ouvId,$type) {
+    public function getOuvrageByOuvIdType($ouvId, $type) {
         $query = "select c";
         $query = $query . " from Aeag\AeagBundle\Entity\Ouvrage c";
-        $query = $query . " where c.ouvId = " . $ouvId;
-        $query = $query . " and c.type = '" . $type . "'";
+        $query = $query . " where c.ouvId = :ouvId";
+        $query = $query . " and c.type = :type";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('ouvId', $ouvId);
+        $qb->setParameter('type', $type);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-    
+
     /**
      * @return array
      */
     public function getOuvrageBySiret($siret) {
         $query = "select c";
         $query = $query . " from Aeag\AeagBundle\Entity\Ouvrage c";
-        $query = $query . " where c.siret = '" . $siret . "'";
+        $query = $query . " where c.siret = :siret";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('siret', $siret);
         //print_r($query);
-       return $qb->getResult();
+        return $qb->getResult();
     }
-    
+
     /**
      * @return array
      */
-    public function getOuvrageBySiretType($siret,$type) {
+    public function getOuvrageBySiretType($siret, $type) {
         $query = "select distinct c";
         $query = $query . " from Aeag\AeagBundle\Entity\Ouvrage c";
-        $query = $query . " where c.siret = '" . $siret . "'";
-        $query = $query . " and c.type = '" . $type . "'";
+        $query = $query . " where c.siret = :siret";
+        $query = $query . " and c.type = :type";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('siret', $siret);
+        $qb->setParameter('type', $type);
         //print_r($query);
         return $qb->getOneOrNullResult();
-      }
-    
-      /**
+    }
+
+    /**
      * @return array
      */
-    public function getOuvragesBySiretType($siret,$type) {
+    public function getOuvragesBySiretType($siret, $type) {
         $query = "select distinct c";
         $query = $query . " from Aeag\AeagBundle\Entity\Ouvrage c";
-        $query = $query . " where c.siret = '" . $siret . "'";
-        $query = $query . " and c.type = '" . $type . "'";
+        $query = $query . " where c.siret = :siret";
+        $query = $query . " and c.type = :type";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('siret', $siret);
+        $qb->setParameter('type', $type);
         //print_r($query);
         //return $qb->getOneOrNullResult();
-         return $qb->getResult();
+        return $qb->getResult();
     }
-    
-     /**
+
+    /**
      * @return array
      */
     public function getOuvrageByUserIdType($userId, $type) {
@@ -163,15 +176,17 @@ class OuvrageRepository extends EntityRepository {
         $query = $query . "   ,Aeag\AeagBundle\Entity\Correspondant c";
         $query = $query . "   ,Aeag\UserBundle\Entity\User u";
         $query = $query . " where o.id = oc.Ouvrage";
-        $query = $query . " and o.type = '" . $type . "'";
+        $query = $query . " and o.type = :type";
         $query = $query . " and oc.Correspondant = c.id";
-        $query = $query . " and c.id = u.correspondant" ;
-        $query = $query . " and u.id = " . $userId ;
+        $query = $query . " and c.id = u.correspondant";
+        $query = $query . " and u.id = :userId";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('userId', $userId);
+        $qb->setParameter('type', $type);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-    
+
     /**
      * @return array
      */
@@ -182,43 +197,45 @@ class OuvrageRepository extends EntityRepository {
         $query = $query . "   ,Aeag\AeagBundle\Entity\Correspondant c";
         $query = $query . "   ,Aeag\UserBundle\Entity\User u";
         $query = $query . " where o.id = oc.Ouvrage";
-        $query = $query . " and o.type = '" . $type . "'";
+        $query = $query . " and o.type = :type";
         $query = $query . " and oc.Correspondant = c.id";
-        $query = $query . " and c.id = u.correspondant" ;
-        $query = $query . " and u.username = '" . $userName . "'";
+        $query = $query . " and c.id = u.correspondant";
+        $query = $query . " and u.username = :userName";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('userName', $userName);
+        $qb->setParameter('type', $type);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-    
-     /**
+
+    /**
      * @return array
      */
     public function getOuvragesEnDoubleBySiretType($type) {
         $query = "select c.siret, count(c.id)";
         $query = $query . " from Aeag\AeagBundle\Entity\Ouvrage c";
-        $query = $query . " where c.type = '" . $type . "'";
+        $query = $query . " where c.type = :type";
         $query = $query . " group by c.siret ";
         $query = $query . " having count(c.id) > 1 ";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('type', $type);
         //print_r($query);
         //return $qb->getOneOrNullResult();
-         return $qb->getResult();
+        return $qb->getResult();
     }
-    
-     /**
+
+    /**
      * @return array
      */
-    /*public function getProducteursByCollecteur($collecteur) {
-        $query = "select p";
-        $query = $query . " from Aeag\AeagBundle\Entity\Ouvrage p";
-        $query = $query . "     , Aeag\DecBundle\Entity\CollecteurProducteur cp";
-        $query = $query . " where p.id = cp.Producteur";
-        $query = $query . " and cp.Collecteur = " . $collecteur;
-        $query = $query . " order by p.libelle, p.siret";
-        $qb = $this->_em->createQuery($query);
-        //print_r($query);
-       return $qb->getResult();
-    }*/
-
+    /* public function getProducteursByCollecteur($collecteur) {
+      $query = "select p";
+      $query = $query . " from Aeag\AeagBundle\Entity\Ouvrage p";
+      $query = $query . "     , Aeag\DecBundle\Entity\CollecteurProducteur cp";
+      $query = $query . " where p.id = cp.Producteur";
+      $query = $query . " and cp.Collecteur = " . $collecteur;
+      $query = $query . " order by p.libelle, p.siret";
+      $qb = $this->_em->createQuery($query);
+      //print_r($query);
+      return $qb->getResult();
+      } */
 }

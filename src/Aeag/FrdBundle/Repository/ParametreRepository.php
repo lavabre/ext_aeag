@@ -14,35 +14,31 @@ use Doctrine\ORM\EntityRepository;
  * Class ParametreRepository
  * @package Aeag\FrdBundle\Repository
  */
-class ParametreRepository extends EntityRepository
-{
-    
-     /**
+class ParametreRepository extends EntityRepository {
+
+    /**
      * @return array
      */
-    public function getParametres()
-    {
+    public function getParametres() {
         $query = "select c";
         $query = $query . " from Aeag\FrdBundle\Entity\Parametre c";
         $query = $query . " order by c.code";
         $qb = $this->_em->createQuery($query);
         //print_r($query);
-        return $qb->getResult();    }
-    
+        return $qb->getResult();
+    }
+
     /**
      * @return array
      */
-    public function getParametreByCode($code)
-    {
+    public function getParametreByCode($code) {
         $query = "select c";
         $query = $query . " from Aeag\FrdBundle\Entity\Parametre c";
-        $query = $query . " where c.code = '" . $code . "'";
+        $query = $query . " where c.code = :code";
         $qb = $this->_em->createQuery($query);
-         //print_r($query);
+        $qb->setParameter('code', $code);
+        //print_r($query);
         return $qb->getOneOrNullResult();
     }
-
-  
-     
 
 }

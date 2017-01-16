@@ -39,8 +39,9 @@ class CategorieRepository extends EntityRepository {
 
         $query = "select c";
         $query = $query . " from Aeag\AideBundle\Entity\Categorie c";
-        $query = $query . " where c.cate = '" . $cate . "'";
+        $query = $query . " where c.cate = :cate";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('cate', $cate);
 
         //print_r($query);
         return $qb->getOneOrNullResult();

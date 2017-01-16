@@ -9,8 +9,7 @@ use Doctrine\ORM\EntityRepository;
  * @package Aeag\SqeBundle\Repository
  */
 class PgCmdDwnldUsrRpsRepository extends EntityRepository {
-    
-      
+
     /**
      * @return array
      */
@@ -29,23 +28,24 @@ class PgCmdDwnldUsrRpsRepository extends EntityRepository {
     public function getPPgCmdDwnldUsrRpsByUser($pgProgWebusers) {
         $query = "select c";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdDwnldUsrRps c";
-        $query = $query . " where c.user = " . $pgProgWebusers->getId() ;
+        $query = $query . " where c.user = :pgProgWebusers";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgProgWebusers', $pgProgWebusers->getId());
         //print_r($query);
         return $qb->getResult();
     }
-    
-      /**
+
+    /**
      * @return array
      */
     public function getPgCmdDwnldUsrRpsByFichierReponse($pgCmdFichiersRps) {
         $query = "select c";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdDwnldUsrRps c";
-        $query = $query . " where c.fichierReponse = " . $pgCmdFichiersRps->getId() ;
+        $query = $query . " where c.fichierReponse = :pgCmdFichiersRps";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgCmdFichiersRps', $pgCmdFichiersRps->getId());
         //print_r($query);
         return $qb->getResult();
     }
-    
-    
+
 }

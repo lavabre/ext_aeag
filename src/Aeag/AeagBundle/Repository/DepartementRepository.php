@@ -59,10 +59,11 @@ class DepartementRepository extends EntityRepository
 
         $query = "select d";
         $query = $query . " from Aeag\AeagBundle\Entity\Departement d";
-        $query = $query . " where d.Region = '" . $reg . "'";
+        $query = $query . " where d.Region = :reg";
         $query = $query . " order by d.dept";
 
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('reg', $reg);
 
         //print_r($query);
         return $qb->getResult();
@@ -77,10 +78,11 @@ class DepartementRepository extends EntityRepository
         $query = "select d";
         $query = $query . " from Aeag\AeagBundle\Entity\Departement d";
         $query = $query . " where d.dec = 'O'";
-        $query = $query . " and d.Region = '" . $reg . "'";
+        $query = $query . " and d.Region = :reg";
         $query = $query . " order by d.dept";
 
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('reg', $reg);
 
         //print_r($query);
         return $qb->getResult();
@@ -96,9 +98,10 @@ class DepartementRepository extends EntityRepository
 
         $query = "select d";
         $query = $query . " from Aeag\AeagBundle\Entity\Departement d";
-        $query = $query . " where d.dept = '" . $dept . "'";
+        $query = $query . " where d.dept = :dept";
 
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('dept', $dept);
 
         //print_r($query);
         return $qb->getOneOrNullResult();

@@ -9,7 +9,7 @@ use Doctrine\ORM\EntityRepository;
  * @package Aeag\SqeBundle\Repository
  */
 class PgCmdDwnldUsrDmdRepository extends EntityRepository {
-     
+
     /**
      * @return array
      */
@@ -28,22 +28,24 @@ class PgCmdDwnldUsrDmdRepository extends EntityRepository {
     public function getPgCmdDwnldUsrDmdByUser($pgProgWebusers) {
         $query = "select c";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdDwnldUsrDmd c";
-        $query = $query . " where c.user = " . $pgProgWebusers->getId() ;
+        $query = $query . " where c.user = :pgProgWebusers";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgProgWebusers', $pgProgWebusers->getId());
         //print_r($query);
         return $qb->getResult();
     }
-    
-     /**
+
+    /**
      * @return array
      */
     public function getPgCmdDwnldUsrDmdByDemande($pgCmdDemande) {
         $query = "select c";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdDwnldUsrDmd c";
-        $query = $query . " where c.demande = " . $pgCmdDemande->getId() ;
+        $query = $query . " where c.demande = :pgCmdDemande";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgCmdDemande', $pgCmdDemande->getId());
         //print_r($query);
         return $qb->getResult();
     }
-    
+
 }

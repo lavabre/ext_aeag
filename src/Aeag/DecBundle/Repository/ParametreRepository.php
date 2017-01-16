@@ -34,8 +34,10 @@ class ParametreRepository extends EntityRepository {
     public function getParametreByCode($code) {
         $query = "select c";
         $query = $query . " from Aeag\DecBundle\Entity\Parametre c";
-        $query = $query . " where c.code = '" . $code . "'";
+        $query = $query . " where c.code = :code";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('code', $code);
+
         //print_r($query);
         return $qb->getOneOrNullResult();
     }

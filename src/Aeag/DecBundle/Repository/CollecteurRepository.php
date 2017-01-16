@@ -28,8 +28,9 @@ class CollecteurRepository extends EntityRepository {
         $query = $query . " where o.id = oc.Ouvrage";
         $query = $query . " and o.type = c.Collecteur'ODEC'";
         $query = $query . " and oc.Correspondant = c.id";
-        $query = $query . " and c.user = " . $user;
+        $query = $query . " and c.user = :user";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('user', $user);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }

@@ -39,24 +39,27 @@ class CiRepository extends EntityRepository {
 
         $query = "select c";
         $query = $query . " from Aeag\AideBundle\Entity\Ci c";
-        $query = $query . " where c.annee = " . $annee;
+        $query = $query . " where c.annee = :annee";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('annee', $annee);
 
         //print_r($query);
         return $qb->getResult();
     }
-    
+
     /**
      * @param $dept
      * @return mixed
      */
-    public function getCiBYAnneeNumero($annee,$numero) {
+    public function getCiBYAnneeNumero($annee, $numero) {
 
         $query = "select c";
         $query = $query . " from Aeag\AideBundle\Entity\Ci c";
-        $query = $query . " where c.annee = " . $annee;
-        $query = $query . "and c.numero = '" . $numero . "'";
+        $query = $query . " where c.annee = :annee";
+        $query = $query . "and c.numero = :numero";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('annee', $annee);
+        $qb->setParameter('numero', $numero);
 
         //print_r($query);
         return $qb->getOneOrNullResult();

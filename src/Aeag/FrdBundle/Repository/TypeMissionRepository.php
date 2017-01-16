@@ -14,15 +14,12 @@ use Doctrine\ORM\EntityRepository;
  * Class TypeMissionRepository
  * @package Aeag\FrdBundle\Repository
  */
-class TypeMissionRepository extends EntityRepository
-{
-
+class TypeMissionRepository extends EntityRepository {
 
     /**
      * @return array
      */
-    public function getTypeMission()
-    {
+    public function getTypeMission() {
 
         $query = "select d";
         $query = $query . " from Aeag\FrdBundle\Entity\TypeMission d";
@@ -38,18 +35,17 @@ class TypeMissionRepository extends EntityRepository
      * @param $code
      * @return mixed
      */
-    public function getTypeMissionByCode($code)
-    {
+    public function getTypeMissionByCode($code) {
 
         $query = "select d";
         $query = $query . " from Aeag\FrdBundle\Entity\TypeMission d";
-        $query = $query . " where d.code = '" . $code . "'";
+        $query = $query . " where d.code = :code";
 
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('code', $code);
 
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-
 
 }

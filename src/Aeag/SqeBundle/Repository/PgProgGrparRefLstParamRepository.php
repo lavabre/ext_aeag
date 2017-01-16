@@ -31,65 +31,73 @@ class PgProgGrparRefLstParamRepository extends EntityRepository {
     public function getPgProgGrparRefLstParamByCodeParametre($codeParametre) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgGrparRefLstParam p";
-        $query = $query . " where p.codeParametre = '" . $codeParametre . "'";
+        $query = $query . " where p.codeParametre = :codeParametre";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('codeParametre', $codeParametre);
         //print_r($query);
         return $qb->getResult();
     }
 
-    public function getPgProgGrparRefLstParamByGrparRef($PgProgGrpParamRef) {
+    public function getPgProgGrparRefLstParamByGrparRef($pgProgGrpParamRef) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgGrparRefLstParam p";
-        $query = $query . " where p.grparRef = " . $PgProgGrpParamRef->getid();
+        $query = $query . " where p.grparRef = :pgProgGrpParamRef";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgProgGrpParamRef', $pgProgGrpParamRef->getid());
         //print_r($query);
         return $qb->getResult();
     }
-    
-    public function getNbPgProgGrparRefLstParamByGrparRef($PgProgGrpParamRef) {
+
+    public function getNbPgProgGrparRefLstParamByGrparRef($pgProgGrpParamRef) {
         $query = "select count(p.codeParametre)";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgGrparRefLstParam p";
-        $query = $query . " where p.grparRef = " . $PgProgGrpParamRef->getid();
+        $query = $query . " where p.grparRef = :pgProgGrpParamRef";
         $qb = $this->_em->createQuery($query);
-       // print_r($query);
+        $qb->setParameter('pgProgGrpParamRef', $pgProgGrpParamRef->getid());
+        // print_r($query);
         return $qb->getSingleScalarResult();
     }
-    
-    public function getNbPgProgGrparRefLstParamValideByGrparRef($PgProgGrpParamRef) {
-       $query = "select count(p.codeParametre)";
+
+    public function getNbPgProgGrparRefLstParamValideByGrparRef($pgProgGrpParamRef) {
+        $query = "select count(p.codeParametre)";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgGrparRefLstParam p";
-        $query = $query . " where p.grparRef = " . $PgProgGrpParamRef->getid();
+        $query = $query . " where p.grparRef = :pgProgGrpParamRef";
         $query = $query . " and p.valide = 'O'";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgProgGrpParamRef', $pgProgGrpParamRef->getid());
         //print_r($query);
         return $qb->getSingleScalarResult();
     }
-    
-      public function getPgProgGrparRefLstParamValideByGrparRef($PgProgGrpParamRef) {
-       $query = "select p";
+
+    public function getPgProgGrparRefLstParamValideByGrparRef($pgProgGrpParamRef) {
+        $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgGrparRefLstParam p";
-        $query = $query . " where p.grparRef = " . $PgProgGrpParamRef->getid();
+        $query = $query . " where p.grparRef = :pgProgGrpParamRef";
         $query = $query . " and p.valide = 'O'";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgProgGrpParamRef', $pgProgGrpParamRef->getid());
         //print_r($query);
         return $qb->getResult();
     }
 
-    public function getPgProgGrparRefLstParamByCodeFraction($PgSandreFractions) {
+    public function getPgProgGrparRefLstParamByCodeFraction($pgSandreFractions) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgGrparRefLstParam p";
-        $query = $query . " where p.codeFraction = '" . $PgSandreFractions->getCodeFraction() . "'";
+        $query = $query . " where p.codeFraction = :pgSandreFractions";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgSandreFractions', $pgSandreFractions->getCodeFraction());
         //print_r($query);
         return $qb->getResult();
     }
-    
-    public function getPgProgGrparRefLstParamByGrparRefCodeParametre($PgProgGrpParamRef,$codeParametre) {
+
+    public function getPgProgGrparRefLstParamByGrparRefCodeParametre($pgProgGrpParamRef, $codeParametre) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgGrparRefLstParam p";
-        $query = $query . " where p.grparRef = " . $PgProgGrpParamRef->getid();
-        $query = $query . " and p.codeParametre = '" . $codeParametre . "'";
+        $query = $query . " where p.grparRef = :pgProgGrpParamRef";
+        $query = $query . " and p.codeParametre = :codeParametre";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgProgGrpParamRef', $pgProgGrpParamRef->getid());
+        $qb->setParameter('codeParametre', $codeParametre);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }

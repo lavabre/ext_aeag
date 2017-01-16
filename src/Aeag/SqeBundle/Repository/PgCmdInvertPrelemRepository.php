@@ -27,9 +27,10 @@ class PgCmdInvertPrelemRepository extends EntityRepository {
     public function getPgCmdInvertPrelemByPrelev($pgCmdPrelevHbInvert) {
         $query = "select c";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdInvertPrelem c";
-       $query = $query . " where c.prelev = " . $pgCmdPrelevHbInvert->getPrelev()->getId();
-       $query = $query . " order by c.prelem";
+        $query = $query . " where c.prelev = :pgCmdPrelevHbInvert";
+        $query = $query . " order by c.prelem";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgCmdPrelevHbInvert', $pgCmdPrelevHbInvert->getPrelev()->getId());
         //print_r($query . '<br/>');
         return $qb->getResult();
     }
@@ -40,9 +41,11 @@ class PgCmdInvertPrelemRepository extends EntityRepository {
     public function getPgCmdInvertPrelemByPrelevPrelem($pgCmdPrelevHbInvert, $prelem) {
         $query = "select c";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdInvertPrelem c";
-        $query = $query . " where c.prelev = " . $pgCmdPrelevHbInvert->getPrelev()->getId();
-        $query = $query . " and c.prelem = '" . $prelem . "'";
+        $query = $query . " where c.prelev = :pgCmdPrelevHbInvert";
+        $query = $query . " and c.prelem = ':prelem";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgCmdPrelevHbInvert', $pgCmdPrelevHbInvert->getPrelev()->getId());
+        $qb->setParameter('prelem', $prelem);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }

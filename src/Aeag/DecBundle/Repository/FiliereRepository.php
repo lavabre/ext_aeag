@@ -27,16 +27,17 @@ class FiliereRepository extends EntityRepository {
         //print_r($query);
         return $qb->getResult();
     }
-    
-     /**
+
+    /**
      * @return array
      */
     public function getFilieresAidables($aidable) {
         $query = "select c";
         $query = $query . " from Aeag\DecBundle\Entity\Filiere c";
-        $query = $query . " where c.aidable = '" . $aidable . "'";
+        $query = $query . " where c.aidable = :aidable";
         $query = $query . " order by c.code";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('aidable', $aidable);
         //print_r($query);
         return $qb->getResult();
     }
@@ -47,8 +48,9 @@ class FiliereRepository extends EntityRepository {
     public function getFiliereByCode($code) {
         $query = "select c";
         $query = $query . " from Aeag\DecBundle\Entity\Filiere c";
-        $query = $query . " where c.code = '" . $code . "'";
+        $query = $query . " where c.code = :code";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('code', $code);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }

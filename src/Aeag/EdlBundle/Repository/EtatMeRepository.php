@@ -18,9 +18,11 @@ class EtatMeRepository extends EntityRepository {
 
         $query = "select p ";
         $query = $query . " from Aeag\EdlBundle\Entity\EtatMeProposed p";
-        $query = $query . " where p.euCd = '" . $euCd . "' and p.cdEtat = '" . $cdEtat . "' and p.role ='expert'";
+        $query = $query . " where p.euCd = :euCd  and p.cdEtat = :cdEtat' and p.role ='expert'";
         $query = $query . " order by p.propositionDate desc";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('euCd', $euCd);
+        $qb->setParameter('cdEtat', $cdEtat);
         //print_r($query);
         return $qb->getResult();
 
@@ -49,12 +51,14 @@ class EtatMeRepository extends EntityRepository {
 
         $query = "select p ";
         $query = $query . " from Aeag\EdlBundle\Entity\EtatMeProposed p";
-          $query = $query . " , Aeag\EdlBundle\Entity\Utilisateur u";
+        $query = $query . " , Aeag\EdlBundle\Entity\Utilisateur u";
         $query = $query . " where upper(u.username) like 'STL%'";
         $query = $query . " and u.id = p.utilisateur";
-        $query = $query . " and p.euCd = '" . $euCd . "' and p.cdEtat = '" . $cdEtat . "'";
+        $query = $query . " and p.euCd = :euCd and p.cdEtat = :cdEtat";
         $query = $query . " order by p.propositionDate desc";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('euCd', $euCd);
+        $qb->setParameter('cdEtat', $cdEtat);
         //print_r($query);
         return $qb->getResult();
 //        
@@ -95,23 +99,20 @@ class EtatMeRepository extends EntityRepository {
 //            return null;
 //        }
 //    }
-    
-      public function getEtatMe($code, $cdGroupe) {
+
+    public function getEtatMe($code, $cdGroupe) {
 
         $query = "select e from Aeag\EdlBundle\Entity\EtatType t";
         $query = $query . " , Aeag\EdlBundle\Entity\EtatMe e";
-        $query = $query . " where  t.cdEtat = e.cdEtat  and e.euCd = '" . $code . "' and t.cdGroupe = '" . $cdGroupe . "'";
+        $query = $query . " where  t.cdEtat = e.cdEtat  and e.euCd = :code  and t.cdGroupe = :cdGroupe";
         //$query = $query . " and e.cdEtat != 'RW_ECO_VAL'";
         $query = $query . " order by t.ordre";
-        //  print_r('query  : ' . $query);
 
-        try {
-            $r = $this->_em->createQuery($query)
-                    ->getResult();
-            return $r;
-        } catch (Exception $e) {
-            return null;
-        }
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('code', $code);
+        $qb->setParameter('cdGroupe', $cdGroupe);
+        //print_r($query);
+        return $qb->getResult();
     }
 
 //    public function getNbEtatMe($code, $cdGroupe) {
@@ -132,23 +133,19 @@ class EtatMeRepository extends EntityRepository {
 //            return null;
 //        }
 //    }
-    
-     public function getNbEtatMe($code, $cdGroupe) {
+
+    public function getNbEtatMe($code, $cdGroupe) {
 
         $query = "select count(e.valeur)  from Aeag\EdlBundle\Entity\EtatType t";
         $query = $query . " , Aeag\EdlBundle\Entity\EtatMe e";
-        $query = $query . " where  t.cdEtat = e.cdEtat  and e.euCd = '" . $code . "' and t.cdGroupe = '" . $cdGroupe . "'";
+        $query = $query . " where  t.cdEtat = e.cdEtat  and e.euCd = :code  and t.cdGroupe = :cdGroupe";
         //$query = $query . " and e.cdEtat != 'RW_ECO_VAL'";
-        // print_r('query  : ' . $query);
 
-        try {
-            $r = $this->_em->createQuery($query)
-                    ->getSingleScalarResult();
-            ;
-            return $r;
-        } catch (Exception $e) {
-            return null;
-        }
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('code', $code);
+        $qb->setParameter('cdGroupe', $cdGroupe);
+        //print_r($query);
+        return $qb->getSingleScalarResult();
     }
 
     public function getDerniereProposition($euCd) {
@@ -158,9 +155,10 @@ class EtatMeRepository extends EntityRepository {
         $query = $query . " , Aeag\EdlBundle\Entity\Utilisateur u";
         $query = $query . " where upper(u.username) like 'STL%'";
         $query = $query . " and u.id = p.utilisateur";
-        $query = $query . " and p.euCd = '" . $euCd . "'";
+        $query = $query . " and p.euCd = :euCd";
         $query = $query . " order by p.propositionDate desc";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('euCd', $euCd);
         //print_r($query);
         return $qb->getResult();
 
