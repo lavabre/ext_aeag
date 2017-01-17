@@ -211,7 +211,7 @@ class ProgrammationStationController extends Controller {
             for ($j = 0; $j < count($tabReseauxUsers); $j++) {
                 if ($tabReseauxUsers[$j]['reseau'] == $pgProgWebuserRs->getReseauMesure()) {
                     $trouve = true;
-                    $j = count($tabReseauxUsers) + 1;
+                    break;
                 }
             }
             if ($trouve == false) {
@@ -235,7 +235,7 @@ class ProgrammationStationController extends Controller {
 
         $pgProgLotStationAns = $repoPgProgLotStationAn->getPgProgLotStationAnBylotan($pgProgLotAn);
         if ($pgProgLotStationAns) {
-            asort($pgProgLotStationAns);
+            //asort($pgProgLotStationAns);
             $tabSelReseaux = array();
             $i = 0;
             foreach ($pgProgLotStationAns as $pgProgLotStationAn) {
@@ -271,7 +271,7 @@ class ProgrammationStationController extends Controller {
             }
         }
 
-        usort($tabReseauxUsers, create_function('$a,$b', 'return $a[\'reseau\']->getNomRsx()-$b[\'reseau\']->getNomRsx();'));
+        // usort($tabReseauxUsers, create_function('$a,$b', 'return $a[\'reseau\']->getNomRsx()-$b[\'reseau\']->getNomRsx();'));
 
         $tabMessages = array();
         $i = 0;
@@ -424,7 +424,7 @@ class ProgrammationStationController extends Controller {
                         }
                     }
                 }
-                 $tabStations[$i]['autreLots'] = $tabLots;
+                $tabStations[$i]['autreLots'] = $tabLots;
                 $i++;
             }
         }
@@ -819,6 +819,7 @@ class ProgrammationStationController extends Controller {
         $repoPgProgLotAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotAn');
         $repoPgProgPeriodes = $emSqe->getRepository('AeagSqeBundle:PgProgPeriodes');
         $repoPgProgZgeorefStation = $emSqe->getRepository('AeagSqeBundle:PgProgZgeorefStation');
+        $repoPgRefStationMesure = $emSqe->getRepository('AeagSqeBundle:PgRefStationMesure');
         $repoPgRefReseauMesure = $emSqe->getRepository('AeagSqeBundle:PgRefReseauMesure');
         $repoPgProgLotStationAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotStationAn');
         $repoPgProgLotPeriodeProg = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeProg');
@@ -839,33 +840,48 @@ class ProgrammationStationController extends Controller {
 
 
         // recuperation des stations a partir de la zone geographique du lot
-        $pgProgZgeorefStations = $repoPgProgZgeorefStation->getpgProgZgeorefStationByZgeoref($pgProgZoneGeoRef);
+        // $pgProgZgeorefStations = $repoPgProgZgeorefStation->getpgProgZgeorefStationByZgeoref($pgProgZoneGeoRef);
+
+        $tabSelStations = array();
+        $i = 0;
+        $tabSelResaux = array();
+        $j = 0;
+        foreach ($_POST as $post => $val) {
+            if (substr($post, 0, 11) == 'idStationOk') {
+                $tabSelStations[$i] = $val;
+                $i++;
+            } else {
+                $tabSelResaux[$j]['station'] = substr($post, 18);
+                $tabSelResaux[$j]['reseau'] = $val;
+                 $j++;
+            }
+        }
+       
         $tabStations = array();
         $i = 0;
         $j = 0;
         $nbStations = 0;
         $erreur = false;
-        foreach ($pgProgZgeorefStations as $pgProgZgeorefStation) {
-            $stationGeo = $pgProgZgeorefStation->getStationMesure();
-            if (!empty($_POST['idStationOk_' . $stationGeo->getOuvFoncId()])) {
-                if ($stationGeo->getOuvFoncId() == $_POST['idStationOk_' . $stationGeo->getOuvFoncId()]) {
-                    $tabStations[$i]['station'] = $stationGeo;
-                    $tabStations[$i]['cocher'] = 'O';
-                    if (empty($_POST['idStationReseauOk_' . $stationGeo->getOuvFoncId()])) {
-                        $erreur = true;
-                        $tabMessage[$j] = 'Sélectionner un réseau pour la station ' . $stationGeo->getCode() . ' ' . $stationGeo->getLibelle();
-                        $j++;
-                    } else {
-                        $tabStations[$i]['reseau'] = $_POST['idStationReseauOk_' . $stationGeo->getOuvFoncId()];
-                    }
-                    $i++;
-                    $nbStations++;
+        for ($nb = 0; $nb < count($tabSelStations); $nb++) {
+            $stationGeo = $repoPgRefStationMesure->getPgRefStationMesureByOuvFoncId($tabSelStations[$nb]);
+            $tabStations[$i]['station'] = $stationGeo;
+            $tabStations[$i]['cocher'] = 'O';
+            for ($nbres = 0; $nbres < count($tabSelResaux); $nbres++) {
+                $trouver = false;
+                if ($tabSelResaux[$nbres]['station'] == $tabSelStations[$nb]) {
+                    $trouver = true;
+                    break;
                 }
-            } else {
-                $tabStations[$i]['station'] = $stationGeo;
-                $tabStations[$i]['cocher'] = 'N';
-                $i++;
             }
+            if (!$trouver) {
+                $erreur = true;
+                $tabMessage[$j] = 'Sélectionner un réseau pour la station ' . $stationGeo->getCode() . ' ' . $stationGeo->getLibelle();
+                $j++;
+            } else {
+                $tabStations[$i]['reseau'] = $tabSelResaux[$nbres]['reseau'];
+            }
+            $i++;
+            $nbStations++;
         }
 
         if ($nbStations == 0) {
@@ -879,43 +895,53 @@ class ProgrammationStationController extends Controller {
             return $this->redirect($this->generateUrl('AeagSqeBundle_programmation_stations', array('action' => $action, 'maj' => $maj, 'lotan' => $pgProgLotAnId)));
         }
 
-        foreach ($tabStations as $station) {
-            $pgRefStationMesure = $station['station'];
-            $pgProgLotStationAn = $repoPgProgLotStationAn->getPgProgLotStationAnByLotAnStation($pgProgLotAn, $pgRefStationMesure);
-            if ($pgProgLotStationAn) {
-                if ($station['cocher'] == 'N') {
-                    $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByStationAn($pgProgLotStationAn);
-                    if (count($pgProgLotPeriodeProgs) > 0) {
-                        foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
-                            $pgProgLotPeriodeProgCompls = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByPprogCompl($pgProgLotPeriodeProg);
-                            foreach ($pgProgLotPeriodeProgCompls as $pgProgLotPeriodeProgCompl) {
-                                $pgProgLotPeriodeProgCompl->setPprogCompl(null);
-                                $emSqe->persist($pgProgLotPeriodeProgCompl);
-                            }
-                            $emSqe->remove($pgProgLotPeriodeProg);
-                        }
-                    }
-                    $emSqe->remove($pgProgLotStationAn);
+        $pgProgLotStationAns = $repoPgProgLotStationAn->getPgProgLotStationAnByLotAn($pgProgLotAn);
+        foreach ($pgProgLotStationAns as $pgProgLotStationAn) {
+            $trouver = false;
+            foreach ($tabStations as $station) {
+                if ($pgProgLotStationAn->getStation()->getOuvFoncId() == $station['station']->getOuvFoncId()) {
+                    $trouver = true;
+                    break;
                 }
             }
-            if ($station['cocher'] == 'O') {
-                $pgRefReseauMesure = $repoPgRefReseauMesure->getPgRefReseauMesureByGroupementId($station['reseau']);
-                if (!$pgProgLotStationAn) {
-                    $pgProgLotStationAn = new PgProgLotStationAn();
+            if (!$trouver) {
+                $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByStationAn($pgProgLotStationAn);
+                if (count($pgProgLotPeriodeProgs) > 0) {
+                    foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
+                        $pgProgLotPeriodeProgCompls = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByPprogCompl($pgProgLotPeriodeProg);
+                        foreach ($pgProgLotPeriodeProgCompls as $pgProgLotPeriodeProgCompl) {
+                            $pgProgLotPeriodeProgCompl->setPprogCompl(null);
+                            $emSqe->persist($pgProgLotPeriodeProgCompl);
+                        }
+                        $emSqe->remove($pgProgLotPeriodeProg);
+                    }
                 }
-                $pgProgLotStationAn->setLotAn($pgProgLotAn);
-                $pgProgLotStationAn->setStation($pgRefStationMesure);
-                $pgProgLotStationAn->setRsxId($pgRefReseauMesure->getGroupementId());
+                $emSqe->remove($pgProgLotStationAn);
+            }
+        }
+         $emSqe->flush();
+
+        foreach ($tabStations as $station) {
+            $pgRefStationMesure = $station['station'];
+            $pgRefReseauMesure = $repoPgRefReseauMesure->getPgRefReseauMesureByGroupementId($station['reseau']);
+            $pgProgLotStationAn = $repoPgProgLotStationAn->getPgProgLotStationAnByLotAnStation($pgProgLotAn, $pgRefStationMesure);
+            if (!$pgProgLotStationAn) {
+                $pgProgLotStationAn = new PgProgLotStationAn();
+            }
+            $pgProgLotStationAn->setLotAn($pgProgLotAn);
+            $pgProgLotStationAn->setStation($pgRefStationMesure);
+            $pgProgLotStationAn->setRsxId($pgRefReseauMesure->getGroupementId());
 //                $pgProgStatut = $repoPgProgStatut->getPgProgStatutByCodeStatut('CRE');
 //                $pgProgLotStationAn->setCodeStatut($pgProgStatut);
 //                $now = date('Y-m-d');
 //                $now = new \DateTime($now);
 //                $pgProgLotStationAn->setDateModif($now);
 //                $pgProgLotStationAn->setUtilModif($pgProgWebuser);
-                $emSqe->persist($pgProgLotStationAn);
-            }
+            $emSqe->persist($pgProgLotStationAn);
+           // print_r('station : ' . $pgRefStationMesure->getCode() . '<br/>');
         }
-        $emSqe->flush();
+         $emSqe->flush();
+         
 
         $pgProgLotStationAns = $repoPgProgLotStationAn->getPgProgLotStationAnBylotan($pgProgLotAn);
         $nbPeriodes = 0;
@@ -983,7 +1009,7 @@ class ProgrammationStationController extends Controller {
         $repoPgProgLotAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotAn');
         $repoPgRefReseauMesure = $emSqe->getRepository('AeagSqeBundle:PgRefReseauMesure');
         $repoPgProgLotStationAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotStationAn');
-      
+
         $pgProgLotAn = $repoPgProgLotAn->getPgProgLotAnById($pgProgLotAnId);
         $pgProgLot = $pgProgLotAn->getLot();
         $pgProgLotStationAns = $repoPgProgLotStationAn->getPgProgLotStationAnBylotan($pgProgLotAn);
@@ -1024,15 +1050,15 @@ class ProgrammationStationController extends Controller {
 
         for ($i = 0; $i < count($tabStations); $i++) {
             $ligne = array($pgProgLotAn->getAnneeProg(),
-                                $pgProgLotAn->getversion(),
-                                $pgProgLotAn->getLot()->getNomLot(),
-                                $tabStations[$i]['station']['code'],
-                                $tabStations[$i]['station']['libelle'] , 
-                                $tabStations[$i]['commune']['libelle'], 
-                                $tabStations[$i]['station']['codeMasdo'] , 
-                                $tabStations[$i]['station']['nomCoursEau'], 
-                                $tabStations[$i]['reseau']->getNomRsx()
-                                );
+                $pgProgLotAn->getversion(),
+                $pgProgLotAn->getLot()->getNomLot(),
+                $tabStations[$i]['station']['code'],
+                $tabStations[$i]['station']['libelle'],
+                $tabStations[$i]['commune']['libelle'],
+                $tabStations[$i]['station']['codeMasdo'],
+                $tabStations[$i]['station']['nomCoursEau'],
+                $tabStations[$i]['reseau']->getNomRsx()
+            );
             for ($j = 0; $j < count($ligne); $j++) {
                 $ligne[$j] = \iconv("UTF-8", "Windows-1252//TRANSLIT", $ligne[$j]);
             }

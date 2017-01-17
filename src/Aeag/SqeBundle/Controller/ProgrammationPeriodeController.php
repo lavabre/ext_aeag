@@ -62,6 +62,9 @@ class ProgrammationPeriodeController extends Controller {
         $pgProgLotStationAns = $repoPgProgLotStationAn->getPgProgLotStationAnBylotan($pgProgLotAn);
         $pgProgPeriodes = $repoPgProgPeriodes->getPgProgPeriodesByAnneeTypePeriode($annee, $pgProgTypeMilieu->getTypePeriode());
         $pgProgLotPeriodeAns = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnByLotan($pgProgLotAn);
+        
+//        $tabEnregs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByPgProgLotAn($pgProgLotAn);
+//        return new Response ('nb : ' . count($tabEnregs));
 
         foreach ($pgProgPeriodes as $pgProgPeriode) {
             if ($pgProgLot->getDelaiPrel()) {
