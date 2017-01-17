@@ -92,7 +92,7 @@ class PgCmdPrelevRepository extends EntityRepository {
         $query = $query . "           Aeag\SqeBundle\Entity\PgProgLot lot,";
         $query = $query . "           Aeag\SqeBundle\Entity\PgProgTypeMilieu typemilieu, ";
         $query = $query . "           Aeag\SqeBundle\Entity\PgSandreSupports support ";
-        $query = $query . " where support.codeSupport = :pgSandreSupports";
+        $query = $query . " where support.codeSupport = :pgSandreSupports ";
         $query = $query . "and support.codeSupport= prelev.codeSupport  ";
         $query = $query . "and demande.id = prelev.demande ";
         $query = $query . "and station.ouvFoncId = prelev.station ";

@@ -28,7 +28,7 @@ class PgCmdPrelevPcRepository extends EntityRepository {
         $query = "select c";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelevPc c";
         $query = $query . " where c.prelev = :pgCmdPrelev";
-        $query = $query . "order by c.zoneVerticale ";
+        $query = $query . " order by c.zoneVerticale ";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('pgCmdPrelev', $pgCmdPrelev->getId());
         //print_r($query);
@@ -41,8 +41,8 @@ class PgCmdPrelevPcRepository extends EntityRepository {
     public function getPgCmdPrelevPcByPrelevOrderByProfondeur($pgCmdPrelev) {
         $query = "select c";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelevPc c";
-        $query = $query . " where c.prelev = :pgCmdPrele";
-        $query = $query . "order by c.profondeur ";
+        $query = $query . " where c.prelev = :pgCmdPrelev";
+        $query = $query . " order by c.profondeur ";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('pgCmdPrelev', $pgCmdPrelev->getId());
         //print_r($query);
