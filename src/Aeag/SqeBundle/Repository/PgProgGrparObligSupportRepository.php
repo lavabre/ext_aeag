@@ -46,7 +46,7 @@ class PgProgGrparObligSupportRepository extends EntityRepository {
     public function getPgProgGrparObligSupportByCodeSupport($codeSupport) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgGrparObligSupport p";
-        $query = $query . " where p.codeSupport = :codeSuppor";
+        $query = $query . " where p.codeSupport = :codeSupport";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('codeSupport', $codeSupport);
         //print_r($query);
