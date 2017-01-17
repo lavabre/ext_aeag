@@ -42,7 +42,7 @@ class DeclarationProducteurRepository extends EntityRepository {
         $query = "select d";
         $query = $query . " from Aeag\DecBundle\Entity\DeclarationProducteur d";
         $query = $query . " where d.Producteur = :producteur";
-        $query = $query . " and d.annee = :$annee";
+        $query = $query . " and d.annee = :annee";
 
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('producteur', $producteur);
