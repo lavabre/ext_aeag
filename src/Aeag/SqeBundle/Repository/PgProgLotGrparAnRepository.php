@@ -124,7 +124,7 @@ class PgProgLotGrparAnRepository extends EntityRepository {
         $query = "select count(p.id)";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotGrparAn p";
         $query = $query . " where p.lotan = :pgProgLotAn";
-        $query = $query . "and p.valide = 'O'";
+        $query = $query . " and p.valide = 'O'";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('pgProgLotAn', $pgProgLotAn->getId());
         //print_r($query);
