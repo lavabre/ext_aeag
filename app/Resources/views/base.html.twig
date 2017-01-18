@@ -332,8 +332,8 @@
                 </div>
             </div>
         </div>
-
-
+        
+         
 
     {% endblock modalAll %}
 
@@ -358,30 +358,30 @@
         Agence de l'eau Adour-Garonne - 90, rue du f&eacute;r&eacute;tra - CS 87801 - 31078 Toulouse Cedex 4 - T&eacute;l. : 05 61 36 37 38 - fax : 05 61 36 37 28
         &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
         {% block statistiques %}
-
-            {% if app.session.get('nbStatistiques')  > 0 %}
+           
+             {% if app.session.get('nbStatistiques')  > 0 %}
                 Visiteurs :  <a  id="idStatistiques" href="{{ path('AeagUserBundle_Statistiques') }}">
-                    <button class="btn btn-primary btn-xs" type="button">
-                        <span class="badge">
-                            {{ app.session.get('nbStatistiques') }}
-                        </span>
-                    </button>
-                </a>
-            {% endif %}
-            {#       Visiteurs :  <script type="text/javascript" src="http://www.abcompteur.com/cpt/?code=6/33/16283/1/2&ID=4349583530"></script>#}
-
+                                   <button class="btn btn-primary btn-xs" type="button">
+                                            <span class="badge">
+                                               {{ app.session.get('nbStatistiques') }}
+                                            </span>
+                                      </button>
+                                     </a>
+                 {% endif %}
+          {#       Visiteurs :  <script type="text/javascript" src="http://www.abcompteur.com/cpt/?code=6/33/16283/1/2&ID=4349583530"></script>#}
+            
         {%endblock statistiques %}
-
-        {% block livreOr %}
-            {#      {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                      <a  id="idLivreOr" href="{{ path('livreor') }}">
-                          <button class="btn btn-primary btn-xs" type="button">
-                              <i class="fa fa-gratipay"></i>&nbsp; Livre d'or
-                             </button>
-                       </a>
-                  {% endif %}#}
+        
+         {% block livreOr %}
+      {#      {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                <a  id="idLivreOr" href="{{ path('livreor') }}">
+                    <button class="btn btn-primary btn-xs" type="button">
+                        <i class="fa fa-gratipay"></i>&nbsp; Livre d'or
+                       </button>
+                 </a>
+            {% endif %}#}
         {%endblock livreOr %}
-
+        
         {# &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;   Webmaster : {{ webmaster }}#}
         {# &nbsp; &nbsp; &nbsp; &nbsp; Symfony : {{ symfony }}#}
         {# &nbsp; &nbsp; &nbsp; &nbsp; version : {{ version }}#}
@@ -413,65 +413,78 @@
     <script type="text/javascript" src="{{ asset('bundles/aeagaeag/bootstrap/js/bootstrap-datetimepicker.fr.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/aeagaeag/bootstrap/js/Autocomplete.js') }}"></script>
 
-   
-
     <script type="text/javascript" language="javascript">
 
         jQuery(document).ready(function () {
 
-        $('#idAttente').hide();
-                $('#modalTraitementEncours').hide();        {# url = '{{ path('AeagUserBundle_Statistiques') }}';
-         $('footer a').attr('href', url);
-         $('footer a').attr('target', '');#}
-
-                     var url = '{{ path("AeagUserBundle_statistiques_maj") }}';
-                     $.ajax({
-                     url: url,
-                             type: 'get'
-                     });
-                     // controle formulaire
-                     $("#idForm").validate();
-                     $("#modalTraitementEncours").draggable({
-             handle: ".modal-header"
-             });
-                     $("#modalMessageErreur").draggable({
-             handle: ".modal-header"
-             });
-                     $('#idTable tbody').on('click', 'tr', function () {
-             $('#idTable tbody tr').removeClass('alert alert-info');
-                     $('#idTable tbody tr').css({'background-color': '#fff'});
-                     $(this).addClass('alert alert-info');
-                     $(this).css({'background-color': '#d9edf7'});
-             });
-                     $(document).on('click', 'li ul ul li a', function (e) {
-        {#$('#idAttente').show();#}
-            $('#modalTraitementEncours').modal('toggle');
+            $('#idAttente').hide();
+            $('#modalTraitementEncours').hide();
+            
+                  
+           {# url = '{{ path('AeagUserBundle_Statistiques') }}';
+            $('footer a').attr('href', url);
+            $('footer a').attr('target', '');#}
+            
+            var url = '{{ path("AeagUserBundle_statistiques_maj") }}';
+             $.ajax({
+                url: url,
+                type: 'get'
             });
-                    $(document).on('click', 'ol li a', function (e) {
+
+            // controle formulaire
+            $("#idForm").validate();
+
+            $("#modalTraitementEncours").draggable({
+                handle: ".modal-header"
+            });
+
+            $("#modalMessageErreur").draggable({
+                handle: ".modal-header"
+            });
+
+
+            $('#idTable tbody').on('click', 'tr', function () {
+                $('#idTable tbody tr').removeClass('alert alert-info');
+                $('#idTable tbody tr').css({'background-color': '#fff'});
+                $(this).addClass('alert alert-info');
+                $(this).css({'background-color': '#d9edf7'});
+            });
+
+
+            $(document).on('click', 'li ul ul li a', function (e) {
         {#$('#idAttente').show();#}
-            $('#modalTraitementEncours').modal('toggle');
-            });        {#  $(document).on('click', 'tr td a',function(e){
+                    $('#modalTraitementEncours').modal('toggle');
+                });
+
+                $(document).on('click', 'ol li a', function (e) {
+        {#$('#idAttente').show();#}
+                    $('#modalTraitementEncours').modal('toggle');
+                });
+
+        {#  $(document).on('click', 'tr td a',function(e){
               $('#modalTraitementEncours').modal('toggle');
           });#}
 
-                      $(document).on('click', '#idBtVoirMessage', function (e) {
-              $('#idAttente').hide();
+                  $(document).on('click', '#idBtVoirMessage', function (e) {
+                      $('#idAttente').hide();
                       $('#modalTraitementEncours').modal('hide');
-              });        {%if (app.session.get('Messages') | length) > 0 %}
+                  });
+
+        {%if (app.session.get('Messages') | length) > 0 %}
             {% for message in app.session.get('Messages') %} 
-                          $('#ajax_{{message.message.id}}').on('shown.bs.modal', function (e) {
-                  $('#modalTraitementEncours').modal('hide');
-                  })
+                $('#ajax_{{message.message.id}}').on('shown.bs.modal', function (e) {
+                    $('#modalTraitementEncours').modal('hide');
+                })
             {% endfor %}
         {% endif %}
 
-                    {
-
-
+    
+    
+     
     {% block scriptsTr %}{% endblock scriptsTr %} 
 
 {% block scripts %}{% endblock scripts %}
-                    }
+            }
             );
 </script>
 
