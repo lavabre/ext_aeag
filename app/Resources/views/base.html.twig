@@ -332,8 +332,8 @@
                 </div>
             </div>
         </div>
-        
-         
+
+
 
     {% endblock modalAll %}
 
@@ -358,30 +358,30 @@
         Agence de l'eau Adour-Garonne - 90, rue du f&eacute;r&eacute;tra - CS 87801 - 31078 Toulouse Cedex 4 - T&eacute;l. : 05 61 36 37 38 - fax : 05 61 36 37 28
         &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
         {% block statistiques %}
-           
-             {% if app.session.get('nbStatistiques')  > 0 %}
+
+            {% if app.session.get('nbStatistiques')  > 0 %}
                 Visiteurs :  <a  id="idStatistiques" href="{{ path('AeagUserBundle_Statistiques') }}">
-                                   <button class="btn btn-primary btn-xs" type="button">
-                                            <span class="badge">
-                                               {{ app.session.get('nbStatistiques') }}
-                                            </span>
-                                      </button>
-                                     </a>
-                 {% endif %}
-          {#       Visiteurs :  <script type="text/javascript" src="http://www.abcompteur.com/cpt/?code=6/33/16283/1/2&ID=4349583530"></script>#}
-            
-        {%endblock statistiques %}
-        
-         {% block livreOr %}
-      {#      {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                <a  id="idLivreOr" href="{{ path('livreor') }}">
                     <button class="btn btn-primary btn-xs" type="button">
-                        <i class="fa fa-gratipay"></i>&nbsp; Livre d'or
-                       </button>
-                 </a>
-            {% endif %}#}
+                        <span class="badge">
+                            {{ app.session.get('nbStatistiques') }}
+                        </span>
+                    </button>
+                </a>
+            {% endif %}
+            {#       Visiteurs :  <script type="text/javascript" src="http://www.abcompteur.com/cpt/?code=6/33/16283/1/2&ID=4349583530"></script>#}
+
+        {%endblock statistiques %}
+
+        {% block livreOr %}
+            {#      {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                      <a  id="idLivreOr" href="{{ path('livreor') }}">
+                          <button class="btn btn-primary btn-xs" type="button">
+                              <i class="fa fa-gratipay"></i>&nbsp; Livre d'or
+                             </button>
+                       </a>
+                  {% endif %}#}
         {%endblock livreOr %}
-        
+
         {# &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;   Webmaster : {{ webmaster }}#}
         {# &nbsp; &nbsp; &nbsp; &nbsp; Symfony : {{ symfony }}#}
         {# &nbsp; &nbsp; &nbsp; &nbsp; version : {{ version }}#}
@@ -415,43 +415,43 @@
 
     <script type="text/javascript" language="javascript">
 
-        jQuery(document).ready(function () {
+                                        jQuery(document).ready(function () {
 
-            $('#idAttente').hide();
-            $('#modalTraitementEncours').hide();
-            
-                  
-           {# url = '{{ path('AeagUserBundle_Statistiques') }}';
-            $('footer a').attr('href', url);
-            $('footer a').attr('target', '');#}
-            
-            var url = '{{ path("AeagUserBundle_statistiques_maj") }}';
-             $.ajax({
-                url: url,
-                type: 'get'
-            });
-
-            // controle formulaire
-            $("#idForm").validate();
-
-            $("#modalTraitementEncours").draggable({
-                handle: ".modal-header"
-            });
-
-            $("#modalMessageErreur").draggable({
-                handle: ".modal-header"
-            });
+                                            $('#idAttente').hide();
+                                            $('#modalTraitementEncours').hide();
 
 
-            $('#idTable tbody').on('click', 'tr', function () {
-                $('#idTable tbody tr').removeClass('alert alert-info');
-                $('#idTable tbody tr').css({'background-color': '#fff'});
-                $(this).addClass('alert alert-info');
-                $(this).css({'background-color': '#d9edf7'});
-            });
+        {# url = '{{ path('AeagUserBundle_Statistiques') }}';
+         $('footer a').attr('href', url);
+         $('footer a').attr('target', '');#}
+
+                 var url = '{{ path("AeagUserBundle_statistiques_maj") }}';
+                 $.ajax({
+                     url: url,
+                     type: 'get'
+                 });
+
+                 // controle formulaire
+                 $("#idForm").validate();
+
+                 $("#modalTraitementEncours").draggable({
+                     handle: ".modal-header"
+                 });
+
+                 $("#modalMessageErreur").draggable({
+                     handle: ".modal-header"
+                 });
 
 
-            $(document).on('click', 'li ul ul li a', function (e) {
+                 $('#idTable tbody').on('click', 'tr', function () {
+                     $('#idTable tbody tr').removeClass('alert alert-info');
+                     $('#idTable tbody tr').css({'background-color': '#fff'});
+                     $(this).addClass('alert alert-info');
+                     $(this).css({'background-color': '#d9edf7'});
+                 });
+
+
+                 $(document).on('click', 'li ul ul li a', function (e) {
         {#$('#idAttente').show();#}
                     $('#modalTraitementEncours').modal('toggle');
                 });
@@ -478,9 +478,25 @@
             {% endfor %}
         {% endif %}
 
-    
-    
-     
+
+                        (function (i, s, o, g, r, a, m) {
+                            i['GoogleAnalyticsObject'] = r;
+                            i[r] = i[r] || function () {
+                                (i[r].q = i[r].q || []).push(arguments)
+                            }, i[r].l = 1 * new Date();
+                            a = s.createElement(o),
+                                    m = s.getElementsByTagName(o)[0];
+                            a.async = 1;
+                            a.src = g;
+                            m.parentNode.insertBefore(a, m)
+                        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+                ga('create', 'UA-90566013-1', 'auto');
+                ga('send', 'pageview');
+
+
+
+
     {% block scriptsTr %}{% endblock scriptsTr %} 
 
 {% block scripts %}{% endblock scripts %}
