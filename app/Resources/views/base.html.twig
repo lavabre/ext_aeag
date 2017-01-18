@@ -413,94 +413,81 @@
     <script type="text/javascript" src="{{ asset('bundles/aeagaeag/bootstrap/js/bootstrap-datetimepicker.fr.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/aeagaeag/bootstrap/js/Autocomplete.js') }}"></script>
 
+    <script>
+                                        (function (i, s, o, g, r, a, m) {
+                                            i['GoogleAnalyticsObject'] = r;
+                                            i[r] = i[r] || function () {
+                                                (i[r].q = i[r].q || []).push(arguments)
+                                            }, i[r].l = 1 * new Date();
+                                            a = s.createElement(o),
+                                                    m = s.getElementsByTagName(o)[0];
+                                            a.async = 1;
+                                            a.src = g;
+                                            m.parentNode.insertBefore(a, m)
+                                        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+                                        ga('create', 'UA-90566013-1', 'auto');
+                                        ga('send', 'pageview');
+
+    </script>
+
     <script type="text/javascript" language="javascript">
 
-                                        jQuery(document).ready(function () {
+        jQuery(document).ready(function () {
 
-                                            $('#idAttente').hide();
-                                            $('#modalTraitementEncours').hide();
-
-
-        {# url = '{{ path('AeagUserBundle_Statistiques') }}';
+        $('#idAttente').hide();
+                $('#modalTraitementEncours').hide();        {# url = '{{ path('AeagUserBundle_Statistiques') }}';
          $('footer a').attr('href', url);
          $('footer a').attr('target', '');#}
 
-                 var url = '{{ path("AeagUserBundle_statistiques_maj") }}';
-                 $.ajax({
+                     var url = '{{ path("AeagUserBundle_statistiques_maj") }}';
+                     $.ajax({
                      url: url,
-                     type: 'get'
-                 });
-
-                 // controle formulaire
-                 $("#idForm").validate();
-
-                 $("#modalTraitementEncours").draggable({
-                     handle: ".modal-header"
-                 });
-
-                 $("#modalMessageErreur").draggable({
-                     handle: ".modal-header"
-                 });
-
-
-                 $('#idTable tbody').on('click', 'tr', function () {
-                     $('#idTable tbody tr').removeClass('alert alert-info');
+                             type: 'get'
+                     });
+                     // controle formulaire
+                     $("#idForm").validate();
+                     $("#modalTraitementEncours").draggable({
+             handle: ".modal-header"
+             });
+                     $("#modalMessageErreur").draggable({
+             handle: ".modal-header"
+             });
+                     $('#idTable tbody').on('click', 'tr', function () {
+             $('#idTable tbody tr').removeClass('alert alert-info');
                      $('#idTable tbody tr').css({'background-color': '#fff'});
                      $(this).addClass('alert alert-info');
                      $(this).css({'background-color': '#d9edf7'});
-                 });
-
-
-                 $(document).on('click', 'li ul ul li a', function (e) {
+             });
+                     $(document).on('click', 'li ul ul li a', function (e) {
         {#$('#idAttente').show();#}
-                    $('#modalTraitementEncours').modal('toggle');
-                });
-
-                $(document).on('click', 'ol li a', function (e) {
+            $('#modalTraitementEncours').modal('toggle');
+            });
+                    $(document).on('click', 'ol li a', function (e) {
         {#$('#idAttente').show();#}
-                    $('#modalTraitementEncours').modal('toggle');
-                });
-
-        {#  $(document).on('click', 'tr td a',function(e){
+            $('#modalTraitementEncours').modal('toggle');
+            });        {#  $(document).on('click', 'tr td a',function(e){
               $('#modalTraitementEncours').modal('toggle');
           });#}
 
-                  $(document).on('click', '#idBtVoirMessage', function (e) {
-                      $('#idAttente').hide();
+                      $(document).on('click', '#idBtVoirMessage', function (e) {
+              $('#idAttente').hide();
                       $('#modalTraitementEncours').modal('hide');
-                  });
-
-        {%if (app.session.get('Messages') | length) > 0 %}
+              });        {%if (app.session.get('Messages') | length) > 0 %}
             {% for message in app.session.get('Messages') %} 
-                $('#ajax_{{message.message.id}}').on('shown.bs.modal', function (e) {
-                    $('#modalTraitementEncours').modal('hide');
-                })
+                          $('#ajax_{{message.message.id}}').on('shown.bs.modal', function (e) {
+                  $('#modalTraitementEncours').modal('hide');
+                  })
             {% endfor %}
         {% endif %}
 
-{#
-                        (function (i, s, o, g, r, a, m) {
-                            i['GoogleAnalyticsObject'] = r;
-                            i[r] = i[r] || function () {
-                                (i[r].q = i[r].q || []).push(arguments)
-                            }, i[r].l = 1 * new Date();
-                            a = s.createElement(o),
-                                    m = s.getElementsByTagName(o)[0];
-                            a.async = 1;
-                            a.src = g;
-                            m.parentNode.insertBefore(a, m)
-                        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
-
-                ga('create', 'UA-90566013-1', 'auto');
-                ga('send', 'pageview');#}
-
-
+                    {
 
 
     {% block scriptsTr %}{% endblock scriptsTr %} 
 
 {% block scripts %}{% endblock scripts %}
-            }
+                    }
             );
 </script>
 
