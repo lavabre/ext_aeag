@@ -4,72 +4,72 @@
                 {% if periode.statut | length %}
                 {% if periode.statut.codeStatut == 'INV' %}
                           {% if periode.nbGroupe > 0 %}
-                                     $('#idDiv_{{ station.id }}_{{ periode.periode.id }}').addClass("danger");
-                                    $('#idBt_{{ station.id }}_{{ periode.periode.id }}').addClass('btn-danger');
-                                    $('#idNbParametres_{{ station.id }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
+                                     $('#idDiv_{{ station.station.ouvFoncId }}_{{ periode.periode.id }}').addClass("danger");
+                                    $('#idBt_{{ station.station.ouvFoncId }}_{{ periode.periode.id }}').addClass('btn-danger');
+                                    $('#idNbParametres_{{ station.station.ouvFoncId }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
                              {% else %}
                                 {% if periode.autreProgrammation == 0 %}
-                                    $('#idDiv_{{ station.id }}_{{ periode.periode.id }}').removeClass("danger");
-                                    $('#idBt_{{ station.id }}_{{ periode.periode.id }}').removeClass('btn-danger');
-                                    $('#idNbParametres_{{ station.id }}_{{ periode.periode.id }}').empty().hide();
+                                    $('#idDiv_{{ station.station.ouvFoncId }}_{{ periode.periode.id }}').removeClass("danger");
+                                    $('#idBt_{{ station.station.ouvFoncId }}_{{ periode.periode.id }}').removeClass('btn-danger');
+                                    $('#idNbParametres_{{ station.station.ouvFoncId }}_{{ periode.periode.id }}').empty().hide();
                                 {% else %}
-                                    $('#idDiv_{{ station.id }}_{{ periode.periode.id }}').addClass("danger");
-                                    $('#idBt_{{ station.id }}_{{ periode.periode.id }}').addClass('btn-danger');
-                                     $('#idNbParametres_{{ station.id }}_{{ periode.periode.id }}').empty().append({{ periode.autreProgrammation }} + '/' + {{ grparAns | length }} );
+                                    $('#idDiv_{{ station.station.ouvFoncId }}_{{ periode.periode.id }}').addClass("danger");
+                                    $('#idBt_{{ station.station.ouvFoncId }}_{{ periode.periode.id }}').addClass('btn-danger');
+                                     $('#idNbParametres_{{ station.station.ouvFoncId }}_{{ periode.periode.id }}').empty().append({{ periode.autreProgrammation }} + '/' + {{ grparAns | length }} );
                                 {% endif %}
                       {% endif %}
                     
                  {% else %}
                         {% if periode.nbGroupe > 0 %}
                                {% if periode.autreStatut == 'N' %}
-                                $('#idDiv_{{ station.id }}_{{ periode.periode.id }}').removeClass("warning").removeClass("info").removeClass("primary").addClass("success");
-                                $('#idBt_{{ station.id }}_{{ periode.periode.id }}').removeClass("btn-default").removeClass("btn-warning").removeClass("btn-info").removeClass("btn-primary").addClass('btn-success');
-                                $('#idNbParametres_{{ station.id }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
+                                $('#idDiv_{{ station.station.ouvFoncId }}_{{ periode.periode.id }}').removeClass("warning").removeClass("info").removeClass("primary").addClass("success");
+                                $('#idBt_{{ station.station.ouvFoncId }}_{{ periode.periode.id }}').removeClass("btn-default").removeClass("btn-warning").removeClass("btn-info").removeClass("btn-primary").addClass('btn-success');
+                                $('#idNbParametres_{{ station.station.ouvFoncId }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
                             {% elseif periode.autreStatut == 'C'%}
-                                $('#idDiv_{{ station.id }}_{{ periode.periode.id }}').removeClass("warning").addClass("info").removeClass("primary").removeClass("success");
-                                $('#idBt_{{ station.id }}_{{ periode.periode.id }}').removeClass("btn-default").removeClass("btn-warning").addClass("btn-info").removeClass("btn-primary").removeClass('btn-success');
-                                $('#idNbParametres_{{ station.id }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
+                                $('#idDiv_{{ station.station.ouvFoncId }}_{{ periode.periode.id }}').removeClass("warning").addClass("info").removeClass("primary").removeClass("success");
+                                $('#idBt_{{ station.station.ouvFoncId }}_{{ periode.periode.id }}').removeClass("btn-default").removeClass("btn-warning").addClass("btn-info").removeClass("btn-primary").removeClass('btn-success');
+                                $('#idNbParametres_{{ station.station.ouvFoncId }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
                             {% elseif periode.autreStatut == 'I'%}
-                                $('#idDiv_{{ station.id }}_{{ periode.periode.id }}').removeClass("warning").removeClass("info").addClass("primary").removeClass("success");
-                                $('#idBt_{{ station.id }}_{{ periode.periode.id }}').removeClass("btn-default").removeClass("btn-warning").removeClass("btn-info").addClass("btn-primary").removeClass('btn-success');
-                                $('#idNbParametres_{{ station.id }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
+                                $('#idDiv_{{ station.station.ouvFoncId }}_{{ periode.periode.id }}').removeClass("warning").removeClass("info").addClass("primary").removeClass("success");
+                                $('#idBt_{{ station.station.ouvFoncId }}_{{ periode.periode.id }}').removeClass("btn-default").removeClass("btn-warning").removeClass("btn-info").addClass("btn-primary").removeClass('btn-success');
+                                $('#idNbParametres_{{ station.station.ouvFoncId }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
                             {% endif %}
                      {# {% else %}
                                {% if periode.autreProgrammation == 0 %}
-                                    $('#idDiv_{{ station.id }}_{{ periode.periode.id }}').removeClass("warning").removeClass("info").removeClass("primary").removeClass("success");
-                                    $('#idBt_{{ station.id }}_{{ periode.periode.id }}').addClass("btn-default").removeClass("btn-warning").removeClass("btn-info").removeClass("btn-primary").removeClass('btn-success');
-                                    $('#idNbParametres_{{ station.id }}_{{ periode.periode.id }}').empty();
+                                    $('#idDiv_{{ station.station.ouvFoncId }}_{{ periode.periode.id }}').removeClass("warning").removeClass("info").removeClass("primary").removeClass("success");
+                                    $('#idBt_{{ station.station.ouvFoncId }}_{{ periode.periode.id }}').addClass("btn-default").removeClass("btn-warning").removeClass("btn-info").removeClass("btn-primary").removeClass('btn-success');
+                                    $('#idNbParametres_{{ station.station.ouvFoncId }}_{{ periode.periode.id }}').empty();
                                 {% else %}
-                                    $('#idDiv_{{ station.id }}_{{ periode.periode.id }}').addClass("warning").removeClass("info").removeClass("primary").removeClass("success");
-                                    $('#idBt_{{ station.id }}_{{ periode.periode.id }}').removeClass("btn-default").addClass("btn-warning").removeClass("btn-info").removeClass("btn-primary").removeClass('btn-success');
-                                     $('#idNbParametres_{{ station.id }}_{{ periode.periode.id }}').empty().append({{ periode.autreProgrammation }} + '/' + {{ grparAns | length }} ).show();
+                                    $('#idDiv_{{ station.station.ouvFoncId }}_{{ periode.periode.id }}').addClass("warning").removeClass("info").removeClass("primary").removeClass("success");
+                                    $('#idBt_{{ station.station.ouvFoncId }}_{{ periode.periode.id }}').removeClass("btn-default").addClass("btn-warning").removeClass("btn-info").removeClass("btn-primary").removeClass('btn-success');
+                                     $('#idNbParametres_{{ station.station.ouvFoncId }}_{{ periode.periode.id }}').empty().append({{ periode.autreProgrammation }} + '/' + {{ grparAns | length }} ).show();
                                 {% endif %}#}
                       {% endif %}
                 {%endif %}
                 {% else %}
                        {% if periode.nbGroupe > 0 %}
                                {% if periode.autreStatut == 'N' %}
-                                $('#idDiv_{{ station.id }}_{{ periode.periode.id }}').removeClass("warning").removeClass("info").removeClass("primary").addClass("success");
-                                $('#idBt_{{ station.id }}_{{ periode.periode.id }}').removeClass("btn-default").removeClass("btn-warning").removeClass("btn-info").removeClass("btn-primary").addClass('btn-success');
-                                $('#idNbParametres_{{ station.id }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
+                                $('#idDiv_{{ station.station.ouvFoncId }}_{{ periode.periode.id }}').removeClass("warning").removeClass("info").removeClass("primary").addClass("success");
+                                $('#idBt_{{ station.station.ouvFoncId }}_{{ periode.periode.id }}').removeClass("btn-default").removeClass("btn-warning").removeClass("btn-info").removeClass("btn-primary").addClass('btn-success');
+                                $('#idNbParametres_{{ station.station.ouvFoncId }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
                             {% elseif periode.autreStatut == 'C'%}
-                                $('#idDiv_{{ station.id }}_{{ periode.periode.id }}').removeClass("warning").addClass("info").removeClass("primary").removeClass("success");
-                                $('#idBt_{{ station.id }}_{{ periode.periode.id }}').removeClass("btn-default").removeClass("btn-warning").addClass("btn-info").removeClass("btn-primary").removeClass('btn-success');
-                                $('#idNbParametres_{{ station.id }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
+                                $('#idDiv_{{ station.station.ouvFoncId }}_{{ periode.periode.id }}').removeClass("warning").addClass("info").removeClass("primary").removeClass("success");
+                                $('#idBt_{{ station.station.ouvFoncId }}_{{ periode.periode.id }}').removeClass("btn-default").removeClass("btn-warning").addClass("btn-info").removeClass("btn-primary").removeClass('btn-success');
+                                $('#idNbParametres_{{ station.station.ouvFoncId }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
                             {% elseif periode.autreStatut == 'I'%}
-                                $('#idDiv_{{ station.id }}_{{ periode.periode.id }}').removeClass("warning").removeClass("info").addClass("primary").removeClass("success");
-                                $('#idBt_{{ station.id }}_{{ periode.periode.id }}').removeClass("btn-default").removeClass("btn-warning").removeClass("btn-info").addClass("btn-primary").removeClass('btn-success');
-                                $('#idNbParametres_{{ station.id }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
+                                $('#idDiv_{{ station.station.ouvFoncId }}_{{ periode.periode.id }}').removeClass("warning").removeClass("info").addClass("primary").removeClass("success");
+                                $('#idBt_{{ station.station.ouvFoncId }}_{{ periode.periode.id }}').removeClass("btn-default").removeClass("btn-warning").removeClass("btn-info").addClass("btn-primary").removeClass('btn-success');
+                                $('#idNbParametres_{{ station.station.ouvFoncId }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
                             {% endif %}
                      {# {% else %}
                                  {% if periode.autreProgrammation == 0 %}
-                                    $('#idDiv_{{ station.id }}_{{ periode.periode.id }}').removeClass("warning").removeClass("info").removeClass("primary").removeClass("success");
-                                    $('#idBt_{{ station.id }}_{{ periode.periode.id }}').addClass("btn-default").removeClass("btn-warning").removeClass("btn-info").removeClass("btn-primary").removeClass('btn-success');
-                                    $('#idNbParametres_{{ station.id }}_{{ periode.periode.id }}').empty();
+                                    $('#idDiv_{{ station.station.ouvFoncId }}_{{ periode.periode.id }}').removeClass("warning").removeClass("info").removeClass("primary").removeClass("success");
+                                    $('#idBt_{{ station.station.ouvFoncId }}_{{ periode.periode.id }}').addClass("btn-default").removeClass("btn-warning").removeClass("btn-info").removeClass("btn-primary").removeClass('btn-success');
+                                    $('#idNbParametres_{{ station.station.ouvFoncId }}_{{ periode.periode.id }}').empty();
                                 {% else %}
-                                    $('#idDiv_{{ station.id }}_{{ periode.periode.id }}').addClass("warning").removeClass("info").removeClass("primary").removeClass("success");
-                                    $('#idBt_{{ station.id }}_{{ periode.periode.id }}').removeClass("btn-default").addClass("btn-warning").removeClass("btn-info").removeClass("btn-primary").removeClass('btn-success');
-                                     $('#idNbParametres_{{ station.id }}_{{ periode.periode.id }}').empty().append({{ periode.autreProgrammation }} + '/' + {{ grparAns | length }} ).show();
+                                    $('#idDiv_{{ station.station.ouvFoncId }}_{{ periode.periode.id }}').addClass("warning").removeClass("info").removeClass("primary").removeClass("success");
+                                    $('#idBt_{{ station.station.ouvFoncId }}_{{ periode.periode.id }}').removeClass("btn-default").addClass("btn-warning").removeClass("btn-info").removeClass("btn-primary").removeClass('btn-success');
+                                     $('#idNbParametres_{{ station.station.ouvFoncId }}_{{ periode.periode.id }}').empty().append({{ periode.autreProgrammation }} + '/' + {{ grparAns | length }} ).show();
                                 {% endif %}#}
                       {% endif %}
                 {% endif %}

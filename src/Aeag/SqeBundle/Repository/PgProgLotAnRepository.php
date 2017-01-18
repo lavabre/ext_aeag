@@ -47,7 +47,7 @@ class PgProgLotAnRepository extends EntityRepository {
         $query = $query . " order by p.anneeProg, p.lot, p.version";
         $qb = $this->_em->createQuery($query);
         if ($anneeProg) {
-        $qb->setParameter('anneeProg', $anneeProg);
+            $qb->setParameter('anneeProg', $anneeProg);
         }
         //print_r($query);
         return $qb->getResult();
@@ -59,7 +59,7 @@ class PgProgLotAnRepository extends EntityRepository {
         $query = $query . " where p.lot = :pgProgLot";
         $query = $query . " order by p.anneeProg, p.version";
         $qb = $this->_em->createQuery($query);
-        $qb->setParameter('pgProgLot',  $pgProgLot->getId());
+        $qb->setParameter('pgProgLot', $pgProgLot->getId());
         //print_r($query);
         return $qb->getResult();
     }
@@ -70,8 +70,8 @@ class PgProgLotAnRepository extends EntityRepository {
         $query = $query . " where p.anneeProg = :annee";
         $query = $query . " and p.lot = :pgProgLot";
         $qb = $this->_em->createQuery($query);
-         $qb->setParameter('annee',  $annee);
-          $qb->setParameter('pgProgLot',  $pgProgLot->getId());
+        $qb->setParameter('annee', $annee);
+        $qb->setParameter('pgProgLot', $pgProgLot->getId());
         //print_r($query);
         return $qb->getResult();
     }
@@ -83,8 +83,8 @@ class PgProgLotAnRepository extends EntityRepository {
         $query = $query . " and p.version = :version";
         $query = $query . " order by p.anneeProg, p.version";
         $qb = $this->_em->createQuery($query);
-        $qb->setParameter('pgProgLot',  $pgProgLot->getId());
-        $qb->setParameter('version',  $version);
+        $qb->setParameter('pgProgLot', $pgProgLot->getId());
+        $qb->setParameter('version', $version);
         // print_r($query);
         return $qb->getResult();
     }
@@ -96,9 +96,9 @@ class PgProgLotAnRepository extends EntityRepository {
         $query = $query . " and p.lot = :pgProgLot";
         $query = $query . " and p.version = :version";
         $qb = $this->_em->createQuery($query);
-         $qb->setParameter('annee',  $annee);
-          $qb->setParameter('pgProgLot',  $pgProgLot->getId());
-          $qb->setParameter('version',  $version);
+        $qb->setParameter('annee', $annee);
+        $qb->setParameter('pgProgLot', $pgProgLot->getId());
+        $qb->setParameter('version', $version);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
@@ -110,7 +110,7 @@ class PgProgLotAnRepository extends EntityRepository {
         $query = $query . " and p.lot = :pgProgLot";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('annee', $annee);
-        $qb->setParameter('pgProgLot',  $pgProgLot->getId());
+        $qb->setParameter('pgProgLot', $pgProgLot->getId());
         //print_r($query);
         return $qb->getSingleScalarResult();
     }
@@ -146,8 +146,8 @@ class PgProgLotAnRepository extends EntityRepository {
         //print_r($query);
         return $qb->getResult();
     }
-    
-     public function getPgProgLotAnSaisieDonneesByPresta($user, $codeMilieu = null) {
+
+    public function getPgProgLotAnSaisieDonneesByPresta($user, $codeMilieu = null) {
 
         $query = "select distinct lotan";
         $query .= " from Aeag\SqeBundle\Entity\PgProgLotParamAn paran,";
@@ -157,7 +157,7 @@ class PgProgLotAnRepository extends EntityRepository {
         $query .= "         Aeag\SqeBundle\Entity\PgProgLotAn lotan,";
         $query .= "         Aeag\SqeBundle\Entity\PgProgLot lot,";
         $query .= "         Aeag\SqeBundle\Entity\PgCmdDemande dmd,";
-         $query .= "         Aeag\SqeBundle\Entity\PgProgLotPeriodeAn pean,";
+        $query .= "         Aeag\SqeBundle\Entity\PgProgLotPeriodeAn pean,";
         if ($codeMilieu) {
             $query .= "         Aeag\SqeBundle\Entity\PgProgTypeMilieu milieu,";
         }
@@ -279,12 +279,12 @@ class PgProgLotAnRepository extends EntityRepository {
         $query .= " and typFic.formatFic like '%Saisie%'";
         $query .= " and  prel.station = stan.station";
         $query .= " and prel.periode = pean.periode";
-         if (!is_null($codeMilieu)) {
+        if (!is_null($codeMilieu)) {
             $query .= " and lot.codeMilieu = milieu.codeMilieu";
             $query .= " and milieu.codeMilieu LIKE :codemilieu";
         }
         $qb = $this->_em->createQuery($query);
-         if (!is_null($codeMilieu)) {
+        if (!is_null($codeMilieu)) {
             $qb->setParameter('codemilieu', '%' . $codeMilieu);
         }
         //print_r($query);
@@ -350,6 +350,26 @@ class PgProgLotAnRepository extends EntityRepository {
         $qb = $this->_em->createQuery($query);
         //print_r($query);
         return $qb->getResult();
+    }
+
+    /**
+     * @return array
+     */
+    public function getProgrammationPeriodes($lotanId) {
+        $query = "select * from sqe_programmation_periode(" . $lotanId . ")";
+        return $this->getEntityManager('')
+                        ->getConnection()
+                        ->query($query);
+    }
+    
+     /**
+     * @return array
+     */
+    public function getProgrammationStationPeriodes($lotanId, $stationId) {
+        $query = "select * from sqe_programmation_station_periode(" . $lotanId . "," . $stationId . ")";
+        return $this->getEntityManager('')
+                        ->getConnection()
+                        ->query($query);
     }
 
 }

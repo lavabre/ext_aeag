@@ -339,7 +339,7 @@
                                                         <th width="10%">Réseaux</th>
                                                             {%if stationAns | length%}  
                                                                 {% for periode in stationAns.0.periodes %}
-                                                                <th width="1%" id="idThPeriode_{{ periode.ordre }}">{{ periode.periode }}</th>
+                                                                <th width="1%" id="idThPeriode_{{ periode.periode.id }}">{{ periode.periode.labelPeriode }}</th>
                                                                 {% endfor %}
                                                             {% endif %}
                                                     </tr>
@@ -358,13 +358,13 @@
                                                                         </a>
                                                                     </td>
                                                                 {% endif %}
-                                                                <td nowrap>{{ stationAn.station.code}}&nbsp;&nbsp;{{ stationAn.station.libelle}}</td>
-                                                                <td nowrap>{{ stationAn.station.reseau }}</td>
+                                                                <td nowrap>{{ stationAn.station.station.code}}&nbsp;&nbsp;{{ stationAn.station.station.libelle}}</td>
+                                                                <td nowrap>{{ stationAn.reseau.nomRsx }}</td>
                                                                 {% for periode in stationAn.periodes %}
-                                                                    <td id="idTd_{{ stationAn.station.id }}_{{ periode.ordre }}">
-                                                                        <div id="idDiv_{{ stationAn.station.id }}_{{ periode.ordre }}" class="text-center">
-                                                                            <a id="idBt_{{ stationAn.station.id }}_{{ periode.ordre }}" class="btn btn-default">
-                                                                                <span id="idNbParametres_{{ stationAn.station.id }}_{{ periode.ordre }}" class="badge"></span>
+                                                                    <td id="idTd_{{ stationAn.station.id }}_{{ periode.periode.id }}">
+                                                                        <div id="idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}" class="text-center">
+                                                                            <a id="idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}" class="btn btn-default">
+                                                                                <span id="idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}" class="badge"></span>
                                                                             </a>
                                                                         </div>
                                                                     </td>
@@ -602,7 +602,6 @@
     );
 
 
-    
 
 
     $('#idCache').hide();
@@ -627,7 +626,7 @@
         {% for periode in periodes %}
             $('#checkPeriode_{{  periode.id }}').prop( "checked", false );
             {% for periodeSelectionnee in stationAns.0.periodes %}
-                {% if periode.id == periodeSelectionnee.ordre %}
+                {% if periode.id == periodeSelectionnee.periode.id %}
                     $('#checkPeriode_{{  periode.id }}').prop( "checked", true );
                 {% endif %}
             {% endfor %}
@@ -886,7 +885,7 @@
             e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
             var html = '<div class="modal-header">';
                 html = html + '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>';
-                html = html + '<h4 class="modal-title">Initialisation de la programmation de la station {{ stationAn.station.code}} </h4>';
+                html = html + '<h4 class="modal-title">Initialisation de la programmation de la station {{ stationAn.station.station.code}} </h4>';
                 html = html + '</div>';
             html = html + '<div class="modal-body">';
                 html = html + '<h4>Cliquer sur "Initialiser" pour initialiser la station</h4>';
@@ -1055,61 +1054,61 @@
             {% for periode in stationAn.periodes %}
 
                 {% if periode.statut | length %}
-                    {% if periode.statut == 'INV' %}
+                    {% if periode.statut.codeStatut == 'INV' %}
 
                         {% if periode.nbGroupe > 0 %}
-                            $('#idDiv_{{ stationAn.station.id }}_{{ periode.ordre }}').addClass("danger");
-                            $('#idBt_{{ stationAn.station.id }}_{{ periode.ordre }}').addClass('btn-danger');
-                            $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.ordre }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
+                            $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').addClass("danger");
+                            $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').addClass('btn-danger');
+                            $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
                         {% else %}
                             {% if periode.autreProgrammation == 0 %}
-                                $('#idDiv_{{ stationAn.station.id }}_{{ periode.ordre }}').removeClass("danger");
-                                $('#idBt_{{ stationAn.station.id }}_{{ periode.ordre }}').removeClass('btn-danger');
-                                $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.ordre }}').empty().hide();
+                                $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("danger");
+                                $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass('btn-danger');
+                                $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().hide();
                             {% else %}
-                                $('#idDiv_{{ stationAn.station.id }}_{{ periode.ordre }}').addClass("danger");
-                                $('#idBt_{{ stationAn.station.id }}_{{ periode.ordre }}').addClass('btn-danger');
-                                $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.ordre }}').empty().append({{ periode.autreProgrammation }} + '/' + {{ grparAns | length }} );
+                                $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').addClass("danger");
+                                $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').addClass('btn-danger');
+                                $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().append({{ periode.autreProgrammation }} + '/' + {{ grparAns | length }} );
                             {% endif %}
                         {% endif %}
 
                     {% else %}
                         {% if periode.nbGroupe > 0 %}
                             {% if periode.autreStatut == 'N' %}
-                                $('#idDiv_{{ stationAn.station.id }}_{{ periode.ordre }}').removeClass("warning").removeClass("info").removeClass("primary").addClass("success");
-                                $('#idBt_{{ stationAn.station.id }}_{{ periode.ordre }}').removeClass("btn-default").removeClass("btn-warning").removeClass("btn-info").removeClass("btn-primary").addClass('btn-success');
-                                $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.ordre }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
+                                $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("warning").removeClass("info").removeClass("primary").addClass("success");
+                                $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("btn-default").removeClass("btn-warning").removeClass("btn-info").removeClass("btn-primary").addClass('btn-success');
+                                $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
                             {% elseif periode.autreStatut == 'C'%}
-                                $('#idDiv_{{ stationAn.station.id }}_{{ periode.ordre }}').removeClass("warning").addClass("info").removeClass("primary").removeClass("success");
-                                $('#idBt_{{ stationAn.station.id }}_{{ periode.ordre }}').removeClass("btn-default").removeClass("btn-warning").addClass("btn-info").removeClass("btn-primary").removeClass('btn-success');
-                                $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.ordre }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
+                                $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("warning").addClass("info").removeClass("primary").removeClass("success");
+                                $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("btn-default").removeClass("btn-warning").addClass("btn-info").removeClass("btn-primary").removeClass('btn-success');
+                                $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
                             {% elseif periode.autreStatut == 'I'%}
-                                $('#idDiv_{{ stationAn.station.id }}_{{ periode.ordre }}').removeClass("warning").removeClass("info").addClass("primary").removeClass("success");
-                                $('#idBt_{{ stationAn.station.id }}_{{ periode.ordre }}').removeClass("btn-default").removeClass("btn-warning").removeClass("btn-info").addClass("btn-primary").removeClass('btn-success');
-                                $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.ordre }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
+                                $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("warning").removeClass("info").addClass("primary").removeClass("success");
+                                $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("btn-default").removeClass("btn-warning").removeClass("btn-info").addClass("btn-primary").removeClass('btn-success');
+                                $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
                             {% endif %}
                         {% else %}
                             {% if periode.autreProgrammation == 0 %}
-                                $('#idDiv_{{ stationAn.station.id }}_{{ periode.ordre }}').removeClass("warning").removeClass("info").removeClass("primary").removeClass("success");
-                                $('#idBt_{{ stationAn.station.id }}_{{ periode.ordre }}').addClass("btn-default").removeClass("btn-warning").removeClass("btn-info").removeClass("btn-primary").removeClass('btn-success');
-                                $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.ordre }}').empty();
+                                $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("warning").removeClass("info").removeClass("primary").removeClass("success");
+                                $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').addClass("btn-default").removeClass("btn-warning").removeClass("btn-info").removeClass("btn-primary").removeClass('btn-success');
+                                $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty();
                             {% else %}
-                                $('#idDiv_{{ stationAn.station.id }}_{{ periode.ordre }}').addClass("warning").removeClass("info").removeClass("primary").removeClass("success");
-                                $('#idBt_{{ stationAn.station.id }}_{{ periode.ordre }}').removeClass("btn-default").addClass("btn-warning").removeClass("btn-info").removeClass("btn-primary").removeClass('btn-success');
-                                $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.ordre }}').empty().append({{ periode.autreProgrammation }} + '/' + {{ grparAns | length }} ).show();
+                                $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').addClass("warning").removeClass("info").removeClass("primary").removeClass("success");
+                                $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("btn-default").addClass("btn-warning").removeClass("btn-info").removeClass("btn-primary").removeClass('btn-success');
+                                $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().append({{ periode.autreProgrammation }} + '/' + {{ grparAns | length }} ).show();
                             {% endif %}
                         {% endif %}
                     {%endif %}
                 {% else %}
                     {% if periode.nbGroupe > 0 %}
                         {% if periode.autreStatut == 'N' %}
-                            $('#idDiv_{{ stationAn.station.id }}_{{ periode.ordre }}').removeClass("warning").removeClass("info").removeClass("primary").addClass("success");
-                            $('#idBt_{{ stationAn.station.id }}_{{ periode.ordre }}').removeClass("btn-default").removeClass("btn-warning").removeClass("btn-info").removeClass("btn-primary").addClass('btn-success');
-                            $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.ordre }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
+                            $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("warning").removeClass("info").removeClass("primary").addClass("success");
+                            $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("btn-default").removeClass("btn-warning").removeClass("btn-info").removeClass("btn-primary").addClass('btn-success');
+                            $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
                         {% elseif periode.autreStatut == 'C'%}
-                            $('#idDiv_{{ stationAn.station.id }}_{{ periode.ordre }}').removeClass("warning").addClass("info").removeClass("primary").removeClass("success");
-                            $('#idBt_{{ stationAn.station.id }}_{{ periode.ordre }}').removeClass("btn-default").removeClass("btn-warning").addClass("btn-info").removeClass("btn-primary").removeClass('btn-success');
-                            $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.ordre }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
+                            $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("warning").addClass("info").removeClass("primary").removeClass("success");
+                            $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("btn-default").removeClass("btn-warning").addClass("btn-info").removeClass("btn-primary").removeClass('btn-success');
+                            $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().append({{ periode.nbGroupe }} + '/' + {{ grparAns | length }} );
                         {% elseif periode.autreStatut == 'I'%}
                             $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("warning").removeClass("info").addClass("primary").removeClass("success");
                             $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("btn-default").removeClass("btn-warning").removeClass("btn-info").addClass("btn-primary").removeClass('btn-success');
@@ -1117,23 +1116,23 @@
                         {% endif %}
                     {% else %}
                         {% if periode.autreProgrammation == 0 %}
-                            $('#idDiv_{{ stationAn.station.id }}_{{ periode.ordre }}').removeClass("warning").removeClass("info").removeClass("primary").removeClass("success");
-                            $('#idBt_{{ stationAn.station.id }}_{{ periode.ordre }}').addClass("btn-default").removeClass("btn-warning").removeClass("btn-info").removeClass("btn-primary").removeClass('btn-success');
-                            $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.ordre }}').empty();
+                            $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("warning").removeClass("info").removeClass("primary").removeClass("success");
+                            $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').addClass("btn-default").removeClass("btn-warning").removeClass("btn-info").removeClass("btn-primary").removeClass('btn-success');
+                            $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty();
                         {% else %}
-                            $('#idDiv_{{ stationAn.station.id }}_{{ periode.ordre }}').addClass("warning").removeClass("info").removeClass("primary").removeClass("success");
-                            $('#idBt_{{ stationAn.station.id }}_{{ periode.ordre }}').removeClass("btn-default").addClass("btn-warning").removeClass("btn-info").removeClass("btn-primary").removeClass('btn-success');
-                            $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.ordre }}').empty().append({{ periode.autreProgrammation }} + '/' + {{ grparAns | length }} ).show();
+                            $('#idDiv_{{ stationAn.station.id }}_{{ periode.periode.id }}').addClass("warning").removeClass("info").removeClass("primary").removeClass("success");
+                            $('#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}').removeClass("btn-default").addClass("btn-warning").removeClass("btn-info").removeClass("btn-primary").removeClass('btn-success');
+                            $('#idNbParametres_{{ stationAn.station.id }}_{{ periode.periode.id }}').empty().append({{ periode.autreProgrammation }} + '/' + {{ grparAns | length }} ).show();
                         {% endif %}
                     {% endif %}
                 {% endif %}
 
                 {#   traitement sur un période sélectionner   #}
-                $(document).on('click', '#idBt_{{ stationAn.station.id }}_{{ periode.ordre }}', function(e){
+                $(document).on('click', '#idBt_{{ stationAn.station.id }}_{{ periode.periode.id }}', function(e){
                 $('#modalTraitementEncours').modal('toggle');
                 var url = '{{ path("AeagSqeBundle_programmation_periode_programmer",{"stationId":  "par1", "periodeId" : "par2","action": "par3","maj":"par4","lotan":"par5"}) }}', // Le nom du fichier indiqué dans le formulaire
                 url = url.replace("par1", {{ stationAn.station.id }});
-                url = url.replace("par2", {{ periode.ordre }});
+                url = url.replace("par2", {{ periode.periode.id }});
                 url = url.replace("amp;","");
                 url = url.replace("par3", '{{ action }}');
                 url = url.replace("amp;","");
@@ -1229,14 +1228,14 @@
             $('#idCocherToutesLesPeriodesDisponibles').removeClass('btn-danger').addClass('btn-success');
             $('#idCocherToutesLesPeriodesDisponibles i').removeClass('fa-eraser').addClass('fa-check ');
             {% for periodeAnAutre in stationAns.0.periodes  %}
-                $('#checkDupliquerPeriode_{{ periodeAnAutre.ordre }}').prop( "checked", false );
+                $('#checkDupliquerPeriode_{{ periodeAnAutre.periode.id }}').prop( "checked", false );
             {% endfor %}
             }else{
             cocherToutesLesPeriodesDisponibles = true;
             $('#idCocherToutesLesPeriodesDisponibles').removeClass('btn-success').addClass('btn-danger');
             $('#idCocherToutesLesPeriodesDisponibles i').removeClass("fa-check").addClass('fa-eraser');
             {% for periodeAnAutre in stationAns.0.periodes  %}
-                $('#checkDupliquerPeriode_{{ periodeAnAutre.ordre }}').prop( "checked", true );
+                $('#checkDupliquerPeriode_{{ periodeAnAutre.periode.id }}').prop( "checked", true );
              {% endfor %}
             };
             if (filtre != ''){

@@ -17,7 +17,7 @@
                     <thead>
                         <tr>
                             <th width="1%" align="center">
-                                <a class="btn btn-success" id="idCocherToutesLesStationsDisponibles_{{ stationAn.id }}"  href="#"><i class="fa fa-check fa-lg"></i></a>
+                                <a class="btn btn-success" id="idCocherToutesLesStationsDisponibles_{{ stationAn.station.ouvFoncId }}"  href="#"><i class="fa fa-check fa-lg"></i></a>
                             </th>
                             <th>Station</th>
                             <th>Réseau</th>
@@ -25,7 +25,7 @@
                     </thead>
                     <tbody id="idListeStationsSelectionnes">
                         {% for stationAnAutre in stationAns %}
-                            {% if stationAnAutre.station.id != stationAn.id %}
+                            {% if stationAnAutre.station.id != stationAn.station.ouvFoncId %}
                                 {% set nbGroupes = 0 %}
                                 {% for periode in stationAnAutre.periodes %}
                                     {% if periode.nbGroupe > 0 %}
@@ -43,8 +43,8 @@
                                             <input type="hidden" id="nbGroupes_{{ stationAnAutre.station.id }}"  value="{{ nbGroupes }}" >
                                         </div>
                                     </td> 
-                                    <td nowrap>{{ stationAnAutre.station.station.code}}&nbsp;&nbsp;{{ stationAnAutre.station.station.libelle}}</td>
-                                    <td nowrap>{{ stationAnAutre.reseau.nomRsx }}</td>
+                                    <td nowrap>{{ stationAnAutre.station.code}}&nbsp;&nbsp;{{ stationAnAutre.station.libelle}}</td>
+                                    <td nowrap>{{ stationAnAutre.station.reseau }}</td>
                                 </tr>
                             {% endif %}
                         {% endfor %}
@@ -55,10 +55,10 @@
     </div>
 </div>
 <div class="modal-footer">
-    <button id="idValiderDupliquerStation_{{ stationAn.id }}" type="submit" class="btn btn-success">
+    <button id="idValiderDupliquerStation_{{ stationAn.station.ouvFoncId }}" type="submit" class="btn btn-success">
         <i class="fa fa-check"> Valider</i>
     </button>
-    <button id="idAnnulerDupliquerStation_{{ stationAn.id }}" type="button" class="btn btn-default" data-dismiss="modal">
+    <button id="idAnnulerDupliquerStation_{{ stationAn.station.ouvFoncId }}" type="button" class="btn btn-default" data-dismiss="modal">
         <i class="fa fa-undo"> Annuler</i>
     </button>
 </div>
@@ -98,7 +98,7 @@
 
     {# initialiser la liste des stations disponibles pour dupliquer #}
     {% for stationAnAutre in stationAns %}
-        {% if stationAnAutre.station.id != stationAn.id %}
+        {% if stationAnAutre.station.id != stationAn.station.ouvFoncId %}
             $('#checkDupliquerStation_{{ stationAnAutre.station.id }}').prop("checked", false);
         {% endif %}
     {% endfor %}
@@ -149,12 +149,12 @@
                 if ($('#nbGroupes_{{ stationAnAutre.station.id }}').val() > 0) {
                     var html = '<div class="modal-header">';
                     html = html + '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>';
-                    html = html + '<h4 class="modal-title">Dupliquation de la programmation de la station ' + '{{ stationAn.station.code}}' + ' vers la station ' + '{{ stationAnAutre.station.station.code }}' + '</h4>';
+                    html = html + '<h4 class="modal-title">Dupliquation de la programmation de la station ' + '{{ stationAn.station.code}}' + ' vers la station ' + '{{ stationAnAutre.station.code }}' + '</h4>';
                     html = html + '</div>';
                     html = html + '<div class="modal-body">';
-                    html = html + '<h4>Cliquer sur "Ecraser" pour accepter de dupliquer la station ' + '{{ stationAn.station.code }}' + ' vers la station ' + '{{ stationAnAutre.station.station.code }}' + '</h4>';
+                    html = html + '<h4>Cliquer sur "Ecraser" pour accepter de dupliquer la station ' + '{{ stationAn.station.code }}' + ' vers la station ' + '{{ stationAnAutre.station.code }}' + '</h4>';
                     html = html + '<br/><br/>';
-                    html = html + '<div class="alert alert-danger">Attention : Une fois dupliquée, la programmation des périodes de la station ' + '{{ stationAnAutre.station.station.code }}' + ' sera perdue</div>';
+                    html = html + '<div class="alert alert-danger">Attention : Une fois dupliquée, la programmation des périodes de la station ' + '{{ stationAnAutre.station.code }}' + ' sera perdue</div>';
                     html = html + '</div>';
                     html = html + '<div class="modal-footer">';
                     html = html + '<a  id="idConfirmerDupliquerStation_' + {{ stationAnAutre.station.id }} +'" class="btn btn-success"  href="#" title="Dupliquer">';
