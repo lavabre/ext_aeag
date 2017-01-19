@@ -688,6 +688,7 @@ class ProgrammationStationController extends Controller {
         $pgProgZgeorefStations = $repoPgProgZgeorefStation->getpgProgZgeorefStationByZgeoref($pgProgZoneGeoRef);
         $tabStations = array();
         $i = 0;
+        $cocherDecocher = "N";
         foreach ($pgProgZgeorefStations as $pgProgZgeorefStation) {
             $stationGeo = $pgProgZgeorefStation->getStationMesure();
             $tabStations[$i]['station']['ouvFoncId'] = $stationGeo->getOuvfoncId();

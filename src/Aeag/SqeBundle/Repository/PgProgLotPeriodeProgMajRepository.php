@@ -33,8 +33,9 @@ class PgProgLotPeriodeProgMajRepository extends EntityRepository {
     public function getPgProgLotPeriodeProgMajById($id) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotPeriodeProgMaj p";
-        $query = $query . " where p.id = " . $id;
+        $query = $query . " where p.id = :id";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('id', $id);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
@@ -42,8 +43,9 @@ class PgProgLotPeriodeProgMajRepository extends EntityRepository {
     public function getPgProgLotPeriodeProgMajByStationAn($stationAn) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotPeriodeProgMaj p";
-        $query = $query . " where p.stationAn = " . $stationAn;
+        $query = $query . " where p.stationAn = :stationAn";
         $qb = $this->_em->createQuery($query);
+         $qb->setParameter('stationAn', $stationAn);
         //print_r($query);
         return $qb->getResult();
     }
