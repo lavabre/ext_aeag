@@ -44,6 +44,7 @@ class SuiviEauController extends Controller {
         $repoPgProgLotAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotAn');
         $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
         $repoPgProgLotPeriodeProg = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeProg');
+        $repoPgProgLotGrparAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotGrparAn');
 
         if ($user->hasRole('ROLE_ADMINSQE')) {
             $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByAdmin();
@@ -72,7 +73,9 @@ class SuiviEauController extends Controller {
                 }
                 if ($trouve) {
                     $trouve = false;
-                    foreach ($pgProgLot->getGrparRef() as $pgProgGrpParamRef) {
+                    $pgProgLotGrparAns = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotan($pgProgLotAn);
+                    foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
+						$pgProgGrpParamRef = $pgProgLotGrparAn->getgrparRef();
                         if ($pgProgGrpParamRef->getSupport()) {
                             if ($pgProgGrpParamRef->getSupport()->getCodeSupport() == '3') {
                                 $trouve = true;
