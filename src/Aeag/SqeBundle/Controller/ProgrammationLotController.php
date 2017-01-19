@@ -705,6 +705,7 @@ class ProgrammationLotController extends Controller {
         }
 
         $repoPgProgWebusers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
+        $repoPgProgWebuserZgeoref = $emSqe->getRepository('AeagSqeBundle:PgProgWebuserZgeoref');
         $repoPgProgMarche = $emSqe->getRepository('AeagSqeBundle:PgProgMarche');
         $repoPgProgMarcheUser = $emSqe->getRepository('AeagSqeBundle:PgProgMarcheUser');
         $repoPgRefCorresPresta = $emSqe->getRepository('AeagSqeBundle:PgRefCorresPresta');
@@ -732,6 +733,8 @@ class ProgrammationLotController extends Controller {
         $nbLots = 0;
         $nbPhases = 0;
 
+        $pgProgWebuserConnecte = $repoPgProgWebusers->getPgProgWebusersByExtid($user->getId());
+        $pgProgWebuserZgeorefConnectes = $repoPgProgWebuserZgeoref->getPgProgWebuserZgeorefByWebuser($pgProgWebuserConnecte);
 
         $webusers = $repoPgProgWebusers->getPgProgWebusers();
         foreach ($webusers as $webuser) {

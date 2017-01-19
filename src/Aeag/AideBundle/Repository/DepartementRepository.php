@@ -39,8 +39,9 @@ class DepartementRepository extends EntityRepository {
 
         $query = "select d";
         $query = $query . " from Aeag\AideBundle\Entity\Departement d";
-        $query = $query . " where d.dept = '" . $dept . "'";
+        $query = $query . " where d.dept = :dept";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('dept', $dept);
 
         //print_r($query);
         return $qb->getOneOrNullResult();

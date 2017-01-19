@@ -39,8 +39,9 @@ class AnneeRepository extends EntityRepository {
 
         $query = "select a";
         $query = $query . " from Aeag\AideBundle\Entity\Annee a";
-        $query = $query . " where a.annee = " . $annee;
+        $query = $query . " where a.annee = :annee";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('annee', $annee);
 
         //print_r($query);
         return $qb->getOneOrNullResult();

@@ -27,17 +27,18 @@ class ThemeRepository extends EntityRepository {
         //print_r($query);
         return $qb->getResult();
     }
-    
+
     /**
      * @return array
      */
     public function getThemesByTheme($theme) {
         $query = "select c";
         $query = $query . " from Aeag\DieBundle\Entity\Theme c";
-        $query = $query . " where c.theme = '" . $theme . "'";
-         $qb = $this->_em->createQuery($query);
+        $query = $query . " where c.theme = :theme";
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('theme', $theme->getId());
         //print_r($query);
-         return $qb->getOneOrNullResult();
+        return $qb->getOneOrNullResult();
     }
 
     /**
@@ -46,8 +47,9 @@ class ThemeRepository extends EntityRepository {
     public function getThemeById($id) {
         $query = "select c";
         $query = $query . " from Aeag\DieBundle\Entity\Theme c";
-        $query = $query . " where c.id = " . $id;
+        $query = $query . " where c.id = :id";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('id', $id);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }

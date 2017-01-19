@@ -55,10 +55,11 @@ class CommuneRepository extends EntityRepository {
 
         $query = "select d";
         $query = $query . " from Aeag\AeagBundle\Entity\Commune d";
-        $query = $query . " where d.Departement = '" . $dept . "'";
+        $query = $query . " where d.Departement = :dept";
         $query = $query . " order by d.commune";
 
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('dept', $dept);
 
         //print_r($query);
         return $qb->getResult();
@@ -73,10 +74,11 @@ class CommuneRepository extends EntityRepository {
         $query = "select d";
         $query = $query . " from Aeag\AeagBundle\Entity\Commune d";
         $query = $query . " where d.dec = 'O'";
-        $query = $query . " and d.Departement = '" . $dept . "'";
+        $query = $query . " and d.Departement = :dept";
         $query = $query . " order by d.commune";
 
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('dept', $dept);
 
         //print_r($query);
         return $qb->getResult();
@@ -90,9 +92,10 @@ class CommuneRepository extends EntityRepository {
 
         $query = "select d";
         $query = $query . " from Aeag\AeagBundle\Entity\Commune d";
-        $query = $query . " where d.commune = '" . $commune . "'";
+        $query = $query . " where d.commune = :commune";
 
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('commune', $commune);
 
         //print_r($query);
         return $qb->getOneOrNullResult();
@@ -106,9 +109,10 @@ class CommuneRepository extends EntityRepository {
 
         $query = "select d";
         $query = $query . " from Aeag\AeagBundle\Entity\Commune d";
-        $query = $query . " where d.id = " . $id;
+        $query = $query . " where d.id = :id";
 
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('id', $id);
 
         //print_r($query);
         return $qb->getOneOrNullResult();

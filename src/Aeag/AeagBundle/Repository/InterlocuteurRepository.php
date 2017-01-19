@@ -18,9 +18,10 @@ class InterlocuteurRepository extends EntityRepository {
     public function getInterlocuteursByCorrespondant($correspondant) {
         $query = "select i";
         $query = $query . " from Aeag\AeagBundle\Entity\Interlocuteur i";
-        $query = $query . " where i.correspondant = " . $correspondant;
+        $query = $query . " where i.correspondant = :correspondant";
         $query = $query . " order by i.nom";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('correspondant', $correspondant);
         //print_r($query);
         return $qb->getResult();
     }
@@ -29,9 +30,10 @@ class InterlocuteurRepository extends EntityRepository {
 
         $query = "select  i";
         $query = $query . " from Aeag\AeagBundle\Entity\Interlocuteur i";
-        $query = $query . " where i.id = " . $id;
+        $query = $query . " where i.id = :id";
 
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('id', $id);
 
         //print_r($query);
         return $qb->getOneOrNullResult();

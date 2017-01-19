@@ -30,8 +30,8 @@ class RegionRepository extends EntityRepository {
         //print_r($query);
         return $qb->getResult();
     }
-    
-     /**
+
+    /**
      * @return array
      */
     public function getRegionsBydec() {
@@ -55,10 +55,11 @@ class RegionRepository extends EntityRepository {
 
         $query = "select r";
         $query = $query . " from Aeag\AeagBundle\Entity\Region r";
-        $query = $query . " where r.reg = '" . $reg . "'";
+        $query = $query . " where r.reg = :reg";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('reg', $reg);
 
-       // print_r($query);
+        // print_r($query);
         return $qb->getOneOrNullResult();
     }
 

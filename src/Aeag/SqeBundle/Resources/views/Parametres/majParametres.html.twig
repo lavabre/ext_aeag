@@ -32,9 +32,9 @@
        <div class="row">
            <div class="col-xm-offset-3 col-xm-5">
                 {%if parametre.code != "" %}
-                   <form class="form-horizontal" role="form" action="{{ path('AeagSqeBundle_admin_parametre', { 'code': parametre.code }) }}" class="form-horizontal" method="post" {{ form_enctype(form) }}>
+                   <form id="idForm" class="form-horizontal" role="form" action="{{ path('AeagSqeBundle_admin_parametre', { 'code': parametre.code }) }}" class="form-horizontal" method="post" {{ form_enctype(form) }}>
                    {%else%}
-                    <form class="form-horizontal" role="form" action="{{ path('AeagSqeBundle_admin_parametre', { 'code': 'new' }) }}" class="form-horizontal" method="post" {{ form_enctype(form) }}>      
+                    <form id="idForm" class="form-horizontal" role="form" action="{{ path('AeagSqeBundle_admin_parametre', { 'code': 'new' }) }}" class="form-horizontal" method="post" {{ form_enctype(form) }}>      
                    {%endif%}
                         
                         

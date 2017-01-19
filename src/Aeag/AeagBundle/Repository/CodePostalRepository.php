@@ -59,9 +59,10 @@ class CodePostalRepository extends EntityRepository {
 
         $query = "select d";
         $query = $query . " from Aeag\AeagBundle\Entity\CodePostal d";
-        $query = $query . " where d.id = " . $id;
+        $query = $query . " where d.id = :id";
 
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('id', $id); 
 
         //print_r($query);
         return $qb->getOneOrNullResult();
@@ -75,9 +76,10 @@ class CodePostalRepository extends EntityRepository {
 
         $query = "select d";
         $query = $query . " from Aeag\AeagBundle\Entity\CodePostal d";
-        $query = $query . " where d.commune = " . $commune;
+        $query = $query . " where d.commune = :commune";
 
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('commune', $commune);
 
         //print_r($query);
         return $qb->getResult();
@@ -91,9 +93,10 @@ class CodePostalRepository extends EntityRepository {
 
         $query = "select d";
         $query = $query . " from Aeag\AeagBundle\Entity\CodePostal d";
-        $query = $query . " where d.cp = '" . $cp . "'";
+        $query = $query . " where d.cp = :cp";
 
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('cp', $cp);
 
         //print_r($query);
         return $qb->getResult();
@@ -107,10 +110,12 @@ class CodePostalRepository extends EntityRepository {
 
         $query = "select d";
         $query = $query . " from Aeag\AeagBundle\Entity\CodePostal d";
-        $query = $query . " where d.commune = " . $commune;
-        $query = $query . " and d.cp = '" . $cp . "'";
+        $query = $query . " where d.commune = :commune";
+        $query = $query . " and d.cp = :cp";
 
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('commune', $commune);
+        $qb->setParameter('cp', $cp);
 
         //print_r($query);
         return $qb->getOneOrNullResult();
@@ -124,10 +129,12 @@ class CodePostalRepository extends EntityRepository {
 
         $query = "select d";
         $query = $query . " from Aeag\AeagBundle\Entity\CodePostal d";
-        $query = $query . " where d.cp = '" . $cp . "'";
-        $query = $query . " and d.acheminement = '" . $acheminement . "'";
+        $query = $query . " where d.cp = :cp";
+        $query = $query . " and d.acheminement = :acheminement";
 
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('acheminement', $acheminement);
+        $qb->setParameter('cp', $cp);
 
        //print_r($query);
         return $qb->getResult();
@@ -141,11 +148,14 @@ class CodePostalRepository extends EntityRepository {
 
         $query = "select d";
         $query = $query . " from Aeag\AeagBundle\Entity\CodePostal d";
-        $query = $query . " where d.cp = '" . $cp . "'";
-        $query = $query . " and d.acheminement = '" . $acheminement . "'";
-        $query = $query . " and d.localite = '" . $localite . "'";
+        $query = $query . " where d.cp = :cp";
+        $query = $query . " and d.acheminement = :acheminement";
+        $query = $query . " and d.localite = :localite";
 
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('cp', $cp);
+        $qb->setParameter('acheminement', $acheminement);
+        $qb->setParameter('localite', $localite);
 
         //print_r($query);
         return $qb->getOneOrNullResult();
@@ -159,12 +169,16 @@ class CodePostalRepository extends EntityRepository {
 
         $query = "select d";
         $query = $query . " from Aeag\AeagBundle\Entity\CodePostal d";
-        $query = $query . " where d.commune = " . $commune;
-        $query = $query . " and d.cp = '" . $cp . "'";
-        $query = $query . " and d.acheminement = '" . $acheminement . "'";
-        $query = $query . " and d.localite = '" . $localite . "'";
+        $query = $query . " where d.commune =  :commune";
+        $query = $query . " and d.cp = :cp";
+        $query = $query . " and d.acheminement = :acheminement";
+        $query = $query . " and d.localite = :localite";
 
         $qb = $this->_em->createQuery($query);
+         $qb->setParameter('commune', $commune);
+         $qb->setParameter('cp', $cp);
+        $qb->setParameter('acheminement', $acheminement);
+        $qb->setParameter('localite', $localite);
 
         //print_r($query);
         return $qb->getOneOrNullResult();

@@ -163,7 +163,7 @@ class PgCmdSuiviPrel {
      * @return PgCmdSuiviPrel
      */
     public function setCommentaire($commentaire) {
-        $this->commentaire = $commentaire;
+        $this->commentaire = filter_var($commentaire, FILTER_SANITIZE_STRING);
 
         return $this;
     }

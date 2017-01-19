@@ -33,8 +33,9 @@ class PgProgGrparObligSupportRepository extends EntityRepository {
     public function getPgProgGrparObligSupportByGrparRefId($grparRefId) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgGrparObligSupport p";
-        $query = $query . " where p.grparRefId = " . $grparRefId;
+        $query = $query . " where p.grparRefId = :grparRefId";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('grparRefId', $grparRefId);
         //print_r($query);
         return $qb->getResult();
     }
@@ -45,8 +46,9 @@ class PgProgGrparObligSupportRepository extends EntityRepository {
     public function getPgProgGrparObligSupportByCodeSupport($codeSupport) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgGrparObligSupport p";
-        $query = $query . " where p.codeSupport = '" . $codeSupport . "'";
+        $query = $query . " where p.codeSupport = :codeSupport";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('codeSupport', $codeSupport);
         //print_r($query);
         return $qb->getResult();
     }
@@ -57,9 +59,11 @@ class PgProgGrparObligSupportRepository extends EntityRepository {
     public function getPgProgGrparObligSupportByGrparRefIdCodeSupport($grparRefId, $codeSupport) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgGrparObligSupport p";
-        $query = $query . " where p.grparRefId = " . $grparRefId;
-        $query = $query . " and p.codeSupport = '" . $codeSupport . "'";
+        $query = $query . " where p.grparRefId = :grparRefId";
+        $query = $query . " and p.codeSupport = ':codeSupport";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('grparRefId', $grparRefId);
+        $qb->setParameter('codeSupport', $codeSupport);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }

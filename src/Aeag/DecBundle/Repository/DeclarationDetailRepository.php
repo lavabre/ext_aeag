@@ -33,88 +33,99 @@ class DeclarationDetailRepository extends EntityRepository {
         //print_r($query);
         return $qb->getResult();
     }
-    
+
     /**
      * @return array
      */
     public function getDeclarationDetailsBySousDeclarationCollecteur($sousDeclarationCollecteur) {
         $query = "select dd";
         $query = $query . " from Aeag\DecBundle\Entity\DeclarationDetail dd";
-        $query = $query . " where dd.SousDeclarationCollecteur = " . $sousDeclarationCollecteur;
+        $query = $query . " where dd.SousDeclarationCollecteur = :sousDeclarationCollecteur";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('sousDeclarationCollecteur', $sousDeclarationCollecteur);
         //print_r($query);
         return $qb->getResult();
     }
-    
+
     /**
      * @return array
      */
     public function getDeclarationDetailsByDeclarationProducteur($declarationProducteur) {
         $query = "select dd";
         $query = $query . " from Aeag\DecBundle\Entity\DeclarationDetail dd";
-        $query = $query . " where dd.DeclarationProducteur = " . $declarationProducteur;
+        $query = $query . " where dd.DeclarationProducteur = :declarationProducteur";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('declarationProducteur', $declarationProducteur);
         //print_r($query);
         return $qb->getResult();
     }
-    
-    
-    
-    public function getDeclarationDetail($sousDeclarationCollecteur,$declarationProducteur,$dechet,$filiere,$traitFiliere,$numFacture,$quantiteReel,$montReel,$nature, $dateFacture) {
+
+    public function getDeclarationDetail($sousDeclarationCollecteur, $declarationProducteur, $dechet, $filiere, $traitFiliere, $numFacture, $quantiteReel, $montReel, $nature, $dateFacture) {
         $query = "select dd";
         $query = $query . " from Aeag\DecBundle\Entity\DeclarationDetail dd";
-        $query = $query . " where dd.SousDeclarationCollecteur = " . $sousDeclarationCollecteur;
-        $query = $query . " and dd.DeclarationProducteur = " . $declarationProducteur;
-        $query = $query . " and dd.Dechet = '" . $dechet . "'";
-        $query = $query . " and dd.Filiere = '" . $filiere . "'";
-        $query = $query . " and dd.traitFiliere = '" . $traitFiliere . "'";
-        $query = $query . " and dd.numFacture = '" . $numFacture . "'";
-        $query = $query . " and dd.dateFacture = '" . $dateFacture->format('Y-m-d') . "'";
-        $query = $query . " and dd.quantiteReel = " . $quantiteReel;
-        $query = $query . " and dd.montReel = " . $montReel;
-        $query = $query . " and dd.nature = '" . $nature . "'";
+        $query = $query . " where dd.SousDeclarationCollecteur = :sousDeclarationCollecteur";
+        $query = $query . " and dd.DeclarationProducteur = :declarationProducteur";
+        $query = $query . " and dd.Dechet = :dechet";
+        $query = $query . " and dd.Filiere = :filiere";
+        $query = $query . " and dd.traitFiliere = :traitFiliere";
+        $query = $query . " and dd.numFacture = :numFacture";
+        $query = $query . " and dd.dateFacture = :dateFacture";
+        $query = $query . " and dd.quantiteReel = :quantiteReel";
+        $query = $query . " and dd.montReel = :montReel";
+        $query = $query . " and dd.nature = :nature";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('sousDeclarationCollecteur', $sousDeclarationCollecteur);
+        $qb->setParameter('declarationProducteur', $declarationProducteur);
+        $qb->setParameter('dechet', $dechet);
+        $qb->setParameter('filiere', $filiere);
+        $qb->setParameter('traitFiliere', $traitFiliere);
+        $qb->setParameter('numFacture', $numFacture);
+        $qb->setParameter('quantiteReel', $quantiteReel);
+        $qb->setParameter('montReel', $montReel);
+        $qb->setParameter('nature', $nature);
+        $qb->setParameter('dateFacture', $dateFacture->format('Y-m-d'));
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-    
+
     public function getDeclarationDetailById($declarationDetail_id) {
         $query = "select dd";
         $query = $query . " from Aeag\DecBundle\Entity\DeclarationDetail dd";
-        $query = $query . " where dd.id = " . $declarationDetail_id;
+        $query = $query . " where dd.id = :declarationDetail_id";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('declarationDetail_id', $declarationDetail_id);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-    
-     public function getCountStatutBySousDeclarationCollecteurStatut($sousDeclarationCollecteur, $statut) {
+
+    public function getCountStatutBySousDeclarationCollecteurStatut($sousDeclarationCollecteur, $statut) {
 
         $query = "select count(dd.id)";
         $query = $query . " from Aeag\DecBundle\Entity\DeclarationDetail dd";
-        $query = $query . " where dd.SousDeclarationCollecteur = " . $sousDeclarationCollecteur;
-        $query = $query . " and dd.statut = '" . $statut . "'";
+        $query = $query . " where dd.SousDeclarationCollecteur = :sousDeclarationCollecteur";
+        $query = $query . " and dd.statut = :statut";
 
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('sousDeclarationCollecteur', $sousDeclarationCollecteur);
+        $qb->setParameter('statut', $statut);
 
         //print_r($query);
         return $qb->getSingleScalarResult();
     }
-    
+
     public function getCountStatutByDeclarationProducteurStatut($declarationProducteur, $statut) {
 
         $query = "select count(dd.id)";
         $query = $query . " from Aeag\DecBundle\Entity\DeclarationDetail dd";
-        $query = $query . " where dd.DeclarationProducteur = " . $declarationProducteur;
-        $query = $query . " and dd.statut = '" . $statut . "'";
+        $query = $query . " where dd.DeclarationProducteur = :declarationProducteur";
+        $query = $query . " and dd.statut = :statut";
 
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('declarationProducteur', $declarationProducteur);
+        $qb->setParameter('statut', $statut);
 
         //print_r($query);
         return $qb->getSingleScalarResult();
     }
 
-
-    
-    
-    
 }

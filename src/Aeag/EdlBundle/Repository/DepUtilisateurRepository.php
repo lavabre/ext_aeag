@@ -39,9 +39,10 @@ class DepUtilisateurRepository extends EntityRepository {
 
         $query = "select d";
         $query = $query . " from Aeag\EdlBundle\Entity\DepUtilisateur d";
-        $query = $query . " where d.inseeDepartement = '" . $dept . "'";
+        $query = $query . " where d.inseeDepartement = :dept";
 
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('dept', $dept);
 
         //print_r($query);
         return $qb->getResult();
@@ -55,9 +56,10 @@ class DepUtilisateurRepository extends EntityRepository {
 
         $query = "select d";
         $query = $query . " from Aeag\EdlBundle\Entity\DepUtilisateur d";
-        $query = $query . " where d.utilisateur = " . $utilisateur->getId();
+        $query = $query . " where d.utilisateur = :utilisateur";
 
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('utilisateur', $utilisateur->getId());
 
         //print_r($query);
         return $qb->getResult();
@@ -67,9 +69,11 @@ class DepUtilisateurRepository extends EntityRepository {
 
         $query = "select d";
         $query = $query . " from Aeag\EdlBundle\Entity\DepUtilisateur d";
-        $query = $query . " where d.inseeDepartement = '" . $dept->getInseeDepartement() . "'";
-        $query = $query . " and d.utilisateur = " . $utilisateur->getId();
+        $query = $query . " where d.inseeDepartement = :dept";
+        $query = $query . " and d.utilisateur = :utilisateur";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('dept', $dept->getInseeDepartement());
+        $qb->setParameter('utilisateur', $utilisateur->getId());
         //print_r($query);
         return $qb->getOneOrNullResult();
     }

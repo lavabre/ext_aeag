@@ -39,8 +39,9 @@ class LigneRepository extends EntityRepository {
 
         $query = "select l";
         $query = $query . " from Aeag\AideBundle\Entity\Ligne l";
-        $query = $query . " where l.ligne = '" . $ligne . "'";
+        $query = $query . " where l.ligne = :ligne";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('ligne', $ligne);
 
         print_r($query);
         return $qb->getOneOrNullResult();

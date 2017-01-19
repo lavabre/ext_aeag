@@ -14,15 +14,12 @@ use Doctrine\ORM\EntityRepository;
  * Class FonctionAdministrateurRepository
  * @package Aeag\FrdBundle\Repository
  */
-class FonctionAdministrateurRepository extends EntityRepository
-{
-
+class FonctionAdministrateurRepository extends EntityRepository {
 
     /**
      * @return array
      */
-    public function getFonctionAdministrateur()
-    {
+    public function getFonctionAdministrateur() {
 
         $query = "select d";
         $query = $query . " from Aeag\FrdBundle\Entity\FonctionAdministrateur d";
@@ -38,18 +35,17 @@ class FonctionAdministrateurRepository extends EntityRepository
      * @param $code
      * @return mixed
      */
-    public function getFonctionAdministrateurByCode($code)
-    {
+    public function getFonctionAdministrateurByCode($code) {
 
         $query = "select d";
         $query = $query . " from Aeag\FrdBundle\Entity\FonctionAdministrateur d";
-        $query = $query . " where d.code = '" . $code . "'";
+        $query = $query . " where d.code = :code";
 
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('code', $code);
 
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-
 
 }

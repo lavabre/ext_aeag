@@ -1627,7 +1627,7 @@ class ProgrammationGroupeController extends Controller {
             $session->set('messageErreur', $tabMessage);
             return $this->redirect($this->generateUrl('AeagSqeBundle_programmation_groupes', array('action' => $action, 'maj' => $maj, 'lotan' => $pgProgLotAnId)));
         }
-
+    
         foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
             $pgProgGrpParamRef = $pgProgLotGrparAn->getGrparRef();
             if ($pgProgGrpParamRef->getValide() != 'N') {

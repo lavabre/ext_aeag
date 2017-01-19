@@ -11,7 +11,6 @@ namespace Aeag\FrdBundle\Repository;
 use Doctrine\ORM\EntityRepository;
 use DoctrineExtensions\Query\Postgresql;
 
-
 /**
  * Class MandatementRepository
  * @package Aeag\FrdBundle\Repository
@@ -31,8 +30,7 @@ class MandatementRepository extends EntityRepository {
         return $qb->getResult();
     }
 
-      
-     /**
+    /**
      *
      * @return array
      */
@@ -40,10 +38,11 @@ class MandatementRepository extends EntityRepository {
 
         $query = "select f";
         $query = $query . " from  Aeag\FrdBundle\Entity\Mandatement f";
-        $query = $query . " where f.etfrId = " . $etfrId;
-      
-       //print_r($query);
+        $query = $query . " where f.etfrId = :etfrId";
+
+        //print_r($query);
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('etfrId', $etfrId);
         return $qb->getOneOrNullResult();
     }
 

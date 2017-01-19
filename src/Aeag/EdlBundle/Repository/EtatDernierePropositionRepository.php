@@ -18,9 +18,11 @@ class EtatDernierePropositionRepository extends EntityRepository {
 
         $query = "select p ";
         $query = $query . " from Aeag\EdlBundle\Entity\EtatDerniereProposition p";
-        $query = $query . " where p.euCd = '" . $euCd . "' and p.cdEtat = '" . $cdEtat . "'";
+        $query = $query . " where p.euCd = :euCd and p.cdEtat =:cdEtat";
         $query = $query . " order by p.propositionDate desc";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('euCd', $euCd);
+        $qb->setParameter('cdEtat', $cdEtat);
         //print_r($query);
         return $qb->getResult();
     }
@@ -29,13 +31,12 @@ class EtatDernierePropositionRepository extends EntityRepository {
 
         $query = "select p ";
         $query = $query . " from Aeag\EdlBundle\Entity\EtatDerniereProposition p";
-        $query = $query . " where p.euCd = '" . $euCd . "'";
+        $query = $query . " where p.euCd = :euCd";
         $query = $query . " order by p.propositionDate desc";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('euCd', $euCd);
         //print_r($query);
         return $qb->getResult();
     }
 
 }
-
-

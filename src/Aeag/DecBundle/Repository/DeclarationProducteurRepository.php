@@ -29,9 +29,10 @@ class DeclarationProducteurRepository extends EntityRepository {
     public function getDeclarationProducteursByAnnee($annee) {
         $query = "select d";
         $query = $query . " from Aeag\DecBundle\Entity\DeclarationProducteur d";
-        $query = $query . " where d.annee = " . $annee;
+        $query = $query . " where d.annee = :annee";
         $query = $query . " order by d.Producteur  ";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('annee', $annee);
         //print_r($query);
         return $qb->getResult();
     }
@@ -40,15 +41,17 @@ class DeclarationProducteurRepository extends EntityRepository {
 
         $query = "select d";
         $query = $query . " from Aeag\DecBundle\Entity\DeclarationProducteur d";
-        $query = $query . " where d.Producteur = " . $producteur;
-        $query = $query . " and d.annee = " . $annee;
+        $query = $query . " where d.Producteur = :producteur";
+        $query = $query . " and d.annee = :annee";
 
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('producteur', $producteur);
+        $qb->setParameter('annee', $annee);
 
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-    
+
 //     public function getDeclarationProducteursByProducteurAnnee($producteur, $annee) {
 //
 //        $query = "select d";
@@ -66,10 +69,12 @@ class DeclarationProducteurRepository extends EntityRepository {
 
         $query = "select sum(d.quantiteReel)";
         $query = $query . " from Aeag\DecBundle\Entity\DeclarationProducteur d";
-        $query = $query . " where d.Producteur = " . $producteur;
-        $query = $query . " and d.annee = " . $annee;
+        $query = $query . " where d.Producteur = :producteur";
+        $query = $query . " and d.annee = :annee";
 
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('producteur', $producteur);
+        $qb->setParameter('annee', $annee);
 
         //print_r($query);
         return $qb->getSingleScalarResult();
@@ -79,9 +84,10 @@ class DeclarationProducteurRepository extends EntityRepository {
 
         $query = "select d";
         $query = $query . " from Aeag\DecBundle\Entity\DeclarationProducteur d";
-        $query = $query . " where d.Producteur = " . $producteur;
+        $query = $query . " where d.Producteur = :producteur";
         $query = $query . " order by d.annee";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('producteur', $producteur);
 
         //print_r($query);
         return $qb->getResult();
@@ -91,9 +97,10 @@ class DeclarationProducteurRepository extends EntityRepository {
 
         $query = "select  d";
         $query = $query . " from Aeag\DecBundle\Entity\DeclarationProducteur d";
-        $query = $query . " where d.id = " . $id;
+        $query = $query . " where d.id = :id";
 
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('id', $id);
 
         //print_r($query);
         return $qb->getOneOrNullResult();
@@ -103,11 +110,14 @@ class DeclarationProducteurRepository extends EntityRepository {
 
         $query = "select count(d.id)";
         $query = $query . " from Aeag\DecBundle\Entity\DeclarationProducteur d";
-        $query = $query . " where d.Producteur = " . $producteur;
-        $query = $query . " and d.annee = " . $annee;
-        $query = $query . " and d.statut = '" . $statut . "'";
+        $query = $query . " where d.Producteur = :producteur";
+        $query = $query . " and d.annee = :annee";
+        $query = $query . " and d.statut = :statut";
 
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('producteur', $producteur);
+        $qb->setParameter('annee', $annee);
+        $qb->setParameter('statut', $statut);
 
         //print_r($query);
         return $qb->getSingleScalarResult();

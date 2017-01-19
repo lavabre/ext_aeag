@@ -27,16 +27,17 @@ class SousThemeRepository extends EntityRepository {
         //print_r($query);
         return $qb->getResult();
     }
-    
+
     /**
      * @return array
      */
     public function getSousThemesByTheme($theme) {
         $query = "select c";
         $query = $query . " from Aeag\DieBundle\Entity\SousTheme c";
-        $query = $query . " where c.theme = '" . $theme->getId() . "'";
+        $query = $query . " where c.theme = ':theme";
         $query = $query . " order by c.theme";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('theme', $theme->getId());
         //print_r($query);
         return $qb->getResult();
     }
@@ -47,8 +48,9 @@ class SousThemeRepository extends EntityRepository {
     public function getSousThemeById($id) {
         $query = "select c";
         $query = $query . " from Aeag\DieBundle\Entity\SousTheme c";
-        $query = $query . " where c.id = " . $id;
+        $query = $query . " where c.id = :id";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('id', $id);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }

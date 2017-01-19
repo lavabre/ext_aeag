@@ -13,15 +13,17 @@ use Doctrine\ORM\EntityRepository;
 class PressionMeRepository extends EntityRepository {
 
     public function getLastPropositionSuperviseur($euCd, $cdPression) {
-        
+
         $query = "select p ";
         $query = $query . " from Aeag\EdlBundle\Entity\PressionMeProposed p";
-        $query = $query . " where p.euCd = '" . $euCd . "' and p.cdPression = '" . $cdPression . "' and p.role ='expert'";
+        $query = $query . " where p.euCd = :euCd and p.cdPression = :cdPression and p.role ='expert'";
         $query = $query . " order by p.propositionDate desc";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('euCd', $euCd);
+        $qb->setParameter('cdPression', $cdPression);
         //print_r($query);
         return $qb->getResult();
-        
+
 //        $qb = $this->_em->createQueryBuilder();
 //
 //        try {
@@ -43,15 +45,17 @@ class PressionMeRepository extends EntityRepository {
     }
 
     public function getLastProposition($euCd, $cdPression) {
-        
-          $query = "select p ";
+
+        $query = "select p ";
         $query = $query . " from Aeag\EdlBundle\Entity\PressionMeProposed p";
-        $query = $query . " where p.euCd = '" . $euCd . "' and p.cdPression = '" . $cdPression . "'";
+        $query = $query . " where p.euCd = :euCd and p.cdPression = :cdPression";
         $query = $query . " order by p.propositionDate desc";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('euCd', $euCd);
+        $qb->setParameter('cdPression', $cdPression);
         //print_r($query);
         return $qb->getResult();
-        
+
 //        $qb = $this->_em->createQueryBuilder();
 //
 //        try {
@@ -76,17 +80,14 @@ class PressionMeRepository extends EntityRepository {
         $query = "select e from Aeag\EdlBundle\Entity\MasseEau m";
         $query = $query . " , Aeag\EdlBundle\Entity\PressionType t";
         $query = $query . " , Aeag\EdlBundle\Entity\PressionMe e";
-        $query = $query . " where m.euCd = e.euCd and e.cdPression = t.cdPression  and m.euCd = '" . $code . "' and t.cdGroupe = '" . $cdGroupe . "'";
+        $query = $query . " where m.euCd = e.euCd and e.cdPression = t.cdPression  and m.euCd = :code and t.cdGroupe = :cdGroupe";
         $query = $query . " order by t.ordre";
-        // return new Response('query  : ' . $query);
 
-        try {
-            $r = $this->_em->createQuery($query)
-                    ->getResult();
-            return $r;
-        } catch (Exception $e) {
-            return null;
-        }
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('code', $code);
+        $qb->setParameter('cdGroupe', $cdGroupe);
+        //print_r($query);
+        return $qb->getResult();
     }
 
     public function getNbPressionMe($code, $cdGroupe) {
@@ -94,30 +95,27 @@ class PressionMeRepository extends EntityRepository {
         $query = "select count(e) from Aeag\EdlBundle\Entity\MasseEau m";
         $query = $query . " , Aeag\EdlBundle\Entity\PressionType t";
         $query = $query . " , Aeag\EdlBundle\Entity\PressionMe e";
-        $query = $query . " where m.euCd = e.euCd and e.cdPression = t.cdPression  and m.euCd = '" . $code . "' and t.cdGroupe = '" . $cdGroupe . "'";
+        $query = $query . " where m.euCd = e.euCd and e.cdPression = t.cdPression  and m.euCd = :code and t.cdGroupe = :cdGroupe";
         //$query = $query . " and e.cdPression != 'RW_ECO_VAL'";
-        // return new Response('query  : ' . $query);
 
-        try {
-            $r = $this->_em->createQuery($query)
-                    ->getSingleScalarResult();
-            ;
-            return $r;
-        } catch (Exception $e) {
-            return null;
-        }
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('code', $code);
+        $qb->setParameter('cdGroupe', $cdGroupe);
+        //print_r($query);
+        return $qb->getSingleScalarResult();
     }
-    
+
     public function getDerniereProposition($euCd) {
-        
-         $query = "select p ";
+
+        $query = "select p ";
         $query = $query . " from Aeag\EdlBundle\Entity\PressionMeProposed p";
-        $query = $query . " where p.euCd = '" . $euCd . "'";
+        $query = $query . " where p.euCd = :euCd";
         $query = $query . " order by p.propositionDate desc";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('euCd', $euCd);
         //print_r($query);
         return $qb->getResult();
-        
+
 //        $qb = $this->_em->createQueryBuilder();
 //
 //        try {

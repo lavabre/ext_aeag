@@ -9,8 +9,7 @@ use Doctrine\ORM\EntityRepository;
  * @package Aeag\SqeBundle\Repository
  */
 class PgCmdPrelevHbInvertRepository extends EntityRepository {
-    
-      
+
     /**
      * @return array
      */
@@ -28,11 +27,11 @@ class PgCmdPrelevHbInvertRepository extends EntityRepository {
     public function getPgCmdPrelevHbInvertByPrelev($pgCmdPrelev) {
         $query = "select c";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelevHbInvert c";
-        $query = $query . " where c.prelev = " . $pgCmdPrelev->getId() ;
+        $query = $query . " where c.prelev = :pgCmdPrelev";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgCmdPrelev', $pgCmdPrelev->getId());
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-    
-    
+
 }

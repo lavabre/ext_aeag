@@ -9,8 +9,7 @@ use Doctrine\ORM\EntityRepository;
  * @package Aeag\SqeBundle\Repository
  */
 class PgCmdPrelevHbMphytRepository extends EntityRepository {
-    
-      
+
     /**
      * @return array
      */
@@ -28,11 +27,11 @@ class PgCmdPrelevHbMphytRepository extends EntityRepository {
     public function getPgCmdPrelevHbMphytByPrelev($pgCmdPrelev) {
         $query = "select c";
         $query = $query . " from Aeag\SqeBundle\Entity\PPgCmdPrelevHbMphyt c";
-        $query = $query . " where c.prelev = " . $pgCmdPrelev->getId() ;
+        $query = $query . " where c.prelev = :pgCmdPrelev";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgCmdPrelev', $pgCmdPrelev->getId());
         //print_r($query);
         return $qb->getResult();
     }
-    
-    
+
 }

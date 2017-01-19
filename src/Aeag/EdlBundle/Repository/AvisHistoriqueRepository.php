@@ -28,8 +28,10 @@ class AvisHistoriqueRepository extends EntityRepository {
 
         $query = "select e ";
         $query = $query . " from Aeag\EdlBundle\Entity\AvisHistorique e";
-        $query = $query . " where e.euCd = '" . $code . "' and e.epr = '" . $epr . "'";
+        $query = $query . " where e.euCd = :code and e.epr = :epr ";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('code', $code);
+        $qb->setParameter('epr', $epr);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }

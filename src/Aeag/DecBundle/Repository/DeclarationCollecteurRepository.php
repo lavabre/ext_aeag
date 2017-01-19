@@ -18,7 +18,7 @@ class DeclarationCollecteurRepository extends EntityRepository {
     public function getDeclarationCollecteurs() {
         $query = "select d";
         $query = $query . " from Aeag\DecBundle\Entity\DeclarationCollecteur d";
-       $query = $query . " order by d.Collecteur, d.annee";
+        $query = $query . " order by d.Collecteur, d.annee";
         $qb = $this->_em->createQuery($query);
         //print_r($query);
         return $qb->getResult();
@@ -30,23 +30,26 @@ class DeclarationCollecteurRepository extends EntityRepository {
     public function getDeclarationCollecteursByAnnee($annee) {
         $query = "select d";
         $query = $query . " from Aeag\DecBundle\Entity\DeclarationCollecteur d";
-        $query = $query . " where d.annee = " . $annee;
+        $query = $query . " where d.annee = :annee ";
         $query = $query . " order by d.Collecteur";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('annee', $annee);
         //print_r($query);
         return $qb->getResult();
     }
-    
-     /**
+
+    /**
      * @return array
      */
     public function getDeclarationCollecteursByAnneeStatut($annee, $statut) {
         $query = "select d";
         $query = $query . " from Aeag\DecBundle\Entity\DeclarationCollecteur d";
-        $query = $query . " where d.annee = " . $annee;
-        $query = $query . " and d.statut = '" . $statut . "'";
+        $query = $query . " where d.annee = :annee";
+        $query = $query . " and d.statut =  :statut";
         $query = $query . " order by d.Collecteur";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('annee', $annee);
+        $qb->setParameter('statut', $statut);
         //print_r($query);
         return $qb->getResult();
     }
@@ -55,37 +58,43 @@ class DeclarationCollecteurRepository extends EntityRepository {
 
         $query = "select d";
         $query = $query . " from Aeag\DecBundle\Entity\DeclarationCollecteur d";
-        $query = $query . " where d.Collecteur = " . $collecteur;
+        $query = $query . " where d.Collecteur =  :collecteur";
         $query = $query . " order by d.annee";
 
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('collecteur', $collecteur);
 
         //print_r($query);
         return $qb->getResult();
     }
-    
+
     public function getDeclarationCollecteurByCollecteurAnnee($collecteur, $annee) {
 
         $query = "select distinct d";
         $query = $query . " from Aeag\DecBundle\Entity\DeclarationCollecteur d";
-        $query = $query . " where d.Collecteur = " . $collecteur;
-         $query = $query . " and d.annee = " . $annee;
+        $query = $query . " where d.Collecteur = :collecteur";
+        $query = $query . " and d.annee = :annee";
 
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('collecteur', $collecteur);
+        $qb->setParameter('annee', $annee);
 
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-    
+
     public function getDeclarationCollecteurByCollecteurAnneeStatut($collecteur, $annee, $statut) {
 
         $query = "select distinct d";
         $query = $query . " from Aeag\DecBundle\Entity\DeclarationCollecteur d";
-        $query = $query . " where d.Collecteur = " . $collecteur;
-        $query = $query . " and d.annee = " . $annee;
-        $query = $query . " and d.statut = '" . $statut . "'";
+        $query = $query . " where d.Collecteur = :collecteur";
+        $query = $query . " and d.annee = :annee";
+        $query = $query . " and d.statut = :statut";
 
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('collecteur', $collecteur);
+        $qb->setParameter('annee', $annee);
+        $qb->setParameter('statut', $statut);
 
         //print_r($query);
         return $qb->getOneOrNullResult();
@@ -95,15 +104,16 @@ class DeclarationCollecteurRepository extends EntityRepository {
 
         $query = "select  d";
         $query = $query . " from Aeag\DecBundle\Entity\DeclarationCollecteur d";
-        $query = $query . " where d.id = " . $id;
+        $query = $query . " where d.id = :id";
 
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('id', $id);
 
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-    
-     public function getAnnees() {
+
+    public function getAnnees() {
 
         $query = "select distinct(d.annee) as annee";
         $query = $query . " from Aeag\DecBundle\Entity\DeclarationCollecteur d";

@@ -4014,6 +4014,8 @@ class ReferentielController extends Controller {
                         }
                         if ($entity->getMontAide() and $entity->getQuantiteAide()) {
                             $entity->setCoutFacture(round((($entity->getMontAide() / $entity->getQuantiteAide()) / $tauxAide), 4));
+                        }else{
+                            $entity->setCoutFacture(0);
                         }
                         if (!($tab[21] == "")) {
                             $entity->setNature($this->wd_remove_accents($tab[21]));

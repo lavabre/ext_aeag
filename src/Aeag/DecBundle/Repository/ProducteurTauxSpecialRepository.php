@@ -27,16 +27,16 @@ class ProducteurTauxSpecialRepository extends EntityRepository {
         //print_r($query);
         return $qb->getResult();
     }
-    
-   
+
     /**
      * @return array
      */
     public function getProducteurTauxSpecialBySiret($siret) {
         $query = "select c";
         $query = $query . " from Aeag\DecBundle\Entity\ProducteurTauxSpecial c";
-        $query = $query . " where c.siret = '" . $siret . "'";
+        $query = $query . " where c.siret = :siret";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('siret', $siret);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }

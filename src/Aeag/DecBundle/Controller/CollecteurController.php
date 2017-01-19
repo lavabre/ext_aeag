@@ -2920,16 +2920,16 @@ class CollecteurController extends Controller {
                                 $montReel = round((($crudDeclarationDetail->getQuantiteReel()) * $crudDeclarationDetail->getCoutFacture()), 2);
                                 $montRet = round((($crudDeclarationDetail->getQuantiteRet()) * $crudDeclarationDetail->getCoutFacture()), 2);
                                 $montAide = (($crudDeclarationDetail->getQuantiteRet()) * $crudDeclarationDetail->getCoutFacture() * $tauxAide);
-                                print_R('1 montant avant round : ' . $montAide);
-                                $montAide = round($montAide, 4);
+                                //print_R('1 montant avant round : ' . $montAide);
+                                //$montAide = round($montAide, 4);
                                 $montAide = round($montAide, 2);
-                                print_R('1 montant apres round : ' . $montAide);
-                                //return new response (' ici');
+                               // print_R('1 montant apres round : ' . $montAide);
+                               // return new response (' ici');
 //}
                             } else {
                                 $montAide = round((($crudDeclarationDetail->getQuantiteRet()) * $crudDeclarationDetail->getCoutFacture() * $tauxAide), 3);
                                 //print_R('2 montant avant round : ' . $montAide);
-                                $montAide = round($montAide, 4);
+                                //$montAide = round($montAide, 4);
                                 $montAide = round($montAide, 2);
                                 //print_R('2 montant apres round : ' . $montAide);
                                 //return new response ('LA');

@@ -24,8 +24,9 @@ class PgCmdPrelevRepository extends EntityRepository {
     public function getPgCmdPrelevById($id) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelev p";
-        $query = $query . " where p.id = " . $id;
+        $query = $query . " where p.id = :id";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('id', $id);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
@@ -33,8 +34,9 @@ class PgCmdPrelevRepository extends EntityRepository {
     public function getPgCmdPrelevByPrestaPrel($pgRefCorresPresta) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelev p";
-        $query = $query . " where p.prestaPrel = " . $pgRefCorresPresta->getAdrCorid();
+        $query = $query . " where p.prestaPrel = :pgRefCorresPresta";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgRefCorresPresta', $pgRefCorresPresta->getAdrCorid());
         //print_r($query);
         return $qb->getResult();
     }
@@ -42,8 +44,9 @@ class PgCmdPrelevRepository extends EntityRepository {
     public function getPgCmdPrelevByDemande($pgCmdDemande) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelev p";
-        $query = $query . " where p.demande = " . $pgCmdDemande->getId();
+        $query = $query . " where p.demande = :pgCmdDemande";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgCmdDemande', $pgCmdDemande->getId());
         //print_r($query);
         return $qb->getResult();
     }
@@ -51,8 +54,9 @@ class PgCmdPrelevRepository extends EntityRepository {
     public function getPgCmdPrelevByStation($pgRefStationMesure) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelev p";
-        $query = $query . " where p.station = " . $pgRefStationMesure->getOuvFoncId();
+        $query = $query . " where p.station = :pgRefStationMesure";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgRefStationMesure', $pgRefStationMesure->getOuvFoncId());
         //print_r($query);
         return $qb->getResult();
     }
@@ -60,8 +64,9 @@ class PgCmdPrelevRepository extends EntityRepository {
     public function getPgCmdPrelevByPeriode($pgProgPeriodes) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelev p";
-        $query = $query . " where p.periode = " . $pgProgPeriodes->getId();
+        $query = $query . " where p.periode = :pgProgPeriodes";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgProgPeriodes', $pgProgPeriodes->getId());
         //print_r($query);
         return $qb->getResult();
     }
@@ -69,9 +74,10 @@ class PgCmdPrelevRepository extends EntityRepository {
     public function getPgCmdPrelevBySupport($pgSandreSupports) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelev p";
-        $query = $query . " where p.codeSupport = '" . $pgSandreSupports->getCodeSupport() . "'";
+        $query = $query . " where p.codeSupport = :pgSandreSupports";
         $query = $query . " order by p.station,  p.periode";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgSandreSupports', $pgSandreSupports->getCodeSupport());
         //print_r($query);
         return $qb->getResult();
     }
@@ -86,7 +92,7 @@ class PgCmdPrelevRepository extends EntityRepository {
         $query = $query . "           Aeag\SqeBundle\Entity\PgProgLot lot,";
         $query = $query . "           Aeag\SqeBundle\Entity\PgProgTypeMilieu typemilieu, ";
         $query = $query . "           Aeag\SqeBundle\Entity\PgSandreSupports support ";
-        $query = $query . " where support.codeSupport = '" . $pgSandreSupports->getCodeSupport() . "'";
+        $query = $query . " where support.codeSupport = :pgSandreSupports ";
         $query = $query . "and support.codeSupport= prelev.codeSupport  ";
         $query = $query . "and demande.id = prelev.demande ";
         $query = $query . "and station.ouvFoncId = prelev.station ";
@@ -99,6 +105,7 @@ class PgCmdPrelevRepository extends EntityRepository {
         $query = $query . "and suiviprel.id = (select max(ss.id) from Aeag\SqeBundle\Entity\PgCmdSuiviPrel ss where ss.prelev = prelev.id) ";
         $query = $query . "order by prelev.station, prelev.periode ";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgSandreSupports', $pgSandreSupports->getCodeSupport());
         //print_r($query);
         return $qb->getResult();
     }
@@ -106,10 +113,12 @@ class PgCmdPrelevRepository extends EntityRepository {
     public function getPgCmdPrelevBySupportPresta($pgSandreSupports, $pgProgWebUser) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelev p";
-        $query = $query . " where p.codeSupport = " . $pgSandreSupports->getCodeSupport();
-        $query = $query . "  and presta_prel_id = '" . $pgProgWebUser->getPrestataire() . "'";
+        $query = $query . " where p.codeSupport = :pgSandreSupports";
+        $query = $query . "  and presta_prel_id = :pgProgWebUser";
         $query = $query . " order by p.station,  p.periode";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgSandreSupports', $pgSandreSupports->getCodeSupport());
+        $qb->setParameter('pgProgWebUser', $pgProgWebUser->getPrestataire());
         //print_r($query);
         return $qb->getResult();
     }
@@ -117,10 +126,13 @@ class PgCmdPrelevRepository extends EntityRepository {
     public function getPgCmdPrelevByDemandeStationPeriode($pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelev p";
-        $query = $query . " where p.demande = " . $pgCmdDemande->getId();
-        $query = $query . " and p.station = " . $pgRefStationMesure->getOuvFoncId();
-        $query = $query . " and p.periode = " . $pgProgPeriodes->getId();
+        $query = $query . " where p.demande = :pgCmdDemande";
+        $query = $query . " and p.station = :pgRefStationMesure";
+        $query = $query . " and p.periode = :pgProgPeriodes";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgCmdDemande', $pgCmdDemande->getId());
+        $qb->setParameter('pgRefStationMesure', $pgRefStationMesure->getOuvFoncId());
+        $qb->setParameter('pgProgPeriodes', $pgProgPeriodes->getId());
         //print_r($query);
         return $qb->getResult();
     }
@@ -128,10 +140,13 @@ class PgCmdPrelevRepository extends EntityRepository {
     public function getPgCmdPrelevByPrestaPrelDemandePeriode($pgRefCorresPresta, $pgCmdDemande, $pgProgPeriodes) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelev p";
-        $query = $query . " where p.prestaPrel = " . $pgRefCorresPresta->getAdrCorid();
-        $query = $query . " and p.demande = " . $pgCmdDemande->getId();
-        $query = $query . " and p.periode = " . $pgProgPeriodes->getId();
+        $query = $query . " where p.prestaPrel = :pgRefCorresPresta";
+        $query = $query . " and p.demande = :pgCmdDemande";
+        $query = $query . " and p.periode = :pgProgPeriodes";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgRefCorresPresta', $pgRefCorresPresta->getAdrCorid());
+        $qb->setParameter('pgCmdDemande', $pgCmdDemande->getId());
+        $qb->setParameter('pgProgPeriodes', $pgProgPeriodes->getId());
         //print_r($query);
         return $qb->getResult();
     }
@@ -139,11 +154,15 @@ class PgCmdPrelevRepository extends EntityRepository {
     public function getPgCmdPrelevByPrestaPrelDemandeStationPeriode($pgRefCorresPresta, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelev p";
-        $query = $query . " where p.prestaPrel = " . $pgRefCorresPresta->getAdrCorid();
-        $query = $query . " and p.demande = " . $pgCmdDemande->getId();
-        $query = $query . " and p.station = " . $pgRefStationMesure->getOuvFoncId();
-        $query = $query . " and p.periode = " . $pgProgPeriodes->getId();
+        $query = $query . " where p.prestaPrel = :pgRefCorresPresta";
+        $query = $query . " and p.demande = :pgCmdDemande";
+        $query = $query . " and p.station = :pgRefStationMesure";
+        $query = $query . " and p.periode = :pgProgPeriodes";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgRefCorresPresta', $pgRefCorresPresta->getAdrCorid());
+        $qb->setParameter('pgCmdDemande', $pgCmdDemande->getId());
+        $qb->setParameter('pgRefStationMesure', $pgRefStationMesure->getOuvFoncId());
+        $qb->setParameter('pgProgPeriodes', $pgProgPeriodes->getId());
         //print_r($query);
         return $qb->getResult();
     }
@@ -151,15 +170,18 @@ class PgCmdPrelevRepository extends EntityRepository {
     public function getPgCmdPrelevUniqueByPrestaPrelDemandeStationPeriode($pgRefCorresPresta, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelev p";
-        $query = $query . " where p.prestaPrel = " . $pgRefCorresPresta->getAdrCorid();
-        $query = $query . " and p.demande = " . $pgCmdDemande->getId();
-        $query = $query . " and p.station = " . $pgRefStationMesure->getOuvFoncId();
-        $query = $query . " and p.periode = " . $pgProgPeriodes->getId();
+        $query = $query . " where p.prestaPrel = :pgRefCorresPresta";
+        $query = $query . " and p.demande = :pgCmdDemande";
+        $query = $query . " and p.station = :pgRefStationMesure";
+        $query = $query . " and p.periode = :pgProgPeriodes";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgRefCorresPresta', $pgRefCorresPresta->getAdrCorid());
+        $qb->setParameter('pgCmdDemande', $pgCmdDemande->getId());
+        $qb->setParameter('pgRefStationMesure', $pgRefStationMesure->getOuvFoncId());
+        $qb->setParameter('pgProgPeriodes', $pgProgPeriodes->getId());
         //print_r($query . '<br/>');
         return $qb->getOneOrNullResult();
     }
-   
 
     public function getPgCmdPrelevByCodePrelevCodeDmdAndPhase($pgCmdPrelev, $pgCmdDemande, $pgProgPhase) {
         $query = "select p";
@@ -172,7 +194,7 @@ class PgCmdPrelevRepository extends EntityRepository {
         $qb->setParameter('demande', $pgCmdDemande);
         $qb->setParameter('codeprelev', $pgCmdPrelev->getCodePrelevCmd());
         $qb->setParameter('phase', $pgProgPhase);
-       // print_r($query . '<br/>');
+        // print_r($query . '<br/>');
         return $qb->getResult();
     }
 
@@ -214,11 +236,25 @@ class PgCmdPrelevRepository extends EntityRepository {
         $query .= " and ltan.id = dmd.lotan";
         $query .= " and dmd.id = prel.demande";
         $query .= " and dmd.typeDemande != '2'";
-        $query .=  " and typFic.codeMilieu = lot.codeMilieu" ;
-        $query .=  " and typFic.prestataire = prel.prestaPrel" ;
-        $query .=  " and typFic.formatFic like '%Saisie%'";
+        $query .= " and typFic.codeMilieu = lot.codeMilieu";
+        $query .= " and typFic.prestataire = prel.prestaPrel";
+        $query .= " and typFic.formatFic like '%Saisie%'";
         $query .= " and  prel.station = stan.station";
         $query .= " and prel.periode = pean.periode";
+        $query .= " and ltan.id = :lotan";
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('lotan', $pgProgLotAn->getid());
+        //print_r($query);
+        return $qb->getSingleScalarResult();
+    }
+
+    public function getCountPgCmdPrelevByLotanBis($pgProgLotAn) {
+        $query = "select count(prel.id)";
+        $query .= " from Aeag\SqeBundle\Entity\PgCmdPrelev prel,";
+        $query .= "         Aeag\SqeBundle\Entity\PgCmdDemande dmd,";
+        $query .= "         Aeag\SqeBundle\Entity\PgProgLotAn ltan";
+        $query .= " where ltan.id = dmd.lotan";
+        $query .= " and dmd.id = prel.demande";
         $query .= " and ltan.id = :lotan";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('lotan', $pgProgLotAn->getid());
@@ -242,15 +278,31 @@ class PgCmdPrelevRepository extends EntityRepository {
         $query .= " and ltan.id = dmd.lotan";
         $query .= " and dmd.id = prel.demande";
         $query .= " and dmd.typeDemande != '2'";
-        $query .=  " and typFic.codeMilieu = lot.codeMilieu" ;
-        $query .=  " and typFic.prestataire = prel.prestaPrel" ;
-        $query .=  " and typFic.formatFic like '%Saisie%'";
+        $query .= " and typFic.codeMilieu = lot.codeMilieu";
+        $query .= " and typFic.prestataire = prel.prestaPrel";
+        $query .= " and typFic.formatFic like '%Saisie%'";
         $query .= " and  prel.station = stan.station";
         $query .= " and prel.periode = pean.periode";
         $query .= " and ltan.id = :lotan";
         $query .= " and prel.phaseDmd = :phase";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('lotan', $pgProgLotAn->getId());
+        $qb->setParameter('phase', $pgProgPhase->getId());
+        //print_r($query);
+        return $qb->getSingleScalarResult();
+    }
+
+    public function getCountPgCmdPrelevByLotanPhaseBis($pgProgLotAn, $pgProgPhase) {
+        $query = "select count(prel.id)";
+        $query .= " from Aeag\SqeBundle\Entity\PgCmdPrelev prel,";
+        $query .= "         Aeag\SqeBundle\Entity\PgCmdDemande dmd,";
+        $query .= "         Aeag\SqeBundle\Entity\PgProgLotAn ltan";
+        $query .= " where ltan.id = dmd.lotan";
+        $query .= " and dmd.id = prel.demande";
+        $query .= " and ltan.id = :lotan";
+        $query .= " and prel.phaseDmd = :phase";
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('lotan', $pgProgLotAn->getid());
         $qb->setParameter('phase', $pgProgPhase->getId());
         //print_r($query);
         return $qb->getSingleScalarResult();
@@ -432,28 +484,30 @@ class PgCmdPrelevRepository extends EntityRepository {
         $query = $query . " and prl.id = sp.prelev";
         $query = $query . " and sp.statutPrel = 'P'";
         $query = $query . " and sp.validation <> 'R'";
-		$query = $query . " and sp.id = (select max(ss.id) from Aeag\SqeBundle\Entity\PgCmdSuiviPrel ss where ss.prelev = prl.id)";
+        $query = $query . " and sp.id = (select max(ss.id) from Aeag\SqeBundle\Entity\PgCmdSuiviPrel ss where ss.prelev = prl.id)";
         //$query = $query . " group by sp.datePrel, sup.codeSupport, sup.nomSupport";
         $query = $query . " order by sp.datePrel desc";
         $qb = $this->_em->createQuery($query);
+
 //        if ($pgCmdPrelev->getStation()->getOuvFoncId() == 557655){
 //        print_r($query);
 //        }
         return $qb->getResult();
     }
-    
+
     public function getPrestataireBySupport($pgSandreSupports) {
         $query = "select distinct presta";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelev prelev,";
         $query = $query . "         Aeag\SqeBundle\Entity\PgRefCorresPresta presta ";
-         $query = $query . " where prelev.codeSupport = '" . $pgSandreSupports->getCodeSupport() . "'";
-        $query = $query . "  and prelev.prestaPrel = presta.adrCorId" ;
-         $query = $query . " order by presta.nomCorres";
+        $query = $query . " where prelev.codeSupport = :pgSandreSupports";
+        $query = $query . "  and prelev.prestaPrel = presta.adrCorId";
+        $query = $query . " order by presta.nomCorres";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgSandreSupports', $pgSandreSupports->getCodeSupport());
         //print_r($query);
         return $qb->getResult();
     }
-    
+
     public function getPgCmdPrelevBySupportPrestaAvisStatutValidation($pgSandreSupports, $presta, $avis, $statut, $validation) {
         $query = " SELECT prelev.id as prelevId, support.nomSupport, station.ouvFoncId, suiviprel.id as suiviPrelId ";
         $query = $query . "FROM Aeag\SqeBundle\Entity\PgCmdPrelev prelev,";
@@ -464,7 +518,7 @@ class PgCmdPrelevRepository extends EntityRepository {
         $query = $query . "           Aeag\SqeBundle\Entity\PgProgLot lot,";
         $query = $query . "           Aeag\SqeBundle\Entity\PgProgTypeMilieu typemilieu, ";
         $query = $query . "           Aeag\SqeBundle\Entity\PgSandreSupports support ";
-        $query = $query . " where support.codeSupport = '" . $pgSandreSupports->getCodeSupport() . "'";
+        $query = $query . " where support.codeSupport = :pgSandreSupports";
         $query = $query . "and support.codeSupport= prelev.codeSupport  ";
         $query = $query . "and demande.id = prelev.demande ";
         $query = $query . "and station.ouvFoncId = prelev.station ";
@@ -475,23 +529,27 @@ class PgCmdPrelevRepository extends EntityRepository {
         $query = $query . "and (substring(typemilieu.codeMilieu,2,2) = 'HB' or typemilieu.codeMilieu = 'RHM') ";
         $query = $query . "and prelev.id = suiviprel.prelev ";
         $query = $query . "and suiviprel.id = (select max(ss.id) from Aeag\SqeBundle\Entity\PgCmdSuiviPrel ss where ss.prelev = prelev.id) ";
-        if ($presta){
-            $query = $query . " and prelev.prestaPrel = " . $presta;
+        if ($presta) {
+            $query = $query . " and prelev.prestaPrel = :presta";
         }
-        if ($avis){
-            $query = $query . " and suiviprel.avis = '" . $avis . "'";
+        if ($avis) {
+            $query = $query . " and suiviprel.avis = :avis";
         }
-        if ($statut){
-            $query = $query . " and suiviprel.statutPrel = '" . $statut . "'";
+        if ($statut) {
+            $query = $query . " and suiviprel.statutPrel = :statu";
         }
-        if ($validation){
-            $query = $query . " and suiviprel.validation = '" . $validation . "'";
+        if ($validation) {
+            $query = $query . " and suiviprel.validation = :validation";
         }
         $query = $query . " order by prelev.station, prelev.periode ";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgSandreSupports', $pgSandreSupports->getCodeSupport());
+        $qb->setParameter('presta', $presta);
+        $qb->setParameter('avis', $avis);
+        $qb->setParameter('statut', $statut);
+        $qb->setParameter('validation', $validation);
         //print_r($query);
         return $qb->getResult();
     }
-
 
 }

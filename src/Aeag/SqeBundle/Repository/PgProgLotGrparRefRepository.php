@@ -16,41 +16,44 @@ use Doctrine\ORM\EntityRepository;
  */
 class PgProgLotGrparRefRepository extends EntityRepository {
 
-    public function getPgProgLotGrparRefByProgLotGrparRef($ProgLotGrparOprel) {
+//    public function getPgProgLotGrparRefByProgLotGrparRef($progLotGrparOprel) {
+//        $query = "select p";
+//        $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotGrparRef p";
+//         $qb = $this->_em->createQuery($query);
+//         //print_r($query);
+//        return $qb->getResult();
+//    }
+
+    public function getPgProgLotGrparRefByLot($pgProgLot) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotGrparRef p";
-         $qb = $this->_em->createQuery($query);
-        //print_r($query);
-        return $qb->getResult();
-    }
-    
-     public function getPgProgLotGrparRefByLot($pgProgLot) {
-        $query = "select p";
-        $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotGrparRef p";
-        $query = $query . " where p.lot = " . $pgProgLot->getId() ;
+        $query = $query . " where p.lot = :pgProgLot";
         $qb = $this->_em->createQuery($query);
-        //print_r($query);
-        return $qb->getResult();
-    }
-    
-    public function getPgProgLotGrparRefByGrpparRef($PgProgGrpParamRef) {
-        $query = "select p";
-        $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotGrparRef p";
-        $query = $query . " where p.grpparref = " . $PgProgGrpParamRef->getid();
-        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgProgLot', $pgProgLot->getId());
         //print_r($query);
         return $qb->getResult();
     }
 
-    public function getPgProgLotGrparRefByPgProgLotPgProgGrpParamRef($PgProgLot, $PgProgGrpParamRef) {
+    public function getPgProgLotGrparRefByGrpparRef($pgProgGrpParamRef) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotGrparRef p";
-        $query = $query . " where p.lot_id = " . $PgProgLot->getId();
-        $query = $query . " where p.grpar_ref_id = " . $PgProgGrpParamRef->getId();
+        $query = $query . " where p.grpparref = :pgProgGrpParamRef";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgProgGrpParamRef', $pgProgGrpParamRef->getId());
         //print_r($query);
         return $qb->getResult();
     }
-  
+
+    public function getPgProgLotGrparRefByPgProgLotPgProgGrpParamRef($pgProgLot, $pgProgGrpParamRef) {
+        $query = "select p";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotGrparRef p";
+        $query = $query . " where p.lot_id = :pgProgLot";
+        $query = $query . " where p.grpar_ref_id = :pgProgGrpParamRef";
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgProgLot', $pgProgLot->getId());
+        $qb->setParameter('pgProgGrpParamRef', $pgProgGrpParamRef->getId());
+        //print_r($query);
+        return $qb->getResult();
+    }
 
 }

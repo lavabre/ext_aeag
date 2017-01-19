@@ -39,8 +39,9 @@ class RegionAdminRepository extends EntityRepository {
 
         $query = "select r";
         $query = $query . " from Aeag\AideBundle\Entity\RegionAdmin r";
-        $query = $query . " where r.reg = '" . $reg . "'";
+        $query = $query . " where r.reg = :reg";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('reg', $reg);
 
         //print_r($query);
         return $qb->getOneOrNullResult();

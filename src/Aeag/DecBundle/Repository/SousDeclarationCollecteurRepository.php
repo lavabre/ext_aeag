@@ -18,66 +18,72 @@ class SousDeclarationCollecteurRepository extends EntityRepository {
     public function getSousDeclarationCollecteurByDeclarationCollecteur($declarationCollecteur) {
         $query = "select sd";
         $query = $query . " from Aeag\DecBundle\Entity\SousDeclarationCollecteur sd";
-        $query = $query . " where sd.DeclarationCollecteur = " . $declarationCollecteur;
+        $query = $query . " where sd.DeclarationCollecteur = :declarationCollecteur";
         $query = $query . " order by sd.numero";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('declarationCollecteur', $declarationCollecteur);
         //print_r($query);
         return $qb->getResult();
     }
-    
+
     /**
      * @return array
      */
     public function getSousDeclarationCollecteurByDeclarationCollecteurNumero($declarationCollecteur, $numero) {
         $query = "select sd";
         $query = $query . " from Aeag\DecBundle\Entity\SousDeclarationCollecteur sd";
-        $query = $query . " where sd.DeclarationCollecteur = " . $declarationCollecteur;
-        $query = $query . " and sd.numero = " . $numero;
+        $query = $query . " where sd.DeclarationCollecteur = :declarationCollecteur";
+        $query = $query . " and sd.numero = :numero";
         $query = $query . " order by sd.numero";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('declarationCollecteur', $declarationCollecteur);
+        $qb->setParameter('numero', $numero);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-    
+
     /**
      * @return array
      */
     public function getSousDeclarationCollecteurByDeclarationCollecteurStatut($declarationCollecteur, $statut) {
         $query = "select sd";
         $query = $query . " from Aeag\DecBundle\Entity\SousDeclarationCollecteur sd";
-        $query = $query . " where sd.DeclarationCollecteur = " . $declarationCollecteur;
-        $query = $query . " and sd.statut = '" . $statut . "'";
+        $query = $query . " where sd.DeclarationCollecteur = :declarationCollecteur";
+        $query = $query . " and sd.statut = :statut";
         $query = $query . " order by sd.numero";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('declarationCollecteur', $declarationCollecteur);
+        $qb->setParameter('statut', $statut);
         //print_r($query);
         return $qb->getResult();
     }
 
-    
-     /**
+    /**
      * @return array
      */
     public function getSousDeclarationCollecteurById($id) {
         $query = "select sd";
         $query = $query . " from Aeag\DecBundle\Entity\SousDeclarationCollecteur sd";
-        $query = $query . " where sd.id = " . $id;
+        $query = $query . " where sd.id = :id";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('id', $id);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-    
-     /**
+
+    /**
      * @return value
      */
     public function getNumeroLibreById($declarationCollecteur) {
         $query = "select max(sd.numero) + 1";
         $query = $query . " from Aeag\DecBundle\Entity\SousDeclarationCollecteur sd";
-        $query = $query . " where sd.DeclarationCollecteur = " . $declarationCollecteur;
+        $query = $query . " where sd.DeclarationCollecteur =:declarationCollecteur";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('declarationCollecteur', $declarationCollecteur);
         // print_r($query);
         return $qb->getSingleScalarResult();
     }
-    
+
     /**
      * @return value
      */
@@ -86,21 +92,23 @@ class SousDeclarationCollecteurRepository extends EntityRepository {
         $query = $query . " from Aeag\DecBundle\Entity\DeclarationCollecteur d,";
         $query = $query . " Aeag\DecBundle\Entity\SousDeclarationCollecteur sd";
         $query = $query . " where sd.DeclarationCollecteur = d.id ";
-        $query = $query . " and d.annee = " . $annee;
+        $query = $query . " and d.annee = :annee";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('annee', $annee);
         // print_r($query);
         return $qb->getSingleScalarResult();
     }
-    
-    
-     public function getCountStatutByDeclarationCollecteurStatut($declarationCollecteur, $statut) {
+
+    public function getCountStatutByDeclarationCollecteurStatut($declarationCollecteur, $statut) {
 
         $query = "select count(d.id)";
         $query = $query . " from Aeag\DecBundle\Entity\SousDeclarationCollecteur d";
-        $query = $query . " where d.DeclarationCollecteur = " . $declarationCollecteur;
-        $query = $query . " and d.statut = '" . $statut . "'";
+        $query = $query . " where d.DeclarationCollecteur = :declarationCollecteur";
+        $query = $query . " and d.statut = :statut";
 
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('declarationCollecteur', $declarationCollecteur);
+        $qb->setParameter('statut', $statut);
 
         //print_r($query);
         return $qb->getSingleScalarResult();

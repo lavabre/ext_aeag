@@ -25,8 +25,9 @@ class PgCmdDemandeRepository extends EntityRepository {
     public function getPgCmdDemandeById($id) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdDemande p";
-        $query = $query . " where p.id = " . $id;
+        $query = $query . " where p.id = :id";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('id', $id);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
@@ -34,8 +35,9 @@ class PgCmdDemandeRepository extends EntityRepository {
     public function getPgCmdDemandeByCodeDemandeCmd($codeDemandeCmd) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdDemande p";
-        $query = $query . " where p.codeDemandeCmd = " . $codeDemandeCmd;
+        $query = $query . " where p.codeDemandeCmd = :codeDemandeCmd";
         $qb = $this->_em->createQuery($query);
+         $qb->setParameter('codeDemandeCmd', $codeDemandeCmd);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
@@ -43,8 +45,9 @@ class PgCmdDemandeRepository extends EntityRepository {
     public function getPgCmdDemandeByAnneeProg($anneeProg) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdDemande p";
-        $query = $query . " where p.anneeProg = " . $anneeProg;
+        $query = $query . " where p.anneeProg = :anneeProg";
         $qb = $this->_em->createQuery($query);
+         $qb->setParameter('anneeProg', $anneeProg);
         //print_r($query);
         return $qb->getResult();
     }
@@ -52,8 +55,9 @@ class PgCmdDemandeRepository extends EntityRepository {
     public function getPgCmdDemandeByCommanditaire($pgRefCorresProducteur) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdDemande p";
-        $query = $query . " where p.commanditaire = " . $pgRefCorresProducteur->getAdrCorid();
+        $query = $query . " where p.commanditaire = :pgRefCorresProducteur";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgRefCorresProducteur', $pgRefCorresProducteur->getAdrCorid());
         //print_r($query);
         return $qb->getResult();
     }
@@ -61,9 +65,11 @@ class PgCmdDemandeRepository extends EntityRepository {
     public function getPgCmdDemandeByCommanditaireAnneeProg($pgRefCorresProducteur, $anneeProg) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdDemande p";
-        $query = $query . " where p.commanditaire = " . $pgRefCorresProducteur->getAdrCorid();
-        $query = $query . " and p.anneeProg = " . $anneeProg;
+        $query = $query . " where p.commanditaire = :pgRefCorresProducteur";
+        $query = $query . " and p.anneeProg = :anneeProg";
         $qb = $this->_em->createQuery($query);
+         $qb->setParameter('pgRefCorresProducteur', $pgRefCorresProducteur->getAdrCorid());
+          $qb->setParameter('anneeProg', $anneeProg);
         //print_r($query);
         return $qb->getResult();
     }
@@ -71,8 +77,9 @@ class PgCmdDemandeRepository extends EntityRepository {
     public function getPgCmdDemandeByPrestataire($pgRefCorresPresta) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdDemande p";
-        $query = $query . " where p.prestataire = " . $pgRefCorresPresta->getAdrCorid();
+        $query = $query . " where p.prestataire = :pgRefCorresPresta";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgRefCorresPresta', $pgRefCorresPresta->getAdrCorid());
         //print_r($query);
         return $qb->getResult();
     }
@@ -80,9 +87,11 @@ class PgCmdDemandeRepository extends EntityRepository {
     public function getPgCmdDemandeByPrestataireAnneeProg($pgRefCorresPresta, $anneeProg) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdDemande p";
-        $query = $query . " where p.prestataire = " . $pgRefCorresPresta->getAdrCorid();
-        $query = $query . " and p.anneeProg = " . $anneeProg;
+        $query = $query . " where p.prestataire = :pgRefCorresPresta";
+        $query = $query . " and p.anneeProg = :anneeProg";
         $qb = $this->_em->createQuery($query);
+         $qb->setParameter('pgRefCorresPresta', $pgRefCorresPresta->getAdrCorid());
+         $qb->setParameter('anneeProg', $anneeProg);
         //print_r($query);
         return $qb->getResult();
     }
@@ -105,9 +114,11 @@ class PgCmdDemandeRepository extends EntityRepository {
     public function getPgCmdDemandesByLotanPeriode($pgProgLotAn, $pgProgPeriodes) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdDemande p";
-        $query = $query . " where p.lotan = " . $pgProgLotAn->getId();
-        $query = $query . " and p.periode= " . $pgProgPeriodes->getid();
+        $query = $query . " where p.lotan = :pgProgLotAn";
+        $query = $query . " and p.periode= :pgProgPeriodes";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgProgLotAn', $pgProgLotAn->getId());
+        $qb->setParameter('pgProgPeriodes', $pgProgPeriodes->getid());
         //print_r($query);
         return $qb->getResult();
     }
@@ -115,12 +126,15 @@ class PgCmdDemandeRepository extends EntityRepository {
     public function getPgCmdDemandeByLotanPrestatairePeriode($pgProgLotAn, $pgRefCorresPresta, $pgProgPeriodes) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdDemande p";
-        $query = $query . " where p.lotan = " . $pgProgLotAn->getId();
+        $query = $query . " where p.lotan =:pgProgLotAn";
         if ($pgRefCorresPresta) {
-            $query = $query . " and p.prestataire = " . $pgRefCorresPresta->getAdrCorid();
+            $query = $query . " and p.prestataire = :pgRefCorresPresta";
         }
-        $query = $query . " and p.periode= " . $pgProgPeriodes->getid();
+        $query = $query . " and p.periode= :pgProgPeriodes";
         $qb = $this->_em->createQuery($query);
+          $qb->setParameter('pgProgLotAn', $pgProgLotAn->getId());
+        $qb->setParameter('pgRefCorresPresta', $pgRefCorresPresta->getAdrCorid());
+        $qb->setParameter('pgProgPeriodes', $pgProgPeriodes->getid());
         //print_r($query);
         return $qb->getOneOrNullResult();
     }

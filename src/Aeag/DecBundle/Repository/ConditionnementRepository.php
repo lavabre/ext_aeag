@@ -34,8 +34,9 @@ class ConditionnementRepository extends EntityRepository {
     public function getConditionnementByCode($code) {
         $query = "select c";
         $query = $query . " from Aeag\DecBundle\Entity\Conditionnement c";
-        $query = $query . " where c.code = '" . $code . "'";
+        $query = $query . " where c.code = :code";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('code', code);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }

@@ -34,22 +34,26 @@ class OuvrageFiliereRepository extends EntityRepository {
     public function getOuvrageFiliereByOuvrage($ouvrage) {
         $query = "select c";
         $query = $query . " from Aeag\DecBundle\Entity\OuvrageFiliere c";
-        $query = $query . " where c.Ouvrage = " . $ouvrage ;
+        $query = $query . " where c.Ouvrage = :ouvrage";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('ouvrage', $ouvrage);
         //print_r($query);
         return $qb->getResult();
     }
-    
-      /**
+
+    /**
      * @return array
      */
-    public function getOuvrageFiliereByOuvrageFiliere($ouvrage,$filiere, $annee) {
+    public function getOuvrageFiliereByOuvrageFiliere($ouvrage, $filiere, $annee) {
         $query = "select c";
         $query = $query . " from Aeag\DecBundle\Entity\OuvrageFiliere c";
-        $query = $query . " where c.Ouvrage = " . $ouvrage;
-        $query = $query . " and c.Filiere = '" . $filiere ."'";
-        $query = $query . " and c.annee = " . $annee ;
+        $query = $query . " where c.Ouvrage = :ouvrage";
+        $query = $query . " and c.Filiere = :filiere";
+        $query = $query . " and c.annee = :annee";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('ouvrage', $ouvrage);
+        $qb->setParameter('filiere', $filiere);
+        $qb->setParameter('annee', $annee);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }

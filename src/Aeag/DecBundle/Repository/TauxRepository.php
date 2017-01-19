@@ -31,12 +31,14 @@ class TauxRepository extends EntityRepository {
     /**
      * @return array
      */
-    public function getTauxByAnneeCode($annee,$code) {
+    public function getTauxByAnneeCode($annee, $code) {
         $query = "select c";
         $query = $query . " from Aeag\DecBundle\Entity\Taux c";
-        $query = $query . " where c.annee = '" . $annee . "'";
-        $query = $query . " and c.code = '" . $code . "'";
+        $query = $query . " where c.annee = :annee";
+        $query = $query . " and c.code = :code";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('annee', $annee);
+        $qb->setParameter('code', $code);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }

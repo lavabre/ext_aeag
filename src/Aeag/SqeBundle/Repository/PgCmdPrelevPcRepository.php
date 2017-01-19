@@ -9,8 +9,7 @@ use Doctrine\ORM\EntityRepository;
  * @package Aeag\SqeBundle\Repository
  */
 class PgCmdPrelevPcRepository extends EntityRepository {
-    
-      
+
     /**
      * @return array
      */
@@ -28,50 +27,54 @@ class PgCmdPrelevPcRepository extends EntityRepository {
     public function getPgCmdPrelevPcByPrelev($pgCmdPrelev) {
         $query = "select c";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelevPc c";
-        $query = $query . " where c.prelev = " . $pgCmdPrelev->getId() ;
-        $query = $query . "order by c.zoneVerticale " ;
+        $query = $query . " where c.prelev = :pgCmdPrelev";
+        $query = $query . " order by c.zoneVerticale ";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgCmdPrelev', $pgCmdPrelev->getId());
         //print_r($query);
         return $qb->getResult();
     }
-    
+
     /**
      * @return array
      */
     public function getPgCmdPrelevPcByPrelevOrderByProfondeur($pgCmdPrelev) {
         $query = "select c";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelevPc c";
-        $query = $query . " where c.prelev = " . $pgCmdPrelev->getId() ;
-        $query = $query . "order by c.profondeur " ;
+        $query = $query . " where c.prelev = :pgCmdPrelev";
+        $query = $query . " order by c.profondeur ";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgCmdPrelev', $pgCmdPrelev->getId());
         //print_r($query);
         return $qb->getResult();
     }
-    
-     /**
+
+    /**
      * @return array
      */
     public function getPgCmdPrelevPcByPrelevNumOrdre($pgCmdPrelev, $numOrdre) {
         $query = "select c";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelevPc c";
-        $query = $query . " where c.prelev = " . $pgCmdPrelev->getId() ;
-        $query = $query . " and c.numOrdre = " . $numOrdre ;
+        $query = $query . " where c.prelev = :pgCmdPrelev";
+        $query = $query . " and c.numOrdre = :numOrdre";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgCmdPrelev', $pgCmdPrelev->getId());
+        $qb->setParameter('numOrdre', $numOrdre);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-    
+
     /**
      * @return array
      */
     public function getMaxNumOrdreByPrelev($pgCmdPrelev) {
         $query = "select max(c.numOrdre)";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelevPc c";
-        $query = $query . " where c.prelev = " . $pgCmdPrelev->getId() ;
+        $query = $query . " where c.prelev = :pgCmdPrelev";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgCmdPrelev', $pgCmdPrelev->getId());
         //print_r($query);
         return $qb->getSingleScalarResult();
     }
-    
-   
+
 }

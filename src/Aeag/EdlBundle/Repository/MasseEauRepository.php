@@ -15,25 +15,18 @@ use Symfony\Component\HttpFoundation\Response;
 class MasseEauRepository extends EntityRepository {
 
     public function getMasseEau($euCd, $groupe) {
-        
-        
+
+
         $query = "select m from Aeag\EdlBundle\Entity\MasseEau m";
         $query = $query . " , Aeag\EdlBundle\Entity\EtatType t";
         $query = $query . " where m.typeMe = t.typeMe and m.euCd = :euCd and t.cdGroupe = :groupe";
         $query = $query . " order by t.ordre";
 
-        return new Response ($query);
-
-        try {
-            $query = $qb = $this->_em->createQuery($query)
-                    ->setParameter('euCd', $euCd)
-                    ->setParameter('groupe', $groupe);
-
-            $r = $query->getResult();
-            return reset($r);
-        } catch (Exception $e) {
-            return null;
-        }
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('euCd', $euCd);
+        $qb->setParameter('groupe', $groupe);
+        //print_r($query);
+        return $qb->getResult();
     }
 
 }

@@ -240,5 +240,35 @@ class PgProgLotPeriodeProgRepository extends EntityRepository {
         return $qb->getResult();
     }
     
+     public function getPgProgLotPeriodeProgByPgProgLotAn($pgProgLotAn) {
+
+        $query = "select lotan.id as lotan_id, lotan.lot_id, lotan.annee_prog, lotan.phase_id, lotan.date_modif, lotan.util_modif, lotan.code_statut, lotan.lotan_pere_id, lotan.version,";
+        $query = $query . " stan.id as stan_id, stan.station_id, stan.rsx_id as sta_rsx_id,";
+        $query = $query . " pean.id as pean_id, pean.periode_id, pean.code_statut,";
+        $query = $query . "  gran.id as gran_id, gran.grpar_ref_id, gref.type_grp, gran.presta_dft_id, presta.nom_corres, gran.valide,";
+        $query = $query . " pprog.id as pprog_id, pprog.pprog_compl_id, pprog.statut, pprog.rsx_id as pprog_rsx_id,";
+        $query = $query . " lotana.id as autre_lotan_id, lotana.lot_id as autre_lot_id, lota.nom_lot as autre_lot_nom, grana.presta_dft_id as autre_presta_id, prestaa.nom_corres as autre_presta_nom";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotAn lotan";
+        $query = $query . " join Aeag\SqeBundle\Entity\PgProgLot lot on lot.id = lotan.lot_id";
+        $query = $query . " join Aeag\SqeBundle\Entity\PgProgLotStationAn stan on stan.lotan_id = lotan.id";
+        $query = $query . " join Aeag\SqeBundle\Entity\PgProgLotPeriodeAn pean on pean.lotan_id = lotan.id";
+        $query = $query . " join Aeag\SqeBundle\Entity\PgProgLotGrparAn gran on gran.lotan_id = lotan.id and gran.valide = 'O'";
+        $query = $query . " join Aeag\SqeBundle\Entity\PgProgGrpParam_ref gref on gref.id = gran.grpar_ref_id";
+        $query = $query . " join Aeag\SqeBundle\Entity\PgRefCorresPresta presta on presta.adr_cor_id = gran.presta_dft_id";
+        $query = $query . " join pg_prog_lot_periode_prog pprog on pprog.grpar_an_id = gran.id and pprog.station_an_id = stan.id and pprog.periodan_id = pean.id";
+        $query = $query . " left join Aeag\SqeBundle\Entity\PgProgLotPeriodeProg ppa on ppa.id = pprog.pprog_compl_id";
+        $query = $query . " left join Aeag\SqeBundle\Entity\PgProgLotStationAn stana on stana.id = ppa.station_an_id and stana.station_id = stan.station_id";
+        $query = $query . " left join Aeag\SqeBundle\Entity\PgProgLotPeriodeAn peana on peana.id = ppa.periodan_id and peana.periode_id = pean.periode_id and peana.code_statut <> 'INV'";
+        $query = $query . " left join Aeag\SqeBundle\Entity\PgProgLotGrparAn grana on grana.id = ppa.grpar_an_id and grana.valide = 'O' and grana.grpar_ref_id = gran.grpar_ref_id";
+        $query = $query . " left join Aeag\SqeBundle\Entity\PgPefCorresPresta prestaa on prestaa.adr_cor_id = grana.presta_dft_id";
+        $query = $query . " left join Aeag\SqeBundle\Entity\PgProgLotAn lotana on lotana.id = stana.lotan_id and lotana.lot_id <> lotan.lot_id and lotana.phase_id > 3 and lotana.phase_id < 9";
+        $query = $query . " left join Aeag\SqeBundle\Entity\PgProgLot lota on lota.id = lotana.lot_id and lota.code_milieu = lot.code_milieu";
+        $query = $query . " where lotan.id = :pgProgLotAn";
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgProgLotAn', $pgProgLotAn->getId());
+        //print_r($query);
+        return $qb->getResult();
+    }
+
   
 }

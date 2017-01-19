@@ -27,16 +27,17 @@ class DemandeRepository extends EntityRepository {
         //print_r($query);
         return $qb->getResult();
     }
-    
+
     /**
      * @return array
      */
     public function getDemandesByNom($nom) {
         $query = "select c";
         $query = $query . " from Aeag\DieBundle\Entity\Demande c";
-        $query = $query . " where c.nom = '" . $nom . "'";
+        $query = $query . " where c.nom = :nom";
         $query = $query . " order by c.code";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('nom', $nom);
         //print_r($query);
         return $qb->getResult();
     }
@@ -47,8 +48,9 @@ class DemandeRepository extends EntityRepository {
     public function getDemandeById($id) {
         $query = "select c";
         $query = $query . " from Aeag\DieBundle\Entity\Demande c";
-        $query = $query . " where c.id = " . $id;
+        $query = $query . " where c.id = :id";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('id', $id);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }

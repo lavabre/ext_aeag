@@ -14,15 +14,12 @@ use Doctrine\ORM\EntityRepository;
  * Class StatutRepository
  * @package Aeag\DecBundle\Repository
  */
-class StatutRepository extends EntityRepository
-{
-
+class StatutRepository extends EntityRepository {
 
     /**
      * @return array
      */
-    public function getStatuts()
-    {
+    public function getStatuts() {
 
         $query = "select s";
         $query = $query . " from Aeag\DecBundle\Entity\Statut s";
@@ -38,18 +35,17 @@ class StatutRepository extends EntityRepository
      * @param $code
      * @return mixed
      */
-    public function getStatutByCode($code)
-    {
+    public function getStatutByCode($code) {
 
         $query = "select s";
         $query = $query . " from Aeag\DecBundle\Entity\Statut s";
-        $query = $query . " where s.code = '" . $code . "'";
+        $query = $query . " where s.code = :code";
 
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('code', $code);
 
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-
 
 }
