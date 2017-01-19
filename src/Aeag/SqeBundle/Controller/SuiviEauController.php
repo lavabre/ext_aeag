@@ -75,6 +75,7 @@ class SuiviEauController extends Controller {
                     $trouve = false;
                     $pgProgLotGrparAns = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotan($pgProgLotAn);
                     foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
+						$pgProgGrpParamRef = $pgProgLotGrparAn->getgrparRef();
                         if ($pgProgGrpParamRef->getSupport()) {
                             if ($pgProgLotGrparAn->getgrparRef()->getSupport()->getCodeSupport() == '3') {
                                 $trouve = true;

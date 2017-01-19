@@ -17,6 +17,6 @@ if [ ! -d "$dirlog" ]; then
   mkdir $dirlog
 fi
 
-if [ $(ps -ax | grep -v grep | grep 'rai:process' | wc -l) -lt 4 ]; then
+if [ $(ps -ax | grep -v grep | grep 'rai:process' | wc -l) -lt 2 ]; then
     php $dircmd rai:process -e $2 >> $dirlog/process_$jour.log
 fi
