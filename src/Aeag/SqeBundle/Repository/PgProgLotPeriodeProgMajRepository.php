@@ -45,7 +45,7 @@ class PgProgLotPeriodeProgMajRepository extends EntityRepository {
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotPeriodeProgMaj p";
         $query = $query . " where p.stationAn = :stationAn";
         $qb = $this->_em->createQuery($query);
-         $qb->setParameter('stationAn', $stationAn);
+        $qb->setParameter('stationAn', $stationAn);
         //print_r($query);
         return $qb->getResult();
     }
@@ -53,8 +53,9 @@ class PgProgLotPeriodeProgMajRepository extends EntityRepository {
     public function getPgProgLotPeriodeProgMajByGrparAn($grparAn) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotPeriodeProgMaj p";
-        $query = $query . " where p.grparAn = " . $grparAn;
+        $query = $query . " where p.grparAn = :grparAn";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('grparAn', $grparAn);
         //print_r($query);
         return $qb->getResult();
     }
@@ -62,8 +63,9 @@ class PgProgLotPeriodeProgMajRepository extends EntityRepository {
     public function getPgProgLotPeriodeProgMajByPeriodeAn($periodan) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotPeriodeProgMaj p";
-        $query = $query . " where p.periodan = " . $periodan;
+        $query = $query . " where p.periodan = :periodan";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('periodan', $periodan);
         //print_r($query);
         return $qb->getResult();
     }
@@ -71,9 +73,11 @@ class PgProgLotPeriodeProgMajRepository extends EntityRepository {
     public function getPgProgLotPeriodeProgMajByStationAnGrparAn($stationAn, $grparAn) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotPeriodeProgMaj p";
-        $query = $query . " where p.stationAn = " . $stationAn;
-        $query = $query . " and p.grparAn = " . $grparAn;
+        $query = $query . " where p.stationAn = :stationAn";
+        $query = $query . " and p.grparAn = :grparAn";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('stationAn', $stationAn);
+        $qb->setParameter('grparAn', $grparAn);
         //print_r($query);
         return $qb->getResult();
     }
@@ -81,9 +85,11 @@ class PgProgLotPeriodeProgMajRepository extends EntityRepository {
     public function getPgProgLotPeriodeProgMajByStationAnPeriodeAn($stationAn, $periodan) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotPeriodeProgMaj p";
-        $query = $query . " where p.stationAn = " . $stationAn;
-        $query = $query . " and p.periodan = " . $periodan;
+        $query = $query . " where p.stationAn = :stationAn";
+        $query = $query . " and p.periodan = :periodan";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('stationAn', $stationAn);
+        $qb->setParameter('periodan', $periodan);
         //print_r($query);
         return $qb->getResult();
     }
@@ -91,10 +97,13 @@ class PgProgLotPeriodeProgMajRepository extends EntityRepository {
     public function getPgProgLotPeriodeProgMajByStationAnGrparAnPeriodeAn($stationAn, $grparAn, $periodan) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotPeriodeProgMaj p";
-        $query = $query . " where p.stationAn = " . $stationAn;
-        $query = $query . " and p.grparAn = " . $grparAn;
-        $query = $query . " and p.periodan = " . $periodan;
+        $query = $query . " where p.stationAn = :stationAn";
+        $query = $query . " and p.grparAn = :grparAn";
+        $query = $query . " and p.periodan = :periodan";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('stationAn', $stationAn);
+        $qb->setParameter('grparAn', $grparAn);
+        $qb->setParameter('periodan', $periodan);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
@@ -102,9 +111,11 @@ class PgProgLotPeriodeProgMajRepository extends EntityRepository {
     public function getPgProgLotPeriodeProgMajByGrparAnPeriodeAn($grparAn, $periodan) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotPeriodeProgMaj p";
-        $query = $query . " where p.grparAn = " . $grparAn;
-        $query = $query . " and p.periodan = " . $periodan;
+        $query = $query . " where p.grparAn = :grparAn";
+        $query = $query . " and p.periodan = :periodan";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('grparAn', $grparAn);
+        $qb->setParameter('periodan', $periodan);
         //print_r($query);
         return $qb->getResult();
     }
@@ -112,8 +123,9 @@ class PgProgLotPeriodeProgMajRepository extends EntityRepository {
     public function countPgProgLotPeriodeProgMajByGrparAn($grparAn) {
         $query = "select count(p.id)";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotPeriodeProgMaj p";
-        $query = $query . " where p.grparAn = " . $grparAn;
+        $query = $query . " where p.grparAn = :grparAn";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('grparAn', $grparAn);
         //print_r($query);
         return $qb->getSingleScalarResult();
     }
@@ -121,8 +133,9 @@ class PgProgLotPeriodeProgMajRepository extends EntityRepository {
     public function countPgProgLotPeriodeProgMajByStationAn($stationAn) {
         $query = "select count(p.id)";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotPeriodeProgMaj p";
-        $query = $query . " where p.stationAn = " . $stationAn;
+        $query = $query . " where p.stationAn = :stationAn";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('stationAn', $stationAn);
         //print_r($query);
         return $qb->getSingleScalarResult();
     }
@@ -130,8 +143,9 @@ class PgProgLotPeriodeProgMajRepository extends EntityRepository {
     public function countPgProgLotPeriodeProgMajByPeriodeAn($periodan) {
         $query = "select count(p.id)";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotPeriodeProgMaj p";
-        $query = $query . " where p.periodan = " . $periodan;
+        $query = $query . " where p.periodan = :periodan";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('periodan', $periodan);
         //print_r($query);
         return $qb->getSingleScalarResult();
     }
@@ -139,8 +153,9 @@ class PgProgLotPeriodeProgMajRepository extends EntityRepository {
     public function countStationAnByGrparAn($grparAn) {
         $query = "select count( distinct p.stationAn)";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotPeriodeProgMaj p";
-        $query = $query . " where p.grparAn = " . $grparAn;
+        $query = $query . " where p.grparAn = :grparAn";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('grparAn', $grparAn);
         //print_r($query);
         return $qb->getSingleScalarResult();
     }
@@ -148,8 +163,9 @@ class PgProgLotPeriodeProgMajRepository extends EntityRepository {
     public function getPgProgLotPeriodeProgMajByPprogCompl($pprogCompl) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotPeriodeProgMaj p";
-        $query = $query . " where p.pprogCompl = " . $pprogCompl;
+        $query = $query . " where p.pprogCompl = :pprogCompl";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pprogCompl', $pprogCompl);
         //print_r($query);
         return $qb->getResult();
     }
