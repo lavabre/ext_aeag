@@ -420,6 +420,10 @@
             $('#idAttente').hide();
             $('#modalTraitementEncours').hide();
             
+            $('#idForm').submit(function() {
+              $('#modalTraitementEncours').modal();
+            });
+
                   
            {# url = '{{ path('AeagUserBundle_Statistiques') }}';
             $('footer a').attr('href', url);
