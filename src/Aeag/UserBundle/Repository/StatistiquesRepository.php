@@ -39,15 +39,16 @@ class StatistiquesRepository extends EntityRepository {
 
         $query = "select u";
         $query = $query . " from Aeag\UserBundle\Entity\Statistiques u";
-        $query = $query . " where u.id = " . $id;
+        $query = $query . " where u.id = :id";
 
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('id', $id);
 
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-    
-      /**
+
+    /**
      * @param $id
      * @return mixed
      */
@@ -55,9 +56,10 @@ class StatistiquesRepository extends EntityRepository {
 
         $query = "select u";
         $query = $query . " from Aeag\UserBundle\Entity\Statistiques u";
-        $query = $query . " where u.ip = '" . $ip . "'";
+        $query = $query . " where u.ip = :ip";
 
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('ip', $ip);
 
         //print_r($query);
         return $qb->getResult();
@@ -67,29 +69,32 @@ class StatistiquesRepository extends EntityRepository {
 
         $query = "select u";
         $query = $query . " from Aeag\UserBundle\Entity\Statistiques u";
-        $query = $query . " where u.user = " . $userId;
+        $query = $query . " where u.user = :userId";
 
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('userId', $userId);
 
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
 
     public function getStatistiquesByUserDateConnexion($userId, $dateConnexion) {
-        
-           
+
+
         $query = "select u";
         $query = $query . " from Aeag\UserBundle\Entity\Statistiques u";
-        $query = $query . " where u.user = " . $userId;
-        $query = $query . " and  to_char(u.dateDebutConnexion,'YYYY-MM-DD') = '" . $dateConnexion->format('Y-m-d') . "'";
+        $query = $query . " where u.user = :userId";
+        $query = $query . " and  to_char(u.dateDebutConnexion,'YYYY-MM-DD') = :dateConnexion";
 
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('userId', $userId);
+        $qb->setParameter('dateConnexion', $dateConnexion->format('Y-m-d'));
 
-       //  print_r($query);
+        //  print_r($query);
         return $qb->getOneOrNullResult();
     }
-    
-     public function getConnectes() {
+
+    public function getConnectes() {
 
         $query = "select u";
         $query = $query . " from Aeag\UserBundle\Entity\Statistiques u";
@@ -111,8 +116,8 @@ class StatistiquesRepository extends EntityRepository {
         //print_r($query);
         return $qb->getSingleScalarResult();
     }
-    
-     public function getNbConnectes() {
+
+    public function getNbConnectes() {
 
         $query = "select count(u.id)";
         $query = $query . " from Aeag\UserBundle\Entity\Statistiques u";

@@ -34,8 +34,9 @@ class PgProgWebuserZgeorefRepository extends EntityRepository {
     public function getPgProgWebuserZgeorefByZgeoref($pgProgZoneGeoRef) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgWebuserZgeoref p";
-        $query = $query . " where p.zgeoref = " . $pgProgZoneGeoRef->getId();
+        $query = $query . " where p.zgeoref = :pgProgZoneGeoRef";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgProgZoneGeoRef', $pgProgZoneGeoRef->getId());
         //print_r($query);
         return $qb->getResult();
     }
@@ -46,8 +47,9 @@ class PgProgWebuserZgeorefRepository extends EntityRepository {
     public function getPgProgWebuserZgeorefByWebuser($pgProgWebusers) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgWebuserZgeoref p";
-        $query = $query . " where p.webuser = " . $pgProgWebusers->getId();
+        $query = $query . " where p.webuser = :pgProgWebusers";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgProgWebusers', $pgProgWebusers->getId());
         //print_r($query);
         return $qb->getResult();
     }
@@ -55,9 +57,11 @@ class PgProgWebuserZgeorefRepository extends EntityRepository {
     public function getPgProgWebuserZgeorefByWebuserZgeoref($pgProgWebusers, $pgProgZoneGeoRef) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgWebuserZgeoref p";
-        $query = $query . " where p.zgeoref = " . $pgProgZoneGeoRef->getId();
-        $query = $query . " and p.webuser = " . $pgProgWebusers->getId();
+        $query = $query . " where p.zgeoref = :pgProgZoneGeoRef";
+        $query = $query . " and p.webuser = :pgProgWebusers";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgProgWebusers', $pgProgWebusers->getId());
+        $qb->setParameter('pgProgZoneGeoRef', $pgProgZoneGeoRef->getId());
         //print_r($query);
         return $qb->getOneOrNullResult();
     }

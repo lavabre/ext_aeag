@@ -34,17 +34,19 @@ class PgProgZgeorefStationRepository extends EntityRepository {
     public function getpgProgZgeorefStationByZgeoref($pgProgZoneGeoref) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\pgProgZgeorefStation p";
-        $query = $query . " where p.zgeoref = " . $pgProgZoneGeoref->getId();
+        $query = $query . " where p.zgeoref = :pgProgZoneGeoref";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgProgZoneGeoref', $pgProgZoneGeoref->getId());
         //print_r($query);
         return $qb->getResult();
     }
-    
-     public function getNbPgProgZgeorefStationByZgeoref($pgProgZoneGeoref) {
+
+    public function getNbPgProgZgeorefStationByZgeoref($pgProgZoneGeoref) {
         $query = "select count(p.stationMesure)";
         $query = $query . " from Aeag\SqeBundle\Entity\pgProgZgeorefStation p";
-        $query = $query . " where p.zgeoref = " . $pgProgZoneGeoref->getId();
+        $query = $query . " where p.zgeoref = :pgProgZoneGeoref";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgProgZoneGeoref', $pgProgZoneGeoref->getId());
         //print_r($query);
         return $qb->getSingleScalarResult();
     }
@@ -55,8 +57,9 @@ class PgProgZgeorefStationRepository extends EntityRepository {
     public function getpgProgZgeorefStationByStationMesure($pgRefStationMesure) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\pgProgZgeorefStation p";
-        $query = $query . " where p.stationMesure = " . $pgRefStationMesure->getOuvFoncId();
+        $query = $query . " where p.stationMesure = :pgRefStationMesure";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgRefStationMesure', $pgRefStationMesure->getOuvFoncId());
         //print_r($query);
         return $qb->getResult();
     }
@@ -64,9 +67,11 @@ class PgProgZgeorefStationRepository extends EntityRepository {
     public function getpgProgZgeorefStationByZgeorefStaionMesure($pgProgZoneGeoref, $pgRefStationMesure) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\pgProgZgeorefStation p";
-        $query = $query . " where p.zgeoref = " . $pgProgZoneGeoref->getId();
-        $query = $query . " and p.stationMesure = " . $pgRefStationMesure->getOuvFoncId();
+        $query = $query . " where p.zgeoref = :pgProgZoneGeoref";
+        $query = $query . " and p.stationMesure = :pgRefStationMesure";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgProgZoneGeoref', $pgProgZoneGeoref->getId());
+        $qb->setParameter('pgRefStationMesure', $pgRefStationMesure->getOuvFoncId());
         //print_r($query);
         return $qb->getOneOrNullResult();
     }

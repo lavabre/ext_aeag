@@ -31,8 +31,9 @@ class PgSandreParametresRepository extends EntityRepository {
     public function getPgSandreParametresByCodeParametre($codeParametre) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgSandreParametres p";
-        $query = $query . " where p.codeParametre = '" . $codeParametre . "'";
+        $query = $query . " where p.codeParametre = :codeParametre";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('codeParametre', $codeParametre);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }

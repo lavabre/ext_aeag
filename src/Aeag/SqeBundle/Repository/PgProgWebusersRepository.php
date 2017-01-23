@@ -34,8 +34,9 @@ class PgProgWebusersRepository extends EntityRepository {
     public function getPgProgWebusersByid($id) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgWebusers p";
-        $query = $query . " where p.id = " . $id;
+        $query = $query . " where p.id = :id";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('id', $id);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
@@ -46,8 +47,9 @@ class PgProgWebusersRepository extends EntityRepository {
     public function getPgProgWebusersByExtid($extId) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgWebusers p";
-        $query = $query . " where p.extId = " . $extId;
+        $query = $query . " where p.extId = :extId";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('extId', $extId);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
@@ -55,8 +57,9 @@ class PgProgWebusersRepository extends EntityRepository {
     public function getPgProgWebusersByNom($nom) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgWebusers p";
-        $query = $query . " where p.nom = '" . $nom . "'";
+        $query = $query . " where p.nom = :nom";
         $qb = $this->_em->createQuery($query);
+         $qb->setParameter('nom', $nom);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
@@ -64,9 +67,11 @@ class PgProgWebusersRepository extends EntityRepository {
     public function getPgProgWebusersByLoginPassword($login,$pwd) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgWebusers p";
-        $query = $query . " where p.login= '" . $login . "'";
-        $query = $query . " and p.pwd= '" . $pwd . "'";
+        $query = $query . " where p.login= :login";
+        $query = $query . " and p.pwd= :pwd";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('login', $login);
+        $qb->setParameter('pwd', $pwd);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
@@ -74,8 +79,9 @@ class PgProgWebusersRepository extends EntityRepository {
      public function getPgProgWebusersByPrestataire($prestataire) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgWebusers p";
-        $query = $query . " where p.prestataire = " . $prestataire->getAdrCorId();
+        $query = $query . " where p.prestataire = :prestataire";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('prestataire', $prestataire->getAdrCorId());
         //print_r($query);
          return $qb->getResult();
     }
@@ -83,9 +89,10 @@ class PgProgWebusersRepository extends EntityRepository {
     public function getPgProgWebusersByTypeUser($typeUser) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgWebusers p";
-        $query = $query . " where p.typeUser = '" . $typeUser . "'";
+        $query = $query . " where p.typeUser = :typeUser";
         $query = $query . " order by p.nom";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('typeUser', $typeUser);
         //print_r($query);
         return $qb->getResult();
     }

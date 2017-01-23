@@ -34,8 +34,9 @@ class PgRefCorresPrestaRepository extends EntityRepository {
     public function getPgRefCorresPrestaByAdrCorId($adrCorId) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgRefCorresPresta p";
-        $query = $query . " where p.adrCorId = " . $adrCorId;
+        $query = $query . " where p.adrCorId = :adrCorId";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('adrCorId', $adrCorId);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
@@ -43,8 +44,9 @@ class PgRefCorresPrestaRepository extends EntityRepository {
     public function getPgRefCorresPrestaByAncnum($ancnum) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgRefCorresPresta p";
-        $query = $query . " where p.ancnum = '" . $ancnum . "'";
+        $query = $query . " where p.ancnum = :ancnum";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('ancnum', $ancnum);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
@@ -52,8 +54,9 @@ class PgRefCorresPrestaRepository extends EntityRepository {
     public function getPgRefCorresPrestaByCodeSiret($codeSiret) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgRefCorresPresta p";
-        $query = $query . " where p.codeSiret = '" . $codeSiret . "'";
+        $query = $query . " where p.codeSiret = :codeSiret";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('codeSiret', $codeSiret);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
@@ -61,8 +64,9 @@ class PgRefCorresPrestaRepository extends EntityRepository {
     public function getPgRefCorresPrestaByCodeSandre($codeSandre) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgRefCorresPresta p";
-        $query = $query . " where p.codeSandre = '" . $codeSandre . "'";
+        $query = $query . " where p.codeSandre = :codeSandre";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('codeSandre', $codeSandre);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }

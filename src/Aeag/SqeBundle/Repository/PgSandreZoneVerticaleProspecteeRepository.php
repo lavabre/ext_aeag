@@ -28,40 +28,42 @@ class PgSandreZoneVerticaleProspecteeRepository extends EntityRepository {
         return $qb->getResult();
     }
 
-   
     public function getPgSandreZoneVerticaleProspecteeByCodeZone($codeZone) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgSandreZoneVerticaleProspectee p";
-        $query = $query . " where p.codeZone = '" . $codeZone . "'";
+        $query = $query . " where p.codeZone = :codeZone";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('codeZone', $codeZone);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-    
-    public function getPgSandreZoneVerticaleProspecteeByMarche($PgProgMarche) {
+
+    public function getPgSandreZoneVerticaleProspecteeByMarche($pgProgMarche) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgSandreZoneVerticaleProspectee p";
-        $query = $query . " where p.marche = " . $PgProgMarche->getid();
+        $query = $query . " where p.marche = :pgProgMarche";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgProgMarche', $pgProgMarche->getid());
         //print_r($query);
         return $qb->getResult();
     }
 
-
-    public function getPgSandreZoneVerticaleProspecteeByTypeMilieu($PgProgTypeMilieu) {
+    public function getPgSandreZoneVerticaleProspecteeByTypeMilieu($pgProgTypeMilieu) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgSandreZoneVerticaleProspectee p";
-        $query = $query . " where p.typeMilieu = " . $PgProgTypeMilieu->getId();
+        $query = $query . " where p.typeMilieu = :pgProgTypeMilieu";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgProgTypeMilieu', $pgProgTypeMilieu->getid());
         //print_r($query);
         return $qb->getResult();
     }
-    
-    public function getPgSandreZoneVerticaleProspecteeByTitulaire($PgRefCorresPresta) {
+
+    public function getPgSandreZoneVerticaleProspecteeByTitulaire($pgRefCorresPresta) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgSandreZoneVerticaleProspectee p";
-        $query = $query . " where p.titulaire = " . $PgRefCorresPresta->getAdrCorId() ;
+        $query = $query . " where p.titulaire = :pgRefCorresPresta";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgRefCorresPresta', $pgRefCorresPresta->getAdrCorId());
         //print_r($query);
         return $qb->getResult();
     }

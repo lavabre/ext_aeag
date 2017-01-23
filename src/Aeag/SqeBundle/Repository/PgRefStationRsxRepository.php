@@ -34,21 +34,22 @@ class PgRefStationRsxRepository extends EntityRepository {
     public function getPgRefStationRsxByResauMesure($pgRefReseauMesure) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgRefStationRsx p";
-        $query = $query . " where p.reseauMesure = " . $pgRefReseauMesure->getGroupementId();
+        $query = $query . " where p.reseauMesure = :pgRefReseauMesure";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgRefReseauMesure', $pgRefReseauMesure->getGroupementId());
         //print_r($query);
         return $qb->getResult();
     }
-    
+
     public function getNbPgRefStationRsxByReseauMesure($pgRefReseauMesure) {
         $query = "select count(p.stationMesure)";
         $query = $query . " from Aeag\SqeBundle\Entity\PgRefStationRsx p";
-        $query = $query . " where p.reseauMesure = " . $pgRefReseauMesure->getGroupementId();
+        $query = $query . " where p.reseauMesure = :pgRefReseauMesure";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgRefReseauMesure', $pgRefReseauMesure->getGroupementId());
         //print_r($query);
         return $qb->getSingleScalarResult();
     }
-
 
     /**
      * @return array
@@ -56,8 +57,9 @@ class PgRefStationRsxRepository extends EntityRepository {
     public function getPgRefStationRsxByStationMesure($pgRefStationMesure) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgRefStationRsx p";
-        $query = $query . " where p.stationMesure = " . $pgRefStationMesure->getOuvFoncId();
+        $query = $query . " where p.stationMesure = :pgRefStationMesure";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgRefStationMesure', $pgRefStationMesuree->getOuvFoncId());
         //print_r($query);
         return $qb->getResult();
     }
@@ -65,9 +67,11 @@ class PgRefStationRsxRepository extends EntityRepository {
     public function getPgRefStationRsxByReseauMesureStaionMesure($pgRefReseauMesure, $pgRefStationMesure) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgRefStationRsx p";
-        $query = $query . " where p.reseauMesure = " . $pgRefReseauMesure->getgroupementId();
-        $query = $query . " and p.stationMesure = " . $pgRefStationMesure->getOuvFoncId();
+        $query = $query . " where p.reseauMesure = :pgRefReseauMesure";
+        $query = $query . " and p.stationMesure = :pgRefStationMesure";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgRefReseauMesure', $pgRefReseauMesure->getGroupementId());
+        $qb->setParameter('pgRefStationMesure', $pgRefStationMesuree->getOuvFoncId());
         //print_r($query);
         return $qb->getOneOrNullResult();
     }

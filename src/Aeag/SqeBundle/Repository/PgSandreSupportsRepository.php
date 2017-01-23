@@ -34,8 +34,9 @@ class PgSandreSupportsRepository extends EntityRepository {
     public function getPgSandreSupportsByCodeSupport($codeSupport) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgSandreSupports p";
-        $query = $query . " where p.codeSupport = '" . $codeSupport . "'";
+        $query = $query . " where p.codeSupport = :codeSupport";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('codeSupport', $codeSupport);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }

@@ -12,7 +12,7 @@ use Aeag\SqeBundle\Entity\PgCmdDwnldUsrRps;
 
 class ProgrammationAvancementController extends Controller {
 
-    public function hydroIndexAction() {
+    public function hydroIndexAction($anneeProg) {
 
         $user = $this->getUser();
         if (!$user) {
@@ -23,10 +23,12 @@ class ProgrammationAvancementController extends Controller {
         $session->set('controller', 'ProgrammationAvancement');
         $session->set('fonction', 'hydroIndex');
 
-        return $this->render('AeagSqeBundle:Programmation:Avancement\hydroIndex.html.twig');
+        return $this->render('AeagSqeBundle:Programmation:Avancement\hydroIndex.html.twig', array(
+                    'anneeProg' => $anneeProg
+        ));
     }
 
-    public function hydroGlobalAction() {
+    public function hydroGlobalAction($anneeProg) {
 
         $user = $this->getUser();
         if (!$user) {
@@ -41,18 +43,19 @@ class ProgrammationAvancementController extends Controller {
 
         $repoPgProgMarche = $emSqe->getRepository('AeagSqeBundle:PgProgMarche');
 
-        $tableau = $repoPgProgMarche->getAvancementHydrobioGlobal();
+        $tableau = $repoPgProgMarche->getAvancementHydrobioGlobal($anneeProg);
 
 
 //          \Symfony\Component\VarDumper\VarDumper::dump($tableau);
 //          return new Response (''); 
 
         return $this->render('AeagSqeBundle:Programmation:Avancement\hydroGlobal.html.twig', array(
+                    'anneeProg' => $anneeProg,
                     'tableau' => $tableau,
         ));
     }
 
-    public function hydroSupportAction() {
+    public function hydroSupportAction($anneeProg) {
 
         $user = $this->getUser();
         if (!$user) {
@@ -67,13 +70,14 @@ class ProgrammationAvancementController extends Controller {
 
         $repoPgProgMarche = $emSqe->getRepository('AeagSqeBundle:PgProgMarche');
 
-        $tableau = $repoPgProgMarche->getAvancementHydrobioSupport();
+        $tableau = $repoPgProgMarche->getAvancementHydrobioSupport($anneeProg);
 
         return $this->render('AeagSqeBundle:Programmation:Avancement\hydroSupport.html.twig', array(
+                    'anneeProg' => $anneeProg,
                     'tableau' => $tableau));
     }
 
-    public function hydroLotAction() {
+    public function hydroLotAction($anneeProg) {
 
         $user = $this->getUser();
         if (!$user) {
@@ -88,13 +92,14 @@ class ProgrammationAvancementController extends Controller {
 
         $repoPgProgMarche = $emSqe->getRepository('AeagSqeBundle:PgProgMarche');
 
-        $tableau = $repoPgProgMarche->getAvancementHydrobioLot();
+        $tableau = $repoPgProgMarche->getAvancementHydrobioLot($anneeProg);
 
         return $this->render('AeagSqeBundle:Programmation:Avancement\hydroLot.html.twig', array(
+                    'anneeProg' => $anneeProg,
                     'tableau' => $tableau));
     }
 
-    public function hydroStationAction() {
+    public function hydroStationAction($anneeProg) {
 
         $user = $this->getUser();
         if (!$user) {
@@ -109,13 +114,14 @@ class ProgrammationAvancementController extends Controller {
 
         $repoPgProgMarche = $emSqe->getRepository('AeagSqeBundle:PgProgMarche');
 
-        $tableau = $repoPgProgMarche->getAvancementHydrobioStation();
+        $tableau = $repoPgProgMarche->getAvancementHydrobioStation($anneeProg);
 
         return $this->render('AeagSqeBundle:Programmation:Avancement\hydroStation.html.twig', array(
+                    'anneeProg' => $anneeProg,
                     'tableau' => $tableau));
     }
 
-    public function analyseIndexAction() {
+    public function analyseIndexAction($anneeProg) {
 
         $user = $this->getUser();
         if (!$user) {
@@ -126,10 +132,12 @@ class ProgrammationAvancementController extends Controller {
         $session->set('controller', 'ProgrammationAvancement');
         $session->set('fonction', 'analyseIndex');
 
-        return $this->render('AeagSqeBundle:Programmation:Avancement\analyseIndex.html.twig');
+        return $this->render('AeagSqeBundle:Programmation:Avancement\analyseIndex.html.twig', array(
+                    'anneeProg' => $anneeProg
+        ));
     }
 
-    public function analyseGlobalAction() {
+    public function analyseGlobalAction($anneeProg) {
 
         $user = $this->getUser();
         if (!$user) {
@@ -144,18 +152,18 @@ class ProgrammationAvancementController extends Controller {
 
         $repoPgProgMarche = $emSqe->getRepository('AeagSqeBundle:PgProgMarche');
 
-        $tableau = $repoPgProgMarche->getAvancementAnalyseGlobal();
-
+        $tableau = $repoPgProgMarche->getAvancementAnalyseGlobal($anneeProg);
 
 //          \Symfony\Component\VarDumper\VarDumper::dump($tableau);
 //          return new Response (''); 
 
         return $this->render('AeagSqeBundle:Programmation:Avancement\analyseGlobal.html.twig', array(
+                    'anneeProg' => $anneeProg,
                     'tableau' => $tableau,
         ));
     }
 
-    public function analysePeriodeAction() {
+    public function analysePeriodeAction($anneeProg) {
 
         $user = $this->getUser();
         if (!$user) {
@@ -170,18 +178,19 @@ class ProgrammationAvancementController extends Controller {
 
         $repoPgProgMarche = $emSqe->getRepository('AeagSqeBundle:PgProgMarche');
 
-        $tableau = $repoPgProgMarche->getAvancementAnalysePeriode();
+        $tableau = $repoPgProgMarche->getAvancementAnalysePeriode($anneeProg);
 
 
 //          \Symfony\Component\VarDumper\VarDumper::dump($tableau);
 //          return new Response (''); 
 
         return $this->render('AeagSqeBundle:Programmation:Avancement\analysePeriode.html.twig', array(
+                    'anneeProg' => $anneeProg,
                     'tableau' => $tableau,
         ));
     }
 
-    public function analyseLotAction() {
+    public function analyseLotAction($anneeProg) {
 
         $user = $this->getUser();
         if (!$user) {
@@ -196,18 +205,19 @@ class ProgrammationAvancementController extends Controller {
 
         $repoPgProgMarche = $emSqe->getRepository('AeagSqeBundle:PgProgMarche');
 
-        $tableau = $repoPgProgMarche->getAvancementAnalyseLot();
+        $tableau = $repoPgProgMarche->getAvancementAnalyseLot($anneeProg);
 
 
 //          \Symfony\Component\VarDumper\VarDumper::dump($tableau);
 //          return new Response (''); 
 
         return $this->render('AeagSqeBundle:Programmation:Avancement\analyseLot.html.twig', array(
+                    'anneeProg' => $anneeProg,
                     'tableau' => $tableau,
         ));
     }
-    
-     public function prelevementIndexAction() {
+
+    public function prelevementIndexAction() {
 
         $user = $this->getUser();
         if (!$user) {
@@ -269,7 +279,7 @@ class ProgrammationAvancementController extends Controller {
 //          return new Response (''); 
 
         return $this->render('AeagSqeBundle:Programmation:Avancement\prelevementTypeMilieu.html.twig', array(
-                    'tableau' => $tableau,
+                     'tableau' => $tableau,
         ));
     }
 
@@ -298,7 +308,7 @@ class ProgrammationAvancementController extends Controller {
                     'tableau' => $tableau,
         ));
     }
-    
+
     public function programmationIndexAction() {
 
         $user = $this->getUser();
@@ -328,13 +338,13 @@ class ProgrammationAvancementController extends Controller {
 
         $repoPgProgLotAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotAn');
         $repoPgProgMarche = $emSqe->getRepository('AeagSqeBundle:PgProgMarche');
-        
+
         $anneeProgs = $repoPgProgLotAn->getPgProgLotAnDistinctAnnee();
-        
+
         $tab = array();
         $tableau = array();
         $i = 0;
-        foreach  ($anneeProgs as $anneeProg){
+        foreach ($anneeProgs as $anneeProg) {
             $tab[$i] = $repoPgProgMarche->getAvancementProgrammationGlobal($anneeProg["anneeProg"]);
             $i++;
         }
@@ -347,7 +357,7 @@ class ProgrammationAvancementController extends Controller {
 
         return $this->render('AeagSqeBundle:Programmation:Avancement\programmationGlobal.html.twig', array(
                     'tableau' => $tableau,
-          ));
+        ));
     }
 
     public function programmationMilieuAction() {
@@ -401,7 +411,6 @@ class ProgrammationAvancementController extends Controller {
                     'tableau' => $tableau,
         ));
     }
-
 
     public function unzipAction($suiviPrelId = null) {
         $user = $this->getUser();

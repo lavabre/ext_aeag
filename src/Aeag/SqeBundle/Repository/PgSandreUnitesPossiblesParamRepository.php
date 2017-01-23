@@ -31,9 +31,10 @@ class PgSandreUnitesPossiblesParamRepository extends EntityRepository {
     public function getPgSandreUnitesPossiblesParamByCodeParametre($codeParametre) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgSandreUnitesPossiblesParam p";
-        $query = $query . " where p.codeParametre = '" . $codeParametre . "'";
-         $query = $query . " order by  p.codeUnite";
+        $query = $query . " where p.codeParametre = :codeParametre";
+        $query = $query . " order by  p.codeUnite";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('codeParametre', $codeParametre);
         //print_r($query);
         return $qb->getResult();
     }

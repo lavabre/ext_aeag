@@ -25,12 +25,13 @@ class PgProgUnitesPossiblesParamRepository extends EntityRepository {
     public function getPgProgUnitesPossiblesParamByCodeParametre($codeParametre) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgUnitesPossiblesParam p";
-        $query = $query . " where p.codeParametre = '" . $codeParametre . "'";
+        $query = $query . " where p.codeParametre = :codeParametre";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('codeParametre', $codeParametre);
         //print_r($query);
         return $qb->getResult();
     }
-    
+
     public function getPgProgUnitesPossiblesParamWithValeurMax() {
         $query = "select p";
         $query .= " from Aeag\SqeBundle\Entity\PgProgUnitesPossiblesParam p";
@@ -44,12 +45,17 @@ class PgProgUnitesPossiblesParamRepository extends EntityRepository {
     public function getPgProgUnitesPossiblesParamByCodeParametreCodeUniteNatureFraction($codeParametre, $codeUnite, $pgSandreFraction) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgUnitesPossiblesParam p";
-        $query = $query . " where p.codeParametre = '" . $codeParametre . "'";
-        $query = $query . " and p.codeUnite = '" . $codeUnite . "'";
+        $query = $query . " where p.codeParametre = :codeParametre";
+        $query = $query . " and p.codeUnite = :codeUnite";
         if ($pgSandreFraction) {
-            $query = $query . " and p.natureFraction = '" . $pgSandreFraction->getNatureFraction() . "'";
+            $query = $query . " and p.natureFraction = :pgSandreFraction";
         }
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('codeParametre', $codeParametre);
+        $qb->setParameter('codeUnite', $codeUnite);
+        if ($pgSandreFraction) {
+            $qb->setParameter('pgSandreFraction', $pgSandreFraction->getNatureFraction());
+        }
         //print_r($query);
         return $qb->getOneOrNullResult();
     }

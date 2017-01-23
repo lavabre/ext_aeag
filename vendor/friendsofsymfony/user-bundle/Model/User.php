@@ -124,7 +124,7 @@ abstract class User implements UserInterface, GroupableInterface
 
     public function __construct()
     {
-        $this->salt = base_convert(sha1(uniqid(mt_rand(), true)), 16, 36);
+        //$this->salt = base_convert(sha1(uniqid(mt_rand(), true)), 16, 36); 
         $this->enabled = false;
         $this->locked = false;
         $this->expired = false;

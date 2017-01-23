@@ -31,8 +31,9 @@ class PgSandreHbNomemclaturesRepository extends EntityRepository {
     public function getPgSandreHbNomemclaturesByCodeNomemclature($codenomemclature) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgSandreHbNomemclatures p";
-        $query = $query . " where p.codeNomemclature = '" . $codeNomemclature . "'";
+        $query = $query . " where p.codeNomemclature = :codeNomemclature";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('codenomemclature', $codenomemclature);
         //print_r($query);
         return $qb->getResult();
     }
@@ -40,9 +41,11 @@ class PgSandreHbNomemclaturesRepository extends EntityRepository {
     public function getPgSandreHbNomemclaturesByCodeNomemclatureCodeElement($codeNomemclature, $codeElement) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgSandreHbNomemclatures p";
-        $query = $query . " where p.codeNomemclature = '" . $codeNomemclature . "'";
-        $query = $query . " and p.codeElement = '" . $codeElement . "'";
+        $query = $query . " where p.codeNomemclature = :codeNomemclature";
+        $query = $query . " and p.codeElement = :codeElement";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('codenomemclature', $codenomemclature);
+        $qb->setParameter('codeElement', $codeElement);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
@@ -50,9 +53,11 @@ class PgSandreHbNomemclaturesRepository extends EntityRepository {
     public function getPgSandreHbNomemclaturesByCodeNomemclatureCodeSupport($codeNomemclature, $codeSupport) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgSandreHbNomemclatures p";
-        $query = $query . " where p.codeNomemclature = '" . $codeNomemclature . "'";
-        $query = $query . " and p.codeSupport = '" . $codeSupport . "'";
+        $query = $query . " where p.codeNomemclature = :codeNomemclature";
+        $query = $query . " and p.codeSupport = :codeSupport";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('codenomemclature', $codenomemclature);
+        $qb->setParameter('codeSupport', $codeSupport);
         //print_r($query);
         return $qb->getResult();
     }
@@ -60,10 +65,13 @@ class PgSandreHbNomemclaturesRepository extends EntityRepository {
     public function getPgSandreHbNomemclaturesByCodeNomemclatureCodeElementCodeSupport($codeNomemclature, $codeElement, $codeSupport) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgSandreHbNomemclatures p";
-        $query = $query . " where p.codeNomemclature = '" . $codeNomemclature . "'";
-        $query = $query . " and p.codeElement = '" . $codeElement . "'";
-        $query = $query . " and p.codeSupport = '" . $codeSupport . "'";
+        $query = $query . " where p.codeNomemclature = :codeNomemclature";
+        $query = $query . " and p.codeElement = :codeElement";
+        $query = $query . " and p.codeSupport = :codeSupport";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('codenomemclature', $codenomemclature);
+        $qb->setParameter('codeElement', $codeElement);
+        $qb->setParameter('codeSupport', $codeSupport);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }

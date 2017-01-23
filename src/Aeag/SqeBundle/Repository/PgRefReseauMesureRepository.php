@@ -34,8 +34,9 @@ class PgRefReseauMesureRepository extends EntityRepository {
     public function getPgRefReseauMesureByGroupementId($groupementId) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgRefReseauMesure p";
-        $query = $query . " where p.groupementId = " . $groupementId;
+        $query = $query . " where p.groupementId = :groupementId";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('groupementId', $groupementId);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
@@ -43,8 +44,9 @@ class PgRefReseauMesureRepository extends EntityRepository {
     public function getPgRefReseauMesureByCodeAeagRsx($codeAeagRsx) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgRefReseauMesure p";
-        $query = $query . " where p.codeAeagRsx = '" . $codeAeagRsx . "'";
+        $query = $query . " where p.codeAeagRsx = :codeAeagRsx";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('codeAeagRsx', $codeAeagRsx);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
@@ -52,8 +54,9 @@ class PgRefReseauMesureRepository extends EntityRepository {
     public function getPgRefReseauMesureByCodeSandre($codeSandre) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgRefReseauMesure p";
-        $query = $query . " where p.codeSandre = '" . $codeSandre . "'";
+        $query = $query . " where p.codeSandre = :codeSandre";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('codeSandre', $codeSandre);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }

@@ -28,27 +28,26 @@ class PgSandreAppellationTaxonRepository extends EntityRepository {
         return $qb->getResult();
     }
 
-    public function getPgSandreAppellationTaxonByCodeAppeltaxon($codeappelTaxon) {
+    public function getPgSandreAppellationTaxonByCodeAppeltaxon($codeAppelTaxon) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgSandreAppellationTaxon p";
-        $query = $query . " where p.codeAppelTaxon = '" . $codeAppelTaxon . "'";
+        $query = $query . " where p.codeAppelTaxon = :codeAppelTaxon";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('codeAppelTaxon', $codeAppelTaxon);
         //print_r($query);
         return $qb->getResult();
     }
-
-   
 
     public function getPgSandreAppellationTaxonByCodeAppelTaxonCodeSupport($codeAppelTaxon, $codeSupport) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgSandreAppellationTaxon p";
-        $query = $query . " where p.codeAppelTaxon = '" . $codeAppelTaxon . "'";
-        $query = $query . " and p.codeSupport = '" . $codeSupport . "'";
+        $query = $query . " where p.codeAppelTaxon = :codeAppelTaxon";
+        $query = $query . " and p.codeSupport = :codeSupport";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('codeAppelTaxon', $codeAppelTaxon);
+        $qb->setParameter('codeSupport', $codeSupport);
         //print_r($query);
         return $qb->getResult();
     }
-
-   
 
 }

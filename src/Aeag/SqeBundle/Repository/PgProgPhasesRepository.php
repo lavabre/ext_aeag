@@ -36,8 +36,9 @@ class PgProgPhasesRepository extends EntityRepository {
     public function getPgProgPhasesById($id) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgPhases p";
-        $query = $query . " where p.id = " . $id;
+        $query = $query . " where p.id = :id";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('id', $id);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
@@ -45,8 +46,9 @@ class PgProgPhasesRepository extends EntityRepository {
     public function getPgProgPhasesByCodePhase($codePhase) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgPhases p";
-        $query = $query . " where p.codePhase = '" . $codePhase . "'";
+        $query = $query . " where p.codePhase = :codePhase";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('codePhase', $codePhase);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }

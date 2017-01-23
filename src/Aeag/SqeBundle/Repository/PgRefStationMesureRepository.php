@@ -27,7 +27,7 @@ class PgRefStationMesureRepository extends EntityRepository {
         //print_r($query);
         return $qb->useResultCache(true)->setResultCacheLifetime(3600)->getResult();
     }
-    
+
     /**
      * @return array
      */
@@ -39,7 +39,7 @@ class PgRefStationMesureRepository extends EntityRepository {
         $query = $query . " group by p.ouvFoncId, p.code, p.libelle, p.type, p.nomCommune, p.nomCoursEau, p.nomMasdo";
         $qb = $this->_em->createQuery($query);
         //print_r($query);
-       return $qb->useResultCache(true)->setResultCacheLifetime(3600)->getResult();
+        return $qb->useResultCache(true)->setResultCacheLifetime(3600)->getResult();
     }
 
     /**
@@ -48,17 +48,19 @@ class PgRefStationMesureRepository extends EntityRepository {
     public function getPgRefStationMesureByOuvFoncId($ouvFoncId) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgRefStationMesure p";
-        $query = $query . " where p.ouvFoncId = " . $ouvFoncId;
+        $query = $query . " where p.ouvFoncId = :ouvFoncId";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('ouvFoncId', $ouvFoncId);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-    
+
     public function getNbPgRefStationMesureByOuvFoncId($ouvFoncId) {
         $query = "select count(p.ouvFoncId)";
         $query = $query . " from Aeag\SqeBundle\Entity\PgRefStationMesure p";
-        $query = $query . " where p.ouvFoncId = " . $ouvFoncId;
+        $query = $query . " where p.ouvFoncId = :ouvFoncId";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('ouvFoncId', $ouvFoncId);
         //print_r($query);
         return $qb->getSingleScalarResult();
     }
@@ -66,21 +68,21 @@ class PgRefStationMesureRepository extends EntityRepository {
     public function getPgRefStationMesureByNumero($numero) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgRefStationMesure p";
-        $query = $query . " where p.numero = '" . $numero . "'";
+        $query = $query . " where p.numero = :numero";
         $qb = $this->_em->createQuery($query);
-        //print_r($query);
-        return $qb->getOneOrNullResult();
-    }
-    
-     public function getPgRefStationMesureByCode($code) {
-        $query = "select p";
-        $query = $query . " from Aeag\SqeBundle\Entity\PgRefStationMesure p";
-        $query = $query . " where p.code = '" . $code . "'";
-        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('numero', $numero);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
 
-    
+    public function getPgRefStationMesureByCode($code) {
+        $query = "select p";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgRefStationMesure p";
+        $query = $query . " where p.code = :code";
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('code', $code);
+        //print_r($query);
+        return $qb->getOneOrNullResult();
+    }
 
 }

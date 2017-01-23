@@ -2718,6 +2718,11 @@ class SaisieDonneesController extends Controller {
             switch ($error) {
                 case UPLOAD_ERR_OK:
                     $valid = true;
+                    //validate file extensions
+                    if (in_array($ext, array('exe','php','bat','ini','com','cmd','bin'))) {
+                        $valid = false;
+                        $response = 'extension du fichier incorrecte.';
+                    }
 //validate file size
                     if ($size / 1024 / 1024 > 2) {
                         $valid = false;

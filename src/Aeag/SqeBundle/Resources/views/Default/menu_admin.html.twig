@@ -31,10 +31,12 @@
                     Avancement campagne
                 </a>
                 <ul class="dropdown-menu">
-                    <li><a href="{{ path('AeagSqeBundle_programmation_avancement_hydro') }}" title="Avancement campagne Hydrobio"> Hydrobio </a></li>
-                    <li><a href="{{ path('AeagSqeBundle_programmation_avancement_analyse') }}" title="Avancement campagne Analyses"> Analyses  </a></li>
-                    <li><a href="{{ path('AeagSqeBundle_programmation_avancement_prelevement') }}" title="Avancement campagne Prélèvements"> Prélèvements  </a></li>
-                </ul>
+                    {% for anneeProg  in app.session.get('anneeProgs')%}
+                    <li><a href="{{ path('AeagSqeBundle_programmation_avancement_hydro',{ 'anneeProg': anneeProg }) }}" title="Avancement campagne {{ anneeProg }} Hydrobio"> Hydrobio {{ anneeProg }} </a></li>
+                    <li><a href="{{ path('AeagSqeBundle_programmation_avancement_analyse',{ 'anneeProg': anneeProg }) }}" title="Avancement campagne {{ anneeProg }} Analyses"> Analyses {{ anneeProg }} </a></li>
+                     {% endfor %}
+                    <li><a href="{{ path('AeagSqeBundle_programmation_avancement_prelevement') }}" title="Avancement campagne Prélèvements"> Prélèvements </a></li>
+               </ul>
                 <li><a href="{{ path('AeagSqeBundle_programmation_avancement_programmation') }}" title="Avancement pogrammation">Avancement programmation  </a></li>
             {% endif %}
     </ul>

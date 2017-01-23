@@ -16,17 +16,14 @@ use Doctrine\ORM\EntityRepository;
  */
 class PgProgStatutRepository extends EntityRepository {
 
-        
-  
     public function getPgProgStatutByCodeStatut($codeStatut) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgStatut p";
-        $query = $query . " where p.codeStatut = '" . $codeStatut . "'";
+        $query = $query . " where p.codeStatut = :codeStatut";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('codeStatut', $codeStatut);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-
-    
 
 }
