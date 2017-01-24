@@ -30,6 +30,7 @@ class UserController extends Controller {
 
         $security = $this->get('security.authorization_checker');
         $em = $this->getDoctrine()->getManager();
+        $emDec = $this->get('doctrine')->getManager('dec');
         $session = $this->get('session');
         $session->set('retourErreur', $this->generateUrl('AeagUserBundle_User', array('role' => $role)));
         $user = $this->getUser();
@@ -41,7 +42,9 @@ class UserController extends Controller {
         $session->set('menu', 'acteurs');
         $repoUsers = $em->getRepository('AeagUserBundle:User');
         $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
-        
+        $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
+        $repoDeclarationCollecteur = $emDec->getRepository('AeagDecBundle:DeclarationCollecteur');
+
         if ($security->isGranted('ROLE_ADMIN')) {
             $entities = $repoUsers->getUsers();
             $role = 'ROLE_AEAG';
@@ -76,11 +79,28 @@ class UserController extends Controller {
             } else {
                 $users[$i][1] = null;
             }
+            if ($role == 'ROLE_ODEC') {
+                if ($entity->getEnabled()) {
+                    // print_r('user : ' . $entity->getId() . '<br/>');
+                    $collecteur = $repoOuvrage->getOuvrageByUserIdType($entity->getId(), 'ODEC');
+                    if ($collecteur) {
+                        $declarationCollecteurs = $repoDeclarationCollecteur->getDeclarationCollecteurByCollecteur($collecteur->getId());
+                    } else {
+                        $declarationCollecteurs = null;
+                    }
+                    $users[$i]['nbDeclarations'] = count($declarationCollecteurs);
+                } else {
+                    $users[$i]['nbDeclarations'] = 0;
+                }
+            } else {
+                $users[$i]['nbDeclarations'] = 0;
+            }
             $i++;
         }
-
+        //return new Response ('');
         return $this->render('AeagUserBundle:User:index.html.twig', array(
-                    'entities' => $users
+                    'entities' => $users,
+                    'role' => $role
         ));
     }
 
@@ -394,7 +414,7 @@ class UserController extends Controller {
         }
 
         $message = null;
-        $editForm = $this->createForm(new UsersUpdateType($entity,$role), $entity);
+        $editForm = $this->createForm(new UsersUpdateType($entity, $role), $entity);
         $maj = 'ko';
         return $this->render('AeagUserBundle:User:edit.html.twig', array(
                     'entity' => $entity,

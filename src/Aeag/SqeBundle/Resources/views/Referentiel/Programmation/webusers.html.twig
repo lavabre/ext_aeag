@@ -64,7 +64,7 @@
                         {% for entity in entities %}
                             <tr>
                                  <td nowrap>
-                                      <a class="btn btn-warning" href="{{ path('aeag_sqe', {'_switch_user': entity.webuser.login}) }}" title="Switch">
+                                      <a class="btn btn-warning" href="{{ path('aeag_sqe', {'_switch_user': entity.webuser.login}) }}" title="se connecter">
                                           <i class="fa fa-refresh"></i> 
                                        </a>
                                        <a class="btn btn-info" href="{{ path('Aeag_envoyerMessage', { 'id': entity.webuser.id }) }}" title="Message">

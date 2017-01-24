@@ -48,6 +48,27 @@
                             {% for entity in entities %}
                                 <tr>
                                      <td nowrap>
+                                         {% if role == 'ROLE_ODEC' %}
+                                                {% if entity.0.enabled  and entity.nbDeclarations  > 0 %}
+                                                       <a class="btn btn-primary" href="{{ path('aeag_dec', {'_switch_user': entity.0.username}) }}" title="se connecter">
+                                                          <i class="fa fa-refresh"></i> 
+                                                       </a>
+                                                 {% endif %}
+                                         {% endif %}
+                                          {% if role == 'ROLE_FRD' %}
+                                                {% if entity.0.enabled  %}
+                                                       <a class="btn btn-primary" href="{{ path('aeag_frd', {'_switch_user': entity.0.username}) }}" title="se connecter">
+                                                          <i class="fa fa-refresh"></i> 
+                                                       </a>
+                                                 {% endif %}
+                                         {% endif %}
+                                       {# {% if role == 'ROLE_EDL' %}
+                                                {% if entity.0.enabled  %}
+                                                       <a class="btn btn-primary" href="{{ path('aeag_edl', {'_switch_user': entity.0.username}) }}" title="Switch">
+                                                          <i class="fa fa-refresh"></i> 
+                                                       </a>
+                                                 {% endif %}
+                                         {% endif %}#}
                                        <a class="btn btn-warning" href="{{ path('AeagUserBundle_User_edit', { 'id': entity.0.id }) }}" title="Editer">
                                           <i class="fa fa-edit"></i> 
                                        </a>
