@@ -47,7 +47,7 @@ class PgProgWebuserRsxRepository extends EntityRepository {
     public function getPgProgWebuserRsxByWebuser($pgProgWebusers) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgWebuserRsx p";
-        $query = $query . " where p.webuser = :pgProgWebuser";
+        $query = $query . " where p.webuser = :pgProgWebusers";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('pgProgWebusers', $pgProgWebusers->getId());
         //print_r($query);
