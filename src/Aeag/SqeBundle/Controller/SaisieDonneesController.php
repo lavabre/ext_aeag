@@ -920,6 +920,7 @@ class SaisieDonneesController extends Controller {
                             } else {
                                 $pgCmdFichiersRps = $pgCmdPrelev->getFichierRps();
                             }
+                            $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R45');
                             $pgCmdFichiersRps->setPhaseFichier($pgProgPhases);
                             $emSqe->persist($pgCmdFichiersRps);
                             $pgCmdPrelev->setFichierRps($pgCmdFichiersRps);
