@@ -216,11 +216,11 @@ class PgProgLotPeriodeProgRepository extends EntityRepository {
         $query .= " and gran.grparRef = :pgProgLotGrparAn";
         $query .= " and stan.station = :pgProgLotStationAn";
         $query .= " and lotan.lot <> :lot and lotan.phase > :phaseIdMin"; // phase >= P25
-        $query .= " and lot.codeMilieu = :milieu'";
+        $query .= " and lot.codeMilieu = :milieu";
         $query .= " and lotan.anneeProg = :annee";
 
         $qb = $this->_em->createQuery($query);
-        $qb->setParameter('pgProglotGrparAn', $pgProgLotGrparAn->getGrparRef()->getId());
+        $qb->setParameter('pgProgLotGrparAn', $pgProgLotGrparAn->getGrparRef()->getId());
         $qb->setParameter('pgProgPeriode', $pgProgPeriode->getId());
         $qb->setParameter('pgProgLotStationAn', $pgProgLotStationAn->getStation()->getOuvFoncId());
         $qb->setParameter('lot', $pgProgLotAn->getLot()->getId());
