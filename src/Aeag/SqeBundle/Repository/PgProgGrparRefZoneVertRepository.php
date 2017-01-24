@@ -62,7 +62,7 @@ class PgProgGrparRefZoneVertRepository extends EntityRepository {
         $query = "select count(p.typClassProf)";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgGrparRefZoneVert p";
         $query = $query . " where p.pgProgGrpParamRef = :pgProgGrpParamRef";
-        $query = $query . " and p.pgSandreZoneVerticaleProspectee = :pgSandreZoneVerticaleProspecte";
+        $query = $query . " and p.pgSandreZoneVerticaleProspectee = :pgSandreZoneVerticaleProspectee";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('pgProgGrpParamRef', $pgProgGrpParamRef->getid());
         $qb->setParameter('pgSandreZoneVerticaleProspectee', $pgSandreZoneVerticaleProspectee->getCodeZone());
