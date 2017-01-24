@@ -122,7 +122,50 @@
 
                 </div>
 
-
+                 {% if autreDemandes | length %}
+                        <div class="row">
+                            <div class="col-md-offset-3 col-xs-5">
+                         <table class="table table-bordered table-condensed">
+                             <thead>
+                                    <th>Non réalisé</th>
+                                    <th>Analyse</th>
+                                    <th>Support</th>
+                                    <th>Profondeur (m)</th>
+                         </thead>
+                         <tbody>
+                      {% for autreDemande in autreDemandes %}
+                            {% for autrePrelev  in  autreDemande.prelevs %}
+                                <tr>
+                                    <td>
+                                        <div class="checkbox">
+                                            <label>
+                                                {% if autrePrelev.prelev.realise == 'N' %}
+                                                        <input type="checkbox" id="nonRealise_{{ autrePrelev.prelevPc.zoneVerticale.codeZone }}_{{ autrePrelev.prelev.codeSupport.codeSupport }}" name="nonRealise_{{ autrePrelev.prelevPc.zoneVerticale.codeZone }}_{{ autrePrelev.prelev.codeSupport.codeSupport }}"   class="form-control" placeholder="Non réalisé"  checked  readonly>
+                                                {% else %}
+                                                        <input type="checkbox" id="nonRealise_{{ autrePrelev.prelevPc.zoneVerticale.codeZone }}_{{ autrePrelev.prelev.codeSupport.codeSupport }}" name="nonRealise_{{ autrePrelev.prelevPc.zoneVerticale.codeZone }}_{{ autrePrelev.prelev.codeSupport.codeSupport }}"   class="form-control" placeholder="Non réalisé" readonly>
+                                                {% endif %}
+                                                </label>
+                                       </div>
+                                    </td>
+                                    <td>
+                                        {{ autrePrelev.prelevPc.zoneVerticale.nomZone }}
+                                    </td>
+                                    <td>
+                                         {% if autrePrelev.prelev.codeSupport %}
+                                            {{ autrePrelev.prelev.codeSupport.nomSupport }}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                         <input type="text" id="profAna_{{ autrePrelev.prelevPc.zoneVerticale.codeZone }}_{{ autrePrelev.prelev.codeSupport.codeSupport }}" name="profAna_{{ autrePrelev.prelevPc.zoneVerticale.codeZone }}_{{ autrePrelev.prelev.codeSupport.codeSupport }}" required="required" class="form-control  number text-right" placeholder="Profondeur de l'analyse" value="{{ autrePrelev.prelevPc.profondeur  }}" readonly>
+                                    </td>
+                                </tr>
+                              {% endfor %}
+                         {% endfor %}
+                                      </tbody>
+                                  </table>
+                              </div>
+                        </div>
+                    {% endif %}
 
                 {% set groupeSelectionne = null %}
                 {% set nbTr = 0 %}

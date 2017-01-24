@@ -71,7 +71,7 @@
 
                                                         <a href="#" id="messageVoir_{{message.message.id}}" data-target="#ajax_{{message.message.id}}" data-toggle="modal" title="Consulter">
                                                             <button type="button" class="btn btn-primary">
-                                                                <i class="fa fa-eye info"> Message de {{ message.emetteur.username }} émis le {{ message.message.created|date("d/m/Y H:i:s") }}</i>
+                                                                <i class="fa fa-eye info"> Message de {% if message.emetteur | length %}{{ message.emetteur.username }} {%else %} inconnu {%endif %} émis le {{ message.message.created|date("d/m/Y H:i:s") }}</i>
                                                             </button>
                                                         </a>
                                                         <a href="#" id="messageSupprimer_{{ message.message.id }}" title="Supprimer">
