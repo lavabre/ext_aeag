@@ -73,9 +73,10 @@ class PgProgTypeMilieuRepository extends EntityRepository {
     public function getPgProgTypesMilieuxByCodeMilieu($codeMilieu) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgTypeMilieu p";
-        $query = $query . " where p.codeMilieu LIKE '%:codeMilieu'";
-        $qb->setParameter('codeMilieu', $codeMilieu);
-        $qb = $this->_em->createQuery($query);
+        $query = $query . " where p.codeMilieu LIKE :codeMilieu";
+         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('codeMilieu', '%' . $codeMilieu);
+       
         //print_r($query);
         return $qb->getResult();
     }
