@@ -64,7 +64,7 @@ class PgProgLotPrestaRepository extends EntityRepository {
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotPresta p";
         $query = $query . " where p.presta = :pgRefCorresPresta";
         $qb = $this->_em->createQuery($query);
-        $qb->setParameter('pgRefCorresPrestat', $pgRefCorresPresta->getAdrCorId());
+        $qb->setParameter('pgRefCorresPresta', $pgRefCorresPresta->getAdrCorId());
         //print_r($query);
         return $qb->getResult();
     }
@@ -76,7 +76,7 @@ class PgProgLotPrestaRepository extends EntityRepository {
         $query = $query . " and p.presta = :pgRefCorresPresta";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('lot', $lot->getId());
-        $qb->setParameter('pgRefCorresPrestat', $pgRefCorresPresta->getAdrCorId());
+        $qb->setParameter('pgRefCorresPresta', $pgRefCorresPresta->getAdrCorId());
         //print_r($query);
         return $qb->getResult();
     }
