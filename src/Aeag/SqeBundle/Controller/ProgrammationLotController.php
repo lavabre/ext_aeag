@@ -2729,6 +2729,9 @@ class ProgrammationLotController extends Controller {
         $texte = $texte . "Cordialement.";
         $message->setMessage($texte);
         $em->persist($message);
+        $messageEmetteur = clone($message);
+        $messageEmetteur->setRecepteur($user->getid());
+        $em->persist($messageEmetteur);
 
         $notification = new Notification();
         $notification->setRecepteur($recepteur->getId());
@@ -2737,9 +2740,13 @@ class ProgrammationLotController extends Controller {
         $notification->setIteration(2);
         $notification->setMessage("la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été refusée par l'administrateur " . $emetteur->getNom() . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y'));
         $em->persist($notification);
+        $notificationEmetteur = clone($notification);
+        $notificationEmetteur->setRecepteur($user->getid());
+        $em->persist($notificationEmetteur);
+        
         // Récupération du service.
         $mailer = $this->get('mailer');
-        // Création de l'e-mail : le service mailer utilise SwiftMailer, donc nous créons une instance de Swift_Message.
+        // Envoi au recepteur
         $mail = \Swift_Message::newInstance('Wonderful Subject')
                 ->setSubject('Programmation ' . $pgProgLotAn->getAnneeProg() . ' version ' . $pgProgLotAn->getVersion() . ' du lot  ' . $pgProgLotAn->getLot()->getNomLot() . '  refusée')
                 ->setFrom('automate@eau-adour-garonne.fr')
@@ -2749,8 +2756,18 @@ class ProgrammationLotController extends Controller {
                     'lotan' => $pgProgLotAn,
                     'motifRefus' => $motifRefus,
         )));
-
-// Retour au service mailer, nous utilisons sa méthode « send() » pour envoyer notre $message.
+        $mailer->send($mail);
+        
+        // Envoi a l'emetteur
+        $mail = \Swift_Message::newInstance('Wonderful Subject')
+                ->setSubject('Programmation ' . $pgProgLotAn->getAnneeProg() . ' version ' . $pgProgLotAn->getVersion() . ' du lot  ' . $pgProgLotAn->getLot()->getNomLot() . '  refusée')
+                ->setFrom('automate@eau-adour-garonne.fr')
+                ->setTo($user->getEmail())
+                ->setBody($this->renderView('AeagSqeBundle:Programmation:Lot/refuserEmail.txt.twig', array(
+                    'emetteur' => $emetteur,
+                    'lotan' => $pgProgLotAn,
+                    'motifRefus' => $motifRefus,
+        )));
         $mailer->send($mail);
 
         $em->flush();
