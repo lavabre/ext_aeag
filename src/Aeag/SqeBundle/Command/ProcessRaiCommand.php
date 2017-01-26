@@ -198,7 +198,7 @@ class ProcessRaiCommand extends AeagCommand {
 
             //test si prelevement ok
             $meSituHydro = $this->getMesureByCodeParametre(1726, $demandeId, $reponseId, $codePrelev["codePrelevement"]);
-            if (!is_null($meSituHydro) && $meSituHydro <= 2) {
+            if (!is_null($meSituHydro) && ($meSituHydro > 0 && $meSituHydro <= 2)) {
                 $prelevRealise = false;
             }
 
