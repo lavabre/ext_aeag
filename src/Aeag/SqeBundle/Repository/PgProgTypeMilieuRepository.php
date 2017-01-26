@@ -28,27 +28,27 @@ class PgProgTypeMilieuRepository extends EntityRepository {
         return $qb->getResult();
     }
 
-   
     public function getPgProgTypeMilieuByCodeMilieu($codeMilieu) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgTypeMilieu p";
-        $query = $query . " where p.codeMilieu = '" . $codeMilieu . "'";
+        $query = $query . " where p.codeMilieu = :codeMilieu";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('codeMilieu', $codeMilieu);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-    
-    
-    public function getPgProgTypeMilieuByTypePeriode($PgProgTypePeriode) {
+
+    public function getPgProgTypeMilieuByTypePeriode($pgProgTypePeriode) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgTypeMilieu p";
-        $query = $query . " where p.typePeriode = " . $PgProgTypePeriode->getId();
+        $query = $query . " where p.typePeriode = :pgProgTypePeriode";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgProgTypePeriode', $pgProgTypePeriode->getId());
         //print_r($query);
         return $qb->getResult();
     }
-    
-     /**
+
+    /**
      * @return array
      */
     public function getPgProgCatMilieux() {
@@ -59,24 +59,26 @@ class PgProgTypeMilieuRepository extends EntityRepository {
         //print_r($query);
         return $qb->getResult();
     }
-    
-     public function getPgProgTypeMilieuByCategorieMilieu($categorieMilieu) {
+
+    public function getPgProgTypeMilieuByCategorieMilieu($categorieMilieu) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgTypeMilieu p";
-        $query = $query . " where p.categorieMilieu = '" . $categorieMilieu . "'";
+        $query = $query . " where p.categorieMilieu = :categorieMilieu";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('categorieMilieu', $categorieMilieu);
         //print_r($query);
         return $qb->getResult();
     }
-    
+
     public function getPgProgTypesMilieuxByCodeMilieu($codeMilieu) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgTypeMilieu p";
-        $query = $query . " where p.codeMilieu LIKE '%" . $codeMilieu . "'";
-        $qb = $this->_em->createQuery($query);
+        $query = $query . " where p.codeMilieu LIKE :codeMilieu";
+         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('codeMilieu', '%' . $codeMilieu);
+       
         //print_r($query);
         return $qb->getResult();
     }
-    
 
 }

@@ -33,9 +33,9 @@ class DefaultController extends Controller {
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
         $repoUsers = $em->getRepository('AeagUserBundle:User');
         $repoPgProgPrestaTypfic = $emSqe->getRepository('AeagSqeBundle:PgProgPrestaTypfic');
-
-
-        $annee = $repoParametre->getParametreByCode('ANNEE');
+          $repoPgProgLotAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotAn');
+    
+          $annee = $repoParametre->getParametreByCode('ANNEE');
         if (!$annee) {
             $this->initBase($emSqe, $em);
         } else {
@@ -85,7 +85,7 @@ class DefaultController extends Controller {
             $message = $this->majPgProgWebusers();
             $message = $this->initPgProgWebusers();
             // return new Response  ($message);
-            //$session->getFlashBag()->add('notice-success', $message);
+           // $session->getFlashBag()->add('notice-success', $message);
         }
 
         $suiviHb = false;
@@ -135,12 +135,21 @@ class DefaultController extends Controller {
             $suiviSED = true;
             $suiviEau = true;
         }
+        
+        $anneeProgs = $repoPgProgLotAn->getPgProgLotAnDistinctAnnee();
+        $tabAnneeProgs = array();
+        $i = 0;
+        foreach($anneeProgs as $anneeProg){
+            $tabAnneeProgs[$i] = $anneeProg['anneeProg'];
+            $i++;
+        }
 
         $session->set('suiviHb', $suiviHb);
         $session->set('suiviQHb', $suiviQHb);
         $session->set('suiviDonnees', $suiviDonnees);
         $session->set('suiviSED', $suiviSED);
         $session->set('suiviEau', $suiviEau);
+        $session->set('anneeProgs', $tabAnneeProgs);
 
 //        $excelService = $this->get('xls.service_xls5');
 //        // create the object see http://phpexcel.codeplex.com documentation
@@ -169,7 +178,9 @@ class DefaultController extends Controller {
 //
 //        return $response;
 
-        return $this->render('AeagSqeBundle:Default:index.html.twig', array('suiviHb' => $suiviHb,
+        return $this->render('AeagSqeBundle:Default:index.html.twig', array(
+                    'anneeProgs' => $tabAnneeProgs,
+                    'suiviHb' => $suiviHb,
                     'suiviDonnees' => $suiviDonnees));
     }
 

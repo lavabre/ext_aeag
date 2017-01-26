@@ -33,17 +33,19 @@ class PgProgLotPrestaWebusersRepository extends EntityRepository {
     public function getPgProgLotById($id) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotPrestaWebusers p";
-        $query = $query . " where p.id = " . $id;
+        $query = $query . " where p.id = :id";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('id', $id);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
 
-    public function getPgProgLotPrestaWebusersByPresta($PgRefCorresPresta) {
+    public function getPgProgLotPrestaWebusersByPresta($pgRefCorresPresta) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotPrestaWebusers p";
-        $query = $query . " where p.presta = " . $PgRefCorresPresta->getAdrCorId();
+        $query = $query . " where p.presta = :pgRefCorresPresta";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgRefCorresPrestat', $pgRefCorresPresta->getAdrCorId());
         //print_r($query);
         return $qb->getResult();
     }

@@ -31,8 +31,7 @@ class UserRepository extends EntityRepository {
         return $qb->getResult();
     }
 
- 
-     /**
+    /**
      * @param $id
      * @return mixed
      */
@@ -40,14 +39,15 @@ class UserRepository extends EntityRepository {
 
         $query = "select u";
         $query = $query . " from Aeag\UserBundle\Entity\User u";
-        $query = $query . " where u.id = " . $id;
-     
+        $query = $query . " where u.id = :id";
+
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('id', $id);
 
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-    
+
     /**
      * @param $username
      * @return mixed
@@ -56,15 +56,16 @@ class UserRepository extends EntityRepository {
 
         $query = "select u";
         $query = $query . " from Aeag\UserBundle\Entity\User u";
-        $query = $query . " where upper(u.username) = upper('" . $username . "')";
-     
+        $query = $query . " where upper(u.username) = upper(:username)";
+
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('username', $username);
 
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-    
-     /**
+
+    /**
      * @param $username, $password
      * @return mixed
      */
@@ -72,15 +73,17 @@ class UserRepository extends EntityRepository {
 
         $query = "select u";
         $query = $query . " from Aeag\UserBundle\Entity\User u";
-        $query = $query . " where upper(u.username) = upper('" . $username . "')";
-        $query = $query . " and u.password = '" . $password. "'";
-     
+        $query = $query . " where upper(u.username) = upper(:username)";
+        $query = $query . " and u.password = :password";
+
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('username', $username);
+        $qb->setParameter('password', $password);
 
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-    
+
     /**
      * @param $username, $prenom
      * @return mixed
@@ -89,16 +92,17 @@ class UserRepository extends EntityRepository {
 
         $query = "select u";
         $query = $query . " from Aeag\UserBundle\Entity\User u";
-        $query = $query . " where upper(u.username) = upper('" . $username . "')";
-        $query = $query . " and upper(u.prenom) = upper('" . $prenom . "')";
-     
+        $query = $query . " where upper(u.username) = upper(:username)";
+        $query = $query . " and upper(u.prenom) = upper(':prenom)";
+
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('username', $username);
+        $qb->setParameter('prenom', $prenom);
 
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-    
-         
+
     /**
      * @param $username
      * @return mixed
@@ -107,14 +111,15 @@ class UserRepository extends EntityRepository {
 
         $query = "select u";
         $query = $query . " from Aeag\UserBundle\Entity\User u";
-        $query = $query . " where u.correspondant = " . $correspondant;
-     
+        $query = $query . " where u.correspondant = :correspondant";
+
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('correspondant', $correspondant);
 
         //print_r($query);
-         return $qb->getResult();
+        return $qb->getResult();
     }
-    
+
     /**
      * @param $username
      * @return mixed
@@ -123,17 +128,16 @@ class UserRepository extends EntityRepository {
 
         $query = "select u";
         $query = $query . " from Aeag\UserBundle\Entity\User u";
-        $query = $query . " where u.correspondant = " . $correspondant;
-     
+        $query = $query . " where u.correspondant = :correspondant";
+
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('correspondant', $correspondant);
 
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-    
-    
-    
-     /**
+
+    /**
      * @param $username
      * @return mixed
      */
@@ -141,14 +145,13 @@ class UserRepository extends EntityRepository {
 
         $query = "select distinct u";
         $query = $query . " from Aeag\UserBundle\Entity\User u";
-        $query = $query . " where u.roles like '%" . $role . "%'";
-     
+        $query = $query . " where u.roles like :role";
+
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('role', '%' . $role . '%');
 
         //print_r($query);
         return $qb->getResult();
     }
-    
-    
-     
+
 }

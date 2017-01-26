@@ -152,7 +152,7 @@ class User extends BaseUser {
     }
 
     public function setSalt($salt) {
-        $this->salt = $salt;
+        $this->salt = '';
     }
 
     function getDepts() {

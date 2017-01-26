@@ -34,8 +34,9 @@ class PgProgWebuserTypmilRepository extends EntityRepository {
     public function getPgProgWebuserTypmilByTypmil($pgProgTypeMilieu) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgWebuserTypmil p";
-        $query = $query . " where p.typmil = " . $pgProgTypeMilieu->getCodeMilieu();
+        $query = $query . " where p.typmil = :pgProgTypeMilieu";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgProgTypeMilieu', $pgProgTypeMilieu->getCodeMilieu());
         //print_r($query);
         return $qb->getResult();
     }
@@ -46,8 +47,9 @@ class PgProgWebuserTypmilRepository extends EntityRepository {
     public function getPgProgWebuserTypmilByWebuser($pgProgWebusers) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgWebuserTypmil p";
-        $query = $query . " where p.webuser = " . $pgProgWebusers->getId();
+        $query = $query . " where p.webuser = :pgProgWebusers";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgProgWebusers', $pgProgWebusers->getId());
         //print_r($query);
         return $qb->getResult();
     }
@@ -55,9 +57,11 @@ class PgProgWebuserTypmilRepository extends EntityRepository {
     public function getPgProgWebuserTypmilByWebuserTypmil($pgProgWebusers, $pgProgTypeMilieu) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgWebuserTypmil p";
-        $query = $query . " where p.typmil = " . $pgProgTypeMilieu->getCodeMilieu();
-        $query = $query . " and p.webuser = " . $pgProgWebusers->getId();
+        $query = $query . " where p.typmil = :pgProgTypeMilieu";
+        $query = $query . " and p.webuser = :pgProgWebusers";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgProgWebusers', $pgProgWebusers->getId());
+        $qb->setParameter('pgProgTypeMilieu', $pgProgTypeMilieu->getCodeMilieu());
         //print_r($query);
         return $qb->getOneOrNullResult();
     }

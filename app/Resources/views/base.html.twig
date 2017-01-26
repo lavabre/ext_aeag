@@ -71,7 +71,7 @@
 
                                                         <a href="#" id="messageVoir_{{message.message.id}}" data-target="#ajax_{{message.message.id}}" data-toggle="modal" title="Consulter">
                                                             <button type="button" class="btn btn-primary">
-                                                                <i class="fa fa-eye info"> Message de {{ message.emetteur.username }} émis le {{ message.message.created|date("d/m/Y H:i:s") }}</i>
+                                                                <i class="fa fa-eye info"> Message de {% if message.emetteur | length %}{{ message.emetteur.username }} {%else %} inconnu {%endif %} émis le {{ message.message.created|date("d/m/Y H:i:s") }}</i>
                                                             </button>
                                                         </a>
                                                         <a href="#" id="messageSupprimer_{{ message.message.id }}" title="Supprimer">
@@ -202,19 +202,24 @@
                     <ul class="nav navbar-nav navbar-right">
                         <!-- BEGIN USER LOGIN DROPDOWN -->
                         {% block user_login %}
-                            {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-
-                                <li class="dropdown user pull-right">
-                                    <a class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" href="#">
-                                        <span class="username"><i class="fa fa-user fa-fw"></i> {{ app.user.username }}</span>
-                                        <span class="fa fa-caret-down"></span>
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="{{ path('AeagUserBundle_compte_show') }}"><i class="fa fa-user fa-fw"></i>&nbsp; Compte</a></li>
-                                        <li><a href="{{ path('fos_user_security_logout') }}"><i class="fa fa-power-off fa-fw"></i>&nbsp; Quitter</a></li>
-                                    </ul>
-                                </li>
-                            {%endif%}
+                               {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                                        <li class="dropdown user pull-right">
+                                            <a class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" href="#">
+                                                <span class="username"><i class="fa fa-user fa-fw"></i> {{ app.user.username }}</span>
+                                                <span class="fa fa-caret-down"></span>
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                  {% if is_granted('ROLE_PREVIOUS_ADMIN') %}
+                                                        <li class="dropdown user pull-right">
+                                                           <a href="{{ path('aeag_homepage', {'_switch_user': '_exit'}) }}"><i class="fa fa-refresh fa-fw"></i>&nbsp; Retour</a>
+                                                        </li>
+                                                   {%else%}
+                                                        <li><a href="{{ path('AeagUserBundle_compte_show') }}"><i class="fa fa-user fa-fw"></i>&nbsp; Compte</a></li>
+                                                        <li><a href="{{ path('fos_user_security_logout') }}"><i class="fa fa-power-off fa-fw"></i>&nbsp; Quitter</a></li>
+                                                 {%endif%}
+                                            </ul>
+                                        </li>
+                             {% endif %}
                         {% endblock user_login %}
                         <!-- END USER LOGIN DROPDOWN -->
                     </ul> 

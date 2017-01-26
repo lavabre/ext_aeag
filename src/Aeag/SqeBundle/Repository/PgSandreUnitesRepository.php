@@ -31,8 +31,9 @@ class PgSandreUnitesRepository extends EntityRepository {
     public function getPgSandreUnitesByCodeUnite($codeUnite) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgSandreUnites p";
-        $query = $query . " where p.codeUnite = '" . $codeUnite . "'";
+        $query = $query . " where p.codeUnite = :codeUnite";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('codeUnite', $codeUnite);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }

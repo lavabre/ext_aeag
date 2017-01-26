@@ -31,8 +31,9 @@ class PgSandreMethodesRepository extends EntityRepository {
     public function getPgSandreMethodesByCodeMethode($codeMethode) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgSandreMethodes p";
-        $query = $query . " where p.codeMethode = '" . $codeMethode . "'";
+        $query = $query . " where p.codeMethode = :codeMethode";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('codeMethode', $codeMethode);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }

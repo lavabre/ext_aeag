@@ -33,87 +33,100 @@ class PgProgLotStationAnRepository extends EntityRepository {
     public function getPgProgLotStationAnById($id) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotStationAn p";
-        $query = $query . " where p.id = " . $id;
+        $query = $query . " where p.id = :id";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('id', $id);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
 
-    public function getPgProgLotStationAnBylotan($PgProgLotAn) {
+    public function getPgProgLotStationAnBylotan($pgProgLotAn) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotStationAn p";
-        $query = $query . " where p.lotan = " . $PgProgLotAn->getId();
+        $query = $query . " where p.lotan = :pgProgLotAn";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgProgLotAn', $pgProgLotAn->getId());
         //print_r($query);
         return $qb->getResult();
     }
 
-    public function getPgProgLotStationAnByStation($PgRefStationMesure) {
+    public function getPgProgLotStationAnByStation($pgRefStationMesure) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotStationAn p";
-        $query = $query . " where p.station = " . $PgRefStationMesure->getOuvFoncId();
+        $query = $query . " where p.station = :pgRefStationMesure";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgRefStationMesure', $pgRefStationMesure->getOuvFoncId());
         //print_r($query);
         return $qb->getResult();
     }
 
-    public function getPgProgLotStationAnByLotAnStation($PgProgLotAn, $PgRefStationMesure) {
+    public function getPgProgLotStationAnByLotAnStation($pgProgLotAn, $pgRefStationMesure) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotStationAn p";
-        $query = $query . " where p.lotan = " . $PgProgLotAn->getId();
-        $query = $query . " and p.station = " . $PgRefStationMesure->getOuvFoncId();
+        $query = $query . " where p.lotan = :pgProgLotAn";
+        $query = $query . " and p.station = :pgRefStationMesure";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgProgLotAn', $pgProgLotAn->getId());
+        $qb->setParameter('pgRefStationMesure', $pgRefStationMesure->getOuvFoncId());
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
 
-    public function getPgProgLotStationAnByReseau($PgRefReseauMesure) {
+    public function getPgProgLotStationAnByReseau($pgRefReseauMesure) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotStationAn p";
-        $query = $query . " where p.rsxId = " . $PgRefReseauMesure->getGroupementId();
+        $query = $query . " where p.rsxId = :pgRefReseauMesure";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgRefReseauMesure', $pgRefReseauMesure->getGroupementId());
         //print_r($query);
         return $qb->getResult();
     }
 
-    public function getPgProgLotStationAnByLotAnReseau($PgProgLotAn, $PgRefReseauMesure) {
+    public function getPgProgLotStationAnByLotAnReseau($pgProgLotAn, $pgRefReseauMesure) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotStationAn p";
-        $query = $query . " where p.lotan = " . $PgProgLotAn->getId();
-        $query = $query . " and p.rsxId = " . $PgRefReseauMesure->getGroupementId();
+        $query = $query . " where p.lotan = :pgProgLotAn";
+        $query = $query . " and p.rsxId = :pgRefReseauMesure";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgProgLotAn', $pgProgLotAn->getId());
+        $qb->setParameter('pgRefReseauMesure', $pgRefReseauMesure->getGroupementId());
         //print_r($query);
         return $qb->getResult();
     }
 
-    public function getPgProgLotStationAnByLotAnStationReseau($PgProgLotAn, $PgRefStationMesure, $PgRefReseauMesure) {
+    public function getPgProgLotStationAnByLotAnStationReseau($pgProgLotAn, $pgRefStationMesure, $pgRefReseauMesure) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotStationAn p";
-        $query = $query . " where p.lotan = " . $PgProgLotAn->getId();
-        $query = $query . " and p.station = " . $PgRefStationMesure->getOuvFoncId();
-        $query = $query . " and p.rsxId = " . $PgRefReseauMesure->getGroupementId();
+        $query = $query . " where p.lotan = :pgProgLotAn";
+        $query = $query . " and p.station = :pgRefStationMesure";
+        $query = $query . " and p.rsxId = :pgRefReseauMesure";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgProgLotAn', $pgProgLotAn->getId());
+        $qb->setParameter('pgRefStationMesure', $pgRefStationMesure->getOuvFoncId());
+        $qb->setParameter('pgRefReseauMesure', $pgRefReseauMesure->getGroupementId());
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-    
-     public function getPgRefReseauMesuresByLotAn($PgProgLotAn) {
+
+    public function getPgRefReseauMesuresByLotAn($pgProgLotAn) {
         $query = "select distinct(r)";
         $query = $query . " from Aeag\SqeBundle\Entity\PgRefStationMesure r";
         $query = $query . " , Aeag\SqeBundle\Entity\PgProgLotStationAn p";
-        $query = $query . " where p.lotan = " . $PgProgLotAn->getId();
+        $query = $query . " where p.lotan = :pgProgLotAn";
         $query = $query . " and p.rsxId = r.groupementId";
         $query = $query . " order by r.codeSandre";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgProgLotAn', $pgProgLotAn->getId());
         //print_r($query);
         return $qb->getResult();
     }
-    
-    public function countPgProgLotStationAnByLotan($PgProgLotAn) {
+
+    public function countPgProgLotStationAnByLotan($pgProgLotAn) {
         $query = "select count(p.id)";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotStationAn p";
-        $query = $query . " where p.lotan = " . $PgProgLotAn->getId();
+        $query = $query . " where p.lotan = :pgProgLotAn";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgProgLotAn', $pgProgLotAn->getId());
         //print_r($query);
         return $qb->getSingleScalarResult();
     }

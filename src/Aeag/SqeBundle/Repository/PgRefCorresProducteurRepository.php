@@ -34,17 +34,19 @@ class PgRefCorresProducteurRepository extends EntityRepository {
     public function getPgRefCorresProducteurByAdrCorId($adrCorId) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgRefCorresProducteur p";
-        $query = $query . " where p.adrCorId = " . $adrCorId;
+        $query = $query . " where p.adrCorId = :adrCorId";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('adrCorId', $adrCorId);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-    
+
     public function getPgRefCorresProducteurByAncnum($ancnum) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgRefCorresProducteur p";
-        $query = $query . " where p.ancnum = '" . $ancnum . "'";
+        $query = $query . " where p.ancnum = :ancnum";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('ancnum', $ancnum);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }

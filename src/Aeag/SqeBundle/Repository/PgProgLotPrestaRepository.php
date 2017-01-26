@@ -27,22 +27,22 @@ class PgProgLotPrestaRepository extends EntityRepository {
         return $qb->getResult();
     }
 
-    
-
     public function getPgProgLotPrestaByTypePresta($typePresta) {
         $query = "select distinct p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotPresta p";
-        $query = $query . " where p.typePresta = '" . $typePresta . "'";
+        $query = $query . " where p.typePresta = :typePresta";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('typePresta', $typePresta);
         //print_r($query);
         return $qb->getResult();
     }
-    
+
     public function getPgProgLotPrestaByLot($lot) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotPresta p";
-        $query = $query . " where p.lot = " . $lot->getId();
+        $query = $query . " where p.lot = :lot";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('lot', $lot->getId());
         //print_r($query);
         return $qb->getResult();
     }
@@ -50,31 +50,35 @@ class PgProgLotPrestaRepository extends EntityRepository {
     public function getPgProgLotPrestaByLotTypePresta($lot, $typePresta) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotPresta p";
-        $query = $query . " where p.lot = " . $lot->getId();
-        $query = $query . " and p.typePresta = '" . $typePresta . "'";
+        $query = $query . " where p.lot = :lot";
+        $query = $query . " and p.typePresta = :typePresta";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('lot', $lot->getId());
+        $qb->setParameter('typePresta', $typePresta);
         //print_r($query);
         return $qb->getResult();
     }
-    
-    public function getPgProgLotPrestaByPresta($PgRefCorresPresta) {
+
+    public function getPgProgLotPrestaByPresta($pgRefCorresPresta) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotPresta p";
-        $query = $query . " where p.presta = " . $PgRefCorresPresta->getAdrCorId();
+        $query = $query . " where p.presta = :pgRefCorresPresta";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgRefCorresPresta', $pgRefCorresPresta->getAdrCorId());
         //print_r($query);
         return $qb->getResult();
     }
-    
-    public function getPgProgLotPrestaByLotPresta($lot, $PgRefCorresPresta) {
+
+    public function getPgProgLotPrestaByLotPresta($lot, $pgRefCorresPresta) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotPresta p";
-        $query = $query . " where p.lot = " . $lot->getId();
-        $query = $query . " and p.presta = " . $PgRefCorresPresta->getAdrCorId();
+        $query = $query . " where p.lot = :lot";
+        $query = $query . " and p.presta = :pgRefCorresPresta";
         $qb = $this->_em->createQuery($query);
-       //print_r($query);
+        $qb->setParameter('lot', $lot->getId());
+        $qb->setParameter('pgRefCorresPresta', $pgRefCorresPresta->getAdrCorId());
+        //print_r($query);
         return $qb->getResult();
     }
-    
-   
+
 }

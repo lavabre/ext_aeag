@@ -5,7 +5,7 @@
                    <a href="{{ path('aeag_homepage') }}">Accueil</a> 
                </li>
                   <li class="active">
-                          Avancement campagne Hydrobio
+                          Avancement campagne {{ anneeProg }} Hydrobio
                  </li>
  {% endblock breadcrumb %}
 
@@ -13,7 +13,7 @@
 
 {%block panel_heading %}
     <h3 class="page-title">
-       Avancement campagne Hydrobio
+       Avancement campagne {{ anneeProg }} Hydrobio
      </h3>
 {%endblock panel_heading %}
 
@@ -58,7 +58,7 @@
  
     
           $('#modalTraitementEncours').modal('toggle');
-            var url = '{{ path("AeagSqeBundle_programmation_avancement_hydro_global") }}'; // Le nom du fichier indiqué dans le formulaire
+            var url = '{{ path("AeagSqeBundle_programmation_avancement_hydro_global",{ 'anneeProg': anneeProg }) }}'; // Le nom du fichier indiqué dans le formulaire
              $.get( url, function( responseData ) { 
                  $("#tab_1_1" ).empty().html( responseData ); 
                  $('#modalTraitementEncours').modal('hide');
@@ -70,7 +70,7 @@
                    console.log('click_tab_2 avant : ' +click_tab_2);
                    $('#modalTraitementEncours').modal('toggle');
                      e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                     var url = '{{ path("AeagSqeBundle_programmation_avancement_hydro_support") }}'; // Le nom du fichier indiqué dans le formulaire
+                     var url = '{{ path("AeagSqeBundle_programmation_avancement_hydro_support",{ 'anneeProg': anneeProg }) }}'; // Le nom du fichier indiqué dans le formulaire
                     $.get( url, function( responseData ) { 
                           $("#tab_1_2" ).empty().html( responseData ); 
                           $('#modalTraitementEncours').modal('hide');
@@ -86,7 +86,7 @@
             if (click_tab_3 == false){
                 $('#modalTraitementEncours').modal('toggle');
                 e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                var url = '{{ path("AeagSqeBundle_programmation_avancement_hydro_lot") }}'; // Le nom du fichier indiqué dans le formulaire
+                var url = '{{ path("AeagSqeBundle_programmation_avancement_hydro_lot",{ 'anneeProg': anneeProg }) }}'; // Le nom du fichier indiqué dans le formulaire
                $.get( url, function( responseData ) { 
                      $("#tab_1_3" ).empty().html( responseData ); 
                      $('#modalTraitementEncours').modal('hide');
@@ -100,7 +100,7 @@
             if (click_tab_4 == false){
                 $('#modalTraitementEncours').modal('toggle');
                 e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                var url = '{{ path("AeagSqeBundle_programmation_avancement_hydro_station") }}'; // Le nom du fichier indiqué dans le formulaire
+                var url = '{{ path("AeagSqeBundle_programmation_avancement_hydro_station",{ 'anneeProg': anneeProg }) }}'; // Le nom du fichier indiqué dans le formulaire
                $.get( url, function( responseData ) { 
                      $("#tab_1_4" ).empty().html( responseData ); 
                      $('#modalTraitementEncours').modal('hide');

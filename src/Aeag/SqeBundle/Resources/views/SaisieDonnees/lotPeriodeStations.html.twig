@@ -96,9 +96,14 @@
                     <a  class="btn btn-success"  href="{{path("AeagSqeBundle_saisieDonnees_lot_periode_stations_valider_stations",{"periodeAnId": periodeAn.id })}}" title="Valider toutes les stations correctes">
                         <i class="fa fa-check"> Valider toutes les stations correctes</i> 
                     </a>
+         </div>
+     {% elseif is_granted('ROLE_PRESTASQE')  %}
+            <div class="row responsive">
+                   <a  class="btn btn-success"  href="{{path("AeagSqeBundle_saisieDonnees_lot_periode_stations_valider_stations",{"periodeAnId": periodeAn.id })}}" title="Valider toutes les stations correctes">
+                        <i class="fa fa-check"> Valider toutes les stations correctes</i> 
+                    </a>
              </div>
-        </div>
-     {% endif %}
+    {% endif %} 
      
 
     <div class="row responsive">

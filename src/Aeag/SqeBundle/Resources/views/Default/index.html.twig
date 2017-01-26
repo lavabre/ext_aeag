@@ -23,20 +23,22 @@
                 </div>
                 <div class="modal-body">
                     <div id="bodyModalCampagne">
-                        <div class="row responsive">
-                            <div class="col-xm-12">
-                                <div class="small"> 
-                                    <div class="col-md-offset-2 col-md-6">
-                                        <ul class="list-group">
-                                            <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_programmation_avancement_hydro') }}" title="Avancement campagne Hydrobio"><i class="fa fa-signal fa-2x"></i> Hydrobio </a></li>
-                                            <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_programmation_avancement_analyse') }}" title="Avancement campagne Analyses"><i class="fa fa-signal fa-2x"></i> Analyses  </a></li>
-                                            <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_programmation_avancement_prelevement') }}" title="Avancement campagne Global"><i class="fa fa-signal fa-2x"></i> Global </a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                               <div class="row responsive">
+                                      <div class="col-xm-12">
+                                          <div class="small"> 
+                                              <div class="col-md-offset-2 col-md-6">
+                                                   <ul class="list-group">
+                                                       {% for anneeProg in anneeProgs %}
+                                                            <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_programmation_avancement_hydro',{ 'anneeProg': anneeProg }) }}" title="Avancement campagne {{ anneeProg }} Hydrobio"><i class="fa fa-signal fa-2x"></i>  Hydrobio {{ anneeProg }} </a></li>
+                                                            <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_programmation_avancement_analyse',{ 'anneeProg': anneeProg }) }}" title="Avancement campagne {{ anneeProg }} Analyses"><i class="fa fa-signal fa-2x"></i> Analyses {{ anneeProg }} </a></li>
+                                                       {% endfor %}
+                                                             <li class="list-group-item list-group-item-info"><a class="btn btn-primary btn-xs" href="{{ path('AeagSqeBundle_programmation_avancement_prelevement') }}" title="Avancement campagne Global"><i class="fa fa-signal fa-2x"></i> Global  </a></li>
+                                                   </ul>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                     </div>
                 </div>   
                 <div class="modal-footer"></div>
             </div>
@@ -74,7 +76,7 @@
                                     {% if   is_granted('ROLE_ADMINSQE') %}
                                         <a class="btn btn-primary btn-group-justified" data-toggle="modal" href="#modalCampagne" title="Avancement campagne"><div class="text-left"><i class="fa fa-caret-right"></i> Avancement campagne</div></a>
                                         <a class="btn btn-primary btn-group-justified" href="{{ path('AeagSqeBundle_programmation_avancement_programmation') }}" title="Avancement programmation"><div class="text-left"><i class="fa fa-caret-right"></i> Avancement programmation</div></a>
-                                    {% endif %}
+                                     {% endif %}
                              {#   {% endif %}#}
                             </div>
                         </div>

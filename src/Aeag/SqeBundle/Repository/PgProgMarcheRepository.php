@@ -34,8 +34,9 @@ class PgProgMarcheRepository extends EntityRepository {
     public function getPgProgMarcheByid($id) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgMarche p";
-        $query = $query . " where p.id = " . $id;
+        $query = $query . " where p.id = :id";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('id', $id);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
@@ -43,8 +44,9 @@ class PgProgMarcheRepository extends EntityRepository {
     public function getPgProgMarcheByNomMarche($nomMarche) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgMarches p";
-        $query = $query . " where p.nomMarche = '" . $nomMarche . "'";
+        $query = $query . " where p.nomMarche = :nomMarche";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('nomMarche', $nomMarche);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
@@ -52,8 +54,9 @@ class PgProgMarcheRepository extends EntityRepository {
     public function getPgProgMarcheByTypeMarche($typeMarche) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgMarche p";
-        $query = $query . " where p.typeMarche = '" . $typeMarche . "'";
+        $query = $query . " where p.typeMarche = :typeMarche";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('typeMarche', $typeMarche);
         //print_r($query);
         return $qb->getResult();
     }
@@ -73,9 +76,9 @@ class PgProgMarcheRepository extends EntityRepository {
      /**
      * @return array
      */
-    public function getAvancementHydrobioGlobal() {
+    public function getAvancementHydrobioGlobal($annee_prog) {
    
-        $query = "select * from sqe_avancement_hydrobio_global() "; 
+        $query = "select * from sqe_avancement_hydrobio_global(" . $annee_prog. ")"; 
          return $this->getEntityManager('')
                 ->getConnection()
                 ->query($query);
@@ -84,9 +87,9 @@ class PgProgMarcheRepository extends EntityRepository {
       /**
      * @return array
      */
-    public function getAvancementHydrobioSupport() {
+    public function getAvancementHydrobioSupport($annee_prog) {
    
-        $query = "select * from sqe_avancement_hydrobio_support() "; 
+        $query = "select * from sqe_avancement_hydrobio_support(" . $annee_prog . ")"; 
          return $this->getEntityManager('')
                 ->getConnection()
                 ->query($query);
@@ -95,9 +98,9 @@ class PgProgMarcheRepository extends EntityRepository {
       /**
      * @return array
      */
-    public function getAvancementHydrobioLot() {
+    public function getAvancementHydrobioLot($annee_prog) {
    
-        $query = "select * from sqe_avancement_hydrobio_lot() "; 
+        $query = "select * from sqe_avancement_hydrobio_lot(" . $annee_prog . ")"; 
          return $this->getEntityManager('')
                 ->getConnection()
                 ->query($query);
@@ -106,9 +109,9 @@ class PgProgMarcheRepository extends EntityRepository {
     /**
      * @return array
      */
-    public function getAvancementHydrobioStation() {
+    public function getAvancementHydrobioStation($annee_prog) {
    
-        $query = "select * from sqe_avancement_hydrobio_station() "; 
+        $query = "select * from sqe_avancement_hydrobio_station(" . $annee_prog . ")"; 
          return $this->getEntityManager('')
                 ->getConnection()
                 ->query($query);
@@ -118,9 +121,9 @@ class PgProgMarcheRepository extends EntityRepository {
      /**
      * @return array
      */
-    public function getAvancementAnalyseGlobal() {
+    public function getAvancementAnalyseGlobal($annee_prog) {
    
-        $query = "select * from sqe_avancement_analyse_global() "; 
+        $query = "select * from sqe_avancement_analyse_global(" . $annee_prog . ")"; 
          return $this->getEntityManager('')
                 ->getConnection()
                 ->query($query);
@@ -129,9 +132,9 @@ class PgProgMarcheRepository extends EntityRepository {
      /**
      * @return array
      */
-    public function getAvancementAnalysePeriode() {
+    public function getAvancementAnalysePeriode($annee_prog) {
    
-        $query = "select * from sqe_avancement_analyse_periode() "; 
+        $query = "select * from sqe_avancement_analyse_periode(" . $annee_prog . ")"; 
          return $this->getEntityManager('')
                 ->getConnection()
                 ->query($query);
@@ -140,9 +143,9 @@ class PgProgMarcheRepository extends EntityRepository {
      /**
      * @return array
      */
-    public function getAvancementAnalyseLot() {
+    public function getAvancementAnalyseLot($annee_prog) {
    
-        $query = "select * from sqe_avancement_analyse_lot() "; 
+        $query = "select * from sqe_avancement_analyse_lot(" . $annee_prog . ")"; 
          return $this->getEntityManager('')
                 ->getConnection()
                 ->query($query);
@@ -153,7 +156,7 @@ class PgProgMarcheRepository extends EntityRepository {
      */
     public function getAvancementPrelevementGlobal() {
    
-        $query = "select * from sqe_avancement_prelevement_global() "; 
+        $query = "select * from sqe_avancement_prelevement_global()"; 
          return $this->getEntityManager('')
                 ->getConnection()
                 ->query($query);
@@ -164,7 +167,7 @@ class PgProgMarcheRepository extends EntityRepository {
      */
     public function getAvancementPrelevementTypeMarche() {
    
-        $query = "select * from sqe_avancement_prelevement_type_marche() "; 
+        $query = "select * from sqe_avancement_prelevement_type_marche()"; 
          return $this->getEntityManager('')
                 ->getConnection()
                 ->query($query);
@@ -175,7 +178,7 @@ class PgProgMarcheRepository extends EntityRepository {
      */
     public function getAvancementPrelevementTypeMilieu() {
    
-        $query = "select * from sqe_avancement_prelevement_type_milieu() "; 
+        $query = "select * from sqe_avancement_prelevement_type_milieu()"; 
          return $this->getEntityManager('')
                 ->getConnection()
                 ->query($query);

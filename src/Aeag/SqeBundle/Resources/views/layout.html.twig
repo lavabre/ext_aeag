@@ -28,7 +28,7 @@
      
      {% if is_granted('ROLE_ADMINSQE') %}
          <!-- Menu admin sqe -->
-         {% include 'AeagSqeBundle:Default:menu_admin.html.twig'%}
+         {% include 'AeagSqeBundle:Default:menu_admin.html.twig' with [{'anneeProgs' : app.session.get('anneeProgs')}]%}
          
     {%elseif is_granted('ROLE_PROGSQE') %}
         <!-- Menu prog sqe -->

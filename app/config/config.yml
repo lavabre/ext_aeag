@@ -192,3 +192,5 @@ fos_user:
     from_email:
         address:        automate@eau-adour-garonne.fr
         sender_name:    Aeag
+        
+

@@ -32,12 +32,12 @@ class AeagController extends Controller {
         $em = $this->get('doctrine')->getManager();
 
         $security = $this->get('security.authorization_checker');
-        
-       
+
+
         $session->clear();
         \apc_clear_cache();
-        
-     
+
+
         $session->set('retourErreur', $this->generateUrl('aeag_homepage'));
 
         if (!$session->get('appli')) {
@@ -51,8 +51,11 @@ class AeagController extends Controller {
             return $this->redirect($this->generateUrl('fos_user_security_login'));
         }
 
+
         if ($security->isGranted('ROLE_ADMIN')) {
             $session->set('appli', 'admin');
+//            $message = $this->majUsers();
+//            $session->getFlashBag()->add('notice-success', $message);
             return $this->render('AeagAeagBundle:Admin:index.html.twig');
         };
 
@@ -71,7 +74,7 @@ class AeagController extends Controller {
         };
 
         if ($security->isGranted('ROLE_EDL')) {
-             $session->set('appli', 'edl');
+            $session->set('appli', 'edl');
             return $this->redirect($this->generateUrl('aeag_edl'));
         };
 
@@ -512,5 +515,31 @@ class AeagController extends Controller {
         return "ok";
     }
 
-    
+    public function majUsers() {
+
+        $em = $this->get('doctrine')->getManager();
+        $factory = $this->get('security.encoder_factory');
+
+        $repoUsers = $em->getRepository('AeagUserBundle:User');
+
+        $entities = $repoUsers->getUsers();
+        $nbModifies = 0;
+        $message = '';
+
+        foreach ($entities as $entity) {
+//            if ($entity->getid() == 24) {
+                $encoder = $factory->getEncoder($entity);
+                $entity->setSalt('');
+               // $entity->setPlainPwd($entity->getPassword());
+                $password = $encoder->encodePassword($entity->getPassword(), $entity->getSalt());
+                $entity->setpassword($password);
+                $em->persist($entity);
+                $nbModifies++;
+//            }
+        }
+        $em->flush();
+        $message = "user  modifiés : " . $nbModifies;
+        return $message;
+    }
+
 }

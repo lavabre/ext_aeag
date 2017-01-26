@@ -31,7 +31,7 @@ class PressionDernierePropositionRepository extends EntityRepository {
 
         $query = "select p ";
         $query = $query . " from Aeag\EdlBundle\Entity\PressionDerniereProposition p";
-        $query = $query . " where p.euCd = ':euCd";
+        $query = $query . " where p.euCd = :euCd";
         $query = $query . " order by p.propositionDate desc";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('euCd', $euCd);

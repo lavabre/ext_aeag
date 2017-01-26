@@ -34,8 +34,9 @@ class PgRefSitePrelevementRepository extends EntityRepository {
     public function getPgRefSitePrelevementById($id) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgRefSitePrelevement p";
-        $query = $query . " where p.id = " . $id;
+        $query = $query . " where p.id = :id";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('id', $id);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
@@ -43,49 +44,51 @@ class PgRefSitePrelevementRepository extends EntityRepository {
     public function getPgRefSitePrelevementByCodeSite($codeSite) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgRefSitePrelevement p";
-        $query = $query . " where p.codeSite = '" . $codeSite . "'";
+        $query = $query . " where p.codeSite = :codeSite";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('codeSite', $codeSite);
         //print_r($query);
         return $qb->getResult();
     }
-    
+
     public function getNbPgRefSitePrelevementByCodeSite($codeSite) {
         $query = "select count(p.id)";
         $query = $query . " from Aeag\SqeBundle\Entity\PgRefSitePrelevement p";
-        $query = $query . " where p.codeSite = '" . $codeSite . "'";
+        $query = $query . " where p.codeSite = :codeSite";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('codeSite', $codeSite);
         //print_r($query);
         return $qb->getSingleScalarResult();
     }
-    
+
     public function getPgRefSitePrelevementByOuvFoncId($ouvFoncId) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgRefSitePrelevement p";
-        $query = $query . " where p.ouvFonc = " . $ouvFoncId;
+        $query = $query . " where p.ouvFonc = :ouvFoncId";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('ouvFoncId', $ouvFoncId);
         //print_r($query);
         return $qb->getResult();
     }
-    
+
     public function getNbPgRefSitePrelevementByOuvFoncId($ouvFoncId) {
         $query = "select count(p.id)";
         $query = $query . " from Aeag\SqeBundle\Entity\PgRefSitePrelevement p";
-        $query = $query . " where p.ouvFonc = " . $ouvFoncId;
+        $query = $query . " where p.ouvFonc = :ouvFoncId";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('ouvFoncId', $ouvFoncId);
         //print_r($query);
         return $qb->getSingleScalarResult();
     }
-    
-  
 
-    public function getPgRefSitePrelevementByCodeSupport($PgSandreSupports) {
+    public function getPgRefSitePrelevementByCodeSupport($pgSandreSupports) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgRefSitePrelevement p";
-        $query = $query . " where p.codeSupport = '" . $PgSandreSupports->getCodeSupport() ; "'";
+        $query = $query . " where p.codeSupport = :pgSandreSupports";
         $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgSandreSupports', $pgSandreSupports->getCodeSupport());
         //print_r($query);
         return $qb->getResult();
     }
-   
 
 }
