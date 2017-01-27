@@ -123,7 +123,7 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
                     $pgCmdPrelev->setCodeMethode($pgTmpValidEdilabo->getMethPrel());
                     if ($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getCodeMilieu()->getCodeMilieu() == 'RPC') {
                         $meSituHydro = $this->getMesureByCodeParametre(1726, $demandeId, $reponseId, $codePrelevement);
-                        if (!is_null($meSituHydro) && $meSituHydro <= 2) {
+                        if (!is_null($meSituHydro) && ($meSituHydro > 0 && $meSituHydro <= 2)) {
                             $pgCmdPrelev->setRealise("0");
                         } else {
                             $pgCmdPrelev->setRealise("1");
