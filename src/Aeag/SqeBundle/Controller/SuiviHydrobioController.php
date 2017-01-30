@@ -489,7 +489,7 @@ class SuiviHydrobioController extends Controller {
                     $nbMessages++;
                 }
 //validate file size
-                if ($size > 104857600) {
+                if ($size > 335544320) {
                     $valid = false;
                     $response = 'La taille du fichier (' . $size / 1024 . ') est plus grande que la taille autorisée.';
                     $tabMessage[$nbMessages][0] = 'ko';
@@ -1007,7 +1007,7 @@ class SuiviHydrobioController extends Controller {
                     $response = 'extension du fichier incorrecte.';
                 }
 //validate file size
-                if ($size > 10485760) {
+                if ($size > 335544320) {
                     $valid = false;
                     $response = 'La taille du fichier est plus grande que la taille autorisée.';
                 }
@@ -2166,7 +2166,7 @@ class SuiviHydrobioController extends Controller {
                         $nbMessages++;
                     }
 //validate file size
-                    if ($size > 10485760) {
+                    if ($size > 335544320) {
                         $valid = false;
                         $response = 'La taille du fichier (' . $size / 1024 . ') est plus grande que la taille autorisée.';
                         $tabMessage[$nbMessages][0] = 'ko';
