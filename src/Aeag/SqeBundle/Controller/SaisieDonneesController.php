@@ -1930,6 +1930,7 @@ class SaisieDonneesController extends Controller {
         $okControleVraisemblance = 0;
         $nbParametresEnvSit = 0;
         $nbParametresAna = 0;
+        $nbParametresAnaMaj = 0;
 
         $userPrestataire = null;
         if ($pgProgWebUser->getPrestataire()) {
@@ -1947,7 +1948,7 @@ class SaisieDonneesController extends Controller {
 
         foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
             $pgProgLotGrparAn = $pgProgLotPeriodeProg->getGrparAn();
-            print_r('groupe : ' . $pgProgLotGrparAn->getId() . ' valide : ' . $pgProgLotGrparAn->getvalide() . ' type : ' . $pgProgLotGrparAn->getGrparRef()->getTypeGrp() . '<br/>');
+            //print_r('groupe : ' . $pgProgLotGrparAn->getId() . ' valide : ' . $pgProgLotGrparAn->getvalide() . ' type : ' . $pgProgLotGrparAn->getGrparRef()->getTypeGrp() . '<br/>');
             if ($pgProgLotGrparAn->getvalide() == 'O' and $pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'ANA') {
                 $pgProgGrpParamRef = $pgProgLotGrparAn->getGrparRef();
 // if ($pgProgGrpParamRef->getCodeMilieu()->getCodeMilieu() == $pgProgTypeMilieu->getCodeMilieu()) {
@@ -1957,12 +1958,13 @@ class SaisieDonneesController extends Controller {
                     if ($user->hasRole('ROLE_ADMINSQE') or ( $prestataire == $pgProgLotParamAn->getPrestataire() and $userPrestataire == $prestataire)) {
                         $parametre = $pgProgLotParamAn->getCodeParametre()->getCodeparametre();
                         $nbParametresAna++;
-                        if (isset($_POST['valeur' . $pgProgLotParamAn->getId()])) {
+                        $valeur = null;
+                        if (!empty($_POST['valeur' . $pgProgLotParamAn->getId()])) {
                             $valeur = $_POST['valeur' . $pgProgLotParamAn->getId()];
-                        } else {
+                          } else {
                             $valeur = null;
                         }
-                        if (isset($_POST['uniteCode' . $pgProgLotParamAn->getId()])) {
+                        if (!empty($_POST['uniteCode' . $pgProgLotParamAn->getId()])) {
                             $unite = $_POST['uniteCode' . $pgProgLotParamAn->getId()];
                             $pgSandreUnites = $repoPgSandreUnites->getPgSandreUnitesByCodeUnite($unite);
                         } else {
@@ -1977,8 +1979,8 @@ class SaisieDonneesController extends Controller {
                                 }
                             }
                         }
-
-                        if (isset($_POST['remarque' . $pgProgLotParamAn->getId()])) {
+                        $remarque = null;
+                        if (!empty($_POST['remarque' . $pgProgLotParamAn->getId()])) {
                             $remarque = $_POST['remarque' . $pgProgLotParamAn->getId()];
                         } else {
                             $remarque = null;
@@ -2004,6 +2006,7 @@ class SaisieDonneesController extends Controller {
                             $pgSandreFraction = null;
                         }
                         if (strlen($valeur) > 0 or $remarque == 0) {
+                            $nbParametresAnaMaj++;
                             if (!$pgCmdAnalyse) {
                                 $pgCmdPrelevPc = $repoPgCmdPrelevPc->getPgCmdPrelevPcByPrelevNumOrdre($pgCmdPrelev, 1);
                                 if (!$pgCmdPrelevPc) {
@@ -2045,6 +2048,7 @@ class SaisieDonneesController extends Controller {
 
                 $emSqe->flush();
 
+           //     return new Response('lu : ' . $nbParametresAna . ' maj : ' . $nbParametresAnaMaj);
 
 
 // }

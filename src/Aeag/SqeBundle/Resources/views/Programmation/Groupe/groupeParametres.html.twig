@@ -74,7 +74,7 @@
                                                     <option value=""></option>
                                                     {%if laboratoires | length %}  
                                                         {% for laboratoire in laboratoires %}
-                                                            <option  value="{{ laboratoire.adrCorId }}" >{{ laboratoire.ancnumNomCorres }}</option>
+                                                            <option  value="{{ laboratoire.adrCorId }}" >{{ laboratoire.nomCorres }}</option>
                                                         {% endfor %}
                                                     {%endif%}
                                                </select>
