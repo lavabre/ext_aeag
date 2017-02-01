@@ -161,7 +161,7 @@
                         {% if parametre.prestataire %}
                             {% for laboratoire in laboratoires if parametre.prestataire.adrCorId == laboratoire.adrCorId %}
                                 $("#prestataire_{{ parametre.pgSandreParametre.codeParametre }} option[value='" + {{ laboratoire.adrCorId }} + "']").attr('selected','selected');
-                                $("#prestataire_{{ parametre.pgSandreParametre.codeParametre }}").val({{ laboratoire.adrCorId }});
+                             {#   $("#prestataire_{{ parametre.pgSandreParametre.codeParametre }}").val('{{ laboratoire.nomCorres }}');#}
                             {% endfor %}
                         {% endif %}
                     {% endif %}
