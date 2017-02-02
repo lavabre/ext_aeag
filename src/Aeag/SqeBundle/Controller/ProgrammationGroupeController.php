@@ -667,6 +667,9 @@ class ProgrammationGroupeController extends Controller {
                 $i++;
             }
         }
+        
+//                                            \Symfony\Component\VarDumper\VarDumper::dump($tabGroupes);
+//                                        return new Response('');
 
 
         return $this->render('AeagSqeBundle:Programmation:Groupe/groupeParametres.html.twig', array(

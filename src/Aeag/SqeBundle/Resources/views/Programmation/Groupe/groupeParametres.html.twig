@@ -1,3 +1,4 @@
+
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
     <h4 class="modal-title" id="ModalLabel_groupe_paramtres">
@@ -74,18 +75,18 @@
                                                     <option value=""></option>
                                                     {%if laboratoires | length %}  
                                                         {% for laboratoire in laboratoires %}
-                                                            <option  value="{{ laboratoire.adrCorId }}" >{{ laboratoire.ancnumNomCorres }}</option>
+                                                            <option  value="{{ laboratoire.adrCorId }}" >{{ laboratoire.nomCorres }}</option>
                                                         {% endfor %}
                                                     {%endif%}
                                                </select>
                                       {% else %}
                                              {% if groupe.prestataire %}
-                                                 <input type="texte"  readonly id="prestataire_{{ parametre.pgSandreParametre.codeParametre }}" name="prestataire_{{ parametre.pgSandreParametre.codeParametre }}" value="{{ groupe.prestataire.nomCorres }}">
+                                                 <input type="texte"  readonly id="prestataire_{{ parametre.pgSandreParametre.codeParametre }}" name="prestataire_{{ parametre.pgSandreParametre.codeParametre }}" value="{{ parametre.prestataire.nomCorres }}">
                                              {% endif %}
                                       {% endif %}
                                      {% else %}
                                            {% if groupe.prestataire %}
-                                              <input type="texte"  readonly id="prestataire_{{ parametre.pgSandreParametre.codeParametre }}" name="prestataire_{{ parametre.pgSandreParametre.codeParametre }}" value="{{ groupe.prestataire.nomCorres }}">
+                                              <input type="texte"  readonly id="prestataire_{{ parametre.pgSandreParametre.codeParametre }}" name="prestataire_{{ parametre.pgSandreParametre.codeParametre }}" value="{{ parametre.prestataire.nomCorres }}">
                                             {% endif %}
                                     {% endif %}
                                </td>
@@ -161,7 +162,7 @@
                         {% if parametre.prestataire %}
                             {% for laboratoire in laboratoires if parametre.prestataire.adrCorId == laboratoire.adrCorId %}
                                 $("#prestataire_{{ parametre.pgSandreParametre.codeParametre }} option[value='" + {{ laboratoire.adrCorId }} + "']").attr('selected','selected');
-                                $("#prestataire_{{ parametre.pgSandreParametre.codeParametre }}").val({{ laboratoire.adrCorId }});
+                             {#   $("#prestataire_{{ parametre.pgSandreParametre.codeParametre }}").val('{{ laboratoire.nomCorres }}');#}
                             {% endfor %}
                         {% endif %}
                     {% endif %}

@@ -85,6 +85,7 @@ class User extends BaseUser {
     public function _construct() {
         $this->roles = array();
         $this->depts = array();
+        $this->salt = ' ';
     }
 
     public function getId() {
@@ -152,7 +153,7 @@ class User extends BaseUser {
     }
 
     public function setSalt($salt) {
-        $this->salt = '';
+        $this->salt = ' ';
     }
 
     function getDepts() {
