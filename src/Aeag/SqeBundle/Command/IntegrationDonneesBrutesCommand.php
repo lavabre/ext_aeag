@@ -67,6 +67,9 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
                 }
             }
                     
+            // Compléter le fichier de logs
+            $this->_insertFichierLog($pgCmdFichierRps, "Intégration Données Brutes");
+            
             $objetMessage = "SQE - RAI : Fichier csv des données brutes disponible pour le lot " . $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getNomLot();
             $urlDb = $this->getContainer()->get('router')->generate('AeagSqeBundle_echangefichiers_reponses_telecharger', array("reponseId" => $pgCmdFichierRps->getId(), "typeFichier" => "DB"), UrlGeneratorInterface::ABSOLUTE_URL);
             $urlCr = $this->getContainer()->get('router')->generate('AeagSqeBundle_echangefichiers_reponses_telecharger', array("reponseId" => $pgCmdFichierRps->getId(), "typeFichier" => "CR"), UrlGeneratorInterface::ABSOLUTE_URL);
@@ -106,9 +109,17 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
         foreach ($codesPrelevement as $codePrelevement) {
             $pgCmdPrelev = $this->repoPgCmdPrelev->findOneBy(array('demande' => $demandeId, 'codePrelevCmd' => $codePrelevement));
             if (!is_null($pgCmdPrelev)) {
-                if ($this->isAlreadyAdded($pgCmdFichierRps, $pgCmdPrelev)) {
-                    $this->_addLog('warning', $demandeId, $reponseId, "Cette RAI a déjà été intégrée dans SQE");
-                } else {
+                if ($this->isAlreadyAdded($pgCmdFichierRps, $pgCmdPrelev, 'M50')) {
+                    $this->addLog('warning', $demandeId, $reponseId, "Le prélèvement ".$pgCmdPrelev->getCodePrelevCmd(). " existe déjà et ne peut pas être mis à jour (clos)");
+                } else { // < 350
+                    
+                    // En fonction de la phase, ajouter des warnings lorsqu'une nouvelle données est insérée
+                    $phaseDmd = $pgCmdPrelev->getPhaseDmd();
+                    
+                    if($phaseDmd->getId() >= '330' && $phaseDmd->getId() < '350') {
+                        $this->addLog('warning', $demandeId, $reponseId, "Le prélèvement ".$pgCmdPrelev->getCodePrelevCmd()." existe déjà - mise à jour");
+                    }
+                    
                     $pgCmdPrelev->setFichierRps($pgCmdFichierRps);
                     $pgTmpValidEdilabo = $this->repoPgTmpValidEdilabo->findOneBy(array('fichierRpsId' => $reponseId, 'demandeId' => $demandeId, 'codePrelevement' => $codePrelevement, 'numOrdre' => '1'));
                     if (!is_null($pgTmpValidEdilabo->getDatePrel())) {
@@ -179,6 +190,9 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
                             $pgCmdMesureEnv = $this->repoPgCmdMesureEnv->findOneBy(array("prelev" => $pgCmdPrelev, "codeParametre" => $pgSandreParametres));
                             if (is_null($pgCmdMesureEnv)) {
                                 $pgCmdMesureEnv = new \Aeag\SqeBundle\Entity\PgCmdMesureEnv();
+                                if($phaseDmd->getId() >= '330' && $phaseDmd->getId() < '350') {
+                                    $this->addLog('warning', $demandeId, $reponseId, "Paramètre ".$pgSandreParametres->getCodeParametre()." rajouté par rapport au dépôt précédent");
+                                }
                             }
                             
                             $pgCmdMesureEnv->setPrelev($pgCmdPrelev);
@@ -221,6 +235,9 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
                             $pgCmdAnalyse = $this->repoPgCmdAnalyse->findOneBy(array("prelevId" => $pgCmdPrelev->getId(), "numOrdre" => $pgTmpValidEdilabo->getNumOrdre(), "codeParametre" => $pgSandreParametres, "codeFraction" => $pgSandreFractions));
                             if (is_null($pgCmdAnalyse)) {
                                 $pgCmdAnalyse = new \Aeag\SqeBundle\Entity\PgCmdAnalyse();
+                                if($phaseDmd->getId() >= '330' && $phaseDmd->getId() < '350') {
+                                    $this->addLog('warning', $demandeId, $reponseId, "Paramètre ".$pgSandreParametres->getCodeParametre()." rajouté par rapport au dépôt précédent");
+                                }
                             }
                             
                             $pgCmdAnalyse->setPrelevId($pgCmdPrelev->getId());

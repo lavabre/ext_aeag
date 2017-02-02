@@ -83,7 +83,7 @@ class ProcessRaiCommand extends AeagCommand {
             }
 
             // Compléter le fichier de logs
-            $this->_insertFichierLog($pgCmdFichierRps);
+            $this->_insertFichierLog($pgCmdFichierRps, "Test Aeag");
 
             // Envoi mail
             $objetMessage = "SQE - RAI : Fichier " . $pgCmdFichierRps->getNomFichier() . " - Récapitulatif";
