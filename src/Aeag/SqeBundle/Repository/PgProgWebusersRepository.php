@@ -155,6 +155,39 @@ class PgProgWebusersRepository extends EntityRepository {
 
         return $qb->getResult();
     }
+    
+    public function getNotAdminPgProgWebusersByProducteurAndMarcheAndTypeMilieu($producteur, $marche, $typeMilieu) {
+        $query = "select p";
+        $query .= " from Aeag\SqeBundle\Entity\PgProgWebusers p";
+        $query .= " join Aeag\SqeBundle\Entity\PgProgMarcheUser mu with mu.webuser = p.id";
+        $query .= " left join Aeag\SqeBundle\Entity\PgProgWebuserTypmil wt with wt.webuser = p.id";
+        $query .= " where p.producteur = :producteur";
+        $query .= " and p.typeUser <> 'ADMIN'";
+        $query .= " and mu.marche = :marche";
+        $query .= " and (wt.typemil = :typemilieu or wt.typemil IS NULL)";
+        $query .= " order by p.nom";
+        $qb = $this->_em->createQuery($query);
+        
+        $qb->setParameter('producteur', $producteur);
+        $qb->setParameter('marche', $marche);
+        $qb->setParameter('typemilieu', $typeMilieu);
+
+        return $qb->getResult();
+    }
+    
+    public function getPgProgWebusersByPrestataireAndTypeMilieu($prestataire, $typeMilieu) {
+        $query = "select p";
+        $query .= " from Aeag\SqeBundle\Entity\PgProgWebusers p";
+        $query .= " left join Aeag\SqeBundle\Entity\PgProgWebuserTypmil wt with wt.webuser = p.id";
+        $query .= " where p.prestataire = :presta";
+        $query .= " and (wt.typemil = :typemilieu or wt.typemil IS NULL)";
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('presta', $prestataire);
+        $qb->setParameter('typemilieu', $typeMilieu);
+        //print_r($query);
+        return $qb->getOneOrNullResult();
+    }
    
 
 }
+

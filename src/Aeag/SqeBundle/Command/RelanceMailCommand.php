@@ -124,13 +124,13 @@ class RelanceMailCommand extends AeagCommand {
             $dateLimite->add(new \DateInterval('P'.$interval.'D'));
             $destinataires = array();
             if (!is_null($pgCmdDemande->getLotan()->getLot()->getTitulaire())) {
-                $prestataires = $this->repoPgProgWebUsers->findByPrestataire($pgCmdDemande->getLotan()->getLot()->getTitulaire());
+                $prestataires = $this->repoPgProgWebUsers->getPgProgWebusersByPrestataireAndTypeMilieu($pgCmdDemande->getLotan()->getLot()->getTitulaire(), $pgCmdDemande->getLotan()->getLot()->getCodeMilieu());
                 foreach($prestataires as $prestataire) {
                     $destinataires[$prestataire->getId()] = $prestataire;
                 }
             }
             if (!is_null($pgCmdDemande->getPrestataire())) {
-                $prestatairesDmd = $this->repoPgProgWebUsers->findByPrestataire($pgCmdDemande->getPrestataire());
+                $prestatairesDmd = $this->repoPgProgWebUsers->getPgProgWebusersByPrestataireAndTypeMilieu($pgCmdDemande->getPrestataire(), $pgCmdDemande->getLotan()->getLot()->getCodeMilieu());
                 foreach($prestatairesDmd as $prestataireDmd) {
                     $destinataires[$prestataireDmd->getId()] = $prestataireDmd;
                 }
@@ -159,14 +159,14 @@ class RelanceMailCommand extends AeagCommand {
             $this->output->writeln($pgCmdDemande->getPeriode()->getDateDeb());
             $destinataires = array();
             if (!is_null($pgCmdDemande->getLotan()->getLot()->getTitulaire())) {
-                $prestataires = $this->repoPgProgWebUsers->findByPrestataire($pgCmdDemande->getLotan()->getLot()->getTitulaire());
+                $prestataires = $this->repoPgProgWebUsers->getPgProgWebusersByPrestataireAndTypeMilieu($pgCmdDemande->getLotan()->getLot()->getTitulaire(), $pgCmdDemande->getLotan()->getLot()->getCodeMilieu());
                 foreach($prestataires as $prestataire) {
                     $destinataires[$prestataire->getId()] = $prestataire;
                 }
             }
             
             if (!is_null($pgCmdDemande->getPrestataire())) {
-                $prestatairesDmd = $this->repoPgProgWebUsers->findByPrestataire($pgCmdDemande->getPrestataire());
+                $prestatairesDmd = $this->repoPgProgWebUsers->getPgProgWebusersByPrestataireAndTypeMilieu($pgCmdDemande->getPrestataire(), $pgCmdDemande->getLotan()->getLot()->getCodeMilieu());
                 foreach($prestatairesDmd as $prestataireDmd) {
                     $destinataires[$prestataireDmd->getId()] = $prestataireDmd;
                 }
@@ -195,13 +195,13 @@ class RelanceMailCommand extends AeagCommand {
             
             $destinataires = array();
             if (!is_null($pgProgLot->getTitulaire())) {
-                $prestataires = $this->repoPgProgWebUsers->findByPrestataire($pgProgLot->getTitulaire());
+                $prestataires = $this->repoPgProgWebUsers->getPgProgWebusersByPrestataireAndTypeMilieu($pgProgLot->getTitulaire(), $pgProgLot->getCodeMilieu());
                 foreach ($prestataires as $prestataire) {
                     $destinataires[$prestataire->getId()] = $prestataire;
                 }
             }
             $typMil = $this->repoPgProgTypeMilieu->findByCodeMilieu('RHB');
-            $admins = $this->repoPgProgWebuserTypmil->findByTypmil($typMil);
+            $admins = $this->repoPgProgWebuserTypmil->getPgProgWebuserTypmilByTypMilAndTypeUser($typeMil, 'ADMIN');
             foreach($admins as $admin) {
                 $destinataires[$admin->getWebuser()->getId()] = $admin->getWebuser();
             }
@@ -243,13 +243,13 @@ class RelanceMailCommand extends AeagCommand {
 
             $destinataires = array();
             if (!is_null($pgProgLot->getTitulaire())) {
-                $prestataires = $this->repoPgProgWebUsers->findByPrestataire($pgProgLot->getTitulaire());
+                $prestataires = $this->repoPgProgWebUsers->getPgProgWebusersByPrestataireAndTypeMilieu($pgProgLot->getTitulaire(), $pgProgLot->getCodeMilieu());
                 foreach ($prestataires as $prestataire) {
                     $destinataires[$prestataire->getId()] = $prestataire;
                 }
             }
             $typMil = $this->repoPgProgTypeMilieu->findByCodeMilieu('RHB');
-            $admins = $this->repoPgProgWebuserTypmil->findByTypmil($typMil);
+            $admins = $this->repoPgProgWebuserTypmil->getPgProgWebuserTypmilByTypMilAndTypeUser($typeMil, 'ADMIN');
             foreach($admins as $admin) {
                 $destinataires[$admin->getWebuser()->getId()] = $admin->getWebuser();
             }
@@ -280,7 +280,7 @@ class RelanceMailCommand extends AeagCommand {
     protected function sendEmailRecap() {
         if (count($this->getLogs()) > 0) {
             $typMil = $this->repoPgProgTypeMilieu->findByCodeMilieu('RHB');
-            $admins = $this->repoPgProgWebuserTypmil->findByTypmil($typMil);
+            $admins = $this->repoPgProgWebuserTypmil->getPgProgWebuserTypmilByTypMilAndTypeUser($typeMil, 'ADMIN');
             $destinataires = array();
             foreach($admins as $admin) {
                 $destinataires[$admin->getWebuser()->getId()] = $admin->getWebuser();

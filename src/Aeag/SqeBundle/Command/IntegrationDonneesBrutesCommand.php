@@ -48,19 +48,19 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
             $destinataires = array();
             // Verifier que le titulaire n'est pas nul
             if (!is_null($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getTitulaire())) {
-                $prestataires = $this->repoPgProgWebUsers->findByPrestataire($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getTitulaire());
+                $prestataires = $this->repoPgProgWebUsers->getPgProgWebusersByPrestataireAndTypeMilieu($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getTitulaire(), $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getCodeMilieu());
                 foreach($prestataires as $prestataire){
                     $destinataires[$prestataire->getId()] = $prestataire;
                 }
             }
             if (!is_null($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getRespAdrCor())) {
-                $producteurs = $this->repoPgProgWebUsers->getNotAdminPgProgWebusersByProducteurAndMarche($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getRespAdrCor(), $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche());
+                $producteurs = $this->repoPgProgWebUsers->getNotAdminPgProgWebusersByProducteurAndMarcheAndTypeMilieu($producteur, $marche, $typeMilieu);
                 foreach($producteurs as $producteur) {
                     $destinataires[$producteur->getId()] = $producteur;
                 }
             }
             
-            $admins = $this->repoPgProgWebuserTypmil->findByTypmil($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getCodeMilieu());
+            $admins = $this->repoPgProgWebuserTypmil->getPgProgWebuserTypmilByTypMilAndTypeUser($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getCodeMilieu(), 'ADMIN');
             foreach ($admins as $admin) {
                 if (!is_null($admin)) {
                     $destinataires[$admin->getWebuser()->getId()] = $admin->getWebuser();
@@ -110,14 +110,14 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
             $pgCmdPrelev = $this->repoPgCmdPrelev->findOneBy(array('demande' => $demandeId, 'codePrelevCmd' => $codePrelevement));
             if (!is_null($pgCmdPrelev)) {
                 if ($this->isAlreadyAdded($pgCmdFichierRps, $pgCmdPrelev, 'M50')) {
-                    $this->addLog('warning', $demandeId, $reponseId, "Le prélèvement ".$pgCmdPrelev->getCodePrelevCmd(). " existe déjà et ne peut pas être mis à jour (clos)");
+                    $this->_addLog('warning', $demandeId, $reponseId, "Le prélèvement ".$pgCmdPrelev->getCodePrelevCmd(). " existe déjà et ne peut pas être mis à jour (clos)");
                 } else { // < 350
                     
                     // En fonction de la phase, ajouter des warnings lorsqu'une nouvelle données est insérée
                     $phaseDmd = $pgCmdPrelev->getPhaseDmd();
                     
                     if($phaseDmd->getId() >= '330' && $phaseDmd->getId() < '350') {
-                        $this->addLog('warning', $demandeId, $reponseId, "Le prélèvement ".$pgCmdPrelev->getCodePrelevCmd()." existe déjà - mise à jour");
+                        $this->_addLog('warning', $demandeId, $reponseId, "Le prélèvement ".$pgCmdPrelev->getCodePrelevCmd()." existe déjà - mise à jour");
                     }
                     
                     $pgCmdPrelev->setFichierRps($pgCmdFichierRps);
@@ -191,7 +191,7 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
                             if (is_null($pgCmdMesureEnv)) {
                                 $pgCmdMesureEnv = new \Aeag\SqeBundle\Entity\PgCmdMesureEnv();
                                 if($phaseDmd->getId() >= '330' && $phaseDmd->getId() < '350') {
-                                    $this->addLog('warning', $demandeId, $reponseId, "Paramètre ".$pgSandreParametres->getCodeParametre()." rajouté par rapport au dépôt précédent");
+                                    $this->_addLog('warning', $demandeId, $reponseId, "Paramètre ".$pgSandreParametres->getCodeParametre()." rajouté par rapport au dépôt précédent");
                                 }
                             }
                             
@@ -236,7 +236,7 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
                             if (is_null($pgCmdAnalyse)) {
                                 $pgCmdAnalyse = new \Aeag\SqeBundle\Entity\PgCmdAnalyse();
                                 if($phaseDmd->getId() >= '330' && $phaseDmd->getId() < '350') {
-                                    $this->addLog('warning', $demandeId, $reponseId, "Paramètre ".$pgSandreParametres->getCodeParametre()." rajouté par rapport au dépôt précédent");
+                                    $this->_addLog('warning', $demandeId, $reponseId, "Paramètre ".$pgSandreParametres->getCodeParametre()." rajouté par rapport au dépôt précédent");
                                 }
                             }
                             
