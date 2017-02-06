@@ -292,10 +292,11 @@ class EchangeFichiersController extends Controller {
                     $session->getFlashBag()->add('notice-warning', 'Le fichier ' . $nomFichier . ' a été traité, mais l\'email n\'a pas pu être envoyé');
                 }
             } else {
-                $session->getFlashBag()->add('notice-error', 'Le fichier ' . $nomFichier . ' a rencontré une erreur lors de la validation auprès du Sandre. Merci de réessayer plus tard.');
+                $session->getFlashBag()->add('notice-warning', 'Le fichier ' . $nomFichier . ' est en attente de traitement, un email vous sera envoyé lorsque celui-ci sera traité');
+                /*$session->getFlashBag()->add('notice-error', 'Le fichier ' . $nomFichier . ' a rencontré une erreur lors de la validation auprès du Sandre. Merci de réessayer plus tard.');
                 $this->_rmdirRecursive($pathBase);
                 $emSqe->remove($reponse);
-                $emSqe->flush();
+                $emSqe->flush();*/
             }
         } else {
             $emSqe->remove($reponse);

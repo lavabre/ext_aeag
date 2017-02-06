@@ -30,7 +30,13 @@ class ProcessRai {
         if ($r !== '') {
             // Analyse de la réponse 
             // Récupération des valeurs dans la réponse
-            $reponseTab = json_decode(json_encode(\simplexml_load_string($r)), true);
+            \libxml_use_internal_errors(true);
+            $xmlR = \simplexml_load_string($r);
+            if ($xmlR === false ) {
+                \libxml_clear_errors();
+                return false;
+            }
+            $reponseTab = json_decode(json_encode($xmlR), true);
 
             // Stockage des valeurs en base
             if (isset($reponseTab['LienAcquittement']) && isset($reponseTab['LienCertificat'])) {

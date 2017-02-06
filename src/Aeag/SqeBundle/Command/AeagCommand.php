@@ -196,7 +196,7 @@ class AeagCommand extends ContainerAwareCommand {
         file_put_contents($fullFileName, $cr, FILE_APPEND);
     }
 
-    protected function _insertFichierLog($pgCmdFichierRps) {
+    protected function _insertFichierLog($pgCmdFichierRps, $nomParagraphe) {
         $demandeId = $pgCmdFichierRps->getDemande()->getId();
         $reponseId = $pgCmdFichierRps->getId();
         $fileName = $pgCmdFichierRps->getNomFichierCompteRendu();
@@ -208,12 +208,16 @@ class AeagCommand extends ContainerAwareCommand {
         $fullFileName = $pathBase . '/' . $fileName;
 
         $cr = '';
-        $cr .= "--- Début Test Aeag \r\n";
+        $cr .= "--- Début ".$nomParagraphe." \r\n";
         foreach ($logs as $log) {
             $cr .= $log . "\r\n";
         }
-        $cr .= "--- Fin Test Aeag \r\n";
-        file_put_contents($fullFileName, $cr, FILE_APPEND);
+        $cr .= "--- Fin ".$nomParagraphe." \r\n";
+        
+        if (file_put_contents($fullFileName, $cr, FILE_APPEND) !== false) {
+            //Suppression des logs
+            $this->_cleanLogTable($pgCmdFichierRps);
+        }
     }
 
     protected function _convertMultiArray($array) {
@@ -238,13 +242,25 @@ class AeagCommand extends ContainerAwareCommand {
         return $result;
     }
 
-    protected function isAlreadyAdded($pgCmdFichierRps, $pgCmdPrelev) {
-        $pgProgPhase = $this->repoPgProgPhases->findOneByCodePhase('M30');
+    protected function isAlreadyAdded($pgCmdFichierRps, $pgCmdPrelev, $phase) {
+        $pgProgPhase = $this->repoPgProgPhases->findOneByCodePhase($phase);
         $pgCmdPrelevExisting = $this->repoPgCmdPrelev->getPgCmdPrelevByCodePrelevCodeDmdAndPhase($pgCmdPrelev, $pgCmdFichierRps->getDemande(), $pgProgPhase);
         if (count($pgCmdPrelevExisting) > 0) {
             return true;
         }
         return false;
+    }
+    
+    protected function _cleanLogTable($pgCmdFichierRps) {
+        $demandeId = $pgCmdFichierRps->getDemande()->getId();
+        $reponseId = $pgCmdFichierRps->getId();
+        
+        $pgPgLogValidEdilabos = $this->repoPgLogValidEdilabo->findBy(array('demandeId' => $demandeId, 'fichierRpsId' => $reponseId));
+        foreach ($pgPgLogValidEdilabos as $pgPgLogValidEdilabo) {
+            $this->emSqe->remove($pgPgLogValidEdilabo);
+        }
+        
+        $this->emSqe->flush();
     }
 
     protected function _cleanTmpTable($pgCmdFichierRps) {
@@ -266,17 +282,14 @@ class AeagCommand extends ContainerAwareCommand {
             }
         }
 
-        $pgPgLogValidEdilabos = $this->repoPgLogValidEdilabo->findBy(array('demandeId' => $demandeId, 'fichierRpsId' => $reponseId));
-        foreach ($pgPgLogValidEdilabos as $pgPgLogValidEdilabo) {
-            $this->emSqe->remove($pgPgLogValidEdilabo);
-        }
-        
         $pgProgSuiviPhases = $this->repoPgProgSuiviPhases->findBy(array('typeObjet' => 'RPS', 'objId' => $reponseId));
         foreach ($pgProgSuiviPhases as $pgProgSuiviPhase) {
             $this->emSqe->remove($pgProgSuiviPhase);
         }
 
         $this->emSqe->flush();
+        
+        $this->_cleanLogTable($pgCmdFichierRps);
     }
     
      // Méthodes permettant la gestion des doublons

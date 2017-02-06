@@ -177,6 +177,7 @@ class ProgrammationLotController extends Controller {
         }
 
         if (!$this->get('security.authorization_checker')->isGranted('ROLE_ADMINSQE')) {
+            var_dump($user->getUsername(), $user->getPassword());
             $pgProgWebuser = $repoPgProgWebusers->getPgProgWebusersByLoginPassword($user->getUsername(), $user->getPassword());
             $critWebuser = $pgProgWebuser->getId();
             $session->set('critWebuser', $critWebuser);
