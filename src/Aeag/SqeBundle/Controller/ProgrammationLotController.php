@@ -1599,7 +1599,7 @@ class ProgrammationLotController extends Controller {
                 $tabLots = array();
                 $i = 0;
                 foreach ($tabLotBis as $lot) {
-                    $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByLot($lot);
+                    $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByAnneeLot($critAnnee, $lot);
                     if (count($pgProgLotAns > 0)) {
                         $trouve = false;
                         foreach ($pgProgLotAns as $pgProgLotAn) {
