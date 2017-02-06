@@ -1085,3 +1085,8 @@ h3 {
     overflow-y: auto;
    
 }
+
+.choice, .choice2{
+    color : #000000 !important;
+    font-weight: normal !important;
+}

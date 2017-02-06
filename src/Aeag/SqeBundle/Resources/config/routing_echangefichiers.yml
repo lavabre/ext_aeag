@@ -3,8 +3,8 @@ AeagSqeBundle_echangefichiers_index:
     defaults: { _controller: AeagSqeBundle:EchangeFichiers:index }
     
 AeagSqeBundle_echangefichiers_demandes:
-    path:  /demandes/{lotanId}
-    defaults: { _controller: AeagSqeBundle:EchangeFichiers:demandes, lotanId : null}
+    path:  /demandes/{lotId}/{anneeProg}
+    defaults: { _controller: AeagSqeBundle:EchangeFichiers:demandes, lotId : null, anneeProg : null}
     
 AeagSqeBundle_echangefichiers_telecharger:
     path:  /telecharger/{demandeId}

@@ -25,18 +25,18 @@ class EchangeFichiersController extends Controller {
         $repoPgProgLotAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotAn');
         $pgProgLotAns = array();
         if ($user->hasRole('ROLE_ADMINSQE')) {
-            $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByAdmin('PC');
+            $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByAdminAlt('PC');
         } else if ($user->hasRole('ROLE_PRESTASQE')) {
-            $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByPresta($user,'PC');
+            $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByPrestaAlt($user,'PC');
         } else if ($user->hasRole('ROLE_PROGSQE')) {
-            $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByProg($user,'PC');
+            $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByProgAlt($user,'PC');
         }
 
         return $this->render('AeagSqeBundle:EchangeFichiers:index.html.twig', array('user' => $user,
                     'lotans' => $pgProgLotAns));
     }
 
-    public function demandesAction($lotanId) {
+    public function demandesAction($lotId, $anneeProg) {
         $user = $this->getUser();
         if (!$user) {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
@@ -48,13 +48,16 @@ class EchangeFichiersController extends Controller {
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
         $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
+        $repoPgProgLot = $emSqe->getRepository('AeagSqeBundle:PgProgLot');
         $repoPgProgLotAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotAn');
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
         $repoPgCmdFichiersRps = $emSqe->getRepository('AeagSqeBundle:PgCmdFichiersRps');
 
+        $pgProgLot = $repoPgProgLot->findOneById($lotId);
         $pgProgWebUser = $repoPgProgWebUsers->findOneByExtId($user->getId());
-        $pgProgLotAn = $repoPgProgLotAn->findOneById($lotanId);
-        $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandeByLotan($pgProgLotAn);
+        //$pgProgLotAn = $repoPgProgLotAn->findOneById($lotanId);
+        $pgProgLotAns = $repoPgProgLotAn->findBy(array("lot" => $lotId, "anneeProg" => $anneeProg));
+        $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandeByLotans($pgProgLotAns);
         $autoriser = false;
         foreach ($pgCmdDemandes as $pgCmdDemande) {
             if ($pgCmdDemande->getPrestataire() == $pgProgWebUser->getPrestataire()) {
@@ -74,7 +77,9 @@ class EchangeFichiersController extends Controller {
         }
         return $this->render('AeagSqeBundle:EchangeFichiers:demandes.html.twig', array('user' => $pgProgWebUser,
                     'demandes' => $pgCmdDemandes,
-                    'lotan' => $pgProgLotAn,
+                    'lot' => $pgProgLot,
+                    'anneeProg' => $anneeProg,
+                    //'lotan' => $pgProgLotAn,
                     'reponses' => $reponses,
                     'reponsesMax' => $reponsesMax));
     }
@@ -248,7 +253,7 @@ class EchangeFichiersController extends Controller {
         $nomFichier = $_FILES["fichier"]["name"];
         if (substr($nomFichier, -3) != "zip") {
             $session->getFlashBag()->add('notice-error', 'Le fichier déposé n\'est pas un fichier zip');
-            return $this->redirect($this->generateUrl('AeagSqeBundle_echangefichiers_demandes', array('lotanId' => $pgCmdDemande->getLotan()->getId())));
+            return $this->redirect($this->generateUrl('AeagSqeBundle_echangefichiers_demandes', array('lotId' => $pgCmdDemande->getLotan()->getLot()->getId(), 'anneeProg' => $pgCmdDemande->getLotan()->getAnneeProg())));
         }
 
         // Enregistrement des valeurs en base
@@ -304,7 +309,7 @@ class EchangeFichiersController extends Controller {
 
             $session->getFlashBag()->add('notice-error', 'Erreur lors du téléchargement du fichier ' . $nomFichier);
         }
-        return $this->redirect($this->generateUrl('AeagSqeBundle_echangefichiers_demandes', array('lotanId' => $pgCmdDemande->getLotan()->getId())));
+        return $this->redirect($this->generateUrl('AeagSqeBundle_echangefichiers_demandes', array('lotId' => $pgCmdDemande->getLotan()->getLot()->getId(), 'anneeProg' => $pgCmdDemande->getLotan()->getAnneeProg())));
     }
 
     public function telechargerReponseAction($reponseId, $typeFichier) {
@@ -389,7 +394,7 @@ class EchangeFichiersController extends Controller {
             $emSqe->flush();
         }
 
-        return $this->redirect($this->generateUrl('AeagSqeBundle_echangefichiers_demandes', array('lotanId' => $pgCmdFichiersRps->getDemande()->getLotan()->getId())));
+        return $this->redirect($this->generateUrl('AeagSqeBundle_echangefichiers_demandes', array('lotId' => $pgCmdDemande->getLotan()->getLot()->getId(), 'anneeProg' => $pgCmdDemande->getLotan()->getAnneeProg())));
     }
 
     private function _rmdirRecursive($dir) {

@@ -14,7 +14,7 @@
 
 {%block panel_heading %}
     <h3 class="page-title">
-        Echange de fichiers - Liste des DAI - {{ lotan.lot.nomLot }} - {{ lotan.anneeProg }}
+        Echange de fichiers - Liste des DAI - {{ lot.nomLot }} - {{ anneeProg }}
     </h3>
 {%endblock panel_heading %}
 
@@ -25,6 +25,7 @@
                 <tr>
                     <th width="5%">Actions</th>
                     <th>Période</th>
+                    <th>Version</th>
                     <th>Prestataire</th>
                     <th>Producteur</th>
                     <th>Code</th>
@@ -57,6 +58,7 @@
                             {% else %}
                                 <td>An</td>
                             {% endif%}
+                            <td>{{ demande.lotan.version }}</td>
                             <td>{{ demande.prestataire.nomCorres }}</td>
                             <td>{{ demande.commanditaire.nomCorres }}</td>
                             <td>{{ demande.codeDemandeCmd }}</td>

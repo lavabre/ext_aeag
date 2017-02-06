@@ -23,40 +23,44 @@
                     <th width="5%">Actions</th>
                     <th>Nom</th>
                     <th>Année de programmation</th>
-                    <th>Version</th>
                     <th>Marché</th>
                     <th>Zone géographique</th>
                     <th>Type de milieu</th>
                     <th>Mandataire</th>
-                    <th>Etat</th>
-                    <th>Statut</th>
+                </tr>
+                <tr class="filtre">
+                    <th></th>
+                    <th></th>
+                    <th class="choice"></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
                  {%if lotans | length%} 
                     {% for lotan in lotans %}
-                       <tr>
+                        <tr>
                             <td>
-                                <a id="id_{{lotan.id}}" class="btn btn-primary btn-demandes" href="{{path('AeagSqeBundle_echangefichiers_demandes',{ 'lotanId': lotan.id })}}" title="Consulter les demandes">
+                                <a id="id_{{lotan.0.id}}_{{lotan.anneeProg}}" class="btn btn-primary btn-demandes" href="{{path('AeagSqeBundle_echangefichiers_demandes',{ 'lotId': lotan.0.id, 'anneeProg': lotan.anneeProg})}}" title="Consulter les demandes">
                                     <i class="fa fa-eye"></i> 
                                 </a>
                             </td>
-                            <td nowrap>{{lotan.lot.nomLot}}</td>
+                            <td nowrap>{{lotan.0.nomLot}}</td>
                             <td>{{ lotan.anneeProg }}</td>
-                            <td>{{ lotan.version }}</td>
-                            <td>{{ lotan.lot.marche.nomMarche }}</td>
-                            <td>{{ lotan.lot.zgeoRef.nomZoneGeo }}</td>
-                            <td>{% if lotan.lot.codeMilieu| length %}
-                                {{ lotan.lot.codeMilieu.nomMilieu }}
+                            <td>{{ lotan.0.marche.nomMarche }}</td>
+                            <td>{{ lotan.0.zgeoRef.nomZoneGeo }}</td>
+                            <td>{% if lotan.0.codeMilieu| length %}
+                                {{ lotan.0.codeMilieu.nomMilieu }}
                                 {% endif %}
                             </td>
-                            <td>{%if lotan.lot.titulaire %}
-                                {{ lotan.lot.titulaire.nomCorres }}
+                            <td>{%if lotan.0.titulaire %}
+                                {{ lotan.0.titulaire.nomCorres }}
                                 {% endif %}
                             </td>
-                            <td>{{lotan.phase.libellePhase}} </td>
-                            <td>{{lotan.codeStatut.libelleStatut}} le {{ lotan.dateModif | date("d/m/Y H:i:")}} par {{ lotan.utilModif.nom}} </td>
                         </tr>
+                        
                     {% endfor %}
                 {% endif %}
             </tbody>
@@ -95,23 +99,19 @@
             }
             }
             );
+            $("#idTable_lot thead tr.filtre th").each( function ( i ) {
+                if ($(this).hasClass('choice')) {
+                    var select = $('<select><option value=""></option></select>')
+                    .appendTo( $(this).empty() )
+                    .on( 'change', function () {
+                        table.column( i ).search( $(this).val() ).draw();
+                    } );
 
-            $("#idTable thead td").each( function ( i ) {
-
-            if (i != 0){
-            var select = $('<select><option value=""></option></select>')
-            .appendTo( $(this).empty() )
-            .on( 'change', function () {
-            table.column( i )
-            .search( $(this).val() )
-            .draw();
+                    table.column( i ).data().unique().sort().each( function ( d, j ) {
+                        select.append( '<option value="'+d+'">'+d+'</option>' );
+                    } );
+                }
             });
-
-            table.column( i ).data().unique().sort().each( function ( d, j ) {
-                select.append( '<option value="'+d+'">'+d+'</option>' )
-            });
-            };
-            }); 
             
             $(".btn-demandes").click(function() {
                 $('#modalTraitementEncours').modal();

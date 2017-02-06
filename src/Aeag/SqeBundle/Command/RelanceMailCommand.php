@@ -69,7 +69,7 @@ class RelanceMailCommand extends AeagCommand {
             if (!is_null($pgProgPrestaTypfic)) {
                 if (strpos($codeMilieu,"PC") !== false) {
                     if (strpos($pgProgPrestaTypfic->getFormatFic(), "EDILABO") !== false) {
-                        $url = $this->getContainer()->get('router')->generate('AeagSqeBundle_echangefichiers_demandes', array("lotanId" => $pgCmdDemande->getLotan()->getId()), UrlGeneratorInterface::ABSOLUTE_URL);
+                        $url = $this->getContainer()->get('router')->generate('AeagSqeBundle_echangefichiers_demandes', array('lotId' => $pgCmdDemande->getLotan()->getLot()->getId(), 'anneeProg' => $pgCmdDemande->getLotan()->getAnneeProg()), UrlGeneratorInterface::ABSOLUTE_URL);
                         $txtMessage = 'Les DAI du lot ' . $pgCmdDemande->getLotan()->getLot()->getNomLot() . ' ont été générées.<br/>';
                         $txtMessage .= 'Vous pouvez les télécharger sur SQE : <a href="' . $url . '">Cliquez ici</a> <br/>';
                     } elseif (strpos($pgProgPrestaTypfic->getFormatFic(), "SAISIE") !== false) {

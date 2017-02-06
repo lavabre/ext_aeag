@@ -167,6 +167,20 @@ class PgCmdDemandeRepository extends EntityRepository {
         return $qb->getResult();
     }
     
+    public function getPgCmdDemandeByLotans(array $pgProgLotAns) {
+        $query = "select dmd";
+        $query .= " from Aeag\SqeBundle\Entity\PgCmdDemande dmd, Aeag\SqeBundle\Entity\PgProgLotAn lotan, Aeag\SqeBundle\Entity\PgProgLotPeriodeAn pean";
+        $query .= " where lotan = dmd.lotan";
+        $query .= " and lotan = pean.lotan";
+        $query .= " and pean.periode = dmd.periode";
+        $query .= " and pean.codeStatut <> 'INV'";
+        $query .= " and lotan.id IN (:lotans)";
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('lotans', $pgProgLotAns);
+        //print_r($query);
+        return $qb->getResult();
+    }
+    
     public function getPgCmdDemandeForRelance7JAvt() {
         $query = "select dmd";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdDemande dmd";
