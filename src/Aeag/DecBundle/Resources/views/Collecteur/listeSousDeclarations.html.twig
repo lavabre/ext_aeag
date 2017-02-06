@@ -250,7 +250,7 @@
                                               <i class="fa fa-trash-o"></i>
                                             </a>
                                        {% endif %}
-                                       {% if entity.sousDec.statut.code <= '22' %}
+                                       {% if entity.sousDec.statut.code <= '22' and  dec_montApDispo > 0 %}
                                             <a class="btn btn-success" data-toggle="modal" href="#val-{{entity.sousDec.id}}" title="Valider">
                                               <i class="fa fa-check"></i>
                                             </a>
