@@ -164,7 +164,7 @@ class PgProgWebusersRepository extends EntityRepository {
         $query .= " where p.producteur = :producteur";
         $query .= " and p.typeUser <> 'ADMIN'";
         $query .= " and mu.marche = :marche";
-        $query .= " and (wt.typemil = :typemilieu or wt.typemil IS NULL)";
+        $query .= " and (wt.typmil = :typemilieu or wt.typmil IS NULL)";
         $query .= " order by p.nom";
         $qb = $this->_em->createQuery($query);
         
@@ -180,7 +180,7 @@ class PgProgWebusersRepository extends EntityRepository {
         $query .= " from Aeag\SqeBundle\Entity\PgProgWebusers p";
         $query .= " left join Aeag\SqeBundle\Entity\PgProgWebuserTypmil wt with wt.webuser = p.id";
         $query .= " where p.prestataire = :presta";
-        $query .= " and (wt.typemil = :typemilieu or wt.typemil IS NULL)";
+        $query .= " and (wt.typmil = :typemilieu or wt.typmil IS NULL)";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('presta', $prestataire);
         $qb->setParameter('typemilieu', $typeMilieu);

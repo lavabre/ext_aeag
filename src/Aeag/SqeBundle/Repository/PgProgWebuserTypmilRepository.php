@@ -72,7 +72,7 @@ class PgProgWebuserTypmilRepository extends EntityRepository {
         $query .= " join p.webuser u";
         $query .= " left join Aeag\SqeBundle\Entity\PgProgWebuserTypmil wt with wt.webuser = u.id";
         $query .= " where u.typeUser = :typeuser";
-        $query .= " and (wt.typemil = :typemilieu or wt.typemil IS NULL)";
+        $query .= " and (wt.typmil = :typemilieu or wt.typmil IS NULL)";
         
         $qb = $this->_em->createQuery($query);
         

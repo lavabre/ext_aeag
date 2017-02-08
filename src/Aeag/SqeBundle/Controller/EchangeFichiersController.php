@@ -20,7 +20,7 @@ class EchangeFichiersController extends Controller {
         $session->set('controller', 'EchangeFichier');
         $session->set('fonction', 'index');
         $emSqe = $this->get('doctrine')->getManager('sqe');
-
+        
         // Récupération des programmations
         $repoPgProgLotAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotAn');
         $pgProgLotAns = array();
