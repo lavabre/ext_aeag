@@ -185,7 +185,7 @@ class PgProgWebusersRepository extends EntityRepository {
         $qb->setParameter('presta', $prestataire);
         $qb->setParameter('typemilieu', $typeMilieu);
         //print_r($query);
-        return $qb->getOneOrNullResult();
+        return $qb->getResult();
     }
    
 
