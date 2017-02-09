@@ -36,27 +36,27 @@ class EchangeFichiersController extends Controller {
             $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByProgAlt($user, 'PC');
         }
 
-        $tabLotAns = array();
         $i = 0;
-        foreach ($pgProgLotAns as $pgProgLotAn) {
-            $tabLotAns[$i]['lotan'] = $pgProgLotAn;
-            $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandeByLotans($pgProgLotAn);
+        foreach ($pgProgLotAns as $pgProgLot) {
+            $tabLotAns[$i]['lotan'] = $pgProgLot;
+            $tabPgProgLotAns = $repoPgProgLotAn->findBy(array("lot" => $pgProgLot[0]->getId(), "anneeProg" => $pgProgLot['anneeProg']));
+            $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandeByLotans($tabPgProgLotAns);
             $nbReponses = 0;
             $nbReponsesMax = 0;
-            $reponses = 0;
-            $reponsesMax = 0;
             foreach ($pgCmdDemandes as $pgCmdDemande) {
+                $reponses = 0;
+                $reponsesMax = 0;
                 $reponses = $repoPgCmdFichiersRps->getNbReponsesValidesByDemande($pgCmdDemande->getId());
                 $reponsesMax = $repoPgCmdFichiersRps->getNbReponsesByDemande($pgCmdDemande->getId());
                 $nbReponses = $nbReponses + $reponses;
                 $nbReponsesMax = $nbReponsesMax + $reponsesMax;
-            }
+             }
             $tabLotAns[$i]['nbReponses'] = $nbReponses;
             $tabLotAns[$i]['nbReponsesMax'] = $nbReponsesMax;
             $i++;
         }
 
-//        \Symfony\Component\VarDumper\VarDumper::dump($tabLotAns);
+//    \Symfony\Component\VarDumper\VarDumper::dump($tabLotAns);
 //        return new Response('');
 
         return $this->render('AeagSqeBundle:EchangeFichiers:index.html.twig', array('user' => $user,
