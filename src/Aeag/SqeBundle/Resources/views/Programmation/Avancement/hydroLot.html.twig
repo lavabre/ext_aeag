@@ -25,7 +25,7 @@
             <tbody>
                 {% if tableau| length %}
                     {% for ligne  in tableau %}
-                       {% if  lligne.nb_prel == ligne.nb_prel_prog and ligne.nb_prel_prog > 0 %}
+                       {% if  ligne.nb_prel == ligne.nb_prel_prog and ligne.nb_prel_prog > 0 %}
                             <tr class="success">
                             {% else %}
                             <tr> 
