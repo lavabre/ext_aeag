@@ -149,7 +149,7 @@ class PgProgLotAnRepository extends EntityRepository {
     
     public function getPgProgLotAnByPrestaAlt($user, $codeMilieu = null) {
 
-        $query = "select lot, lotan.anneeProg";
+        /*$query = "select lot, lotan.anneeProg";
         $query .= " from Aeag\SqeBundle\Entity\PgProgLotParamAn paran, Aeag\SqeBundle\Entity\PgRefCorresPresta presta, Aeag\SqeBundle\Entity\PgProgWebusers users, Aeag\SqeBundle\Entity\PgProgLotGrparAn gran, Aeag\SqeBundle\Entity\PgProgLotAn lotan, Aeag\SqeBundle\Entity\PgProgLot lot, Aeag\SqeBundle\Entity\PgCmdDemande dmd, Aeag\SqeBundle\Entity\PgProgLotPeriodeAn pean, Aeag\SqeBundle\Entity\PgProgTypeMilieu milieu";
         $query .= " where paran.prestataire = presta.adrCorId";
         $query .= " and users.prestataire = presta.adrCorId";
@@ -178,7 +178,35 @@ class PgProgLotAnRepository extends EntityRepository {
             $qb->setParameter('codemilieu', '%' . $codeMilieu);
         }
         //print_r($query);
-        return $qb->getResult();
+        return $qb->getResult();*/
+        
+        $query = "select lot.id, lotan.annee_prog";
+        $query .= " from pg_prog_lot_an lotan";
+        $query .= " join pg_prog_lot lot on lotan.lot_id = lot.id";
+        $query .= " join pg_cmd_demande dmd on dmd.lotan_id = lotan.id";
+        $query .= " join pg_prog_lot_periode_an pean on pean.lotan_id= lotan.id";
+        $query .= " join pg_prog_type_milieu milieu on lot.code_milieu = milieu.code_milieu";
+        $query .= " join pg_prog_lot_grpar_an gran on lotan.id = gran.lotan_id";
+        $query .= " join pg_prog_lot_param_an paran on gran.id = paran.grparan_id";
+        $query .= " join pg_ref_corres_presta presta on paran.prestataire_id = presta.adr_cor_id";
+        $query .= " join pg_prog_webusers users on users.presta_id = presta.adr_cor_id";
+        $query .= " where lotan.code_statut <> 'INV'";
+        $query .= " and (lotan.phase_id >= 5 and lotan.phase_id <= 8)";
+        $query .= " and users.ext_id = :aeagUser";
+        $query .= " and pean.code_statut <> 'INV'";
+        
+        if (!is_null($codeMilieu)) {
+            $query .= " and milieu.code_milieu LIKE :codemilieu";
+        }
+        $query .= " group by lot.id, lotan.annee_prog";
+        
+        $stmt = $this->_em->getConnection()->prepare($query);
+        $stmt->bindValue('aeagUser', $user->getId());
+        if (!is_null($codeMilieu)) {
+            $stmt->bindValue('codemilieu', '%' . $codeMilieu);
+        }
+        $stmt->execute();
+        return $stmt->fetchAll();
     }
 
     public function getPgProgLotAnSaisieDonneesByPresta($user, $codeMilieu = null) {
@@ -424,7 +452,7 @@ class PgProgLotAnRepository extends EntityRepository {
     }
     
     public function getPgProgLotAnByProgAlt($user, $codeMilieu = null) {
-        $query = "select lot, lotan.anneeProg";
+        /*$query = "select lot, lotan.anneeProg";
         $query .= " from Aeag\SqeBundle\Entity\PgProgMarcheUser mu, Aeag\SqeBundle\Entity\PgProgWebusers users, Aeag\SqeBundle\Entity\PgProgLotAn lotan, Aeag\SqeBundle\Entity\PgProgLot lot, Aeag\SqeBundle\Entity\PgCmdDemande dmd, Aeag\SqeBundle\Entity\PgProgLotPeriodeAn pean, Aeag\SqeBundle\Entity\PgProgTypeMilieu milieu";
         $query .= " where lotan.lot = lot.id";
         $query .= " and mu.marche = lot.marche";
@@ -449,7 +477,33 @@ class PgProgLotAnRepository extends EntityRepository {
             $qb->setParameter('codemilieu', '%' . $codeMilieu);
         }
 
-        return $qb->getResult();
+        return $qb->getResult();*/
+        
+        $query = "select lot.id, lotan.annee_prog";
+        $query .= " from pg_prog_lot_an lotan";
+        $query .= " join pg_prog_lot lot on lotan.lot_id = lot.id";
+        $query .= " join pg_cmd_demande dmd on dmd.lotan_id = lotan.id";
+        $query .= " join pg_prog_lot_periode_an pean on pean.lotan_id= lotan.id";
+        $query .= " join pg_prog_type_milieu milieu on lot.code_milieu = milieu.code_milieu";
+        $query .= " join pg_prog_marche_user mu on mu.marche_id = lot.marche_id";
+        $query .= " join pg_prog_webusers users on users.id = mu.webuser_id";
+        $query .= " where lotan.code_statut <> 'INV'";
+        $query .= " and (lotan.phase_id >= 5 and lotan.phase_id <= 8)";
+        $query .= " and users.ext_id = :aeagUser";
+        $query .= " and pean.code_statut <> 'INV'";
+        
+        if (!is_null($codeMilieu)) {
+            $query .= " and milieu.code_milieu LIKE :codemilieu";
+        }
+        $query .= " group by lot.id, lotan.annee_prog";
+        
+        $stmt = $this->_em->getConnection()->prepare($query);
+        $stmt->bindValue('aeagUser', $user->getId());
+        if (!is_null($codeMilieu)) {
+            $stmt->bindValue('codemilieu', '%' . $codeMilieu);
+        }
+        $stmt->execute();
+        return $stmt->fetchAll();
     }
 
     /**
