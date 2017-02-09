@@ -286,7 +286,7 @@ class PgProgLotAnRepository extends EntityRepository {
         return $qb->getResult();
     }
     
-    public function getPgProgLotAnByAdminAlt($codeMilieu = null) {
+    public function getPgProgLotAnByAdminAlt($codeMilieu = null) { 
         $query = "select lot, lotan.anneeProg";
         if ($codeMilieu) {
             $query .= " from Aeag\SqeBundle\Entity\PgProgLotAn lotan, Aeag\SqeBundle\Entity\PgProgLot lot, Aeag\SqeBundle\Entity\PgCmdDemande dmd, Aeag\SqeBundle\Entity\PgProgLotPeriodeAn pean, Aeag\SqeBundle\Entity\PgProgTypeMilieu milieu";

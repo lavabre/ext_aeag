@@ -24,6 +24,31 @@ class PgCmdFichiersRpsRepository extends EntityRepository {
         return $qb->getResult();
     }
     
+     public function getNbReponsesValidesByDemande($demande) {
+        $query = "select count(rps.id)";
+        $query .= " from Aeag\SqeBundle\Entity\PgCmdFichiersRps rps, Aeag\SqeBundle\Entity\PgProgPhases pha";
+        $query .= " where rps.demande = :demande"; 
+        $query .= " and rps.phaseFichier = pha.id";
+        $query .= " and pha.codePhase IN (:phase)";
+        $query .= " and rps.typeFichier = 'RPS'";
+        $query .= " and rps.suppr = 'N'";
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('demande', $demande);
+        $qb->setParameter('phase', array('R40','R41','R42','R45','R50','R51'));
+        return $qb->getSingleScalarResult();
+    }
+    
+     public function getNbReponsesByDemande($demande) {
+        $query = "select count(rps.id)";
+        $query .= " from Aeag\SqeBundle\Entity\PgCmdFichiersRps rps";
+        $query .= " where rps.demande = :demande"; 
+        $query .= " and rps.typeFichier = 'RPS'";
+        $query .= " and rps.suppr = 'N'";
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('demande', $demande);
+        return $qb->getSingleScalarResult();
+    }
+    
     public function getReponsesValidesDb() {
         $query = "select rps";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdFichiersRps rps, Aeag\SqeBundle\Entity\PgProgPhases pha";

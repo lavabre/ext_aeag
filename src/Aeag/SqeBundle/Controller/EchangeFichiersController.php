@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Aeag\AeagBundle\Entity\Notification;
 use Aeag\AeagBundle\Entity\Message;
 use Aeag\AeagBundle\Controller\AeagController;
+use Symfony\Component\HttpFoundation\Response;
 
 class EchangeFichiersController extends Controller {
 
@@ -20,20 +21,46 @@ class EchangeFichiersController extends Controller {
         $session->set('controller', 'EchangeFichier');
         $session->set('fonction', 'index');
         $emSqe = $this->get('doctrine')->getManager('sqe');
-        
+
         // Récupération des programmations
         $repoPgProgLotAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotAn');
+        $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
+        $repoPgCmdFichiersRps = $emSqe->getRepository('AeagSqeBundle:PgCmdFichiersRps');
+
         $pgProgLotAns = array();
         if ($user->hasRole('ROLE_ADMINSQE')) {
             $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByAdminAlt('PC');
         } else if ($user->hasRole('ROLE_PRESTASQE')) {
-            $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByPrestaAlt($user,'PC');
+            $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByPrestaAlt($user, 'PC');
         } else if ($user->hasRole('ROLE_PROGSQE')) {
-            $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByProgAlt($user,'PC');
+            $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByProgAlt($user, 'PC');
         }
 
+        $tabLotAns = array();
+        $i = 0;
+        foreach ($pgProgLotAns as $pgProgLotAn) {
+            $tabLotAns[$i]['lotan'] = $pgProgLotAn;
+            $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandeByLotans($pgProgLotAns);
+            $nbReponses = 0;
+            $nbReponsesMax = 0;
+            $reponses = 0;
+            $reponsesMax = 0;
+            foreach ($pgCmdDemandes as $pgCmdDemande) {
+                $reponses = $repoPgCmdFichiersRps->getNbReponsesValidesByDemande($pgCmdDemande->getId());
+                $reponsesMax = $repoPgCmdFichiersRps->getNbReponsesByDemande($pgCmdDemande->getId());
+                $nbReponses = $nbReponses + $reponses;
+                $nbReponsesMax = $nbReponsesMax + $reponsesMax;
+            }
+            $tabLotAns[$i]['nbReponses'] = $nbReponses;
+            $tabLotAns[$i]['nbReponsesMax'] = $nbReponsesMax;
+            $i++;
+        }
+
+//        \Symfony\Component\VarDumper\VarDumper::dump($tabLotAns);
+//        return new Response('');
+
         return $this->render('AeagSqeBundle:EchangeFichiers:index.html.twig', array('user' => $user,
-                    'lotans' => $pgProgLotAns));
+                    'lotans' => $tabLotAns));
     }
 
     public function demandesAction($lotId, $anneeProg) {
@@ -298,10 +325,10 @@ class EchangeFichiersController extends Controller {
                 }
             } else {
                 $session->getFlashBag()->add('notice-warning', 'Le fichier ' . $nomFichier . ' est en attente de traitement, un email vous sera envoyé lorsque celui-ci sera traité');
-                /*$session->getFlashBag()->add('notice-error', 'Le fichier ' . $nomFichier . ' a rencontré une erreur lors de la validation auprès du Sandre. Merci de réessayer plus tard.');
-                $this->_rmdirRecursive($pathBase);
-                $emSqe->remove($reponse);
-                $emSqe->flush();*/
+                /* $session->getFlashBag()->add('notice-error', 'Le fichier ' . $nomFichier . ' a rencontré une erreur lors de la validation auprès du Sandre. Merci de réessayer plus tard.');
+                  $this->_rmdirRecursive($pathBase);
+                  $emSqe->remove($reponse);
+                  $emSqe->flush(); */
             }
         } else {
             $emSqe->remove($reponse);

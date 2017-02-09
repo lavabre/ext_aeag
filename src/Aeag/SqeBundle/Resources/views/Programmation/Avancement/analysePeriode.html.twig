@@ -21,7 +21,11 @@
             <tbody>
                 {% if tableau| length %}
                     {% for ligne  in tableau %}
-                        <tr>
+                         {% if  ligne.nb_rendus == ligne.nb_attendus and ligne.nb_attendus > 0 %}
+                            <tr class="success">
+                            {% else %}
+                            <tr> 
+                            {% endif %}
                             <td>{{ ligne.nom_milieu }}</td>
                             <td>{{ ligne.nom_marche }}</td>
                             <td>{{ ligne.label_periode }}</td>

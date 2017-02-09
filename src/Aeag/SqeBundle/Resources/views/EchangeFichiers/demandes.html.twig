@@ -39,9 +39,17 @@
                  {%if demandes | length%} 
                     {% for demande in demandes %}
                        {% if demande.prestataire == user.prestataire %} 
-                       <tr style="background-color: #aac3f1">
+                            {% if  reponses[demande.id] | length == reponsesMax[demande.id]  | length and reponsesMax[demande.id]  | length > 0 %}
+                               <tr class="success">
+                                {% else %}
+                               <tr style="background-color: #aac3f1">
+                             {% endif %}
                         {% else %}
-                            <tr>
+                             {% if  reponses[demande.id] | length == reponsesMax[demande.id]  | length and reponsesMax[demande.id]  | length > 0 %}
+                                <tr class="success">
+                                {% else %}
+                                <tr> 
+                             {% endif %}
                         {% endif %}
                             <td align="center" nowrap>
                                 <a id="id_{{demande.id}}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_echangefichiers_telecharger',{'demandeId' : demande.id})}}" title="Télécharger la DAI">

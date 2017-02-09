@@ -14,7 +14,11 @@
             <tbody>
                 {% if tableau| length %}
                     {% for ligne  in tableau %}
-                        <tr>
+                      {% if  ligne.nb_rendus == ligne.nb_attendus and ligne.nb_attendus > 0 %}
+                            <tr class="success">
+                            {% else %}
+                            <tr> 
+                            {% endif %}
                             <td>{{ ligne.annee_prog }}</td>
                             <td>{{ ligne.nom_marche }}</td>
                             <td class="text-right">{{ ligne.nb_rendus  | number_format(0,'.',' ')}}</td>

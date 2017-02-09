@@ -41,22 +41,26 @@
             <tbody>
                  {%if lotans | length%} 
                     {% for lotan in lotans %}
-                        <tr>
+                          {% if  lotan.nbReponses == lotan.nbReponsesMax and lotan.nbReponsesMax > 0 %}
+                                <tr class="success">
+                                {% else %}
+                                <tr> 
+                             {% endif %}
                             <td>
-                                <a id="id_{{lotan.0.id}}_{{lotan.anneeProg}}" class="btn btn-primary btn-demandes" href="{{path('AeagSqeBundle_echangefichiers_demandes',{ 'lotId': lotan.0.id, 'anneeProg': lotan.anneeProg})}}" title="Consulter les demandes">
+                                <a id="id_{{lotan.lotan.0.id}}_{{lotan.lotan.anneeProg}}" class="btn btn-primary btn-demandes" href="{{path('AeagSqeBundle_echangefichiers_demandes',{ 'lotId': lotan.lotan.0.id, 'anneeProg': lotan.lotan.anneeProg})}}" title="Consulter les demandes">
                                     <i class="fa fa-eye"></i> 
                                 </a>
                             </td>
-                            <td nowrap>{{lotan.0.nomLot}}</td>
-                            <td>{{ lotan.anneeProg }}</td>
-                            <td>{{ lotan.0.marche.nomMarche }}</td>
-                            <td>{{ lotan.0.zgeoRef.nomZoneGeo }}</td>
-                            <td>{% if lotan.0.codeMilieu| length %}
-                                {{ lotan.0.codeMilieu.nomMilieu }}
+                            <td nowrap>{{lotan.lotan.0.nomLot}}</td>
+                            <td>{{ lotan.lotan.anneeProg }}</td>
+                            <td>{{ lotan.lotan.0.marche.nomMarche }}</td>
+                            <td>{{ lotan.lotan.0.zgeoRef.nomZoneGeo }}</td>
+                            <td>{% if lotan.lotan.0.codeMilieu| length %}
+                                {{ lotan.lotan.0.codeMilieu.nomMilieu }}
                                 {% endif %}
                             </td>
-                            <td>{%if lotan.0.titulaire %}
-                                {{ lotan.0.titulaire.nomCorres }}
+                            <td>{%if lotan.lotan.0.titulaire %}
+                                {{ lotan.lotan.0.titulaire.nomCorres }}
                                 {% endif %}
                             </td>
                         </tr>
