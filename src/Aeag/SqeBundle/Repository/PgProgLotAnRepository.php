@@ -287,21 +287,18 @@ class PgProgLotAnRepository extends EntityRepository {
     }
     
     public function getPgProgLotAnByAdminAlt($codeMilieu = null) { 
-        $query = "select lot, lotan.anneeProg";
-        if ($codeMilieu) {
-            $query .= " from Aeag\SqeBundle\Entity\PgProgLotAn lotan, Aeag\SqeBundle\Entity\PgProgLot lot, Aeag\SqeBundle\Entity\PgCmdDemande dmd, Aeag\SqeBundle\Entity\PgProgLotPeriodeAn pean, Aeag\SqeBundle\Entity\PgProgTypeMilieu milieu";
-        } else {
-            $query .= " from Aeag\SqeBundle\Entity\PgProgLotAn lotan, Aeag\SqeBundle\Entity\PgProgLot lot, Aeag\SqeBundle\Entity\PgCmdDemande dmd, Aeag\SqeBundle\Entity\PgProgLotPeriodeAn pean";
-        }
-        $query .= " where lotan.lot = lot.id";
-        $query .= " and dmd.lotan = lotan.id";
-        $query .= " and pean.lotan = lotan.id";
-        $query .= " and lotan.codeStatut <> 'INV'";
-        $query .= " and lotan.phase >= 5 and lotan.phase <= 8";
+        /*$query = "select lot, lotan.anneeProg";
+        $query .= " from Aeag\SqeBundle\Entity\PgProgLotAn lotan";
+        $query .= " join Aeag\SqeBundle\Entity\PgProgLot lot with lotan.lot = lot.id";
+        $query .= " join Aeag\SqeBundle\Entity\PgCmdDemande dmd with dmd.lotan = lotan.id";
+        $query .= " join Aeag\SqeBundle\Entity\PgProgLotPeriodeAn pean with pean.lotan = lotan.id";
+        $query .= " join Aeag\SqeBundle\Entity\PgProgTypeMilieu milieu with lot.codeMilieu = milieu.codeMilieu";
+        $query .= " where lotan.codeStatut <> 'INV'";
+        $query .= " and (lotan.phase >= 5 and lotan.phase <= 8)";
         $query .= " and pean.codeStatut <> 'INV'";
 
         if (!is_null($codeMilieu)) {
-            $query .= " and lot.codeMilieu = milieu.codeMilieu";
+            //$query .= " and lot.codeMilieu = milieu.codeMilieu";
             $query .= " and milieu.codeMilieu LIKE :codemilieu";
         }
         
@@ -312,7 +309,29 @@ class PgProgLotAnRepository extends EntityRepository {
             $qb->setParameter('codemilieu', '%' . $codeMilieu);
         }
 
-        return $qb->getResult();
+        return $qb->getResult();*/
+        
+        $query = "select lot.id, lotan.annee_prog";
+        $query .= " from pg_prog_lot_an lotan";
+        $query .= " join pg_prog_lot lot on lotan.lot_id = lot.id";
+        $query .= " join pg_cmd_demande dmd on dmd.lotan_id = lotan.id";
+        $query .= " join pg_prog_lot_periode_an pean on pean.lotan_id= lotan.id";
+        $query .= " join pg_prog_type_milieu milieu on lot.code_milieu = milieu.code_milieu";
+        $query .= " where lotan.code_statut <> 'INV'";
+        $query .= " and (lotan.phase_id >= 5 and lotan.phase_id <= 8)";
+        $query .= " and pean.code_statut <> 'INV'";
+        
+        if (!is_null($codeMilieu)) {
+            $query .= " and milieu.code_milieu LIKE :codemilieu";
+        }
+        $query .= " group by lot.id, lotan.annee_prog";
+        
+        $stmt = $this->_em->getConnection()->prepare($query);
+        if (!is_null($codeMilieu)) {
+            $stmt->bindValue('codemilieu', '%' . $codeMilieu);
+        }
+        $stmt->execute();
+        return $stmt->fetchAll();
     }
 
     public function getPgProgLotAnSaisieDonneesByAdmin($codeMilieu = null) {

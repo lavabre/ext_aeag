@@ -23,6 +23,7 @@ class EchangeFichiersController extends Controller {
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
         // Récupération des programmations
+        $repoPgProgLot = $emSqe->getRepository('AeagSqeBundle:PgProgLot');
         $repoPgProgLotAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotAn');
         $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
         $repoPgCmdFichiersRps = $emSqe->getRepository('AeagSqeBundle:PgCmdFichiersRps');
@@ -35,12 +36,13 @@ class EchangeFichiersController extends Controller {
         } else if ($user->hasRole('ROLE_PROGSQE')) {
             $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByProgAlt($user, 'PC');
         }
-
+        
         $tabLotAns = array();
         $i = 0;
         foreach ($pgProgLotAns as $pgProgLot) {
-            $tabLotAns[$i]['lotan'] = $pgProgLot;
-            $tabPgProgLotAns = $repoPgProgLotAn->findBy(array("lot" => $pgProgLot[0]->getId(), "anneeProg" => $pgProgLot['anneeProg']));
+            $tabLotAns[$i]['lotan'] = $repoPgProgLot->findOneById($pgProgLot['id']);
+            $tabLotAns[$i]['anneeProg'] = $pgProgLot['annee_prog'];
+            $tabPgProgLotAns = $repoPgProgLotAn->findBy(array("lot" => $pgProgLot['id'], "anneeProg" => $pgProgLot['annee_prog']));
             $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandeByLotans($tabPgProgLotAns);
             $nbReponses = 0;
             $nbReponsesMax = 0;
