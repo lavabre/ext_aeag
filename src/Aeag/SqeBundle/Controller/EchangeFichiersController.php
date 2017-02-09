@@ -40,7 +40,7 @@ class EchangeFichiersController extends Controller {
         $i = 0;
         foreach ($pgProgLotAns as $pgProgLotAn) {
             $tabLotAns[$i]['lotan'] = $pgProgLotAn;
-            $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandeByLotans($pgProgLotAns);
+            $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandeByLotans($pgProgLotAn);
             $nbReponses = 0;
             $nbReponsesMax = 0;
             $reponses = 0;
