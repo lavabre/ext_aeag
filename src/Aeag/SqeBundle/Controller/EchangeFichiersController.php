@@ -36,6 +36,7 @@ class EchangeFichiersController extends Controller {
             $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByProgAlt($user, 'PC');
         }
 
+        $tabLotAns = array();
         $i = 0;
         foreach ($pgProgLotAns as $pgProgLot) {
             $tabLotAns[$i]['lotan'] = $pgProgLot;
@@ -44,13 +45,17 @@ class EchangeFichiersController extends Controller {
             $nbReponses = 0;
             $nbReponsesMax = 0;
             foreach ($pgCmdDemandes as $pgCmdDemande) {
-                $reponses = 0;
-                $reponsesMax = 0;
-                $reponses = $repoPgCmdFichiersRps->getNbReponsesValidesByDemande($pgCmdDemande->getId());
-                $reponsesMax = $repoPgCmdFichiersRps->getNbReponsesByDemande($pgCmdDemande->getId());
-                $nbReponses = $nbReponses + $reponses;
-                $nbReponsesMax = $nbReponsesMax + $reponsesMax;
-             }
+                $reponses[$pgCmdDemande->getId()] = $repoPgCmdFichiersRps->getReponsesValidesByDemande($pgCmdDemande->getId());
+                $reponsesMax[$pgCmdDemande->getId()] = $repoPgCmdFichiersRps->findBy(array('demande' => $pgCmdDemande->getId(), 'typeFichier' => 'RPS', 'suppr' => 'N'));
+                if (count($reponses[$pgCmdDemande->getId()]) > 0) {
+                    $nbReponses = $nbReponses + count($reponses[$pgCmdDemande->getId()]);
+                }
+                if (count($reponsesMax[$pgCmdDemande->getId()]) > 0) {
+                    $nbReponsesMax = $nbReponsesMax + count($reponsesMax[$pgCmdDemande->getId()]);
+                } else {
+                    $nbReponsesMax++;
+                }
+            }
             $tabLotAns[$i]['nbReponses'] = $nbReponses;
             $tabLotAns[$i]['nbReponsesMax'] = $nbReponsesMax;
             $i++;
