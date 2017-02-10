@@ -27,7 +27,8 @@ class EchangeFichiersController extends Controller {
         $repoPgProgLotAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotAn');
         $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
         $repoPgCmdFichiersRps = $emSqe->getRepository('AeagSqeBundle:PgCmdFichiersRps');
-
+        $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
+        
         $pgProgLotAns = array();
         if ($user->hasRole('ROLE_ADMINSQE')) {
             $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByAdminAlt('PC');
@@ -43,6 +44,7 @@ class EchangeFichiersController extends Controller {
             $tabLotAns[$i]['lotan'] = $repoPgProgLot->findOneById($pgProgLot['id']);
             $tabLotAns[$i]['anneeProg'] = $pgProgLot['annee_prog'];
             $tabPgProgLotAns = $repoPgProgLotAn->findBy(array("lot" => $pgProgLot['id'], "anneeProg" => $pgProgLot['annee_prog']));
+            /*
             $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandeByLotans($tabPgProgLotAns);
             $nbReponses = 0;
             $nbReponsesMax = 0;
@@ -58,6 +60,17 @@ class EchangeFichiersController extends Controller {
                     $nbReponsesMax++;
                 }
             }
+            */
+            $nbReponses = 0;
+            $nbReponsesMax = 0;
+            foreach ($tabPgProgLotAns as $pgProgLotan) {
+                $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('D40');
+                $nbReponses = $nbReponses + $repoPgCmdDemande->getCountPgCmdDemandeByLotanPhase($pgProgLotan, $pgProgPhases);
+                $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('D50');
+                $nbReponses = $nbReponses + $repoPgCmdDemande->getCountPgCmdDemandeByLotanPhase($pgProgLotan, $pgProgPhases);
+                $nbReponsesMax = $nbReponsesMax + $repoPgCmdDemande->getCountPgCmdDemandeByLotan($pgProgLotan);
+            }
+            
             $tabLotAns[$i]['nbReponses'] = $nbReponses;
             $tabLotAns[$i]['nbReponsesMax'] = $nbReponsesMax;
             $i++;
