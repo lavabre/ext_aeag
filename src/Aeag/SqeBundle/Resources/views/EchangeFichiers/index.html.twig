@@ -2,12 +2,12 @@
 
 {% block breadcrumb %}
     <li>
-        <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+        <a href="{{ path('aeag_homepage') }}">Accueil</a>
     </li>
     <li class="active">
-          Echange de fichiers
+        Echange de fichiers
     </li>
-{% endblock breadcrumb %} 
+{% endblock breadcrumb %}
 
 {%block panel_heading %}
     <h3 class="page-title">
@@ -16,7 +16,7 @@
 {%endblock panel_heading %}
 
 {%block content %}
-    <div class="form-body">        
+    <div class="form-body">
         <table class="table table-bordered table-condensed table-advance" id="idTable_lot">
             <thead>
                 <tr>
@@ -38,17 +38,17 @@
                     <th></th>
                 </tr>
             </thead>
-            <tbody>
-                 {%if lotans | length%} 
+            <tbody> 
+                {%if lotans | length%}
                     {% for lotan in lotans %}
                         {% if  lotan.nbReponses == lotan.nbReponsesMax and lotan.nbReponsesMax > 0 %}
                             <tr class="success">
-                        {% else %}
-                            <tr> 
-                        {% endif %}
+                            {% else %}
+                            <tr>
+                            {% endif %}
                             <td>
                                 <a id="id_{{lotan.lotan.id}}_{{lotan.anneeProg}}" class="btn btn-primary btn-demandes" href="{{path('AeagSqeBundle_echangefichiers_demandes',{ 'lotId': lotan.lotan.id, 'anneeProg': lotan.anneeProg})}}" title="Consulter les demandes">
-                                    <i class="fa fa-eye"></i> 
+                                    <i class="fa fa-eye"></i>
                                 </a>
                             </td>
                             <td nowrap>{{lotan.lotan.nomLot}}</td>
@@ -58,69 +58,68 @@
                             <td>{% if lotan.lotan.codeMilieu| length %}
                                 {{ lotan.lotan.codeMilieu.nomMilieu }}
                                 {% endif %}
-                            </td>
-                            <td>{%if lotan.lotan.titulaire %}
-                                {{ lotan.lotan.titulaire.nomCorres }}
-                                {% endif %}
-                            </td>
-                        </tr>
-                        
-                    {% endfor %}
-                {% endif %}
-            </tbody>
-        </table>
-    </div>
-{%endblock content %}    
+                                </td>
+                                <td>{%if lotan.lotan.titulaire %}
+                                    {{ lotan.lotan.titulaire.nomCorres }}
+                                    {% endif %}
+                                    </td>
+                                </tr>
 
-{% block scripts %}
+                                {% endfor %}
+                                    {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {%endblock content %}
 
-    $(document).ready(function() {
-        $('#modalTraitementEncours').modal('hide');
-          var table = $('#idTable_lot').DataTable(
-            {"stateSave": true,
-             "order": [[ 1, "desc" ]],
-            "oLanguage": {
-            "sSearch": "Filtre",
-            "sFirst": "1ere page",
-            "sLast": "Dernière page",
-            "sNext": "Prochaine page",
-            "sPrevious": "Page précédente",
-            "EmptyTable": "Pas de données",
-            "sInfo": "Nombre d'enregistrements :  _TOTAL_",
-            "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
-            "sZeroRecords": "Pas d'enregistrement à afficher",
-            "sInfoEmpty": "Pas d'enregistrement à afficher",
-            "sInfoThousands": " ",
-            "sLengthMenu": 'Afficher <select>' +
-                '<option value="10">10</option>' +
-                '<option value="20">20</option>' +
-                '<option value="30">30</option>' +
-                '<option value="40">40</option>' +
-                '<option value="50">50</option>' +
-                '<option value="-1">Tous</option>' +
-                '</select> enregistrements',
-            "sPaginationType": "full_numbers"
-            }
-            }
-            );
-            $("#idTable_lot thead tr.filtre th").each( function ( i ) {
-                if ($(this).hasClass('choice')) {
-                    var select = $('<select><option value=""></option></select>')
-                    .appendTo( $(this).empty() )
-                    .on( 'change', function () {
-                        table.column( i ).search( $(this).val() ).draw();
-                    } );
+                                {% block scripts %}
 
-                    table.column( i ).data().unique().sort().each( function ( d, j ) {
-                        select.append( '<option value="'+d+'">'+d+'</option>' );
-                    } );
-                }
-            });
-            
-            $(".btn-demandes").click(function() {
-                $('#modalTraitementEncours').modal();
-            });
-    });
-    
-{%endblock scripts %}    
-    
+                                    $(document).ready(function() {
+                                    $('#modalTraitementEncours').modal('hide');
+                                    var table = $('#idTable_lot').DataTable(
+                                    {"stateSave": true,
+                                    "order": [[ 1, "desc" ]],
+                                    "oLanguage": {
+                                    "sSearch": "Filtre",
+                                    "sFirst": "1ere page",
+                                    "sLast": "Dernière page",
+                                    "sNext": "Prochaine page",
+                                    "sPrevious": "Page précédente",
+                                    "EmptyTable": "Pas de données",
+                                    "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+                                    "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+                                    "sZeroRecords": "Pas d'enregistrement à afficher",
+                                    "sInfoEmpty": "Pas d'enregistrement à afficher",
+                                    "sInfoThousands": " ",
+                                    "sLengthMenu": 'Afficher <select>' +
+                                        '<option value="10">10</option>' +
+                                        '<option value="20">20</option>' +
+                                        '<option value="30">30</option>' +
+                                        '<option value="40">40</option>' +
+                                        '<option value="50">50</option>' +
+                                        '<option value="-1">Tous</option>' +
+                                        '</select> enregistrements',
+                                    "sPaginationType": "full_numbers"
+                                    }
+                                    }
+                                    );
+                                    $("#idTable_lot thead tr.filtre th").each( function ( i ) {
+                                    if ($(this).hasClass('choice')) {
+                                    var select = $('<select><option value=""></option></select>')
+                                    .appendTo( $(this).empty() )
+                                    .on( 'change', function () {
+                                    table.column( i ).search( $(this).val() ).draw();
+                                    } );
+
+                                    table.column( i ).data().unique().sort().each( function ( d, j ) {
+                                    select.append( '<option value="'+d+'">'+d+'</option>' );
+                                    } );
+                                    }
+                                    });
+
+                                    $(".btn-demandes").click(function() {
+                                    $('#modalTraitementEncours').modal();
+                                    });
+                                    });
+
+                                {%endblock scripts %}

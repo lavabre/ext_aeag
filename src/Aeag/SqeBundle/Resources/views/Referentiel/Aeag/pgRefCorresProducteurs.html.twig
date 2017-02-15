@@ -3,7 +3,7 @@
 {% block breadcrumb %}
     <li>
         <i class="icon-home"></i>
-        <a href="{{ path('aeag_sqe') }}">Accueil</a> 
+        <a href="{{ path('aeag_sqe') }}">Accueil</a>
     </li>
     <li class="active">
         Producteurs
@@ -14,7 +14,7 @@
 {%block panel_heading %}
     <h3 class="page-title">
         Liste des producteurs
-        {# <a class="btn btn-primary pull-right" href="{{ path('AeagDecBundle_admin_pdfListeDechets') }}" title="Imprimer la lister"> 
+        {# <a class="btn btn-primary pull-right" href="{{ path('AeagDecBundle_admin_pdfListeDechets') }}" title="Imprimer la lister">
                 <i class="fa fa-print"> Imprimer la liste</i>
          </a>#}
         <a class="btn btn-primary pull-right" href="{{ asset('fichiers/') }}{{ fichier }}">
@@ -68,6 +68,7 @@
     // DataTable
     var table = $('#idTable').DataTable(
     {"stateSave": false,
+    "order": [[ 0, "asc" ]],
     "oLanguage": {
     "sSearch": "Filtre",
     "sFirst": "1ere page",

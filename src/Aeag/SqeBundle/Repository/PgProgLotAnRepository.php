@@ -138,7 +138,7 @@ class PgProgLotAnRepository extends EntityRepository {
 
 
         $qb = $this->_em->createQuery($query);
-        $qb->setParameter('aeagUser', $user->getId()); // Id de l'utilisateur 
+        $qb->setParameter('aeagUser', $user->getId()); // Id de l'utilisateur
 
         if (!is_null($codeMilieu)) {
             $qb->setParameter('codemilieu', '%' . $codeMilieu);
@@ -146,9 +146,9 @@ class PgProgLotAnRepository extends EntityRepository {
         //print_r($query);
         return $qb->getResult();
     }
-    
+
     public function getPgProgLotAnByPrestaAlt($user, $codeMilieu = null) {
-        
+
         $query = "select lot.id, lotan.annee_prog";
         $query .= " from pg_prog_lot_an lotan";
         $query .= " join pg_prog_lot lot on lotan.lot_id = lot.id";
@@ -163,12 +163,12 @@ class PgProgLotAnRepository extends EntityRepository {
         $query .= " and (lotan.phase_id >= 5 and lotan.phase_id <= 8)";
         $query .= " and users.ext_id = :aeagUser";
         $query .= " and pean.code_statut <> 'INV'";
-        
+
         if (!is_null($codeMilieu)) {
             $query .= " and milieu.code_milieu LIKE :codemilieu";
         }
         $query .= " group by lot.id, lotan.annee_prog";
-        
+
         $stmt = $this->_em->getConnection()->prepare($query);
         $stmt->bindValue('aeagUser', $user->getId());
         if (!is_null($codeMilieu)) {
@@ -215,7 +215,7 @@ class PgProgLotAnRepository extends EntityRepository {
 
 
         $qb = $this->_em->createQuery($query);
-        $qb->setParameter('aeagUser', $user->getId()); // Id de l'utilisateur 
+        $qb->setParameter('aeagUser', $user->getId()); // Id de l'utilisateur
 
         if (!is_null($codeMilieu)) {
             $qb->setParameter('codemilieu', '%' . $codeMilieu);
@@ -251,7 +251,7 @@ class PgProgLotAnRepository extends EntityRepository {
         $query .= " and pean.codeStatut <> 'INV'";
 
         $qb = $this->_em->createQuery($query);
-        $qb->setParameter('aeagUser', $user->getId()); // Id de l'utilisateur 
+        $qb->setParameter('aeagUser', $user->getId()); // Id de l'utilisateur
         //print_r($query);
         return $qb->getResult();
     }
@@ -282,9 +282,9 @@ class PgProgLotAnRepository extends EntityRepository {
 
         return $qb->getResult();
     }
-    
-    public function getPgProgLotAnByAdminAlt($codeMilieu = null) { 
-        
+
+    public function getPgProgLotAnByAdminAlt($codeMilieu = null) {
+
         $query = "select lot.id, lotan.annee_prog";
         $query .= " from pg_prog_lot_an lotan";
         $query .= " join pg_prog_lot lot on lotan.lot_id = lot.id";
@@ -294,16 +294,17 @@ class PgProgLotAnRepository extends EntityRepository {
         $query .= " where lotan.code_statut <> 'INV'";
         $query .= " and (lotan.phase_id >= 5 and lotan.phase_id <= 8)";
         $query .= " and pean.code_statut <> 'INV'";
-        
+
         if (!is_null($codeMilieu)) {
             $query .= " and milieu.code_milieu LIKE :codemilieu";
         }
         $query .= " group by lot.id, lotan.annee_prog";
-        
+
         $stmt = $this->_em->getConnection()->prepare($query);
         if (!is_null($codeMilieu)) {
             $stmt->bindValue('codemilieu', '%' . $codeMilieu);
         }
+        //print_r($query);
         $stmt->execute();
         return $stmt->fetchAll();
     }
@@ -388,7 +389,7 @@ class PgProgLotAnRepository extends EntityRepository {
         }
 
         $qb = $this->_em->createQuery($query);
-        $qb->setParameter('aeagUser', $user->getId()); // Id de l'utilisateur 
+        $qb->setParameter('aeagUser', $user->getId()); // Id de l'utilisateur
 
         if (!is_null($codeMilieu)) {
             $qb->setParameter('codemilieu', '%' . $codeMilieu);
@@ -396,9 +397,9 @@ class PgProgLotAnRepository extends EntityRepository {
 
         return $qb->getResult();
     }
-    
+
     public function getPgProgLotAnByProgAlt($user, $codeMilieu = null) {
-        
+
         $query = "select lot.id, lotan.annee_prog";
         $query .= " from pg_prog_lot_an lotan";
         $query .= " join pg_prog_lot lot on lotan.lot_id = lot.id";
@@ -411,12 +412,12 @@ class PgProgLotAnRepository extends EntityRepository {
         $query .= " and (lotan.phase_id >= 5 and lotan.phase_id <= 8)";
         $query .= " and users.ext_id = :aeagUser";
         $query .= " and pean.code_statut <> 'INV'";
-        
+
         if (!is_null($codeMilieu)) {
             $query .= " and milieu.code_milieu LIKE :codemilieu";
         }
         $query .= " group by lot.id, lotan.annee_prog";
-        
+
         $stmt = $this->_em->getConnection()->prepare($query);
         $stmt->bindValue('aeagUser', $user->getId());
         if (!is_null($codeMilieu)) {
@@ -446,8 +447,8 @@ class PgProgLotAnRepository extends EntityRepository {
                         ->getConnection()
                         ->query($query);
     }
-    
-     /**
+
+    /**
      * @return array
      */
     public function getProgrammationStationPeriodes($lotanId, $stationId) {

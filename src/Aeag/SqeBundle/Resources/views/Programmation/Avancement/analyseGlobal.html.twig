@@ -22,7 +22,7 @@
                         {% if  ligne.nb_rendus == ligne.nb_attendus and ligne.nb_attendus > 0 %}
                             <tr class="success">
                             {% else %}
-                            <tr> 
+                            <tr>
                             {% endif %}
                             <td>{{ ligne.nom_milieu }}</td>
                             <td>{{ ligne.nom_marche }}</td>
@@ -32,13 +32,13 @@
                     {% endfor %}
                 {% endif %}
             </tbody>
-        </table> 
+        </table>
     </div>
 </div>
 
 <script type="text/javascript" language="javascript">
 
-    jQuery(document).ready(function () {
+    jQuery(document).ready(function() {
         var tableGlobal = $('#idTable_global').DataTable(
                 {"stateSave": false,
                     "order": [[0, "asc"]],
@@ -63,29 +63,25 @@
                                 '<option value="-1">Tous</option>' +
                                 '</select> enregistrements',
                         "sPaginationType": "full_numbers"
-                    }
+                    },
                 }
         );
-
-        $("#idTable_global thead td").each(function (i) {
+        $("#idTable_global thead td").each(function(i) {
 
             if (i != 2 && i != 3) {
                 var select = $('<select><option value=""></option></select>')
                         .appendTo($(this).empty())
-                        .on('change', function () {
+                        .on('change', function() {
                             tableGlobal.column(i)
                                     .search($(this).val())
                                     .draw();
                         });
-
-                tableGlobal.column(i).data().unique().sort().each(function (d, j) {
+                tableGlobal.column(i).data().unique().sort().each(function(d, j) {
                     select.append('<option value="' + d + '">' + d + '</option>')
                 });
             }
             ;
         });
-
-
     });
 
 </script>

@@ -28,7 +28,7 @@ class EchangeFichiersController extends Controller {
         $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
         $repoPgCmdFichiersRps = $emSqe->getRepository('AeagSqeBundle:PgCmdFichiersRps');
         $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
-        
+
         $pgProgLotAns = array();
         if ($user->hasRole('ROLE_ADMINSQE')) {
             $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByAdminAlt('PC');
@@ -37,7 +37,7 @@ class EchangeFichiersController extends Controller {
         } else if ($user->hasRole('ROLE_PROGSQE')) {
             $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByProgAlt($user, 'PC');
         }
-        
+
         $tabLotAns = array();
         $i = 0;
         foreach ($pgProgLotAns as $pgProgLot) {
@@ -45,22 +45,22 @@ class EchangeFichiersController extends Controller {
             $tabLotAns[$i]['anneeProg'] = $pgProgLot['annee_prog'];
             $tabPgProgLotAns = $repoPgProgLotAn->findBy(array("lot" => $pgProgLot['id'], "anneeProg" => $pgProgLot['annee_prog']));
             /*
-            $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandeByLotans($tabPgProgLotAns);
-            $nbReponses = 0;
-            $nbReponsesMax = 0;
-            foreach ($pgCmdDemandes as $pgCmdDemande) {
-                $reponses[$pgCmdDemande->getId()] = $repoPgCmdFichiersRps->getReponsesValidesByDemande($pgCmdDemande->getId());
-                $reponsesMax[$pgCmdDemande->getId()] = $repoPgCmdFichiersRps->findBy(array('demande' => $pgCmdDemande->getId(), 'typeFichier' => 'RPS', 'suppr' => 'N'));
-                if (count($reponses[$pgCmdDemande->getId()]) > 0) {
-                    $nbReponses = $nbReponses + count($reponses[$pgCmdDemande->getId()]);
-                }
-                if (count($reponsesMax[$pgCmdDemande->getId()]) > 0) {
-                    $nbReponsesMax = $nbReponsesMax + count($reponsesMax[$pgCmdDemande->getId()]);
-                } else {
-                    $nbReponsesMax++;
-                }
-            }
-            */
+              $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandeByLotans($tabPgProgLotAns);
+              $nbReponses = 0;
+              $nbReponsesMax = 0;
+              foreach ($pgCmdDemandes as $pgCmdDemande) {
+              $reponses[$pgCmdDemande->getId()] = $repoPgCmdFichiersRps->getReponsesValidesByDemande($pgCmdDemande->getId());
+              $reponsesMax[$pgCmdDemande->getId()] = $repoPgCmdFichiersRps->findBy(array('demande' => $pgCmdDemande->getId(), 'typeFichier' => 'RPS', 'suppr' => 'N'));
+              if (count($reponses[$pgCmdDemande->getId()]) > 0) {
+              $nbReponses = $nbReponses + count($reponses[$pgCmdDemande->getId()]);
+              }
+              if (count($reponsesMax[$pgCmdDemande->getId()]) > 0) {
+              $nbReponsesMax = $nbReponsesMax + count($reponsesMax[$pgCmdDemande->getId()]);
+              } else {
+              $nbReponsesMax++;
+              }
+              }
+             */
             $nbReponses = 0;
             $nbReponsesMax = 0;
             foreach ($tabPgProgLotAns as $pgProgLotan) {
@@ -70,7 +70,7 @@ class EchangeFichiersController extends Controller {
                 $nbReponses = $nbReponses + $repoPgCmdDemande->getCountPgCmdDemandeByLotanPhase($pgProgLotan, $pgProgPhases);
                 $nbReponsesMax = $nbReponsesMax + $repoPgCmdDemande->getCountPgCmdDemandeByLotan($pgProgLotan);
             }
-            
+
             $tabLotAns[$i]['nbReponses'] = $nbReponses;
             $tabLotAns[$i]['nbReponsesMax'] = $nbReponsesMax;
             $i++;
@@ -99,6 +99,7 @@ class EchangeFichiersController extends Controller {
         $repoPgProgLotAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotAn');
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
         $repoPgCmdFichiersRps = $emSqe->getRepository('AeagSqeBundle:PgCmdFichiersRps');
+        $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
 
         $pgProgLot = $repoPgProgLot->findOneById($lotId);
         $pgProgWebUser = $repoPgProgWebUsers->findOneByExtId($user->getId());
@@ -327,7 +328,7 @@ class EchangeFichiersController extends Controller {
 
             // Envoi du fichier sur le serveur du sandre pour validationFormat
             if ($this->get('aeag_sqe.process_rai')->envoiFichierValidationFormat($emSqe, $reponse, $pathBase . '/' . $nomFichier, $session)) {
-                // Changement de la phase de la réponse 
+                // Changement de la phase de la réponse
                 $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R15');
                 $reponse->setPhaseFichier($pgProgPhases);
                 $emSqe->persist($reponse);
@@ -470,16 +471,16 @@ class EchangeFichiersController extends Controller {
         return rmdir($dir);
     }
 
-    protected function unzip($file, $path = '', $effacer_zip = false) {/* Méthode qui permet de décompresser un fichier zip $file dans un répertoire de destination $path 
+    protected function unzip($file, $path = '', $effacer_zip = false) {/* Méthode qui permet de décompresser un fichier zip $file dans un répertoire de destination $path
       et qui retourne un tableau contenant la liste des fichiers extraits
       Si $effacer_zip est égal à true, on efface le fichier zip d'origine $file */
 
-        $tab_liste_fichiers = array(); //Initialisation 
+        $tab_liste_fichiers = array(); //Initialisation
 
         $zip = zip_open($file);
 
         if ($zip) {
-            while ($zip_entry = zip_read($zip)) { //Pour chaque fichier contenu dans le fichier zip 
+            while ($zip_entry = zip_read($zip)) { //Pour chaque fichier contenu dans le fichier zip
                 if (zip_entry_filesize($zip_entry) >= 0) {
                     $complete_path = $path . dirname(zip_entry_name($zip_entry));
 
@@ -492,7 +493,7 @@ class EchangeFichiersController extends Controller {
                     /* On ajoute le nom du fichier dans le tableau */
                     array_push($tab_liste_fichiers, $nom_fichier);
 
-                    $complete_name = $path . $nom_fichier; //Nom et chemin de destination 
+                    $complete_name = $path . $nom_fichier; //Nom et chemin de destination
 
                     if (!file_exists($complete_path)) {
                         $tmp = '';
