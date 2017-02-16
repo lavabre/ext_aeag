@@ -647,21 +647,12 @@ class ProcessRaiCommand extends AeagCommand {
         $reponseId = $pgCmdFichierRps->getId();
         $pgTmpValidEdilabos = $this->repoPgTmpValidEdilabo->findBy(array('demandeId' => $demandeId, 'fichierRpsId' => $reponseId, 'codePrelevement' => $codePrelevement));
         foreach($pgTmpValidEdilabos as $pgTmpValidEdilabo) {
-
-            $pgSandreParametres = $this->repoPgSandreParametres->findOneByCodeParametre($pgTmpValidEdilabo->getCodeParametre());
-            $pgCmdPrelev = $this->repoPgCmdPrelev->findOneBy(array('codePrelevCmd' => $codePrelevement));
-            $pgCmdMesureEnvs = $this->repoPgCmdMesureEnv->findBy(array("prelev" => $pgCmdPrelev, "codeParametre" => $pgSandreParametres));
-            if (count($pgCmdMesureEnvs) > 1) {
-                $this->_addLog('error', $demandeId, $reponseId, "Détection doublons mesure env : Présence de doublon pour le prelevement ".$codePrelevement." et le code parametre ".$pgSandreParametres);
+            $pgTmpValidEdilabosDoublons = $this->repoPgTmpValidEdilabo->findBy(array('demandeId' => $demandeId, 'fichierRpsId' => $reponseId, 'codePrelevement' => $codePrelevement, "numOrdre" => $pgTmpValidEdilabo->getNumOrdre(), "codeParametre" => $pgTmpValidEdilabo->getCodeParametre(), "codeFraction" => $pgTmpValidEdilabo->getCodeFraction()));
+            if (count($pgTmpValidEdilabosDoublons) > 1) {
+                $this->_addLog('error', $demandeId, $reponseId, "Détection doublons analyse : Présence de doublon pour le prelevement ".$codePrelevement." , le numero d'ordre ".$pgTmpValidEdilabo->getNumOrdre()." , le code parametre ".$pgTmpValidEdilabo->getCodeParametre()."  et le code fraction  ".$pgTmpValidEdilabo->getCodeFraction(), $codePrelevement);
             }
-
-            $pgSandreFractions = $this->repoPgSandreFractions->findOneByCodeFraction($pgTmpValidEdilabo->getCodeFraction());
-            $pgCmdAnalyses = $this->repoPgCmdAnalyse->findBy(array("prelevId" => $pgCmdPrelev->getId(), "numOrdre" => $pgTmpValidEdilabo->getNumOrdre(), "codeParametre" => $pgSandreParametres, "codeFraction" => $pgSandreFractions));
-            if(count($pgCmdAnalyses) > 1) {
-                $this->_addLog('error', $demandeId, $reponseId, "Détection doublons analyse : Présence de doublon pour le prelevement ".$codePrelevement." , le numero d'ordre ".$pgTmpValidEdilabo->getNumOrdre()." , le code parametre ".$pgSandreParametres."  et le code fraction  ".$pgSandreFractions, $codePrelevement);
-            }
+            
         }
-        
     }
 
 }
