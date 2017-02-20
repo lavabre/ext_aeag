@@ -143,7 +143,13 @@ class SaisieDonneesController extends Controller {
                                 $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandesByLotanPeriode($pgProgLotAn, $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
                             }
                             foreach ($pgCmdDemandes as $pgCmdDemande) {
-                                if ($pgCmdDemande) {
+                                for ($k = 0; $k < count($tabStations); $k++) {
+                                    if ($tabStations[$k]->getOuvFoncId() == $pgProgLotPeriodeProg->getStationAn()->getStation()->getOuvFoncId()) {
+                                        $trouve = true;
+                                        break;
+                                    }
+                                }
+                                if (!$trouve) {
                                     $tabStations[$j] = $pgProgLotPeriodeProg->getStationAn()->getStation();
                                     $j++;
                                     $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($pgCmdDemande->getPrestataire(), $pgCmdDemande, $pgProgLotPeriodeProg->getStationAn()->getStation(), $pgProgLotPeriodeAn->getPeriode());
@@ -154,9 +160,10 @@ class SaisieDonneesController extends Controller {
                                             $nbPrelevCorrects++;
                                         }
                                     }
-                                }
-                                if ($nbPrelevs == $nbPrelevCorrects and $nbPrelevs > 0) {
-                                    $nbStationCorrectes++;
+
+                                    if ($nbPrelevs == $nbPrelevCorrects and $nbPrelevs > 0) {
+                                        $nbStationCorrectes++;
+                                    }
                                 }
                             }
                         }
@@ -1961,7 +1968,7 @@ class SaisieDonneesController extends Controller {
                         $valeur = null;
                         if (!empty($_POST['valeur' . $pgProgLotParamAn->getId()])) {
                             $valeur = $_POST['valeur' . $pgProgLotParamAn->getId()];
-                          } else {
+                        } else {
                             $valeur = null;
                         }
                         if (!empty($_POST['uniteCode' . $pgProgLotParamAn->getId()])) {
@@ -2048,9 +2055,7 @@ class SaisieDonneesController extends Controller {
 
                 $emSqe->flush();
 
-           //     return new Response('lu : ' . $nbParametresAna . ' maj : ' . $nbParametresAnaMaj);
-
-
+                //     return new Response('lu : ' . $nbParametresAna . ' maj : ' . $nbParametresAnaMaj);
 // }
             } else {
                 $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
