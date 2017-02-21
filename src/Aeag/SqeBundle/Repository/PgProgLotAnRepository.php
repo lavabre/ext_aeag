@@ -200,20 +200,17 @@ class PgProgLotAnRepository extends EntityRepository {
         $query .= " and lotan.lot = lot.id";
         $query .= " and dmd.lotan = lotan.id";
         $query .= " and pean.lotan = lotan.id";
-        $query .= " and lot.codeMilieu = milieu.codeMilieu";
         $query .= " and users.extId = :aeagUser";
         $query .= " and lotan.codeStatut <> 'INV'";
         $query .= " and lotan.phase >= 5 and lotan.phase <= 8";
         $query .= " and pean.codeStatut <> 'INV'";
         $query .= " and typFic.codeMilieu = lot.codeMilieu";
-        $query .= " and typFic.prestataire = presta.adrCorIdl";
+        $query .= " and typFic.prestataire = presta.adrCorId";
         $query .= " and typFic.formatFic like '%Saisie%'";
-
         if (!is_null($codeMilieu)) {
+            $query .= " and lot.codeMilieu = milieu.codeMilieu";
             $query .= " and milieu.codeMilieu LIKE :codemilieu";
         }
-
-
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('aeagUser', $user->getId()); // Id de l'utilisateur
 
@@ -387,6 +384,46 @@ class PgProgLotAnRepository extends EntityRepository {
         if (!is_null($codeMilieu)) {
             $query .= " and milieu.codeMilieu LIKE :codemilieu";
         }
+
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('aeagUser', $user->getId()); // Id de l'utilisateur
+
+        if (!is_null($codeMilieu)) {
+            $qb->setParameter('codemilieu', '%' . $codeMilieu);
+        }
+
+        return $qb->getResult();
+    }
+
+    public function getPgProgLotAnSaisieDonneesByProg($user, $codeMilieu = null) {
+        $query = "select distinct lotan";
+        $query .= " from Aeag\SqeBundle\Entity\PgProgMarcheUser mu,";
+        $query .= " Aeag\SqeBundle\Entity\PgProgWebusers users,";
+        $query .= " Aeag\SqeBundle\Entity\PgProgLotAn lotan,";
+        $query .= " Aeag\SqeBundle\Entity\PgProgLot lot,";
+        $query .= " Aeag\SqeBundle\Entity\PgCmdDemande dmd,";
+        $query .= " Aeag\SqeBundle\Entity\PgProgLotPeriodeAn pean,";
+        if ($codeMilieu) {
+            $query .= "         Aeag\SqeBundle\Entity\PgProgTypeMilieu milieu,";
+        }
+        $query .= " Aeag\SqeBundle\Entity\PgProgPrestaTypfic typFic";
+        $query .= " where lotan.lot = lot.id";
+        $query .= " and mu.marche = lot.marche";
+        $query .= " and users.id = mu.webuser";
+        $query .= " and dmd.lotan = lotan.id";
+        $query .= " and pean.lotan = lotan.id";
+        $query .= " and lotan.codeStatut <> 'INV'";
+        $query .= " and typFic.codeMilieu = lot.codeMilieu";
+        $query .= " and typFic.prestataire = users.prestataire";
+        $query .= " and typFic.formatFic like '%Saisie%'";
+
+        if (!is_null($codeMilieu)) {
+            $query .= " and lot.codeMilieu = milieu.codeMilieu";
+            $query .= " and milieu.codeMilieu LIKE :codemilieu";
+        }
+        $query .= " and lotan.phase >= 5 and lotan.phase <= 8";
+        $query .= " and users.extId = :aeagUser";
+        $query .= " and pean.codeStatut <> 'INV'";
 
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('aeagUser', $user->getId()); // Id de l'utilisateur

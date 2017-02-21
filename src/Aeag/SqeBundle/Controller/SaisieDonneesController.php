@@ -38,25 +38,26 @@ class SaisieDonneesController extends Controller {
         $repoProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
 
         if ($user->hasRole('ROLE_ADMINSQE')) {
-            $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByAdmin();
+            $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnSaisieDonneesByAdmin();
         } else if ($user->hasRole('ROLE_PRESTASQE')) {
-            $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByPresta($user);
+            $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnSaisieDonneesByPresta($user);
         } else if ($user->hasRole('ROLE_PROGSQE')) {
-            $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnByProg($user);
+            $pgProgLotAns = $repoPgProgLotAn->getPgProgLotAnSaisieDonneesByProg($user);
         }
-
-        $pgProgPhase = $repoProgPhases->getPgProgPhasesByCodePhase('M40');
 
         $tabProgLotAns = array();
         $i = 0;
         foreach ($pgProgLotAns as $pgProgLotAn) {
             $tabProgLotAns[$i]['lotan'] = $pgProgLotAn;
             $nbPrelevs = $repoPgCmdPrelev->getCountPgCmdPrelevByLotan($pgProgLotAn);
-            $nbPrelevCorrectes = $repoPgCmdPrelev->getCountPgCmdPrelevByLotanPhase($pgProgLotAn, $pgProgPhase);
+            $pgProgPhase = $repoProgPhases->getPgProgPhasesByCodePhase('M40');
+            $nbPrelevCorrectes40 = $repoPgCmdPrelev->getCountPgCmdPrelevByLotanPhase($pgProgLotAn, $pgProgPhase);
+            $pgProgPhase = $repoProgPhases->getPgProgPhasesByCodePhase('M50');
+            $nbPrelevCorrectes50 = $repoPgCmdPrelev->getCountPgCmdPrelevByLotanPhase($pgProgLotAn, $pgProgPhase);
             $tabProgLotAns[$i]['nbDemandes'] = $nbPrelevs;
-            $tabProgLotAns[$i]['nbDemandeCorrectes'] = $nbPrelevCorrectes;
-//            if ($pgProgLotAn->getid() ==502){
-//            echo('lot : ' . $pgProgLotAn->getLot()->getNomLot() . ' demandes : ' . $tabProgLotAns[$i]['nbDemandes'] . ' correctes : ' . $tabProgLotAns[$i]['nbDemandeCorrectes'] . '</br>');
+            $tabProgLotAns[$i]['nbDemandeCorrectes'] = $nbPrelevCorrectes40 + $nbPrelevCorrectes50;
+//            if ($pgProgLotAn->getid() == 330) {
+//                echo('lot : ' . $pgProgLotAn->getLot()->getNomLot() . ' demandes : ' . $tabProgLotAns[$i]['nbDemandes'] . ' correctes : ' . $tabProgLotAns[$i]['nbDemandeCorrectes'] . '</br>');
 //            }
             $i++;
         }
@@ -128,7 +129,7 @@ class SaisieDonneesController extends Controller {
                     if ($user->hasRole('ROLE_ADMINSQE') or ( $userPrestataire == $prestataire)) {
                         $trouve = false;
                         for ($k = 0; $k < count($tabStations); $k++) {
-                            if ($tabStations[$k]->getOuvFoncid() == $pgProgLotPeriodeProg->getStationAn()->getStation()->getOuvFoncid()) {
+                            if ($tabStations[$k]['station']->getOuvFoncid() == $pgProgLotPeriodeProg->getStationAn()->getStation()->getOuvFoncid()) {
                                 $trouve = true;
                                 break;
                             }
@@ -144,23 +145,27 @@ class SaisieDonneesController extends Controller {
                             }
                             foreach ($pgCmdDemandes as $pgCmdDemande) {
                                 for ($k = 0; $k < count($tabStations); $k++) {
-                                    if ($tabStations[$k]->getOuvFoncId() == $pgProgLotPeriodeProg->getStationAn()->getStation()->getOuvFoncId()) {
+                                    if ($tabStations[$k]['station']->getOuvFoncId() == $pgProgLotPeriodeProg->getStationAn()->getStation()->getOuvFoncId()) {
                                         $trouve = true;
                                         break;
                                     }
                                 }
                                 if (!$trouve) {
-                                    $tabStations[$j] = $pgProgLotPeriodeProg->getStationAn()->getStation();
-                                    $j++;
+                                    $tabStations[$j]['station'] = $pgProgLotPeriodeProg->getStationAn()->getStation();
                                     $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($pgCmdDemande->getPrestataire(), $pgCmdDemande, $pgProgLotPeriodeProg->getStationAn()->getStation(), $pgProgLotPeriodeAn->getPeriode());
-                                    $nbPrelevs = count($pgCmdPrelevs);
+                                    $nbPrelevs = 0;
                                     $nbPrelevCorrects = 0;
                                     foreach ($pgCmdPrelevs as $pgCmdPrelev) {
-                                        if ($pgCmdPrelev->getPhaseDmd()->getcodePhase() == 'M40') {
+                                        if ($pgCmdPrelev->getPhaseDmd()->getcodePhase() != 'M60') {
+                                            $nbPrelevs++;
+                                        }
+                                        if ($pgCmdPrelev->getPhaseDmd()->getcodePhase() == 'M40' or $pgCmdPrelev->getPhaseDmd()->getcodePhase() == 'M50') {
                                             $nbPrelevCorrects++;
                                         }
                                     }
-
+                                    $tabStations[$j]['nbPrelevs'] = $nbPrelevs;
+                                    $tabStations[$j]['nbPrelevCorrects'] = $nbPrelevCorrects;
+                                    $j++;
                                     if ($nbPrelevs == $nbPrelevCorrects and $nbPrelevs > 0) {
                                         $nbStationCorrectes++;
                                     }
@@ -176,8 +181,8 @@ class SaisieDonneesController extends Controller {
             }
         }
 //
-//                                     \Symfony\Component\VarDumper\VarDumper::dump($tabPeriodeAns);
-//                                        return new Response('');
+//        \Symfony\Component\VarDumper\VarDumper::dump($tabPeriodeAns);
+//        return new Response('');
 
 
         return $this->render('AeagSqeBundle:SaisieDonnees:lotPeriodes.html.twig', array(
