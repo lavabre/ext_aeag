@@ -12,8 +12,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass="Aeag\SqeBundle\Repository\PgCmdDemandeRepository")
  */
 class PgCmdDemande {
-    
-     /**
+
+    /**
      * @var string
      *
      * @ORM\Column(name="id", type="decimal", precision=38, scale=0, nullable=false)
@@ -22,21 +22,21 @@ class PgCmdDemande {
      * @ORM\SequenceGenerator(sequenceName="pg_cmd_demande_id_seq", allocationSize=1, initialValue=1)
      */
     private $id;
-    
+
     /**
      * @var string
      *
      * @ORM\Column(name="code_demande_cmd", type="string", length=100, nullable=false)
      */
     private $codeDemandeCmd;
-    
+
     /**
      * @var string
      *
      * @ORM\Column(name="annee_prog", type="decimal", precision=4, scale=0, nullable=false)
      */
     private $anneeProg;
-    
+
     /**
      * @var \PgProgLotAn
      *
@@ -46,7 +46,7 @@ class PgCmdDemande {
      * })
      */
     private $lotan;
-    
+
     /**
      * @var \PgRefCorresProducteur
      *
@@ -56,15 +56,15 @@ class PgCmdDemande {
      * })
      */
     private $commanditaire;
-    
+
     /**
      * @var string
      *
      * @ORM\Column(name="code_demande_presta", type="string", length=100, nullable=true)
      */
     private $codeDemandePresta;
-    
-     /**
+
+    /**
      * @var \PgRefCorresPresta
      *
      * @ORM\ManyToOne(targetEntity="PgRefCorresPresta")
@@ -73,14 +73,14 @@ class PgCmdDemande {
      * })
      */
     private $prestataire;
-    
+
     /**
      * @var string
      *
      * @ORM\Column(name="type_demande", type="string", length=1, nullable=false)
      */
     private $typeDemande;
-    
+
     /**
      * @var \PgRefCorresProducteur
      *
@@ -90,21 +90,21 @@ class PgCmdDemande {
      * })
      */
     private $destAna;
-    
+
     /**
      * @var \DateTime
      *
      * @ORM\Column(name="date_demande", type="datetime", nullable=true)
      */
     private $dateDemande;
-    
+
     /**
      * @var string
      *
      * @ORM\Column(name="nom_fichier", type="string", length=255, nullable=true)
      */
     private $nomFichier;
-    
+
     /**
      * @var \PgProgPhases
      *
@@ -114,7 +114,7 @@ class PgCmdDemande {
      * })
      */
     private $phaseDemande;
-    
+
     /**
      * @var \PgProgWebusers
      *
@@ -124,7 +124,7 @@ class PgCmdDemande {
      * })
      */
     private $emetteur;
-    
+
     /**
      * @var \PgProgPeriodes
      *
@@ -134,14 +134,14 @@ class PgCmdDemande {
      * })
      */
     private $periode;
-    
+
     /**
      * @var string
      *
      * @ORM\Column(name="format_fic", type="string", length=50, nullable=true)
      */
     private $formatFichier;
-    
+
     function getId() {
         return $this->id;
     }
@@ -245,7 +245,7 @@ class PgCmdDemande {
     function setEmetteur($emetteur) {
         $this->emetteur = $emetteur;
     }
-    
+
     function getPeriode() {
         return $this->periode;
     }
@@ -262,6 +262,4 @@ class PgCmdDemande {
         $this->formatFichier = $formatFichier;
     }
 
-
-    
 }

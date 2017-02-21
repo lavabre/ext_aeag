@@ -75,7 +75,7 @@ class SuiviEauController extends Controller {
                     $trouve = false;
                     $pgProgLotGrparAns = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotan($pgProgLotAn);
                     foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
-						$pgProgGrpParamRef = $pgProgLotGrparAn->getgrparRef();
+                        $pgProgGrpParamRef = $pgProgLotGrparAn->getgrparRef();
                         if ($pgProgGrpParamRef->getSupport()) {
                             if ($pgProgLotGrparAn->getgrparRef()->getSupport()->getCodeSupport() == '3') {
                                 $trouve = true;
@@ -184,6 +184,7 @@ class SuiviEauController extends Controller {
         }
 
         $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
+        $repoPgProgLotGrparAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotGrparAn');
         $repoPgProgLotPeriodeProg = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeProg');
         $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
         $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
@@ -207,6 +208,15 @@ class SuiviEauController extends Controller {
         $i = 0;
         $j = 0;
         $k = 0;
+
+        $pgProgLotGrparAns = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotan($pgProgLotAn);
+        $prestaprel = null;
+        foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
+            if ($pgProgLotGrparAn->getGrparRef()->getCodeGrp() == '000' or $pgProgLotGrparAn->getGrparRef()->getCodeGrp() == '010') {
+                $prestaprel = $pgProgLotGrparAn->getPrestaDft();
+            }
+        }
+
         foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
             if ($pgProgLot->getDelaiPrel()) {
                 $dateFin = clone($pgProgLotPeriodeProg->getPeriodan()->getPeriode()->getDateDeb());
@@ -241,11 +251,14 @@ class SuiviEauController extends Controller {
                 if (count($pgCmdDemandes) > 0) {
                     foreach ($pgCmdDemandes as $pgCmdDemande) {
                         //if ($pgCmdDemande) {
+                        if (!$prestaprel) {
+                            $prestaprel = $pgCmdDemande->getPrestataire();
+                        }
                         $tabStations[$i]['cmdDemande'] = $pgCmdDemande;
                         $tabCmdPrelevs = array();
                         $nbCmdPrelevs = 0;
                         //$pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($pgProgLotPeriodeProg->getGrparAn()->getPrestaDft(), $pgCmdDemande, $pgProgLotPeriodeProg->getStationAn()->getStation(), $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
-                        $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($pgCmdDemande->getPrestataire(), $pgCmdDemande, $pgProgLotPeriodeProg->getStationAn()->getStation(), $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
+                        $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($prestaprel, $pgCmdDemande, $pgProgLotPeriodeProg->getStationAn()->getStation(), $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
                         foreach ($pgCmdPrelevs as $pgCmdPrelev) {
                             if ($pgCmdPrelev->getCodeSupport()->getCodeSupport() == '3') {
                                 $trouveDmd = true;
@@ -303,7 +316,7 @@ class SuiviEauController extends Controller {
                                 //                             }
                                 //                             echo('nb: ' . count($tabCmdPrelevs[$nbCmdPrelevs]['autrePrelevs']));
                                 //                           \Symfony\Component\VarDumper\VarDumper::dump($tabCmdPrelevs[$nbCmdPrelevs]['autrePrelevs']);
-                                //                            return new Response ('');   
+                                //                            return new Response ('');
                                 //                        }
                                 $nbCmdPrelevs++;
                             }
@@ -330,7 +343,7 @@ class SuiviEauController extends Controller {
         }
 
 //        \Symfony\Component\VarDumper\VarDumper::dump($tabStations);
-//        return new Response ('');   
+//        return new Response ('');
 
         return $this->render('AeagSqeBundle:SuiviEau:lotPeriodeStations.html.twig', array(
                     'user' => $pgProgWebUser,
@@ -378,6 +391,7 @@ class SuiviEauController extends Controller {
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
         $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
+        $repoPgProgLotGrparAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotGrparAn');
         $repoPgRefStationMesure = $emSqe->getRepository('AeagSqeBundle:PgRefStationMesure');
         $repoPgSandreSupports = $emSqe->getRepository('AeagSqeBundle:PgSandreSupports');
         $repoPgProgLotPeriodeProg = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeProg');
@@ -404,6 +418,16 @@ class SuiviEauController extends Controller {
         } else {
             $dateFin = $pgProgPeriode->getDateFin();
         }
+
+        $pgProgLotGrparAns = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotan($pgProgLotAn);
+        $prestaprel = null;
+        foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
+            if ($pgProgLotGrparAn->getGrparRef()->getCodeGrp() == '000' or $pgProgLotGrparAn->getGrparRef()->getCodeGrp() == '010') {
+                $prestaprel = $pgProgLotGrparAn->getPrestaDft();
+            }
+        }
+
+
         if ($pgProgLotPeriodeAn->getCodeStatut()->getCodeStatut() != 'DEL' and $pgProgLotPeriodeAn->getCodeStatut()->getCodeStatut() != 'INV') {
             $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByPeriodeAn($pgProgLotPeriodeAn);
             $tabStations = array();
@@ -427,9 +451,12 @@ class SuiviEauController extends Controller {
                     if (count($pgCmdDemandes) > 0) {
                         foreach ($pgCmdDemandes as $pgCmdDemande) {
                             //      if ($pgCmdDemande) {
+                            if (!$prestaprel) {
+                                $prestaprel = $pgCmdDemande->getPrestataire();
+                            }
                             $tabStations[$j]['demande'] = $pgCmdDemande;
                             //$pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($pgProgLotPeriodeProg->getGrparAn()->getPrestaDft(), $pgCmdDemande, $pgProgLotPeriodeProg->getStationAn()->getStation(), $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
-                            $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($pgCmdDemande->getPrestataire(), $pgCmdDemande, $pgProgLotPeriodeProg->getStationAn()->getStation(), $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
+                            $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($prestaprel, $pgCmdDemande, $pgProgLotPeriodeProg->getStationAn()->getStation(), $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
                             $tabCmdPrelevs = array();
                             $nbCmdPrelevs = 0;
                             foreach ($pgCmdPrelevs as $pgCmdPrelev) {
@@ -456,7 +483,7 @@ class SuiviEauController extends Controller {
         }
 
 //        \Symfony\Component\VarDumper\VarDumper::dump($tabStations);
-//        return new Response ('');   
+//        return new Response ('');
 // Récupération des valeurs du fichier
 
         $name = $_FILES['file']['name'];
@@ -781,7 +808,7 @@ class SuiviEauController extends Controller {
             $objetMessage = "fichier terrrain déposé ";
             $txtMessage = "Un ou plusieurs fichiers terrain ont été déposés sur le lot " . $pgProgLot->getNomLot() . " pour la période du " . $pgProgPeriode->getDateDeb()->format('d/m/Y') . " au " . $dateFin->format('d/m/Y');
             $mailer = $this->get('mailer');
-            // envoi mail  aux presta connecte 
+            // envoi mail  aux presta connecte
             $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
             if ($pgProgWebUser) {
                 $txtMessage.= '<br/><br/>Veullez trouver en pièce jointe le rapport d\'intégration';
@@ -827,7 +854,7 @@ class SuiviEauController extends Controller {
         $tabReponse[4] = $ficRapport;
 
 //         \Symfony\Component\VarDumper\VarDumper::dump($tabReponse);
-//          return new Response (''); 
+//          return new Response ('');
 //$session->getFlashBag()->add('notice-warning', $response);
 
         return new Response(json_encode($tabReponse));
@@ -894,6 +921,7 @@ class SuiviEauController extends Controller {
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
         $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
+        $repoPgProgLotGrparAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotGrparAn');
         $repoPgRefStationMesure = $emSqe->getRepository('AeagSqeBundle:PgRefStationMesure');
         $repoPgSandreSupports = $emSqe->getRepository('AeagSqeBundle:PgSandreSupports');
         $repoPgProgLotPeriodeProg = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeProg');
@@ -907,6 +935,16 @@ class SuiviEauController extends Controller {
         $pgProgLot = $pgProgLotAn->getLot();
         $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
         $pgProgPeriode = $pgProgLotPeriodeAn->getPeriode();
+
+        $pgProgLotGrparAns = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotan($pgProgLotAn);
+        $prestaprel = null;
+        foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
+            if ($pgProgLotGrparAn->getGrparRef()->getCodeGrp() == '000' or $pgProgLotGrparAn->getGrparRef()->getCodeGrp() == '010') {
+                $prestaprel = $pgProgLotGrparAn->getPrestaDft();
+            }
+        }
+
+
         if ($pgProgLotPeriodeAn->getCodeStatut()->getCodeStatut() != 'DEL' and $pgProgLotPeriodeAn->getCodeStatut()->getCodeStatut() != 'INV') {
             $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByPeriodeAn($pgProgLotPeriodeAn);
             $tabStations = array();
@@ -930,9 +968,12 @@ class SuiviEauController extends Controller {
                     if (count($pgCmdDemandes) > 0) {
                         foreach ($pgCmdDemandes as $pgCmdDemande) {
                             //if ($pgCmdDemande) {
+                            if (!$prestaprel) {
+                                $prestaprel = $pgCmdDemande->getPrestataire();
+                            }
                             $tabStations[$j]['demande'] = $pgCmdDemande;
                             //$pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($pgProgLotPeriodeProg->getGrparAn()->getPrestaDft(), $pgCmdDemande, $pgProgLotPeriodeProg->getStationAn()->getStation(), $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
-                            $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($pgCmdDemande->getPrestataire(), $pgCmdDemande, $pgProgLotPeriodeProg->getStationAn()->getStation(), $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
+                            $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($prestaprel, $pgCmdDemande, $pgProgLotPeriodeProg->getStationAn()->getStation(), $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
                             $tabCmdPrelevs = array();
                             $nbCmdPrelevs = 0;
                             foreach ($pgCmdPrelevs as $pgCmdPrelev) {
@@ -961,7 +1002,7 @@ class SuiviEauController extends Controller {
         }
 
 //        \Symfony\Component\VarDumper\VarDumper::dump($tabStations);
-//        return new Response ('');   
+//        return new Response ('');
 // Récupération des valeurs du fichier
 
         $name = $_FILES['file']['name'];
@@ -1302,7 +1343,7 @@ class SuiviEauController extends Controller {
             unlink($pathBase . '/' . $name);
             unlink($pathBase . '/trans-' . $user->getId() . '.csv');
 
-            // envoi mail  aux presta connecte 
+            // envoi mail  aux presta connecte
             $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
             if ($pgProgWebUser) {
                 $objetMessage = "fichier de suivi ";
@@ -2241,7 +2282,7 @@ class SuiviEauController extends Controller {
             $txtMessage = "Un ou plusieurs fichiers terrain ont été déposés sur le lot " . $pgProgLot->getNomLot() . " pour la période du " . $pgProgPeriode->getDateDeb()->format('d/m/Y') . " au " . $dateFin->format('d/m/Y');
             $mailer = $this->get('mailer');
 
-            // envoi mail  aux presta connecte 
+            // envoi mail  aux presta connecte
             $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
             if ($pgProgWebUser) {
                 $txtMessage.= '<br/><br/>Veullez trouver en pièce jointe le rapport d\'intégration';
@@ -2287,7 +2328,7 @@ class SuiviEauController extends Controller {
         $tabReponse[4] = $ficRapport;
 
 //         \Symfony\Component\VarDumper\VarDumper::dump($tabReponse);
-//          return new Response (''); 
+//          return new Response ('');
 //$session->getFlashBag()->add('notice-warning', $response);
 
         return new Response(json_encode($tabReponse));
@@ -2805,16 +2846,16 @@ class SuiviEauController extends Controller {
         return $chemin;
     }
 
-    protected function unzip($file, $path = '', $effacer_zip = false) {/* Méthode qui permet de décompresser un fichier zip $file dans un répertoire de destination $path 
+    protected function unzip($file, $path = '', $effacer_zip = false) {/* Méthode qui permet de décompresser un fichier zip $file dans un répertoire de destination $path
       et qui retourne un tableau contenant la liste des fichiers extraits
       Si $effacer_zip est égal à true, on efface le fichier zip d'origine $file */
 
-        $tab_liste_fichiers = array(); //Initialisation 
+        $tab_liste_fichiers = array(); //Initialisation
 
         $zip = zip_open($file);
 
         if ($zip) {
-            while ($zip_entry = zip_read($zip)) { //Pour chaque fichier contenu dans le fichier zip 
+            while ($zip_entry = zip_read($zip)) { //Pour chaque fichier contenu dans le fichier zip
                 if (zip_entry_filesize($zip_entry) >= 0) {
                     $complete_path = $path . dirname(zip_entry_name($zip_entry));
 
@@ -2827,7 +2868,7 @@ class SuiviEauController extends Controller {
                     /* On ajoute le nom du fichier dans le tableau */
                     array_push($tab_liste_fichiers, $nom_fichier);
 
-                    $complete_name = $path . $nom_fichier; //Nom et chemin de destination 
+                    $complete_name = $path . $nom_fichier; //Nom et chemin de destination
 
                     if (!file_exists($complete_path)) {
                         $tmp = '';

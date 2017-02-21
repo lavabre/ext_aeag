@@ -93,6 +93,13 @@ class SaisieDonneesController extends Controller {
         $pgProgLot = $pgProgLotAn->getLot();
         $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
         $pgProgLotPeriodeAns = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnByLotan($pgProgLotAn);
+        $pgProgLotGrparAns = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotan($pgProgLotAn);
+        $prestaprel = null;
+        foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
+            if ($pgProgLotGrparAn->getGrparRef()->getCodeGrp() == '000' or $pgProgLotGrparAn->getGrparRef()->getCodeGrp() == '010') {
+                $prestaprel = $pgProgLotGrparAn->getPrestaDft();
+            }
+        }
 
         $userPrestataire = null;
         if ($pgProgWebUser) {
@@ -150,9 +157,12 @@ class SaisieDonneesController extends Controller {
                                         break;
                                     }
                                 }
-                                if (!$trouve) {
+                                if (!$trouve or $tabStations[$j]['nbPrelevs'] == 0) {
                                     $tabStations[$j]['station'] = $pgProgLotPeriodeProg->getStationAn()->getStation();
-                                    $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($pgCmdDemande->getPrestataire(), $pgCmdDemande, $pgProgLotPeriodeProg->getStationAn()->getStation(), $pgProgLotPeriodeAn->getPeriode());
+                                    if (!$prestaprel) {
+                                        $prestatprel = $pgCmdDemande->getPrestataire();
+                                    }
+                                    $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($prestatprel, $pgCmdDemande, $pgProgLotPeriodeProg->getStationAn()->getStation(), $pgProgLotPeriodeAn->getPeriode());
                                     $nbPrelevs = 0;
                                     $nbPrelevCorrects = 0;
                                     foreach ($pgCmdPrelevs as $pgCmdPrelev) {
@@ -1914,6 +1924,7 @@ class SaisieDonneesController extends Controller {
         $repoPgRefStationMesure = $emSqe->getRepository('AeagSqeBundle:PgRefStationMesure');
         $repoPgProgLotStationAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotStationAn');
         $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
+        $repoPgProgLotGrparAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotGrparAn');
         $repoPgProgLotPeriodeProg = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeProg');
         $repoPgProgLotParamAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotParamAn');
         $repoPgSandreUnites = $emSqe->getRepository('AeagSqeBundle:PgSandreUnites');
@@ -1930,12 +1941,23 @@ class SaisieDonneesController extends Controller {
         $pgCmdDemande = $pgCmdPrelev->getDemande();
         $prestataire = $pgCmdDemande->getPrestataire();
 
+        $pgProgLotGrparAns = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotan($pgCmdDemande->getLotan());
+        $prestaprel = null;
+        foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
+            if ($pgProgLotGrparAn->getGrparRef()->getCodeGrp() == '000' or $pgProgLotGrparAn->getGrparRef()->getCodeGrp() == '010') {
+                $prestaprel = $pgProgLotGrparAn->getPrestaDft();
+            }
+        }
+        if (!$prestaprel) {
+            $prestaprel = $prestataire;
+        }
+
         $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($periodeAnId);
         $pgProgLotAn = $pgProgLotPeriodeAn->getLotAn();
         $pgProgLot = $pgProgLotAn->getLot();
         $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
         $pgRefStationMesure = $repoPgRefStationMesure->getPgRefStationMesureByOuvFoncId($stationId);
-        $pgProgLotStationAn = $repoPgProgLotStationAn->getPgProgLotStationAnByLotAnStation($pgProgLotAn, $pgRefStationMesure);
+        $pgProgLotStationAn = $repoPgProgLotStationAn - $repoPgRefStationMesure > getPgProgLotStationAnByLotAnStation($pgProgLotAn, $pgRefStationMesure);
         $pgProgLotPeriodeProgs = $pgCmdPrelev->getPprog();
         $nbErreurs = 0;
         $okControlesSpecifiques = 0;
@@ -2130,7 +2152,7 @@ class SaisieDonneesController extends Controller {
 //                                if ($prestataire == $pgProgLotParamAn->getPrestataire() and $userPrestataire == $prestataire) {
                                 //echo ('groupe: ' . $pgProgLotGrparAn->getId() . ' type : ' . $pgProgGrpParamRef->getTypeGrp() . '  pgCmdPrelev : ' . $pgCmdPrelev->getId() . ' parametre : ' . $pgProgLotParamAn->getId() . ' </br>');
                                 $nbParametresAna++;
-                                $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($prestataire, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
+                                $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($prestaprel, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
                                 $pgCmdAnalyses = $repoPgCmdAnalyse->getPgCmdAnalysesByPrelevParamProg($pgCmdPrelev, $pgProgLotParamAn);
                                 if (count($pgCmdAnalyses) > 0) {
                                     $nbSaisieParametresAna++;
@@ -2250,6 +2272,7 @@ class SaisieDonneesController extends Controller {
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
+        $repoPgProgLotGrparAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotGrparAn');
         $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
         $repoPgProgLotPeriodeProg = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeProg');
         $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
@@ -2266,6 +2289,17 @@ class SaisieDonneesController extends Controller {
         $producteur = $pgProgMarche->getRespAdrCor();
         $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevById($prelevId);
         $pgCmdDemande = $pgCmdPrelev->getDemande();
+
+        $pgProgLotGrparAns = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotan($pgProgLotAn);
+        $prestaprel = null;
+        foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
+            if ($pgProgLotGrparAn->getGrparRef()->getCodeGrp() == '000' or $pgProgLotGrparAn->getGrparRef()->getCodeGrp() == '010') {
+                $prestaprel = $pgProgLotGrparAn->getPrestaDft();
+            }
+        }
+        if (!$prestaprel) {
+            $prestaprel = $pgCmdDemande->getPrestataire();
+        }
 
         $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R45');
 
@@ -2344,7 +2378,7 @@ class SaisieDonneesController extends Controller {
                         if ($pgCmdDemande) {
                             $tabStations[$j] = $pgProgLotPeriodeProg->getStationAn()->getStation();
                             $j++;
-                            $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($pgCmdDemande->getPrestataire(), $pgCmdDemande, $pgProgLotPeriodeProg->getStationAn()->getStation(), $pgProgLotPeriodeAn->getPeriode());
+                            $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($prestaprel, $pgCmdDemande, $pgProgLotPeriodeProg->getStationAn()->getStation(), $pgProgLotPeriodeAn->getPeriode());
                             $nbPrelevs = count($pgCmdPrelevs);
                             $nbPrelevCorrects = 0;
                             foreach ($pgCmdPrelevs as $pgCmdPrelev) {
@@ -4177,6 +4211,7 @@ class SaisieDonneesController extends Controller {
         $repoPgRefStationMesure = $emSqe->getRepository('AeagSqeBundle:PgRefStationMesure');
         $repoPgProgLotStationAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotStationAn');
         $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
+        $repoPgProgLotGrparAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotGrparAn');
         $repoPgProgLotPeriodeProg = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeProg');
         $repoPgProgLotParamAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotParamAn');
         $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
@@ -4201,17 +4236,24 @@ class SaisieDonneesController extends Controller {
         $pgPrelevPc = $pgPrelevPcs[0];
         $pgCmdDemande = $pgCmdPrelev->getDemande();
 
+        $pgProgLotGrparAns = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotan($pgProgLotAn);
+        $prestaprel = null;
+        foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
+            if ($pgProgLotGrparAn->getGrparRef()->getCodeGrp() == '000' or $pgProgLotGrparAn->getGrparRef()->getCodeGrp() == '010') {
+                $prestaprel = $pgProgLotGrparAn->getPrestaDft();
+            }
+        }
+        if (!$prestaprel) {
+            $prestaprel = $pgCmdDemande->getPrestataire();
+        }
+
         $userPrestataire = null;
         if ($pgProgWebUser->getPrestataire()) {
             $userPrestataire = $pgProgWebUser->getPrestataire();
         } else {
             $userPrestataire = null;
-            ;
         }
 
-        $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($periodeAnId);
-        $pgProgLotAn = $pgProgLotPeriodeAn->getLotAn();
-        $pgProgLot = $pgProgLotAn->getLot();
         $pgRefStationMesure = $repoPgRefStationMesure->getPgRefStationMesureByOuvFoncId($stationId);
         $pgProgLotStationAn = $repoPgProgLotStationAn->getPgProgLotStationAnByLotAnStation($pgProgLotAn, $pgRefStationMesure);
         $pgProgLotPeriodeProgs = $pgCmdPrelev->getPprog();
@@ -4276,7 +4318,7 @@ class SaisieDonneesController extends Controller {
 
         foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
             $pgProgLotGrparAn = $pgProgLotPeriodeProg->getGrparAn();
-            $prestataire = $pgProgLotGrparAn->getPrestaDft();
+            //$prestataire = $pgProgLotGrparAn->getPrestaDft();
             $pgProgPeriodes = $pgProgLotPeriodeProg->getPeriodAn()->getPeriode();
             if ($pgProgLotGrparAn->getvalide() == 'O') {
                 $pgProgGrpParamRef = $pgProgLotGrparAn->getGrparRef();
@@ -4411,7 +4453,7 @@ class SaisieDonneesController extends Controller {
 
                         if ($pgProgGrpParamRef->getTypeGrp() == 'ENV') {
 
-                            $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($prestataire, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
+                            $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($prestaprel, $pgCmdDemande, $pgRefStationMesure, $pgProgPeriodes);
                             $trouve = false;
                             $pgCmdPrelevPcs = $repoPgCmdPrelevPc->getPgCmdPrelevPcByPrelev($pgCmdPrelev);
                             foreach ($pgCmdPrelevPcs as $pgCmdPrelevPc) {
