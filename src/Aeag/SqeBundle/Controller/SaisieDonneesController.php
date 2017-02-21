@@ -157,7 +157,7 @@ class SaisieDonneesController extends Controller {
                                         break;
                                     }
                                 }
-                                if (!$trouve or $tabStations[$j]['nbPrelevs'] == 0) {
+                                if (!$trouve or $nbPrelevs == 0) {
                                     $tabStations[$j]['station'] = $pgProgLotPeriodeProg->getStationAn()->getStation();
                                     if (!$prestaprel) {
                                         $prestatprel = $pgCmdDemande->getPrestataire();

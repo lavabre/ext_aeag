@@ -1351,6 +1351,7 @@ class CollecteurController extends Controller {
                 $tab[$i]['coutFacture'] = $declaration->getCoutFacture();
                 $tab[$i]['quantiteReel'] = $declaration->getQuantiteReel();
                 $tab[$i]['quantiteRet'] = $declaration->getQuantiteRet();
+                $tab[$i]['tauxAide'] = $declaration->getTauxAide();
                 $tab[$i]['montAide'] = $declaration->getMontAide();
                 $i++;
             }
@@ -2923,8 +2924,8 @@ class CollecteurController extends Controller {
                                 //print_R('1 montant avant round : ' . $montAide);
                                 //$montAide = round($montAide, 4);
                                 $montAide = round($montAide, 2);
-                               // print_R('1 montant apres round : ' . $montAide);
-                               // return new response (' ici');
+                                // print_R('1 montant apres round : ' . $montAide);
+                                // return new response (' ici');
 //}
                             } else {
                                 $montAide = round((($crudDeclarationDetail->getQuantiteRet()) * $crudDeclarationDetail->getCoutFacture() * $tauxAide), 3);
