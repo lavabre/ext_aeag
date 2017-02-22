@@ -34,10 +34,6 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
             $this->output->writeln($date->format('d/m/Y H:i:s') . '- Integration Données Brutes : Le traitement de la RAI ' . $pgCmdFichierRps->getId() . ' commence');
             $this->_integrationDonneesBrutes($pgCmdFichierRps);
 
-            // Evolution de la phase
-            $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R45');
-
-            $this->_updatePhaseDemande($pgCmdFichierRps->getDemande());
 
             // Fichier csv
             $chemin = $this->getContainer()->getParameter('repertoire_echange');
@@ -79,19 +75,28 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
             $txtMessage .= 'Le fichier de compte rendu est, quand à lui, disponible ici: <a href="' . $urlCr . '">' . $pgCmdFichierRps->getNomFichierCompteRendu() . '</a>';
             $txtMessage .= '<br/><br/>Merci de nous faire parvenir vos remarques ou corrections éventuelles.';
             
+            $sendingMail = true;
             foreach ($destinataires as $destinataire) {
                 if (!is_null($destinataire)) {
                     $mailer = $this->getContainer()->get('mailer');
                     if (!$this->getContainer()->get('aeag_sqe.message')->createMail($this->em, $mailer, $txtMessage, $destinataire, $objetMessage)) {
                         $this->_addLog('warning', $pgCmdFichierRps->getDemande()->getId(), $pgCmdFichierRps->getId(), "Erreur lors de l\'envoi de mail dans le process de verification des RAIs", null, $destinataire);
+                        $sendingMail = false;
                     } else {
                         $this->output->writeln($date->format('d/m/Y H:i:s') . '- Integration Données Brutes : Un email a été envoyé à ' . $destinataire->getMail() . ' pour la RAI '.$pgCmdFichierRps->getId());
                     }
                 }
             }
+            
+            if ($sendingMail) {
+                // Vider la table tempo des lignes correspondant à la RAI
+                $this->_cleanTmpTable($pgCmdFichierRps);
 
-            // Vider la table tempo des lignes correspondant à la RAI
-            $this->_cleanTmpTable($pgCmdFichierRps);
+                // Evolution de la phase
+                $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R45');
+
+                $this->_updatePhaseDemande($pgCmdFichierRps->getDemande());
+            }
         }
 
         $date = new \DateTime();
