@@ -69,7 +69,7 @@ class PgSandreHbNomemclaturesRepository extends EntityRepository {
         $query = $query . " and p.codeElement = :codeElement";
         $query = $query . " and p.codeSupport = :codeSupport";
         $qb = $this->_em->createQuery($query);
-        $qb->setParameter('codenomemclature', $codenomemclature);
+        $qb->setParameter('codeNomemclature', $codeNomemclature);
         $qb->setParameter('codeElement', $codeElement);
         $qb->setParameter('codeSupport', $codeSupport);
         //print_r($query);
