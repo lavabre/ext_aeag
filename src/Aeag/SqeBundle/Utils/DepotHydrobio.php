@@ -6,6 +6,8 @@ use Aeag\SqeBundle\Entity\PgCmdPrelevHbInvert;
 use Aeag\SqeBundle\Entity\PgCmdInvertRecouv;
 use Aeag\SqeBundle\Entity\PgCmdInvertPrelem;
 use Aeag\SqeBundle\Entity\PgCmdInvertListe;
+use Aeag\SqeBundle\Entity\PgCmdPrelevHbDiato;
+use Aeag\SqeBundle\Entity\PgCmdDiatoListe;
 
 class DepotHydrobio {
 
@@ -52,7 +54,7 @@ class DepotHydrobio {
                 $fic++;
             }
             if ($tabNomFichier[1] == 'prn') {
-                $tabFichier = $this->lirePrn($demandeId, $excelObj, $nomFichier, $pathBase, $rapport, $session, $emSqe);
+                $tabFichier = $this->lirePrn($demandeId, $nomFichier, $pathBase, $rapport, $session, $emSqe);
                 $tabTraitFichiers[$fic] = $tabFichier;
                 $fic++;
             }
@@ -180,13 +182,9 @@ class DepotHydrobio {
         $session->set('fonction', 'lireXlsSupport10');
         // Récupération des programmations
         $repoPgSandreHbNomemclatures = $emSqe->getRepository('AeagSqeBundle:PgSandreHbNomemclatures');
-        $repoPgSandreAppellationTaxon = $emSqe->getRepository('AeagSqeBundle:PgSandreAppellationTaxon');
         $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
         $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
-        $repoPgCmdPrelevHbInvert = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelevHbInvert');
-        $repoPgCmdInvertRecouv = $emSqe->getRepository('AeagSqeBundle:PgCmdInvertRecouv');
-        $repoPgCmdInvertPrelem = $emSqe->getRepository('AeagSqeBundle:PgCmdInvertPrelem');
-        $repoPgCmdInvertListe = $emSqe->getRepository('AeagSqeBundle:PgCmdInvertListe');
+        $repoPgCmdPrelevHbDiato = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelevHbDiato');
         $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
 
         $pgCmdDemande = $repoPgCmdDemande->findOneById($demandeId);
@@ -202,14 +200,13 @@ class DepotHydrobio {
         $erreur = false;
 
         // station
-        $B23 = $worksheet->getCell('B22');
-        $codeStation = $B23->getCalculatedValue();
+        $B22 = $worksheet->getCell('B22');
+        $codeStation = $B22->getCalculatedValue();
         $trouve = false;
         foreach ($pgCmdPrelevs as $pgCmdPrelev) {
             if (substr($pgCmdPrelev->getStation()->getCode(), -(strlen($codeStation))) == $codeStation) {
                 $trouve = true;
                 if ($pgCmdPrelev->getPhaseDmd()->getCodePhase() == 'M40') {
-                    $avertissement = true;
                     $contenu = '                     Avertissement : la station ' . $codeStation . ' ' . $pgCmdPrelev->getStation()->getLibelle() . ' à déjà été traitée.' . CHR(13) . CHR(10);
                     $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                     fputs($rapport, $contenu);
@@ -227,7 +224,6 @@ class DepotHydrobio {
             // Coordonnées : cellules G23, H23 doivent être non vides, au format numérique et avec une valeur > 0
             $G23 = $worksheet->getCell('G23');
             $H23 = $worksheet->getCell('H23');
-            $avertissement = false;
             if (is_null($G23) or is_null($H23)) {
                 $avertissement = true;
                 $contenu = '                     Avertissement : Coordonnées Lambert 93 incorrectes ou non renseignées. ' . CHR(13) . CHR(10);
@@ -276,7 +272,7 @@ class DepotHydrobio {
             $B53 = $worksheet->getCell('B53');
             $C53 = $worksheet->getCell('C53');
             if (is_null($E40)) {
-                $avertissement = true;
+                $erreur = true;
                 $contenu = '                     Avertissementt : cellule ' . $E40->getCoordinate() . ' non renseignée. ' . CHR(13) . CHR(10);
                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                 fputs($rapport, $contenu);
@@ -288,24 +284,24 @@ class DepotHydrobio {
             }
 
             if (is_null($F40)) {
-                $avertissement = true;
+                $erreur = true;
                 $contenu = '                      Avertissementt : cellule ' . $F40->getCoordinate() . ' incorrecte ou non renseignée. ' . CHR(13) . CHR(10);
                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                 fputs($rapport, $contenu);
             } elseif (!is_numeric(intval($F40->getCalculatedValue()))) {
-                $avertissement = true;
+                $erreur = true;
                 $contenu = '                     Avertissementt : cellule ' . $F40->getCoordinate() . 'incorrecte. ' . CHR(13) . CHR(10);
                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                 fputs($rapport, $contenu);
             } elseif ($F40->getCalculatedValue() == 0) {
-                $avertissement = true;
+                $erreur = true;
                 $contenu = '                      Avertissementt : cellule ' . $F40->getCoordinate() . ' valeur : ' . $F40->getCalculatedValue() . ' incorrecte. ' . CHR(13) . CHR(10);
                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                 fputs($rapport, $contenu);
             }
 
             if (is_null($A53)) {
-                $avertissement = true;
+                $erreur = true;
                 $contenu = '                     Avertissementt : cellule ' . $A53->getCoordinate() . 'incorrecte ou non renseignée. ' . CHR(13) . CHR(10);
                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                 fputs($rapport, $contenu);
@@ -320,7 +316,7 @@ class DepotHydrobio {
             }
 
             if (is_null($B53)) {
-                $avertissement = true;
+                $erreur = true;
                 $contenu = '                     Avertissementt : cellule ' . $B53->getCoordinate() . 'incorrecte ou non renseignée. ' . CHR(13) . CHR(10);
                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                 fputs($rapport, $contenu);
@@ -328,19 +324,19 @@ class DepotHydrobio {
                 $pgSandreHnNomemclature = $repoPgSandreHbNomemclatures->getPgSandreHbNomemclaturesByCodeNomemclatureCodeElementCodeSupport('278', $B53->getCalculatedValue(), '10');
                 if (!$pgSandreHnNomemclature) {
                     $erreur = true;
-                    $contenu = '                     Erreur : cellule ' . $A53->getCoordinate() . ' :  substrat ' . $B53->getCalculatedValue() . ' impossible. ' . CHR(13) . CHR(10);
+                    $contenu = '                     Erreur : cellule ' . $A53->getCoordinate() . ' :  classe vitesse  ' . $B53->getCalculatedValue() . ' impossible. ' . CHR(13) . CHR(10);
                     $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                     fputs($rapport, $contenu);
                 }
             }
 
             if (is_null($C53)) {
-                $avertissement = true;
+                $erreur = true;
                 $contenu = '                     Avertissementt : cellule ' . $C53->getCoordinate() . 'incorrecte ou non renseignée. ' . CHR(13) . CHR(10);
                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                 fputs($rapport, $contenu);
             } elseif (!strtoupper($C53->getCalculatedValue()) == 'OUVERT' or ! strtoupper($C53->getCalculatedValue()) == 'SEMI-OUVERT' or ! strtoupper(substr($C53->getCalculatedValue(), 0, 4)) == 'FERM') {
-                $avertissement = true;
+                $erreur = true;
                 $contenu = '                      Avertissementt : cellule ' . $C53->getCoordinate() . ' valeur : ' . $C53->getCalculatedValue() . ' incorrecte. ' . CHR(13) . CHR(10);
                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                 fputs($rapport, $contenu);
@@ -377,26 +373,75 @@ class DepotHydrobio {
                 }
             }
 
+            if (!$erreur) {
+                $contenu = '                     Correct ' . CHR(13) . CHR(10);
+                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                fputs($rapport, $contenu);
+                // enregistrement en base
+                //
+                // Table pg_cmd_prelev_hb_invert
+                $pgCmdPrelevHbDiato = $repoPgCmdPrelevHbDiato->getPgCmdPrelevHbDiatoByPrelev($pgCmdPrelev);
+                if (!$pgCmdPrelevHbDiato) {
+                    $pgCmdPrelevHbDiato = new PgCmdPrelevHbDiato();
+                    $pgCmdPrelevHbDiato->setPrelev($pgCmdPrelev);
+                }
+                if (is_null($G23) or ! is_numeric($G23->getCalculatedValue()) or ( $G23->getCalculatedValue() == 0)) {
+                    $pgCmdPrelevHbDiato->setXPrel($G22->getCalculatedValue());
+                } else {
+                    $pgCmdPrelevHbDiato->setXPrel($G23->getCalculatedValue());
+                }
+                if (is_null($H23) or ! is_numeric($H23->getCalculatedValue()) or ( $H23->getCalculatedValue() == 0)) {
+                    $pgCmdPrelevHbDiato->setYPrel($H22->getCalculatedValue());
+                } else {
+                    $pgCmdPrelevHbDiato->setYPrel($H23->getCalculatedValue());
+                }
+
+                if (!is_null($B40)) {
+                    if (is_numeric(intval($B40->getCalculatedValue()))) {
+                        $pgCmdPrelevHbDiato->setTempEau($B40->getCalculatedValue());
+                    }
+                }
+                if (!is_null($C40)) {
+                    if (is_numeric(intval($C40->getCalculatedValue()))) {
+                        $pgCmdPrelevHbDiato->setPh($C40->getCalculatedValue());
+                    }
+                }
+                if (!is_null($D40)) {
+                    if (is_numeric(intval($D40->getCalculatedValue()))) {
+                        $pgCmdPrelevHbDiato->setConductivite($D40->getCalculatedValue());
+                    }
+                }
+
+                if (!is_null($F40)) {
+                    if (is_numeric(intval($F40->getCalculatedValue()))) {
+                        if ($F40->getCalculatedValue() != 0) {
+                            $pgCmdPrelevHbDiato->setLargeur($F40->getCalculatedValue());
+                        }
+                    }
+                }
+
+                $pgCmdPrelevHbDiato->setSubstrat($A53->getCalculatedValue());
+                $pgCmdPrelevHbDiato->setVitesse($B53->getCalculatedValue());
+                $pgCmdPrelevHbDiato->setOmbrage($C53->getCalculatedValue());
+                $pgCmdPrelevHbDiato->setConditionsHydro($E40->getCalculatedValue());
+
+                $emSqe->persist($pgCmdPrelevHbDiato);
+
+                $pgCmdPrelev->setDatePrelev(new \DateTime());
+                $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M40');
+                $pgCmdPrelev->setPhaseDmd($pgProgPhases);
+            } else {
+                $pgCmdPrelev->setDatePrelev(new \DateTime());
+                $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R80');
+                $pgCmdPrelev->setPhaseDmd($pgProgPhases);
+            }
+
+            $emSqe->flush();
+
 
             $contenu = CHR(13) . CHR(10);
             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
             fputs($rapport, $contenu);
-
-//                foreach ($worksheet->getRowIterator() as $row) {
-//                    $contenu = '   Ligne n° - ' . $row->getRowIndex() . CHR(13) . CHR(10) . CHR(13) . CHR(10);
-//                    $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-//                    fputs($rapport, $contenu);
-//
-//                    $cellIterator = $row->getCellIterator();
-//                    $cellIterator->setIterateOnlyExistingCells(false); // Loop all cells, even if it is not set
-//                    foreach ($cellIterator as $cell) {
-//                        if (!is_null($cell)) {
-//                            $contenu = '        Cellule - ' . $cell->getCoordinate() . ' - ' . $cell->getCalculatedValue() . CHR(13) . CHR(10);
-//                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-//                            fputs($rapport, $contenu);
-//                        }
-//                    }
-//                }
         }
         $tabFeuillets[$feuil]['erreur'] = $erreur;
         $feuil++;
@@ -896,24 +941,19 @@ class DepotHydrobio {
         return $tabFeuillets;
     }
 
-    protected function lirePrn($demandeId, $excelObj, $nomFichier, $pathBase, $rapport, $session, $emSqe) {
+    protected function lirePrn($demandeId, $nomFichier, $pathBase, $rapport, $session, $emSqe) {
 
         $session->set('fonction', 'lirePrn');
 
         // Récupération des programmations
-        $repoPgSandreHbNomemclatures = $emSqe->getRepository('AeagSqeBundle:PgSandreHbNomemclatures');
-        $repoPgSandreAppellationTaxon = $emSqe->getRepository('AeagSqeBundle:PgSandreAppellationTaxon');
+        $repoPgSandreCodesAlternAppelTaxon = $emSqe->getRepository('AeagSqeBundle:PgSandreCodesAlternAppelTaxon');
         $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
         $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
-        $repoPgCmdPrelevHbInvert = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelevHbInvert');
-        $repoPgCmdInvertRecouv = $emSqe->getRepository('AeagSqeBundle:PgCmdInvertRecouv');
-        $repoPgCmdInvertPrelem = $emSqe->getRepository('AeagSqeBundle:PgCmdInvertPrelem');
-        $repoPgCmdInvertListe = $emSqe->getRepository('AeagSqeBundle:PgCmdInvertListe');
-        $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
+        $repoPgCmdPrelevHbDiato = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelevHbDiato');
+        $repoPgCmdDiatoListe = $emSqe->getRepository('AeagSqeBundle:PgCmdDiatoListe');
 
         $pgCmdDemande = $repoPgCmdDemande->findOneById($demandeId);
         $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByDemande($pgCmdDemande);
-
 
         $tabFichier = array();
         $tabFichier['fichier'] = $nomFichier;
@@ -923,16 +963,114 @@ class DepotHydrobio {
         fputs($rapport, $contenu);
 
         $fichier = fopen($pathBase . '/' . $nomFichier, "r");
-        $feuil = 0;
+        $codeStation = null;
+        $codeSandre = null;
+        $taxon = null;
+        $denombrement = null;
         $tabFeuillets = array();
         $nbl = 0;
         while (!feof($fichier)) {
             $ligne = fgets($fichier, 1024);
+            $nbl++;
             if (strlen($ligne) > 0) {
                 $tab = explode("\t", $ligne);
-                $nbl++;
-                print_r('ligne ' . $nbl . ' : ' . $tab[0] . '</br>');
+                if (strlen($tab[0]) > 0) {
+                    $tab1 = explode('*', $tab[0]);
+                    if (strlen($codeStation) > 0 and $codeStation != $tab1[5]) {
+                        if (!$erreur) {
+                            $contenu = '                   Correct ' . CHR(13) . CHR(10);
+                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                            fputs($rapport, $contenu);
+                            // enregistrement en base
+                            //
+                // Table pg_cmd_prelev_hb_invert
+                            $pgCmdPrelevHbDiato = $repoPgCmdPrelevHbDiato->getPgCmdPrelevHbDiatoByPrelev($pgCmdPrelev);
+                            $pgCmdDiatoListe = $repoPgCmdDiatoListe->getPgCmdDiatoListeByPrelev($pgCmdPrelevHbDiato);
+                            if (!$pgCmdDiatoListe) {
+                                $pgCmdDiatoListe = new PgCmdDiatoListe();
+                                $pgCmdDiatoListe->setPrelev($pgCmdPrelevHbDiato);
+                            }
+                            $pgCmdDiatoListe->setCodeSandre($codeSandre);
+                            $pgCmdDiatoListe->setTaxon($taxon);
+                            $pgCmdDiatoListe->setDenombrement($denombrement);
+                            $emSqe->persist($pgCmdDiatoListe);
+                            $emSqe->flush();
+                        }
+                    }
+                    $codeStation = $tab1[5];
+                    $codeSandre = null;
+                    $taxon = null;
+                    $denombrement = null;
+                    $erreur = false;
+                    // station
+                    $trouve = false;
+                    foreach ($pgCmdPrelevs as $pgCmdPrelev) {
+                        if (substr($pgCmdPrelev->getStation()->getCode(), -(strlen($codeStation))) == $codeStation) {
+                            $trouve = true;
+                            if ($pgCmdPrelev->getPhaseDmd()->getCodePhase() == 'M40') {
+                                $contenu = '                     Avertissement : la station ' . $codeStation . ' ' . $pgCmdPrelev->getStation()->getLibelle() . ' à déjà été traitée.' . CHR(13) . CHR(10);
+                                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                fputs($rapport, $contenu);
+                            }
+                            break;
+                        }
+                    }
+                    if (!$trouve) {
+                        $erreur = true;
+                        $contenu = '                     Erreur : la station ' . $codeStation . ' ne fait pas partie de cette demande' . CHR(13) . CHR(10);
+                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                        fputs($rapport, $contenu);
+                    }
+                } else {
+                    $codeAltern = $tab[1];
+                    if (is_null($codeAltern)) {
+                        $erreur = true;
+                        $contenu = '                     ligne ' . $nbl . ' Erreur : code  incorrect ou non renseignée. ' . CHR(13) . CHR(10);
+                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                        fputs($rapport, $contenu);
+                    } else {
+                        $pgSandreCodesAlternAppelTaxon = $repoPgSandreCodesAlternAppelTaxon->getPgSandreCodesAlternAppelTaxonBycodeAlternOrigineCodeAltern($codeAltern, 'OMNIDIA');
+                        if (!$pgSandreCodesAlternAppelTaxon) {
+                            $erreur = true;
+                            $contenu = '                     ligne ' . $nbl . ' Erreur : code ' . $codeAltern . ' inconnu. ' . CHR(13) . CHR(10);
+                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                            fputs($rapport, $contenu);
+                        } else {
+                            $codeSandre = $pgSandreCodesAlternAppelTaxon->getCodeAppelTaxon();
+                        }
+                    }
+                    $denombrement = $tab[2];
+                    if (is_null($denombrement)) {
+                        $erreur = true;
+                        $contenu = '                     ligne ' . $nbl . '  Avertissement : dénombrement  incorrecte ou non renseignée. ' . CHR(13) . CHR(10);
+                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                        fputs($rapport, $contenu);
+                    } elseif (!is_numeric(intval($denombrement))) {
+                        $erreur = true;
+                        $contenu = '                     ligne ' . $nbl . '  Avertissement : dénombrement incorrecte. ' . CHR(13) . CHR(10);
+                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                        fputs($rapport, $contenu);
+                    }
+                }
             }
+        }
+        if (!$erreur) {
+            $contenu = '                   Correct ' . CHR(13) . CHR(10);
+            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+            fputs($rapport, $contenu);
+            // enregistrement en base
+            //
+                // Table pg_cmd_prelev_hb_invert
+            $pgCmdDiatoListe = $repoPgCmdDiatoListe->getPgCmdDiatoListeByPrelev($pgCmdPrelev);
+            if (!$pgCmdDiatoListe) {
+                $pgCmdDiatoListe = new PgCmdDiatoListe();
+                $pgCmdDiatoListe->setPrelev($pgCmdPrelev);
+            }
+            $pgCmdDiatoListe->setCodeSandre($codeSandre);
+            $pgCmdDiatoListe->setTaxon($taxon);
+            $pgCmdDiatoListe->setDenombrement($denombrement);
+            $emSqe->persist($pgCmdDiatoListe);
+            $emSqe->flush();
         }
 
         $tabFichier['feuillet'] = $tabFeuillets;

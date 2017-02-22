@@ -31,12 +31,12 @@ class PgCmdDiatoListeRepository extends EntityRepository {
     /**
      * @return array
      */
-    public function getPgCmdDiatoListeByCodeSandre($codeSandre) {
+    public function getPgCmdDiatoListeByPrelev($pgCmdPrelevHbDiato) {
         $query = "select c";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdDiatoListe c";
-        $query = $query . " where c.codeSandre = :codeSandre";
+        $query = $query . " where c.prelev = :pgCmdPrelev";
         $qb = $this->_em->createQuery($query);
-        $qb->setParameter('codeSandre', $codeSandre);
+        $qb->setParameter('pgCmdPrelev', $pgCmdPrelevHbDiato->getPrelev()->getId());
         //print_r($query);
         return $qb->getOneOrNullResult();
     }

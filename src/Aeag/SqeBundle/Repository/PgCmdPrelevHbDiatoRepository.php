@@ -15,7 +15,7 @@ class PgCmdPrelevHbDiatoRepository extends EntityRepository {
      */
     public function getPgCmdPrelevHbDiatos() {
         $query = "select c";
-        $query = $query . " from Aeag\SqeBundle\Entity\PPgCmdPrelevHbDiato c";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelevHbDiato c";
         $qb = $this->_em->createQuery($query);
         //print_r($query);
         return $qb->getResult();
@@ -26,12 +26,12 @@ class PgCmdPrelevHbDiatoRepository extends EntityRepository {
      */
     public function getPgCmdPrelevHbDiatoByPrelev($pgCmdPrelev) {
         $query = "select c";
-        $query = $query . " from Aeag\SqeBundle\Entity\PPgCmdPrelevHbDiato c";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelevHbDiato c";
         $query = $query . " where c.prelev = :pgCmdPrelev";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('pgCmdPrelev', $pgCmdPrelev->getId());
         //print_r($query);
-        return $qb->getResult();
+        return $qb->getOneOrNullResult();
     }
 
 }
