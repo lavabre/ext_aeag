@@ -17,23 +17,23 @@
         </thead>
         <tbody>
             {% for reponse in reponses %}
-                {% if reponse.phaseFichier.codePhase == 'DH40' %}
+                {% if reponse.phaseFichier.codePhase == 'R80' %}
                     <tr class="warning">
                     {% else %}
-                    <tr> 
+                    <tr>
                     {% endif %}
                     <td width="1%" align="center" nowrap>
                         <a id="id_{{reponse.id}}" class="btn btn-success btn-telecharger" href="{{path("AeagSqeBundle_depotHydrobio_reponses_telecharger",{"reponseId":  reponse.id, "typeFichier" : "EXL"})}}" title="Télécharger le dépôt">
-                            <i class="fa fa-download"></i> 
+                            <i class="fa fa-download"></i>
                         </a>
                         {%if is_granted('ROLE_ADMINSQE')%}
                             <a id="supprimerReponseId_{{ reponse.id }}" class="btn btn-danger" href="{{path("AeagSqeBundle_depotHydrobio_reponses_supprimer",{"reponseId":  reponse.id})}}" title="Supprimer le dépôt">
-                                <i class="fa fa-eraser"></i> 
+                                <i class="fa fa-eraser"></i>
                             </a>
-                        {% endif %}   
+                        {% endif %}
                         {% if reponse.nomFichierCompteRendu | length %}
                             <a  class="btn btn-info" href="{{path("AeagSqeBundle_depotHydrobio_reponses_telecharger",{"reponseId":  reponse.id, "typeFichier" : "CR"})}}" title="Rapport du dépôt">
-                                <i class="fa fa-download"> Rapport</i> 
+                                <i class="fa fa-download"> Rapport</i>
                             </a>
                         {% endif %}
                     </td>
@@ -54,7 +54,7 @@
         <div class="modal-dialog">
             <div class="modal-content" id="modal-reponses-selection-content">
             </div>
-        </div>    
+        </div>
     </div>
 {%endblock modal %}
 
@@ -89,25 +89,25 @@
             }
     );
 
-    $("idTable_reponses thead td").each(function (i) {
+    $("idTable_reponses thead td").each(function(i) {
 
         if (i != 0) {
             var select = $('<select><option value=""></option></select>')
                     .appendTo($(this).empty())
-                    .on('change', function () {
+                    .on('change', function() {
                         table1.column(i)
                                 .search($(this).val())
                                 .draw();
                     });
 
-            table1.column(i).data().unique().sort().each(function (d, j) {
+            table1.column(i).data().unique().sort().each(function(d, j) {
                 select.append('<option value="' + d + '">' + d + '</option>')
             });
         }
         ;
     });
 
-    $('#btn-deposer-reponse').click(function () {
+    $('#btn-deposer-reponse').click(function() {
         $('#modalTraitementEncours').modal();
         var url = '{{ path("AeagSqeBundle_echangefichiers_reponses_selectionner",{"demandeId":  "par1" }) }}';
         var demandeId = $(this).data('id');
@@ -115,7 +115,7 @@
         $.ajax({
             url: url,
             type: 'get',
-            success: function (html) {
+            success: function(html) {
                 $('#modal-reponses-selection-content').empty().append(html);
                 $('#modalTraitementEncours').modal('hide');
                 $('#modal_reponses_selection_2').modal();
@@ -124,7 +124,7 @@
 
     });
 
-    $('.btn-close-selection-2').click(function () {
+    $('.btn-close-selection-2').click(function() {
         $('#modal-reponses-content').empty();
         $('#modal_reponses').modal('hide');
     });

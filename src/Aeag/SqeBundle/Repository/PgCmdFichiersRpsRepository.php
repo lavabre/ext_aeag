@@ -9,46 +9,46 @@ use Doctrine\ORM\EntityRepository;
  * @package Aeag\SqeBundle\Repository
  */
 class PgCmdFichiersRpsRepository extends EntityRepository {
-    
+
     public function getReponsesValidesByDemande($demande) {
         $query = "select rps";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdFichiersRps rps, Aeag\SqeBundle\Entity\PgProgPhases pha";
-        $query .= " where rps.demande = :demande"; 
+        $query .= " where rps.demande = :demande";
         $query .= " and rps.phaseFichier = pha.id";
         $query .= " and pha.codePhase IN (:phase)";
         $query .= " and rps.typeFichier = 'RPS'";
         $query .= " and rps.suppr = 'N'";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('demande', $demande);
-        $qb->setParameter('phase', array('R40','R41','R42','R45','R50','R51'));
+        $qb->setParameter('phase', array('R40', 'R41', 'R42', 'R45', 'R50', 'R51'));
         return $qb->getResult();
     }
-    
-     public function getNbReponsesValidesByDemande($demande) {
+
+    public function getNbReponsesValidesByDemande($demande) {
         $query = "select count(rps.id)";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdFichiersRps rps, Aeag\SqeBundle\Entity\PgProgPhases pha";
-        $query .= " where rps.demande = :demande"; 
+        $query .= " where rps.demande = :demande";
         $query .= " and rps.phaseFichier = pha.id";
         $query .= " and pha.codePhase IN (:phase)";
         $query .= " and rps.typeFichier = 'RPS'";
         $query .= " and rps.suppr = 'N'";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('demande', $demande);
-        $qb->setParameter('phase', array('R40','R41','R42','R45','R50','R51'));
+        $qb->setParameter('phase', array('R40', 'R41', 'R42', 'R45', 'R50', 'R51'));
         return $qb->getSingleScalarResult();
     }
-    
-     public function getNbReponsesByDemande($demande) {
+
+    public function getNbReponsesByDemande($demande) {
         $query = "select count(rps.id)";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdFichiersRps rps";
-        $query .= " where rps.demande = :demande"; 
+        $query .= " where rps.demande = :demande";
         $query .= " and rps.typeFichier = 'RPS'";
         $query .= " and rps.suppr = 'N'";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('demande', $demande);
         return $qb->getSingleScalarResult();
     }
-    
+
     public function getReponsesValidesDb() {
         $query = "select rps";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdFichiersRps rps, Aeag\SqeBundle\Entity\PgProgPhases pha";
@@ -58,11 +58,11 @@ class PgCmdFichiersRpsRepository extends EntityRepository {
         $query .= " and rps.suppr = 'N'";
         $query .= " order by rps.id asc";
         $qb = $this->_em->createQuery($query);
-        $qb->setParameter('phase', array('R40','R41'));
+        $qb->setParameter('phase', array('R40', 'R41'));
         $qb->setMaxResults(1);
         return $qb->getResult();
     }
-    
+
     public function getReponses($phase) {
         $query = "select rps";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdFichiersRps rps";
@@ -85,7 +85,7 @@ class PgCmdFichiersRpsRepository extends EntityRepository {
         $qb->setMaxResults(1);
         return $qb->getResult();
     }
-    
+
     public function getReponsesBackup($phase) {
         $query = "select rps2";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdFichiersRps rps2";
@@ -107,7 +107,7 @@ class PgCmdFichiersRpsRepository extends EntityRepository {
         $qb->setParameter('phase', $phase);
         return $qb->getResult();
     }
-    
+
     public function getReponsesHorsLac($phase) {
         $query = "select rps";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdFichiersRps rps";
@@ -131,7 +131,7 @@ class PgCmdFichiersRpsRepository extends EntityRepository {
         $qb->setMaxResults(1);
         return $qb->getResult();
     }
-    
+
     public function getReponsesHorsLacBackup($phase) {
         $query = "select rps2";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdFichiersRps rps2";
@@ -154,40 +154,40 @@ class PgCmdFichiersRpsRepository extends EntityRepository {
         $qb->setParameter('phase', $phase);
         return $qb->getResult();
     }
-    
-     public function getReponsesExcelByDemande($demande) {
+
+    public function getReponsesExcelByDemande($demande) {
         $query = "select rps";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdFichiersRps rps";
-        $query .= " where rps.demande = :demande"; 
-        $query .= " and rps.typeFichier = 'EXL'";
+        $query .= " where rps.demande = :demande";
+        $query .= " and rps.typeFichier = 'DHY'";
         $query .= " and rps.suppr = 'N'";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('demande', $demande);
         return $qb->getResult();
     }
-    
-      public function getReponseByDemandeNomFichier($demande,$nomFichier) {
+
+    public function getReponseByDemandeNomFichier($demande, $nomFichier) {
         $query = "select rps";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdFichiersRps rps";
-        $query .= " where rps.demande = :demande"; 
+        $query .= " where rps.demande = :demande";
         $query .= " and rps.nomFichier = :nomFichier";
         $query .= " and rps.suppr = 'N'";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('demande', $demande);
-         $qb->setParameter('nomFichier', $nomFichier);
+        $qb->setParameter('nomFichier', $nomFichier);
         return $qb->getOneOrNullResult();
     }
-    
-     public function getReponseByDemandeType($demande,$typeFichier) {
+
+    public function getReponseByDemandeType($demande, $typeFichier) {
         $query = "select rps";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdFichiersRps rps";
-        $query .= " where rps.demande = :demande"; 
+        $query .= " where rps.demande = :demande";
         $query .= " and rps.typeFichier = :typeFichier";
         $query .= " and rps.suppr = 'N'";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('demande', $demande);
-         $qb->setParameter('typeFichier', $typeFichier);
+        $qb->setParameter('typeFichier', $typeFichier);
         return $qb->getResult();
-    } 
-    
+    }
+
 }

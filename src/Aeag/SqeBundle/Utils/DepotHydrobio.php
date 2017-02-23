@@ -134,21 +134,6 @@ class DepotHydrobio {
 
         $session->set('fonction', 'lireXls');
 
-        // Récupération des programmations
-        $repoPgSandreHbNomemclatures = $emSqe->getRepository('AeagSqeBundle:PgSandreHbNomemclatures');
-        $repoPgSandreAppellationTaxon = $emSqe->getRepository('AeagSqeBundle:PgSandreAppellationTaxon');
-        $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
-        $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
-        $repoPgCmdPrelevHbInvert = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelevHbInvert');
-        $repoPgCmdInvertRecouv = $emSqe->getRepository('AeagSqeBundle:PgCmdInvertRecouv');
-        $repoPgCmdInvertPrelem = $emSqe->getRepository('AeagSqeBundle:PgCmdInvertPrelem');
-        $repoPgCmdInvertListe = $emSqe->getRepository('AeagSqeBundle:PgCmdInvertListe');
-        $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
-
-        $pgCmdDemande = $repoPgCmdDemande->findOneById($demandeId);
-        $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByDemande($pgCmdDemande);
-
-
         $tabFichier = array();
         $tabFichier['fichier'] = $nomFichier;
 
@@ -379,7 +364,7 @@ class DepotHydrobio {
                 fputs($rapport, $contenu);
                 // enregistrement en base
                 //
-                // Table pg_cmd_prelev_hb_invert
+                // Table pg_cmd_prelev_hb_ diato
                 $pgCmdPrelevHbDiato = $repoPgCmdPrelevHbDiato->getPgCmdPrelevHbDiatoByPrelev($pgCmdPrelev);
                 if (!$pgCmdPrelevHbDiato) {
                     $pgCmdPrelevHbDiato = new PgCmdPrelevHbDiato();
@@ -481,7 +466,7 @@ class DepotHydrobio {
             if (substr($pgCmdPrelev->getStation()->getCode(), -(strlen($codeStation))) == $codeStation) {
                 $trouve = true;
                 if ($pgCmdPrelev->getPhaseDmd()->getCodePhase() == 'M40') {
-                    $avertissement = true;
+                    //  $avertissement = true;
                     $contenu = '                     Avertissement : la station ' . $codeStation . ' ' . $pgCmdPrelev->getStation()->getLibelle() . ' à déjà étét traitée.' . CHR(13) . CHR(10);
                     $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                     fputs($rapport, $contenu);
@@ -961,12 +946,16 @@ class DepotHydrobio {
         $contenu = '     fichier : ' . $nomFichier . CHR(13) . CHR(10);
         $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
         fputs($rapport, $contenu);
+        $contenu = CHR(13) . CHR(10);
+        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+        fputs($rapport, $contenu);
 
         $fichier = fopen($pathBase . '/' . $nomFichier, "r");
         $codeStation = null;
         $codeSandre = null;
         $taxon = null;
         $denombrement = null;
+        $feuil = 0;
         $tabFeuillets = array();
         $nbl = 0;
         while (!feof($fichier)) {
@@ -978,7 +967,7 @@ class DepotHydrobio {
                     $tab1 = explode('*', $tab[0]);
                     if (strlen($codeStation) > 0 and $codeStation != $tab1[5]) {
                         if (!$erreur) {
-                            $contenu = '                   Correct ' . CHR(13) . CHR(10);
+                            $contenu = '                     Correct ' . CHR(13) . CHR(10);
                             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                             fputs($rapport, $contenu);
                             // enregistrement en base
@@ -991,10 +980,14 @@ class DepotHydrobio {
                                 $pgCmdDiatoListe->setPrelev($pgCmdPrelevHbDiato);
                             }
                             $pgCmdDiatoListe->setCodeSandre($codeSandre);
-                            $pgCmdDiatoListe->setTaxon($taxon);
+                            $pgCmdDiatoListe->setTaxon($codeAltern);
                             $pgCmdDiatoListe->setDenombrement($denombrement);
                             $emSqe->persist($pgCmdDiatoListe);
                             $emSqe->flush();
+                        } else {
+                            $contenu = '                     Incorrect ' . CHR(13) . CHR(10);
+                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                            fputs($rapport, $contenu);
                         }
                     }
                     $codeStation = $tab1[5];
@@ -1007,11 +1000,11 @@ class DepotHydrobio {
                     foreach ($pgCmdPrelevs as $pgCmdPrelev) {
                         if (substr($pgCmdPrelev->getStation()->getCode(), -(strlen($codeStation))) == $codeStation) {
                             $trouve = true;
-                            if ($pgCmdPrelev->getPhaseDmd()->getCodePhase() == 'M40') {
-                                $contenu = '                     Avertissement : la station ' . $codeStation . ' ' . $pgCmdPrelev->getStation()->getLibelle() . ' à déjà été traitée.' . CHR(13) . CHR(10);
-                                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                                fputs($rapport, $contenu);
-                            }
+//                            if ($pgCmdPrelev->getPhaseDmd()->getCodePhase() == 'M40') {
+                            $contenu = '               Station ' . $codeStation . ' ' . $pgCmdPrelev->getStation()->getLibelle() . CHR(13) . CHR(10);
+                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                            fputs($rapport, $contenu);
+//                            }
                             break;
                         }
                     }
@@ -1060,18 +1053,22 @@ class DepotHydrobio {
             fputs($rapport, $contenu);
             // enregistrement en base
             //
-                // Table pg_cmd_prelev_hb_invert
-            $pgCmdDiatoListe = $repoPgCmdDiatoListe->getPgCmdDiatoListeByPrelev($pgCmdPrelev);
+                // Table pg_cmd_diato_liste
+            $pgCmdPrelevHbDiato = $repoPgCmdPrelevHbDiato->getPgCmdPrelevHbDiatoByPrelev($pgCmdPrelev);
+            $pgCmdDiatoListe = $repoPgCmdDiatoListe->getPgCmdDiatoListeByPrelev($pgCmdPrelevHbDiato);
             if (!$pgCmdDiatoListe) {
                 $pgCmdDiatoListe = new PgCmdDiatoListe();
-                $pgCmdDiatoListe->setPrelev($pgCmdPrelev);
+                $pgCmdDiatoListe->setPrelev($pgCmdPrelevHbDiato);
             }
             $pgCmdDiatoListe->setCodeSandre($codeSandre);
-            $pgCmdDiatoListe->setTaxon($taxon);
+            $pgCmdDiatoListe->setTaxon($codeAltern);
             $pgCmdDiatoListe->setDenombrement($denombrement);
             $emSqe->persist($pgCmdDiatoListe);
             $emSqe->flush();
         }
+
+        $tabFeuillets[$feuil]['erreur'] = $erreur;
+        $feuil++;
 
         $tabFichier['feuillet'] = $tabFeuillets;
 

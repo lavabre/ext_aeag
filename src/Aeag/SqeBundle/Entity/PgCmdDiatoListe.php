@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * PgCmdDiatoListe
  *
- * @ORM\Table(name="pg_cmd_diato_liste", indexes={@ORM\Index(name="IDX_477DE109D8E1F6AA", columns={"prelev_id"})})
+ * @ORM\Table(name="pg_cmd_diato_liste")
  * @ORM\Entity
  * @ORM\Entity(repositoryClass="Aeag\SqeBundle\Repository\PgCmdDiatoListeRepository")
  */
@@ -27,7 +27,6 @@ class PgCmdDiatoListe {
      * @var string
      *
      * @ORM\Column(name="code_sandre", type="string", length=5, nullable=false)
-     * @ORM\GeneratedValue(strategy="NONE")
      */
     private $codeSandre;
 
@@ -48,8 +47,8 @@ class PgCmdDiatoListe {
     /**
      * @var \PgCmdPrelevHbDiato
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
+     *
+     *
      * @ORM\OneToOne(targetEntity="PgCmdPrelevHbDiato")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="prelev_id", referencedColumnName="prelev_id")
@@ -77,9 +76,9 @@ class PgCmdDiatoListe {
         return $this->prelev;
     }
 
-    function setId($id) {
-        $this->id = $id;
-    }
+//    function setId($id) {
+//        $this->id = $id;
+//    }
 
     function setCodeSandre($codeSandre) {
         $this->codeSandre = $codeSandre;
@@ -93,7 +92,7 @@ class PgCmdDiatoListe {
         $this->denombrement = $denombrement;
     }
 
-    function setPrelev(\PgCmdPrelevHbDiato $prelev) {
+    function setPrelev($prelev) {
         $this->prelev = $prelev;
     }
 
