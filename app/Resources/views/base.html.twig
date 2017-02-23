@@ -43,14 +43,65 @@
                     <div class="col-md-1">
                         <a class="navbar-brand" href="http://www.eau-adour-garonne.fr" target="_target">
                             <img class="img-responsive" id="logo" src="{{ asset('bundles/aeagaeag/images/logoAEAG2010.jpg') }}" alt="Site Aeag">
-                        </a> 
+                        </a>
                     </div>
-                    <div class="col-md-9 hidden-xs text-center">
+                    <div class="col-md-8 hidden-xs text-center">
                         <h2>Agence de l'eau Adour-Garonne<br/>{% block titre %}'{% endblock titre %}</h2>
                     </div>
-                    <div class="col-md-2  text-right">
-                        <br/>
+                    <div class="col-md-3  text-right">
                     {% block message_admin %}{% endblock message_admin %}
+                </div>
+            </div>
+            <!--[if lt IE 9]>
+             </div>
+             <![endif]-->
+        </header>
+    {% endblock header %}
+
+    {% block navbar %}
+        <nav class="navbar navbar-default" >
+            <div class="container-fluid">
+                <div class="navbar-header ">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav target navbar-nav">
+                        {% block menu %}
+                            <li><a href="{{ path('aeag_homepage') }}"><i class="fa fa-home"></i>&nbsp; Accueil</a></li>
+                            {% endblock menu %}
+                    </ul>
+
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <!-- BEGIN USER LOGIN DROPDOWN -->
+                        {% block user_login %}
+                            {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                                <li class="dropdown user pull-right">
+                                    <a class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" href="#">
+                                        <span class="username"><i class="fa fa-user fa-fw"></i> {{ app.user.username }}</span>
+                                        <span class="fa fa-caret-down"></span>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        {% if is_granted('ROLE_PREVIOUS_ADMIN') %}
+                                            <li class="dropdown user pull-right">
+                                                <a href="{{ path('aeag_homepage', {'_switch_user': '_exit'}) }}"><i class="fa fa-refresh fa-fw"></i>&nbsp; Retour</a>
+                                            </li>
+                                        {%else%}
+                                            <li><a href="{{ path('AeagUserBundle_compte_show') }}"><i class="fa fa-user fa-fw"></i>&nbsp; Compte</a></li>
+                                            <li><a href="{{ path('fos_user_security_logout') }}"><i class="fa fa-power-off fa-fw"></i>&nbsp; Quitter</a></li>
+                                            {%endif%}
+                                    </ul>
+                                </li>
+                            {% endif %}
+                        {% endblock user_login %}
+                        <!-- END USER LOGIN DROPDOWN -->
+                    </ul>
+
                     {% block inbox_notificaton %}
                         <ul class="nav navbar-nav navbar-right">
                             <!-- BEGIN INBOX DROPDOWN -->
@@ -64,7 +115,7 @@
                                 </a>
                                 <ul class="dropdown-menu    inbox-form-group" style="width: 350px;">
                                     {% if app.session.get('Messages') %}
-                                        {% for message in app.session.get('Messages') %} 
+                                        {% for message in app.session.get('Messages') %}
                                             {% if message.message %}
                                                 <li>
                                                     <div class="btn-group">
@@ -82,36 +133,36 @@
                                                     </div>
                                                 </li>
                                             {% endif %}
-                                        {% endfor %} 
+                                        {% endfor %}
                                     {% endif %}
                                 </ul>
                             </li>
                             <script type="text/javascript" src="{{ asset('bundles/aeagaeag/bootstrap/js/jquery-2.1.4.js') }}"></script>
                             <script type="text/javascript" language="javascript">
-                                jQuery(document).ready(function () {
+                                jQuery(document).ready(function() {
                                 {%if (app.session.get('Messages') | length) > 0 %}
-                                    {% for message in app.session.get('Messages') %} 
-                                        $('#messageSupprimer_{{ message.message.id }}').click(function () {
-                                            var $url = "{{ path('Aeag_supprimerMessage', { 'id': message.message.id}) }}";
-                                            $.ajax({
-                                                type: "POST",
-                                                async: false,
-                                                url: $url,
-                                                success: function (data) {
-                                                    $('#header_inbox_bar').empty();
-                                                    $('#header_inbox_bar').append(data);
-                                                },
-                                                error: function (jqXHR, textStatus, errorThrown) {
-                                                    $('#header_inbox_bar').empty();
-                                                    $('#header_inbox_bar').append('<div class="error">' + jqXHR.responseText + '</div>');
-                                                }
+                                    {% for message in app.session.get('Messages') %}
+                                            $('#messageSupprimer_{{ message.message.id }}').click(function() {
+                                                var $url = "{{ path('Aeag_supprimerMessage', { 'id': message.message.id}) }}";
+                                                $.ajax({
+                                                    type: "POST",
+                                                    async: false,
+                                                    url: $url,
+                                                    success: function(data) {
+                                                        $('#header_inbox_bar').empty();
+                                                        $('#header_inbox_bar').append(data);
+                                                    },
+                                                    error: function(jqXHR, textStatus, errorThrown) {
+                                                        $('#header_inbox_bar').empty();
+                                                        $('#header_inbox_bar').append('<div class="error">' + jqXHR.responseText + '</div>');
+                                                    }
+                                                });
+                                                return false;
                                             });
-                                            return false;
-                                        });
                                     {%endfor%}
-                                {%endif%}  
+                                {%endif%}
 
-                                        });
+                                    });
                             </script>
 
                             {# endif #}
@@ -136,11 +187,11 @@
                                                     {{notification.emetteur.username}}
                                                 {%endif%}
                                                 <i class="fa fa-caret-right"></i>
-                                                {{ notification.notification.message | nl2br }} 
+                                                {{ notification.notification.message | nl2br }}
                                                 <span class="time">{{ notification.notification.created | date("d/m/Y H:i:s")  }}</span>
                                             </a>
                                         </li>
-                                    {% endfor %} 
+                                    {% endfor %}
 
                                 </ul>
                                 {#<ul class="dropdown-menu extended notification">
@@ -150,18 +201,18 @@
                                         <li>
                                             <ul class="dropdown-menu-list scroller" style="height: 250px;">
                                                  {%if app.session.get('Notifications') %}
-                                                   {% for notification in app.session.get('Notifications') %} 
-                                                      <li>  
+                                                   {% for notification in app.session.get('Notifications') %}
+                                                      <li>
                                                             <a href="#">
                                                             {%if notification.Emetteur != notification.Recepteur %}
                                                              {{notification.Emetteur.username}}
                                                              {%endif%}
                                                              <i class="fa fa-caret-right"></i>
-                                                            {{ notification.message }} 
+                                                            {{ notification.message }}
                                                              <span class="time">{{ notification.created | date("d/m/Y H:i:s")  }}</span>
                                                             </a>
                                                       </li>
-                                                   {% endfor %} 
+                                                   {% endfor %}
                                                  {% endif %}
                                             </ul>
                                         </li>
@@ -172,69 +223,20 @@
                             <!-- END NOTIFICATION DROPDOWN -->
 
 
-                        </ul> 
+                        </ul>
                     {% endblock inbox_notificaton %}
                 </div>
             </div>
-            <!--[if lt IE 9]>
-             </div>
-             <![endif]-->
-        </header>
-    {% endblock header %}
-
-    {% block navbar %}
-        <nav class="navbar navbar-default" >
-            <div class="container-fluid">
-                <div class="navbar-header "> 
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                </div>  
-                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                    <ul class="nav target navbar-nav">
-                        {% block menu %}   
-                            <li><a href="{{ path('aeag_homepage') }}"><i class="fa fa-home"></i>&nbsp; Accueil</a></li>
-                            {% endblock menu %}
-                    </ul>
-                    <ul class="nav navbar-nav navbar-right">
-                        <!-- BEGIN USER LOGIN DROPDOWN -->
-                        {% block user_login %}
-                               {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                                        <li class="dropdown user pull-right">
-                                            <a class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" href="#">
-                                                <span class="username"><i class="fa fa-user fa-fw"></i> {{ app.user.username }}</span>
-                                                <span class="fa fa-caret-down"></span>
-                                            </a>
-                                            <ul class="dropdown-menu">
-                                                  {% if is_granted('ROLE_PREVIOUS_ADMIN') %}
-                                                        <li class="dropdown user pull-right">
-                                                           <a href="{{ path('aeag_homepage', {'_switch_user': '_exit'}) }}"><i class="fa fa-refresh fa-fw"></i>&nbsp; Retour</a>
-                                                        </li>
-                                                   {%else%}
-                                                        <li><a href="{{ path('AeagUserBundle_compte_show') }}"><i class="fa fa-user fa-fw"></i>&nbsp; Compte</a></li>
-                                                        <li><a href="{{ path('fos_user_security_logout') }}"><i class="fa fa-power-off fa-fw"></i>&nbsp; Quitter</a></li>
-                                                 {%endif%}
-                                            </ul>
-                                        </li>
-                             {% endif %}
-                        {% endblock user_login %}
-                        <!-- END USER LOGIN DROPDOWN -->
-                    </ul> 
-                </div> 
-            </div>
-        </nav> 
+        </nav>
     {% endblock navbar %}
 
     {% block breadcrumbAll %}
-        <ol class="breadcrumb"> 
+        <ol class="breadcrumb">
             {% block breadcrumb %}
-                <li><a href="{{ path('aeag_homepage') }}">Accueil</a></li> 
-                <li class="active">page active</li> 
+                <li><a href="{{ path('aeag_homepage') }}">Accueil</a></li>
+                <li class="active">page active</li>
                 {% endblock breadcrumb %}
-        </ol> 
+        </ol>
     {% endblock breadcrumbAll %}
 
     <div class="container-fluid">
@@ -246,7 +248,7 @@
                </div>
          {%endif%}#}
         {%if (app.session.get('Messages') | length) > 0 %}
-            {% for message in app.session.get('Messages') %} 
+            {% for message in app.session.get('Messages') %}
                 <div class="modal fade" id="ajax_{{message.message.id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -337,8 +339,8 @@
                 </div>
             </div>
         </div>
-        
-         
+
+
 
     {% endblock modalAll %}
 
@@ -363,30 +365,30 @@
         Agence de l'eau Adour-Garonne - 90, rue du f&eacute;r&eacute;tra - CS 87801 - 31078 Toulouse Cedex 4 - T&eacute;l. : 05 61 36 37 38 - fax : 05 61 36 37 28
         &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
         {% block statistiques %}
-           
-             {% if app.session.get('nbStatistiques')  > 0 %}
+
+            {% if app.session.get('nbStatistiques')  > 0 %}
                 Visiteurs :  <a  id="idStatistiques" href="{{ path('AeagUserBundle_Statistiques') }}">
-                                   <button class="btn btn-primary btn-xs" type="button">
-                                            <span class="badge">
-                                               {{ app.session.get('nbStatistiques') }}
-                                            </span>
-                                      </button>
-                                     </a>
-                 {% endif %}
-          {#       Visiteurs :  <script type="text/javascript" src="http://www.abcompteur.com/cpt/?code=6/33/16283/1/2&ID=4349583530"></script>#}
-            
-        {%endblock statistiques %}
-        
-         {% block livreOr %}
-      {#      {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                <a  id="idLivreOr" href="{{ path('livreor') }}">
                     <button class="btn btn-primary btn-xs" type="button">
-                        <i class="fa fa-gratipay"></i>&nbsp; Livre d'or
-                       </button>
-                 </a>
-            {% endif %}#}
+                        <span class="badge">
+                            {{ app.session.get('nbStatistiques') }}
+                        </span>
+                    </button>
+                </a>
+            {% endif %}
+            {#       Visiteurs :  <script type="text/javascript" src="http://www.abcompteur.com/cpt/?code=6/33/16283/1/2&ID=4349583530"></script>#}
+
+        {%endblock statistiques %}
+
+        {% block livreOr %}
+            {#      {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                      <a  id="idLivreOr" href="{{ path('livreor') }}">
+                          <button class="btn btn-primary btn-xs" type="button">
+                              <i class="fa fa-gratipay"></i>&nbsp; Livre d'or
+                             </button>
+                       </a>
+                  {% endif %}#}
         {%endblock livreOr %}
-        
+
         {# &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;   Webmaster : {{ webmaster }}#}
         {# &nbsp; &nbsp; &nbsp; &nbsp; Symfony : {{ symfony }}#}
         {# &nbsp; &nbsp; &nbsp; &nbsp; version : {{ version }}#}
@@ -420,52 +422,52 @@
 
     <script type="text/javascript" language="javascript">
 
-        jQuery(document).ready(function () {
+                                    jQuery(document).ready(function() {
 
-            $('#idAttente').hide();
-            $('#modalTraitementEncours').hide();
-            
-            $('#idForm').submit(function() {
-              $('#modalTraitementEncours').modal();
-            });
+                                        $('#idAttente').hide();
+                                        $('#modalTraitementEncours').hide();
 
-                  
-           {# url = '{{ path('AeagUserBundle_Statistiques') }}';
-            $('footer a').attr('href', url);
-            $('footer a').attr('target', '');#}
-            
-            var url = '{{ path("AeagUserBundle_statistiques_maj") }}';
-             $.ajax({
-                url: url,
-                type: 'get'
-            });
-
-            // controle formulaire
-            $("#idForm").validate();
-
-            $("#modalTraitementEncours").draggable({
-                handle: ".modal-header"
-            });
-
-            $("#modalMessageErreur").draggable({
-                handle: ".modal-header"
-            });
+                                        $('#idForm').submit(function() {
+                                            $('#modalTraitementEncours').modal();
+                                        });
 
 
-            $('#idTable tbody').on('click', 'tr', function () {
-                $('#idTable tbody tr').removeClass('alert alert-info');
-                $('#idTable tbody tr').css({'background-color': '#fff'});
-                $(this).addClass('alert alert-info');
-                $(this).css({'background-color': '#d9edf7'});
-            });
+        {# url = '{{ path('AeagUserBundle_Statistiques') }}';
+         $('footer a').attr('href', url);
+         $('footer a').attr('target', '');#}
+
+                 var url = '{{ path("AeagUserBundle_statistiques_maj") }}';
+                 $.ajax({
+                     url: url,
+                     type: 'get'
+                 });
+
+                 // controle formulaire
+                 $("#idForm").validate();
+
+                 $("#modalTraitementEncours").draggable({
+                     handle: ".modal-header"
+                 });
+
+                 $("#modalMessageErreur").draggable({
+                     handle: ".modal-header"
+                 });
 
 
-            $(document).on('click', 'li ul ul li a', function (e) {
+                 $('#idTable tbody').on('click', 'tr', function() {
+                     $('#idTable tbody tr').removeClass('alert alert-info');
+                     $('#idTable tbody tr').css({'background-color': '#fff'});
+                     $(this).addClass('alert alert-info');
+                     $(this).css({'background-color': '#d9edf7'});
+                 });
+
+
+                 $(document).on('click', 'li ul ul li a', function(e) {
         {#$('#idAttente').show();#}
                     $('#modalTraitementEncours').modal('toggle');
                 });
 
-                $(document).on('click', 'ol li a', function (e) {
+                $(document).on('click', 'ol li a', function(e) {
         {#$('#idAttente').show();#}
                     $('#modalTraitementEncours').modal('toggle');
                 });
@@ -474,46 +476,46 @@
               $('#modalTraitementEncours').modal('toggle');
           });#}
 
-                  $(document).on('click', '#idBtVoirMessage', function (e) {
+                  $(document).on('click', '#idBtVoirMessage', function(e) {
                       $('#idAttente').hide();
                       $('#modalTraitementEncours').modal('hide');
                   });
 
         {%if (app.session.get('Messages') | length) > 0 %}
-            {% for message in app.session.get('Messages') %} 
-                $('#ajax_{{message.message.id}}').on('shown.bs.modal', function (e) {
-                    $('#modalTraitementEncours').modal('hide');
-                })
+            {% for message in app.session.get('Messages') %}
+                    $('#ajax_{{message.message.id}}').on('shown.bs.modal', function(e) {
+                        $('#modalTraitementEncours').modal('hide');
+                    })
             {% endfor %}
         {% endif %}
 
-    
-    
-     
-    {% block scriptsTr %}{% endblock scriptsTr %} 
+
+
+
+    {% block scriptsTr %}{% endblock scriptsTr %}
 
 {% block scripts %}{% endblock scripts %}
-            }
-            );
+        }
+        );
 </script>
 
- <script type="text/javascript" language="javascript">
-                                        (function (i, s, o, g, r, a, m) {
-                                            i['GoogleAnalyticsObject'] = r;
-                                            i[r] = i[r] || function () {
-                                                (i[r].q = i[r].q || []).push(arguments)
-                                            }, i[r].l = 1 * new Date();
-                                            a = s.createElement(o),
-                                                    m = s.getElementsByTagName(o)[0];
-                                            a.async = 1;
-                                            a.src = g;
-                                            m.parentNode.insertBefore(a, m)
-                                        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+<script type="text/javascript" language="javascript">
+    (function(i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r;
+        i[r] = i[r] || function() {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date();
+        a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+        a.async = 1;
+        a.src = g;
+        m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
 
-                                        ga('create', 'UA-90566013-1', 'auto');
-                                        ga('send', 'pageview');
+    ga('create', 'UA-90566013-1', 'auto');
+    ga('send', 'pageview');
 
-    </script>
+</script>
 
 
 

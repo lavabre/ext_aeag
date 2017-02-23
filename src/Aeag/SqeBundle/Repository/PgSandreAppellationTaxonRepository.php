@@ -47,7 +47,7 @@ class PgSandreAppellationTaxonRepository extends EntityRepository {
         $qb->setParameter('codeAppelTaxon', $codeAppelTaxon);
         $qb->setParameter('codeSupport', $codeSupport);
         //print_r($query);
-        return $qb->getResult();
+        return $qb->getOneOrNullResult();
     }
 
 }

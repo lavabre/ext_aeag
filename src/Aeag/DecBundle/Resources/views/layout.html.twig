@@ -1,265 +1,266 @@
 {% extends '::base.html.twig' %}
 
 {% block titre %}
- Demande d'aide pour le traitement des déchets 
+    Demande d'aide pour le traitement des déchets
 {% endblock titre %}
- 
- {% block message_admin %}
+
+{% block message_admin %}
     {%if (app.session.get('messageAdmin') | length) > 0 and is_granted('ROLE_ODEC') and not is_granted('ROLE_ADMINDEC') %}
         <h5 class="alert alert-danger pull-right">
-           {{ app.session.get('messageAdmin') }}
+            {{ app.session.get('messageAdmin') }}
         </h5>
     {%endif%}
 {% endblock message_admin %}
 
- {% block menu %}
+{% block menu %}
 
-  
+
     {% if is_granted('ROLE_ADMINDEC') %}
-          <li><a href="{{ path('aeag_homepage') }}"><i class="fa fa-home"></i>&nbsp; Accueil</a></li>
-          {%if app.session.get('menu') == 'declarations'%}
-                <li  id="idDeclarations" class="active">
-                    <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
-                        <span class="selected"></span>
-                        Déclarations
-                        <i class="fa fa-angle-down"></i>     
-                    </a>
-             {%else%}
-                <li  id="idDeclarations">
-                    <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
-                        Déclarations
-                        <i class="fa fa-angle-down"></i>     
-                    </a>
-             {%endif%}
-                    <ul class="dropdown-menu">
-                                    {% for annee in app.session.get('annees') %}
-                        <li class="dropdown-submenu">
-                            <a href="javascript:;">
-                                              {{ annee.annee}}
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a href="{{ path('AeagDecBundle_admin_listeDeclarationCollecteurs', { 'annee': annee.annee, 'statut': '99' }) }}">
-                                        Toutes
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{{ path('AeagDecBundle_admin_listeDeclarationCollecteurs', { 'annee': annee.annee, 'statut': '20' }) }}">
-                                        En préparation
-                                    </a>
-                                </li> 
-                                <li>
-                                    <a href="{{ path('AeagDecBundle_admin_listeDeclarationCollecteurs', { 'annee': annee.annee, 'statut': '21' }) }}">
-                                        Non conforme
-                                    </a>
-                                </li> 
-                                <li>
-                                    <a href="{{ path('AeagDecBundle_admin_listeDeclarationCollecteurs', { 'annee': annee.annee, 'statut': '22' }) }}">
-                                        Validée
-                                    </a>
-                                </li> 
-                                <li>
-                                    <a href="{{ path('AeagDecBundle_admin_listeDeclarationCollecteurs', { 'annee': annee.annee, 'statut': '30' }) }}">
-                                        Approuvée
-                                    </a>
-                                </li> 
-                                <li>
-                                    <a href="{{ path('AeagDecBundle_admin_listeDeclarationCollecteurs', { 'annee': annee.annee, 'statut': '40' }) }}">
-                                        Transferée
-                                    </a>
-                                </li> 
-                                <li>
-                                    <a href="{{ path('AeagDecBundle_admin_listeDeclarationCollecteurs', { 'annee': annee.annee, 'statut': '50' }) }}">
-                                        Traitée
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{{ path('AeagDecBundle_admin_listeDeclarationCollecteurs', { 'annee': annee.annee, 'statut': '60' }) }}">
-                                        Payée
-                                    </a>
-                                </li> 
-                                <li>
-                                    <a href="{{ path('AeagDecBundle_admin_majCompteursDeclarations', { 'annee': annee.annee }) }}">
-                                        Maj compteurs déclarations 
-                                    </a>
-                                </li> 
-                                <li>
-                                    <a href="{{ path('AeagDecBundle_admin_majCompteursProducteurs', { 'annee': annee.annee }) }}">
-                                        Maj compteurs producteurs 
-                                    </a>
-                                </li> 
-                             
-                            </ul>
-                        </li>
-                    
-                                   {% endfor %}
-                                 <li>
-                                    <a href="{{ path('AeagDecBundle_admin_ajouterDeclarations', { 'annee': 2015, 'statut': '99' }) }}">
-                                        Ouvrir nouvelle année
-                                    </a>
-                                </li> 
-                    </ul> 
-                </li>
-
-
-           {%if app.session.get('menu') == 'parametres'%}
-                <li class="active">
-                    <a href="{{ path('AeagDecBundle_admin_parametres') }}">
-                        <span class="selected"></span>
-                        Paramètres
-                    </a>
-                </li>
-           {%else%}
-                <li>
-                    <a href="{{ path('AeagDecBundle_admin_parametres') }}">
-                        Paramètres
-                    </a>
-                </li>
+        <li><a href="{{ path('aeag_homepage') }}"><i class="fa fa-home"></i>&nbsp; Accueil</a></li>
+            {%if app.session.get('menu') == 'declarations'%}
+            <li  id="idDeclarations" class="active">
+                <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+                    <span class="selected"></span>
+                    Déclarations
+                    <i class="fa fa-angle-down"></i>
+                </a>
+            {%else%}
+            <li  id="idDeclarations">
+                <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+                    Déclarations
+                    <i class="fa fa-angle-down"></i>
+                </a>
             {%endif%}
+            <ul class="dropdown-menu">
+                {% for annee in app.session.get('annees') %}
+                    <li class="dropdown-submenu">
+                        <a href="javascript:;">
+                            {{ annee.annee}}
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="{{ path('AeagDecBundle_admin_listeDeclarationCollecteurs', { 'annee': annee.annee, 'statut': '99' }) }}">
+                                    Toutes
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ path('AeagDecBundle_admin_listeDeclarationCollecteurs', { 'annee': annee.annee, 'statut': '20' }) }}">
+                                    En préparation
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ path('AeagDecBundle_admin_listeDeclarationCollecteurs', { 'annee': annee.annee, 'statut': '21' }) }}">
+                                    Non conforme
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ path('AeagDecBundle_admin_listeDeclarationCollecteurs', { 'annee': annee.annee, 'statut': '22' }) }}">
+                                    Validée
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ path('AeagDecBundle_admin_listeDeclarationCollecteurs', { 'annee': annee.annee, 'statut': '30' }) }}">
+                                    Approuvée
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ path('AeagDecBundle_admin_listeDeclarationCollecteurs', { 'annee': annee.annee, 'statut': '40' }) }}">
+                                    Transferée
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ path('AeagDecBundle_admin_listeDeclarationCollecteurs', { 'annee': annee.annee, 'statut': '50' }) }}">
+                                    Traitée
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ path('AeagDecBundle_admin_listeDeclarationCollecteurs', { 'annee': annee.annee, 'statut': '60' }) }}">
+                                    Payée
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ path('AeagDecBundle_admin_majCompteursDeclarations', { 'annee': annee.annee }) }}">
+                                    Maj compteurs déclarations
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ path('AeagDecBundle_admin_majCompteursProducteurs', { 'annee': annee.annee }) }}">
+                                    Maj compteurs producteurs
+                                </a>
+                            </li>
 
-            {%if app.session.get('menu') == 'referentiel'%}   
-                <li class="active">
-                    <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
-                        <span class="selected"></span>
-                        Référentiel
-                        <i class="fa fa-angle-down"></i>     
-                    </a>
-            {%else%}
+                        </ul>
+                    </li>
+
+                {% endfor %}
                 <li>
-                    <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
-                        Référentiel
-                        <i class="fa fa-angle-down"></i>     
+                    <a href="{{ path('AeagDecBundle_admin_ajouterDeclarations', { 'annee': 2015, 'statut': '99' }) }}">
+                        Ouvrir nouvelle année
                     </a>
-             {%endif%}
+                </li>
+            </ul>
+        </li>
+
+
+        {%if app.session.get('menu') == 'parametres'%}
+            <li class="active">
+                <a href="{{ path('AeagDecBundle_admin_parametres') }}">
+                    <span class="selected"></span>
+                    Paramètres
+                </a>
+            </li>
+        {%else%}
+            <li>
+                <a href="{{ path('AeagDecBundle_admin_parametres') }}">
+                    Paramètres
+                </a>
+            </li>
+        {%endif%}
+
+        {%if app.session.get('menu') == 'referentiel'%}
+            <li class="active">
+                <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+                    <span class="selected"></span>
+                    Référentiel
+                    <i class="fa fa-angle-down"></i>
+                </a>
+            {%else%}
+            <li>
+                <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+                    Référentiel
+                    <i class="fa fa-angle-down"></i>
+                </a>
+            {%endif%}
+            <ul class="dropdown-menu">
+                <li class="dropdown-submenu">
+                    <a href="javascript:;">
+                        Importer
+                    </a>
                     <ul class="dropdown-menu">
-                        <li class="dropdown-submenu">
-                            <a href="javascript:;">
-                                Importer
+                        <li>
+                            <a href="{{ path('AeagDecBundle_admin_chargeReferentiel') }}">
+                                Référentiel
                             </a>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a href="{{ path('AeagDecBundle_admin_chargeReferentiel') }}">
-                                        Référentiel
-                                    </a>
-                                </li>  
-                                <li>
-                                    <a href="{{ path('AeagDecBundle_admin_chargeDeclaration') }}">
-                                        Déclarations
-                                    </a>
-                                </li> 
-                            </ul>
                         </li>
-                        <li class="dropdown-submenu">
-                            <a href="javascript:;">
-                                Consulter
+                        <li>
+                            <a href="{{ path('AeagDecBundle_admin_chargeDeclaration') }}">
+                                Déclarations
                             </a>
-                            <ul class="dropdown-menu">
-                                <li><a href="{{ path('AeagDecBundle_admin_listeTaux') }}">Taux</a></li>
-                                <li><a href="{{ path('AeagDecBundle_admin_listeDechet') }}">Codes déchets</a></li>
-                                <li><a href="{{ path('AeagDecBundle_admin_listeFiliere') }}">Filières</a></li>
-                                <!--<li><a href="{{ path('Aeag_listeOuvrage') }}">Ouvrages</a></li>-->
-                                <li><a href="{{ path('AeagDecBundle_admin_listeNaf') }}">Codes NAF</a></li>
-                                <li><a href="{{ path('Aeag_listeRegion') }}">Régions</a></li>
-                                <li><a href="{{ path('AeagDecBundle_admin_listeProducteurNonPlafonne') }}">Producteurs non plafonnés</a></li>
-                                <li><a href="{{ path('AeagDecBundle_admin_listeProducteurTauxSpecial') }}">Producteurs avec un taux d'aide spécial</a></li>
-                                <li><a href="http://sdage-sage.eau-loire-bretagne.fr/files/live/sites/sdage-sage/files/Icono/Aides/Documents spécifiques à une fiche aide/Frais de collecte_1.1d2/liste-inter-agences">Liste nationale des opérateurs déchets</a></li>
-                                <li><a href="{{ asset('bundles/aeagdec/doc_dec/trame_Excel.xls') }}" target="_blank">Trame Excel</a></li>        
-                            </ul>
                         </li>
                     </ul>
                 </li>
-            {%if app.session.get('menu') == 'acteurs'%}  
-                <li class="active">
-                    <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
-                        <span class="selected"></span>
-                        Acteurs
-                        <i class="fa fa-angle-down"></i>     
+                <li class="dropdown-submenu">
+                    <a href="javascript:;">
+                        Consulter
                     </a>
-             {%else%}
-                <li>
-                    <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
-                        Acteurs
-                        <i class="fa fa-angle-down"></i>     
-                    </a>   
-             {%endif%}
                     <ul class="dropdown-menu">
-                        {% if is_granted('ROLE_ADMIN') %}
-                            <li><a href="{{ path('AeagUserBundle_User', { 'role': 'ROLE_AEAG' }) }}">Utilisateurs</a></li>
-                        {% elseif is_granted('ROLE_ADMINDEC') %}
-                            <li><a href="{{ path('AeagUserBundle_User', { 'role': 'ROLE_ODEC' }) }}">Utilisateurs</a></li>
-                        {% elseif is_granted('ROLE_ADMINFRD')%}
-                            <li><a href="{{ path('AeagUserBundle_User', { 'role': 'ROLE_FRD' }) }}">Membres</a></li>
-                        {% endif %}
-                        <!--<li><a href="{{ path('Aeag_listeCorrespondants') }}">Correspondants</a></li>-->
-                        <li><a href="{{ path('AeagDecBundle_admin_listeCollecteurs') }}">Centres d’entreposages </a></li>
-                        <li><a href="{{ path('AeagDecBundle_admin_listeCentresTransits') }}">Centres de transit</a></li>
-                        <li><a href="{{ path('AeagDecBundle_admin_listeCentresTraitements') }}">Centres de traitement</a></li>
-                        <li><a href="{{ path('AeagDecBundle_admin_listeProducteurs') }}">Producteurs</a></li>
+                        <li><a href="{{ path('AeagDecBundle_admin_listeTaux') }}">Taux</a></li>
+                        <li><a href="{{ path('AeagDecBundle_admin_listeDechet') }}">Codes déchets</a></li>
+                        <li><a href="{{ path('AeagDecBundle_admin_listeFiliere') }}">Filières</a></li>
+                        <!--<li><a href="{{ path('Aeag_listeOuvrage') }}">Ouvrages</a></li>-->
+                        <li><a href="{{ path('AeagDecBundle_admin_listeNaf') }}">Codes NAF</a></li>
+                        <li><a href="{{ path('Aeag_listeRegion') }}">Régions</a></li>
+                        <li><a href="{{ path('AeagDecBundle_admin_listeProducteurNonPlafonne') }}">Producteurs non plafonnés</a></li>
+                        <li><a href="{{ path('AeagDecBundle_admin_listeProducteurTauxSpecial') }}">Producteurs avec un taux d'aide spécial</a></li>
+                        <li><a href="http://sdage-sage.eau-loire-bretagne.fr/files/live/sites/sdage-sage/files/Icono/Aides/Documents spécifiques à une fiche aide/Frais de collecte_1.1d2/liste-inter-agences">Liste nationale des opérateurs déchets</a></li>
+                        <li><a href="{{ asset('bundles/aeagdec/doc_dec/trame_Excel.xls') }}" target="_blank">Trame Excel</a></li>
                     </ul>
                 </li>
-            {#{%if app.session.get('menu') == 'aide'%}
-                <li class="active">
-                    <a href="{{ path('AeagDecBundle_collecteur_aide') }}">
-                        <i class="fa fa-question"></i> 
-                        <span class="selected"></span>
-                    </a>
-                </li>
+            </ul>
+        </li>
+        {%if app.session.get('menu') == 'acteurs'%}
+            <li class="active">
+                <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+                    <span class="selected"></span>
+                    Acteurs
+                    <i class="fa fa-angle-down"></i>
+                </a>
             {%else%}
-                <li>
-                    <a href="{{ path('AeagDecBundle_collecteur_aide') }}">
-                        <i class="fa fa-question"></i> 
-                    </a>
-                </li>
-           {%endif%}#}
-    <!-- Fin Menu administrateur -->            
-   {%else%}
-      <!-- Menu collecteur -->
+            <li>
+                <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+                    Acteurs
+                    <i class="fa fa-angle-down"></i>
+                </a>
+            {%endif%}
+            <ul class="dropdown-menu">
+                {% if is_granted('ROLE_ADMIN') %}
+                    <li><a href="{{ path('AeagUserBundle_User', { 'role': 'ROLE_AEAG' }) }}">Utilisateurs</a></li>
+                    {% elseif is_granted('ROLE_ADMINDEC') %}
+                    <li><a href="{{ path('AeagUserBundle_User', { 'role': 'ROLE_ODEC' }) }}">Utilisateurs</a></li>
+                    {% elseif is_granted('ROLE_ADMINFRD')%}
+                    <li><a href="{{ path('AeagUserBundle_User', { 'role': 'ROLE_FRD' }) }}">Membres</a></li>
+                    {% endif %}
+                    <!--<li><a href="{{ path('Aeag_listeCorrespondants') }}">Correspondants</a></li>-->
+                <li><a href="{{ path('AeagDecBundle_admin_listeCollecteurs') }}">Centres d’entreposages </a></li>
+                <li><a href="{{ path('AeagDecBundle_admin_listeCentresTransits') }}">Centres de transit</a></li>
+                <li><a href="{{ path('AeagDecBundle_admin_listeCentresTraitements') }}">Centres de traitement</a></li>
+                <li><a href="{{ path('AeagDecBundle_admin_listeProducteurs') }}">Producteurs</a></li>
+            </ul>
+        </li>
+        {#{%if app.session.get('menu') == 'aide'%}
+            <li class="active">
+                <a href="{{ path('AeagDecBundle_collecteur_aide') }}">
+                    <i class="fa fa-question"></i>
+                    <span class="selected"></span>
+                </a>
+            </li>
+        {%else%}
+            <li>
+                <a href="{{ path('AeagDecBundle_collecteur_aide') }}">
+                    <i class="fa fa-question"></i>
+                </a>
+            </li>
+       {%endif%}#}
+        <!-- Fin Menu administrateur -->
+    {%else%}
+        <!-- Menu collecteur -->
         <li>
             <a href="{{ path('aeag_dec') }}">
-            Déclarations
+                Déclarations
             </a>
         </li>
-       <li>
-                <a href="{{ path('AeagDecBundle_collecteur_listeProducteurs') }}">
-                Producteurs
-                </a>
-        </li>
-       {%if app.session.get('menu') == 'referentiel'%}   
-        <li class="active">
-            <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
-                <span class="selected"></span>
-                Référentiel
-                <i class="fa fa-angle-down"></i>     
-            </a>
-       {%else%}
         <li>
-            <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
-                Référentiel
-                <i class="fa fa-angle-down"></i>     
+            <a href="{{ path('AeagDecBundle_collecteur_listeProducteurs') }}">
+                Producteurs
             </a>
-       {%endif%}
+        </li>
+        {%if app.session.get('menu') == 'referentiel'%}
+            <li class="active">
+                <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+                    <span class="selected"></span>
+                    Référentiel
+                    <i class="fa fa-angle-down"></i>
+                </a>
+            {%else%}
+            <li>
+                <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+                    Référentiel
+                    <i class="fa fa-angle-down"></i>
+                </a>
+            {%endif%}
             <ul class="dropdown-menu">
-                      <li><a href="{{ path('AeagDecBundle_admin_listeDechet') }}">Codes déchets</a></li>
-                      <li><a href="{{ path('AeagDecBundle_admin_listeFiliere') }}">Filières</a></li>
-                      <li><a href="{{ path('AeagDecBundle_admin_listeNaf') }}">Codes NAF</a></li>
-                      <li><a href="http://www.eau-loire-bretagne.fr/entreprises/modalites_daides/dechets_dangereux/Liste_nationale_CHR.xls">Liste nationale des opérateurs déchets</a></li>
-                      <li><a href="{{ asset('bundles/aeagdec/doc_dec/trame_Excel.xls') }}" target="_blank">Trame Excel</a></li>        
+                <li><a href="{{ path('AeagDecBundle_admin_listeDechet') }}">Codes déchets</a></li>
+                <li><a href="{{ path('AeagDecBundle_admin_listeFiliere') }}">Filières</a></li>
+                <li><a href="{{ path('AeagDecBundle_admin_listeNaf') }}">Codes NAF</a></li>
+                <li><a href="{{ path('AeagDecBundle_admin_listeProducteurTauxSpecial') }}">Producteurs avec un taux d'aide spécial</a></li>
+                <li><a href="http://www.eau-loire-bretagne.fr/entreprises/modalites_daides/dechets_dangereux/Liste_nationale_CHR.xls">Liste nationale des opérateurs déchets</a></li>
+                <li><a href="{{ asset('bundles/aeagdec/doc_dec/trame_Excel.xls') }}" target="_blank">Trame Excel</a></li>
             </ul>
-            </li>
+        </li>
         {#
-        {%if app.session.get('menu') == 'acteurs'%}  
+        {%if app.session.get('menu') == 'acteurs'%}
                 <li class="active">
                     <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
                         <span class="selected"></span>
                         Acteurs
-                        <i class="fa fa-angle-down"></i>     
+                        <i class="fa fa-angle-down"></i>
                     </a>
              {%else%}
                 <li>
                     <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
                         Acteurs
-                        <i class="fa fa-angle-down"></i>     
-                    </a>   
+                        <i class="fa fa-angle-down"></i>
+                    </a>
              {%endif%}
                     <ul class="dropdown-menu">
                         <li><a href="{{ path('AeagDecBundle_admin_listeCollecteurs') }}">Collecteurs</a></li>
@@ -268,37 +269,37 @@
                     </ul>
                 </li>
          #}
-        {%if app.session.get('menu') == 'contact'%}  
-         <li class="active">
-        {% else %}
+        {%if app.session.get('menu') == 'contact'%}
+            <li class="active">
+            {% else %}
             <li>
-         {% endif %}
-                <a href="{{ path('AeagDecBundle_collecteur_envoyerMessage') }}">
+            {% endif %}
+            <a href="{{ path('AeagDecBundle_collecteur_envoyerMessage') }}">
                 Contact
-                </a>
+            </a>
         </li>
-       {%if app.session.get('menu') == 'aide'%}
-        <li class="active">
-            <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
-                <span class="selected"></span>
-                Aide
-                <i class="fa fa-angle-down"></i>     
-            </a>
-       {%else%}
-        <li>
-            <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
-                Aide
-                <i class="fa fa-angle-down"></i>     
-            </a>
-        {%endif%}   
+        {%if app.session.get('menu') == 'aide'%}
+            <li class="active">
+                <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+                    <span class="selected"></span>
+                    Aide
+                    <i class="fa fa-angle-down"></i>
+                </a>
+            {%else%}
+            <li>
+                <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+                    Aide
+                    <i class="fa fa-angle-down"></i>
+                </a>
+            {%endif%}
             <ul class="dropdown-menu">
                 <li><a href="{{ asset('bundles/aeagdec/doc_dec/manuel-utilisateurV1.pdf') }}" target="_blank">Aide</a></li>
                 <li><a href="{{ asset('bundles/aeagdec/doc_dec/guide_pratique_de_l_aide.pdf') }}" target="_blank">Guide pratique de l'aide</a></li>
             </ul>
-       </li>
-              
-            
+        </li>
+
+
     {%endif%}
-        <!--  fin Menu collecteur -->
+    <!--  fin Menu collecteur -->
 {% endblock menu %}
 

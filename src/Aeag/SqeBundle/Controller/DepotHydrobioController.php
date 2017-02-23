@@ -143,17 +143,16 @@ class DepotHydrobioController extends Controller {
         $session->set('fonction', 'prelevementDetail');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
-        $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
         $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
-        $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
         $repoPgCmdPrelevHbInvert = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelevHbInvert');
         $repoPgCmdInvertRecouv = $emSqe->getRepository('AeagSqeBundle:PgCmdInvertRecouv');
         $repoPgCmdInvertPrelem = $emSqe->getRepository('AeagSqeBundle:PgCmdInvertPrelem');
         $repoPgCmdInvertListe = $emSqe->getRepository('AeagSqeBundle:PgCmdInvertListe');
-        $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
         $repoPgSandreHbNomemclatures = $emSqe->getRepository('AeagSqeBundle:PgSandreHbNomemclatures');
         $repoPgSandreAppellationTaxon = $emSqe->getRepository('AeagSqeBundle:PgSandreAppellationTaxon');
+        $repoPgCmdPrelevHbDiato = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelevHbDiato');
+        $repoPgCmdDiatoListe = $emSqe->getRepository('AeagSqeBundle:PgCmdDiatoListe');
 
         $pgProgWebUser = $repoPgProgWebUsers->findOneByExtId($user->getId());
         $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevById($prelevId);
@@ -162,6 +161,7 @@ class DepotHydrobioController extends Controller {
         $tabRecouvs = array();
         $tabPrelems = array();
         $tabListes = array();
+        $tabDiatomes = array();
 
         $pgCmdPrelevHbInvert = $repoPgCmdPrelevHbInvert->getPgCmdPrelevHbInvertByPrelev($pgCmdPrelev);
         if ($pgCmdPrelevHbInvert) {
@@ -193,13 +193,32 @@ class DepotHydrobioController extends Controller {
             }
         }
 
+        $pgCmdPrelevHbDiato = $repoPgCmdPrelevHbDiato->getPgCmdPrelevHbDiatoByPrelev($pgCmdPrelev);
+        if ($pgCmdPrelevHbDiato) {
+            $tabDiatomes['diatome'] = $pgCmdPrelevHbDiato;
+            $tabDiatomeListes = array();
+            $i = 0;
+            $pgCmdDiatoListes = $repoPgCmdDiatoListe->getPgCmdDiatoListesByPrelev($pgCmdPrelevHbDiato);
+            foreach ($pgCmdDiatoListes as $pgCmdDiatoListe) {
+                $tabDiatomeListes[$i]['liste'] = $pgCmdDiatoListe;
+                $pgSandreAppellationTaxon = $repoPgSandreAppellationTaxon->getPgSandreAppellationTaxonByCodeAppelTaxonCodeSupport($pgCmdDiatoListe->getCodeSandre(), '10');
+                $tabDiatomeListes[$i]['taxon'] = $pgSandreAppellationTaxon;
+                $i++;
+            }
+            $tabDiatomes['liste'] = $tabDiatomeListes;
+        }
+
+//        \Symfony\Component\VarDumper\VarDumper::dump($tabDiatomes);
+//        return new response('nb diatomes : ' . count($tabDiatomes));
+
         return $this->render('AeagSqeBundle:DepotHydrobio:prelevementDetail.html.twig', array('user' => $pgProgWebUser,
                     'demande' => $pgCmdDemande,
                     'prelev' => $pgCmdPrelev,
                     'pgCmdPrelevHbInvert' => $pgCmdPrelevHbInvert,
                     'pgCmdInvertRecouvs' => $tabRecouvs,
                     'pgCmdInvertPrelems' => $tabPrelems,
-                    'pgCmdInvertListes' => $tabListes));
+                    'pgCmdInvertListes' => $tabListes,
+                    'pgCmdPrelevHbDiato' => $tabDiatomes));
     }
 
     public function telechargerAction($demandeId) {
@@ -415,7 +434,7 @@ class DepotHydrobioController extends Controller {
             }
 
             if (!$erreur) {
-                $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R30');
+                $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R40');
                 $reponse->setPhaseFichier($pgProgPhases);
                 $emSqe->persist($reponse);
                 $emSqe->flush();
