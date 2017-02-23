@@ -43,6 +43,18 @@ class ProducteurTauxSpecial {
     private $siret;
 
     /**
+     * @ORM\Column(type="string", length=100)
+     *
+     */
+    private $raisonSociale;
+
+    /**
+     * @ORM\Column(type="string", length=100)
+     *
+     */
+    private $localisation;
+
+    /**
      * @ORM\Column(type="float",nullable=false)
      *
      */
@@ -81,6 +93,14 @@ class ProducteurTauxSpecial {
         return $this->siret;
     }
 
+    function getRaisonSociale() {
+        return $this->raisonSociale;
+    }
+
+    function getLocalisation() {
+        return $this->localisation;
+    }
+
     function getTaux() {
         return $this->taux;
     }
@@ -99,6 +119,14 @@ class ProducteurTauxSpecial {
 
     function setSiret($siret) {
         $this->siret = $siret;
+    }
+
+    function setRaisonSociale($raisonSociale) {
+        $this->raisonSociale = $raisonSociale;
+    }
+
+    function setLocalisation($localisation) {
+        $this->localisation = $localisation;
     }
 
     function setTaux($taux) {

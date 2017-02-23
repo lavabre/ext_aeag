@@ -42,22 +42,10 @@
                     <tbody>
                         {% for entity in entities %}
                             <tr>
-                                <td>{{ entity.0.siret }}</td>
-                                <td>
-                                    {%if entity.Ouvrage %}
-                                        {{ entity.Ouvrage.libelle }}
-                                    {%else%}
-                                        Non référencé
-                                    {%endif%}
-                                </td>
-                                <td>
-                                    {%if entity.Ouvrage %}
-                                        {{ entity.Ouvrage.cp }} {{ entity.Ouvrage.ville }}
-                                    {%else%}
-                                        Non référencé
-                                    {%endif%}
-                                </td>
-                                <td align="center">{{ entity.0.taux  | number_format(2,'.',' ')}} %</td>
+                                <td>{{ entity.siret }}</td>
+                                <td>{{ entity.raisonsociale }}</td>
+                                <td>{{ entity.localisation }}</td>
+                                <td align="center">{{ entity.taux  | number_format(2,'.',' ')}} %</td>
                             </tr>
                         {% endfor %}
                     </tbody>

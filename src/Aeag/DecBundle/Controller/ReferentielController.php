@@ -63,9 +63,9 @@ class ReferentielController extends Controller {
      * @Cache(maxage="900000")
      */
     public function indexAction() {
-        
+
         $user = $this->getUser();
-         if (!$user) {
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -80,9 +80,9 @@ class ReferentielController extends Controller {
     }
 
     public function chargeReferentielAction() {
-        
+
         $user = $this->getUser();
-         if (!$user) {
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -147,9 +147,9 @@ class ReferentielController extends Controller {
     }
 
     public function chargeDeclarationAction() {
-        
+
         $user = $this->getUser();
-         if (!$user) {
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -212,9 +212,9 @@ class ReferentielController extends Controller {
     }
 
     public function chargeFichierAction($ficent = null, $message = null, $passage = null) {
-        
+
         $user = $this->getUser();
-         if (!$user) {
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -224,12 +224,12 @@ class ReferentielController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
 
-       $repoParametre = $emDec->getRepository('AeagDecBundle:Parametre');
+        $repoParametre = $emDec->getRepository('AeagDecBundle:Parametre');
         $repoDeclarationCollecteur = $emDec->getRepository('AeagDecBundle:DeclarationCollecteur');
         $repoSousDeclarationCollecteur = $emDec->getRepository('AeagDecBundle:SousDeclarationCollecteur');
         $repoDeclarationDetail = $emDec->getRepository('AeagDecBundle:DeclarationDetail');
         $repoStatut = $emDec->getRepository('AeagDecBundle:Statut');
-  
+
         $session->set('refMess', array());
 
         $ficent = $_POST['ficent'];
@@ -356,7 +356,7 @@ class ReferentielController extends Controller {
                   $ok = CollecteurController::majStatutDeclarationCollecteursAction($declaration->getId(), $user, $em, $session);
                   // print_r($declaration->getId() . ' statut : ' . $declaration->getStatut()->getCode());
                   }
-                 * 
+                 *
                  */
                 $fichier = $rep . "/" . $ficent;
             }
@@ -390,9 +390,9 @@ class ReferentielController extends Controller {
     }
 
     public function chargeFichierDeclarationAction($ficent = null, $message = null, $passage = null) {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -432,8 +432,8 @@ class ReferentielController extends Controller {
         $fic_decdet = 'dec_decdet_' . $tabFicent[2] . '_' . $tabFicent[3] . '_' . $tabFicent[4];
         $message = $this->chargeDeclarationDetailAction($fic_decdet, $ajout, $modif);
 //         \Symfony\Component\VarDumper\VarDumper::dump($message);
-//        return new Response ('');   
-        
+//        return new Response ('');
+
         $message4 = $this->chargeFiliereAideAction();
 
         $ok = CollecteurController::majStatutDeclarationCollecteursAction($declaration->getId(), $user, $emDec, $session);
@@ -534,9 +534,9 @@ class ReferentielController extends Controller {
     }
 
     public function chargeTauxAction($ficent = null) {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -602,9 +602,9 @@ class ReferentielController extends Controller {
     }
 
     public function listeTauxAction() {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -614,7 +614,7 @@ class ReferentielController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
 
-         $repoTaux = $emDec->getRepository('AeagDecBundle:Taux');
+        $repoTaux = $emDec->getRepository('AeagDecBundle:Taux');
 
         $entities = $repoTaux->getTaux();
 
@@ -624,9 +624,9 @@ class ReferentielController extends Controller {
     }
 
     public function chargeDechetAction($ficent = null) {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -636,7 +636,7 @@ class ReferentielController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
 
-         $repoParametre = $emDec->getRepository('AeagDecBundle:Parametre');
+        $repoParametre = $emDec->getRepository('AeagDecBundle:Parametre');
         $repoDechet = $emDec->getRepository('AeagDecBundle:Dechet');
 
         $parametre = $repoParametre->getParametreByCode('REP_REFERENTIEL');
@@ -697,9 +697,9 @@ class ReferentielController extends Controller {
     }
 
     public function listeDechetAction() {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -724,9 +724,9 @@ class ReferentielController extends Controller {
      *  Fichier PDF
      */
     public function pdfListeDechetAction() {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -760,9 +760,9 @@ class ReferentielController extends Controller {
     }
 
     public function ajouterDechetAction(Request $request) {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -795,9 +795,9 @@ class ReferentielController extends Controller {
     }
 
     public function editerDechetAction($code = null, Request $request) {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -830,9 +830,9 @@ class ReferentielController extends Controller {
     }
 
     public function chargeFiliereAction($ficent = null) {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -901,9 +901,9 @@ class ReferentielController extends Controller {
     }
 
     public function listeFiliereAction() {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -913,7 +913,7 @@ class ReferentielController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
 
-         $repoFiliere = $emDec->getRepository('AeagDecBundle:Filiere');
+        $repoFiliere = $emDec->getRepository('AeagDecBundle:Filiere');
 
         if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMINDEC')) {
             $entities = $repoFiliere->getFilieres();
@@ -930,9 +930,9 @@ class ReferentielController extends Controller {
      *  Fichier PDF
      */
     public function pdfListeFiliereAction() {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -966,9 +966,9 @@ class ReferentielController extends Controller {
     }
 
     public function ajouterFiliereAction(Request $request) {
-        
+
         $user = $this->getUser();
-         if (!$user) {
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -999,9 +999,9 @@ class ReferentielController extends Controller {
     }
 
     public function editerFiliereAction($code = null, Request $request) {
-        
+
         $user = $this->getUser();
-         if (!$user) {
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -1034,9 +1034,9 @@ class ReferentielController extends Controller {
     }
 
     public function chargeDechetFiliereAction($ficent = null) {
-        
+
         $user = $this->getUser();
-         if (!$user) {
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -1111,9 +1111,9 @@ class ReferentielController extends Controller {
     }
 
     public function listeDechetFiliereAction($dechet) {
-        
+
         $user = $this->getUser();
-         if (!$user) {
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -1136,9 +1136,9 @@ class ReferentielController extends Controller {
     }
 
     public function chargeConditionnementAction($ficent = null) {
-        
+
         $user = $this->getUser();
-         if (!$user) {
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -1204,9 +1204,9 @@ class ReferentielController extends Controller {
     }
 
     public function listeConditionnementAction() {
-        
+
         $user = $this->getUser();
-         if (!$user) {
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -1226,9 +1226,9 @@ class ReferentielController extends Controller {
     }
 
     public function chargeNafAction($ficent = null) {
-        
+
         $user = $this->getUser();
-         if (!$user) {
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -1299,9 +1299,9 @@ class ReferentielController extends Controller {
     }
 
     public function listeNafAction() {
-        
-          $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -1311,7 +1311,7 @@ class ReferentielController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
 
-         $repoNaf = $emDec->getRepository('AeagDecBundle:Naf');
+        $repoNaf = $emDec->getRepository('AeagDecBundle:Naf');
 
         if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMINDEC')) {
             $entities = $repoNaf->getNafs();
@@ -1328,9 +1328,9 @@ class ReferentielController extends Controller {
      *  Fichier PDF
      */
     public function pdfListeNafAction() {
-        
-          $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -1364,9 +1364,9 @@ class ReferentielController extends Controller {
     }
 
     public function ajouterNafAction(Request $request) {
-        
-          $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -1376,7 +1376,7 @@ class ReferentielController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
 
-         $majNaf = new majNaf();
+        $majNaf = new majNaf();
         $form = $this->createForm(new MajNafType(), $majNaf);
         if ($request->getMethod() == 'POST') {
             $form->handleRequest($request);
@@ -1397,9 +1397,9 @@ class ReferentielController extends Controller {
     }
 
     public function editerNafAction($code = null, Request $request) {
-        
-          $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -1432,9 +1432,9 @@ class ReferentielController extends Controller {
     }
 
     public function chargeRegionAction($ficent = null) {
-        
-          $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -1505,9 +1505,9 @@ class ReferentielController extends Controller {
     }
 
     public function chargeDepartementAction($ficent = null) {
-        
-          $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -1517,7 +1517,7 @@ class ReferentielController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
 
-         $repoParametre = $emDec->getRepository('AeagDecBundle:Parametre');
+        $repoParametre = $emDec->getRepository('AeagDecBundle:Parametre');
         $repoRegion = $em->getRepository('AeagAeagBundle:Region');
         $repoDepartement = $em->getRepository('AeagAeagBundle:Departement');
 
@@ -1581,9 +1581,9 @@ class ReferentielController extends Controller {
     }
 
     public function chargeCommuneAction($ficent = null) {
-        
-          $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -1662,9 +1662,9 @@ class ReferentielController extends Controller {
     }
 
     public function chargeCodePostalAction($ficent = null) {
-        
-          $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -1746,9 +1746,9 @@ class ReferentielController extends Controller {
     }
 
     public function chargeOperationAction($ficent = null) {
-        
-          $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -1814,9 +1814,9 @@ class ReferentielController extends Controller {
     }
 
     public function chargeOperationNafAction($ficent = null) {
-        
-          $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -1889,9 +1889,9 @@ class ReferentielController extends Controller {
     }
 
     public function chargeOperationCommuneAction($ficent = null) {
-        
-          $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -1901,7 +1901,7 @@ class ReferentielController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
 
-         $repoParametre = $emDec->getRepository('AeagDecBundle:Parametre');
+        $repoParametre = $emDec->getRepository('AeagDecBundle:Parametre');
         $repoOperation = $emDec->getRepository('AeagDecBundle:Operation');
         $repoDepartement = $emDec->getRepository('AeagDecBundle:Departement');
         $repoCommune = $emDec->getRepository('AeagDecBundle:Commune');
@@ -1961,9 +1961,9 @@ class ReferentielController extends Controller {
     }
 
     public function listeOperationAction() {
-        
-          $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -1973,7 +1973,7 @@ class ReferentielController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
 
-         $repoOperation = $emDec->getRepository('AeagDecBundle:Operation');
+        $repoOperation = $emDec->getRepository('AeagDecBundle:Operation');
 
         $entities = $repoOperation->getOperations();
 
@@ -1983,9 +1983,9 @@ class ReferentielController extends Controller {
     }
 
     public function listeOperationNafAction($operation) {
-        
-          $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -2007,9 +2007,9 @@ class ReferentielController extends Controller {
     }
 
     public function listeOperationCommuneAction($operation) {
-        
-          $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -2031,9 +2031,9 @@ class ReferentielController extends Controller {
     }
 
     public function chargeOuvrageAction($ficent = null) {
-        
-          $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -2080,7 +2080,7 @@ class ReferentielController extends Controller {
                         if ($tab[4] != '000000000000000' and $tab[3] != 'ODEC') {
                             $Ouvrages = $repoOuvrage->getOuvragesBySiretType($tab[4], $tab[3]);
                             $Ouvrage = null;
-                            if ($Ouvrages){
+                            if ($Ouvrages) {
                                 $Ouvrage = $Ouvrages[0];
                             }
                             if (!$Ouvrage) {
@@ -2130,9 +2130,9 @@ class ReferentielController extends Controller {
     }
 
     public function chargeOuvrageFiliereAction($ficent = null) {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -2142,7 +2142,7 @@ class ReferentielController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
 
-         $repoParametre = $emDec->getRepository('AeagDecBundle:Parametre');
+        $repoParametre = $emDec->getRepository('AeagDecBundle:Parametre');
         $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
         $repoFiliere = $emDec->getRepository('AeagDecBundle:Filiere');
         $repoOuvrageFiliere = $emDec->getRepository('AeagDecBundle:OuvrageFiliere');
@@ -2207,9 +2207,9 @@ class ReferentielController extends Controller {
     }
 
     public function listeOuvrageFiliereAction($ouvrage) {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -2232,9 +2232,9 @@ class ReferentielController extends Controller {
     }
 
     public function chargeCorrespondantsAction($ficent = null) {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -2308,9 +2308,9 @@ class ReferentielController extends Controller {
     }
 
     public function chargeOuvrageCorrespondantAction($ficent = null) {
-        
+
         $user = $this->getUser();
-         if (!$user) {
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -2429,9 +2429,9 @@ class ReferentielController extends Controller {
     }
 
     public function chargeProducteurAction($ficent = null) {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -2441,7 +2441,7 @@ class ReferentielController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
 
-         $repoParametre = $emDec->getRepository('AeagDecBundle:Parametre');
+        $repoParametre = $emDec->getRepository('AeagDecBundle:Parametre');
         $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
         $repoCodePostal = $em->getRepository('AeagAeagBundle:CodePostal');
         $repoCommune = $em->getRepository('AeagAeagBundle:Commune');
@@ -2573,9 +2573,9 @@ class ReferentielController extends Controller {
     }
 
     public function chargeCollecteurProducteurAction($ficent = null) {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -2651,9 +2651,9 @@ class ReferentielController extends Controller {
     }
 
     public function chargeProducteurNonPlafonneAction($ficent = null) {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -2663,7 +2663,7 @@ class ReferentielController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
 
-         $repoParametre = $emDec->getRepository('AeagDecBundle:Parametre');
+        $repoParametre = $emDec->getRepository('AeagDecBundle:Parametre');
         $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
         $repoProducteurNonPlafonne = $emDec->getRepository('AeagDecBundle:ProducteurNonPlafonne');
 
@@ -2729,9 +2729,9 @@ class ReferentielController extends Controller {
     }
 
     public function listeProducteurNonPlafonneAction() {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -2741,7 +2741,7 @@ class ReferentielController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
 
-         $repoProducteurNonPlafonne = $emDec->getRepository('AeagDecBundle:ProducteurNonPlafonne');
+        $repoProducteurNonPlafonne = $emDec->getRepository('AeagDecBundle:ProducteurNonPlafonne');
         $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
 
         $producteurs = $repoProducteurNonPlafonne->getProducteurNonPlafonnes();
@@ -2768,9 +2768,9 @@ class ReferentielController extends Controller {
      *  Fichier PDF
      */
     public function pdfListeProducteurNonPlafonneAction($collecteur_id = null) {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -2826,9 +2826,9 @@ class ReferentielController extends Controller {
     }
 
     public function ajouterProducteurNonPlafonneAction(Request $request) {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -2859,9 +2859,9 @@ class ReferentielController extends Controller {
     }
 
     public function editerProducteurNonPlafonneAction($siret = null, Request $request) {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -2893,9 +2893,9 @@ class ReferentielController extends Controller {
     }
 
     public function chargeProducteurTauxSpecialAction($ficent = null) {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -2905,7 +2905,7 @@ class ReferentielController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
 
-         $repoParametre = $emDec->getRepository('AeagDecBundle:Parametre');
+        $repoParametre = $emDec->getRepository('AeagDecBundle:Parametre');
         $repoProducteurTauxSpecial = $emDec->getRepository('AeagDecBundle:ProducteurTauxSpecial');
 
         $parametre = $repoParametre->getParametreByCode('REP_REFERENTIEL');
@@ -2930,6 +2930,13 @@ class ReferentielController extends Controller {
                 $tabOri[$i] = $tab;
                 $i++;
             }
+
+            $ProducteurTauxSpecials = $repoProducteurTauxSpecial->getProducteurTauxSpecials();
+            foreach ($ProducteurTauxSpecials as $ProducteurTauxSpecial) {
+                $emDec->remove($ProducteurTauxSpecial);
+            }
+            $emDec->flush();
+
             $tabTri = \array_unique($tabOri, SORT_REGULAR);
             foreach ($tabTri as $tab) {
 
@@ -2946,10 +2953,12 @@ class ReferentielController extends Controller {
                     }
 
                     $entity->setSiret($tab[0]);
-                    $entity->setTaux($tab[1]);
+                    $entity->setRaisonSociale($tab[1]);
+                    $entity->setLocalisation($tab[2]);
+                    $entity->setTaux($tab[3]);
                     $emDec->persist($entity);
-                };
-            };
+                }
+            }
 
             $emDec->flush();
             $message = $ajout . " Producteurs avec un taux spécial créés et " . $modif . " Producteurs avec un taux spécial mises à jour";
@@ -2962,9 +2971,9 @@ class ReferentielController extends Controller {
     }
 
     public function listeProducteurTauxSpecialAction() {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -2974,37 +2983,20 @@ class ReferentielController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
 
-         $repoProducteurTauxSpecial = $emDec->getRepository('AeagDecBundle:ProducteurTauxSpecial');
+        $repoProducteurTauxSpecial = $emDec->getRepository('AeagDecBundle:ProducteurTauxSpecial');
         $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
 
         $producteurs = $repoProducteurTauxSpecial->getProducteurTauxSpecials();
 
-        $entities = array();
-        $i = 0;
-        foreach ($producteurs as $producteur) {
-            $entities[$i][0] = $producteur;
-            if ($producteur->getSiret()) {
-                $ouvrages = $repoOuvrage->getOuvragesBySiretType($producteur->getSiret(), 'PDEC');
-                $ouvrage = null;
-                if ($ouvrages) {
-                    $ouvrage = $ouvrages[0];
-                }
-            } else {
-                $ouvrage = null;
-            }
-            $entities[$i]['Ouvrage'] = $ouvrage;
-            $i++;
-        }
-
         return $this->render('AeagDecBundle:Referentiel:listeProducteurTauxSpecial.html.twig', array(
-                    'entities' => $entities
+                    'entities' => $producteurs
         ));
     }
 
     public function pdfListeProducteurTauxSpecialAction() {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -3019,23 +3011,6 @@ class ReferentielController extends Controller {
 
         $producteurs = $repoProducteurTauxSpecial->getProducteurTauxSpecials();
 
-        $entities = array();
-        $i = 0;
-        foreach ($producteurs as $producteur) {
-            $entities[$i][0] = $producteur;
-            if ($producteur->getSiret()) {
-                $ouvrages = $repoOuvrage->getOuvragesBySiretType($producteur->getSiret(), 'PDEC');
-                $ouvrage = null;
-                if ($ouvrages){
-                    $ouvrage = $ouvrages[0];
-                }
-            } else {
-                $ouvrage = null;
-            }
-            $entities[$i]['Ouvrage'] = $ouvrage;
-            $i++;
-        }
-
         $pdf = new PdfListeProducteurTauxSpecialAll('P', 'mm', 'A4');
 
         $titre = 'Liste des producteurs avec un taux d\'aide spécial';
@@ -3043,9 +3018,9 @@ class ReferentielController extends Controller {
         $pdf->setAuthor('Joel Lavabre');
         $pdf->AliasNbPages();
         $pdf->StartPageGroup();
-        $pdf->AddPage($entities);
+        $pdf->AddPage($producteurs);
         $pdf->SetFont('Arial', '', 10);
-        $pdf->Formatage($entities);
+        $pdf->Formatage($producteurs);
         $fichier = 'DEC_PRODUCTEURS_TAUX_SPECIAL.pdf';
         $pdf->Output($fichier, 'D');
 
@@ -3054,9 +3029,9 @@ class ReferentielController extends Controller {
     }
 
     public function listeCollecteursAction() {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -3066,7 +3041,7 @@ class ReferentielController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
 
-         $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
+        $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
         $repoOuvrageCorrespondant = $em->getRepository('AeagAeagBundle:OuvrageCorrespondant');
 
         $ouvrages = $repoOuvrage->getOuvragesByType('ODEC');
@@ -3102,9 +3077,9 @@ class ReferentielController extends Controller {
      */
 
     public function pdfListeCollecteursAction() {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -3114,7 +3089,7 @@ class ReferentielController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
 
-         $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
+        $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
         $repoOuvrageCorrespondant = $em->getRepository('AeagAeagBundle:OuvrageCorrespondant');
 
         $ouvrages = $repoOuvrage->getOuvragesByType('ODEC');
@@ -3155,9 +3130,9 @@ class ReferentielController extends Controller {
     }
 
     public function listeCentresTransitsAction() {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -3167,7 +3142,7 @@ class ReferentielController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
 
-       $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
+        $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
 
         $entities = $repoOuvrage->getOuvragesByType('CT');
 
@@ -3182,9 +3157,9 @@ class ReferentielController extends Controller {
      *  Fichier PDF
      */
     public function pdfListeCentresTransitsAction() {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -3213,9 +3188,9 @@ class ReferentielController extends Controller {
     }
 
     public function listeCentresTraitementsAction() {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -3240,9 +3215,9 @@ class ReferentielController extends Controller {
      *  Fichier PDF
      */
     public function pdfListeCentresTraitementsAction() {
-        
-       $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -3271,9 +3246,9 @@ class ReferentielController extends Controller {
     }
 
     public function listeProducteursAction() {
-        
+
         $user = $this->getUser();
-         if (!$user) {
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -3311,9 +3286,9 @@ class ReferentielController extends Controller {
      */
 
     public function pdfListeProducteursAction() {
-        
+
         $user = $this->getUser();
-         if (!$user) {
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -3343,9 +3318,9 @@ class ReferentielController extends Controller {
     }
 
     public function majProducteurAction($producteur_id = null, Request $request) {
-        
+
         $user = $this->getUser();
-         if (!$user) {
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -3354,8 +3329,8 @@ class ReferentielController extends Controller {
         $session->set('fonction', 'majProducteur');
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
-        
-         $user = $this->getUser();
+
+        $user = $this->getUser();
         $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
         $repoCodePostal = $em->getRepository('AeagAeagBundle:CodePostal');
         $repoCommune = $em->getRepository('AeagAeagBundle:Commune');
@@ -3467,9 +3442,9 @@ class ReferentielController extends Controller {
     }
 
     public function chargeDossierAction($ficent = null) {
-        
-          $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -3499,9 +3474,9 @@ class ReferentielController extends Controller {
     }
 
     public function chargeDeclarationcollecteurAction($ficent = null) {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -3611,9 +3586,9 @@ class ReferentielController extends Controller {
     }
 
     public function chargeSousDeclarationCollecteurAction($ficent = null) {
-        
+
         $user = $this->getUser();
-         if (!$user) {
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -3682,7 +3657,7 @@ class ReferentielController extends Controller {
                                     $emDec->remove($declarationdetail);
                                 }
                             }
-                         }
+                        }
                     }
                     $sousDeclarationCollecteur->setDeclarationCollecteur($declarationCollecteur);
                     $sousDeclarationCollecteur->setNumero($tab[2]);
@@ -3728,9 +3703,9 @@ class ReferentielController extends Controller {
     }
 
     public function chargeDeclarationProducteurAction($ficent = null) {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -3740,7 +3715,7 @@ class ReferentielController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
 
-          $repoParametre = $emDec->getRepository('AeagDecBundle:Parametre');
+        $repoParametre = $emDec->getRepository('AeagDecBundle:Parametre');
         $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
         $repoDeclarationProducteur = $emDec->getRepository('AeagDecBundle:DeclarationProducteur');
         if (substr($ficent, 0, 4) == 'init') {
@@ -3810,9 +3785,9 @@ class ReferentielController extends Controller {
     }
 
     public function chargeDeclarationDetailAction($ficent = null, $ajout = null, $modif = null) {
-        
+
         $user = $this->getUser();
-         if (!$user) {
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -3836,7 +3811,7 @@ class ReferentielController extends Controller {
         $repoNaf = $emDec->getRepository('AeagDecBundle:Naf');
         $repoTaux = $emDec->getRepository('AeagDecBundle:Taux');
         $repoProducteurTauxSpecial = $emDec->getRepository('AeagDecBundle:ProducteurTauxSpecial');
-    
+
         $anneeDecl = $repoParametre->getParametreByCode('ANNEE');
         if (substr($ficent, 0, 4) == 'init') {
             $parametre = $repoParametre->getParametreByCode('REP_REFERENTIEL');
@@ -3873,7 +3848,7 @@ class ReferentielController extends Controller {
                     $collecteur = $repoOuvrage->getOuvrageByOuvidType($tab[0], 'ODEC');
                     $producteurs = $repoOuvrage->getOuvragesBySiretType($tab[1], 'PDEC');
                     $producteur = null;
-                    if ($producteurs){
+                    if ($producteurs) {
                         $producteur = $producteurs[0];
                     }
                     if ($producteur) {
@@ -3898,19 +3873,19 @@ class ReferentielController extends Controller {
                     $declarationCollecteur = $repoDeclarationCollecteur->getDeclarationCollecteurByCollecteurAnnee($collecteur->getId(), $tab[2]);
                     $producteurs = $repoOuvrage->getOuvragesBySiretType($tab[1], 'PDEC');
                     $producteur = null;
-                    if ($producteurs){
+                    if ($producteurs) {
                         $producteur = $producteurs[0];
                     }
                     if ($producteur) {
-                            $producteurTauxSpecial = $repoProducteurTauxSpecial->getProducteurTauxSpecialBySiret($producteur->getSiret());
-                          if ($producteurTauxSpecial) {
-                              $tauxAide = $producteurTauxSpecial->getTaux() / 100;
-                              $bonnifier = true;
-                          } else {
-                              $tauxAeag =$repoTaux->getTauxByAnneeCode($tab[2], 'TAUXAIDE');
-                              $tauxAide =  $tauxAeag->getValeur();
-                              $bonnifier = false;
-                          }
+                        $producteurTauxSpecial = $repoProducteurTauxSpecial->getProducteurTauxSpecialBySiret($producteur->getSiret());
+                        if ($producteurTauxSpecial) {
+                            $tauxAide = $producteurTauxSpecial->getTaux() / 100;
+                            $bonnifier = true;
+                        } else {
+                            $tauxAeag = $repoTaux->getTauxByAnneeCode($tab[2], 'TAUXAIDE');
+                            $tauxAide = $tauxAeag->getValeur();
+                            $bonnifier = false;
+                        }
                         $declarationProducteur = $repoDeclarationProducteur->getDeclarationProducteurByProducteurAnnee($producteur->getId(), $tab[2]);
                         $sousDeclarationCollecteur = $repoSousDeclarationCollecteur->getSousDeclarationCollecteurByDeclarationCollecteurNumero($declarationCollecteur->getId(), $tab[3]);
                         if ($tab[4]) {
@@ -4014,7 +3989,7 @@ class ReferentielController extends Controller {
                         }
                         if ($entity->getMontAide() and $entity->getQuantiteAide()) {
                             $entity->setCoutFacture(round((($entity->getMontAide() / $entity->getQuantiteAide()) / $tauxAide), 4));
-                        }else{
+                        } else {
                             $entity->setCoutFacture(0);
                         }
                         if (!($tab[21] == "")) {
@@ -4063,14 +4038,14 @@ class ReferentielController extends Controller {
                     }
                 }
             };
-             if (count($message3) > 0){
-                    $messages = array($message3, null, null, null);
-                   // \Symfony\Component\VarDumper\VarDumper::dump($messages);
-                    //        return new Response ('');   
-                    return $messages;
-             }
-            
-            
+            if (count($message3) > 0) {
+                $messages = array($message3, null, null, null);
+                // \Symfony\Component\VarDumper\VarDumper::dump($messages);
+                //        return new Response ('');
+                return $messages;
+            }
+
+
             fclose($fic);
             $message3 = $ajout . " producteurs par déclaration créés et " . $modif . " producteurs par déclaration mis à jour";
             if (substr($ficent, 0, 4) == 'init') {
@@ -4085,9 +4060,9 @@ class ReferentielController extends Controller {
     }
 
     public function chargeFiliereAideAction() {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -4118,9 +4093,9 @@ class ReferentielController extends Controller {
     }
 
     public function listeDeclarationCollecteursAction($annee = null) {
-        
-         $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -4151,9 +4126,9 @@ class ReferentielController extends Controller {
     }
 
     public function listeSousDeclarationCollecteursAction($declarationCollecteur_id) {
-        
-          $user = $this->getUser();
-         if (!$user) {
+
+        $user = $this->getUser();
+        if (!$user) {
             return $this->render('AeagDecBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -4162,8 +4137,8 @@ class ReferentielController extends Controller {
         $session->set('fonction', 'listeSousDeclarationCollecteurs');
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
-        
-         $repoDeclarationCollecteur = $emDec->getRepository('AeagDecBundle:DeclarationCollecteur');
+
+        $repoDeclarationCollecteur = $emDec->getRepository('AeagDecBundle:DeclarationCollecteur');
         $repoSousDeclarationCollecteur = $emDec->getRepository('AeagDecBundle:SousDeclarationCollecteur');
 
         $declarationCollecteur = $repoDeclarationCollecteur->getDeclarationCollecteurById($declarationCollecteur_id);

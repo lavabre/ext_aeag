@@ -9,8 +9,8 @@
  * Description of PDF
  *
  * @author lavabre
- * 
- * 
+ *
+ *
  */
 
 namespace Aeag\DecBundle\DependencyInjection;
@@ -69,9 +69,9 @@ class PdfListeProducteurTauxSpecialAll extends PageGroup {
         // Entete
         $this->SetFont('Arial', 'B');
         // En-tête des colonnes
-        $w = array(25, 150, 15);
+        $w = array(25, 75, 75, 15);
         $col = array();
-        $header = array('Siret', 'Raison sociale', 'Taux');
+        $header = array('Siret', 'Raison sociale', 'Localisation', 'Taux');
         // En-tête
         for ($i = 0; $i < count($header); $i++) {
             $this->Cell($w[$i], 7, $header[$i], 1, 0, 'C');
@@ -93,20 +93,17 @@ class PdfListeProducteurTauxSpecialAll extends PageGroup {
         $fill = false;
         // Chargement des données
         foreach ($entities as $entity) {
-             $this->Cell($w[0], 4, $entity[0]->getSiret(), 'LR', 0, 'C', $fill);
-             if ($entity['Ouvrage']){
-                $this->Cell($w[1], 4, $entity['Ouvrage']->getLibelle() , 'LR', 0, 'L', $fill);
-             }else {
-                $this->Cell($w[1], 4, 'Inconnu', 'LR', 0, 'L', $fill);
-             }
-             $this->Cell($w[2], 4, number_format($entity[0]->getTaux(), 2, ',', ' ') . ' %', 'LR', 0, 'C', $fill);
+            $this->Cell($w[0], 4, $entity->getSiret(), 'LR', 0, 'C', $fill);
+            $this->Cell($w[1], 4, $entity->getRaisonSociale(), 'LR', 0, 'L', $fill);
+            $this->Cell($w[2], 4, $entity->getLocalisation(), 'LR', 0, 'L', $fill);
+            $this->Cell($w[3], 4, number_format($entity->getTaux(), 2, ',', ' ') . ' %', 'LR', 0, 'C', $fill);
             $this->ln();
             $h = $h + 4;
             $fill = !$fill;
             $nbLignes += 1;
             $totNbLignes = $totNbLignes + 1;
             if ($nbLignes > 55) {
-                // rectangle 
+                // rectangle
                 $this->Rect($x, $y, 190, $h, 'D');
                 $this->ln();
                 // saut de page
@@ -121,8 +118,8 @@ class PdfListeProducteurTauxSpecialAll extends PageGroup {
                 // Entete
                 $this->SetFont('Arial', 'B');
                 // En-tête des colonnes
-                $w = array(25, 150, 15);
-                $header = array('Siret', 'Raison sociale', 'Taux');
+                $w = array(25, 75, 75, 15);
+                $header = array('Siret', 'Raison sociale', 'Localisation', 'Taux');
                 // En-tête
                 for ($i = 0; $i < count($header); $i++)
                     $this->Cell($w[$i], 7, $header[$i], 1, 0, 'C');
@@ -140,7 +137,7 @@ class PdfListeProducteurTauxSpecialAll extends PageGroup {
                 $fill = false;
             }
         }
-       // rectangle 
+        // rectangle
         $this->Rect($x, $y, 190, $h, 'D');
         $this->ln();
     }
@@ -158,5 +155,3 @@ class PdfListeProducteurTauxSpecialAll extends PageGroup {
     }
 
 }
-
-?>

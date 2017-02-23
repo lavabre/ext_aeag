@@ -47,7 +47,7 @@ class DechetFiliereRepository extends EntityRepository {
     public function getDechetFiliereByDechetFiliere($dechet, $filiere) {
         $query = "select c";
         $query = $query . " from Aeag\DecBundle\Entity\DechetFiliere c";
-        $query = $query . " where c.Dechet = :dechet";
+        $query = $query . " where c.Dechet = :dechet ";
         $query = $query . " and c.Filiere = :filiere";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('dechet', $dechet);
@@ -62,7 +62,7 @@ class DechetFiliereRepository extends EntityRepository {
     public function getDechetFiliereByDechetFiliereAnnee($dechet, $filiere, $annee) {
         $query = "select c";
         $query = $query . " from Aeag\DecBundle\Entity\DechetFiliere c";
-        $query = $query . " where c.Dechet = ':dechet";
+        $query = $query . " where c.Dechet = :dechet";
         $query = $query . " and c.Filiere = :filiere";
         $query = $query . " and c.annee= :annee";
         $qb = $this->_em->createQuery($query);
