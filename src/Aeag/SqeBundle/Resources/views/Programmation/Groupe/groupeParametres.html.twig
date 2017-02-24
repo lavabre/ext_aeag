@@ -2,7 +2,7 @@
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
     <h4 class="modal-title" id="ModalLabel_groupe_paramtres">
-      paramètres du groupe {{ groupe.groupe.codeGrp}} {{ groupe.groupe.libelleGrp}}
+        paramètres du groupe {{ groupe.groupe.codeGrp}} {{ groupe.groupe.libelleGrp}}
     </h4>
 </div>
 <div class="modal-body-sqe">
@@ -10,371 +10,359 @@
     <div class="row responsive">
         <div class="col-md-offset-1 col-md-10">
             <div class="small">
-                
-                  <div class="col-md-2  text-center" id="idNbCocher">
+
+                <div class="col-md-2  text-center" id="idNbCocher">
                     <p class="btn btn-primary"></p>
-                   </div>
-                
+                </div>
+
                 <form action="#" class="form-horizontal" id="idForm_groupe_parametres" method="post">
                     <table class="table table-bordered table-condensed table-advance" id="idTableGroupeParametres">
-                    <thead>
-                       <tr>
-                          <th width="1%" align="center">
-                          {% if action == 'P'  and maj != 'V' %}
-                                <a class="btn btn-danger" id="decocherParametres"  href="#" title="Décocher"><i class="fa fa-square-o fa-lg"></i></a>
-                                <a class="btn btn-success" id="cocherParametres"  href="#" title="Cocher"><i class="fa fa-check-square-o fa-lg"></i></a>
-                           {% endif %}
-                           </th>
-                            <th>Code</th>
-                            <th>Libelle</th>
-                            <th>Fraction</th>
-                            <th>Unité</th>
-                            <th>Prestataire</th>
-                         </tr>
-                    </thead>
-                    <tbody>
-                        {% if groupe.parametres | length %}
-                        {% for parametre in groupe.parametres %}
-                              <tr>
-                                  {% if action == 'P'  and maj != 'V' %}
-                                   <td align="center">
-                                      <div class="checbox">
-                                           {% if parametre.cocher == 'O' %}
-                                                <input type="checkbox" id="check_{{ parametre.pgSandreParametre.codeParametre }}" name="check[]" value="{{ parametre.pgSandreParametre.codeParametre }}" checked="checked">
-                                           {% else %}    
-                                                <input type="checkbox" id="check_{{ parametre.pgSandreParametre.codeParametre }}" name="check[]" value="{{ parametre.pgSandreParametre.codeParametre }}">
-                                           {% endif %}
-                                      </div><!-- /input-group -->
-                                   </td> 
-                                  {% else %}
-                                    <td align="center">
-                                       {% if parametre.cocher == 'O' %}
-                                                 <span class="glyphicon glyphicon-check" aria-hidden="true"></span>
-                                            {% endif %} 
-                                    </td>
-                                  {% endif %}
-                                <td width='5%'>{{ parametre.pgSandreParametre.codeParametre }}</td>
-                                <td>{{ parametre.pgSandreParametre.nomParametre }}</td>
-                                <td>{% if parametre.pgSandreFraction | length %}
-                                    {{ parametre.pgSandreFraction.nomFraction }}
-                                    {% endif %}
-                                </td>
-                                <td>{%if parametre.pgSandreUnite | length %}
-                                    {{ parametre.pgSandreUnite.nomUnite }}
-                                   {% endif %}
-                                </td>
-                                <td  width='25%'>
-                                    <input type="hidden" id="idPrestataire_{{ parametre.pgSandreParametre.codeParametre }}" name="idPrestataire_{{ parametre.pgSandreParametre.codeParametre }}" value="{{ groupe.prestataire.adrCorId }}">
-                                    {% if groupe.groupe.typeGrp  == 'ANA' %}
-                                       {% if action == 'P'  and maj != 'V' %}
-                                              {%if laboratoires | length > 1 %}  
-                                                <select id="prestataire_{{ parametre.pgSandreParametre.codeParametre }}" name="prestataire_{{ parametre.pgSandreParametre.codeParametre }}" class="form-control input-small" placeholder="Prestataire" name="prestataire_{{ parametre.pgSandreParametre.codeParametre }}" required="required">
-                                              {% else %}
-                                                <select id="prestataire_{{ parametre.pgSandreParametre.codeParametre }}" name="prestataire_{{ parametre.pgSandreParametre.codeParametre }}" readonly class="form-control input-small" placeholder="Prestataire" name="prestataire_{{ parametre.pgSandreParametre.codeParametre }}" required="required">
-                                              {% endif %}
-                                                    <option value=""></option>
-                                                    {%if laboratoires | length %}  
-                                                        {% for laboratoire in laboratoires %}
-                                                            <option  value="{{ laboratoire.adrCorId }}" >{{ laboratoire.nomCorres }}</option>
-                                                        {% endfor %}
-                                                    {%endif%}
-                                               </select>
-                                      {% else %}
-                                             {% if groupe.prestataire %}
-                                                 <input type="texte"  readonly id="prestataire_{{ parametre.pgSandreParametre.codeParametre }}" name="prestataire_{{ parametre.pgSandreParametre.codeParametre }}" value="{{ parametre.prestataire.nomCorres }}">
-                                             {% endif %}
-                                      {% endif %}
-                                     {% else %}
-                                           {% if groupe.prestataire %}
-                                              <input type="texte"  readonly id="prestataire_{{ parametre.pgSandreParametre.codeParametre }}" name="prestataire_{{ parametre.pgSandreParametre.codeParametre }}" value="{{ parametre.prestataire.nomCorres }}">
+                        <thead>
+                            <tr>
+                                <th width="1%" align="center">
+                                    {% if action == 'P'  and maj != 'V' %}
+                                        <a class="btn btn-danger" id="decocherParametres"  href="#" title="Décocher"><i class="fa fa-square-o fa-lg"></i></a>
+                                        <a class="btn btn-success" id="cocherParametres"  href="#" title="Cocher"><i class="fa fa-check-square-o fa-lg"></i></a>
+                                        {% endif %}
+                                </th>
+                                <th>Code</th>
+                                <th>Libelle</th>
+                                <th>Fraction</th>
+                                <th>Unité</th>
+                                <th>Prestataire</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if groupe.parametres | length %}
+                                {% for parametre in groupe.parametres %}
+                                    <tr>
+                                        {% if action == 'P'  and maj != 'V' %}
+                                            <td align="center">
+                                                <div class="checbox">
+                                                    {% if parametre.cocher == 'O' %}
+                                                        <input type="checkbox" id="check_{{ parametre.pgSandreParametre.codeParametre }}" name="check[]" value="{{ parametre.pgSandreParametre.codeParametre }}" checked="checked">
+                                                    {% else %}
+                                                        <input type="checkbox" id="check_{{ parametre.pgSandreParametre.codeParametre }}" name="check[]" value="{{ parametre.pgSandreParametre.codeParametre }}">
+                                                    {% endif %}
+                                                </div><!-- /input-group -->
+                                            </td>
+                                        {% else %}
+                                            <td align="center">
+                                                {% if parametre.cocher == 'O' %}
+                                                    <span class="glyphicon glyphicon-check" aria-hidden="true"></span>
+                                                {% endif %}
+                                            </td>
+                                        {% endif %}
+                                        <td width='5%'>{{ parametre.pgSandreParametre.codeParametre }}</td>
+                                        <td>{{ parametre.pgSandreParametre.nomParametre }}</td>
+                                        <td>{% if parametre.pgSandreFraction | length %}
+                                            {{ parametre.pgSandreFraction.nomFraction }}
                                             {% endif %}
-                                    {% endif %}
-                               </td>
-                               </tr>
-                         {% endfor %}
-                         {% endif %}
-                    </tbody>
-                </table>
-                </form>
-            </div>
-        </div>
-    </div>
- </div>
-<div class="modal-footer">
-    {% if action == 'P'  and maj != 'V'  %}
-       <div id="idMessage_parametre"></div>
-       <button id="idSubmit_parametre_{{groupe.groupe.id}}" type="button" class="btn btn-success">
-           <i class="fa fa-check"> Valider</i>
-       </button>
-    {% endif %}
-       <button id="btFermer_parametre_{{groupe.groupe.id}}" type="button" class="btn btn-default" data-dismiss="modal">
-           <i class="fa fa-undo"> Fermer</i>
-       </button>
-</div>
+                                            </td>
+                                            <td>{%if parametre.pgSandreUnite | length %}
+                                                {{ parametre.pgSandreUnite.nomUnite }}
+                                                {% endif %}
+                                                </td>
+                                                <td  width='25%'>
+                                                    <input type="hidden" id="idPrestataire_{{ parametre.pgSandreParametre.codeParametre }}" name="idPrestataire_{{ parametre.pgSandreParametre.codeParametre }}" value="{{ groupe.prestataire.adrCorId }}">
+                                                    {% if groupe.groupe.typeGrp  == 'ANA' %}
+                                                        {% if action == 'P'  and maj != 'V' %}
+                                                            {%if laboratoires | length > 1 %}
+                                                                <select id="prestataire_{{ parametre.pgSandreParametre.codeParametre }}" name="prestataire_{{ parametre.pgSandreParametre.codeParametre }}" class="form-control input-small" placeholder="Prestataire" name="prestataire_{{ parametre.pgSandreParametre.codeParametre }}" required="required">
+                                                                {% else %}
+                                                                    <select id="prestataire_{{ parametre.pgSandreParametre.codeParametre }}" name="prestataire_{{ parametre.pgSandreParametre.codeParametre }}" readonly class="form-control input-small" placeholder="Prestataire" name="prestataire_{{ parametre.pgSandreParametre.codeParametre }}" required="required">
+                                                                    {% endif %}
+                                                                    <option value=""></option>
+                                                                    {%if laboratoires | length %}
+                                                                        {% for laboratoire in laboratoires %}
+                                                                            <option  value="{{ laboratoire.adrCorId }}" >{{ laboratoire.nomCorres }}</option>
+                                                                        {% endfor %}
+                                                                    {%endif%}
+                                                                </select>
+                                                            {% else %}
+                                                                {% if groupe.prestataire %}
+                                                                    <input type="texte"  readonly id="prestataire_{{ parametre.pgSandreParametre.codeParametre }}" name="prestataire_{{ parametre.pgSandreParametre.codeParametre }}" value="{{ parametre.prestataire.nomCorres }}">
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        {% else %}
+                                                            {% if groupe.prestataire %}
+                                                                <input type="texte"  readonly id="prestataire_{{ parametre.pgSandreParametre.codeParametre }}" name="prestataire_{{ parametre.pgSandreParametre.codeParametre }}" value="{{ parametre.prestataire.nomCorres }}">
+                                                            {% endif %}
+                                                        {% endif %}
+                                                        </td>
+                                                        </tr>
+                                                        {% endfor %}
+                                                            {% endif %}
+                                                                </tbody>
+                                                                </table>
+                                                                </form>
+                                                                </div>
+                                                                </div>
+                                                                </div>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    {% if action == 'P'  and maj != 'V'  %}
+                                                                        <div id="idMessage_parametre"></div>
+                                                                        <button id="idSubmit_parametre_{{groupe.groupe.id}}" type="button" class="btn btn-success">
+                                                                            <i class="fa fa-check"> Valider</i>
+                                                                        </button>
+                                                                    {% endif %}
+                                                                    <button id="btFermer_parametre_{{groupe.groupe.id}}" type="button" class="btn btn-default" data-dismiss="modal">
+                                                                        <i class="fa fa-undo"> Fermer</i>
+                                                                    </button>
+                                                                </div>
 
-<script>
-    jQuery(document).ready(function() {
-        
-         $('#idMessage_parametre').hide();
-         
-            tableGroupeParametres =     $('#idTableGroupeParametres').DataTable(
-                         { "stateSave": false,
-                             "order": [[ 1, "asc" ]],
-                            "oLanguage": {
-                             "sSearch": "Filtre",
-                             "sFirst": "1ere page",
-                             "sLast": "Dernière page",
-                             "sNext": "Prochaine page",
-                             "sPrevious": "Page précédente",
-                             "EmptyTable": "Pas de données",
-                             "sInfo": "Nombre d'enregistrements :  _TOTAL_",
-                             "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
-                             "sZeroRecords": "Pas d'enregistrement à afficher",
-                             "sInfoEmpty": "Pas d'enregistrement à afficher",
-                             "sInfoThousands": " ",
-                             "sLengthMenu": 'Afficher <select>' +
-                                     '<option value="10">10</option>' +
-                                     '<option value="20">20</option>' +
-                                     '<option value="30">30</option>' +
-                                     '<option value="40">40</option>' +
-                                     '<option value="50">50</option>' +
-                                     '<option value="-1">Tous</option>' +
-                                     '</select> enregistrements',
-                             "sPaginationType": "full_numbers"
-                         }
-                        }
-                       );
-        {% if groupe.groupe.typeGrp  == 'ANA' %}
-            {% if groupe.parametres | length %}
-                var info = tableGroupeParametres.page.info();
-                var nbRecords = $('#idTableGroupeParametres_length option:selected').val();
-                var filtre = $('#idTableGroupeParametres_filter input').val();
-                   if (filtre != ''){
-                        var initval = '';
-                        tableGroupeParametres.search(initval).draw();
-                     };
-                tableGroupeParametres.page.len( -1 ).draw();
-                {% for parametre in groupe.parametres %}    
-                    $(document).on('click','#check_{{ parametre.pgSandreParametre.codeParametre }}',function(e){
-                             nbcocher();
-                     });
-                    {%if laboratoires | length %}  
-                        {% if parametre.prestataire %}
-                            {% for laboratoire in laboratoires if parametre.prestataire.adrCorId == laboratoire.adrCorId %}
-                                $("#prestataire_{{ parametre.pgSandreParametre.codeParametre }} option[value='" + {{ laboratoire.adrCorId }} + "']").attr('selected','selected');
-                             {#   $("#prestataire_{{ parametre.pgSandreParametre.codeParametre }}").val('{{ laboratoire.nomCorres }}');#}
-                            {% endfor %}
-                        {% endif %}
-                    {% endif %}
-                {% endfor %}
-                   if (filtre != ''){
-                        tableGroupeParametres.search(filtre).draw();
-                   }
-                   tableGroupeParametres.page.len( nbRecords ).draw();
-            {% endif %}   
-        {% endif %}
-       
-        {% if valide == 'O' %}
-            $('#cocherParametres').hide();
-            $('#decocherParametres').show();
-        {% else  %}
-           $('#cocherParametres').show();
-           $('#decocherParametres').hide();
-        {% endif %}
-                    
-        $(document).on('click','#cocherParametres',function(e){
-                var info = tableGroupeParametres.page.info();
-                var nbRecords = $('#idTableGroupeParametres_length option:selected').val();
-                var filtre = $('#idTableGroupeParametres_filter input').val();
-                   if (filtre != ''){
-                        var initval = '';
-                        tableGroupeParametres.search(initval).draw();
-                     };
-                tableGroupeParametres.page.len( -1 ).draw();
-            $('#cocherParametres').hide();
-            $('#decocherParametres').show();
-            {% if groupe.parametres | length %}
-                {% for parametre in groupe.parametres %}
-                    $('#check_{{ parametre.pgSandreParametre.codeParametre }}').prop( "checked", true );
-                 {% endfor %}
-             {% endif %}
-            if (filtre != ''){
-                  tableGroupeParametres.search(filtre).draw();
-             };
-              tableGroupeParametres.page.len( nbRecords ).draw();
-             nbcocher();
-        });
-        
-         $(document).on('click','#decocherParametres',function(e){
-               var info = tableGroupeParametres.page.info();
-                var nbRecords = $('#idTableGroupeParametres_length option:selected').val();
-                var filtre = $('#idTableGroupeParametres_filter input').val();
-                   if (filtre != ''){
-                        var initval = '';
-                        tableGroupeParametres.search(initval).draw();
-                     };
-                tableGroupeParametres.page.len( -1 ).draw();
-            $('#cocherParametres').show();
-            $('#decocherParametres').hide();
-            {% if groupe.parametres | length %}
-                {% for parametre in groupe.parametres %}
-                    $('#check_{{ parametre.pgSandreParametre.codeParametre }}').prop( "checked", false );
-                 {% endfor %}
-            {% endif %}
-            if (filtre != ''){
-                  tableGroupeParametres.search(filtre).draw();
-             };
-            tableGroupeParametres.page.len( nbRecords ).draw();
-            nbcocher();
-        });
-        
-        {% if groupe.parametres | length %}
-               {% for parametre in groupe.parametres %}
-                        $(document).on('click','#check_{{ parametre.pgSandreParametre.codeParametre }}',function(e){
-                             nbcocher();
-                       });
-               {% endfor %}
-        {% endif %}
-        
-        
-        
-        $(document).on('click','#idSubmit_parametre_{{groupe.groupe.id}}',function(e){
-             e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-            $('#modalTraitementEncours').modal('toggle');
-            var info = tableGroupeParametres.page.info();
-            var nbRecords = $('#idTableGroupeParametres_length option:selected').val();
-            var filtre = $('#idTableGroupeParametres_filter input').val();
-               if (filtre != ''){
-                    var initval = '';
-                    tableGroupeParametres.search(initval).draw();
-                 };
-            tableGroupeParametres.page.len( -1 ).draw();
-            var $this = $('#idForm_groupe_parametres'); // L'objet jQuery du formulaire
-           var url = '{{ path("AeagSqeBundle_programmation_groupe_valider",{"groupeId":  "texte","action": "par1","maj":"par2","lotan":"par3"}) }}', // Le nom du fichier indiqué dans le formulaire
-            url = url.replace("texte", {{ groupe.groupe.id }});
-            url = url.replace("par1", '{{ action }}');
-            url = url.replace("amp;","");
-            url = url.replace("par2", '{{ maj }}');
-            url = url.replace("amp;","");
-            url = url.replace("par3", '{{ lotan.id }}');
-            url = url.replace("amp;","");
-            $.ajax({
-                    url: url,
-                    type: 'POST', // La méthode indiquée dans le formulaire (get ou post)
-                    data: $this.serialize(), // Je sérialise les données (j'envoie toutes les valeurs présentes dans le formulaire)
-                    success: function(messages) { // Je récupère la réponse du fichier PHP
-                      tabMessages = JSON.parse(messages)
-                      if (tabMessages.length == 0){
-                        var nbParametres = 0;
-                           var info = tableGroupeParametres.page.info();
-                            var nbRecords = $('#idTableGroupeParametres_length option:selected').val();
-                            var filtre = $('#idTableGroupeParametres_filter input').val();
-                               if (filtre != ''){
-                                    var initval = '';
-                                    tableGroupeParametres.search(initval).draw();
-                                 };
-                            tableGroupeParametres.page.len( -1 ).draw();
-                        {% if groupe.parametres | length %}
-                           {% for parametre in groupe.parametres %}
-                                if ($('#check_{{ parametre.pgSandreParametre.codeParametre }}').prop('checked') == true){
-                                    nbParametres = nbParametres + 1;
-                                }
-                            {% endfor %}
-                        {% endif %}
-                        $("#idNbParametres_{{ groupe.groupe.id }}").empty().append(nbParametres + '/' + {{ groupe.parametres | length }} );
-                        if (nbParametres == 0  && {{ groupe.parametres | length }} != 0){
-                             $("#idTd_{{ groupe.groupe.id }} a").removeClass("btn-success").addClass("btn-info");
-                            $('#idValide_{{ groupe.groupe.id }}').val('N');
-                        }else{
-                            $("#idTd_{{ groupe.groupe.id }} a").removeClass("btn-info").addClass("btn-success");
-                            $('#idValide_{{ groupe.groupe.id }}').val('O');
-                        };
-                         if (filtre != ''){
-                                tableGroupeParametres.search(filtre).draw();
-                           };
-                          tableGroupeParametres.page.len( nbRecords ).draw();
-                        $('#modal_groupe_parametres').modal('hide');
-                        $('#modalTraitementEncours').modal('hide');
-                       }else{
-                       $('#idMessage_parametre').show();
-                        var html = '';
-                        html = html + '<div class="alert alert-danger alert-dismissible" role="alert">';
-                        html = html + '<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>';
-                        for (i = 0; i <= tabMessages.length-1; i++)
-                        { 
-                            html = html + '<strong>' + tabMessages[i] + '</strong><br/>';
-                        }
-                        html = html + '</div>';
-                        $('#idMessage_parametre').empty().append(html);
-                        $('#modalTraitementEncours').modal('hide');
-                        };
-                        }
-             });
-            if (filtre != ''){
-                  tableGroupeParametres.search(filtre).draw();
-             };
-            tableGroupeParametres.page.len( nbRecords ).draw();
-          });
-         
-          
-        $(document).on('click','#btFermer_parametre',function(e){
-           var info = tableGroupeParametres.page.info();
-            var nbRecords = $('#idTableGroupeParametres_length option:selected').val();
-            var filtre = $('#idTableGroupeParametres_filter input').val();
-               if (filtre != ''){
-                    var initval = '';
-                    tableGroupeParametres.search(initval).draw();
-                 };
-            tableGroupeParametres.page.len( -1 ).draw();
-            var nbParametres = 0;
-            var nbParametres = 0;
-            {% if groupe.parametres | length %}
-               {% for parametre in groupe.parametres %}
-                   {% if action == 'P'  and maj != 'V'  %}
-                    if ($('#check_{{ parametre.pgSandreParametre.codeParametre }}').prop('checked') == true){
-                        nbParametres = nbParametres + 1;
-                    }
-                    {% else %}
-                        {% if parametre.cocher == 'O' %}
-                            nbParametres = nbParametres + 1;
-                        {% endif %}
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
-            $("#idNbParametres").empty().append(nbParametres + '/' + {{ groupe.parametres | length }} );
-             if (filtre != ''){
-                  tableGroupeParametres.search(filtre).draw();
-             };
-            tableGroupeParametres.page.len( nbRecords ).draw();
-            $('#modal_groupe_parametres').modal('hide');
-         });
-         
-         
-         
-      
-          /* Nombre de groupes cocheées*/
-            var nbcocher = function() {
-            var info = tableGroupeParametres.page.info();
-            var nbRecords = $('#idTableGroupeParametres_length option:selected').val();
-            var filtre = $('#idTableGroupeParametres_filter input').val();
-               if (filtre != ''){
-                    var initval = '';
-                    tableGroupeParametres.search(initval).draw();
-                 };
-            tableGroupeParametres.page.len( -1 ).draw();
-            var n = $( "input:checked" ).length;
-            html = "Paramètres cochés  : <span class='badge'>" + n  + "</span>"; 
-            $("#idNbCocher p").html(html);
-            if (filtre != ''){
-                  tableGroupeParametres.search(filtre).draw();
-             };
-            tableGroupeParametres.page.len(nbRecords).draw();
-            tableGroupeParametres.page(info.page).draw(false);
-           };
-           nbcocher();
-      
-   
+                                                                <script>
+                                                                    jQuery(document).ready(function() {
 
-    });
+                                                                    $('#idMessage_parametre').hide();
+                                                                    tableGroupeParametres = $('#idTableGroupeParametres').DataTable(
+                                                                    { "stateSave": false,
+                                                                            "order": [[ 1, "asc" ]],
+                                                                            "oLanguage": {
+                                                                            "sSearch": "Filtre",
+                                                                                    "sFirst": "1ere page",
+                                                                                    "sLast": "Dernière page",
+                                                                                    "sNext": "Prochaine page",
+                                                                                    "sPrevious": "Page précédente",
+                                                                                    "EmptyTable": "Pas de données",
+                                                                                    "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+                                                                                    "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+                                                                                    "sZeroRecords": "Pas d'enregistrement à afficher",
+                                                                                    "sInfoEmpty": "Pas d'enregistrement à afficher",
+                                                                                    "sInfoThousands": " ",
+                                                                                    "sLengthMenu": 'Afficher <select>' +
+                                                                                    '<option value="10">10</option>' +
+                                                                                    '<option value="20">20</option>' +
+                                                                                    '<option value="30">30</option>' +
+                                                                                    '<option value="40">40</option>' +
+                                                                                    '<option value="50">50</option>' +
+                                                                                    '<option value="-1">Tous</option>' +
+                                                                                    '</select> enregistrements',
+                                                                                    "sPaginationType": "full_numbers"
+                                                                            }
+                                                                    }
+                                                                    );
+                                                                    {% if groupe.groupe.typeGrp  == 'ANA' %}
+                                                                        {% if groupe.parametres | length %}
+                                                                                var info = tableGroupeParametres.page.info();
+                                                                                var nbRecords = $('#idTableGroupeParametres_length option:selected').val();
+                                                                                var filtre = $('#idTableGroupeParametres_filter input').val();
+                                                                                if (filtre != ''){
+                                                                                var initval = '';
+                                                                                tableGroupeParametres.search(initval).draw();
+                                                                                };
+                                                                                tableGroupeParametres.page.len( - 1).draw();
+                                                                            {% for parametre in groupe.parametres %}
+                                                                                $(document).on('click', '#check_{{ parametre.pgSandreParametre.codeParametre }}', function(e){
+                                                                                nbcocher();
+                                                                                });
+                                                                                {%if laboratoires | length %}
+                                                                                    {% if parametre.prestataire %}
+                                                                                        {% for laboratoire in laboratoires if parametre.prestataire.adrCorId == laboratoire.adrCorId %}
+                                                                                                $("#prestataire_{{ parametre.pgSandreParametre.codeParametre }} option[value='" +  {{ laboratoire.adrCorId }} + "']").attr('selected', 'selected');
+                                                                                            {#   $("#prestataire_{{ parametre.pgSandreParametre.codeParametre }}").val('{{ laboratoire.nomCorres }}');#}
+                                                                                        {% endfor %}
+                                                                                    {% endif %}
+                                                                                {% endif %}
+                                                                            {% endfor %}
+                                                                                    if (filtre != ''){
+                                                                                    tableGroupeParametres.search(filtre).draw();
+                                                                                    }
+                                                                                    tableGroupeParametres.page.len(nbRecords).draw();
+                                                                        {% endif %}
+                                                                    {% endif %}
 
-</script>
+                                                                    {% if valide == 'O' %}
+                                                                            $('#cocherParametres').hide();
+                                                                            $('#decocherParametres').show();
+                                                                    {% else  %}
+                                                                            $('#cocherParametres').show();
+                                                                            $('#decocherParametres').hide();
+                                                                    {% endif %}
+
+                                                                            $(document).on('click', '#cocherParametres', function(e){
+                                                                            var info = tableGroupeParametres.page.info();
+                                                                            var nbRecords = $('#idTableGroupeParametres_length option:selected').val();
+                                                                            var filtre = $('#idTableGroupeParametres_filter input').val();
+                                                                            if (filtre != ''){
+                                                                            var initval = '';
+                                                                            tableGroupeParametres.search(initval).draw();
+                                                                            };
+                                                                            tableGroupeParametres.page.len( - 1).draw();
+                                                                            $('#cocherParametres').hide();
+                                                                            $('#decocherParametres').show();
+                                                                    {% if groupe.parametres | length %}
+                                                                        {% for parametre in groupe.parametres %}
+                                                                                    $('#check_{{ parametre.pgSandreParametre.codeParametre }}').prop("checked", true);
+                                                                        {% endfor %}
+                                                                    {% endif %}
+                                                                                 if (filtre != ''){
+                                                                                 tableGroupeParametres.search(filtre).draw();
+                                                                                 };
+                                                                                 tableGroupeParametres.page.len(nbRecords).draw();
+                                                                                 nbcocher();
+                                                                                 });
+                                                                                 $(document).on('click', '#decocherParametres', function(e){
+                                                                                 var info = tableGroupeParametres.page.info();
+                                                                                 var nbRecords = $('#idTableGroupeParametres_length option:selected').val();
+                                                                                 var filtre = $('#idTableGroupeParametres_filter input').val();
+                                                                                 if (filtre != ''){
+                                                                                 var initval = '';
+                                                                                 tableGroupeParametres.search(initval).draw();
+                                                                                 };
+                                                                                 tableGroupeParametres.page.len( - 1).draw();
+                                                                                 $('#cocherParametres').show();
+                                                                                 $('#decocherParametres').hide();
+                                                                    {% if groupe.parametres | length %}
+                                                                        {% for parametre in groupe.parametres %}
+                                                                                    $('#check_{{ parametre.pgSandreParametre.codeParametre }}').prop("checked", false);
+                                                                        {% endfor %}
+                                                                    {% endif %}
+                                                                                if (filtre != ''){
+                                                                                tableGroupeParametres.search(filtre).draw();
+                                                                                };
+                                                                                tableGroupeParametres.page.len(nbRecords).draw();
+                                                                                nbcocher();
+                                                                                });
+                                                                    {% if groupe.parametres | length %}
+                                                                        {% for parametre in groupe.parametres %}
+                                                                                   $(document).on('click', '#check_{{ parametre.pgSandreParametre.codeParametre }}', function(e){
+                                                                                   nbcocher();
+                                                                                   });
+                                                                        {% endfor %}
+                                                                    {% endif %}
+
+
+
+                                                                            $(document).on('click', '#idSubmit_parametre_{{groupe.groupe.id}}', function(e){
+                                                                            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                                                                            $('#modalTraitementEncours').modal('toggle');
+                                                                            var info = tableGroupeParametres.page.info();
+                                                                            var nbRecords = $('#idTableGroupeParametres_length option:selected').val();
+                                                                            var filtre = $('#idTableGroupeParametres_filter input').val();
+                                                                            if (filtre != ''){
+                                                                            var initval = '';
+                                                                            tableGroupeParametres.search(initval).draw();
+                                                                            };
+                                                                            tableGroupeParametres.page.len( - 1).draw();
+                                                                            var $this = $('#idForm_groupe_parametres'); // L'objet jQuery du formulaire
+                                                                            var url = '{{ path("AeagSqeBundle_programmation_groupe_valider",{"groupeId":  "texte","action": "par1","maj":"par2","lotan":"par3"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                                                                    url = url.replace("texte", {{ groupe.groupe.id }});
+                                                                            url = url.replace("par1", '{{ action }}');
+                                                                            url = url.replace("amp;", "");
+                                                                            url = url.replace("par2", '{{ maj }}');
+                                                                            url = url.replace("amp;", "");
+                                                                            url = url.replace("par3", '{{ lotan.id }}');
+                                                                            url = url.replace("amp;", "");
+                                                                            $.ajax({
+                                                                            url: url,
+                                                                                    type: 'POST', // La méthode indiquée dans le formulaire (get ou post)
+                                                                                    data: $this.serialize(), // Je sérialise les données (j'envoie toutes les valeurs présentes dans le formulaire)
+                                                                                    success: function(messages) { // Je récupère la réponse du fichier PHP
+                                                                                    tabMessages = JSON.parse(messages)
+                                                                                            if (tabMessages.length == 0){
+                                                                                    var nbParametres = 0;
+                                                                                    var info = tableGroupeParametres.page.info();
+                                                                                    var nbRecords = $('#idTableGroupeParametres_length option:selected').val();
+                                                                                    var filtre = $('#idTableGroupeParametres_filter input').val();
+                                                                                    if (filtre != ''){
+                                                                                    var initval = '';
+                                                                                    tableGroupeParametres.search(initval).draw();
+                                                                                    };
+                                                                                    tableGroupeParametres.page.len( - 1).draw();
+                                                                    {% if groupe.parametres | length %}
+                                                                        {% for parametre in groupe.parametres %}
+                                                                                                       if ($('#check_{{ parametre.pgSandreParametre.codeParametre }}').prop('checked') == true){
+                                                                                                       nbParametres = nbParametres + 1;
+                                                                                                       }
+                                                                        {% endfor %}
+                                                                    {% endif %}
+                                                                                                    $("#idNbParametres_{{ groupe.groupe.id }}").empty().append(nbParametres + '/' +  {{ groupe.parametres | length }} );
+                                                                                                    if (nbParametres == 0 &&  {{ groupe.parametres | length }} != 0){
+                                                                                                    $("#idTd_{{ groupe.groupe.id }} a").removeClass("btn-success").addClass("btn-info");
+                                                                                                    $('#idValide_{{ groupe.groupe.id }}').val('N');
+                                                                                                    } else{
+                                                                                                    $("#idTd_{{ groupe.groupe.id }} a").removeClass("btn-info").addClass("btn-success");
+                                                                                                    $('#idValide_{{ groupe.groupe.id }}').val('O');
+                                                                                                    };
+                                                                                                    if (filtre != ''){
+                                                                                                    tableGroupeParametres.search(filtre).draw();
+                                                                                                    };
+                                                                                                    tableGroupeParametres.page.len(nbRecords).draw();
+                                                                                                    $('#modal_groupe_parametres').modal('hide');
+                                                                                                    $('#modalTraitementEncours').modal('hide');
+                                                                                                    } else{
+                                                                                                    $('#idMessage_parametre').show();
+                                                                                                    var html = '';
+                                                                                                    html = html + '<div class="alert alert-warning alert-dismissible" role="alert">';
+                                                                                                    html = html + '<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>';
+                                                                                                    for (i = 0; i <= tabMessages.length - 1; i++)
+                                                                                                    {
+                                                                                                    html = html + '<strong>' + tabMessages[i] + '</strong><br/>';
+                                                                                                    }
+                                                                                                    html = html + '</div>';
+                                                                                                    $('#idMessage_parametre').empty().append(html);
+                                                                                                    $('#modalTraitementEncours').modal('hide');
+                                                                                                    };
+                                                                                                    }
+                                                                                            });
+                                                                                            if (filtre != ''){
+                                                                                            tableGroupeParametres.search(filtre).draw();
+                                                                                            };
+                                                                                            tableGroupeParametres.page.len(nbRecords).draw();
+                                                                                            });
+                                                                                            $(document).on('click', '#btFermer_parametre', function(e){
+                                                                                            var info = tableGroupeParametres.page.info();
+                                                                                            var nbRecords = $('#idTableGroupeParametres_length option:selected').val();
+                                                                                            var filtre = $('#idTableGroupeParametres_filter input').val();
+                                                                                            if (filtre != ''){
+                                                                                            var initval = '';
+                                                                                            tableGroupeParametres.search(initval).draw();
+                                                                                            };
+                                                                                            tableGroupeParametres.page.len( - 1).draw();
+                                                                                            var nbParametres = 0;
+                                                                                            var nbParametres = 0;
+                                                                    {% if groupe.parametres | length %}
+                                                                        {% for parametre in groupe.parametres %}
+                                                                            {% if action == 'P'  and maj != 'V'  %}
+                                                                                       if ($('#check_{{ parametre.pgSandreParametre.codeParametre }}').prop('checked') == true){
+                                                                                       nbParametres = nbParametres + 1;
+                                                                                       }
+                                                                            {% else %}
+                                                                                {% if parametre.cocher == 'O' %}
+                                                                                            nbParametres = nbParametres + 1;
+                                                                                {% endif %}
+                                                                            {% endif %}
+                                                                        {% endfor %}
+                                                                    {% endif %}
+                                                                                $("#idNbParametres").empty().append(nbParametres + '/' +  {{ groupe.parametres | length }} );
+                                                                                if (filtre != ''){
+                                                                                tableGroupeParametres.search(filtre).draw();
+                                                                                };
+                                                                                tableGroupeParametres.page.len(nbRecords).draw();
+                                                                                $('#modal_groupe_parametres').modal('hide');
+                                                                                });
+                                                                                /* Nombre de groupes cocheées*/
+                                                                                var nbcocher = function() {
+                                                                                var info = tableGroupeParametres.page.info();
+                                                                                var nbRecords = $('#idTableGroupeParametres_length option:selected').val();
+                                                                                var filtre = $('#idTableGroupeParametres_filter input').val();
+                                                                                if (filtre != ''){
+                                                                                var initval = '';
+                                                                                tableGroupeParametres.search(initval).draw();
+                                                                                };
+                                                                                tableGroupeParametres.page.len( - 1).draw();
+                                                                                var n = $("input:checked").length;
+                                                                                html = "Paramètres cochés  : <span class='badge'>" + n + "</span>";
+                                                                                $("#idNbCocher p").html(html);
+                                                                                if (filtre != ''){
+                                                                                tableGroupeParametres.search(filtre).draw();
+                                                                                };
+                                                                                tableGroupeParametres.page.len(nbRecords).draw();
+                                                                                tableGroupeParametres.page(info.page).draw(false);
+                                                                                };
+                                                                                nbcocher();
+                                                                                });
+
+                                                                </script>

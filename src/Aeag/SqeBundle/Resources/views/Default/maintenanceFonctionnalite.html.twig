@@ -1,0 +1,40 @@
+{% extends "AeagSqeBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+    <li>
+        <i class="icon-home"></i>
+        <a href="{{ path('aeag_homepage') }}">Accueil</a>
+        <i class="fa fa-angle-right"></i>
+    </li>
+    <li class="active">
+        Maintenance
+    </li>
+{% endblock breadcrumb %}
+
+
+{%block panel_heading %}
+    <h3 class="page-title">
+        Fonctionnailté en cours de maintenance
+    </h3>
+{%endblock panel_heading %}
+
+
+{%block content %}
+
+    <div class="row">
+        <div class="col-md-offset-3 col-md-6">
+            <h3>Fonctionnalité en cours de maintenance</h3>
+            <p>Cette fonctionnalité est momentanément inaccessible.</br>
+                Nous faisons tout  notre possible pour la rendre opérationnelles dans les plus brefs délais.</br>
+                Cordialement.
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-offset-5 col-md-7">
+            <a class="btn btn-danger" href="{{ path('aeag_homepage') }}">
+                <i class="fa fa-reply fa-lg"></i> Retour</a>
+        </div>
+    </div>
+{%endblock content %}

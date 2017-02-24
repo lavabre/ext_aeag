@@ -327,7 +327,6 @@ class PgProgLotAnRepository extends EntityRepository {
         $query .= " and lot.id = ltan.lot";
         $query .= " and ltan.id = dmd.lotan";
         $query .= " and dmd.id = prel.demande";
-        $query .= " and dmd.typeDemande != '2'";
         $query .= " and typFic.codeMilieu = lot.codeMilieu";
         $query .= " and typFic.prestataire = prel.prestaPrel";
         $query .= " and typFic.formatFic like '%Saisie%'";

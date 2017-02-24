@@ -64,8 +64,13 @@ class DepotHydrobioController extends Controller {
         //     \Symfony\Component\VarDumper\VarDumper::dump($tabProglotAns);
         //   return new response ('nb lotan : ' . count($tabProglotAns) );
 
-        return $this->render('AeagSqeBundle:DepotHydrobio:index.html.twig', array('user' => $user,
-                    'lotans' => $tabProglotAns));
+
+        if ($user->hasRole('ROLE_ADMINSQE')) {
+            return $this->render('AeagSqeBundle:DepotHydrobio:index.html.twig', array('user' => $user,
+                        'lotans' => $tabProglotAns));
+        } else {
+            return $this->render('AeagSqeBundle:Default:maintenanceFonctionnalite.html.twig');
+        }
     }
 
     public function demandesAction($lotanId) {
@@ -138,17 +143,16 @@ class DepotHydrobioController extends Controller {
         $session->set('fonction', 'prelevementDetail');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
-        $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
         $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
-        $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
         $repoPgCmdPrelevHbInvert = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelevHbInvert');
         $repoPgCmdInvertRecouv = $emSqe->getRepository('AeagSqeBundle:PgCmdInvertRecouv');
         $repoPgCmdInvertPrelem = $emSqe->getRepository('AeagSqeBundle:PgCmdInvertPrelem');
         $repoPgCmdInvertListe = $emSqe->getRepository('AeagSqeBundle:PgCmdInvertListe');
-        $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
         $repoPgSandreHbNomemclatures = $emSqe->getRepository('AeagSqeBundle:PgSandreHbNomemclatures');
         $repoPgSandreAppellationTaxon = $emSqe->getRepository('AeagSqeBundle:PgSandreAppellationTaxon');
+        $repoPgCmdPrelevHbDiato = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelevHbDiato');
+        $repoPgCmdDiatoListe = $emSqe->getRepository('AeagSqeBundle:PgCmdDiatoListe');
 
         $pgProgWebUser = $repoPgProgWebUsers->findOneByExtId($user->getId());
         $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevById($prelevId);
@@ -157,11 +161,12 @@ class DepotHydrobioController extends Controller {
         $tabRecouvs = array();
         $tabPrelems = array();
         $tabListes = array();
+        $tabDiatomes = array();
 
         $pgCmdPrelevHbInvert = $repoPgCmdPrelevHbInvert->getPgCmdPrelevHbInvertByPrelev($pgCmdPrelev);
         if ($pgCmdPrelevHbInvert) {
             $pgCmdInvertRecouvs = $repoPgCmdInvertRecouv->getPgCmdInvertRecouvByPrelev($pgCmdPrelevHbInvert);
-           $i = 0;
+            $i = 0;
             foreach ($pgCmdInvertRecouvs as $pgCmdInvertRecouv) {
                 $tabRecouvs[$i]['recouv'] = $pgCmdInvertRecouv;
                 $pgSandreHbNomemclature = $repoPgSandreHbNomemclatures->getPgSandreHbNomemclaturesByCodeNomemclatureCodeElement(274, $pgCmdInvertRecouv->getSubstrat());
@@ -188,13 +193,32 @@ class DepotHydrobioController extends Controller {
             }
         }
 
+        $pgCmdPrelevHbDiato = $repoPgCmdPrelevHbDiato->getPgCmdPrelevHbDiatoByPrelev($pgCmdPrelev);
+        if ($pgCmdPrelevHbDiato) {
+            $tabDiatomes['diatome'] = $pgCmdPrelevHbDiato;
+            $tabDiatomeListes = array();
+            $i = 0;
+            $pgCmdDiatoListes = $repoPgCmdDiatoListe->getPgCmdDiatoListesByPrelev($pgCmdPrelevHbDiato);
+            foreach ($pgCmdDiatoListes as $pgCmdDiatoListe) {
+                $tabDiatomeListes[$i]['liste'] = $pgCmdDiatoListe;
+                $pgSandreAppellationTaxon = $repoPgSandreAppellationTaxon->getPgSandreAppellationTaxonByCodeAppelTaxonCodeSupport($pgCmdDiatoListe->getCodeSandre(), '10');
+                $tabDiatomeListes[$i]['taxon'] = $pgSandreAppellationTaxon;
+                $i++;
+            }
+            $tabDiatomes['liste'] = $tabDiatomeListes;
+        }
+
+//        \Symfony\Component\VarDumper\VarDumper::dump($tabDiatomes);
+//        return new response('nb diatomes : ' . count($tabDiatomes));
+
         return $this->render('AeagSqeBundle:DepotHydrobio:prelevementDetail.html.twig', array('user' => $pgProgWebUser,
                     'demande' => $pgCmdDemande,
                     'prelev' => $pgCmdPrelev,
                     'pgCmdPrelevHbInvert' => $pgCmdPrelevHbInvert,
                     'pgCmdInvertRecouvs' => $tabRecouvs,
                     'pgCmdInvertPrelems' => $tabPrelems,
-                    'pgCmdInvertListes' => $tabListes));
+                    'pgCmdInvertListes' => $tabListes,
+                    'pgCmdPrelevHbDiato' => $tabDiatomes));
     }
 
     public function telechargerAction($demandeId) {
@@ -313,7 +337,7 @@ class DepotHydrobioController extends Controller {
         $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
 
-        $pgCmdFichiersRps = $repoPgCmdFichiersRps->getReponseByDemandeType($demandeId, 'EXL');
+        $pgCmdFichiersRps = $repoPgCmdFichiersRps->getReponseByDemandeType($demandeId, 'DHY');
         $pgCmdDemande = $repoPgCmdDemande->findOneById($demandeId);
         $pgProgWebUser = $repoPgProgWebUsers->findOneByExtId($user->getId());
 
@@ -360,7 +384,7 @@ class DepotHydrobioController extends Controller {
 
         $pgProgWebUser = $repoPgProgWebUsers->findOneByExtId($user->getId());
         $pgCmdDemande = $repoPgCmdDemande->findOneById($demandeId);
-        $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('DH10');
+        $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R10');
 
         // Récupération des valeurs du fichier
         $nomFichier = $_FILES["fichier"]["name"];
@@ -374,7 +398,7 @@ class DepotHydrobioController extends Controller {
         $reponse->setDemande($pgCmdDemande);
         $reponse->setNomFichier($nomFichier);
         $reponse->setDateDepot(new \DateTime());
-        $reponse->setTypeFichier('EXL');
+        $reponse->setTypeFichier('DHY');
         $reponse->setPhaseFichier($pgProgPhases);
         $reponse->setUser($pgProgWebUser);
         $reponse->setSuppr('N');
@@ -398,8 +422,8 @@ class DepotHydrobioController extends Controller {
             $excelObj = $this->get('xls.load_xls5');
             $tabFichiers = $this->get('aeag_sqe.depotHydrobio')->extraireFichier($demandeId, $emSqe, $reponse, $pathBase, $nomFichier, $session, $excelObj);
 
-//             \Symfony\Component\VarDumper\VarDumper::dump($tabFichiers);
-//              return new Response ('');   
+//            \Symfony\Component\VarDumper\VarDumper::dump($tabFichiers);
+//            return new Response('');
 
 
             $erreur = false;
@@ -410,7 +434,7 @@ class DepotHydrobioController extends Controller {
             }
 
             if (!$erreur) {
-                $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('DH30');
+                $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R40');
                 $reponse->setPhaseFichier($pgProgPhases);
                 $emSqe->persist($reponse);
                 $emSqe->flush();
@@ -424,10 +448,7 @@ class DepotHydrobioController extends Controller {
                     $txtMessage = $txtMessage . " fichiers :  <br/><br/>";
                 }
                 for ($i = 0; $i < count($tabFichiers); $i++) {
-                    $txtMessage = $txtMessage . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- ' . $tabFichiers[$i]['fichier'] . '<br/>';
-                    for ($j = 0; $j < count($tabFichiers[$i]['feuillet']); $j++) {
-                        $txtMessage = $txtMessage . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - ' . $tabFichiers[$i]['feuillet'][$j]['feuillet'] . '  Correct <br/>';
-                    }
+                    $txtMessage = $txtMessage . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- ' . $tabFichiers[$i]['fichier'] . '  correct <br/>';
                 }
                 $mailer = $this->get('mailer');
                 if ($this->get('aeag_sqe.message')->envoiMessage($em, $mailer, $txtMessage, $pgProgWebUser, $objetMessage)) {
@@ -436,7 +457,7 @@ class DepotHydrobioController extends Controller {
                     $session->getFlashBag()->add('notice-warning', 'Le fichier ' . $nomFichier . ' a été traité, mais l\'email n\'a pas pu être envoyé');
                 }
             } else {
-                $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('DH40');
+                $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R80');
                 $reponse->setPhaseFichier($pgProgPhases);
                 $emSqe->persist($reponse);
                 $emSqe->flush();
@@ -452,9 +473,9 @@ class DepotHydrobioController extends Controller {
                     $txtMessage = $txtMessage . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - ' . $tabFichiers[$i]['fichier'] . '<br/>';
                     for ($j = 0; $j < count($tabFichiers[$i]['feuillet']); $j++) {
                         if (!$tabFichiers[$i]['feuillet'][$j]['erreur']) {
-                            $txtMessage = $txtMessage . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - ' . $tabFichiers[$i]['feuillet'][$j]['feuillet'] . '  Correct <br/>';
+                            $txtMessage = $txtMessage . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - ' . $tabFichiers[$i]['fichier'] . '  correct <br/>';
                         } else {
-                            $txtMessage = $txtMessage . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - ' . $tabFichiers[$i]['feuillet'][$j]['feuillet'] . '  Incorrect <br/>';
+                            $txtMessage = $txtMessage . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - ' . $tabFichiers[$i]['fichier'] . '  incorrect <br/>';
                         }
                     }
                 }
@@ -620,16 +641,16 @@ class DepotHydrobioController extends Controller {
         return rmdir($dir);
     }
 
-    protected function unzip($file, $path = '', $effacer_zip = false) {/* Méthode qui permet de décompresser un fichier zip $file dans un répertoire de destination $path 
+    protected function unzip($file, $path = '', $effacer_zip = false) {/* Méthode qui permet de décompresser un fichier zip $file dans un répertoire de destination $path
       et qui retourne un tableau contenant la liste des fichiers extraits
       Si $effacer_zip est égal à true, on efface le fichier zip d'origine $file */
 
-        $tab_liste_fichiers = array(); //Initialisation 
+        $tab_liste_fichiers = array(); //Initialisation
 
         $zip = zip_open($file);
 
         if ($zip) {
-            while ($zip_entry = zip_read($zip)) { //Pour chaque fichier contenu dans le fichier zip 
+            while ($zip_entry = zip_read($zip)) { //Pour chaque fichier contenu dans le fichier zip
                 if (zip_entry_filesize($zip_entry) >= 0) {
                     $complete_path = $path . dirname(zip_entry_name($zip_entry));
 
@@ -642,7 +663,7 @@ class DepotHydrobioController extends Controller {
                     /* On ajoute le nom du fichier dans le tableau */
                     array_push($tab_liste_fichiers, $nom_fichier);
 
-                    $complete_name = $path . $nom_fichier; //Nom et chemin de destination 
+                    $complete_name = $path . $nom_fichier; //Nom et chemin de destination
 
                     if (!file_exists($complete_path)) {
                         $tmp = '';

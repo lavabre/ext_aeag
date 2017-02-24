@@ -667,7 +667,7 @@ class ProgrammationGroupeController extends Controller {
                 $i++;
             }
         }
-        
+
 //                                            \Symfony\Component\VarDumper\VarDumper::dump($tabGroupes);
 //                                        return new Response('');
 
@@ -1431,11 +1431,11 @@ class ProgrammationGroupeController extends Controller {
                     $ok = 'ko';
                 }
             }
-            $doublons = $repoPgProgLotParamAn->getNbDoublonsByLotanParametre($pgProgLotAn,$pgProgLotGrparAn,$pgProgGrparRefLstParam);
-            if ($doublons > 1){
-                   $tabMessage[$i] = "Le paramètre : " . $codeParametre  . " est dejà sélectionné dans un autre groupe";
-                    $i++;
-                    $ok = 'ko';
+            $doublons = $repoPgProgLotParamAn->getNbDoublonsByLotanParametre($pgProgLotAn, $pgProgLotGrparAn, $pgProgGrparRefLstParam);
+            if ($doublons > 1) {
+                $tabMessage[$i] = "Le paramètre : " . $codeParametre . " est dejà sélectionné dans un autre groupe";
+                $i++;
+                $ok = 'ok';
             }
         }
 
@@ -1630,7 +1630,7 @@ class ProgrammationGroupeController extends Controller {
             $session->set('messageErreur', $tabMessage);
             return $this->redirect($this->generateUrl('AeagSqeBundle_programmation_groupes', array('action' => $action, 'maj' => $maj, 'lotan' => $pgProgLotAnId)));
         }
-    
+
         foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
             $pgProgGrpParamRef = $pgProgLotGrparAn->getGrparRef();
             if ($pgProgGrpParamRef->getValide() != 'N') {
@@ -1763,9 +1763,9 @@ class ProgrammationGroupeController extends Controller {
         $i = 0;
         foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
             $tabGroupes[$i]['groupe'] = $pgProgLotGrparAn;
-            if ($tabGroupes[$i]['groupe']->getGrparRef()->getSupport()){
+            if ($tabGroupes[$i]['groupe']->getGrparRef()->getSupport()) {
                 $tabGroupes[$i]['support'] = $tabGroupes[$i]['groupe']->getGrparRef()->getSupport()->getNomSupport();
-            }else{
+            } else {
                 $tabGroupes[$i]['support'] = null;
             }
             $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
