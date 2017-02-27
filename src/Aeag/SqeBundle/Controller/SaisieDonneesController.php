@@ -144,12 +144,14 @@ class SaisieDonneesController extends Controller {
                         if (!$trouve) {
                             $nbStations++;
                             $pgCmdDemandes = array();
-                            if (!$user->hasRole('ROLE_ADMINSQE')) {
-                                $pgCmdDemande = $repoPgCmdDemande->getPgCmdDemandeByLotanPrestatairePeriode($pgProgLotAn, $prestaprel, $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
-                                $pgCmdDemandes[0] = $pgCmdDemande;
-                            } else {
-                                $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandesByLotanPeriode($pgProgLotAn, $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
-                            }
+//                            if (!$user->hasRole('ROLE_ADMINSQE')) {
+//                                $pgCmdDemande = $repoPgCmdDemande->getPgCmdDemandeByLotanPrestatairePeriode($pgProgLotAn, $prestaprel, $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
+//                                $pgCmdDemandes[0] = $pgCmdDemande;
+//                                $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandesByLotanPeriode($pgProgLotAn, $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
+//                            } else {
+//                                $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandesByLotanPeriode($pgProgLotAn, $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
+//                            }
+                            $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandesByLotanPeriode($pgProgLotAn, $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
                             foreach ($pgCmdDemandes as $pgCmdDemande) {
                                 if ($pgCmdDemande) {
                                     for ($k = 0; $k < count($tabStations); $k++) {
@@ -256,12 +258,12 @@ class SaisieDonneesController extends Controller {
         }
 
         $pgCmdDemandes = array();
-        if ($user->hasRole('ROLE_ADMINSQE')) {
-            $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandesByLotanPeriode($pgProgLotAn, $pgProgLotPeriodeAn->getPeriode());
-        } else {
-            $pgCmdDemandes[0] = $repoPgCmdDemande->getPgCmdDemandeByLotanPrestatairePeriode($pgProgLotAn, $userPrestataire, $pgProgLotPeriodeAn->getPeriode());
-        }
-
+//        if ($user->hasRole('ROLE_ADMINSQE')) {
+//            $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandesByLotanPeriode($pgProgLotAn, $pgProgLotPeriodeAn->getPeriode());
+//        } else {
+//            $pgCmdDemandes[0] = $repoPgCmdDemande->getPgCmdDemandeByLotanPrestatairePeriode($pgProgLotAn, $userPrestataire, $pgProgLotPeriodeAn->getPeriode());
+//        }
+        $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandesByLotanPeriode($pgProgLotAn, $pgProgLotPeriodeAn->getPeriode());
 
         $tabStations = array();
         $i = 0;
