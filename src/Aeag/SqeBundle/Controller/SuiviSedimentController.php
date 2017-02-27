@@ -203,7 +203,7 @@ class SuiviSedimentController extends Controller {
         $pgProgLotGrparAns = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotan($pgProgLotAn);
         $prestaprel = null;
         foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
-            if ($pgProgLotGrparAn->getGrparRef()->getCodeGrp() == '000' or $pgProgLotGrparAn->getGrparRef()->getCodeGrp() == '010') {
+            if (substr_count($pgProgLotGrparAn->getGrparRef()->getLibelleGrp(), 'situ') > 0 or substr_count($pgProgLotGrparAn->getGrparRef()->getLibelleGrp(), 'environ') > 0) {
                 $prestaprel = $pgProgLotGrparAn->getPrestaDft();
             }
         }
@@ -701,7 +701,7 @@ class SuiviSedimentController extends Controller {
         $pgProgLotGrparAns = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotan($pgProgLotAn);
         $prestaprel = null;
         foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
-            if ($pgProgLotGrparAn->getGrparRef()->getCodeGrp() == '000' or $pgProgLotGrparAn->getGrparRef()->getCodeGrp() == '010') {
+            if (substr_count($pgProgLotGrparAn->getGrparRef()->getLibelleGrp(), 'situ') > 0 or substr_count($pgProgLotGrparAn->getGrparRef()->getLibelleGrp(), 'environ') > 0) {
                 $prestaprel = $pgProgLotGrparAn->getPrestaDft();
             }
         }
@@ -1195,7 +1195,7 @@ class SuiviSedimentController extends Controller {
             // envoi mail  aux presta connecte
             $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
             if ($pgProgWebUser) {
-                $txtMessage.= '<br/><br/>Veullez trouver en pièce jointe le rapport d\'intégration';
+                $txtMessage .= '<br/><br/>Veullez trouver en pièce jointe le rapport d\'intégration';
                 $htmlMessage = "<html><head></head><body>";
                 $htmlMessage .= "Bonjour, <br/><br/>";
                 $htmlMessage .= $txtMessage;

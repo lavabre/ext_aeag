@@ -212,7 +212,7 @@ class SuiviEauController extends Controller {
         $pgProgLotGrparAns = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotan($pgProgLotAn);
         $prestaprel = null;
         foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
-            if ($pgProgLotGrparAn->getGrparRef()->getCodeGrp() == '000' or $pgProgLotGrparAn->getGrparRef()->getCodeGrp() == '010') {
+            if (substr_count($pgProgLotGrparAn->getGrparRef()->getLibelleGrp(), 'situ') > 0 or substr_count($pgProgLotGrparAn->getGrparRef()->getLibelleGrp(), 'environ') > 0) {
                 $prestaprel = $pgProgLotGrparAn->getPrestaDft();
             }
         }
@@ -422,7 +422,7 @@ class SuiviEauController extends Controller {
         $pgProgLotGrparAns = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotan($pgProgLotAn);
         $prestaprel = null;
         foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
-            if ($pgProgLotGrparAn->getGrparRef()->getCodeGrp() == '000' or $pgProgLotGrparAn->getGrparRef()->getCodeGrp() == '010') {
+            if (substr_count($pgProgLotGrparAn->getGrparRef()->getLibelleGrp(), 'situ') > 0 or substr_count($pgProgLotGrparAn->getGrparRef()->getLibelleGrp(), 'environ') > 0) {
                 $prestaprel = $pgProgLotGrparAn->getPrestaDft();
             }
         }
@@ -811,7 +811,7 @@ class SuiviEauController extends Controller {
             // envoi mail  aux presta connecte
             $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
             if ($pgProgWebUser) {
-                $txtMessage.= '<br/><br/>Veullez trouver en pièce jointe le rapport d\'intégration';
+                $txtMessage .= '<br/><br/>Veullez trouver en pièce jointe le rapport d\'intégration';
                 $htmlMessage = "<html><head></head><body>";
                 $htmlMessage .= "Bonjour, <br/><br/>";
                 $htmlMessage .= $txtMessage;
@@ -939,7 +939,7 @@ class SuiviEauController extends Controller {
         $pgProgLotGrparAns = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotan($pgProgLotAn);
         $prestaprel = null;
         foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
-            if ($pgProgLotGrparAn->getGrparRef()->getCodeGrp() == '000' or $pgProgLotGrparAn->getGrparRef()->getCodeGrp() == '010') {
+            if (substr_count($pgProgLotGrparAn->getGrparRef()->getLibelleGrp(), 'situ') > 0 or substr_count($pgProgLotGrparAn->getGrparRef()->getLibelleGrp(), 'environ') > 0) {
                 $prestaprel = $pgProgLotGrparAn->getPrestaDft();
             }
         }
@@ -1350,7 +1350,7 @@ class SuiviEauController extends Controller {
                 $txtMessage = "Un fichier de suivi a été déposé sur le lot " . $pgProgLot->getNomLot() . " pour la période du " . $pgProgPeriode->getDateDeb()->format('d/m/Y') . " au " . $dateFin->format('d/m/Y');
                 $mailer = $this->get('mailer');
 
-                $txtMessage.= '<br/><br/>Veullez trouver en pièce jointe le rapport d\'intégration';
+                $txtMessage .= '<br/><br/>Veullez trouver en pièce jointe le rapport d\'intégration';
                 $htmlMessage = "<html><head></head><body>";
                 $htmlMessage .= "Bonjour, <br/><br/>";
                 $htmlMessage .= $txtMessage;
@@ -2285,7 +2285,7 @@ class SuiviEauController extends Controller {
             // envoi mail  aux presta connecte
             $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
             if ($pgProgWebUser) {
-                $txtMessage.= '<br/><br/>Veullez trouver en pièce jointe le rapport d\'intégration';
+                $txtMessage .= '<br/><br/>Veullez trouver en pièce jointe le rapport d\'intégration';
                 $htmlMessage = "<html><head></head><body>";
                 $htmlMessage .= "Bonjour, <br/><br/>";
                 $htmlMessage .= $txtMessage;
