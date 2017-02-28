@@ -185,12 +185,79 @@ class DepotHydrobioController extends Controller {
             }
             $pgCmdInvertListes = $repoPgCmdInvertListe->getPgCmdInvertListeByPrelev($pgCmdPrelevHbInvert);
             $i = 0;
-            foreach ($pgCmdInvertListes as $pgCmdInvertListe) {
-                $tabListes[$i]['liste'] = $pgCmdInvertListe;
-                $pgSandreAppellationTaxon = $repoPgSandreAppellationTaxon->getPgSandreAppellationTaxonByCodeAppelTaxonCodeSupport($pgCmdInvertListe->getTaxon(), '13');
-                $tabListes[$i]['taxon'] = $pgSandreAppellationTaxon;
-                $i++;
+            $j = 0;
+            $codeSandre = null;
+            $taxon = null;
+            $tabSandre = array();
+            for ($j = 0; $j < 15; $j++) {
+                $tabSandre[$j] = null;
             }
+            foreach ($pgCmdInvertListes as $pgCmdInvertListe) {
+                if (!$codeSandre) {
+                    $codeSandre = $pgCmdInvertListe->getCodeSandre();
+                    $taxon = $pgCmdInvertListe->getTaxon();
+                }
+                if ($codeSandre != $pgCmdInvertListe->getCodeSandre()) {
+                    $tabListes[$i]['taxon'] = $taxon;
+                    $tabListes[$i]['codeSandre'] = $codeSandre;
+                    $tabListes[$i]['liste'] = $tabSandre;
+                    $i++;
+                    $codeSandre = $pgCmdInvertListe->getCodeSandre();
+                    $taxon = $pgCmdInvertListe->getTaxon();
+                    $tabSandre = array();
+                    for ($j = 0; $j < 15; $j++) {
+                        $tabSandre[$j] = null;
+                    }
+                }
+                if ($pgCmdInvertListe->getPhase() == 'PHA') {
+                    $tabSandre[0] = $pgCmdInvertListe;
+                }
+                if ($pgCmdInvertListe->getPhase() == 'PHB') {
+                    $tabSandre[1] = $pgCmdInvertListe;
+                }
+                if ($pgCmdInvertListe->getPhase() == 'PHC') {
+                    $tabSandre[2] = $pgCmdInvertListe;
+                }
+                if ($pgCmdInvertListe->getPrelem() == 'P1') {
+                    $tabSandre[3] = $pgCmdInvertListe;
+                }
+                if ($pgCmdInvertListe->getPrelem() == 'P2') {
+                    $tabSandre[4] = $pgCmdInvertListe;
+                }
+                if ($pgCmdInvertListe->getPrelem() == 'P3') {
+                    $tabSandre[5] = $pgCmdInvertListe;
+                }
+                if ($pgCmdInvertListe->getPrelem() == 'P4') {
+                    $tabSandre[6] = $pgCmdInvertListe;
+                }
+                if ($pgCmdInvertListe->getPrelem() == 'P5') {
+                    $tabSandre[7] = $pgCmdInvertListe;
+                }
+                if ($pgCmdInvertListe->getPrelem() == 'P6') {
+                    $tabSandre[8] = $pgCmdInvertListe;
+                }
+                if ($pgCmdInvertListe->getPrelem() == 'P7') {
+                    $tabSandre[9] = $pgCmdInvertListe;
+                }
+                if ($pgCmdInvertListe->getPrelem() == 'P8') {
+                    $tabSandre[10] = $pgCmdInvertListe;
+                }
+                if ($pgCmdInvertListe->getPrelem() == 'P9') {
+                    $tabSandre[11] = $pgCmdInvertListe;
+                }
+                if ($pgCmdInvertListe->getPrelem() == 'P10') {
+                    $tabSandre[12] = $pgCmdInvertListe;
+                }
+                if ($pgCmdInvertListe->getPrelem() == 'P11') {
+                    $tabSandre[13] = $pgCmdInvertListe;
+                }
+                if ($pgCmdInvertListe->getPrelem() == 'P12') {
+                    $tabSandre[14] = $pgCmdInvertListe;
+                }
+            }
+            $tabListes[$i]['taxon'] = $taxon;
+            $tabListes[$i]['codeSandre'] = $codeSandre;
+            $tabListes[$i]['liste'] = $tabSandre;
         }
 
         $pgCmdPrelevHbDiato = $repoPgCmdPrelevHbDiato->getPgCmdPrelevHbDiatoByPrelev($pgCmdPrelev);
@@ -208,8 +275,8 @@ class DepotHydrobioController extends Controller {
             $tabDiatomes['liste'] = $tabDiatomeListes;
         }
 
-//        \Symfony\Component\VarDumper\VarDumper::dump($tabDiatomes);
-//        return new response('nb diatomes : ' . count($tabDiatomes));
+//        \Symfony\Component\VarDumper\VarDumper::dump($tabListes);
+//        return new response('nb diatomes : ' . count($tabListes));
 
         return $this->render('AeagSqeBundle:DepotHydrobio:prelevementDetail.html.twig', array('user' => $pgProgWebUser,
                     'demande' => $pgCmdDemande,

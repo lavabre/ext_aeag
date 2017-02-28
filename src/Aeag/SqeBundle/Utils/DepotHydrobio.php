@@ -968,9 +968,9 @@ class DepotHydrobio {
                     $tab1 = explode('*', $tab[0]);
                     if (strlen($codeStation) > 0 and $codeStation != $tab1[5]) {
                         if (!$erreur) {
-                            $contenu = '                     Correct ' . CHR(13) . CHR(10);
-                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                            fputs($rapport, $contenu);
+//                            $contenu = '                     Correct ' . CHR(13) . CHR(10);
+//                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+//                            fputs($rapport, $contenu);
                             // enregistrement en base
                             //
                             // Table pg_cmd_diato_liste
@@ -986,11 +986,12 @@ class DepotHydrobio {
                             $pgCmdDiatoListe->setDenombrement($denombrement);
                             $emSqe->persist($pgCmdDiatoListe);
                             $emSqe->flush();
-                        } else {
-                            $contenu = '                     Incorrect ' . CHR(13) . CHR(10);
-                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                            fputs($rapport, $contenu);
                         }
+//                         else {
+//                            $contenu = '                     Incorrect ' . CHR(13) . CHR(10);
+//                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+//                            fputs($rapport, $contenu);
+//                        }
                     }
                     $codeStation = $tab1[5];
                     $codeSandre = null;
@@ -1013,71 +1014,74 @@ class DepotHydrobio {
                     }
                     if (!$trouve) {
                         $erreur = true;
-                        $contenu = '                     Erreur : la station ' . $codeStation . ' ne fait pas partie de cette demande' . CHR(13) . CHR(10);
+                        $contenu = '               Station ' . $codeStation . ' ne fait pas partie de cette demande' . CHR(13) . CHR(10);
                         $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                         fputs($rapport, $contenu);
                     }
                 } else {
-                    $codeAltern = $tab[1];
-                    if (is_null($codeAltern)) {
-                        $erreur = true;
-                        $contenu = '                     ligne ' . $nbl . ' Erreur : code  incorrect ou non renseignée. ' . CHR(13) . CHR(10);
-                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                        fputs($rapport, $contenu);
-                    } else {
-                        $pgSandreCodesAlternAppelTaxon = $repoPgSandreCodesAlternAppelTaxon->getPgSandreCodesAlternAppelTaxonBycodeAlternOrigineCodeAltern($codeAltern, 'OMNIDIA');
-                        if (!$pgSandreCodesAlternAppelTaxon) {
+                    if (!$erreur) {
+                        $codeAltern = $tab[1];
+                        if (is_null($codeAltern)) {
                             $erreur = true;
-                            $contenu = '                     ligne ' . $nbl . ' Erreur : code ' . $codeAltern . ' inconnu. ' . CHR(13) . CHR(10);
+                            $contenu = '                     ligne ' . $nbl . ' Erreur : code  incorrect ou non renseignée. ' . CHR(13) . CHR(10);
                             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                             fputs($rapport, $contenu);
                         } else {
-                            $codeSandre = $pgSandreCodesAlternAppelTaxon->getCodeAppelTaxon();
+                            $pgSandreCodesAlternAppelTaxon = $repoPgSandreCodesAlternAppelTaxon->getPgSandreCodesAlternAppelTaxonBycodeAlternOrigineCodeAltern($codeAltern, 'OMNIDIA');
+                            if (!$pgSandreCodesAlternAppelTaxon) {
+                                $erreur = true;
+                                $contenu = '                     ligne ' . $nbl . ' Erreur : code ' . $codeAltern . ' inconnu. ' . CHR(13) . CHR(10);
+                                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                fputs($rapport, $contenu);
+                            } else {
+                                $codeSandre = $pgSandreCodesAlternAppelTaxon->getCodeAppelTaxon();
+                            }
                         }
-                    }
-                    $denombrement = $tab[2];
-                    if (is_null($denombrement)) {
-                        $erreur = true;
-                        $contenu = '                     ligne ' . $nbl . '  Avertissement : dénombrement  incorrecte ou non renseignée. ' . CHR(13) . CHR(10);
-                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                        fputs($rapport, $contenu);
-                    } elseif (!is_numeric(intval($denombrement))) {
-                        $erreur = true;
-                        $contenu = '                     ligne ' . $nbl . '  Avertissement : dénombrement incorrecte. ' . CHR(13) . CHR(10);
-                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                        fputs($rapport, $contenu);
-                    }
-                    if (!$erreur) {
-                        $contenu = '                  ligne ' . $nbl . ' correcte ' . CHR(13) . CHR(10);
-                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                        fputs($rapport, $contenu);
-                        // enregistrement en base
-                        //
+                        $denombrement = $tab[2];
+                        if (is_null($denombrement)) {
+                            $erreur = true;
+                            $contenu = '                     ligne ' . $nbl . '  Avertissement : dénombrement  incorrecte ou non renseignée. ' . CHR(13) . CHR(10);
+                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                            fputs($rapport, $contenu);
+                        } elseif (!is_numeric(intval($denombrement))) {
+                            $erreur = true;
+                            $contenu = '                     ligne ' . $nbl . '  Avertissement : dénombrement incorrecte. ' . CHR(13) . CHR(10);
+                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                            fputs($rapport, $contenu);
+                        }
+                        if (!$erreur) {
+//                            $contenu = '                  ligne ' . $nbl . ' correcte ' . CHR(13) . CHR(10);
+//                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+//                            fputs($rapport, $contenu);
+                            // enregistrement en base
+                            //
                             // Table pg_cmd_diato_liste
-                        //print_r('station : ' . $codeStation . ' sandre : ' . $codeSandre . ' taxon : ' . $codeAltern . '</br>');
-                        $pgCmdPrelevHbDiato = $repoPgCmdPrelevHbDiato->getPgCmdPrelevHbDiatoByPrelev($pgCmdPrelev);
-                        $pgCmdDiatoListe = $repoPgCmdDiatoListe->getPgCmdDiatoListeByPrelevCodeSandreTaxon($pgCmdPrelevHbDiato, $codeSandre, $codeAltern);
-                        if (!$pgCmdDiatoListe) {
-                            $pgCmdDiatoListe = new PgCmdDiatoListe();
-                            $pgCmdDiatoListe->setPrelev($pgCmdPrelevHbDiato);
+                            //print_r('station : ' . $codeStation . ' sandre : ' . $codeSandre . ' taxon : ' . $codeAltern . '</br>');
+                            $pgCmdPrelevHbDiato = $repoPgCmdPrelevHbDiato->getPgCmdPrelevHbDiatoByPrelev($pgCmdPrelev);
+                            $pgCmdDiatoListe = $repoPgCmdDiatoListe->getPgCmdDiatoListeByPrelevCodeSandreTaxon($pgCmdPrelevHbDiato, $codeSandre, $codeAltern);
+                            if (!$pgCmdDiatoListe) {
+                                $pgCmdDiatoListe = new PgCmdDiatoListe();
+                                $pgCmdDiatoListe->setPrelev($pgCmdPrelevHbDiato);
+                            }
+                            $pgCmdDiatoListe->setCodeSandre($codeSandre);
+                            $pgCmdDiatoListe->setTaxon($codeAltern);
+                            $pgCmdDiatoListe->setDenombrement($denombrement);
+                            $emSqe->persist($pgCmdDiatoListe);
+                            $emSqe->flush();
                         }
-                        $pgCmdDiatoListe->setCodeSandre($codeSandre);
-                        $pgCmdDiatoListe->setTaxon($codeAltern);
-                        $pgCmdDiatoListe->setDenombrement($denombrement);
-                        $emSqe->persist($pgCmdDiatoListe);
-                        $emSqe->flush();
-                    } else {
-                        $contenu = '               ligne ' . $nbl . ' incorrecte ' . CHR(13) . CHR(10);
-                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                        fputs($rapport, $contenu);
+//                        else {
+//                            $contenu = '               ligne ' . $nbl . ' incorrecte ' . CHR(13) . CHR(10);
+//                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+//                            fputs($rapport, $contenu);
+//                        }
                     }
                 }
             }
         }
         if (!$erreur) {
-            $contenu = '                   Correct ' . CHR(13) . CHR(10);
-            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-            fputs($rapport, $contenu);
+//            $contenu = '                   Correct ' . CHR(13) . CHR(10);
+//            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+//            fputs($rapport, $contenu);
             // enregistrement en base
             //
                 // Table pg_cmd_diato_liste

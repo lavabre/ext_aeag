@@ -142,7 +142,6 @@ class SaisieDonneesController extends Controller {
                             }
                         }
                         if (!$trouve) {
-                            $nbStations++;
                             $pgCmdDemandes = array();
 //                            if (!$user->hasRole('ROLE_ADMINSQE')) {
 //                                $pgCmdDemande = $repoPgCmdDemande->getPgCmdDemandeByLotanPrestatairePeriode($pgProgLotAn, $prestaprel, $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
@@ -178,7 +177,11 @@ class SaisieDonneesController extends Controller {
                                         }
                                         $tabStations[$j]['nbPrelevs'] = $nbPrelevs;
                                         $tabStations[$j]['nbPrelevCorrects'] = $nbPrelevCorrects;
-                                        $j++;
+
+                                        if ($nbPrelevs > 0) {
+                                            $nbStations++;
+                                            $j++;
+                                        }
                                         if ($nbPrelevs == $nbPrelevCorrects and $nbPrelevs > 0) {
                                             $nbStationCorrectes++;
                                         }
@@ -323,7 +326,7 @@ class SaisieDonneesController extends Controller {
                 $fichierRps = null;
                 $donneesBrutes = array();
                 foreach ($pgCmdPrelevs as $pgCmdPrelev) {
-                    if ($pgCmdPrelev) {
+                    if ($pgCmdPrelev->getPhaseDmd()->getcodePhase() != 'M60') {
                         if ($pgCmdPrelev->getFichierRps()) {
                             if ($fichierRps != $pgCmdPrelev->getFichierRps()) {
                                 //echo ('station : ' . $station->getCode() . ' prelev : ' . $pgCmdPrelev->getId() . ' fichierRps : ' .  $pgCmdPrelev->getFichierRps()->getId() . ' </br>');
@@ -444,21 +447,22 @@ class SaisieDonneesController extends Controller {
                 $id = 0;
                 $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandesByLotanPeriode($pgProgLotAn, $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
                 foreach ($pgCmdDemandes as $pgCmdDemande) {
-                    if ($pgCmdDemande) {
-                        if ($userPrestataire) {
-                            if ($userPrestataire == $pgCmdDemande->getPrestataire()) {
-                                $userPrestataireDemande = true;
-                            } else {
-                                $userPrestataireDemande = false;
-                            }
+                    // if ($pgCmdDemande->getPhaseDemande()->getcodePhase() != 'D50') {
+                    if ($userPrestataire) {
+                        if ($userPrestataire == $pgCmdDemande->getPrestataire()) {
+                            $userPrestataireDemande = true;
+                        } else {
+                            $userPrestataireDemande = false;
                         }
-                        $tabPgCmdDemandes[$id]['pgCmdDemande'] = $pgCmdDemande;
-                        $tabPgCmdDemandes[$id]['prestataire'] = $pgCmdDemande->getPrestataire();
-                        $tabPgCmdDemandes[$id]['pgCmdPrelevs'] = null;
-                        $tabPgCmdPrelevs = array();
-                        $ip = 0;
-                        $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByDemandeStationPeriode($pgCmdDemande, $station, $periode);
-                        foreach ($pgCmdPrelevs as $pgCmdPrelev) {
+                    }
+                    $tabPgCmdDemandes[$id]['pgCmdDemande'] = $pgCmdDemande;
+                    $tabPgCmdDemandes[$id]['prestataire'] = $pgCmdDemande->getPrestataire();
+                    $tabPgCmdDemandes[$id]['pgCmdPrelevs'] = null;
+                    $tabPgCmdPrelevs = array();
+                    $ip = 0;
+                    $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByDemandeStationPeriode($pgCmdDemande, $station, $periode);
+                    foreach ($pgCmdPrelevs as $pgCmdPrelev) {
+                        if ($pgCmdPrelev->getPhaseDmd()->getcodePhase() != 'M60') {
                             $tabPgCmdPrelevs[$ip]['cmdPrelev'] = $pgCmdPrelev;
                             $tabPgCmdPrelevs[$ip]['valider'] = 'N';
                             $tabPgCmdPrelevs[$ip]['devalider'] = 'N';
@@ -602,14 +606,18 @@ class SaisieDonneesController extends Controller {
                             }
                             $ip++;
                         }
-                        $tabPgCmdDemandes[$id]['pgCmdPrelevs'] = $tabPgCmdPrelevs;
+                    }
+                    $tabPgCmdDemandes[$id]['pgCmdPrelevs'] = $tabPgCmdPrelevs;
+                    if ($ip > 0) {
                         $id++;
                     }
+                    //     }
                 }
                 sort($tabPgCmdDemandes);
                 $tabStations[$is]['pgCmdDemandes'] = $tabPgCmdDemandes;
-
-                $is++;
+                if ($id > 0) {
+                    $is++;
+                }
             }
         }
 

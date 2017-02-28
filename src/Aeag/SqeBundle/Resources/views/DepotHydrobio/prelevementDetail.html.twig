@@ -63,170 +63,306 @@
             </tbody>
         </table>
 
-        <div class="row responsive">
-            <div class="col-xm-12">
-                <div class="small ">
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            <ul  class="nav nav-pills nav-justified" role="tablist">
-                                <li class="active"><a id="idTab_1" href="#tab_1_1" data-toggle="tab"><h4>Informations sur le site</h4></a></li>
-                                <li class=""><a id="idTab_2" href="#tab_1_2" data-toggle="tab"><h4>Informations sur l'échantillon</h4></a></li>
-                                <li class=""><a id="idTab_3" href="#tab_1_3" data-toggle="tab"><h4>Quantification de l'information</h4></a></li>
-                                <li class=""><a id="idTab_4" href="#tab_1_4" data-toggle="tab"><h4>Diatomées benthiques </h4></a></li>
-                            </ul>
-                            <div  class="tab-content">
-                                <div class="tab-pane fade active in" id="tab_1_1">
-                                    <table class="table table-bordered table-condensed table-advance" id="idTable_recouv">
-                                        <thead>
-                                            <tr>
-                                                <th>Substrat</th>
-                                                <th>Sandre</th>
-                                                <th>Recouvrement</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for pgCmdInvertRecouv in pgCmdInvertRecouvs %}
-                                                <tr>
-                                                    <td>{{  pgCmdInvertRecouv.nomenclature.libElement }}
-                                                    <td>{{  pgCmdInvertRecouv.recouv.substrat  }}</td>
-                                                    <td>{{ pgCmdInvertRecouv.recouv.recouvNum }}</td>
-                                                </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="tab-pane fade" id="tab_1_2">
-                                    <table class="table table-bordered table-condensed table-advance" id="idTable_prelem">
-                                        <thead>
-                                            <tr>
-                                                <th>Micorprélevement</th>
-                                                <th>Substrat</th>
-                                                <th>Sandre</th>
-                                                <th>Classe vitesse</th>
-                                                <th>Phase</th>
-                                                <th>Hauteur d'eau</th>
-                                                <th>Intensité du colmatage</th>
-                                                <th>Stabilité</th>
-                                                <th>Nature végétation</th>
-                                                <th>Abondance végétation</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for pgCmdInvertPrelem in pgCmdInvertPrelems %}
-                                                <tr>
-                                                    <td>{{  pgCmdInvertPrelem.prelem.prelem }}</td>
-                                                    <td>{{  pgCmdInvertPrelem.nomenclature.libElement }}</td>
-                                                    <td>{{  pgCmdInvertPrelem.prelem.substrat  }}</td>
-                                                    <td>{{ pgCmdInvertPrelem.prelem.vitesse }}</td>
-                                                    <td>{{ pgCmdInvertPrelem.prelem.phase }}</td>
-                                                    <td>{{ pgCmdInvertPrelem.prelem.hauteurEau }}</td>
-                                                    <td>{{ pgCmdInvertPrelem.prelem.colmatage }}</td>
-                                                    <td>{{ pgCmdInvertPrelem.prelem.stabilite }}</td>
-                                                    <td>{{ pgCmdInvertPrelem.prelem.natureVeget }}</td>
-                                                    <td>{{ pgCmdInvertPrelem.prelem.abondVeget }}</td>
-                                                </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="tab-pane fade" id="tab_1_3">
-                                    <table class="table table-bordered table-condensed table-advance" id="idTable_liste">
-                                        <thead>
-                                            <tr>
-                                                <th>Taxon</th>
-                                                <th>Sandre</th>
-                                                <th>Dénombrement</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for pgCmdInvertListe in pgCmdInvertListes %}
-                                                <tr>
-                                                    <td>{{  pgCmdInvertListe.liste.taxon }}
-                                                    <td>{{  pgCmdInvertListe.liste.codeSandre  }}</td>
-                                                    <td>{{ pgCmdInvertListe.liste.denombrement }}</td>
-                                                </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="tab-pane fade" id="tab_1_4">
-                                    {% if  pgCmdPrelevHbDiato %}
-                                        <table class="table table-bordered table-condensed table-advance" id="idTable_diatome">
+        {% if prelev.codeSupport.codeSupport ==  "13" %}
+            <div class="row responsive">
+                <div class="col-xm-12">
+                    <div class="small ">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <ul  class="nav nav-pills nav-justified" role="tablist">
+                                    <li class="active"><a id="idTab_1" href="#tab_1_1" data-toggle="tab"><h4>Informations sur le site</h4></a></li>
+                                    <li class=""><a id="idTab_2" href="#tab_1_2" data-toggle="tab"><h4>Informations sur l'échantillon</h4></a></li>
+                                    <li class=""><a id="idTab_3" href="#tab_1_3" data-toggle="tab"><h4>Quantification de l'information</h4></a></li>
+                                </ul>
+                                <div  class="tab-content">
+                                    <div class="tab-pane fade active in" id="tab_1_1">
+                                        <table class="table table-bordered table-condensed table-advance" id="idTable_recouv">
                                             <thead>
                                                 <tr>
-                                                    <th>Longitude X</th>
-                                                    <th>Latitude Yt</th>
-                                                    <th>largeur</th>
-                                                    <th>Condition Hydrologique</th>
-                                                    <th>Support</th>
-                                                    <th>Clase vitesse</th>
-                                                    <th>Ombrage</th>
-                                                    <th>Température</th>
-                                                    <th>Ph</th>
-                                                    <th>Conductivite</th>
+                                                    <th>Substrat</th>
+                                                    <th>Sandre</th>
+                                                    <th width="5%">Recouvrement</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <td>{{ pgCmdPrelevHbDiato.diatome.xPrel  | number_format(0,'.','')}}</td>
-                                                    <td>{{ pgCmdPrelevHbDiato.diatome.yPrel  | number_format(0,'.','')}}</td>
-                                                    <td>{{ pgCmdPrelevHbDiato.diatome.largeur  | number_format(0,'.',' ')}}</td>
-                                                    <td>{{ pgCmdPrelevHbDiato.diatome.conditionsHydro }}</td>
-                                                    <td>{{ pgCmdPrelevHbDiato.diatome.substrat }}</td>
-                                                    <td>{{ pgCmdPrelevHbDiato.diatome.vitesse }}</td>
-                                                    <td>{{ pgCmdPrelevHbDiato.diatome.ombrage }}</td>
-                                                    <td>
-                                                        {% if pgCmdPrelevHbDiato.diatome.tempEau %}
-                                                            {{ pgCmdPrelevHbDiato.diatome.tempEau  | number_format(2,'.',' ') }}
-                                                        {% endif %}
-                                                    </td>
-                                                    <td>
-                                                        {% if pgCmdPrelevHbDiato.diatome.ph %}
-                                                            {{ pgCmdPrelevHbDiato.diatome.ph  | number_format(2,'.',' ')}}
-                                                        {% endif %}
-                                                    </td>
-                                                    <td>
-                                                        {% if pgCmdPrelevHbDiato.diatome.conductivite %}
-                                                            {{ pgCmdPrelevHbDiato.diatome.conductivite  | number_format(2,'.',' ')}}
-                                                        {% endif %}
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-
-                                        </br>
-
-                                        <table class="table table-bordered table-condensed table-advance" id="idTable_diatome_liste">
-                                            <thead>
-                                                <tr>
-                                                    <th width="5%">Code Sandre</th>
-                                                    <th width="5%">Code alternatif</th>
-                                                    <th>taxon</th>
-                                                    <th width="5%">Dénombrement</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {% for liste in pgCmdPrelevHbDiato.liste %}
+                                                {% for pgCmdInvertRecouv in pgCmdInvertRecouvs %}
                                                     <tr>
-                                                        <td>{{  liste.liste.codeSandre  }}</td>
-                                                        <td>{{  liste.liste.taxon }}
-                                                        <td>{{  liste.taxon.nomAppelTaxon  }}</td>
-                                                        <td>{{  liste.liste.denombrement | number_format(0,'.',' ') }}</td>
+                                                        <td>{{  pgCmdInvertRecouv.nomenclature.libElement }}
+                                                        <td>{{  pgCmdInvertRecouv.recouv.substrat  }}</td>
+                                                        <td class="text-right">
+                                                            {% if  pgCmdInvertRecouv.recouv.recouvNum is not null %}
+                                                                {{ pgCmdInvertRecouv.recouv.recouvNum  | number_format(0,'.',' ') }}
+                                                            {% endif %}
+                                                        </td>
                                                     </tr>
                                                 {% endfor %}
                                             </tbody>
                                         </table>
-
-                                    {% endif %}
-
+                                    </div>
+                                    <div class="tab-pane fade" id="tab_1_2">
+                                        <table class="table table-bordered table-condensed table-advance" id="idTable_prelem">
+                                            <thead>
+                                                <tr>
+                                                    <th>Micorprélevement</th>
+                                                    <th>Substrat</th>
+                                                    <th>Sandre</th>
+                                                    <th>Classe vitesse</th>
+                                                    <th>Phase</th>
+                                                    <th>Hauteur d'eau</th>
+                                                    <th>Intensité du colmatage</th>
+                                                    <th>Stabilité</th>
+                                                    <th>Nature végétation</th>
+                                                    <th>Abondance végétation</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for pgCmdInvertPrelem in pgCmdInvertPrelems %}
+                                                    <tr>
+                                                        <td>{{  pgCmdInvertPrelem.prelem.prelem }}</td>
+                                                        <td>{{  pgCmdInvertPrelem.nomenclature.libElement }}</td>
+                                                        <td>{{  pgCmdInvertPrelem.prelem.substrat  }}</td>
+                                                        <td>{{ pgCmdInvertPrelem.prelem.vitesse }}</td>
+                                                        <td>{{ pgCmdInvertPrelem.prelem.phase }}</td>
+                                                        <td>
+                                                            {% if  pgCmdInvertPrelem.prelem.hauteurEau is not null %}
+                                                                {{ pgCmdInvertPrelem.prelem.hauteurEau | number_format(0,'.',' ') }}
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>
+                                                            {% if  pgCmdInvertPrelem.prelem.colmatage is not null %}
+                                                                {{ pgCmdInvertPrelem.prelem.colmatage | number_format(0,'.',' ') }}
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>{{ pgCmdInvertPrelem.prelem.stabilite }}</td>
+                                                        <td>{{ pgCmdInvertPrelem.prelem.natureVeget }}</td>
+                                                        <td>
+                                                            {% if  pgCmdInvertPrelem.prelem.abondVeget is not null %}
+                                                                {{ pgCmdInvertPrelem.prelem.abondVeget | number_format(0,'.',' ') }}
+                                                            {% endif %}
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="tab-pane fade" id="tab_1_3">
+                                        <table class="table table-bordered table-condensed table-advance" id="idTable_liste">
+                                            <thead>
+                                                <tr>
+                                                    <th>Taxon</th>
+                                                    <th>Sandre</th>
+                                                    <th>Phase A</th>
+                                                    <th>Phase B</th>
+                                                    <th>Phase C</th>
+                                                    <th>P1</th>
+                                                    <th>P2</th>
+                                                    <th>P3</th>
+                                                    <th>P4</th>
+                                                    <th>P5</th>
+                                                    <th>P6</th>
+                                                    <th>P7</th>
+                                                    <th>P8</th>
+                                                    <th>P9</th>
+                                                    <th>P10</th>
+                                                    <th>P11</th>
+                                                    <th>P12</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for pgCmdInvertListe in pgCmdInvertListes %}
+                                                    <tr>
+                                                        <td>{{   pgCmdInvertListe.taxon }}</td>
+                                                        <td>{{   pgCmdInvertListe.codeSandre  }}</td>
+                                                        <td class="text-right">
+                                                            {% if pgCmdInvertListe.liste.0 %}
+                                                                {% if pgCmdInvertListe.liste.0.phase == 'PHA' and pgCmdInvertListe.liste.0.denombrement %}
+                                                                    {{ pgCmdInvertListe.liste.0.denombrement  | number_format(0,'.',' ')}}
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        </td>
+                                                        <td class="text-right">
+                                                            {% if pgCmdInvertListe.liste.1 %}
+                                                                {% if pgCmdInvertListe.liste.1.phase == 'PHB' and pgCmdInvertListe.liste.1.denombrement %}
+                                                                    {{ pgCmdInvertListe.liste.1.denombrement  | number_format(0,'.',' ')}}
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        </td>
+                                                        <td class="text-right">
+                                                            {% if pgCmdInvertListe.liste.2 %}
+                                                                {% if pgCmdInvertListe.liste.2.phase == 'PHC' and pgCmdInvertListe.liste.2.denombrement %}
+                                                                    {{ pgCmdInvertListe.liste.2.denombrement  | number_format(0,'.',' ')}}
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        </td>
+                                                        <td class="text-right">
+                                                            {% if pgCmdInvertListe.liste.3 %}
+                                                                {% if pgCmdInvertListe.liste.3.prelem == 'P1' and pgCmdInvertListe.liste.3.denombrement %}
+                                                                    {{ pgCmdInvertListe.liste.3.denombrement  | number_format(0,'.',' ')}}
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        </td>
+                                                        <td class="text-right">
+                                                            {% if pgCmdInvertListe.liste.4 %}
+                                                                {% if pgCmdInvertListe.liste.4.prelem == 'P2' and pgCmdInvertListe.liste.4.denombrement %}
+                                                                    {{ pgCmdInvertListe.liste.4.denombrement  | number_format(0,'.',' ')}}
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        </td>
+                                                        <td class="text-right">
+                                                            {% if pgCmdInvertListe.liste.5 %}
+                                                                {% if pgCmdInvertListe.liste.5.prelem == 'P3' and pgCmdInvertListe.liste.5.denombrement %}
+                                                                    {{ pgCmdInvertListe.liste.5.denombrement  | number_format(0,'.',' ')}}
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        </td>
+                                                        <td  class="text-right">
+                                                            {% if pgCmdInvertListe.liste.6 %}
+                                                                {% if pgCmdInvertListe.liste.6.prelem == 'P4' and pgCmdInvertListe.liste.6.denombrement %}
+                                                                    {{ pgCmdInvertListe.liste.6.denombrement  | number_format(0,'.',' ')}}
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        </td>
+                                                        <td class="text-right">
+                                                            {% if pgCmdInvertListe.liste.7 %}
+                                                                {% if pgCmdInvertListe.liste.7.prelem == 'P5' and pgCmdInvertListe.liste.7.denombrement %}
+                                                                    {{ pgCmdInvertListe.liste.7.denombrement  | number_format(0,'.',' ')}}
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        </td>
+                                                        <td class="text-right">
+                                                            {% if pgCmdInvertListe.liste.8 %}
+                                                                {% if pgCmdInvertListe.liste.8.prelem == 'P6' and pgCmdInvertListe.liste.8.denombrement %}
+                                                                    {{ pgCmdInvertListe.liste.8.denombrement  | number_format(0,'.',' ')}}
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        </td>
+                                                        <td class="text-right">
+                                                            {% if pgCmdInvertListe.liste.9 %}
+                                                                {% if pgCmdInvertListe.liste.9.prelem == 'P7' and pgCmdInvertListe.liste.9.denombrement %}
+                                                                    {{ pgCmdInvertListe.liste.9.denombrement  | number_format(0,'.',' ')}}
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        </td>
+                                                        <td class="text-right">
+                                                            {% if pgCmdInvertListe.liste.10 %}
+                                                                {% if pgCmdInvertListe.liste.10.prelem == 'P8' and pgCmdInvertListe.liste.10.denombrement %}
+                                                                    {{ pgCmdInvertListe.liste.10.denombrement  | number_format(0,'.',' ')}}
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        </td>
+                                                        <td class="text-right">
+                                                            {% if pgCmdInvertListe.liste.11 %}
+                                                                {% if pgCmdInvertListe.liste.11.prelem == 'P9' and pgCmdInvertListe.liste.11.denombrement %}
+                                                                    {{ pgCmdInvertListe.liste.11.denombrement  | number_format(0,'.',' ')}}
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        </td>
+                                                        <td class="text-right">
+                                                            {% if pgCmdInvertListe.liste.12 %}
+                                                                {% if pgCmdInvertListe.liste.12.prelem == 'P10' and pgCmdInvertListe.liste.12.denombrement %}
+                                                                    {{ pgCmdInvertListe.liste.12.denombrement  | number_format(0,'.',' ')}}
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        </td>
+                                                        <td class="text-right">
+                                                            {% if pgCmdInvertListe.liste.13 %}
+                                                                {% if pgCmdInvertListe.liste.13.prelem == 'P11' and pgCmdInvertListe.liste.13.denombrement %}
+                                                                    {{ pgCmdInvertListe.liste.13.denombrement  | number_format(0,'.',' ')}}
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        </td>
+                                                        <td class="text-right">
+                                                            {% if pgCmdInvertListe.liste.14 %}
+                                                                {% if pgCmdInvertListe.liste.14.prelem == 'P12' and pgCmdInvertListe.liste.14.denombrement %}
+                                                                    {{ pgCmdInvertListe.liste.14.denombrement  | number_format(0,'.',' ')}}
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
+                                <div id="idCache"></div>
                             </div>
-                            <div id="idCache"></div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        {% endif %}
+
+        {% if prelev.codeSupport.codeSupport ==  "10" %}
+            {% if  pgCmdPrelevHbDiato %}
+                <table class="table table-bordered table-condensed table-advance" id="idTable_diatome">
+                    <thead>
+                        <tr>
+                            <th>Longitude X</th>
+                            <th>Latitude Y</th>
+                            <th>largeur</th>
+                            <th>Condition Hydrologique</th>
+                            <th>Support</th>
+                            <th>Clase vitesse</th>
+                            <th>Ombrage</th>
+                            <th>Température</th>
+                            <th>Ph</th>
+                            <th>Conductivite</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text-right">{{ pgCmdPrelevHbDiato.diatome.xPrel  | number_format(0,'.','')}}</td>
+                            <td class="text-right">{{ pgCmdPrelevHbDiato.diatome.yPrel  | number_format(0,'.','')}}</td>
+                            <td class="text-right">{{ pgCmdPrelevHbDiato.diatome.largeur  | number_format(0,'.',' ')}}</td>
+                            <td>{{ pgCmdPrelevHbDiato.diatome.conditionsHydro }}</td>
+                            <td>{{ pgCmdPrelevHbDiato.diatome.substrat }}</td>
+                            <td>{{ pgCmdPrelevHbDiato.diatome.vitesse }}</td>
+                            <td>{{ pgCmdPrelevHbDiato.diatome.ombrage }}</td>
+                            <td class="text-right">
+                                {% if pgCmdPrelevHbDiato.diatome.tempEau %}
+                                    {{ pgCmdPrelevHbDiato.diatome.tempEau  | number_format(2,'.',' ') }}
+                                {% endif %}
+                            </td>
+                            <td class="text-right">
+                                {% if pgCmdPrelevHbDiato.diatome.ph %}
+                                    {{ pgCmdPrelevHbDiato.diatome.ph  | number_format(2,'.',' ')}}
+                                {% endif %}
+                            </td>
+                            <td class="text-right">
+                                {% if pgCmdPrelevHbDiato.diatome.conductivite %}
+                                    {{ pgCmdPrelevHbDiato.diatome.conductivite  | number_format(2,'.',' ')}}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                </br>
+
+                <table class="table table-bordered table-condensed table-advance" id="idTable_diatome_liste">
+                    <thead>
+                        <tr>
+                            <th width="5%">Code Sandre</th>
+                            <th width="5%">Code alternatif</th>
+                            <th>taxon</th>
+                            <th width="5%">Dénombrement</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for liste in pgCmdPrelevHbDiato.liste %}
+                            <tr>
+                                <td>{{  liste.liste.pgCmdInvertListe.codeSandre  }}</td>
+                                <td>{{  liste.liste.pgCmdInvertListe.taxon }}
+                                <td>{{  liste.taxon.nomAppelTaxon  }}</td>
+                                <td class="text-right">{{  liste.liste.pgCmdInvertListe.denombrement | number_format(0,'.',' ') }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            {% endif %}
+
+        {% endif %}
 
     </div>
 {%endblock content %}

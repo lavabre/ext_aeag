@@ -532,7 +532,7 @@ class PgCmdPrelevRepository extends EntityRepository {
         $query = $query . "           Aeag\SqeBundle\Entity\PgProgLot lot,";
         $query = $query . "           Aeag\SqeBundle\Entity\PgProgTypeMilieu typemilieu, ";
         $query = $query . "           Aeag\SqeBundle\Entity\PgSandreSupports support ";
-        $query = $query . " where support.codeSupport = :pgSandreSupports";
+        $query = $query . " where support.codeSupport = :pgSandreSupports ";
         $query = $query . "and support.codeSupport= prelev.codeSupport  ";
         $query = $query . "and demande.id = prelev.demande ";
         $query = $query . "and station.ouvFoncId = prelev.station ";
@@ -558,10 +558,18 @@ class PgCmdPrelevRepository extends EntityRepository {
         $query = $query . " order by prelev.station, prelev.periode ";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('pgSandreSupports', $pgSandreSupports->getCodeSupport());
-        $qb->setParameter('presta', $presta);
-        $qb->setParameter('avis', $avis);
-        $qb->setParameter('statut', $statut);
-        $qb->setParameter('validation', $validation);
+        if ($presta) {
+            $qb->setParameter('presta', $presta);
+        }
+        if ($avis) {
+            $qb->setParameter('avis', $avis);
+        }
+        if ($statut) {
+            $qb->setParameter('statut', $statut);
+        }
+        if ($validation) {
+            $qb->setParameter('validation', $validation);
+        }
         //print_r($query);
         return $qb->getResult();
     }
