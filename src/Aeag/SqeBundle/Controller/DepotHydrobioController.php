@@ -442,11 +442,9 @@ class DepotHydrobioController extends Controller {
         $session->set('controller', 'DepotHydrobio');
         $session->set('fonction', 'deposerReponse');
         $emSqe = $this->get('doctrine')->getManager('sqe');
-        $em = $this->get('doctrine')->getManager();
 
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
         $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
-        $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
         $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
 
         $pgProgWebUser = $repoPgProgWebUsers->findOneByExtId($user->getId());
@@ -485,103 +483,14 @@ class DepotHydrobioController extends Controller {
 
         if (move_uploaded_file($_FILES['fichier']['tmp_name'], $pathBase . '/' . $nomFichier)) {
 
-            // Envoi du fichier sur le serveur du sandre pour validationFormat
-            $excelObj = $this->get('xls.load_xls5');
-            $tabFichiers = $this->get('aeag_sqe.depotHydrobio')->extraireFichier($demandeId, $emSqe, $reponse, $pathBase, $nomFichier, $session, $excelObj);
-
-//            \Symfony\Component\VarDumper\VarDumper::dump($tabFichiers);
-//            return new Response('');
-
-
-            $erreur = false;
-            for ($i = 0; $i < count($tabFichiers); $i++) {
-                for ($j = 0; $j < count($tabFichiers[$i]['feuillet']); $j++) {
-                    $erreur = $tabFichiers[$i]['feuillet'][$j]['erreur'];
-                }
-            }
-
-            if (!$erreur) {
-                $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R40');
-                $reponse->setPhaseFichier($pgProgPhases);
-                $emSqe->persist($reponse);
-                $emSqe->flush();
-                // Envoi d'un mail
-                $objetMessage = "Dépôt Hydrobio  " . $reponse->getId() . " soumis correctement";
-                $txtMessage = "Votre dépôt hydrobio (id " . $reponse->getId() . ") concernant la DAI " . $pgCmdDemande->getCodeDemandeCmd() . " a été soumis.<br/><br/>";
-                $txtMessage = $txtMessage . "Le fichier " . $reponse->getNomFichier() . " contient " . count($tabFichiers);
-                if (count($tabFichiers) == 1) {
-                    $txtMessage = $txtMessage . " fichier :  <br/><br/>";
-                } else {
-                    $txtMessage = $txtMessage . " fichiers :  <br/><br/>";
-                }
-                for ($i = 0; $i < count($tabFichiers); $i++) {
-                    $txtMessage = $txtMessage . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- ' . $tabFichiers[$i]['fichier'] . '  correct <br/>';
-                }
-                $mailer = $this->get('mailer');
-                if ($this->get('aeag_sqe.message')->envoiMessage($em, $mailer, $txtMessage, $pgProgWebUser, $objetMessage)) {
-                    $session->getFlashBag()->add('notice-success', 'Le fichier ' . $nomFichier . ' a été traité, un email vous a été envoyé');
-                } else {
-                    $session->getFlashBag()->add('notice-warning', 'Le fichier ' . $nomFichier . ' a été traité, mais l\'email n\'a pas pu être envoyé');
-                }
-            } else {
-                $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R80');
-                $reponse->setPhaseFichier($pgProgPhases);
-                $emSqe->persist($reponse);
-                $emSqe->flush();
-                $objetMessage = "Dépôt Hydrobio  " . $reponse->getId() . " soumis avec des erreurs";
-                $txtMessage = "Votre dépôt hydrobio (id " . $reponse->getId() . ") concernant la DAI " . $pgCmdDemande->getCodeDemandeCmd() . " a été soumis avec des erreurs. <br/><br/>";
-                $txtMessage = $txtMessage . "Le fichier " . $reponse->getNomFichier() . " contient " . count($tabFichiers);
-                if (count($tabFichiers) == 1) {
-                    $txtMessage = $txtMessage . " fichier :  <br/><br/>";
-                } else {
-                    $txtMessage = $txtMessage . " fichiers :  <br/><br/>";
-                }
-                for ($i = 0; $i < count($tabFichiers); $i++) {
-                    $txtMessage = $txtMessage . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - ' . $tabFichiers[$i]['fichier'] . '<br/>';
-                    for ($j = 0; $j < count($tabFichiers[$i]['feuillet']); $j++) {
-                        if (!$tabFichiers[$i]['feuillet'][$j]['erreur']) {
-                            $txtMessage = $txtMessage . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - ' . $tabFichiers[$i]['fichier'] . '  correct <br/>';
-                        } else {
-                            $txtMessage = $txtMessage . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - ' . $tabFichiers[$i]['fichier'] . '  incorrect <br/>';
-                        }
-                    }
-                }
-                $mailer = $this->get('mailer');
-                if ($this->get('aeag_sqe.message')->envoiMessage($em, $mailer, $txtMessage, $pgProgWebUser, $objetMessage)) {
-                    $session->getFlashBag()->add('notice-warning', 'Le fichier ' . $nomFichier . ' n\'a  pas été traité, un email vous a été envoyé');
-                } else {
-                    $session->getFlashBag()->add('notice-warning', 'Le fichier ' . $nomFichier . ' n\'a  pas été traité, mais l\'email n\'a pas pu être envoyé');
-                }
-//                $session->getFlashBag()->add('notice-error', 'Le fichier ' . $nomFichier . ' a rencontré une erreur lors du traitement. Merci de réessayer plus tard.');
-//                $this->_rmdirRecursive($pathBase);
-//                $emSqe->remove($reponse);
-//                $emSqe->flush();
-            }
+            $commande = $this->get('commande');
+            $commande->runCommand('rai:depotHydrobio', array('pgCmdFichierRps_id' => $reponse->getId()));
         } else {
             $emSqe->remove($reponse);
             $emSqe->flush();
 
             $session->getFlashBag()->add('notice-error', 'Erreur lors du téléchargement du fichier ' . $nomFichier);
         }
-
-        $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByDemande($pgCmdDemande);
-        $nbPrelevs = count($pgCmdPrelevs);
-        $nbPrelevM40 = 0;
-        foreach ($pgCmdPrelevs as $pgCmdPrelev) {
-            if ($pgCmdPrelev->getPhaseDmd()->getCodePhase() == 'M40') {
-                $nbPrelevM40++;
-            }
-        }
-        if ($nbPrelevs == $nbPrelevM40) {
-            $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('D40');
-            $pgCmdDemande->setPhaseDemande($pgProgPhases);
-        } else {
-            $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('D30');
-            $pgCmdDemande->setPhaseDemande($pgProgPhases);
-        }
-        $emSqe->persist($pgCmdDemande);
-        $emSqe->flush();
-
 
         return $this->redirect($this->generateUrl('AeagSqeBundle_depotHydrobio_demandes', array('lotanId' => $pgCmdDemande->getLotan()->getId())));
     }
@@ -607,7 +516,7 @@ class DepotHydrobioController extends Controller {
         $chemin = $this->getParameter('repertoire_depotHydrobio');
         $pathBase = $this->get('aeag_sqe.process_rai')->getCheminEchange($chemin, $pgCmdFichiersRps->getDemande(), $reponseId);
         switch ($typeFichier) {
-            case "EXL" :
+            case "DHY" :
                 $contentType = "application/zip";
                 $fileName = $pgCmdFichiersRps->getNomFichier();
                 break;

@@ -11,9 +11,7 @@ use Aeag\SqeBundle\Entity\PgCmdDiatoListe;
 
 class DepotHydrobio {
 
-    public function extraireFichier($demandeId, $emSqe, $pgCmdFichierRps, $pathBase, $nomFichier, $session = null, $excelObj) {
-
-        $session->set('fonction', 'extraireFichier');
+    public function extraireFichier($demandeId, $emSqe, $pgCmdFichierRps, $pathBase, $nomFichier, $excelObj) {
 
         $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
         $pgCmdDemande = $repoPgCmdDemande->findOneById($demandeId);
@@ -49,12 +47,12 @@ class DepotHydrobio {
         foreach ($liste as $nomFichier) {
             $tabNomFichier = explode('.', $nomFichier);
             if ($tabNomFichier[1] == 'xls') {
-                $tabFichier = $this->lireXls($demandeId, $excelObj, $nomFichier, $pathBase, $rapport, $session, $emSqe);
+                $tabFichier = $this->lireXls($demandeId, $excelObj, $nomFichier, $pathBase, $rapport, $emSqe);
                 $tabTraitFichiers[$fic] = $tabFichier;
                 $fic++;
             }
             if ($tabNomFichier[1] == 'prn') {
-                $tabFichier = $this->lirePrn($demandeId, $nomFichier, $pathBase, $rapport, $session, $emSqe);
+                $tabFichier = $this->lirePrn($demandeId, $nomFichier, $pathBase, $rapport, $emSqe);
                 $tabTraitFichiers[$fic] = $tabFichier;
                 $fic++;
             }
@@ -130,9 +128,7 @@ class DepotHydrobio {
         return $tab_liste_fichiers;
     }
 
-    protected function lireXls($demandeId, $excelObj, $nomFichier, $pathBase, $rapport, $session, $emSqe) {
-
-        $session->set('fonction', 'lireXls');
+    protected function lireXls($demandeId, $excelObj, $nomFichier, $pathBase, $rapport, $emSqe) {
 
         $tabFichier = array();
         $tabFichier['fichier'] = $nomFichier;
@@ -148,11 +144,11 @@ class DepotHydrobio {
         $tabFeuillets = array();
         foreach ($fileExcel->getWorksheetIterator() as $worksheet) {
             if ($worksheet->getCell('B21') == 'CODE STATION') {
-                $this->lireXlsSupport10($worksheet, $feuil, $tabFeuillets, $rapport, $demandeId, $session, $emSqe);
+                $this->lireXlsSupport10($worksheet, $feuil, $tabFeuillets, $rapport, $demandeId, $emSqe);
                 $feuil++;
             }
             if ($worksheet->getCell('B22') == 'CODE STATION') {
-                $this->lireXlsSupport13($worksheet, $feuil, $tabFeuillets, $rapport, $demandeId, $session, $emSqe);
+                $this->lireXlsSupport13($worksheet, $feuil, $tabFeuillets, $rapport, $demandeId, $emSqe);
                 $feuil++;
             }
         }
@@ -163,8 +159,7 @@ class DepotHydrobio {
         return $tabFichier;
     }
 
-    protected function lireXlsSupport10($worksheet, $feuil, $tabFeuillets, $rapport, $demandeId, $session, $emSqe) {
-        $session->set('fonction', 'lireXlsSupport10');
+    protected function lireXlsSupport10($worksheet, $feuil, $tabFeuillets, $rapport, $demandeId, $emSqe) {
         // Récupération des programmations
         $repoPgSandreHbNomemclatures = $emSqe->getRepository('AeagSqeBundle:PgSandreHbNomemclatures');
         $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
@@ -433,8 +428,7 @@ class DepotHydrobio {
         return $tabFeuillets;
     }
 
-    protected function lireXlsSupport13($worksheet, $feuil, $tabFeuillets, $rapport, $demandeId, $session, $emSqe) {
-        $session->set('fonction', 'lireXlsSupport13');
+    protected function lireXlsSupport13($worksheet, $feuil, $tabFeuillets, $rapport, $demandeId, $emSqe) {
         // Récupération des programmations
         $repoPgSandreHbNomemclatures = $emSqe->getRepository('AeagSqeBundle:PgSandreHbNomemclatures');
         $repoPgSandreAppellationTaxon = $emSqe->getRepository('AeagSqeBundle:PgSandreAppellationTaxon');
@@ -926,9 +920,7 @@ class DepotHydrobio {
         return $tabFeuillets;
     }
 
-    protected function lirePrn($demandeId, $nomFichier, $pathBase, $rapport, $session, $emSqe) {
-
-        $session->set('fonction', 'lirePrn');
+    protected function lirePrn($demandeId, $nomFichier, $pathBase, $rapport, $emSqe) {
 
         // Récupération des programmations
         $repoPgSandreCodesAlternAppelTaxon = $emSqe->getRepository('AeagSqeBundle:PgSandreCodesAlternAppelTaxon');

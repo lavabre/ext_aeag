@@ -40,13 +40,11 @@ class AeagCommand extends ContainerAwareCommand {
     protected $repoPgProgWebuserTypmil;
     protected $repoPgProgBornesParams;
     protected $repoPgProgPrestaTypfic;
-    
     protected $detectionCodeRemarqueComplet;
     protected $detectionCodeRemarqueMoitie;
-    
     protected $controleVraisemblaceService;
-    
     protected $evolution;
+    protected $excelObj;
 
     protected function configure() {
         $this
@@ -56,7 +54,7 @@ class AeagCommand extends ContainerAwareCommand {
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) {
-        
+
     }
 
     protected function initialize(InputInterface $input, OutputInterface $output) {
@@ -95,24 +93,26 @@ class AeagCommand extends ContainerAwareCommand {
         $this->repoPgProgPrestaTypfic = $this->emSqe->getRepository('AeagSqeBundle:PgProgPrestaTypfic');
         $this->repoParametre = $this->emSqe->getRepository('AeagSqeBundle:Parametre');
 
-        // Chargement des fichiers csv dans des tableaux 
+        // Chargement des fichiers csv dans des tableaux
         $cheminCourant = __DIR__ . '/../../../../';
         $this->detectionCodeRemarqueComplet = $this->_csvToArray($cheminCourant . "/web/tablesCorrespondancesRai/detectionCodeRemarqueComplet.csv");
         $this->detectionCodeRemarqueMoitie = $this->_csvToArray($cheminCourant . "/web/tablesCorrespondancesRai/detectionCodeRemarqueMoitie.csv");
-        
+
         $this->controleVraisemblaceService = $this->getContainer()->get('aeag_sqe.controle_vraisemblance');
-        
+
         $this->setEvolution($this->repoParametre->getParametreByCode('EVOLUTION'));
+
+        $this->excelObj = $this->getContainer()->get('xls.load_xls5');
     }
 
     protected function _updatePhaseFichierRps(\Aeag\SqeBundle\Entity\PgCmdFichiersRps $pgCmdFichierRps, $phase, $phase82atteinte = false) {
         $pgProgPhases = $this->repoPgProgPhases->findOneByCodePhase($phase);
         $this->_addSuiviPhase('RPS', $pgCmdFichierRps->getId(), $pgProgPhases);
-        
+
         if ($phase82atteinte) {
-            $pgProgPhases = $this->repoPgProgPhases->findOneByCodePhase('R82');       
+            $pgProgPhases = $this->repoPgProgPhases->findOneByCodePhase('R82');
         }
-        
+
         $pgCmdFichierRps->setPhaseFichier($pgProgPhases);
         $this->emSqe->persist($pgCmdFichierRps);
         $this->emSqe->flush();
@@ -167,7 +167,7 @@ class AeagCommand extends ContainerAwareCommand {
                 $commentaire = implode("-", $commentaire);
             } else {
                 $commentaire = $this->_convertMultiArray($commentaire);
-            }    
+            }
         }
         $pgLogValidEdilabo = new \Aeag\SqeBundle\Entity\PgLogValidEdilabo($demandeId, $fichierRpsId, $typeErreur, $message, $dateLog, $codePrelevement, $commentaire);
 
@@ -208,12 +208,12 @@ class AeagCommand extends ContainerAwareCommand {
         $fullFileName = $pathBase . '/' . $fileName;
 
         $cr = '';
-        $cr .= "--- Début ".$nomParagraphe." \r\n";
+        $cr .= "--- Début " . $nomParagraphe . " \r\n";
         foreach ($logs as $log) {
             $cr .= $log . "\r\n";
         }
-        $cr .= "--- Fin ".$nomParagraphe." \r\n";
-        
+        $cr .= "--- Fin " . $nomParagraphe . " \r\n";
+
         if (file_put_contents($fullFileName, $cr, FILE_APPEND) !== false) {
             //Suppression des logs
             $this->_cleanLogTable($pgCmdFichierRps);
@@ -250,29 +250,29 @@ class AeagCommand extends ContainerAwareCommand {
         }
         return false;
     }
-    
+
     protected function _cleanLogTable($pgCmdFichierRps) {
         $demandeId = $pgCmdFichierRps->getDemande()->getId();
         $reponseId = $pgCmdFichierRps->getId();
-        
+
         $pgPgLogValidEdilabos = $this->repoPgLogValidEdilabo->findBy(array('demandeId' => $demandeId, 'fichierRpsId' => $reponseId));
         foreach ($pgPgLogValidEdilabos as $pgPgLogValidEdilabo) {
             $this->emSqe->remove($pgPgLogValidEdilabo);
         }
-        
+
         $this->emSqe->flush();
     }
 
     protected function _cleanTmpTable($pgCmdFichierRps) {
         $demandeId = $pgCmdFichierRps->getDemande()->getId();
         $reponseId = $pgCmdFichierRps->getId();
-        
+
         // Suppression de la RAI
         $pgTmpValidEdilabos = $this->repoPgTmpValidEdilabo->findBy(array('demandeId' => $demandeId, 'fichierRpsId' => $reponseId));
         foreach ($pgTmpValidEdilabos as $pgTmpValidEdilabo) {
             $this->emSqe->remove($pgTmpValidEdilabo);
         }
-        
+
         // Suppression de la DAI
         // Avant de supprimer la DAI, on vérifie s'il n'existe pas encore des RAIs
         if (count($this->repoPgTmpValidEdilabo->getPgTmpValidEdilaboRps($demandeId)) == 0) {
@@ -288,47 +288,47 @@ class AeagCommand extends ContainerAwareCommand {
         }
 
         $this->emSqe->flush();
-        
+
         $this->_cleanLogTable($pgCmdFichierRps);
     }
-    
-     // Méthodes permettant la gestion des doublons
+
+    // Méthodes permettant la gestion des doublons
     public function getCodeRqByCodeParametre($codeParametre, $demandeId, $reponseId, $codePrelevement, $codeFraction = null) {
         $codeRq = $this->repoPgTmpValidEdilabo->getCodeRqByCodeParametre($codeParametre, $demandeId, $reponseId, $codePrelevement, $codeFraction);
         if ($codeRq == -1) {
             $this->_addLog('error', $demandeId, $reponseId, 'Présence de doublon du code remarque', $codePrelevement, $codeParametre);
             return null;
-        } 
+        }
         return $codeRq;
     }
-    
+
     public function getMesureByCodeParametre($codeParametre, $demandeId, $reponseId, $codePrelevement, $codeFraction = null) {
         $mesure = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre($codeParametre, $demandeId, $reponseId, $codePrelevement, $codeFraction);
-         if ($mesure == -1) {
+        if ($mesure == -1) {
             $this->_addLog('error', $demandeId, $reponseId, 'Présence de doublon de la mesure', $codePrelevement, $codeParametre);
             return null;
-        } 
+        }
         return $mesure;
     }
-    
+
     public function getMesuresByCodeParametre($codeParametre, $codePrelevement, $demandeId, $reponseId = null, $codeFraction = null) {
         $mesures = $this->repoPgTmpValidEdilabo->getMesuresByCodeParametre($codeParametre, $codePrelevement, $demandeId, $reponseId, $codeFraction);
-         if ($mesures == -1) {
+        if ($mesures == -1) {
             $this->_addLog('error', $demandeId, $reponseId, 'Présence de doublon des mesures', $codePrelevement, $codeParametre);
             return null;
-        } 
+        }
         return $mesures;
     }
-    
+
     public function getDatePrelevement($codePrelevement, $demandeId, $reponseId = null) {
         $datePrelev = $this->repoPgTmpValidEdilabo->getDatePrelevement($codePrelevement, $demandeId, $reponseId);
-         if ($datePrelev == -1) {
+        if ($datePrelev == -1) {
             $this->_addLog('error', $demandeId, $reponseId, 'Présence de doublon de la date de prelevement', $codePrelevement);
             return null;
-        } 
+        }
         return $datePrelev;
     }
-    
+
     public function getEvolution() {
         return $this->evolution;
     }
@@ -336,7 +336,5 @@ class AeagCommand extends ContainerAwareCommand {
     public function setEvolution($evolution) {
         $this->evolution = $evolution;
     }
-    
-    
 
 }
