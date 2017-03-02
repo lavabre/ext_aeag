@@ -177,10 +177,6 @@ class SuiviHydrobioController extends Controller {
         $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
         $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
-        $repoPgProgLotParamAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotParamAn');
-        $repoPgProgPrestaTypfic = $emSqe->getRepository('AeagSqeBundle:PgProgPrestaTypfic');
-        $repoPgCmdMesureEnv = $emSqe->getRepository('AeagSqeBundle:PgCmdMesureEnv');
-        $repoPgCmdAnalyse = $emSqe->getRepository('AeagSqeBundle:PgCmdAnalyse');
         $repoPgRefReseauMesure = $emSqe->getRepository('AeagSqeBundle:PgRefReseauMesure');
 
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
@@ -827,7 +823,7 @@ class SuiviHydrobioController extends Controller {
             // envoi mail  aux presta connecte
             $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
             if ($pgProgWebUser) {
-                $txtMessage.= '<br/><br/>Veullez trouver en pièce jointe le rapport d\'intégration';
+                $txtMessage .= '<br/><br/>Veullez trouver en pièce jointe le rapport d\'intégration';
                 $htmlMessage = "<html><head></head><body>";
                 $htmlMessage .= "Bonjour, <br/><br/>";
                 $htmlMessage .= $txtMessage;
@@ -1419,7 +1415,7 @@ class SuiviHydrobioController extends Controller {
                 $txtMessage = "Un fichier de suivi a été déposé sur le lot " . $pgProgLot->getNomLot() . " pour la période du " . $pgProgPeriode->getDateDeb()->format('d/m/Y') . " au " . $dateFin->format('d/m/Y');
                 $mailer = $this->get('mailer');
 
-                $txtMessage.= '<br/><br/>Veullez trouver en pièce jointe le rapport d\'intégration';
+                $txtMessage .= '<br/><br/>Veullez trouver en pièce jointe le rapport d\'intégration';
                 $htmlMessage = "<html><head></head><body>";
                 $htmlMessage .= "Bonjour, <br/><br/>";
                 $htmlMessage .= $txtMessage;
@@ -2472,7 +2468,7 @@ class SuiviHydrobioController extends Controller {
             // envoi mail  aux presta connecte
             $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
             if ($pgProgWebUser) {
-                $txtMessage.= '<br/><br/>Veullez trouver en pièce jointe le rapport d\'intégration';
+                $txtMessage .= '<br/><br/>Veullez trouver en pièce jointe le rapport d\'intégration';
                 $htmlMessage = "<html><head></head><body>";
                 $htmlMessage .= "Bonjour, <br/><br/>";
                 $htmlMessage .= $txtMessage;

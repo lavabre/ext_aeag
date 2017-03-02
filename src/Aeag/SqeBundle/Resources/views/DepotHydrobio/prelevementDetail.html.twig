@@ -11,7 +11,7 @@
         <a href="{{ path('AeagSqeBundle_depotHydrobio_demandes',{'lotanId' : demande.lotan.id}) }}">DAI</a>
     </li>
     <li>
-        <a href="{{ path('AeagSqeBundle_depotHydrobio_prelevements',{'demandeId' : demande.id}) }}">Prélèvements</a>
+        <a href="{{ path('AeagSqeBundle_depotHydrobio_prelevements',{'demandeId' : demande.id}) }}">Stations</a>
     </li>
     <li class="active">
         Détail
@@ -20,10 +20,10 @@
 
 {%block panel_heading %}
     <h3 class="page-title text-center">
-        Dépôt Hydrobio - Détail du prélèvement {{ prelev.codePrelevCmd }} sur la station {{ prelev.station.code  }} {{ prelev.station.libelle  }} <br/>
-        pour la période {{ prelev.periode.labelPeriode}}
-        de la  DAI  {{ demande.codeDemandeCmd }} <br/>
-        du lot  {{ demande.lotan.lot.nomLot }} - {{  demande.lotan.anneeProg }}
+        Dépôt Hydrobio - Station {{ prelev.station.code  }} {{ prelev.station.libelle  }} <br/>
+        Demande {{ demande.codeDemandeCmd }} </br>
+        {{demande.lotan.lot.nomLot }} - {{ demande.lotan.anneeProg }}  - version :  {{ demande.lotan.version }}</br>
+        Prélèvement {{ prelev.codePrelevCmd }} entre le  {{ periodeAn.periode.dateDeb | date("d/m/Y") }}&nbsp;&nbsp;et&nbsp;&nbsp; {{ dateFin | date("d/m/Y") }}
     </h3>
 {%endblock panel_heading %}
 
@@ -351,10 +351,10 @@
                     <tbody>
                         {% for liste in pgCmdPrelevHbDiato.liste %}
                             <tr>
-                                <td>{{  liste.liste.pgCmdInvertListe.codeSandre  }}</td>
-                                <td>{{  liste.liste.pgCmdInvertListe.taxon }}
+                                <td>{{  liste.liste.codeSandre  }}</td>
+                                <td>{{  liste.liste.taxon }}
                                 <td>{{  liste.taxon.nomAppelTaxon  }}</td>
-                                <td class="text-right">{{  liste.liste.pgCmdInvertListe.denombrement | number_format(0,'.',' ') }}</td>
+                                <td class="text-right">{{  liste.liste.denombrement | number_format(0,'.',' ') }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>

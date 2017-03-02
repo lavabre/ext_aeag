@@ -1,27 +1,27 @@
 AeagSqeBundle_depotHydrobio_index:
     path:  /
     defaults: { _controller: AeagSqeBundle:DepotHydrobio:index }
-    
+
 AeagSqeBundle_depotHydrobio_demandes:
     path:  /demandes/{lotanId}
     defaults: { _controller: AeagSqeBundle:DepotHydrobio:demandes, lotanId : null}
-    
+
 AeagSqeBundle_depotHydrobio_prelevements:
     path:  /prelevement/{demandeId}
     defaults: { _controller: AeagSqeBundle:DepotHydrobio:prelevements, demandeId : null }
-    
+
 AeagSqeBundle_depotHydrobio_prelevement_detail:
     path:  /prelevement/detail/{prelevId}
     defaults: { _controller: AeagSqeBundle:DepotHydrobio:prelevementDetail, prelevId : null }
-    
+
 AeagSqeBundle_depotHydrobio_telecharger:
     path:  /telecharger/{demandeId}
     defaults: { _controller: AeagSqeBundle:DepotHydrobio:telecharger, demandeId : null }
-    
+
 AeagSqeBundle_depotHydrobio_reponses:
     path:  /reponses/{demandeId}
     defaults: { _controller: AeagSqeBundle:DepotHydrobio:reponses, demandeId : null }
-    
+
 AeagSqeBundle_depotHydrobio_reponses_deposer:
     path:  /reponses/deposer/{demandeId}
     defaults: { _controller: AeagSqeBundle:DepotHydrobio:deposerReponse, demandeId : null }
@@ -29,11 +29,11 @@ AeagSqeBundle_depotHydrobio_reponses_deposer:
 AeagSqeBundle_depotHydrobio_reponses_selectionner:
     path:  /reponses/selectionner/{demandeId}
     defaults: { _controller: AeagSqeBundle:DepotHydrobio:selectionnerReponse, demandeId : null }
-    
+
 AeagSqeBundle_depotHydrobio_reponses_telecharger:
     path:  /reponses/telecharger/{reponseId}/{typeFichier}
     defaults: { _controller: AeagSqeBundle:DepotHydrobio:telechargerReponse, reponseId : null, typeFichier : null }
-    
+
 AeagSqeBundle_depotHydrobio_reponses_supprimer:
     path:  /reponses/supprimer/{reponseId}
     defaults: { _controller: AeagSqeBundle:DepotHydrobio:supprimerReponse, reponseId : null }

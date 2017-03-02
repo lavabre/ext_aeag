@@ -115,21 +115,132 @@ class DepotHydrobioController extends Controller {
         $session->set('fonction', 'prelevements');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
+        $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
+        $repoPgProgLotStationAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotStationAn');
         $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
         $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
+        $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
         $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
+        $repoPgRefReseauMesure = $emSqe->getRepository('AeagSqeBundle:PgRefReseauMesure');
 
         $pgProgWebUser = $repoPgProgWebUsers->findOneByExtId($user->getId());
         $pgCmdDemande = $repoPgCmdDemande->findOneById($demandeId);
+        $pgProgLotAn = $pgCmdDemande->getLotan();
+        $pgProgLot = $pgProgLotAn->getLot();
+
         if ($pgCmdDemande) {
+            $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnByLotanPeriode($pgCmdDemande->getLotan(), $pgCmdDemande->getPeriode());
+            if ($pgProgLot->getDelaiPrel()) {
+                $dateFin = clone($pgProgLotPeriodeAn->getPeriode()->getDateDeb());
+                $delai = $pgProgLot->getDelaiPrel();
+                $dateFin->add(new \DateInterval('P' . $delai . 'D'));
+            } else {
+                $dateFin = $pgProgLotPeriodeAn->getPeriode()->getDateFin();
+            }
+            $tabCmdPrelevs = array();
+            $nbCmdPrelevs = 0;
             $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByDemande($pgCmdDemande);
-        } else {
-            $pgCmdPrelevs = null;
+            foreach ($pgCmdPrelevs as $pgCmdPrelev) {
+                $tabCmdPrelevs[$nbCmdPrelevs]['cmdPrelev'] = $pgCmdPrelev;
+                $tabCmdPrelevs[$nbCmdPrelevs]['lien'] = '/sqe_fiches_stations/' . str_replace('/', '-', $pgCmdPrelev->getStation()->getCode()) . '.pdf';
+                $pgProgLotStationAn = $repoPgProgLotStationAn->getPgProgLotStationAnByLotAnStation($pgProgLotAn, $pgCmdPrelev->getStation());
+                if ($pgProgLotStationAn) {
+                    $pgRefReseauMesure = $repoPgRefReseauMesure->getPgRefReseauMesureByGroupementId($pgProgLotStationAn->getRsxId());
+                    if ($pgRefReseauMesure) {
+                        $tabCmdPrelevs[$nbCmdPrelevs]['reseau'] = $pgRefReseauMesure;
+                    } else {
+                        $tabCmdPrelevs[$nbCmdPrelevs]['reseau'] = null;
+                    }
+                } else {
+                    $tabCmdPrelevs[$nbCmdPrelevs]['reseau'] = null;
+                }
+                $tabCmdPrelevs[$nbCmdPrelevs]['maj'] = 'N';
+                $tabCmdPrelevs[$nbCmdPrelevs]['commentaire'] = null;
+                $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelevOrderId($pgCmdPrelev);
+                $tabSuiviPrels = array();
+                $nbSuiviPrels = 0;
+                if (count($pgCmdSuiviPrels) == 0) {
+                    $tabSuiviPrels[$nbSuiviPrels]['suiviPrel'] = array();
+                    $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'O';
+                    $tabCmdPrelevs[$nbCmdPrelevs]['maj'] = 'O';
+                } else {
+                    foreach ($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
+                        $tabSuiviPrels[$nbSuiviPrels]['suiviPrel'] = $pgCmdSuiviPrel;
+                        $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'N';
+                        $tabSuiviPrels[$nbSuiviPrels]['avisSaisie'] = 'N';
+                        if ($pgCmdSuiviPrel->getCommentaire()) {
+                            if ($tabCmdPrelevs[$nbCmdPrelevs]['commentaire'] == null) {
+                                $tabCmdPrelevs[$nbCmdPrelevs]['commentaire'] = $pgCmdSuiviPrel->getCommentaire();
+                            }
+                        }
+                        if ($user->hasRole('ROLE_ADMINSQE') or ( $pgCmdPrelev->getPrestaPrel() == $pgCmdDemande->getPrestataire())) {
+                            if ($pgCmdSuiviPrel->getStatutPrel() != 'F') {
+                                $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'O';
+                                $tabCmdPrelevs[$nbCmdPrelevs]['maj'] = 'O';
+                            } else {
+                                if (!$pgCmdSuiviPrel->getFichierRps()) {
+                                    if ($pgCmdSuiviPrel->getValidation() != 'A') {
+                                        $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'O';
+                                        $tabCmdPrelevs[$nbCmdPrelevs]['maj'] = 'O';
+                                    }
+                                }
+                            }
+                        }
+                        $commentaire = $pgCmdSuiviPrel->getCommentaire();
+                        $tabCommentaires = explode(CHR(13) . CHR(10), $commentaire);
+                        for ($nbLignes = 0; $nbLignes < count($tabCommentaires); $nbLignes++) {
+                            $pos = explode(' ', $tabCommentaires[$nbLignes]);
+                            //echo ('ligne : ' . $nbLignes . '  pos : ' . $pos[0] .  ' ligne : ' . $tabCommentaires[$nbLignes] . '</br>');
+                            if ($pos[0] == 'Déposé' and $pos[1] = 'le' and $pos[3] == 'à' and $pos[5] == 'par' and $pos[7] == ':') {
+                                $commentaireBis = null;
+                                for ($nbLignesBis = 0; $nbLignesBis < $nbLignes; $nbLignesBis++) {
+                                    $commentaireBis .= $tabCommentaires[$nbLignesBis] . CHR(13) . CHR(10);
+                                }
+                                if (!$user->hasRole('ROLE_ADMINSQE')) {
+                                    $tabSuiviPrels[$nbSuiviPrels]['suiviPrel']->setCommentaire($commentaireBis);
+                                    break;
+                                }
+                            }
+                        }
+                        $nbSuiviPrels++;
+                        break;
+                    }
+                }
+                if (count($tabSuiviPrels) > 0) {
+                    $tabCmdPrelevs[$nbCmdPrelevs]['suiviPrels'] = $tabSuiviPrels;
+                } else {
+                    $tabCmdPrelevs[$nbCmdPrelevs]['suiviPrels'] = null;
+                }
+                //print_r('prelev : ' . $pgCmdPrelev->getid() . '</br>');
+                $tabAutrePrelevs = array();
+                $tabAutrePrelevs = $repoPgCmdPrelev->getAutrePrelevs($pgCmdPrelev);
+                if (count($tabAutrePrelevs) > 0) {
+                    $tabCmdPrelevs[$nbCmdPrelevs]['autrePrelevs'] = $tabAutrePrelevs;
+                } else {
+                    $tabCmdPrelevs[$nbCmdPrelevs]['autrePrelevs'] = null;
+                }
+//                         if ($pgCmdPrelev->getStation()->getOuvFoncId() == 557655){
+//                             for($j = 0 ; $j < count($tabCmdPrelevs[$nbCmdPrelevs]['autrePrelevs']); $j++){
+//                                 echo('j : ' . $j . ' date : ' . $tabCmdPrelevs[$nbCmdPrelevs]['autrePrelevs'][$j]['datePrel'] . ' support : ' . $tabCmdPrelevs[$nbCmdPrelevs]['autrePrelevs'][$j]['support'] . '</br>');
+//                             }
+//                             echo('nb: ' . count($tabCmdPrelevs[$nbCmdPrelevs]['autrePrelevs']));
+//               \Symfony\Component\VarDumper\VarDumper::dump($tabCmdPrelevs);
+//               return new Response('');
+//                        }
+                $nbCmdPrelevs++;
+            }
         }
-        return $this->render('AeagSqeBundle:DepotHydrobio:prelevements.html.twig', array('user' => $pgProgWebUser,
+
+//        \Symfony\Component\VarDumper\VarDumper::dump($tabCmdPrelevs);
+//        return new Response('');
+        return $this->render('AeagSqeBundle:DepotHydrobio:prelevements.html.twig', array(
+                    'user' => $pgProgWebUser,
+                    'periodeAn' => $pgProgLotPeriodeAn,
+                    'dateFin' => $dateFin,
                     'demande' => $pgCmdDemande,
-                    'prelevs' => $pgCmdPrelevs,));
+                    'prelevs' => $tabCmdPrelevs
+        ));
     }
 
     public function prelevementDetailAction($prelevId) {
@@ -143,6 +254,7 @@ class DepotHydrobioController extends Controller {
         $session->set('fonction', 'prelevementDetail');
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
+        $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
         $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
         $repoPgCmdPrelevHbInvert = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelevHbInvert');
@@ -157,6 +269,18 @@ class DepotHydrobioController extends Controller {
         $pgProgWebUser = $repoPgProgWebUsers->findOneByExtId($user->getId());
         $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevById($prelevId);
         $pgCmdDemande = $pgCmdPrelev->getdemande();
+        $pgProgLotAn = $pgCmdDemande->getLotan();
+        $pgProgLot = $pgProgLotAn->getlot();
+        $periode = $pgCmdDemande->getPeriode();
+
+        $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnByLotanPeriode($pgProgLotAn, $periode);
+        if ($pgProgLot->getDelaiPrel()) {
+            $dateFin = clone($pgProgLotPeriodeAn->getPeriode()->getDateDeb());
+            $delai = $pgProgLot->getDelaiPrel();
+            $dateFin->add(new \DateInterval('P' . $delai . 'D'));
+        } else {
+            $dateFin = $pgProgLotPeriodeAn->getPeriode()->getDateFin();
+        }
 
         $tabRecouvs = array();
         $tabPrelems = array();
@@ -278,7 +402,10 @@ class DepotHydrobioController extends Controller {
 //        \Symfony\Component\VarDumper\VarDumper::dump($tabListes);
 //        return new response('nb diatomes : ' . count($tabListes));
 
-        return $this->render('AeagSqeBundle:DepotHydrobio:prelevementDetail.html.twig', array('user' => $pgProgWebUser,
+        return $this->render('AeagSqeBundle:DepotHydrobio:prelevementDetail.html.twig', array(
+                    'user' => $pgProgWebUser,
+                    'periodeAn' => $pgProgLotPeriodeAn,
+                    'dateFin' => $dateFin,
                     'demande' => $pgCmdDemande,
                     'prelev' => $pgCmdPrelev,
                     'pgCmdPrelevHbInvert' => $pgCmdPrelevHbInvert,

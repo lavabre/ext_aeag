@@ -487,26 +487,26 @@ class PgCmdPrelevRepository extends EntityRepository {
      * @return array
      */
     public function getAutrePrelevs($pgCmdPrelev) {
-        $query = "select distinct sp.datePrel as datePrel, sup.codeSupport as codeSupport, sup.nomSupport as support";
-        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdPrelev prl";
-        $query = $query . " , Aeag\SqeBundle\Entity\PgCmdSuiviPrel sp ";
-        $query = $query . " ,Aeag\SqeBundle\Entity\PgSandreSupports sup";
-        $query = $query . " where prl.station = " . $pgCmdPrelev->getStation()->getOuvFoncId();
-        $query = $query . " and prl.codeSupport in ('4','10','11','13','27','69')";
-        $query = $query . " and prl.codeSupport <> '" . $pgCmdPrelev->getCodeSupport()->getCodeSupport() . "'";
-        $query = $query . " and sup.codeSupport = prl.codeSupport";
-        $query = $query . " and prl.id = sp.prelev";
-        $query = $query . " and sp.statutPrel = 'P'";
-        $query = $query . " and sp.validation <> 'R'";
-        $query = $query . " and sp.id = (select max(ss.id) from Aeag\SqeBundle\Entity\PgCmdSuiviPrel ss where ss.prelev = prl.id)";
-        //$query = $query . " group by sp.datePrel, sup.codeSupport, sup.nomSupport";
-        $query = $query . " order by sp.datePrel desc";
-        $qb = $this->_em->createQuery($query);
 
-//        if ($pgCmdPrelev->getStation()->getOuvFoncId() == 557655){
-//        print_r($query);
-//        }
-        return $qb->getResult();
+        $query = 'SELECT distinct sp.date_prel as "datePrel", sup.code_support as "codeSupport", sup.nom_support as "nomSupport"
+                      from pg_cmd_prelev  prl
+                      join pg_cmd_suivi_prel sp on prl.id = sp.prelev_id
+                      join pg_sandre_supports sup on sup.code_support = prl.code_support
+                      where prl.station_id = :station
+                      and prl.code_support in (\'4\',\'10\',\'11\',\'13\',\'27\',\'69\')
+                      and prl.code_support <> :pgSandreSupports
+                      and sup.code_support = prl.code_support
+                      and prl.id = sp.prelev_id
+                      and sp.statut_prel = \'P\'
+                      and sp.validation <> \'R\'
+                      and sp.id = (select max(ss.id) from pg_cmd_suivi_prel ss where ss.prelev_id = prl.id)
+                      order by sp.date_prel desc';
+
+        $stmt = $this->_em->getConnection()->prepare($query);
+        $stmt->bindValue('station', $pgCmdPrelev->getStation()->getOuvFoncId());
+        $stmt->bindValue('pgSandreSupports', $pgCmdPrelev->getCodeSupport()->getCodeSupport());
+        $stmt->execute();
+        return $stmt->fetchAll();
     }
 
     public function getPrestataireBySupport($pgSandreSupports) {
