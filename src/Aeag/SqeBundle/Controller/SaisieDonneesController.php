@@ -154,6 +154,8 @@ class SaisieDonneesController extends Controller {
 //                                $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandesByLotanPeriode($pgProgLotAn, $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
 //                            }
                             $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandesByLotanPeriode($pgProgLotAn, $pgProgLotPeriodeProg->getPeriodan()->getPeriode());
+                            $nbPrelevs = 0;
+                            $nbPrelevCorrects = 0;
                             foreach ($pgCmdDemandes as $pgCmdDemande) {
                                 if ($pgCmdDemande) {
 
@@ -161,8 +163,7 @@ class SaisieDonneesController extends Controller {
                                         $prestaprel = $pgCmdDemande->getPrestataire();
                                     }
                                     $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($prestaprel, $pgCmdDemande, $pgProgLotPeriodeProg->getStationAn()->getStation(), $pgProgLotPeriodeAn->getPeriode());
-                                    $nbPrelevs = 0;
-                                    $nbPrelevCorrects = 0;
+
                                     foreach ($pgCmdPrelevs as $pgCmdPrelev) {
                                         // print_r('demande : ' . $pgCmdDemande->getId() . '  prelev : ' . $pgCmdPrelev->getId() . ' phase : ' . $pgCmdPrelev->getPhaseDmd()->getcodePhase() . '</br>');
                                         if ($pgCmdPrelev->getPhaseDmd()->getcodePhase() != 'M60') {
@@ -176,19 +177,13 @@ class SaisieDonneesController extends Controller {
                                     $tabStations[$k]['nbPrelevCorrects'] = $nbPrelevCorrects;
                                 }
                             }
+                            if ($nbPrelevs == $nbPrelevCorrects and $nbPrelevs > 0) {
+                                $nbStationCorrectes++;
+                            }
                         }
                     }
                 }
                 $tabPeriodeAns[$i]['nbStations'] = $nbStations;
-                $nbPrelevs = 0;
-                $nbPrelevCorrects = 0;
-                for ($k = 0; $k < count($tabStations); $k++) {
-                    $nbPrelevs = $nbPrelevs + $tabStations[$k]['nbPrelevs'];
-                    $nbPrelevCorrects = $nbPrelevCorrects + $tabStations[$k]['nbPrelevCorrects'];
-                }
-                if ($nbPrelevs == $nbPrelevCorrects and $nbPrelevs > 0) {
-                    $nbStationCorrectes++;
-                }
                 $tabPeriodeAns[$i]['nbStationCorrectes'] = $nbStationCorrectes;
                 $tabPeriodeAns[$i]['stations'] = $tabStations;
                 $i++;
@@ -1986,7 +1981,7 @@ class SaisieDonneesController extends Controller {
         $pgProgLot = $pgProgLotAn->getLot();
         $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
         $pgRefStationMesure = $repoPgRefStationMesure->getPgRefStationMesureByOuvFoncId($stationId);
-        $pgProgLotStationAn = $repoPgProgLotStationAn - $repoPgRefStationMesure > getPgProgLotStationAnByLotAnStation($pgProgLotAn, $pgRefStationMesure);
+        $pgProgLotStationAn = $repoPgProgLotStationAn->getPgProgLotStationAnByLotAnStation($pgProgLotAn, $pgRefStationMesure);
         $pgProgLotPeriodeProgs = $pgCmdPrelev->getPprog();
         $nbErreurs = 0;
         $okControlesSpecifiques = 0;

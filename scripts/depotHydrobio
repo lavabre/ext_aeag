@@ -1,0 +1,22 @@
+#!/bin/bash
+jour=$(date +"%Y%m%d")
+if [ "$1" = "-env" ]; then
+    if [ "$2" = "prod" ]; then
+        dirbase="/base/extranet/ext_aeag/"
+    elif [ "$2" = "preprod" ]; then
+        dirbase="/base/extranet/preprod/ext_aeag/"
+    else
+        dirbase="/base/extranet/dev/Joel/ext_aeag/"
+    fi
+else
+    dirbase="/base/extranet/dev/Joel/ext_aeag/"
+fi
+dirlog=$dirbase"app/logs"
+dircmd=$dirbase"app/console_process_rai"
+if [ ! -d "$dirlog" ]; then
+  mkdir $dirlog
+fi
+
+if [ $(ps -ax | grep -v grep | grep 'rai:depotHydrobio' | wc -l) -lt 2 ]; then
+    php $dircmd rai:depotHydrobio -e $2 >> $dirlog/depoHydrobio_$jour.log
+fi

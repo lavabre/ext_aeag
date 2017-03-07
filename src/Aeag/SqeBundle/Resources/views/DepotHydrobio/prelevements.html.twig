@@ -175,6 +175,7 @@
             <thead>
                 <tr>
                     <th>Action</th>
+                    <th>Avis</th>
                     <th>Station</th>
                     <th>Libellé</th>
                     <th>Réseau</th>
@@ -186,135 +187,183 @@
                 </tr>
             </thead>
             <tbody>
+                {% set nb = 0 %}
                 {%if prelevs | length%}
                     {% for cmdPrelev in prelevs %}
-                        {% if cmdPrelev.cmdPrelev.phaseDmd.codePhase == 'M40' %}
-                            <tr class="success">
-                            {% else %}
-                            <tr>
-                            {% endif %}
-                            <td width="10%" nowrap>
-                                {% if is_granted('ROLE_XHBIO') %}
-                                    {% if  cmdPrelev.suiviPrels.0.maj == 'O' %}
-                                        <a class="btn btn-success" id="idNouveauSuivi{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Nouveau suivi">
-                                            <i class="fa fa-plus"></i>
-                                        </a>
-                                    {% endif %}
+                        {%if cmdPrelev.suiviPrels.0.suiviPrel | length%}
+                            {% set nb = nb + 1%}
+                            {% if cmdPrelev.cmdPrelev.phaseDmd.codePhase == 'M40' %}
+                                <tr  id="idTr-{{nb}}" class="success">
+                                {% else %}
+                                <tr  id="idTr-{{nb}}">
                                 {% endif %}
-                                {%if cmdPrelev.suiviPrels.0.suiviPrel | length%}
-                                    <a id="idVoirSuivi{{ cmdPrelev.cmdPrelev.id }}" class="btn btn-primary" href="#" title="consulter l'historique">
-                                        <i class="fa fa-archive"></i>
+                                <td id="idTd1-{{nb}}" width="10%" nowrap>
+                                    {%if cmdPrelev.suiviPrels.0.suiviPrel | length%}
+                                        <a id="idVoirSuivi{{ cmdPrelev.cmdPrelev.id }}" class="btn btn-primary" href="#" title="consulter l'historique">
+                                            <i class="fa fa-archive"></i>
+                                        </a>
+                                        {%if cmdPrelev.commentaire | length%}
+                                            <a id="idCommentaireSuivi{{ cmdPrelev.cmdPrelev.id }}" class="btn btn-info" href="#" title="dernier commentaire">
+                                                <i class="fa fa-comment-o"></i>
+                                            </a>
+                                        {% endif %}
+                                        {% if cmdPrelev.suiviPrels.0.suiviPrel.statutPrel  == 'F' or cmdPrelev.suiviPrels.0.suiviPrel.statutPrel  == 'D' %}
+                                            {% if  not cmdPrelev.suiviPrels.0.suiviPrel.fichierRps %}
+                                                {% if is_granted('ROLE_XHBIO') %}
+                                                    <a id="idDeposerSuivi{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}" class="btn btn-primary btn-deposer-reponse"  title="Déposer un fichier terrain">
+                                                        <i class="fa fa-download"></i>
+                                                    </a>
+                                                {% endif %}
+                                            {% else %}
+                                                {% if cmdPrelev.suiviPrels.0.suiviPrel.fichierRps.nomFichier %}
+                                                    <a id="idTelechargerSuivi{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}" class="btn btn-success btn-telecharger" data-id="{{ cmdPrelev.suiviPrels.0.suiviPrel.id  }}"  title="Télécharger les fichiers déposés">
+                                                        <i class="fa fa-upload"></i>
+                                                    </a>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endif %}
+                                        {% if is_granted('ROLE_ADMINSQE') or pgProgWebUser.typeUser == 'XHBIO' %}
+                                            {#  {% if station.suiviPrel.statutPrel  == 'D'  and
+                                                      station.suiviPrel.validation  == 'E'  and
+                                                      station.suiviPrel.fichierRps | length %}#}
+                                            <a  id="idAvis-{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}" class="btn btn-warning"  title="Donner un avis">
+                                                <i class="fa fa-graduation-cap"></i>
+                                            </a>
+                                            {#{% endif %}#}
+                                        {% endif %}
+
+                                        {% if is_granted('ROLE_ADMINSQE') %}
+                                            <a  id="idMaj-{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}" class="btn btn-warning"  title="valider le suivi">
+                                                <i class="fa fa-check"></i>
+                                            </a>
+                                            {% if cmdPrelev.suiviPrels.0.suiviPrel.statutPrel != 'D' %}
+                                                <a class="btn btn-danger" data-toggle="modal" href="#sup-{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}" title="Supprimer le suivi">
+                                                    <i class="fa fa-trash-o"></i>
+                                                </a>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endif %}
+                                    <a id="id_{{ cmdPrelev.cmdPrelev.id }}" class="btn btn-info" href="{{path('AeagSqeBundle_depotHydrobio_prelevement_detail',{'prelevId' : cmdPrelev.cmdPrelev.id})}}" title="détail sur le prélèvement">
+                                        <i class="fa fa-eye"></i>
                                     </a>
-                                    {%if cmdPrelev.commentaire | length%}
-                                        <a id="idCommentaireSuivi{{ cmdPrelev.cmdPrelev.id }}" class="btn btn-info" href="#" title="dernier commentaire">
-                                            <i class="fa fa-comment-o"></i>
-                                        </a>
-                                    {% endif %}
-                                    {% if cmdPrelev.suiviPrels.0.suiviPrel.statutPrel  == 'F' %}
-                                        {% if  not cmdPrelev.suiviPrels.0.suiviPrel.fichierRps %}
-                                            {% if is_granted('ROLE_XHBIO') %}
-                                                <a id="idDeposerSuivi{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}" class="btn btn-primary btn-deposer-reponse"  title="Déposer un fichier terrain">
-                                                    <i class="fa fa-download"></i>
-                                                </a>
-                                            {% endif %}
-                                        {% else %}
-                                            {% if cmdPrelev.suiviPrels.0.suiviPrel.fichierRps.nomFichier %}
-                                                <a id="idTelechargerSuivi{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}" class="btn btn-success btn-telecharger" data-id="{{ cmdPrelev.suiviPrels.0.suiviPrel.id  }}"  title="Télécharger le fichier terrain">
-                                                    <i class="fa fa-upload"></i>
-                                                </a>
-                                            {% endif %}
-                                        {% endif %}
-                                    {% endif %}
-                                    {% if is_granted('ROLE_ADMINSQE') %}
-                                        <a  id="idMaj-{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}" class="btn btn-warning"  title="valider le suivi">
-                                            <i class="fa fa-check"></i>
-                                        </a>
-                                        <a class="btn btn-danger" data-toggle="modal" href="#sup-{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}" title="Supprimer le suivi">
-                                            <i class="fa fa-trash-o"></i>
-                                        </a>
-                                    {% endif %}
-                                {% endif %}
-                                <a id="id_{{ cmdPrelev.cmdPrelev.id }}" class="btn btn-info" href="{{path('AeagSqeBundle_depotHydrobio_prelevement_detail',{'prelevId' : cmdPrelev.cmdPrelev.id})}}" title="détail sur le prélèvement">
-                                    <i class="fa fa-eye"></i>
-                                </a>
-                            </td>
-                            <td>
-                                <a  href="{{ cmdPrelev.lien }}" target="_blank" title="Localisation">{{ cmdPrelev.cmdPrelev.station.code  }}</a>
-                            </td>
-                            <td>
-                                {{ cmdPrelev.cmdPrelev.station.libelle }}
-                            </td>
-                            <td>
-                                {{ cmdPrelev.reseau.nomRsx }}
-                            </td>
-                            <td>
-                                {{ cmdPrelev.cmdPrelev.codeSupport.nomSupport }}
-                            </td>
-                            <td>
-                                {%if  cmdPrelev.autrePrelevs %}
-                                    {% for autrePrelev in cmdPrelev.autrePrelevs  %}
-                                        {% if autrePrelev.datePrel %}
-                                            {{ autrePrelev.datePrel | date("d/m/Y H:i") }} : {{ autrePrelev.nomSupport }} <br/>
-                                        {% endif %}
-                                    {% endfor %}
-                                {% endif %}
-                            </td>
-                            {%if not cmdPrelev.suiviPrels.0.suiviPrel | length %}
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            {% else %}
-                                {% if cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'A' %}
-                                    <td class="success" nowrap>
-                                    {% elseif cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'R' %}
-                                    <td class="danger" nowrap>
-                                    {% else %}
-                                    <td class="warning" nowrap>
-                                    {% endif %}
-                                    <span class="hidden">{{cmdPrelev.suiviPrels.0.suiviPrel.datePrel | date("Y/m/d H:i") }}</span>
-                                    {{cmdPrelev.suiviPrels.0.suiviPrel.datePrel | date("d/m/Y H:i") }}
                                 </td>
-                                {% if cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'A' %}
-                                    <td class="success" nowrap>
-                                    {% elseif cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'R' %}
-                                    <td class="danger" nowrap>
+
+                                {%if cmdPrelev.suiviPrels.0.suiviPrel | length%}
+                                    {% if cmdPrelev.suiviPrels.0.suiviPrel.avis == 'F' %}
+                                        <td id="idTd-{{nb}}" class="success">
+                                            {% if cmdPrelev.suiviPrels.0.suiviPrel.validAuto == 'O' %}
+                                                Favorable (auto)
+                                            {% elseif  cmdPrelev.suiviPrels.0.suiviPrel.validAuto == 'N' %}
+                                                Favorable (manu)
+                                            {% else %}
+                                                Favorable
+                                            {% endif %}
+                                        </td>
+                                    {% elseif cmdPrelev.suiviPrels.0.suiviPrel.avis == 'D' %}
+                                        <td id="idTd-{{nb}}" class="danger">
+                                            {% if cmdPrelev.suiviPrels.0.suiviPrel.validAuto == 'O' %}
+                                                Défavorable (auto)
+                                            {% elseif  cmdPrelev.suiviPrels.0.suiviPrel.validAuto == 'N' %}
+                                                Défavorable (manu)
+                                            {% else %}
+                                                Défavorable
+                                            {% endif %}
+                                        </td>
                                     {% else %}
-                                    <td class="warning" nowrap>
+                                        <td id="idTd-{{nb}}"> </td>
                                     {% endif %}
-                                    {% if cmdPrelev.suiviPrels.0.suiviPrel.statutPrel == 'P' %}
-                                        Prévisionnel
-                                    {% elseif cmdPrelev.suiviPrels.0.suiviPrel.statutPrel == 'F' %}
-                                        Effectué
-                                    {% elseif cmdPrelev.suiviPrels.0.suiviPrel.statutPrel == 'N' %}
-                                        Non effectué
-                                    {% elseif cmdPrelev.suiviPrels.0.suiviPrel.statutPrel == 'R' %}
-                                        Reporté
+                                {% else %}
+                                    <td id="idTd-{{nb}}"> </td>
+                                {% endif %}
+
+
+                                <td>
+                                    <a  href="{{ cmdPrelev.lien }}" target="_blank" title="Localisation">{{ cmdPrelev.cmdPrelev.station.code  }}</a>
+                                </td>
+                                <td>
+                                    {{ cmdPrelev.cmdPrelev.station.libelle }}
+                                </td>
+                                <td>
+                                    {{ cmdPrelev.reseau.nomRsx }}
+                                </td>
+                                <td>
+                                    {{ cmdPrelev.cmdPrelev.codeSupport.nomSupport }}
+                                </td>
+                                <td>
+                                    {%if  cmdPrelev.autrePrelevs %}
+                                        {% for autrePrelev in cmdPrelev.autrePrelevs  %}
+                                            {% if autrePrelev.datePrel %}
+                                                {{ autrePrelev.datePrel | date("d/m/Y H:i") }} : {{ autrePrelev.nomSupport }} <br/>
+                                            {% endif %}
+                                        {% endfor %}
                                     {% endif %}
                                 </td>
-                                {% if cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'A' %}
-                                    <td class="success" nowrap>
-                                    {% elseif cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'R' %}
-                                    <td class="danger" nowrap>
-                                    {% else%}
-                                    <td class="warning" nowrap>
-                                    {% endif %}
+                                {%if not cmdPrelev.suiviPrels.0.suiviPrel | length %}
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                {% else %}
                                     {% if cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'A' %}
-                                        Accepté
-                                    {% elseif cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'R' %}
-                                        Refusé
-                                    {% else %}
-                                        En attente
-                                    {% endif %}
-                                </td>
-                            {% endif %}
-                        </tr>
+                                        <td class="success" nowrap>
+                                        {% elseif cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'R' %}
+                                        <td class="danger" nowrap>
+                                        {% else %}
+                                        <td class="warning" nowrap>
+                                        {% endif %}
+                                        <span class="hidden">{{cmdPrelev.suiviPrels.0.suiviPrel.datePrel | date("Y/m/d H:i") }}</span>
+                                        {{cmdPrelev.suiviPrels.0.suiviPrel.datePrel | date("d/m/Y H:i") }}
+                                    </td>
+                                    {% if cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'A' %}
+                                        <td class="success" nowrap>
+                                        {% elseif cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'R' %}
+                                        <td class="danger" nowrap>
+                                        {% else %}
+                                        <td class="warning" nowrap>
+                                        {% endif %}
+                                        {% if cmdPrelev.suiviPrels.0.suiviPrel.statutPrel == 'P' %}
+                                            Prévisionnel
+                                        {% elseif cmdPrelev.suiviPrels.0.suiviPrel.statutPrel == 'F' %}
+                                            Effectué
+                                        {% elseif cmdPrelev.suiviPrels.0.suiviPrel.statutPrel == 'N' %}
+                                            Non effectué
+                                        {% elseif cmdPrelev.suiviPrels.0.suiviPrel.statutPrel == 'R' %}
+                                            Reporté
+                                        {% elseif cmdPrelev.suiviPrels.0.suiviPrel.statutPrel == 'D' %}
+                                            Déposé
+                                        {% endif %}
+                                    </td>
+                                    {% if cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'A' %}
+                                        <td class="success" nowrap>
+                                        {% elseif cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'R' %}
+                                        <td class="danger" nowrap>
+                                        {% else%}
+                                        <td class="warning" nowrap>
+                                        {% endif %}
+                                        {% if cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'A' %}
+                                            Accepté
+                                        {% elseif cmdPrelev.suiviPrels.0.suiviPrel.validation  == 'R' %}
+                                            Refusé
+                                        {% else %}
+                                            En attente
+                                        {% endif %}
+                                    </td>
+                                {% endif %}
+                            </tr>
+                        {% endif %}
                     {% endfor %}
                 {% endif %}
             </tbody>
         </table>
 
         <div class="row">
-            <div class="col-md-12 pull-right text-info">
+            <div class="col-md-offset-9 col-md-2 pull-right text-info">
+                <ul class="list-inline">
+                    <li><span class="label label-success">Accepté</span></li>
+                    <li><span class="label label-warning">En attente</span></li>
+                    <li><span class="label label-danger">Refusé</span></li>
+                </ul>
+            </div>
+            <div class="col-md-1 pull-right text-info">
                 <ul class="list-inline">
                     <li><span class="label label-success">Correct</span></li>
                         {# <li><span class="label label-danger"><i class="fa fa-exclamation-triangle"> En cours de développement</i></span></li>#}
@@ -362,28 +411,10 @@
     }
     );
 
-    $("#idTable_demandes thead td").each( function ( i ) {
 
-    if (i != 0){
-    var select = $('<select><option value=""></option></select>')
-    .appendTo( $(this).empty() )
-    .on( 'change', function () {
-    table.column( i )
-    .search( $(this).val() )
-    .draw();
-    });
-
-    table.column( i ).data().unique().sort().each( function ( d, j ) {
-    select.append( '<option value="'+d+'">'+d+'</option>' )
-    });
-    };
-    });
-
-    $('#select-length-menu').val("-1");
-    });
-
+    {%set nb1 = 0 %}
     {% for cmdPrelev in prelevs %}
-
+        {%set nb1 = nb1 + 1 %}
         $("#modalArchive{{ cmdPrelev.cmdPrelev.id }}").draggable({
         handle: ".modal-header"
         });
@@ -441,6 +472,28 @@
 
         {%if cmdPrelev.suiviPrels.0.suiviPrel | length%}
 
+            $(document).on('click','#idAvis-{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}',function(e){
+            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+            $('#modalTraitementEncours').modal('toggle');
+            var url = '{{ path("AeagSqeBundle_suiviHydrobio_synthese_support_station",{"codeSupport": "par1", "stationId": "par2", "suiviPrelId":  "par3", "tr": "par4"}) }}', // Le nom du fichier indiqué dans le formulaire
+            url = url.replace("par1", {{  cmdPrelev.cmdPrelev.codeSupport.codeSupport }});
+            url = url.replace("par2", {{ cmdPrelev.cmdPrelev.station.ouvFoncId }});
+            url = url.replace("par3", {{ cmdPrelev.suiviPrels.0.suiviPrel.id }});
+            url = url.replace("par4", {{ nb1 }});
+            url = url.replace("amp;","");
+            $.ajax({
+            url: url,
+            type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+            success: function(html) { // Je récupère la réponse du fichier PHP
+            $('#idModalContentNouveauSuivi').empty().append(html);
+            var html = 'Avis sur le suivi Hydrobio de la station  {{ cmdPrelev.cmdPrelev.station.code  }}<br/>sur le support :  {{ cmdPrelev.cmdPrelev.codeSupport.nomSupport}}';
+            $('#labelModalNouveauSuivi').html(html);
+            $('#modalNouveauSuivi').modal('show');
+            $('#modalTraitementEncours').modal('hide');
+            }
+            });
+            });
+
             $(document).on('click','#idMaj-{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}',function(e){
             e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
             $('#modalTraitementEncours').modal('toggle');
@@ -472,8 +525,8 @@
             url: url,
             type: 'get', // La méthode indiquée dans le formulaire (get ou post)
             success: function(html) { // Je récupère la réponse du fichier PHP
-            var url1 = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_stations",{"periodeAnId": "par1"}) }}', // Le nom du fichier indiqué dans le formulaire
-            url1 = url1.replace("par1", {{ periodeAn.id }});
+            var url1 = '{{ path("AeagSqeBundle_depotHydrobio_prelevements",{"demandeId": "par1"}) }}', // Le nom du fichier indiqué dans le formulaire
+            url1 = url1.replace("par1", {{ demande.id }});
             url1 = url1.replace("amp;", "");
             window.location.replace(url1);
             $('#modalTraitementEncours').modal('toggle');
@@ -521,5 +574,5 @@
 
         {% endif %}
     {% endfor %}
-
+    });
 {%endblock scripts %}

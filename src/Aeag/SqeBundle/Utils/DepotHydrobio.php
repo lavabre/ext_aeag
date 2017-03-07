@@ -2,6 +2,7 @@
 
 namespace Aeag\SqeBundle\Utils;
 
+use Aeag\SqeBundle\Entity\PgCmdSuiviPrel;
 use Aeag\SqeBundle\Entity\PgCmdPrelevHbInvert;
 use Aeag\SqeBundle\Entity\PgCmdInvertRecouv;
 use Aeag\SqeBundle\Entity\PgCmdInvertPrelem;
@@ -47,7 +48,7 @@ class DepotHydrobio {
         foreach ($liste as $nomFichier) {
             $tabNomFichier = explode('.', $nomFichier);
             if ($tabNomFichier[1] == 'xls') {
-                $tabFichier = $this->lireXls($demandeId, $excelObj, $nomFichier, $pathBase, $rapport, $emSqe);
+                $tabFichier = $this->lireXls($pgCmdFichierRps->getId(), $demandeId, $excelObj, $nomFichier, $pathBase, $rapport, $emSqe);
                 $tabTraitFichiers[$fic] = $tabFichier;
                 $fic++;
             }
@@ -128,7 +129,7 @@ class DepotHydrobio {
         return $tab_liste_fichiers;
     }
 
-    protected function lireXls($demandeId, $excelObj, $nomFichier, $pathBase, $rapport, $emSqe) {
+    protected function lireXls($pgCmdFichierRpsId, $demandeId, $excelObj, $nomFichier, $pathBase, $rapport, $emSqe) {
 
         $tabFichier = array();
         $tabFichier['fichier'] = $nomFichier;
@@ -144,11 +145,11 @@ class DepotHydrobio {
         $tabFeuillets = array();
         foreach ($fileExcel->getWorksheetIterator() as $worksheet) {
             if ($worksheet->getCell('B21') == 'CODE STATION') {
-                $this->lireXlsSupport10($worksheet, $feuil, $tabFeuillets, $rapport, $demandeId, $emSqe);
+                $this->lireXlsSupport10($worksheet, $feuil, $tabFeuillets, $rapport, $pgCmdFichierRpsId, $demandeId, $emSqe);
                 $feuil++;
             }
             if ($worksheet->getCell('B22') == 'CODE STATION') {
-                $this->lireXlsSupport13($worksheet, $feuil, $tabFeuillets, $rapport, $demandeId, $emSqe);
+                $this->lireXlsSupport13($worksheet, $feuil, $tabFeuillets, $rapport, $pgCmdFichierRpsId, $demandeId, $emSqe);
                 $feuil++;
             }
         }
@@ -159,16 +160,21 @@ class DepotHydrobio {
         return $tabFichier;
     }
 
-    protected function lireXlsSupport10($worksheet, $feuil, $tabFeuillets, $rapport, $demandeId, $emSqe) {
+    protected function lireXlsSupport10($worksheet, $feuil, $tabFeuillets, $rapport, $pgCmdFichierRpsId, $demandeId, $emSqe) {
         // Récupération des programmations
+        $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebUsers');
         $repoPgSandreHbNomemclatures = $emSqe->getRepository('AeagSqeBundle:PgSandreHbNomemclatures');
+        $repoPgCmdFichierRps = $emSqe->getRepository('AeagSqeBundle:PgCmdFichiersRps');
         $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
         $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
+        $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
         $repoPgCmdPrelevHbDiato = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelevHbDiato');
         $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
 
+        $pgCmdFichierRps = $repoPgCmdFichierRps->findOneById($pgCmdFichierRpsId);
         $pgCmdDemande = $repoPgCmdDemande->findOneById($demandeId);
         $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByDemande($pgCmdDemande);
+        $pgProgWebUser = $repoPgProgWebUsers->findOneByPrestataire($pgCmdDemande->getPrestataire());
 
 
         $tabFeuillets[$feuil]['feuillet'] = $worksheet->getTitle();
@@ -359,6 +365,24 @@ class DepotHydrobio {
                 fputs($rapport, $contenu);
                 // enregistrement en base
                 //
+                // table pg_cmd_suivi_prel
+                $pgCmdSuiviPrel = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelevStatutPrel($pgCmdPrelev, 'D');
+                if (!$pgCmdSuiviPrel) {
+                    $pgCmdSuiviPrel = new PgCmdSuiviPrel();
+                    $pgCmdSuiviPrel->setPrelev($pgCmdPrelev);
+                    $pgCmdSuiviPrel->setFichierRps($pgCmdFichierRps);
+                    $pgCmdSuiviPrel->setUser($pgProgWebUser);
+                    $pgCmdSuiviPrel->setDatePrel($pgCmdPrelev->getDatePrelev());
+                    $pgCmdSuiviPrel->setStatutPrel('D');
+                    $pgCmdSuiviPrel->setCommentaire('Dépôt hydrobio');
+                    $pgCmdSuiviPrel->setValidation('E');
+                } else {
+                    $pgCmdSuiviPrel->setFichierRps($pgCmdFichierRps);
+                    $pgCmdSuiviPrel->setCommentaire('Dépôt hydrobio');
+                    $pgCmdSuiviPrel->setValidation('E');
+                }
+                $emSqe->persist($pgCmdSuiviPrel);
+                //
                 // Table pg_cmd_prelev_hb_ diato
                 $pgCmdPrelevHbDiato = $repoPgCmdPrelevHbDiato->getPgCmdPrelevHbDiatoByPrelev($pgCmdPrelev);
                 if (!$pgCmdPrelevHbDiato) {
@@ -407,11 +431,11 @@ class DepotHydrobio {
 
                 $emSqe->persist($pgCmdPrelevHbDiato);
 
-                $pgCmdPrelev->setDatePrelev(new \DateTime());
+                //$pgCmdPrelev->setDatePrelev(new \DateTime());
                 $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M40');
                 $pgCmdPrelev->setPhaseDmd($pgProgPhases);
             } else {
-                $pgCmdPrelev->setDatePrelev(new \DateTime());
+                // $pgCmdPrelev->setDatePrelev(new \DateTime());
                 $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R80');
                 $pgCmdPrelev->setPhaseDmd($pgProgPhases);
             }
@@ -428,21 +452,25 @@ class DepotHydrobio {
         return $tabFeuillets;
     }
 
-    protected function lireXlsSupport13($worksheet, $feuil, $tabFeuillets, $rapport, $demandeId, $emSqe) {
+    protected function lireXlsSupport13($worksheet, $feuil, $tabFeuillets, $rapport, $pgCmdFichierRpsId, $demandeId, $emSqe) {
         // Récupération des programmations
+        $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebUsers');
         $repoPgSandreHbNomemclatures = $emSqe->getRepository('AeagSqeBundle:PgSandreHbNomemclatures');
         $repoPgSandreAppellationTaxon = $emSqe->getRepository('AeagSqeBundle:PgSandreAppellationTaxon');
+        $repoPgCmdFichierRps = $emSqe->getRepository('AeagSqeBundle:PgCmdFichiersRps');
         $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
         $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
+        $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
         $repoPgCmdPrelevHbInvert = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelevHbInvert');
         $repoPgCmdInvertRecouv = $emSqe->getRepository('AeagSqeBundle:PgCmdInvertRecouv');
         $repoPgCmdInvertPrelem = $emSqe->getRepository('AeagSqeBundle:PgCmdInvertPrelem');
         $repoPgCmdInvertListe = $emSqe->getRepository('AeagSqeBundle:PgCmdInvertListe');
         $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
 
+        $pgCmdFichierRps = $repoPgCmdFichierRps->findOneById($pgCmdFichierRpsId);
         $pgCmdDemande = $repoPgCmdDemande->findOneById($demandeId);
         $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByDemande($pgCmdDemande);
-
+        $pgProgWebUser = $repoPgProgWebUsers->findOneByPrestataire($pgCmdDemande->getPrestataire());
 
         $tabFeuillets[$feuil]['feuillet'] = $worksheet->getTitle();
         $contenu = '          Feuillet : ' . $worksheet->getTitle() . CHR(13) . CHR(10);
@@ -665,7 +693,25 @@ class DepotHydrobio {
                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                 fputs($rapport, $contenu);
                 // enregistrement en base
-                //
+                // table pg_cmd_suivi_prel
+                $pgCmdSuiviPrel = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelevStatutPrel($pgCmdPrelev, 'D');
+                if (!$pgCmdSuiviPrel) {
+                    $pgCmdSuiviPrel = new PgCmdSuiviPrel();
+                    $pgCmdSuiviPrel->setPrelev($pgCmdPrelev);
+                    $pgCmdSuiviPrel->setFichierRps($pgCmdFichierRps);
+                    $pgCmdSuiviPrel->setUser($pgProgWebUser);
+                    $pgCmdSuiviPrel->setDatePrel($pgCmdPrelev->getDatePrelev());
+                    $pgCmdSuiviPrel->setStatutPrel('D');
+                    $pgCmdSuiviPrel->setCommentaire('Dépôt hydrobio');
+                    $pgCmdSuiviPrel->setValidation('E');
+                } else {
+                    $pgCmdSuiviPrel->setFichierRps($pgCmdFichierRps);
+                    $pgCmdSuiviPrel->setCommentaire('Dépôt hydrobio');
+                    $pgCmdSuiviPrel->setValidation('E');
+                }
+                $emSqe->persist($pgCmdSuiviPrel);
+
+
                 // Table pg_cmd_prelev_hb_invert
                 $pgCmdPrelevHbInvert = $repoPgCmdPrelevHbInvert->getPgCmdPrelevHbInvertByPrelev($pgCmdPrelev);
                 if (!$pgCmdPrelevHbInvert) {
@@ -884,11 +930,11 @@ class DepotHydrobio {
                         break;
                     }
                 }
-                $pgCmdPrelev->setDatePrelev(new \DateTime());
+                // $pgCmdPrelev->setDatePrelev(new \DateTime());
                 $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M40');
                 $pgCmdPrelev->setPhaseDmd($pgProgPhases);
             } else {
-                $pgCmdPrelev->setDatePrelev(new \DateTime());
+                // $pgCmdPrelev->setDatePrelev(new \DateTime());
                 $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R80');
                 $pgCmdPrelev->setPhaseDmd($pgProgPhases);
             }

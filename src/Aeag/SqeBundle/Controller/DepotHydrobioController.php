@@ -7,6 +7,10 @@ use Aeag\AeagBundle\Entity\Notification;
 use Aeag\AeagBundle\Entity\Message;
 use Aeag\AeagBundle\Controller\AeagController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Process\Process;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\PhpProcess;
+use Symfony\Component\Process\ProcessBuilder;
 
 class DepotHydrobioController extends Controller {
 
@@ -610,14 +614,32 @@ class DepotHydrobioController extends Controller {
 
         if (move_uploaded_file($_FILES['fichier']['tmp_name'], $pathBase . '/' . $nomFichier)) {
 
-            $commande = $this->get('commande');
-            $commande->runCommand('rai:depotHydrobio', array('pgCmdFichierRps_id' => $reponse->getId()));
+            $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R15');
+            $reponse->setPhaseFichier($pgProgPhases);
+            $emSqe->persist($reponse);
+
+//            $commande = $this->get('commande');
+//            $commande->runCommand('rai:depotHydrobio', array('pgCmdFichierRps_id' => $reponse->getId()));
+//
+//            $process = new PhpProcess('php app/console rai:depotHydrobio ' . $reponse->getId());
+//            $process->run();
+//            $builder = new ProcessBuilder(array('cd /base/extranet/dev/Joel/ext_aeag', 'php app/console rai:depotHydrobio ' . $reponse->getId()));
+//            $builder->getProcess()->run();
+//            $builder = new ProcessBuilder();
+//            $builder
+//                    ->setPrefix('/base/extranet/dev/Joel/ext_aeag')
+//                    ->setArguments(array('php app/console rai:depotHydrobio ' . $reponse->getId()))
+//                    ->getProcess()
+//                    ->run();
+//            $cmd = '/base/extranet/dev/Joel/ext_aeag/app/console  rai:depotHydrobio ' . $reponse->getId();
+//            pclose(popen("start /B " . $cmd, "r"));
+
+            $session->getFlashBag()->add('notice-success', 'fichier ' . $nomFichier . ' en cours de traitement');
         } else {
             $emSqe->remove($reponse);
-            $emSqe->flush();
-
             $session->getFlashBag()->add('notice-error', 'Erreur lors du téléchargement du fichier ' . $nomFichier);
         }
+        $emSqe->flush();
 
         return $this->redirect($this->generateUrl('AeagSqeBundle_depotHydrobio_demandes', array('lotanId' => $pgCmdDemande->getLotan()->getId())));
     }

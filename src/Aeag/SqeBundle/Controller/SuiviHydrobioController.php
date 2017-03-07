@@ -1914,10 +1914,10 @@ class SuiviHydrobioController extends Controller {
                 }
             }
             $emSqe->persist($pgCmdSuiviPrel);
-            if ($pgCmdSuiviPrel->getStatutPrel() == 'F' and $pgCmdSuiviPrel->getValidation() == 'A') {
+            if (($pgCmdSuiviPrel->getStatutPrel() == 'F' or $pgCmdSuiviPrel->getStatutPrel() == 'D') and $pgCmdSuiviPrel->getValidation() == 'A') {
                 $pgCmdPrelev->setDatePrelev($datePrel);
                 $pgCmdPrelev->setRealise('O');
-            } elseif ($pgCmdSuiviPrel->getStatutPrel() == 'N' or $pgCmdSuiviPrel->getStatutPrel() == 'R') {
+            } elseif ($pgCmdSuiviPrel->getStatutPrel() == 'N' or $pgCmdSuiviPrel->getStatutPrel() == 'D' or $pgCmdSuiviPrel->getStatutPrel() == 'R') {
                 $pgCmdPrelev->setDatePrelev($datePrel);
                 $pgCmdPrelev->setRealise('N');
             } else {
@@ -1928,8 +1928,13 @@ class SuiviHydrobioController extends Controller {
             $emSqe->flush();
             $session->getFlashBag()->add('notice-success', 'le suivi du ' . $datePrel->format('d/m/Y') . ' a été modifié sur la station : ' . $pgCmdPrelev->getStation()->getCode() . ' !');
 
-            return $this->redirect($this->generateUrl('AeagSqeBundle_suiviHydrobio_lot_periode_stations', array('stationId' => $pgCmdPrelev->getStation()->getOuvFoncId(),
-                                'periodeAnId' => $periodeAnId)));
+            if ($pgCmdSuiviPrel->getStatutPrel() != 'D') {
+                return $this->redirect($this->generateUrl('AeagSqeBundle_suiviHydrobio_lot_periode_stations', array('stationId' => $pgCmdPrelev->getStation()->getOuvFoncId(),
+                                    'periodeAnId' => $periodeAnId)));
+            } else {
+                return $this->redirect($this->generateUrl('AeagSqeBundle_depotHydrobio_prelevements', array('demandeId' => $pgCmdPrelev->getDemande()->getId(),
+                                    'periodeAnId' => $periodeAnId)));
+            }
         }
 
         return $this->render('AeagSqeBundle:SuiviHydrobio:lotPeriodeStationDemandeSuiviMaj.html.twig', array(
@@ -2042,17 +2047,19 @@ class SuiviHydrobioController extends Controller {
         if ($pgCmdSuiviPrel->getFichierRps()) {
             $pgCmdFichiersRps = $pgCmdSuiviPrel->getFichierRps();
             $dossier = $this->getCheminEchange($pgCmdSuiviPrel);
-            $dir_iterator = new \RecursiveDirectoryIterator($dossier);
-            $iterator = new \RecursiveIteratorIterator($dir_iterator, \RecursiveIteratorIterator::CHILD_FIRST);
+            if (is_dir($dossier)) {
+                $dir_iterator = new \RecursiveDirectoryIterator($dossier);
+                $iterator = new \RecursiveIteratorIterator($dir_iterator, \RecursiveIteratorIterator::CHILD_FIRST);
 
 // On supprime chaque dossier et chaque fichier	du dossier cible
-            foreach ($iterator as $fichier) {
-                if ($fichier != "." && $fichier != "..") {
-                    is_dir($fichier) ? null : unlink($fichier);
+                foreach ($iterator as $fichier) {
+                    if ($fichier != "." && $fichier != "..") {
+                        is_dir($fichier) ? null : unlink($fichier);
+                    }
                 }
-            }
 // On supprime le dossier cible
-            rmdir($dossier);
+                rmdir($dossier);
+            }
 // On supprime l'enregistrement  $pgCmdFichiersRps
             $pgCmdSuiviPrel->setFichierRps(null);
             $emSqe->persist($pgCmdSuiviPrel);
@@ -2632,6 +2639,7 @@ class SuiviHydrobioController extends Controller {
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgCmdSuiviPrel = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelById($suiviPrelId);
         $pgCmdPrelev = $pgCmdSuiviPrel->getPrelev();
+        $pgRefStationMesure = $pgCmdPrelev->getStation();
         $pgCmdFichiersRps = $pgCmdSuiviPrel->getFichierRps();
         $pathBase = $this->getCheminEchange($pgCmdSuiviPrel);
         $fichierZip = $pgCmdFichiersRps->getNomFichier();
@@ -2651,20 +2659,57 @@ class SuiviHydrobioController extends Controller {
         $emSqe->flush();
 
         $chemin = $pathBase . '/' . $fichierZip;
-        //print_r('chemin : ' . $chemin);
+        print_r('chemin : ' . $chemin);
         $fichiers = $this->unzip($chemin, $pathBase . '/');
         $tabFichiers = array();
         $i = 0;
         foreach ($fichiers as $fichier) {
             $ext = strtolower(pathinfo($fichier, PATHINFO_EXTENSION));
             if ($ext) {
-                $tabFichiers[$i]['fichier'] = $fichier;
-                $tabFichiers[$i]['chemin'] = $pathBase . '/' . $fichier;
-                chmod($pathBase . '/' . $fichier, 0775);
-                chown($pathBase . '/' . $fichier, 'www-data');
-                $repertoire = "fichiers";
-                rename($pathBase . '/' . $fichier, $repertoire . "/" . $fichier);
-                $i++;
+                if ($pgRefStationMesure->getCode() == substr($fichier, 0, strlen($pgRefStationMesure->getCode()))) {
+                    $tabFichiers[$i]['fichier'] = $fichier;
+                    $tabFichiers[$i]['chemin'] = $pathBase . '/' . $fichier;
+                    chmod($pathBase . '/' . $fichier, 0775);
+                    chown($pathBase . '/' . $fichier, 'www-data');
+                    $repertoire = "fichiers";
+                    rename($pathBase . '/' . $fichier, $repertoire . "/" . $fichier);
+                    $i++;
+                }
+                if ($ext == 'prn') {
+                    $ficStation = $pgRefStationMesure->getCode() . '_prn.csv';
+                    $ficSortie = fopen($pathBase . '/' . $ficStation, "w+");
+                    $nomFichier = fopen($pathBase . '/' . $fichier, "r");
+                    $codeStation = null;
+                    while (!feof($nomFichier)) {
+                        $ligne = fgets($nomFichier, 1024);
+                        if (strlen($ligne) > 0) {
+                            $tab = explode("\t", $ligne);
+                            if (strlen($tab[0]) > 0) {
+                                $tab1 = explode('*', $tab[0]);
+                                if ($pgRefStationMesure->getCode() == $tab1[5]) {
+//                                    $contenu = $ligne . CHR(13) . CHR(10);
+//                                    $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                    fputs($ficSortie, $ligne);
+                                    $codeStation = $tab1[5];
+                                }
+                            } else {
+                                if ($codeStation == $pgRefStationMesure->getCode()) {
+                                    $contenu = $ligne . CHR(13) . CHR(10);
+                                    $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                    fputs($ficSortie, $contenu);
+                                }
+                            }
+                        }
+                    }
+                    fclose($ficSortie);
+                    $tabFichiers[$i]['fichier'] = $ficStation;
+                    $tabFichiers[$i]['chemin'] = $pathBase . '/' . $ficStation;
+                    chmod($pathBase . '/' . $ficStation, 0775);
+                    chown($pathBase . '/' . $ficStation, 'www-data');
+                    $repertoire = "fichiers";
+                    rename($pathBase . '/' . $ficStation, $repertoire . "/" . $ficStation);
+                    $i++;
+                }
             }
         }
         return $this->render('AeagSqeBundle:SuiviHydrobio:lotPeriodeStationDemandeSuiviFichierListe.html.twig', array(
@@ -3236,10 +3281,18 @@ class SuiviHydrobioController extends Controller {
     }
 
     protected function getCheminEchange($pgCmdSuiviPrel) {
-        $chemin = $this->container->getParameter('repertoire_echange');
-        $chemin .= $pgCmdSuiviPrel->getPrelev()->getDemande()->getAnneeProg() . '/' . $pgCmdSuiviPrel->getPrelev()->getDemande()->getCommanditaire()->getNomCorres();
-        $chemin .= '/' . $pgCmdSuiviPrel->getPrelev()->getDemande()->getLotan()->getLot()->getId() . '/' . $pgCmdSuiviPrel->getPrelev()->getDemande()->getLotan()->getId();
-        $chemin .= '/SUIVI/' . $pgCmdSuiviPrel->getPrelev()->getId() . '/' . $pgCmdSuiviPrel->getId();
+        if ($pgCmdSuiviPrel->getStatutPrel() != 'D') {
+            $chemin = $this->container->getParameter('repertoire_echange');
+            $chemin .= $pgCmdSuiviPrel->getPrelev()->getDemande()->getAnneeProg() . '/' . $pgCmdSuiviPrel->getPrelev()->getDemande()->getCommanditaire()->getNomCorres();
+            $chemin .= '/' . $pgCmdSuiviPrel->getPrelev()->getDemande()->getLotan()->getLot()->getId() . '/' . $pgCmdSuiviPrel->getPrelev()->getDemande()->getLotan()->getId();
+            $chemin .= '/SUIVI/' . $pgCmdSuiviPrel->getPrelev()->getId() . '/' . $pgCmdSuiviPrel->getId();
+        } else {
+            $chemin = $this->container->getParameter('repertoire_depotHydrobio');
+            $chemin .= $pgCmdSuiviPrel->getPrelev()->getDemande()->getAnneeProg() . '/' . $pgCmdSuiviPrel->getPrelev()->getDemande()->getCommanditaire()->getNomCorres();
+            $chemin .= '/' . $pgCmdSuiviPrel->getPrelev()->getDemande()->getLotan()->getLot()->getId() . '/' . $pgCmdSuiviPrel->getPrelev()->getDemande()->getLotan()->getId();
+            $chemin .= '/' . $pgCmdSuiviPrel->getFichierRps()->getId();
+        }
+
 
         return $chemin;
     }

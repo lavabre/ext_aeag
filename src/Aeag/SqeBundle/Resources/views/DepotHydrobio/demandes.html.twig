@@ -43,7 +43,7 @@
                             <tr>
                             {% endif %}
                             <td align="center" nowrap>
-                                <a id="id_{{demande.id}}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_depotHydrobio_prelevements',{'demandeId' : demande.id})}}" title="Liste des prélèvements">
+                                <a id="id_{{demande.id}}" class="btn btn-success" href="{{path('AeagSqeBundle_depotHydrobio_prelevements',{'demandeId' : demande.id})}}" title="Liste des prélèvements">
                                     <i class="fa fa-eye"></i>
                                 </a>
                                 {% if (is_granted('ROLE_ADMINSQE') or (user.prestataire == demande.prestataire and ("Saisie" not in demande.formatFichier))) and (demande.phaseDemande.codePhase != 'D40' and demande.phaseDemande.codePhase != 'D50') %}
@@ -107,6 +107,7 @@
 {% block scripts %}
 
     jQuery(document).ready(function() {
+
     $('.btn-telecharger').click(function (){
     setTimeout("window.location.reload()",2000);//or other value
     });
@@ -173,24 +174,6 @@
     }
     );
 
-    {# $("#idTable_demandes thead td").each( function ( i ) {
-
-     if (i != 0){
-     var select = $('<select><option value=""></option></select>')
-     .appendTo( $(this).empty() )
-     .on( 'change', function () {
-     table.column( i )
-     .search( $(this).val() )
-     .draw();
-     });
-
-     table.column( i ).data().unique().sort().each( function ( d, j ) {
-     select.append( '<option value="'+d+'">'+d+'</option>' )
-     });
-     };
-     });
-
-     $('#select-length-menu').val("-1");
-     });#}
+    });
 
 {%endblock scripts %}
