@@ -337,7 +337,7 @@ class PgCmdPrelevRepository extends EntityRepository {
                     join pg_ref_corres_presta presta on presta.adr_cor_id = prlv.presta_prel_id
                     join pg_cmd_analyse ana on ana.prelev_id = prlv.id
                     join pg_sandre_parametres param on ana.code_parametre = param.code_parametre
-                    join pg_cmd_prelev_pc prlvpc on prlvpc.prelev_id = prlv.id
+                     join pg_cmd_prelev_pc prlvpc on prlvpc.prelev_id = ana.prelev_id and prlvpc.num_ordre = ana.num_ordre
                     join pg_sandre_supports sup on sup.code_support = prlv.code_support
                     join pg_sandre_fractions frac on frac.code_fraction = ana.code_fraction
                     left join pg_sandre_methodes meth on meth.code_methode = ana.code_methode

@@ -37,7 +37,7 @@ class PgCmdDemandeRepository extends EntityRepository {
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdDemande p";
         $query = $query . " where p.codeDemandeCmd = :codeDemandeCmd";
         $qb = $this->_em->createQuery($query);
-         $qb->setParameter('codeDemandeCmd', $codeDemandeCmd);
+        $qb->setParameter('codeDemandeCmd', $codeDemandeCmd);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
@@ -47,7 +47,7 @@ class PgCmdDemandeRepository extends EntityRepository {
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdDemande p";
         $query = $query . " where p.anneeProg = :anneeProg";
         $qb = $this->_em->createQuery($query);
-         $qb->setParameter('anneeProg', $anneeProg);
+        $qb->setParameter('anneeProg', $anneeProg);
         //print_r($query);
         return $qb->getResult();
     }
@@ -68,8 +68,8 @@ class PgCmdDemandeRepository extends EntityRepository {
         $query = $query . " where p.commanditaire = :pgRefCorresProducteur";
         $query = $query . " and p.anneeProg = :anneeProg";
         $qb = $this->_em->createQuery($query);
-         $qb->setParameter('pgRefCorresProducteur', $pgRefCorresProducteur->getAdrCorid());
-          $qb->setParameter('anneeProg', $anneeProg);
+        $qb->setParameter('pgRefCorresProducteur', $pgRefCorresProducteur->getAdrCorid());
+        $qb->setParameter('anneeProg', $anneeProg);
         //print_r($query);
         return $qb->getResult();
     }
@@ -90,8 +90,8 @@ class PgCmdDemandeRepository extends EntityRepository {
         $query = $query . " where p.prestataire = :pgRefCorresPresta";
         $query = $query . " and p.anneeProg = :anneeProg";
         $qb = $this->_em->createQuery($query);
-         $qb->setParameter('pgRefCorresPresta', $pgRefCorresPresta->getAdrCorid());
-         $qb->setParameter('anneeProg', $anneeProg);
+        $qb->setParameter('pgRefCorresPresta', $pgRefCorresPresta->getAdrCorid());
+        $qb->setParameter('anneeProg', $anneeProg);
         //print_r($query);
         return $qb->getResult();
     }
@@ -132,7 +132,7 @@ class PgCmdDemandeRepository extends EntityRepository {
         }
         $query = $query . " and p.periode= :pgProgPeriodes";
         $qb = $this->_em->createQuery($query);
-          $qb->setParameter('pgProgLotAn', $pgProgLotAn->getId());
+        $qb->setParameter('pgProgLotAn', $pgProgLotAn->getId());
         $qb->setParameter('pgRefCorresPresta', $pgRefCorresPresta->getAdrCorid());
         $qb->setParameter('pgProgPeriodes', $pgProgPeriodes->getid());
         //print_r($query);
@@ -166,7 +166,7 @@ class PgCmdDemandeRepository extends EntityRepository {
         //print_r($query);
         return $qb->getResult();
     }
-    
+
     public function getPgCmdDemandeByLotans(array $pgProgLotAns) {
         $query = "select dmd";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdDemande dmd, Aeag\SqeBundle\Entity\PgProgLotAn lotan, Aeag\SqeBundle\Entity\PgProgLotPeriodeAn pean";
@@ -180,7 +180,7 @@ class PgCmdDemandeRepository extends EntityRepository {
         //print_r($query);
         return $qb->getResult();
     }
-    
+
     public function getPgCmdDemandeForRelance7JAvt() {
         $query = "select dmd";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdDemande dmd";
@@ -200,7 +200,7 @@ class PgCmdDemandeRepository extends EntityRepository {
         $qb = $this->_em->createQuery($query);
         return $qb->getResult();
     }
-    
+
     public function getPgCmdDemandeForRelance1JAprs() {
         $query = "select dmd";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdDemande dmd";
@@ -220,8 +220,8 @@ class PgCmdDemandeRepository extends EntityRepository {
         $qb = $this->_em->createQuery($query);
         return $qb->getResult();
     }
-    
-     public function getCountPgCmdDemandeByLotan($pgProgLotAn) {
+
+    public function getCountPgCmdDemandeByLotan($pgProgLotAn) {
         $query = "select count(dmd)";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdDemande dmd, Aeag\SqeBundle\Entity\PgProgLotAn lotan, Aeag\SqeBundle\Entity\PgProgLotPeriodeAn pean";
         $query .= " where lotan = dmd.lotan";
@@ -232,10 +232,10 @@ class PgCmdDemandeRepository extends EntityRepository {
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('lotan', $pgProgLotAn->getid());
         //print_r($query);
-         return $qb->getSingleScalarResult();
+        return $qb->getSingleScalarResult();
     }
-    
-     public function getCountPgCmdDemandeByLotanPhase($pgProgLotAn, $pgProgPhase) {
+
+    public function getCountPgCmdDemandeByLotanPhase($pgProgLotAn, $pgProgPhase) {
         $query = "select count(dmd)";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdDemande dmd, Aeag\SqeBundle\Entity\PgProgLotAn lotan, Aeag\SqeBundle\Entity\PgProgLotPeriodeAn pean";
         $query .= " where lotan = dmd.lotan";
@@ -246,9 +246,45 @@ class PgCmdDemandeRepository extends EntityRepository {
         $query .= " and dmd.phaseDemande = :phase";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('lotan', $pgProgLotAn->getId());
-         $qb->setParameter('phase', $pgProgPhase->getId());
+        $qb->setParameter('phase', $pgProgPhase->getId());
         //print_r($query);
-         return $qb->getSingleScalarResult();
+        return $qb->getSingleScalarResult();
+    }
+
+    public function getDonneesBrutesAnalyseByDemande($pgCmdDemande) {
+
+        $query = '(select dmd.annee_prog as "Année", msr.code as "Code Station", msr.libelle as "Nom Station", msr.code_masdo as "Code masse d\'eau",
+                    prlv.code_prelev_cmd as "Code du prelevement", presta.code_siret as "Siret Préleveur", presta.nom_corres as "Nom Préleveur",
+                    prlv.date_prelev as "Date-heure du prélèvement", ana.code_parametre as "Code du paramètre", param.libelle_court as "Libellé court paramètre",
+                    param.nom_parametre as "Nom paramètre", case when prlvpc.zone_verticale = \'9\' then \'6\' else prlvpc.zone_verticale end as "Zone verticale", prlvpc.profondeur as "Profondeur",
+                    prlv.code_support as "Code Support", sup.nom_support as "Nom Support", ana.code_fraction as "Code Fraction", frac.nom_fraction as "Nom Fraction", ana.code_methode as "Code Méthode", meth.nom_methode as "Nom Méthode",
+                    ana.code_remarque as "Code Remarque", ana.resultat as "Resultat", \'\' as "Valeur textuelle", ana.code_unite as "Code Unite", unit.nom_unite as "Libellé Unite",
+                    unit.symbole as "Symbole Unité", ana.lq_ana as "LQ", presta2.code_siret as "Siret Labo", presta2.nom_corres as "Nom Labo", resmes.code_aeag_rsx as "Code Réseau",
+                    resmes.nom_rsx as "Nom Réseau", prod.code_siret as "Siret Prod", prod.nom_corres as "Nom Prod", ana.commentaire as "Commentaire"
+                    from pg_cmd_prelev prlv
+                    join pg_cmd_demande dmd on prlv.demande_id = dmd.id
+                    join pg_ref_station_mesure msr on msr.ouv_fonc_id = prlv.station_id
+                    join pg_ref_corres_presta presta on presta.adr_cor_id = prlv.presta_prel_id
+                    join pg_cmd_analyse ana on ana.prelev_id = prlv.id
+                    join pg_sandre_parametres param on ana.code_parametre = param.code_parametre
+                     join pg_cmd_prelev_pc prlvpc on prlvpc.prelev_id = ana.prelev_id and prlvpc.num_ordre = ana.num_ordre
+                    join pg_sandre_supports sup on sup.code_support = prlv.code_support
+                    join pg_sandre_fractions frac on frac.code_fraction = ana.code_fraction
+                    left join pg_sandre_methodes meth on meth.code_methode = ana.code_methode
+                    join pg_sandre_unites unit on unit.code_unite = ana.code_unite
+                    join pg_ref_corres_presta presta2 on presta2.adr_cor_id = dmd.prestataire_id
+                    join pg_prog_lot_station_an station on station.lotan_id = dmd.lotan_id and station.station_id = prlv.station_id
+                    join pg_ref_reseau_mesure resmes on resmes.groupement_id = station.rsx_id
+                    join pg_prog_lot_an lotan on dmd.lotan_id = lotan.id
+                    join pg_prog_lot lot on lot.id = lotan.lot_id
+                    join pg_prog_marche marche on marche.id = lot.marche_id
+                    join pg_ref_corres_producteur prod on prod.adr_cor_id = marche.resp_adr_cor_id
+                    where dmd.id = :demande)';
+
+        $stmt = $this->_em->getConnection()->prepare($query);
+        $stmt->bindValue('demande', $pgCmdDemande->getId());
+        $stmt->execute();
+        return $stmt->fetchAll();
     }
 
 }

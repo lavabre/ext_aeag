@@ -213,77 +213,10 @@ class SaisieDonneesController extends Controller {
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
         $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
-        $repoPgProgLotPeriodeProg = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeProg');
         $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
-        $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
-        $repoPgCmdPrelevPc = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelevPc');
-        $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
-        $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
-        $repoPgProgLotParamAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotParamAn');
-        $repoPgProgPrestaTypfic = $emSqe->getRepository('AeagSqeBundle:PgProgPrestaTypfic');
-        $repoPgCmdMesureEnv = $emSqe->getRepository('AeagSqeBundle:PgCmdMesureEnv');
-        $repoPgCmdAnalyse = $emSqe->getRepository('AeagSqeBundle:PgCmdAnalyse');
-        $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
-        $repoPgProgLotGrparAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotGrparAn');
-        $repoPgRefStationMesure = $emSqe->getRepository('AeagSqeBundle:PgRefStationMesure');
-
-        $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
-
 
         $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($periodeAnId);
         $pgProgLotAn = $pgProgLotPeriodeAn->getLotAn();
-        $pgProgLot = $pgProgLotAn->getLot();
-        $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
-        $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByPeriodeAn($pgProgLotPeriodeAn);
-        $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M40');
-
-        $userPrestataire = null;
-        if ($pgProgWebUser->getPrestataire()) {
-            $userPrestataire = $pgProgWebUser->getPrestataire();
-        } elseif ($pgProgLot->getTitulaire()) {
-            $userPrestataire = $pgProgLot->getTitulaire();
-        } else {
-            $pgProgLotGrparAns = $repoPgProgLotGrparAn->getPgProgLotGrparAnByPrestataire($pgProgLotAn);
-            foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
-                if ($pgProgLotGrparAn->getValide() == 'O' and ( $pgProgLotGrparAn->getOrigine() == 'R' or $pgProgLotGrparAn->getOrigine() == 'A')) {
-                    $userPrestataire = $pgProgLotGrparAn->getPrestaDft();
-                    break;
-                }
-            }
-        }
-
-        $pgCmdDemandes = array();
-//        if ($user->hasRole('ROLE_ADMINSQE')) {
-//            $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandesByLotanPeriode($pgProgLotAn, $pgProgLotPeriodeAn->getPeriode());
-//        } else {
-//            $pgCmdDemandes[0] = $repoPgCmdDemande->getPgCmdDemandeByLotanPrestatairePeriode($pgProgLotAn, $userPrestataire, $pgProgLotPeriodeAn->getPeriode());
-//        }
-        $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandesByLotanPeriode($pgProgLotAn, $pgProgLotPeriodeAn->getPeriode());
-
-        $tabStations = array();
-        $i = 0;
-        $j = 0;
-        $k = 0;
-        foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
-            $trouve = false;
-            if (count($tabStations) > 0) {
-                for ($k = 0; $k < count($tabStations); $k++) {
-                    if ($tabStations[$k]->getOuvFoncId() == $pgProgLotPeriodeProg->getStationAn()->getStation()->getOuvFoncId()) {
-                        $trouve = true;
-                        break;
-                    }
-                }
-            }
-            if (!$trouve) {
-                $pgRefStationMesure = $repoPgRefStationMesure->getPgRefStationMesureByOuvFoncId($pgProgLotPeriodeProg->getStationAn()->getStation()->getOuvFoncId());
-                $tabStations[$i] = $pgRefStationMesure;
-                $i++;
-            }
-        }
-        asort($tabStations);
-
-//          \Symfony\Component\VarDumper\VarDumper::dump($tabStations);
-//          return new Response ('');
 
         $chemin = '/base/extranet/Transfert/Sqe/csv';
         $fichier = 'Saisie-des-donnees-periode-' . $pgProgLotPeriodeAn->getId() . '-' . $pgProgLotPeriodeAn->getPeriode()->getTypePeriode()->getCodeTypePeriode() . '-' . $pgProgLotPeriodeAn->getPeriode()->getNumPeriode() . '.csv';
@@ -306,41 +239,23 @@ class SaisieDonneesController extends Controller {
 
         fputcsv($fichier_csv, $ligne, ';');
 
-        for ($i = 0; $i < count($tabStations); $i++) {
-            $station = $tabStations[$i];
-            foreach ($pgCmdDemandes as $pgCmdDemande) {
-                //$pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($pgCmdDemande->getPrestataire(), $pgCmdDemande, $station, $pgProgLotPeriodeAn->getPeriode());
-                $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByDemandeStationPeriode($pgCmdDemande, $station, $pgProgLotPeriodeAn->getPeriode());
-                asort($pgCmdPrelevs);
-//            echo('prestataire : ' . $pgCmdDemande->getPrestataire()->getAdrCorid() . ' demande : ' .  $pgCmdDemande->getId() . ' station : ' . $station->getOuvFoncid() . ' periode : ' . $pgProgLotPeriodeAn->getPeriode()->getid() );
-//            \Symfony\Component\VarDumper\VarDumper::dump($pgCmdPrelevs);
-//            return new Response ('');
-                $fichierRps = null;
-                $donneesBrutes = array();
-                foreach ($pgCmdPrelevs as $pgCmdPrelev) {
-                    if ($pgCmdPrelev->getPhaseDmd()->getcodePhase() != 'M60') {
-                        if ($pgCmdPrelev->getFichierRps()) {
-                            if ($fichierRps != $pgCmdPrelev->getFichierRps()) {
-                                //echo ('station : ' . $station->getCode() . ' prelev : ' . $pgCmdPrelev->getId() . ' fichierRps : ' .  $pgCmdPrelev->getFichierRps()->getId() . ' </br>');
-                                $donneesBrutes = $repoPgCmdPrelev->getDonneesBrutes($pgCmdPrelev->getFichierRps());
-                                foreach ($donneesBrutes as $ligne) {
-                                    foreach ($ligne as $j => $value) {
-                                        $ligne[$j] = \iconv("UTF-8", "Windows-1252//TRANSLIT", $ligne[$j]);
-                                    }
-                                    fputcsv($fichier_csv, $ligne, ';');
-                                }
-                                $fichierRps = $pgCmdPrelev->getFichierRps();
-                            }
-                        }
-                    }
+        $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandesByLotanPeriode($pgProgLotAn, $pgProgLotPeriodeAn->getPeriode());
+        foreach ($pgCmdDemandes as $pgCmdDemande) {
+            //          print_r('prestataire : ' . $pgCmdDemande->getPrestataire()->getAdrCorid() . ' demande : ' . $pgCmdDemande->getId() . ' station : ' . $station->getOuvFoncid() . ' periode : ' . $pgProgLotPeriodeAn->getPeriode()->getid() . '</br>');
+            $donneesBrutes = $repoPgCmdDemande->getDonneesBrutesAnalyseByDemande($pgCmdDemande);
+            foreach ($donneesBrutes as $ligne) {
+                foreach ($ligne as $j => $value) {
+                    $ligne[$j] = \iconv("UTF-8", "Windows-1252//TRANSLIT", $ligne[$j]);
                 }
+                fputcsv($fichier_csv, $ligne, ';');
             }
         }
+
         fclose($fichier_csv);
 
 //        \Symfony\Component\VarDumper\VarDumper::dump($tabStations);
-//        return new Response ('');
-//         return new Response ('fichier : ' . $chemin . '/' . $fichier . ' ext : ' . $ext. ' size : ' . filesize($chemin . '/' . $fichier));
+//        return new Response('');
+//        return new Response('fichier : ' . $chemin . '/' . $fichier . ' ext : ' . $ext . ' size : ' . filesize($chemin . '/' . $fichier));
 
         \header("Cache-Control: no-cahe, must-revalidate");
         \header('Content-Type', 'text/' . $ext);
