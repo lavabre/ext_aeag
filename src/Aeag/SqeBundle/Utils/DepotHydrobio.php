@@ -46,16 +46,21 @@ class DepotHydrobio {
         $fic = 0;
 
         foreach ($liste as $nomFichier) {
-            $tabNomFichier = explode('.', $nomFichier);
-            if ($tabNomFichier[1] == 'xls') {
-                $tabFichier = $this->lireXls($pgCmdFichierRps->getId(), $demandeId, $excelObj, $nomFichier, $pathBase, $rapport, $emSqe);
-                $tabTraitFichiers[$fic] = $tabFichier;
-                $fic++;
-            }
-            if ($tabNomFichier[1] == 'prn') {
-                $tabFichier = $this->lirePrn($demandeId, $nomFichier, $pathBase, $rapport, $emSqe);
-                $tabTraitFichiers[$fic] = $tabFichier;
-                $fic++;
+            if (is_file($pathBase . '/' . $nomFichier)) {
+                $pos1 = stripos($nomFichier, '.');
+                if ($pos1) {
+                    $tabNomFichier = explode('.', $nomFichier);
+                    if ($tabNomFichier[1] == 'xls') {
+                        $tabFichier = $this->lireXls($pgCmdFichierRps->getId(), $demandeId, $excelObj, $nomFichier, $pathBase, $rapport, $emSqe);
+                        $tabTraitFichiers[$fic] = $tabFichier;
+                        $fic++;
+                    }
+                    if ($tabNomFichier[1] == 'prn') {
+                        $tabFichier = $this->lirePrn($demandeId, $nomFichier, $pathBase, $rapport, $emSqe);
+                        $tabTraitFichiers[$fic] = $tabFichier;
+                        $fic++;
+                    }
+                }
             }
         }
 
