@@ -1272,12 +1272,13 @@ class SaisieDonneesController extends Controller {
         if (isset($_POST['datePrel'])) {
             $dateSaisie = str_replace('/', '-', $_POST['datePrel']);
             $datePrel = new \DateTime($dateSaisie);
+            $pgCmdPrelev->setDatePrelev($datePrel);
+            $emSqe->persist($pgCmdPrelev);
         } else {
             $datePrel = null;
         }
 
-        $pgCmdPrelev->setDatePrelev($datePrel);
-        $emSqe->persist($pgCmdPrelev);
+
 
         $autresDemandes = $repoPgCmdDemande->getPgCmdDemandesByLotanPeriode($pgProgLotAn, $pgProgPeriodes);
         foreach ($autresDemandes as $autreDemande) {

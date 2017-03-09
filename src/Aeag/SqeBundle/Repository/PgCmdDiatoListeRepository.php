@@ -45,17 +45,21 @@ class PgCmdDiatoListeRepository extends EntityRepository {
      * @return array
      */
     public function getPgCmdDiatoListeByPrelevCodeSandreTaxon($pgCmdPrelevHbDiato, $codeSandre, $taxon) {
-        $query = "select c";
-        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdDiatoListe c";
-        $query = $query . " where c.prelev = :pgCmdPrelev";
-        $query = $query . " and c.codeSandre = :codeSandre";
-        $query = $query . " and c.taxon = :taxon";
-        $qb = $this->_em->createQuery($query);
-        $qb->setParameter('pgCmdPrelev', $pgCmdPrelevHbDiato->getPrelev()->getId());
-        $qb->setParameter('codeSandre', $codeSandre);
-        $qb->setParameter('taxon', $taxon);
-        //print_r($query);
-        return $qb->getOneOrNullResult();
+        if ($pgCmdPrelevHbDiato) {
+            $query = "select c";
+            $query = $query . " from Aeag\SqeBundle\Entity\PgCmdDiatoListe c";
+            $query = $query . " where c.prelev = :pgCmdPrelev";
+            $query = $query . " and c.codeSandre = :codeSandre";
+            $query = $query . " and c.taxon = :taxon";
+            $qb = $this->_em->createQuery($query);
+            $qb->setParameter('pgCmdPrelev', $pgCmdPrelevHbDiato->getPrelev()->getId());
+            $qb->setParameter('codeSandre', $codeSandre);
+            $qb->setParameter('taxon', $taxon);
+            //print_r($query);
+            return $qb->getOneOrNullResult();
+        } else {
+            return null;
+        }
     }
 
 }
