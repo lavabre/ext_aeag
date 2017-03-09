@@ -82,7 +82,7 @@ class ProgrammationPeriodeController extends Controller {
         if (!$pgProgLotPeriodeAns) {
             foreach ($pgProgPeriodes as $selPeriode) {
                 $pgProgPeriode = $repoPgProgPeriodes->getPgProgPeriodesById($selPeriode->getId());
-                $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnBySLotanPeriode($pgProgLotAn, $pgProgPeriode);
+                $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnByLotanPeriode($pgProgLotAn, $pgProgPeriode);
                 if (!$pgProgLotPeriodeAn) {
                     $pgProgLotPeriodeAn = new PgProgLotPeriodeAn();
                     $pgProgLotPeriodeAn->setLotan($pgProgLotAn);
@@ -137,7 +137,7 @@ class ProgrammationPeriodeController extends Controller {
         $tabStations[$i]["periodes"] = $tabPeriodes;
 
 //          \Symfony\Component\VarDumper\VarDumper::dump($tabStations);
-//           return new Response ('');   
+//           return new Response ('');
 
         $session->set('niveau6', $this->generateUrl('AeagSqeBundle_programmation_periodes', array('action' => $action, 'maj' => $maj, 'lotan' => $pgProgLotAnId)));
 
@@ -287,7 +287,7 @@ class ProgrammationPeriodeController extends Controller {
         }
 
         foreach ($pgProgPeriodes as $pgProgPeriode) {
-            $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnBySLotanPeriode($pgProgLotAn, $pgProgPeriode);
+            $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnByLotanPeriode($pgProgLotAn, $pgProgPeriode);
             if ($pgProgLotPeriodeAn) {
                 $trouve = 0;
                 foreach ($selPeriodes as $selPeriode) {
@@ -315,7 +315,7 @@ class ProgrammationPeriodeController extends Controller {
 
         foreach ($selPeriodes as $selPeriode) {
             $pgProgPeriode = $repoPgProgPeriodes->getPgProgPeriodesById($selPeriode);
-            $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnBySLotanPeriode($pgProgLotAn, $pgProgPeriode);
+            $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnByLotanPeriode($pgProgLotAn, $pgProgPeriode);
             if (!$pgProgLotPeriodeAn) {
                 $pgProgLotPeriodeAn = new PgProgLotPeriodeAn();
                 $pgProgLotPeriodeAn->setLotan($pgProgLotAn);
@@ -384,7 +384,7 @@ class ProgrammationPeriodeController extends Controller {
 
         foreach ($pgProgPeriodes as $pgProgPeriode) {
             $tabProgPeriodes[$i]['periode'] = $pgProgPeriode;
-            $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnBySLotanPeriode($pgProgLotAn, $pgProgPeriode);
+            $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnByLotanPeriode($pgProgLotAn, $pgProgPeriode);
             if ($pgProgLotPeriodeAn) {
                 $tabProgPeriodes[$i]['sel'] = 'O';
             } else {
@@ -455,7 +455,7 @@ class ProgrammationPeriodeController extends Controller {
         }
 
         foreach ($pgProgPeriodes as $pgProgPeriode) {
-            $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnBySLotanPeriode($pgProgLotAn, $pgProgPeriode);
+            $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnByLotanPeriode($pgProgLotAn, $pgProgPeriode);
             if ($pgProgLotPeriodeAn) {
                 $trouve = 0;
                 foreach ($selPeriodes as $selPeriode) {
@@ -483,7 +483,7 @@ class ProgrammationPeriodeController extends Controller {
 
         foreach ($selPeriodes as $selPeriode) {
             $pgProgPeriode = $repoPgProgPeriodes->getPgProgPeriodesById($selPeriode);
-            $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnBySLotanPeriode($pgProgLotAn, $pgProgPeriode);
+            $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnByLotanPeriode($pgProgLotAn, $pgProgPeriode);
             if (!$pgProgLotPeriodeAn) {
                 $pgProgLotPeriodeAn = new PgProgLotPeriodeAn();
                 $pgProgLotPeriodeAn->setLotan($pgProgLotAn);
@@ -1426,7 +1426,7 @@ class ProgrammationPeriodeController extends Controller {
         $pgProgLotPeriodeAns = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnByLotan($pgProgLotAn);
         $pgProgLotStationAn = $repoPgProgLotStationAn->getPgProgLotStationAnByLotAnStation($pgProgLotAn, $pgRefStationMesure);
         $pgProgPeriode = $repoPgProgPeriodes->getPgProgPeriodesById($periodeId);
-        $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnBySLotanPeriode($pgProgLotAn, $pgProgPeriode);
+        $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnByLotanPeriode($pgProgLotAn, $pgProgPeriode);
         $pgRefSitePrelevements = $repoPgRefSitePrelevement->getPgRefSitePrelevementByOuvFoncId($pgProgLotStationAn->getStation()->getOuvFoncId());
 
         if ($session->get('critWebuser')) {
@@ -1554,7 +1554,7 @@ class ProgrammationPeriodeController extends Controller {
 
         //$pgProgLotStationAn = $repoPgProgLotStationAn->getPgProgLotStationAnById($stationId);
         $pgProgPeriode = $repoPgProgPeriodes->getPgProgPeriodesById($periodeId);
-        $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnBySLotanPeriode($pgProgLotAn, $pgProgPeriode);
+        $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnByLotanPeriode($pgProgLotAn, $pgProgPeriode);
         $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByStationAnPeriodeAn($pgProgLotStationAn, $pgProgLotPeriodeAn);
 
 
@@ -1746,13 +1746,13 @@ class ProgrammationPeriodeController extends Controller {
         ));
     }
 
-    private function createProgrammation($emSqe, $optionGroupes, $repoPgProgLotAn,$repoPgProgLotStationAn, $repoPgRefReseauMesure, $repoPgProgLotPeriodeProg, $repoPgProgLotPeriodeAn, $repoPgProgLotGrparAn, $pgProgLotStationAn, $pgProgPeriode, $pgProgLotGrparAns, $pgProgLotAn, $pgProgLotPeriodeAns, $selAutrePeriodeAns, $selGroupes, $selReseau, &$tabStations, &$tabGrparAns, $logger) {
+    private function createProgrammation($emSqe, $optionGroupes, $repoPgProgLotAn, $repoPgProgLotStationAn, $repoPgRefReseauMesure, $repoPgProgLotPeriodeProg, $repoPgProgLotPeriodeAn, $repoPgProgLotGrparAn, $pgProgLotStationAn, $pgProgPeriode, $pgProgLotGrparAns, $pgProgLotAn, $pgProgLotPeriodeAns, $selAutrePeriodeAns, $selGroupes, $selReseau, &$tabStations, &$tabGrparAns, $logger) {
 
-         if (!$optionGroupes) {
+        if (!$optionGroupes) {
             $optionGroupes = 'N';
         }
 
-        $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnBySLotanPeriode($pgProgLotAn, $pgProgPeriode);
+        $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnByLotanPeriode($pgProgLotAn, $pgProgPeriode);
         if ($pgProgLotPeriodeAn) {
             $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByStationAnPeriodeAn($pgProgLotStationAn, $pgProgLotPeriodeAn);
             foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
@@ -1969,7 +1969,7 @@ class ProgrammationPeriodeController extends Controller {
         $annee = $pgProgLotAn->getAnneeProg();
         $pgProgLotStationAn = $repoPgProgLotStationAn->getPgProgLotStationAnById($stationId);
         $pgProgPeriode = $repoPgProgPeriodes->getPgProgPeriodesById($periodeId);
-        $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnBySLotanPeriode($pgProgLotAn, $pgProgPeriode);
+        $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnByLotanPeriode($pgProgLotAn, $pgProgPeriode);
         $pgProgLotGrparAn = $repoPgProgLotGrparAn->getPgProgLotGrparAnById($groupeId);
         $trouve = false;
         $pgProgLotGrparAnAutres = $repoPgProgLotGrparAn->getPgProgLotGrparAnByGrpparref($pgProgLotGrparAn->getGrparRef());

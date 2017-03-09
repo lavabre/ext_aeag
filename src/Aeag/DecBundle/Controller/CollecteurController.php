@@ -959,6 +959,8 @@ class CollecteurController extends Controller {
 
         $producteur = $repoOuvrage->getOuvrageById($id);
 
+        $annee = $emDec->getRepository('AeagDecBundle:Parametre')->findOneBy(array('code' => 'ANNEE'));
+
 
         if (!$producteur) {
             throw $this->createNotFoundException('Impossible de retouver l\'enregistrement : ' . $id);
@@ -968,7 +970,7 @@ class CollecteurController extends Controller {
         if ($producteurTauxSpecial) {
             $tauxAide = $producteurTauxSpecial->getTaux() / 100;
         } else {
-            $tauxAideAgence = $repoTaux->getTauxByAnneeCode($session->get('annee'), 'TAUXAIDE');
+            $tauxAideAgence = $repoTaux->getTauxByAnneeCode($annee, 'TAUXAIDE');
             $tauxAide = $tauxAideAgence->getValeur();
         }
 

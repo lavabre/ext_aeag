@@ -300,6 +300,14 @@ class SaisieDonneesController extends Controller {
         $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
         $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByPeriodeAnOrderByStation($pgProgLotPeriodeAn);
 
+        if ($pgProgLot->getDelaiPrel()) {
+            $dateFin = clone($pgProgLotPeriodeAn->getPeriode()->getDateDeb());
+            $delai = $pgProgLot->getDelaiPrel();
+            $dateFin->add(new \DateInterval('P' . $delai . 'D'));
+        } else {
+            $dateFin = clone($pgProgLotPeriodeAn->getPeriode()->getDateFin());
+        }
+
         $pgProgLotGrparAns = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotan($pgProgLotAn);
         $prestaprel = null;
         foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
@@ -545,6 +553,7 @@ class SaisieDonneesController extends Controller {
                     'typeMilieu' => $pgProgTypeMilieu,
                     'lotan' => $pgProgLotAn,
                     'periodeAn' => $pgProgLotPeriodeAn,
+                    'dateFin' => $dateFin,
                     'stations' => $tabStations,
                     'rapport' => $rapport));
     }
