@@ -425,6 +425,7 @@ class EchangeFichiersController extends Controller {
         $repoPgCmdFichiersRps = $emSqe->getRepository('AeagSqeBundle:PgCmdFichiersRps');
 
         $pgCmdFichiersRps = $repoPgCmdFichiersRps->findOneById($reponseId);
+        $pgCmdDemande = $pgCmdFichiersRps->getDemande();
 
         // Suppression physique des fichiers
         $chemin = $this->getParameter('repertoire_echange');

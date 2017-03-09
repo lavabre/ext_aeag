@@ -37,12 +37,12 @@ class PgProgPrestaTypficRepository extends EntityRepository {
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgPrestaTypfic p";
         $query = $query . " where p.codeMilieu = :pgProgTypeMilieu";
         $query = $query . " and p.prestataire = :prestataire";
-        $query = $query . " and p.formatFic like :formatFic";
+        $query = $query . " and upper(p.formatFic) like :formatFic";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('pgProgTypeMilieu', $pgProgTypeMilieu->getCodeMilieu());
         $qb->setParameter('prestataire', $prestataire->getAdrCorId());
-        $qb->setParameter('formatFic','%' . $formatFic . '%');
-    //   print_r($query . ' <br/> pgProgTypeMilieu :  ' . $pgProgTypeMilieu->getCodeMilieu() . ' prestataire :  ' . $prestataire->getAdrCorId() . ' formatFic : ' . $formatFic);
+        $qb->setParameter('formatFic', '%' . strtoupper($formatFic) . '%');
+        //   print_r($query . ' <br/> pgProgTypeMilieu :  ' . $pgProgTypeMilieu->getCodeMilieu() . ' prestataire :  ' . $prestataire->getAdrCorId() . ' formatFic : ' . $formatFic);
         return $qb->getOneOrNullResult();
     }
 

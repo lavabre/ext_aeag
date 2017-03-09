@@ -28,7 +28,7 @@ class PgCmdInvertListeRepository extends EntityRepository {
         $query = "select c";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdInvertListe c";
         $query = $query . " where c.prelev = :pgCmdPrelevHbInvert";
-        $query = $query . " order by c.phase,c.prelem, c.codeSandre";
+        $query = $query . " order by  c.codeSandre, c.phase,c.prelem";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('pgCmdPrelevHbInvert', $pgCmdPrelevHbInvert->getPrelev()->getId());
         //print_r($query);

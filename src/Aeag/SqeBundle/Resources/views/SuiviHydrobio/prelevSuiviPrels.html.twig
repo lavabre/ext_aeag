@@ -1,6 +1,6 @@
 <div class="row responsive">
     <div class="col-xm-12">
-        <div class="small ">          
+        <div class="small ">
             <table class="table table-bordered  table-advance table-condensed table-responsive table-striped" id="idTablePrelevSuiviPrels">
                 <thead>
                     <tr>
@@ -14,18 +14,18 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {%if cmdPrelev.suiviPrels | length%} 
+                    {%if cmdPrelev.suiviPrels | length%}
                         {% for suiviPrel  in cmdPrelev.suiviPrels %}
                             {% if suiviPrel %}
                                 <tr>
-                                     <td>
+                                    <td>
                                         {{ suiviPrel.id }}
                                     </td>
                                     <td>
                                         <span class="hidden">{{ suiviPrel.datePrel | date("Y/m/d H:i") }}</span>
                                         {{ suiviPrel.datePrel | date("d/m/Y") }}
                                     </td>
-                                     <td>
+                                    <td>
                                         {% if suiviPrel.statutPrel == 'P' %}
                                             Prévisionnel
                                         {% elseif suiviPrel.statutPrel == 'F' %}
@@ -38,6 +38,8 @@
                                             Validé
                                         {% elseif suiviPrel.statutPrel == 'R' %}
                                             Reporté
+                                        {% elseif suiviPrel.statutPrel == 'D' %}
+                                            Déposé
                                         {% endif %}
                                     </td>
                                     <td>
@@ -50,36 +52,36 @@
                                         {% endif %}
                                     </td>
                                     <td>
-                                       {% if suiviPrel.avis == 'F' %}
-                                               {% if suiviPrel.validAuto == 'O' %}
-                                                         Favorable (auto)
-                                                {% elseif suiviPrel.validAuto == 'N' %}
-                                                         Favorable (manu)
-                                                {% else %}
-                                                          Favorable
-                                               {% endif %}
-                                      {% elseif suiviPrel.avis == 'D' %}
-                                                {% if suiviPrel.validAuto == 'O' %}
-                                                          Défavorable (auto)
-                                               {% elseif  suiviPrel.validAuto == 'N' %}
-                                                          Défavorable (manu)
-                                               {% else %}
-                                                          Défavorable
-                                               {% endif %}
-                                      {% endif %}
-                                      {% if  suiviPrel.commentaireAvis | length %}
-                                                :<br/>{{ suiviPrel.commentaireAvis | nl2br }}
-                                       {% endif %}
+                                        {% if suiviPrel.avis == 'F' %}
+                                            {% if suiviPrel.validAuto == 'O' %}
+                                                Favorable (auto)
+                                            {% elseif suiviPrel.validAuto == 'N' %}
+                                                Favorable (manu)
+                                            {% else %}
+                                                Favorable
+                                            {% endif %}
+                                        {% elseif suiviPrel.avis == 'D' %}
+                                            {% if suiviPrel.validAuto == 'O' %}
+                                                Défavorable (auto)
+                                            {% elseif  suiviPrel.validAuto == 'N' %}
+                                                Défavorable (manu)
+                                            {% else %}
+                                                Défavorable
+                                            {% endif %}
+                                        {% endif %}
+                                        {% if  suiviPrel.commentaireAvis | length %}
+                                            :<br/>{{ suiviPrel.commentaireAvis | nl2br }}
+                                        {% endif %}
                                     </td>
                                     <td>
                                         {{ suiviPrel.commentaire | nl2br }}
                                     </td>
                                     <td>
-                                        {% if suiviPrel.statutPrel  == 'F' %}
+                                        {% if suiviPrel.statutPrel  == 'F' or suiviPrel.statutPrel  == 'D' %}
                                             {% if suiviPrel.fichierRps %}
                                                 {% if suiviPrel.fichierRps.nomFichier %}
                                                     <a id="idTelechargerSuivi-{{ suiviPrel.id }}" class="btn btn-success btn-telecharger" data-id="{{ suiviPrel.id }}"  title="Télécharger le fichier terrain">
-                                                        <i class="fa fa-upload"></i> 
+                                                        <i class="fa fa-upload"></i>
                                                     </a>
                                                 {% endif %}
                                             {% endif %}
@@ -98,7 +100,7 @@
 
 <script type="text/javascript" language="javascript">
 
-    jQuery(document).ready(function () {
+    jQuery(document).ready(function() {
         $('#idTablePrelevSuiviPrels').DataTable(
                 {"stateSave": false,
                     "order": [[0, "desc"]],
@@ -116,25 +118,25 @@
         $("#idTablePrelevSuiviPrels").draggable({
             handle: ".modal-header"
         });
-        
-         $('.btn-telecharger').click(function (e){
-           e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-           $('#modalTraitementEncours').modal('toggle');
+
+        $('.btn-telecharger').click(function(e) {
+            e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+            $('#modalTraitementEncours').modal('toggle');
             var url = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_fichier_liste_fichiers",{"suiviPrelId":  "par1" }) }}';
             var suiviPrelId = $(this).data('id');
             url = url.replace("par1", suiviPrelId);
-           $.ajax({
+            $.ajax({
                 url: url,
                 type: 'get',
                 success: function(html) {
-                  $('#idListeFichiers').empty().append(html);
-                   $('#modalTraitementEncours').modal('hide');
-                   $('#modal_fichiers').modal();
+                    $('#idListeFichiers').empty().append(html);
+                    $('#modalTraitementEncours').modal('hide');
+                    $('#modal_fichiers').modal();
                 }
             });
-         });
-        
-        
+        });
+
+
     });
 
 </script>

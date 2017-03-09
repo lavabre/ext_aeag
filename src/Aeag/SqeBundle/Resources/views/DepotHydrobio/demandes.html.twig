@@ -2,15 +2,15 @@
 
 {% block breadcrumb %}
     <li>
-        <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+        <a href="{{ path('aeag_homepage') }}">Accueil</a>
     </li>
     <li>
-        <a href="{{ path('AeagSqeBundle_depotHydrobio_index') }}">Lots</a> 
+        <a href="{{ path('AeagSqeBundle_depotHydrobio_index') }}">Lots</a>
     </li>
     <li class="active">
         Demandes
     </li>
-{% endblock breadcrumb %} 
+{% endblock breadcrumb %}
 
 {%block panel_heading %}
     <h3 class="page-title">
@@ -19,7 +19,7 @@
 {%endblock panel_heading %}
 
 {%block content %}
-    <div class="form-body">        
+    <div class="form-body">
         <table class="table table-bordered table-condensed table-advance" id="idTable_demandes">
             <thead>
                 <tr>
@@ -35,20 +35,20 @@
                 </tr>
             </thead>
             <tbody>
-                {%if demandes | length%} 
+                {%if demandes | length%}
                     {% for demande in demandes %}
-                        {% if demande.phaseDemande.codePhase == 'D40' %} 
+                        {% if demande.phaseDemande.codePhase == 'D40' %}
                             <tr class="success">
                             {% else %}
                             <tr>
                             {% endif %}
                             <td align="center" nowrap>
-                                <a id="id_{{demande.id}}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_depotHydrobio_prelevements',{'demandeId' : demande.id})}}" title="Liste des prélèvements">
-                                    <i class="fa fa-eye"></i> 
+                                <a id="id_{{demande.id}}" class="btn btn-success" href="{{path('AeagSqeBundle_depotHydrobio_prelevements',{'demandeId' : demande.id})}}" title="Liste des prélèvements">
+                                    <i class="fa fa-eye"></i>
                                 </a>
                                 {% if (is_granted('ROLE_ADMINSQE') or (user.prestataire == demande.prestataire and ("Saisie" not in demande.formatFichier))) and (demande.phaseDemande.codePhase != 'D40' and demande.phaseDemande.codePhase != 'D50') %}
                                     <a id="id_{{demande.id}}" class="btn btn-primary btn-deposer-reponse" data-id="{{demande.id}}" title="Déposer des fiches Excel">
-                                        <i class="fa fa-download"></i> 
+                                        <i class="fa fa-download"></i>
                                     </a>
                                 {% endif%}
                             </td>
@@ -81,12 +81,12 @@
                 <ul class="list-inline">
                     <li><span class="label label-success">Correct</span></li>
                         {# <li><span class="label label-danger"><i class="fa fa-exclamation-triangle"> En cours de développement</i></span></li>#}
-                </ul>  
+                </ul>
             </div>
-        </div>      
+        </div>
 
     </div>
-{%endblock content %}    
+{%endblock content %}
 
 {% block modal %}
     <div class="modal fade" id="modal_reponses">
@@ -100,13 +100,14 @@
         <div class="modal-dialog">
             <div class="modal-content" id="modal-reponses-selection-content">
             </div>
-        </div>    
+        </div>
     </div>
 {%endblock modal %}
 
 {% block scripts %}
 
     jQuery(document).ready(function() {
+
     $('.btn-telecharger').click(function (){
     setTimeout("window.location.reload()",2000);//or other value
     });
@@ -173,24 +174,6 @@
     }
     );
 
-    $("#idTable_demandes thead td").each( function ( i ) {
-
-    if (i != 0){
-    var select = $('<select><option value=""></option></select>')
-    .appendTo( $(this).empty() )
-    .on( 'change', function () {
-    table.column( i )
-    .search( $(this).val() )
-    .draw();
     });
 
-    table.column( i ).data().unique().sort().each( function ( d, j ) {
-    select.append( '<option value="'+d+'">'+d+'</option>' )
-    });
-    };
-    }); 
-
-    $('#select-length-menu').val("-1");
-    });
-
-{%endblock scripts %}    
+{%endblock scripts %}

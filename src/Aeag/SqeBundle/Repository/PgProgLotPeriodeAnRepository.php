@@ -61,7 +61,7 @@ class PgProgLotPeriodeAnRepository extends EntityRepository {
         return $qb->getResult();
     }
 
-    public function getPgProgLotPeriodeAnBySLotanPeriode($pgProgLotAn, $pgProgPeriodes) {
+    public function getPgProgLotPeriodeAnByLotanPeriode($pgProgLotAn, $pgProgPeriodes) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgLotPeriodeAn p";
         $query = $query . " where p.lotan = :pgProgLotAn";
