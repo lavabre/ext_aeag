@@ -246,7 +246,7 @@ class PgTmpValidEdilaboRepository extends EntityRepository {
         
         $result = $qb->getResult();
         if (count($result) > 1) {
-            return -1;
+            return -999;
         } else if (count($result) == 0) {
             return null;
         }

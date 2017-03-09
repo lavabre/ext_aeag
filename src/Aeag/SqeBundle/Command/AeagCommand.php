@@ -304,7 +304,7 @@ class AeagCommand extends ContainerAwareCommand {
     
     public function getMesureByCodeParametre($codeParametre, $demandeId, $reponseId, $codePrelevement, $codeFraction = null) {
         $mesure = $this->repoPgTmpValidEdilabo->getMesureByCodeParametre($codeParametre, $demandeId, $reponseId, $codePrelevement, $codeFraction);
-         if ($mesure == -1) {
+         if ($mesure == -999) {
             $this->_addLog('error', $demandeId, $reponseId, 'Présence de doublon de la mesure', $codePrelevement, $codeParametre);
             return null;
         } 
