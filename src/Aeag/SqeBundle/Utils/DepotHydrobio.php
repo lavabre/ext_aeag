@@ -46,16 +46,21 @@ class DepotHydrobio {
         $fic = 0;
 
         foreach ($liste as $nomFichier) {
-            $tabNomFichier = explode('.', $nomFichier);
-            if ($tabNomFichier[1] == 'xls') {
-                $tabFichier = $this->lireXls($pgCmdFichierRps->getId(), $demandeId, $excelObj, $nomFichier, $pathBase, $rapport, $emSqe);
-                $tabTraitFichiers[$fic] = $tabFichier;
-                $fic++;
-            }
-            if ($tabNomFichier[1] == 'prn') {
-                $tabFichier = $this->lirePrn($demandeId, $nomFichier, $pathBase, $rapport, $emSqe);
-                $tabTraitFichiers[$fic] = $tabFichier;
-                $fic++;
+            if (is_file($pathBase . '/' . $nomFichier)) {
+                $pos1 = stripos($nomFichier, '.');
+                if ($pos1) {
+                    $tabNomFichier = explode('.', $nomFichier);
+                    if ($tabNomFichier[1] == 'xls') {
+                        $tabFichier = $this->lireXls($pgCmdFichierRps->getId(), $demandeId, $excelObj, $nomFichier, $pathBase, $rapport, $emSqe);
+                        $tabTraitFichiers[$fic] = $tabFichier;
+                        $fic++;
+                    }
+                    if ($tabNomFichier[1] == 'prn') {
+                        $tabFichier = $this->lirePrn($demandeId, $nomFichier, $pathBase, $rapport, $emSqe);
+                        $tabTraitFichiers[$fic] = $tabFichier;
+                        $fic++;
+                    }
+                }
             }
         }
 
@@ -1014,16 +1019,18 @@ class DepotHydrobio {
                             // Table pg_cmd_diato_liste
                             //print_r('station : ' . $codeStation . ' sandre : ' . $codeSandre . ' taxon : ' . $codeAltern . '</br>');
                             $pgCmdPrelevHbDiato = $repoPgCmdPrelevHbDiato->getPgCmdPrelevHbDiatoByPrelev($pgCmdPrelev);
-                            $pgCmdDiatoListe = $repoPgCmdDiatoListe->getPgCmdDiatoListeByPrelevCodeSandreTaxon($pgCmdPrelevHbDiato, $codeSandre, $codeAltern);
-                            if (!$pgCmdDiatoListe) {
-                                $pgCmdDiatoListe = new PgCmdDiatoListe();
-                                $pgCmdDiatoListe->setPrelev($pgCmdPrelevHbDiato);
+                            if ($pgCmdPrelevHbDiato) {
+                                $pgCmdDiatoListe = $repoPgCmdDiatoListe->getPgCmdDiatoListeByPrelevCodeSandreTaxon($pgCmdPrelevHbDiato, $codeSandre, $codeAltern);
+                                if (!$pgCmdDiatoListe) {
+                                    $pgCmdDiatoListe = new PgCmdDiatoListe();
+                                    $pgCmdDiatoListe->setPrelev($pgCmdPrelevHbDiato);
+                                }
+                                $pgCmdDiatoListe->setCodeSandre($codeSandre);
+                                $pgCmdDiatoListe->setTaxon($codeAltern);
+                                $pgCmdDiatoListe->setDenombrement($denombrement);
+                                $emSqe->persist($pgCmdDiatoListe);
+                                $emSqe->flush();
                             }
-                            $pgCmdDiatoListe->setCodeSandre($codeSandre);
-                            $pgCmdDiatoListe->setTaxon($codeAltern);
-                            $pgCmdDiatoListe->setDenombrement($denombrement);
-                            $emSqe->persist($pgCmdDiatoListe);
-                            $emSqe->flush();
                         }
 //                         else {
 //                            $contenu = '                     Incorrect ' . CHR(13) . CHR(10);
@@ -1087,7 +1094,7 @@ class DepotHydrobio {
                             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                             fputs($rapport, $contenu);
                         }
-                        if (!$erreur) {
+                        if (!$erreur and $pgCmdPrelev) {
 //                            $contenu = '                  ligne ' . $nbl . ' correcte ' . CHR(13) . CHR(10);
 //                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
 //                            fputs($rapport, $contenu);
@@ -1096,18 +1103,20 @@ class DepotHydrobio {
                             // Table pg_cmd_diato_liste
                             //print_r('station : ' . $codeStation . ' sandre : ' . $codeSandre . ' taxon : ' . $codeAltern . '</br>');
                             $pgCmdPrelevHbDiato = $repoPgCmdPrelevHbDiato->getPgCmdPrelevHbDiatoByPrelev($pgCmdPrelev);
-                            $pgCmdDiatoListe = $repoPgCmdDiatoListe->getPgCmdDiatoListeByPrelevCodeSandreTaxon($pgCmdPrelevHbDiato, $codeSandre, $codeAltern);
-                            if (!$pgCmdDiatoListe) {
-                                $pgCmdDiatoListe = new PgCmdDiatoListe();
-                                $pgCmdDiatoListe->setPrelev($pgCmdPrelevHbDiato);
+                            if ($pgCmdPrelevHbDiato) {
+                                $pgCmdDiatoListe = $repoPgCmdDiatoListe->getPgCmdDiatoListeByPrelevCodeSandreTaxon($pgCmdPrelevHbDiato, $codeSandre, $codeAltern);
+                                if (!$pgCmdDiatoListe) {
+                                    $pgCmdDiatoListe = new PgCmdDiatoListe();
+                                    $pgCmdDiatoListe->setPrelev($pgCmdPrelevHbDiato);
+                                }
+                                $pgCmdDiatoListe->setCodeSandre($codeSandre);
+                                $pgCmdDiatoListe->setTaxon($codeAltern);
+                                $pgCmdDiatoListe->setDenombrement($denombrement);
+                                $emSqe->persist($pgCmdDiatoListe);
+                                $emSqe->flush();
                             }
-                            $pgCmdDiatoListe->setCodeSandre($codeSandre);
-                            $pgCmdDiatoListe->setTaxon($codeAltern);
-                            $pgCmdDiatoListe->setDenombrement($denombrement);
-                            $emSqe->persist($pgCmdDiatoListe);
-                            $emSqe->flush();
                         }
-//                        else {
+                        //                        else {
 //                            $contenu = '               ligne ' . $nbl . ' incorrecte ' . CHR(13) . CHR(10);
 //                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
 //                            fputs($rapport, $contenu);
@@ -1116,7 +1125,7 @@ class DepotHydrobio {
                 }
             }
         }
-        if (!$erreur) {
+        if (!$erreur and $pgCmdPrelev) {
 //            $contenu = '                   Correct ' . CHR(13) . CHR(10);
 //            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
 //            fputs($rapport, $contenu);
@@ -1124,16 +1133,18 @@ class DepotHydrobio {
             //
                 // Table pg_cmd_diato_liste
             $pgCmdPrelevHbDiato = $repoPgCmdPrelevHbDiato->getPgCmdPrelevHbDiatoByPrelev($pgCmdPrelev);
-            $pgCmdDiatoListe = $repoPgCmdDiatoListe->getPgCmdDiatoListeByPrelevCodeSandreTaxon($pgCmdPrelevHbDiato, $codeSandre, $codeAltern);
-            if (!$pgCmdDiatoListe) {
-                $pgCmdDiatoListe = new PgCmdDiatoListe();
-                $pgCmdDiatoListe->setPrelev($pgCmdPrelevHbDiato);
+            if ($pgCmdPrelevHbDiato) {
+                $pgCmdDiatoListe = $repoPgCmdDiatoListe->getPgCmdDiatoListeByPrelevCodeSandreTaxon($pgCmdPrelevHbDiato, $codeSandre, $codeAltern);
+                if (!$pgCmdDiatoListe) {
+                    $pgCmdDiatoListe = new PgCmdDiatoListe();
+                    $pgCmdDiatoListe->setPrelev($pgCmdPrelevHbDiato);
+                }
+                $pgCmdDiatoListe->setCodeSandre($codeSandre);
+                $pgCmdDiatoListe->setTaxon($codeAltern);
+                $pgCmdDiatoListe->setDenombrement($denombrement);
+                $emSqe->persist($pgCmdDiatoListe);
+                $emSqe->flush();
             }
-            $pgCmdDiatoListe->setCodeSandre($codeSandre);
-            $pgCmdDiatoListe->setTaxon($codeAltern);
-            $pgCmdDiatoListe->setDenombrement($denombrement);
-            $emSqe->persist($pgCmdDiatoListe);
-            $emSqe->flush();
         }
 
         $tabFeuillets[$feuil]['erreur'] = $erreur;

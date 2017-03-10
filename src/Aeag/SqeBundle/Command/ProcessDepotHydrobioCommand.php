@@ -53,6 +53,7 @@ class ProcessDepotHydrobioCommand extends AeagCommand {
                 $pgCmdDemande = $pgCmdFichierRps->getDemande();
                 $chemin = $this->getContainer()->getParameter('repertoire_depotHydrobio');
                 $pathBase = $this->getContainer()->get('aeag_sqe.process_rai')->getCheminEchange($chemin, $pgCmdDemande, $pgCmdFichierRps->getId());
+                //    $this->output->writeln($date->format('d/m/Y H:i:s') . '- chemin : ' . $pathBase);
                 $excelObj = $this->excelObj;
                 $tabFichiers = $this->getContainer()->get('aeag_sqe.depotHydrobio')->extraireFichier($pgCmdFichierRps->getDemande()->getId(), $this->emSqe, $pgCmdFichierRps, $pathBase, $pgCmdFichierRps->getNomFichier(), $excelObj);
 
