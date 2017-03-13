@@ -45,6 +45,7 @@ class AeagCommand extends ContainerAwareCommand {
     protected $controleVraisemblaceService;
     protected $excelObj;
     protected $evolution;
+    protected $env;
 
     protected function configure() {
         $this
@@ -102,6 +103,8 @@ class AeagCommand extends ContainerAwareCommand {
 
         $this->setEvolution($this->repoParametre->getParametreByCode('EVOLUTION'));
         $this->excelObj = $this->getContainer()->get('xls.load_xls5');
+        
+        $this->env = $input->getOption('env');
     }
 
     protected function _updatePhaseFichierRps(\Aeag\SqeBundle\Entity\PgCmdFichiersRps $pgCmdFichierRps, $phase, $phase82atteinte = false) {
@@ -287,8 +290,10 @@ class AeagCommand extends ContainerAwareCommand {
         }
 
         $this->emSqe->flush();
-
-        $this->_cleanLogTable($pgCmdFichierRps);
+        
+        if ($this->getEnv() !== 'preprod') {
+            $this->_cleanLogTable($pgCmdFichierRps);
+        }
     }
 
     // Méthodes permettant la gestion des doublons
@@ -335,5 +340,12 @@ class AeagCommand extends ContainerAwareCommand {
     public function setEvolution($evolution) {
         $this->evolution = $evolution;
     }
+    
+    public function getEnv() {
+        return $this->env;
+    }
 
+    public function setEnv($env) {
+        $this->env = $env;
+    }
 }

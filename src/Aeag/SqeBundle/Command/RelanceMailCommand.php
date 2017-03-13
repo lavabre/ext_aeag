@@ -64,6 +64,9 @@ class RelanceMailCommand extends AeagCommand {
             $codeMilieu = $pgCmdDemande->getLotan()->getLot()->getCodeMilieu()->getCodeMilieu();
             $prestataire = $pgCmdDemande->getLotan()->getLot()->getTitulaire();
             $objetMessage = "SQE : DAI générée - " . $pgCmdDemande->getLotan()->getLot()->getNomLot();
+            if ($this->getEnv() !== 'prod') {
+                $objetMessage .= " - ".$this->getEnv();
+            }
             $pgProgPrestaTypfic = $this->repoPgProgPrestaTypfic->findOneBy(array('codeMilieu' => $codeMilieu, 'prestataire' => $prestataire));
             
             if (!is_null($pgProgPrestaTypfic)) {
@@ -136,6 +139,9 @@ class RelanceMailCommand extends AeagCommand {
                 }
             }
             $objetMessage = "Relance SQE - RAI : Dépot de fichier en attente " . $pgCmdDemande->getLotan()->getLot()->getNomLot();
+            if ($this->getEnv() !== 'prod') {
+                $objetMessage .= " - ".$this->getEnv();
+            }
             $txtMessage = "Lot : " . $pgCmdDemande->getLotan()->getLot()->getNomLot() . "<br/>";
             $txtMessage .= "Période : " . $pgCmdDemande->getPeriode()->getLabelPeriode() . "<br/>";
             $txtMessage .= "Vous êtes censé déposer les résultats de la demande " . $pgCmdDemande->getId() . " du lot " . $pgCmdDemande->getLotan()->getLot()->getNomLot() . " avant le ".$dateLimite->format('d-m-Y')."<br/>";
@@ -173,6 +179,9 @@ class RelanceMailCommand extends AeagCommand {
             }
 
             $objetMessage = "Relance SQE - RAI : Dépot de fichier non effectué " . $pgCmdDemande->getLotan()->getLot()->getNomLot();
+            if ($this->getEnv() !== 'prod') {
+                $objetMessage .= " - " . $this->getEnv();
+            }
             $txtMessage = "Lot : " . $pgCmdDemande->getLotan()->getLot()->getNomLot() . "<br/>";
             $txtMessage .= "Période : " . $pgCmdDemande->getPeriode()->getLabelPeriode() . "<br/>";
             $txtMessage .= "Les résultats à la demande ".$pgCmdDemande->getId()." du lot ".$pgCmdDemande->getLotan()->getLot()->getNomLot()." n'ont pas été déposé. Vous encourez des pénalités. (Retard dans la remise des résultats, pénalités encourues cf. CCAP 17.1) <br/>";
@@ -214,7 +223,10 @@ class RelanceMailCommand extends AeagCommand {
             }
             $listeStationLibs .= '</ul>';
 
-            $objetMessage = "Relance SQE : Lot ".$pgProgLot->getNomLot()." - Stations non réalisées à ce jour";
+            $objetMessage = "Relance SQE : Lot " . $pgProgLot->getNomLot() . " - Stations non réalisées à ce jour";
+            if ($this->getEnv() !== 'prod') {
+                $objetMessage .= " - " . $this->getEnv();
+            }
             $txtMessage = "Lot : " . $pgProgLot->getNomLot() . "<br/>";
             $txtMessage .= "Stations prévues le ".$pgCmdSuiviPrels[0]->getDatePrel()->format('d/m/Y').":<br/>" . $listeStationLibs . "<br/>";
             $txtMessage .= "<br/>Vous n'avez pas renseigné le prélèvement de la station comme \"Effectué\" ni déposé les fichiers associés.<br/>";
@@ -261,7 +273,10 @@ class RelanceMailCommand extends AeagCommand {
             }
             $listeStationLibs .= '</ul>';
 
-            $objetMessage = "Relance SQE : Lot ".$pgProgLot->getNomLot()." - Absence de documents de terrain ";
+            $objetMessage = "Relance SQE : Lot " . $pgProgLot->getNomLot() . " - Absence de documents de terrain ";
+            if ($this->getEnv() !== 'prod') {
+                $objetMessage .= " - " . $this->getEnv();
+            }
             $txtMessage = "Lot : " . $pgProgLot->getNomLot() . "<br/>";
             $txtMessage .= "Stations : </br>" . $listeStationLibs . "<br/>";
             $txtMessage .= "Vous n'avez pas déposé les fichiers associés pour ces stations, le CCTP cf. article 4.1.4 n’est pas respecté à ce jour. <br/>";
@@ -287,7 +302,10 @@ class RelanceMailCommand extends AeagCommand {
             }
             
             $date = new \DateTime();
-            $objetMessage = "Relance SQE : Récapitulatif des mises à jour automatique du ".$date->format('d/m/Y H:i:s');
+            $objetMessage = "Relance SQE : Récapitulatif des mises à jour automatique du " . $date->format('d/m/Y H:i:s');
+            if ($this->getEnv() !== 'prod') {
+                $objetMessage .= " - " . $this->getEnv();
+            }
             $txtMessage = "Vous trouverez ci-dessous le récapitulatif des mises à jour automatique effectuées le ".$date->format('d/m/Y H:i:s')."<br/><br/>";
             foreach ($this->getLogs() as $log) {
                 $txtMessage .= $log.'<br/>';

@@ -69,7 +69,7 @@ class PgProgWebuserTypmilRepository extends EntityRepository {
     public function getPgProgWebuserTypmilByTypMilAndTypeUser($typeMilieu, $typeUser) {
         $query = "select ut";
         $query .= " from Aeag\SqeBundle\Entity\PgProgWebuserTypmil ut";
-        $query .= " left join Aeag\SqeBundle\Entity\PgProgWebusers u with ut.user = u.id";
+        $query .= " left join Aeag\SqeBundle\Entity\PgProgWebusers u with ut.webuser = u.id";
         $query .= " where u.typeUser = :typeuser";
         $query .= " and (ut.typmil = :typemilieu or ut.typmil IS NULL)";
         
