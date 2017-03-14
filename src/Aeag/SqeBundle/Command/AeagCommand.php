@@ -254,15 +254,16 @@ class AeagCommand extends ContainerAwareCommand {
     }
 
     protected function _cleanLogTable($pgCmdFichierRps) {
-        $demandeId = $pgCmdFichierRps->getDemande()->getId();
-        $reponseId = $pgCmdFichierRps->getId();
+        if ($this->getEnv() !== 'preprod') {
+            $demandeId = $pgCmdFichierRps->getDemande()->getId();
+            $reponseId = $pgCmdFichierRps->getId();
+            $pgPgLogValidEdilabos = $this->repoPgLogValidEdilabo->findBy(array('demandeId' => $demandeId, 'fichierRpsId' => $reponseId));
+            foreach ($pgPgLogValidEdilabos as $pgPgLogValidEdilabo) {
+                $this->emSqe->remove($pgPgLogValidEdilabo);
+            }
 
-        $pgPgLogValidEdilabos = $this->repoPgLogValidEdilabo->findBy(array('demandeId' => $demandeId, 'fichierRpsId' => $reponseId));
-        foreach ($pgPgLogValidEdilabos as $pgPgLogValidEdilabo) {
-            $this->emSqe->remove($pgPgLogValidEdilabo);
+            $this->emSqe->flush();
         }
-
-        $this->emSqe->flush();
     }
 
     protected function _cleanTmpTable($pgCmdFichierRps) {
@@ -290,10 +291,8 @@ class AeagCommand extends ContainerAwareCommand {
         }
 
         $this->emSqe->flush();
-        
-        if ($this->getEnv() !== 'preprod') {
-            $this->_cleanLogTable($pgCmdFichierRps);
-        }
+        $this->_cleanLogTable($pgCmdFichierRps);
+
     }
 
     // Méthodes permettant la gestion des doublons
