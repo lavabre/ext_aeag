@@ -2840,6 +2840,7 @@ class SaisieDonneesController extends Controller {
 
                         $siret_prestataire = $tab[5];
                         $siret_labo = $tab[26];
+                        $pgRefCorresPresta = null;
                         if (strlen($siret_labo) > 1) {
                             $pgRefCorresPresta = $repoPgRefCorresPresta->getPgRefCorresPrestaByCodeSiret($siret_labo);
                         } else {
