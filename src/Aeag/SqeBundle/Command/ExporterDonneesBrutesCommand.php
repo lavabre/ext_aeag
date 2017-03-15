@@ -76,6 +76,9 @@ class ExporterDonneesBrutesCommand extends AeagCommand {
             $destinataire = $this->repoPgProgWebUsers->findOneByExtId($user);
             $url = $this->getContainer()->get('router')->generate('AeagSqeBundle_exportdonneesbrutes_telecharger', array("nomFichier" => $nomArchive), UrlGeneratorInterface::ABSOLUTE_URL);
             $objetMessage = "SQE - RAI : Fichier csv de l'export des données brutes disponible ";
+            if ($this->getEnv() !== 'prod') {
+                $objetMessage .= " - ".$this->getEnv();
+            }            
             $txtMessage = "Le fichier csv de l'export des données brutes est disponible. <br/><br/>";
             $txtMessage .= "Zone géographique : " . $strZgeoRefs . "<br/>";
             $txtMessage .= "Code Milieu : " . $pgProgTypeMilieu->getNomMilieu()  . "<br/>";

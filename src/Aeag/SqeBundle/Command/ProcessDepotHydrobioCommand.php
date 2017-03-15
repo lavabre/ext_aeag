@@ -76,6 +76,9 @@ class ProcessDepotHydrobioCommand extends AeagCommand {
 
                 // Envoi mail
                 $objetMessage = "SQE - RAI : Fichier " . $pgCmdFichierRps->getNomFichier() . " - Récapitulatif";
+                if ($this->getEnv() !== 'prod') {
+                    $objetMessage .= " - ".$this->getEnv();
+                }
                 //$url = $this->getContainer()->get('router')->generate('AeagSqeBundle_depotHydrobio_demandes', array("lotanId" => $pgCmdFichierRps->getDemande()->getLotan()->getId()), UrlGeneratorInterface::ABSOLUTE_URL);
                 $url = $this->getContainer()->get('router')->generate('AeagSqeBundle_depotHydrobio_reponses_telecharger', array("reponseId" => $pgCmdFichierRps->getId(), "typeFichier" => "CR"), UrlGeneratorInterface::ABSOLUTE_URL);
                 $txtMessage = "Lot : " . $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getNomLot() . "<br/>";

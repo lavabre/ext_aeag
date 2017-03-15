@@ -45,6 +45,7 @@ class AeagCommand extends ContainerAwareCommand {
     protected $controleVraisemblaceService;
     protected $excelObj;
     protected $evolution;
+    protected $env;
 
     protected function configure() {
         $this
@@ -102,6 +103,8 @@ class AeagCommand extends ContainerAwareCommand {
 
         $this->setEvolution($this->repoParametre->getParametreByCode('EVOLUTION'));
         $this->excelObj = $this->getContainer()->get('xls.load_xls5');
+        
+        $this->env = $input->getOption('env');
     }
 
     protected function _updatePhaseFichierRps(\Aeag\SqeBundle\Entity\PgCmdFichiersRps $pgCmdFichierRps, $phase, $phase82atteinte = false) {
@@ -251,15 +254,16 @@ class AeagCommand extends ContainerAwareCommand {
     }
 
     protected function _cleanLogTable($pgCmdFichierRps) {
-        $demandeId = $pgCmdFichierRps->getDemande()->getId();
-        $reponseId = $pgCmdFichierRps->getId();
+        if ($this->getEnv() !== 'preprod') {
+            $demandeId = $pgCmdFichierRps->getDemande()->getId();
+            $reponseId = $pgCmdFichierRps->getId();
+            $pgPgLogValidEdilabos = $this->repoPgLogValidEdilabo->findBy(array('demandeId' => $demandeId, 'fichierRpsId' => $reponseId));
+            foreach ($pgPgLogValidEdilabos as $pgPgLogValidEdilabo) {
+                $this->emSqe->remove($pgPgLogValidEdilabo);
+            }
 
-        $pgPgLogValidEdilabos = $this->repoPgLogValidEdilabo->findBy(array('demandeId' => $demandeId, 'fichierRpsId' => $reponseId));
-        foreach ($pgPgLogValidEdilabos as $pgPgLogValidEdilabo) {
-            $this->emSqe->remove($pgPgLogValidEdilabo);
+            $this->emSqe->flush();
         }
-
-        $this->emSqe->flush();
     }
 
     protected function _cleanTmpTable($pgCmdFichierRps) {
@@ -287,8 +291,8 @@ class AeagCommand extends ContainerAwareCommand {
         }
 
         $this->emSqe->flush();
-
         $this->_cleanLogTable($pgCmdFichierRps);
+
     }
 
     // Méthodes permettant la gestion des doublons
@@ -335,5 +339,12 @@ class AeagCommand extends ContainerAwareCommand {
     public function setEvolution($evolution) {
         $this->evolution = $evolution;
     }
+    
+    public function getEnv() {
+        return $this->env;
+    }
 
+    public function setEnv($env) {
+        $this->env = $env;
+    }
 }

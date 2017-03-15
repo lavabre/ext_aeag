@@ -87,6 +87,9 @@ class ProcessRaiCommand extends AeagCommand {
 
             // Envoi mail
             $objetMessage = "SQE - RAI : Fichier " . $pgCmdFichierRps->getNomFichier() . " - Récapitulatif";
+            if ($this->getEnv() !== 'prod') {
+                $objetMessage .= " - ".$this->getEnv();
+            }
             $url = $this->getContainer()->get('router')->generate('AeagSqeBundle_echangefichiers_reponses_telecharger', array("reponseId" => $pgCmdFichierRps->getId(), "typeFichier" => "CR"), UrlGeneratorInterface::ABSOLUTE_URL);
             $txtMessage = "Lot : " . $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getNomLot() . "<br/>";
             $txtMessage .= "Période : " . $pgCmdFichierRps->getDemande()->getPeriode()->getLabelPeriode() . "<br/>";
@@ -340,7 +343,7 @@ class ProcessRaiCommand extends AeagCommand {
         // III.1
         //$dateLog = new \DateTime();
         //$this->output->writeln($dateLog->format('d/m/Y H:i:s') . '- Process RAI : RAI '.$pgCmdFichierRps->getId().' - Controle Vraisemblance - '.$codePrelevement.' - Début III.1');
-        if (($result = $this->controleVraisemblaceService->champsNonRenseignes($mesure, $codeRq, $codeParametre, $inSitu)) != true) {
+        if (is_array($result = $this->controleVraisemblaceService->champsNonRenseignes($mesure, $codeRq, $codeParametre, $inSitu))) {
             $this->_addLog($result[0], $demandeId, $reponseId, $result[1], $codePrelevement, $codeParametre);
         }
         //$dateLog = new \DateTime();
@@ -348,7 +351,7 @@ class ProcessRaiCommand extends AeagCommand {
         // III.1.1
         //$dateLog = new \DateTime();
         //$this->output->writeln($dateLog->format('d/m/Y H:i:s') . '- Process RAI : RAI '.$pgCmdFichierRps->getId().' - Controle Vraisemblance - '.$codePrelevement.' - Début III.1.1');
-        if (($result = $this->controleVraisemblaceService->champsNonRenseignesEtValeursVides($mesure, $codeRq, $codeParametre, $inSitu)) != true) {
+        if (is_array($result = $this->controleVraisemblaceService->champsNonRenseignesEtValeursVides($mesure, $codeRq, $codeParametre, $inSitu))) {
             $this->_addLog($result[0], $demandeId, $reponseId, $result[1], $codePrelevement, $codeParametre);
         }
         //$dateLog = new \DateTime();
@@ -356,7 +359,7 @@ class ProcessRaiCommand extends AeagCommand {
         // III.2
         //$dateLog = new \DateTime();
         //$this->output->writeln($dateLog->format('d/m/Y H:i:s') . '- Process RAI : RAI '.$pgCmdFichierRps->getId().' - Controle Vraisemblance - '.$codePrelevement.' - Début III.2');
-        if (($result = $this->controleVraisemblaceService->valeursNumeriques($mesure, $codeRq)) != true) {
+        if (is_array($result = $this->controleVraisemblaceService->valeursNumeriques($mesure, $codeRq))) {
             $this->_addLog($result[0], $demandeId, $reponseId, $result[1], $codePrelevement, $codeParametre);
         }
         //$dateLog = new \DateTime();
@@ -364,7 +367,7 @@ class ProcessRaiCommand extends AeagCommand {
         // III.3 Valeurs =0 (hors TH (1345), TA (1346), TAC (1347), Temp(1301)) hors codes observations environnementales / résultat = 0 possible pour les paramètres de cette liste (et pour 1345, 1346, 1347 et 1301) => Erreur
         //$dateLog = new \DateTime();
         //$this->output->writeln($dateLog->format('d/m/Y H:i:s') . '- Process RAI : RAI '.$pgCmdFichierRps->getId().' - Controle Vraisemblance - '.$codePrelevement.' - Début III.3');
-        if (($result = $this->controleVraisemblaceService->valeursEgalZero($mesure, $codeParametre, $inSitu)) != true) {
+        if (is_array($result = $this->controleVraisemblaceService->valeursEgalZero($mesure, $codeParametre, $inSitu))) {
             $this->_addLog($result[0], $demandeId, $reponseId, $result[1], $codePrelevement, $codeParametre);
         }
         //$dateLog = new \DateTime();
@@ -372,7 +375,7 @@ class ProcessRaiCommand extends AeagCommand {
         // III.4 Valeurs < 0 (hors température de air 1409, potentiel REDOX 1330)
         //$dateLog = new \DateTime();
         //$this->output->writeln($dateLog->format('d/m/Y H:i:s') . '- Process RAI : RAI '.$pgCmdFichierRps->getId().' - Controle Vraisemblance - '.$codePrelevement.' - Début III.4');
-        if (($result = $this->controleVraisemblaceService->valeursInfZero($mesure, $codeParametre)) != true) {
+        if (is_array($result = $this->controleVraisemblaceService->valeursInfZero($mesure, $codeParametre))) {
             $this->_addLog($result[0], $demandeId, $reponseId, $result[1], $codePrelevement, $codeParametre);
         }
         //$dateLog = new \DateTime();
@@ -380,7 +383,7 @@ class ProcessRaiCommand extends AeagCommand {
         // III.5 Valeurs avec code remarque '> (3)' hors bactério (1147,1448,1449,1451,5479,6455); code remarque ="Trace (7)"
         //$dateLog = new \DateTime();
         //$this->output->writeln($dateLog->format('d/m/Y H:i:s') . '- Process RAI : RAI '.$pgCmdFichierRps->getId().' - Controle Vraisemblance - '.$codePrelevement.' - Début III.5');
-        if (($result = $this->controleVraisemblaceService->valeursSupTrois($codeParametre, $codeRq)) != true) {
+        if (is_array($result = $this->controleVraisemblaceService->valeursSupTrois($codeParametre, $codeRq))) {
             $this->_addLog($result[0], $demandeId, $reponseId, $result[1], $codePrelevement, $codeParametre);
         }
         //$dateLog = new \DateTime();
@@ -393,7 +396,7 @@ class ProcessRaiCommand extends AeagCommand {
 
         // III.6 1 < pH(1302) < 14
         $mPh = $this->getMesureByCodeParametre(1302, $demandeId, $reponseId, $codePrelevement, 23);
-        if (($result = $this->controleVraisemblaceService->pH($mPh)) != true) {
+        if (is_array($result = $this->controleVraisemblaceService->pH($mPh))) {
             $this->_addLog($result[0], $demandeId, $reponseId, $result[1], $codePrelevement);
         }
         
@@ -403,7 +406,7 @@ class ProcessRaiCommand extends AeagCommand {
             $mTxSatOx = $this->getMesureByCodeParametre(1312, $demandeId, $reponseId, $codePrelevement, 23);
             $mOxDiss = $this->getMesureByCodeParametre(1311, $demandeId, $reponseId, $codePrelevement, 23);
             $mTEau = $this->getMesureByCodeParametre(1301, $demandeId, $reponseId, $codePrelevement, 23);
-            if (($result = $this->controleVraisemblaceService->modeleWeiss($mTxSatOx, $mOxDiss, $mTEau, $mConductivite)) != true) {
+            if (is_array($result = $this->controleVraisemblaceService->modeleWeiss($mTxSatOx, $mOxDiss, $mTEau, $mConductivite))) {
                 $this->_addLog($result[0], $demandeId, $reponseId, $result[1], $codePrelevement);
             }
         }
@@ -433,12 +436,12 @@ class ProcessRaiCommand extends AeagCommand {
         foreach ($cAnionParams as $idx => $cAnionParam) {
             $codeRqAnionParams[$idx] = $this->getCodeRqByCodeParametre($idx, $demandeId, $reponseId, $codePrelevement, 3);
         }
-        if (($result = $this->controleVraisemblaceService->balanceIonique($cCationParams, $cAnionParams, $codeRqCationParams, $codeRqAnionParams)) != true) {
+        if (is_array($result = $this->controleVraisemblaceService->balanceIonique($cCationParams, $cAnionParams, $codeRqCationParams, $codeRqAnionParams))) {
             $this->_addLog($result[0], $demandeId, $reponseId, $result[1], $codePrelevement);
         }
         
         // III.9 Comparaison Balance ionique / conductivité (Feret)
-        if (($result = $this->controleVraisemblaceService->balanceIoniqueTds2($cCationParams, $cAnionParams, $codeRqCationParams, $codeRqAnionParams, $mConductivite)) != true) {
+        if (is_array($result = $this->controleVraisemblaceService->balanceIoniqueTds2($cCationParams, $cAnionParams, $codeRqCationParams, $codeRqAnionParams, $mConductivite))) {
             $this->_addLog($result[0], $demandeId, $reponseId, $result[1], $codePrelevement);
         }
 
@@ -447,7 +450,7 @@ class ProcessRaiCommand extends AeagCommand {
         $mP = $this->getMesureByCodeParametre(1350, $demandeId, $reponseId, $codePrelevement, 23);
         $codeRqPo4 = $this->getCodeRqByCodeParametre(1433, $demandeId, $reponseId, $codePrelevement, 3);
         $codeRqP = $this->getCodeRqByCodeParametre(1350, $demandeId, $reponseId, $codePrelevement, 23);
-        if (($result = $this->controleVraisemblaceService->orthophosphate($mPo4, $mP, $codeRqPo4, $codeRqP)) != true) {
+        if (is_array($result = $this->controleVraisemblaceService->orthophosphate($mPo4, $mP, $codeRqPo4, $codeRqP))) {
             $this->_addLog($result[0], $demandeId, $reponseId, $result[1], $codePrelevement);
         }
 
@@ -456,14 +459,14 @@ class ProcessRaiCommand extends AeagCommand {
         $mNkj = $this->getMesureByCodeParametre(1319, $demandeId, $reponseId, $codePrelevement, 23);
         $codeRqNh4 = $this->getCodeRqByCodeParametre(1335, $demandeId, $reponseId, $codePrelevement, 3);
         $codeRqNkj = $this->getCodeRqByCodeParametre(1319, $demandeId, $reponseId, $codePrelevement, 23);
-        if (($result = $this->controleVraisemblaceService->ammonium($mNh4, $mNkj, $codeRqNh4, $codeRqNkj)) != true) {
+        if (is_array($result = $this->controleVraisemblaceService->ammonium($mNh4, $mNkj, $codeRqNh4, $codeRqNkj))) {
             $this->_addLog($result[0], $demandeId, $reponseId, $result[1], $codePrelevement);
         }
         
         // III.12 Valeur de pourcentage hors 1312 oxygène (ex : matière sèche ou granulo) : non compris entre 0 et 100 si code unité = 243 ou 246
         $tabMesures = array(243 => $this->repoPgTmpValidEdilabo->getMesureByCodeUnite(243, $demandeId, $reponseId, $codePrelevement, 1312),
             246 => $this->repoPgTmpValidEdilabo->getMesureByCodeUnite(246, $demandeId, $reponseId, $codePrelevement, 1312));
-        if (($results = $this->controleVraisemblaceService->pourcentageHorsOxygene($tabMesures)) != true) {
+        if (is_array($results = $this->controleVraisemblaceService->pourcentageHorsOxygene($tabMesures))) {
             foreach ($results as $result) {
                 $this->_addLog($result[0], $demandeId, $reponseId, $result[1], $codePrelevement);
                 //$this->_addLog('info', $demandeId, $reponseId, 'III.12', $codePrelevement, $codeParametre);
@@ -495,7 +498,7 @@ class ProcessRaiCommand extends AeagCommand {
             3 => $this->getMesureByCodeParametre(1780, $demandeId, $reponseId, $codePrelevement, 23));
 
         $params = array(5537, 1743, 7146, 1780);
-        if (($results = $this->controleVraisemblaceService->sommeParametresDistincts($sommeParams, $resultParams, $params)) != true) {
+        if (is_array($results = $this->controleVraisemblaceService->sommeParametresDistincts($sommeParams, $resultParams, $params))) {
             foreach ($results as $result) {
                 $this->_addLog($result[0], $demandeId, $reponseId, $result[1], $codePrelevement);
             }

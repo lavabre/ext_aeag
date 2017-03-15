@@ -67,6 +67,9 @@ class IntegrationDonneesBrutesCommand extends AeagCommand {
             $this->_insertFichierLog($pgCmdFichierRps, "Intégration Données Brutes");
             
             $objetMessage = "SQE - RAI : Fichier csv des données brutes disponible pour le lot " . $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getNomLot();
+            if ($this->getEnv() !== 'prod') {
+                $objetMessage .= " - ".$this->getEnv();
+            }
             $urlDb = $this->getContainer()->get('router')->generate('AeagSqeBundle_echangefichiers_reponses_telecharger', array("reponseId" => $pgCmdFichierRps->getId(), "typeFichier" => "DB"), UrlGeneratorInterface::ABSOLUTE_URL);
             $urlCr = $this->getContainer()->get('router')->generate('AeagSqeBundle_echangefichiers_reponses_telecharger', array("reponseId" => $pgCmdFichierRps->getId(), "typeFichier" => "CR"), UrlGeneratorInterface::ABSOLUTE_URL);
             $txtMessage = "Lot : " . $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getNomLot() . "<br/>";

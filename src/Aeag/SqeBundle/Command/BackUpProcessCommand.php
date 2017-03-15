@@ -58,6 +58,9 @@ class BackUpProcessCommand extends AeagCommand {
 
                     // Envoi d'un mail
                     $objetMessage = "RAI " . $pgCmdFichierRps->getId() . " soumise et en cours de validation";
+                    if ($this->getEnv() !== 'prod') {
+                        $objetMessage .= " - ".$this->getEnv();
+                    }
                     $txtMessage = "Votre RAI (id " . $pgCmdFichierRps->getId() . ") concernant la DAI " . $pgCmdFichierRps->getDemande()->getCodeDemandeCmd() . " a été soumise. Le fichier " . $pgCmdFichierRps->getNomFichier() . " est en cours de validation. "
                             . "Vous serez informé lorsque celle-ci sera validée. ";
                     $destinataire = $this->repoPgProgWebUsers->findOneByPrestataire($pgCmdFichierRps->getDemande()->getPrestataire());

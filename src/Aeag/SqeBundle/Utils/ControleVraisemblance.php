@@ -369,7 +369,10 @@ class ControleVraisemblance {
     }
 
     public function isNull($val) {
-        return (is_null($val) || (isset($val) && $val == ""));
+        if (is_null($val) || (isset($val) && $val == "")) {
+            return true;
+        }
+        return false;
     }
 
 }

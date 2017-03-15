@@ -47,6 +47,6 @@ assetic:
 
 swiftmailer:
     #delivery_address: jle@eau-adour-garonne.fr
-    delivery_address: lomig.leborgne@eau-adour-garonne.fr
+    delivery_address: frederic.sibien@eau-adour-garonne.fr
     
 
