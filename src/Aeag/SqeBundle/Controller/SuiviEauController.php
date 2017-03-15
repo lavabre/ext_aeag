@@ -936,6 +936,14 @@ class SuiviEauController extends Controller {
         $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
         $pgProgPeriode = $pgProgLotPeriodeAn->getPeriode();
 
+        if ($pgProgLot->getDelaiPrel()) {
+            $dateFin = clone($pgProgLotPeriodeAn->getPeriode()->getDateDeb());
+            $delai = $pgProgLot->getDelaiPrel();
+            $dateFin->add(new \DateInterval('P' . $delai . 'D'));
+        } else {
+            $dateFin = $pgProgLotPeriodeAn->getPeriode()->getDateFin();
+        }
+
         $pgProgLotGrparAns = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotan($pgProgLotAn);
         $prestaprel = null;
         foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
@@ -1168,13 +1176,6 @@ class SuiviEauController extends Controller {
                             $contenu = 'ligne  ' . $ligne . '  :  date heure incorrecte (' . $date . ')' . CHR(13) . CHR(10);
                             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                             fputs($rapport, $contenu);
-                        }
-                        if ($pgProgLot->getDelaiPrel()) {
-                            $dateFin = clone($pgProgLotPeriodeAn->getPeriode()->getDateDeb());
-                            $delai = $pgProgLot->getDelaiPrel();
-                            $dateFin->add(new \DateInterval('P' . $delai . 'D'));
-                        } else {
-                            $dateFin = $pgProgLotPeriodeAn->getPeriode()->getDateFin();
                         }
                         if ($statutPrel == 'P') {
                             if ($datePrel < $dateActuel or $datePrel > $dateFin) {

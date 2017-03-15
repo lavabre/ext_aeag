@@ -74,7 +74,8 @@
 
 {%block content %}
 
-    {% if is_granted('ROLE_PRESTASQE')  and userPrestataireDemande %}
+    {#{% if is_granted('ROLE_PRESTASQE')  and userPrestataireDemande %}#}
+    {% if is_granted('ROLE_PRESTASQE')  %}
         <div class="row responsive">
             <a id="idIntegrerFichier" class="btn btn-primary"  title="Intégrer un fichier de suivi">
                 <i class="fa fa-download"> Intégrer un fichier de données</i>

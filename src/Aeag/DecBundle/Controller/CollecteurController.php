@@ -970,7 +970,7 @@ class CollecteurController extends Controller {
         if ($producteurTauxSpecial) {
             $tauxAide = $producteurTauxSpecial->getTaux() / 100;
         } else {
-            $tauxAideAgence = $repoTaux->getTauxByAnneeCode($annee, 'TAUXAIDE');
+            $tauxAideAgence = $repoTaux->getTauxByAnneeCode($annee->getLibelle(), 'TAUXAIDE');
             $tauxAide = $tauxAideAgence->getValeur();
         }
 
