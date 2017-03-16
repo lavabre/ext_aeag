@@ -2840,6 +2840,7 @@ class SaisieDonneesController extends Controller {
 
                         $siret_prestataire = $tab[5];
                         $siret_labo = $tab[26];
+                        $pgRefCorresPresta = null;
                         if (strlen($siret_labo) > 1) {
                             $pgRefCorresPresta = $repoPgRefCorresPresta->getPgRefCorresPrestaByCodeSiret($siret_labo);
                         } else {
@@ -4317,8 +4318,10 @@ class SaisieDonneesController extends Controller {
                         }
                         if (isset($_POST['profAna_' . $autrePrelevPc->getZoneVerticale()->getcodeZone() . '_' . $autrePrelev->getCodeSupport()->getCodeSupport()])) {
                             $profAna = $_POST['profAna_' . $autrePrelevPc->getZoneVerticale()->getcodeZone() . '_' . $autrePrelev->getCodeSupport()->getCodeSupport()];
-                            $autrePrelevPc->setProfondeur($profAna);
-                            $emSqe->persist($autrePrelevPc);
+                            if (strlen($profAna) > 0) {
+                                $autrePrelevPc->setProfondeur($profAna);
+                                $emSqe->persist($autrePrelevPc);
+                            }
                         }
                     }
                 }
@@ -4767,6 +4770,7 @@ class SaisieDonneesController extends Controller {
         $pgProgGrpParamRef = $pgProgLotGrparAn->getGrparRef();
         $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
 
+        $profMax = str_replace(',', '.', $profMax);
 
         if ($profMax <= 3) {
             $profDeb = 0;
