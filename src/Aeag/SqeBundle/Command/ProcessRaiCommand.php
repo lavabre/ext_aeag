@@ -340,6 +340,8 @@ class ProcessRaiCommand extends AeagCommand {
         $inSitu = $pgTmpValidEdilabo->getInSitu();
         $demandeId = $pgCmdFichierRps->getDemande()->getId();
         $reponseId = $pgCmdFichierRps->getId();
+        $lqM = $pgTmpValidEdilabo->getLqM();
+        
         // III.1
         //$dateLog = new \DateTime();
         //$this->output->writeln($dateLog->format('d/m/Y H:i:s') . '- Process RAI : RAI '.$pgCmdFichierRps->getId().' - Controle Vraisemblance - '.$codePrelevement.' - Début III.1');
@@ -388,6 +390,11 @@ class ProcessRaiCommand extends AeagCommand {
         }
         //$dateLog = new \DateTime();
         //$this->output->writeln($dateLog->format('d/m/Y H:i:s') . '- Process RAI : RAI '.$pgCmdFichierRps->getId().' - Controle Vraisemblance - '.$codePrelevement.' - Fin III.5');
+        
+        // Tests complémentaires
+        if (is_array($result = $this->controleVraisemblaceService->testsComplementaires($mesure, $codeRq, $inSitu, $lqM))) {
+            $this->_addLog($result[0], $demandeId, $reponseId, $result[1], $codePrelevement, $codeParametre);
+        }
     }
 
     public function controleVraisemblanceGlobalProcess($codePrelevement, $pgCmdFichierRps) {

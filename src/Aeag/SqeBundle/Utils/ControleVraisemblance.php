@@ -367,6 +367,25 @@ class ControleVraisemblance {
         }
         return true;
     }
+    
+    public function testsComplementaires($mesure, $codeRq, $inSitu, $lqM) {
+         if ($inSitu > 0) {
+            if ($codeRq == 10) {
+                if ($this->isNull($lqM)) {
+                    return array("error", "Tests complementaires : LQ non renseignée pour le code remarque 10");
+                } 
+                if ($mesure !== $lqM) {
+                    return array("error", "Tests complementaires :  Mesure différente de la LQ pour le code remarque 10");
+                }
+            } else if ($codeRq == 1 && !$this->isNull($lqM)) {
+                if ($mesure < $lqM) {
+                    return array("error", "Tests complementaires :  Mesure inférieure à la LQ pour le code remarque 1");
+                } else if ($mesure == $lqM) {
+                    return array("warning", "Tests complementaires :  Mesure égale à la LQ pour le code remarque 1");
+                }
+            }
+        }
+    }
 
     public function isNull($val) {
         if (is_null($val) || (isset($val) && $val == "")) {
