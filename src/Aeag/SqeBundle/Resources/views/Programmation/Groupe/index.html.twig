@@ -2,26 +2,26 @@
 
 {% block breadcrumb %}
     <li>
-        <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+        <a href="{{ path('aeag_homepage') }}">Accueil</a>
     </li>
     <li>
-        <a href="{{ path('Aeag_sqe_programmation_lots', {'action': action}) }}">Critères</a> 
+        <a href="{{ path('Aeag_sqe_programmation_lots', {'action': action}) }}">Critères</a>
     </li>
     <li>
-        <a href="{{ path('AeagSqeBundle_programmation_lot_retour', {'action': action}) }}">Lots</a> 
+        <a href="{{ path('AeagSqeBundle_programmation_lot_retour', {'action': action}) }}">Lots</a>
     </li>
     <li>
-        <a  id="idMenuStation" href="#">Stations</a> 
+        <a  id="idMenuStation" href="#">Stations</a>
     </li>
     <li class="active">
         Groupes de parametres
     </li>
     {% if action != 'P' or (action == 'P' and  maj != 'C') %}
         <li>
-            <a id="idMenuPeriode" href="#">Périodes</a> 
+            <a id="idMenuPeriode" href="#">Périodes</a>
         </li>
         <li>
-            <a id="idMenuBilan" href="#">Bilan</a> 
+            <a id="idMenuBilan" href="#">Bilan</a>
         </li>
     {% endif %}
 {% endblock breadcrumb %}
@@ -66,9 +66,9 @@
                 </div>
             </div>
         </div>
-    </div>    
+    </div>
 
-    {%if groupes | length%}  
+    {%if groupes | length%}
         {% for groupe in groupes %}
 
             <div class="modal fade" id="sup-{{ groupe.groupe.id }}">
@@ -91,7 +91,7 @@
                         </div>
                     </div>
                 </div>
-            </div>                                   
+            </div>
 
         {% endfor %}
     {% endif %}
@@ -121,15 +121,15 @@
         {% else %}
             Groupes de paramètres impactés par la programmation {{ campagne }} version {{ lotan.version }} du lot : {{ lotan.lot.nomLot }}
         {% endif %}
-        {# <a class="btn btn-primary pull-right" href="{{ path('AeagDecBundle_admin_pdfListeDechets') }}" title="Imprimer la lister"> 
+        {# <a class="btn btn-primary pull-right" href="{{ path('AeagDecBundle_admin_pdfListeDechets') }}" title="Imprimer la lister">
                 <i class="fa fa-print"> Imprimer la liste</i>
          </a>#}
-             {%if groupes | length%}  
-                <a id="idTelechargerGroupes" class="btn btn-success btn-telecharger btn-sm  pull-right" href="#" title="Télécharger les groupes de paramètres">
-                    <i class="fa fa-upload"></i> 
-                </a>
-            {% endif %}
-     </h3>
+        {%if groupes | length%}
+            <a id="idTelechargerGroupes" class="btn btn-success btn-telecharger btn-sm  pull-right" href="#" title="Télécharger les groupes de paramètres">
+                <i class="fa fa-upload"></i>
+            </a>
+        {% endif %}
+    </h3>
 {%endblock panel_heading %}
 
 
@@ -142,9 +142,9 @@
                 <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
                 {% for message in messages %}
                     <strong>{{ message }}</strong><br/>
-                {% endfor %}   
+                {% endfor %}
             </div>
-        {% endif %} 
+        {% endif %}
         <form action="{{ path('AeagSqeBundle_programmation_groupe_resultat', { 'lotan': lotan.id, 'action': action, 'maj': maj}) }}" class="form-horizontal" id="idForm" method="post">
             <div class="row responsive">
                 <div class="col-xm-12 small">
@@ -159,13 +159,13 @@
                             <tr>
                                 <td>
                                     {% if action == 'P'  and maj != 'V' %}
-                                        {%if preleveurs | length > 1 %} 
+                                        {%if preleveurs | length > 1 %}
                                             <select id="preleveur_ie" class="form-control input-small" placeholder="Préléveur" name="preleveur_ie" required="required" autocomplete>
                                             {% else %}
                                                 <select id="preleveur_ie" readonly  class="form-control input-small" placeholder="Préléveur" name="preleveur_ie" required="required" autocomplete>
                                                 {% endif %}
                                                 <option value=""></option>
-                                                {%if preleveurs | length %}  
+                                                {%if preleveurs | length %}
                                                     {% for preleveur in preleveurs %}
                                                         <option  value="{{ preleveur.adrCorId }}" >{{ preleveur.ancnumNomCorres }}</option>
                                                     {% endfor %}
@@ -175,7 +175,7 @@
                                             <input id="preleveur" name="preleveur" type="text" class="form-control input-small" placeholder="Preleveur" list="preleveurList" autofocus="autofocus" autocomplete="off">
                                             <div>
                                                 <datalist id="preleveurList">
-                                                    {%if preleveurs | length %}  
+                                                    {%if preleveurs | length %}
                                                         {% for preleveur in preleveurs %}
                                                             <option  value="{{ preleveur.ancnumNomCorres }}" ></option>
                                                         {% endfor %}
@@ -193,7 +193,7 @@
                                             <input id="preleveur" readonly  name="preleveur" type="text" class="form-control input-small" placeholder="Preleveur" list="preleveurList" autofocus="autofocus" autocomplete="off">
                                             <div>
                                                 <datalist id="preleveurList">
-                                                    {%if preleveurs | length %}  
+                                                    {%if preleveurs | length %}
                                                         {% for preleveur in preleveurs %}
                                                             <option  value="{{ preleveur.ancnumNomCorres }}" ></option>
                                                         {% endfor %}
@@ -204,13 +204,13 @@
                                 </td>
                                 <td>
                                     {% if action == 'P'  and maj != 'V' %}
-                                        {%if laboratoires | length > 1 %}  
+                                        {%if laboratoires | length > 1 %}
                                             <select id="laboratoire_ie" class="form-control input-small" placeholder="Laboratoire" name="laboratoire_ie" required="required" autocomplete>
                                             {% else %}
                                                 <select id="laboratoire_ie"  readonly class="form-control input-small" placeholder="Laboratoire" name="laboratoire_ie" required="required" autocomplete>
                                                 {% endif %}
                                                 <option value=""></option>
-                                                {%if laboratoires | length %}  
+                                                {%if laboratoires | length %}
                                                     {% for laboratoire in laboratoires %}
                                                         <option  value="{{ laboratoire.adrCorId }}" >{{ laboratoire.ancnumNomCorres }}</option>
                                                     {% endfor %}
@@ -220,7 +220,7 @@
                                             <input id="laboratoire" name="laboratoire" type="text" class="form-control input-small" placeholder="Laboratoire" list="laboratoireList" autofocus="autofocus" autocomplete="off">
                                             <div>
                                                 <datalist id="laboratoireList">
-                                                    {%if laboratoires  | length %}  
+                                                    {%if laboratoires  | length %}
                                                         {% for laboratoire in laboratoires %}
                                                             <option  value="{{ laboratoire.ancnumNomCorres }}" ></option>
                                                         {% endfor %}
@@ -238,7 +238,7 @@
                                             <input  id="laboratoire" name="laboratoire" type="text" class="form-control input-small" placeholder="Laboratoire" list="laboratoireList" autofocus="autofocus" autocomplete="off" readonly >
                                             <div>
                                                 <datalist id="laboratoireList">
-                                                    {%if laboratoires | length %}  
+                                                    {%if laboratoires | length %}
                                                         {% for laboratoire in laboratoires %}
                                                             <option  value="{{ laboratoire.ancnumNomCorres }}" ></option>
                                                         {% endfor %}
@@ -257,7 +257,7 @@
                         <i class="fa fa-level-down"> Suivant</i>
                     </button>
                 </div>
-            </div> 
+            </div>
 
             <div class="row responsive">
                 <div id="idGroupeAll" class="col-xm-12">
@@ -295,13 +295,13 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {%if groupes | length%}  
+                                                    {%if groupes | length%}
                                                         {% for groupe in groupes %}
                                                             {% if groupe.origine == 'RC' %}
                                                                 <tr id='idGroupe_{{ groupe.groupe.id }}' name='idGroupe_{{ groupe.groupe.id }}'>
                                                                     <td></td>
                                                                 {% elseif  groupe.origine == 'R'  %}
-                                                                <tr id='idGroupe_{{ groupe.groupe.id }}' name='idGroupe_{{ groupe.groupe.id }}'> 
+                                                                <tr id='idGroupe_{{ groupe.groupe.id }}' name='idGroupe_{{ groupe.groupe.id }}'>
                                                                     <td></td>
                                                                 {% elseif groupe.origine == 'A' %}
                                                                 <tr id='idGroupe_{{ groupe.groupe.id }}' name='idGroupe_{{ groupe.groupe.id }}'>
@@ -330,13 +330,13 @@
                                                                         <input type="hidden" id="idPrestataire_{{ groupe.groupe.id }}" name="idPrestataire_{{ groupe.groupe.id }}" value="">
                                                                         {% if groupe.groupe.typeGrp  == 'ANA' %}
                                                                             {% if action == 'P'  and maj != 'V' %}
-                                                                                {%if laboratoires | length > 1 %}  
+                                                                                {%if laboratoires | length > 1 %}
                                                                                     <select id="prestataire_{{ groupe.groupe.id }}_ie" class="form-control input-small" placeholder="Prestataire" name="prestataire_{{ groupe.groupe.id }}" required="required">
                                                                                     {% else %}
                                                                                         <select id="prestataire_{{ groupe.groupe.id }}_ie"  readonly class="form-control input-small" placeholder="Prestataire" name="prestataire_{{ groupe.groupe.id }}" required="required">
                                                                                         {% endif %}
                                                                                         <option value=""></option>
-                                                                                        {%if laboratoires | length %}  
+                                                                                        {%if laboratoires | length %}
                                                                                             {% for laboratoire in laboratoires %}
                                                                                                 <option  value="{{ laboratoire.adrCorId }}" >{{ laboratoire.ancnumNomCorres }}</option>
                                                                                             {% endfor %}
@@ -346,7 +346,7 @@
                                                                                     <input id="prestataire_{{ groupe.groupe.id }}" name="prestataire_{{ groupe.groupe.id }}" type="text" class="form-control input-small" placeholder="Prestataire" list="prestataireList" autofocus="autofocus">
                                                                                     <div>
                                                                                         <datalist id="prestataireList">
-                                                                                            {%if laboratoires | length %}  
+                                                                                            {%if laboratoires | length %}
                                                                                                 {% for laboratoire in laboratoires %}
                                                                                                     <option  value="{{ laboratoire.ancnumNomCorres }}" ></option>
                                                                                                 {% endfor %}
@@ -387,7 +387,7 @@
                                                                                 {% endfor %}
                                                                                     {% endif %}
                                                                                         </tbody>
-                                                                                        </table>   
+                                                                                        </table>
                                                                                     </div>
                                                                                     </div>
                                                                                     <div class="row">
@@ -395,7 +395,7 @@
                                                                                             <ul class="list-inline">
                                                                                                 <li><a class="btn btn-info btn-xs" href="#" title="Paramètres à valider"><i class="fa"></i></a> A valider</li>
                                                                                                 <li><a class="btn btn-success btn-xs" href="#" title="paramètre validés"><i class="fa" ></i></a> Valider</li>
-                                                                                            </ul>  
+                                                                                            </ul>
                                                                                         </div>
                                                                                     </div>
                                                                                     <div class="form-actions fluid center">
@@ -411,7 +411,7 @@
                                                                                                 </button>
                                                                                             {% endif %}
                                                                                         </div>
-                                                                                    </div>  
+                                                                                    </div>
                                                                                     </div>
                                                                                     <div class="tab-pane fade" id="tab_1_2">
                                                                                         <div id='idGroupesMilieu'>
@@ -430,7 +430,7 @@
 
                                                                                                                     <select id="idParametres" name="parametres" class="form-control input-small" placeholder="Parametre" name="parametre" autocomplete >
                                                                                                                         <option value=""></option>
-                                                                                                                        {%if parametres | length%}  
+                                                                                                                        {%if parametres | length%}
                                                                                                                             {% for parametre in parametres %}
                                                                                                                                 <option  value="{{ parametre.codeParametre }}" >{{ parametre.codeParametre }} {{ parametre.nomParametre }}</option>
                                                                                                                             {% endfor %}
@@ -439,7 +439,7 @@
                                                                                                                     <input id="idParametre" name="parametre" type="text" class="form-control input-small" placeholder="Parametre" list="parametreList" autofocus="autofocus">
                                                                                                                     <div>
                                                                                                                         <datalist id="parametreList">
-                                                                                                                            {%if parametres | length%}  
+                                                                                                                            {%if parametres | length%}
                                                                                                                                 {% for parametre in parametres %}
                                                                                                                                     <option  value="{{ parametre.codeParametre }} {{ parametre.nomParametre }}" ></option>
                                                                                                                                 {% endfor %}
@@ -475,18 +475,18 @@
                                                                                                         </tr>
                                                                                                     </thead>
                                                                                                     <tbody>
-                                                                                                        {%if groupesMilieu | length%}  
+                                                                                                        {%if groupesMilieu | length%}
                                                                                                             {% for groupe in groupesMilieu %}
                                                                                                                 <tr id='idGroupe_{{ groupe.groupe.id }}' name='idGroupe_{{ groupe.groupe.id }}'>
                                                                                                                     <td align="center">
                                                                                                                         <div class="checbox">
                                                                                                                             {% if groupe.cocher == 'O' %}
                                                                                                                                 <input type="checkbox" id="check_{{ groupe.groupe.id }}" name="check[]" value="{{groupe.groupe.id}}" checked="checked">
-                                                                                                                            {% else %}    
+                                                                                                                            {% else %}
                                                                                                                                 <input type="checkbox" id="check_{{ groupe.groupe.id }}" name="check[]" value="{{groupe.groupe.id}}">
                                                                                                                             {% endif %}
                                                                                                                         </div><!-- /input-group -->
-                                                                                                                    </td> 
+                                                                                                                    </td>
                                                                                                                     <td>{{ groupe.groupe.codeGrp}}</td>
                                                                                                                     <td>{{ groupe.groupe.libelleGrp}}</td>
                                                                                                                     <td>{{ groupe.groupe.typeGrp }}</td>
@@ -503,7 +503,7 @@
                                                                                                                     {% endfor %}
                                                                                                                         {% endif %}
                                                                                                                         </tbody>
-                                                                                                                    </table>   
+                                                                                                                    </table>
                                                                                                                 </div>
                                                                                                             </div>
                                                                                                             <div class="form-actions fluid center">
@@ -512,7 +512,7 @@
                                                                                                                         <i class="fa fa-check"> Ajouter les groupes sélectionnés</i>
                                                                                                                     </button>
                                                                                                                 </div>
-                                                                                                            </div>       
+                                                                                                            </div>
                                                                                                         </div>
                                                                                                         </div>
                                                                                                         </div>
@@ -522,7 +522,7 @@
 
                                                                                                         <input type="hidden" name="suivant" id="idSuivant" value="periode">
                                                                                                         </form>
-                                                                                                        </div> 
+                                                                                                        </div>
 
                                                                                                         {% if action == 'P'  and maj != 'V' %}
                                                                                                             <div class="progress" style="height: 50px;padding: 5px 5px;">
@@ -576,7 +576,7 @@
                                                                                                                                     {{ controle.periode.nb  |  number_format(0,'.',' ')}}
                                                                                                                                 </span>
                                                                                                                             </span>
-                                                                                                                        </a> 
+                                                                                                                        </a>
                                                                                                                     </div>
                                                                                                                 {% else %}
                                                                                                                     <div class="progress-bar progress-bar-danger" style="width: 25%;font-size: 16px;line-height: 35px;">
@@ -586,16 +586,16 @@
                                                                                                                                     {{ controle.periode.nb  |  number_format(0,'.',' ')}}
                                                                                                                                 </span>
                                                                                                                             </span>
-                                                                                                                        </a> 
+                                                                                                                        </a>
                                                                                                                     </div>
                                                                                                                 {% endif %}
                                                                                                                 {% if controle.station.nbOk == controle.station.nb and  controle.groupe.nbOk == controle.groupe.nb and controle.periode.nbOk == controle.periode.nb %}
                                                                                                                     <div class="progress-bar progress-bar-success" style="width: 25%;font-size: 16px;line-height: 35px;">
-                                                                                                                        <a id="idSuivantBilan" href="#">Bilan</a> 
+                                                                                                                        <a id="idSuivantBilan" href="#">Bilan</a>
                                                                                                                     </div>
                                                                                                                 {% else %}
                                                                                                                     <div class="progress-bar progress-bar-danger" style="width: 25%;font-size: 16px;line-height: 35px;">
-                                                                                                                        <a id="idSuivantBilan" href="#">Bilan</a> 
+                                                                                                                        <a id="idSuivantBilan" href="#">Bilan</a>
                                                                                                                     </div>
                                                                                                                 {% endif %}
                                                                                                             </div>
@@ -611,7 +611,7 @@
                                                                                                                 e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
                                                                                                                 $('#modalTraitementEncours').modal('toggle');
                                                                                                                 var url = '{{ path("AeagSqeBundle_programmation_groupe_telecharger",{"lotan": "par1"}) }}', // Le nom du fichier indiqué dans le formulaire
-                                                                                                                url = url.replace("par1", {{ lotan.id }}); 
+                                                                                                                url = url.replace("par1", {{ lotan.id }});
                                                                                                                 url = url.replace("amp;","");
                                                                                                                 window.location.replace(url);
                                                                                                                 });
@@ -646,7 +646,7 @@
                                                                                                                     $('#idGroupeAll').hide();
                                                                                                                     $('#idGroupeSuivant').show();
                                                                                                                     };
-                                                                                                                    {%if groupes | length%}  
+                                                                                                                    {%if groupes | length%}
                                                                                                                         {% for groupe in groupes %}
                                                                                                                             $('#prestataire_{{ groupe.groupe.id }}_ie').show();
                                                                                                                             $('#prestataire_{{ groupe.groupe.id }}').hide();
@@ -674,7 +674,7 @@
                                                                                                                     $('#idGroupeAll').hide();
                                                                                                                     $('#idGroupeSuivant').show();
                                                                                                                     };
-                                                                                                                    {%if groupes | length%}  
+                                                                                                                    {%if groupes | length%}
                                                                                                                         {% for groupe in groupes %}
                                                                                                                             $('#prestataire_{{ groupe.groupe.id }}_ie').hide();
                                                                                                                             $('#prestataire_{{ groupe.groupe.id }}').show();
@@ -690,7 +690,7 @@
                                                                                                                 $(document).on('change','#preleveur',function(e){
                                                                                                                 e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
                                                                                                                 valeur = $('#preleveur').val();
-                                                                                                                texte =  $('#preleveur').text();  
+                                                                                                                texte =  $('#preleveur').text();
                                                                                                                 preleveur = $('#preleveur').val();
                                                                                                                 laboratoire = $('#laboratoire').val();
                                                                                                                 if (preleveur == '' || laboratoire == ''){
@@ -702,7 +702,7 @@
                                                                                                                 }
                                                                                                                 var nbRecords = $('#idTable_length option:selected').val();
                                                                                                                 table.page.len( -1 ).draw();
-                                                                                                                {%if groupes | length%}  
+                                                                                                                {%if groupes | length%}
                                                                                                                     {% for groupe in groupes %}
                                                                                                                         {% if action == 'P'  and maj != 'V'  %}
                                                                                                                             {% if groupe.groupe.typeGrp  != 'ANA' %}
@@ -717,12 +717,12 @@
                                                                                                                     {% endfor %}
                                                                                                                 {% endif %}
                                                                                                                 table.page.len( nbRecords ).draw();
-                                                                                                                }); 
+                                                                                                                });
 
                                                                                                                 $(document).on('change','#preleveur_ie',function(e){
                                                                                                                 e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
                                                                                                                 valeur = $('#preleveur_ie option:selected').val();
-                                                                                                                texte =  $('#preleveur_ie option:selected').text();  
+                                                                                                                texte =  $('#preleveur_ie option:selected').text();
                                                                                                                 preleveur = $('#preleveur_ie option:selected').val();
                                                                                                                 laboratoire = $('#laboratoire_ie option:selected').val();
                                                                                                                 if (preleveur == '' || laboratoire == ''){
@@ -734,7 +734,7 @@
                                                                                                                 }
                                                                                                                 var nbRecords = $('#idTable_length option:selected').val();
                                                                                                                 table.page.len( -1 ).draw();
-                                                                                                                {%if groupes | length%}  
+                                                                                                                {%if groupes | length%}
                                                                                                                     {% for groupe in groupes %}
                                                                                                                         {% if action == 'P'  and maj != 'V'  %}
                                                                                                                             {% if groupe.groupe.typeGrp  != 'ANA' %}
@@ -749,7 +749,7 @@
                                                                                                                     {% endfor %}
                                                                                                                 {% endif %}
                                                                                                                 table.page.len( nbRecords ).draw();
-                                                                                                                }); 
+                                                                                                                });
 
                                                                                                                 $(document).on('change','#laboratoire',function(e){
                                                                                                                 e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
@@ -766,7 +766,7 @@
                                                                                                                 }
                                                                                                                 var nbRecords = $('#idTable_length option:selected').val();
                                                                                                                 table.page.len( -1 ).draw();
-                                                                                                                {%if groupes | length%}  
+                                                                                                                {%if groupes | length%}
                                                                                                                     {% for groupe in groupes %}
                                                                                                                         {% if action == 'P'  and maj != 'V'  %}
                                                                                                                             {% if groupe.groupe.typeGrp  == 'ANA' %}
@@ -782,16 +782,18 @@
                                                                                                                                 url = url.replace("amp;","");
                                                                                                                                 url = url.replace("par3", '{{ lotan.id }}');
                                                                                                                                 url = url.replace("amp;","");
-                                                                                                                                $.get( url, requestData , function( responseData ) { 
+                                                                                                                                $.get( url, requestData , function( responseData ) {
+                                                                                                                                if (responseDate == 'ok'){
                                                                                                                                 $("#idTd_{{ groupe.groupe.id }} a").removeClass("btn-success").addClass("btn-info");
                                                                                                                                 $('#idValide_{{ groupe.groupe.id }}').val('N');
+                                                                                                                                };
                                                                                                                                 });
                                                                                                                             {% endif %}
                                                                                                                         {% endif %}
                                                                                                                     {% endfor %}
                                                                                                                 {% endif %}
                                                                                                                 table.page.len( nbRecords ).draw();
-                                                                                                                });    
+                                                                                                                });
 
                                                                                                                 $(document).on('change','#laboratoire_ie',function(e){
                                                                                                                 e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
@@ -808,7 +810,7 @@
                                                                                                                 }
                                                                                                                 var nbRecords = $('#idTable_length option:selected').val();
                                                                                                                 table.page.len( -1 ).draw();
-                                                                                                                {%if groupes | length%}  
+                                                                                                                {%if groupes | length%}
                                                                                                                     {% for groupe in groupes %}
                                                                                                                         {% if action == 'P'  and maj != 'V'  %}
                                                                                                                             {% if groupe.groupe.typeGrp  == 'ANA' %}
@@ -825,16 +827,18 @@
                                                                                                                                 url = url.replace("amp;","");
                                                                                                                                 url = url.replace("par3", '{{ lotan.id }}');
                                                                                                                                 url = url.replace("amp;","");
-                                                                                                                                $.get( url, requestData , function( responseData ) { 
+                                                                                                                                $.get( url, requestData , function( responseData ) {
+                                                                                                                                if (responseDate == 'ok'){
                                                                                                                                 $("#idTd_{{ groupe.groupe.id }} a").removeClass("btn-success").addClass("btn-info");
                                                                                                                                 $('#idValide_{{ groupe.groupe.id }}').val('N');
+                                                                                                                                };
                                                                                                                                 });
                                                                                                                             {% endif %}
                                                                                                                         {% endif %}
                                                                                                                     {% endfor %}
                                                                                                                 {% endif %}
                                                                                                                 table.page.len( nbRecords ).draw();
-                                                                                                                });    
+                                                                                                                });
 
 
                                                                                                                 {% if app.session.get('browser') == 'Internet Explorer' %}
@@ -845,7 +849,7 @@
                                                                                                                     texte =  $('#preleveur').text();
                                                                                                                 {% endif %}
 
-                                                                                                                {%if groupes | length%}  
+                                                                                                                {%if groupes | length%}
                                                                                                                     {% for groupe in groupes %}
 
                                                                                                                         {% if groupe.prestataire %}
@@ -893,11 +897,13 @@
                                                                                                                                     url = url.replace("amp;","");
                                                                                                                                     url = url.replace("par3", '{{ lotan.id }}');
                                                                                                                                     url = url.replace("amp;","");
-                                                                                                                                    $.get( url, requestData , function( responseData ) { 
+                                                                                                                                    $.get( url, requestData , function( responseData ) {
+                                                                                                                                    if (responseDate == 'ok'){
                                                                                                                                     $("#idTd_{{ groupe.groupe.id }} a").removeClass("btn-success").addClass("btn-info");
                                                                                                                                     $('#idValide_{{ groupe.groupe.id }}').val('N');
+                                                                                                                                    };
                                                                                                                                     });
-                                                                                                                                    }); 
+                                                                                                                                    });
                                                                                                                                 {% else %}
                                                                                                                                     $("#prestataire_{{ groupe.groupe.id }} option[value='" + valeur + "']").attr('selected','selected');
                                                                                                                                     $("#prestataire_{{ groupe.groupe.id }}").val(valeur);
@@ -915,11 +921,13 @@
                                                                                                                                     url = url.replace("amp;","");
                                                                                                                                     url = url.replace("par3", '{{ lotan.id }}');
                                                                                                                                     url = url.replace("amp;","");
-                                                                                                                                    $.get( url, requestData , function( responseData ) { 
+                                                                                                                                    $.get( url, requestData , function( responseData ) {
+                                                                                                                                    if (responseDate == 'ok'){
                                                                                                                                     $("#idTd_{{ groupe.groupe.id }} a").removeClass("btn-success").addClass("btn-info");
                                                                                                                                     $('#idValide_{{ groupe.groupe.id }}').val('N');
+                                                                                                                                    };
                                                                                                                                     });
-                                                                                                                                    });  
+                                                                                                                                    });
                                                                                                                                 {% endif %}
                                                                                                                             {% endif %}
                                                                                                                             }
@@ -945,8 +953,8 @@
                                                                                                                         url = url.replace("amp;","");
                                                                                                                         url = url.replace("par3", '{{ lotan.id }}');
                                                                                                                         url = url.replace("amp;","");
-                                                                                                                        $.get( url, requestData , function( responseData ) { 
-                                                                                                                        $("#idListeGroupeParametres" ).empty().html( responseData ); 
+                                                                                                                        $.get( url, requestData , function( responseData ) {
+                                                                                                                        $("#idListeGroupeParametres" ).empty().html( responseData );
                                                                                                                         $('#modal_groupe_parametres').modal();
                                                                                                                         $('#modalTraitementEncours').modal('hide');
                                                                                                                         });
@@ -955,7 +963,7 @@
 
                                                                                                                         $("#sup-{{ groupe.groupe.id }}").draggable({
                                                                                                                         handle: ".modal-header"
-                                                                                                                        });   
+                                                                                                                        });
 
                                                                                                                     {% endfor %}
                                                                                                                 {% else %}
@@ -973,7 +981,7 @@
                                                                                                                 var html = '';
                                                                                                                 var nbValider = 0;
                                                                                                                 var nbgroupe = 0;
-                                                                                                                {%if groupes | length%}  
+                                                                                                                {%if groupes | length%}
                                                                                                                     {% for groupe in groupes %}
                                                                                                                         if ($('#idValide_{{ groupe.groupe.id }}').val() == 'O'){
                                                                                                                         nbValider = nbValider + 1;
@@ -1042,7 +1050,7 @@
                                                                                                                 var html = '';
                                                                                                                 var nbValider = 0;
                                                                                                                 var nbgroupe = 0;
-                                                                                                                {%if groupes | length%}  
+                                                                                                                {%if groupes | length%}
                                                                                                                     {% for groupe in groupes %}
                                                                                                                         if ($('#idValide_{{ groupe.groupe.id }}').val() == 'O'){
                                                                                                                         nbValider = nbValider + 1;
@@ -1111,7 +1119,7 @@
                                                                                                                 var html = '';
                                                                                                                 var nbValider = 0;
                                                                                                                 var nbgroupe = 0;
-                                                                                                                {%if groupes | length%}  
+                                                                                                                {%if groupes | length%}
                                                                                                                     {% for groupe in groupes %}
                                                                                                                         if ($('#idValide_{{ groupe.groupe.id }}').val() == 'O'){
                                                                                                                         nbValider = nbValider + 1;
@@ -1180,7 +1188,7 @@
                                                                                                                 var html = '';
                                                                                                                 var nbValider = 0;
                                                                                                                 var nbgroupe = 0;
-                                                                                                                {%if groupes | length%}  
+                                                                                                                {%if groupes | length%}
                                                                                                                     {% for groupe in groupes %}
                                                                                                                         if ($('#idValide_{{ groupe.groupe.id }}').val() == 'O'){
                                                                                                                         nbValider = nbValider + 1;
@@ -1248,7 +1256,7 @@
                                                                                                                 var html = '';
                                                                                                                 var nbValider = 0;
                                                                                                                 var nbgroupe = 0;
-                                                                                                                {%if groupes | length%}  
+                                                                                                                {%if groupes | length%}
                                                                                                                     {% for groupe in groupes %}
                                                                                                                         if ($('#idValide_{{ groupe.groupe.id }}').val() == 'O'){
                                                                                                                         nbValider = nbValider + 1;
@@ -1316,7 +1324,7 @@
                                                                                                                 var html = '';
                                                                                                                 var nbValider = 0;
                                                                                                                 var nbgroupe = 0;
-                                                                                                                {%if groupes | length%}  
+                                                                                                                {%if groupes | length%}
                                                                                                                     {% for groupe in groupes %}
                                                                                                                         if ($('#idValide_{{ groupe.groupe.id }}').val() == 'O'){
                                                                                                                         nbValider = nbValider + 1;
@@ -1384,7 +1392,7 @@
                                                                                                                 var html = '';
                                                                                                                 var nbValider = 0;
                                                                                                                 var nbgroupe = 0;
-                                                                                                                {%if groupes | length%}  
+                                                                                                                {%if groupes | length%}
                                                                                                                     {% for groupe in groupes %}
                                                                                                                         if ($('#idValide_{{ groupe.groupe.id }}').val() == 'O'){
                                                                                                                         nbValider = nbValider + 1;
@@ -1452,7 +1460,7 @@
                                                                                                                 var html = '';
                                                                                                                 var nbValider = 0;
                                                                                                                 var nbgroupe = 0;
-                                                                                                                {%if groupes | length%}  
+                                                                                                                {%if groupes | length%}
                                                                                                                     {% for groupe in groupes %}
                                                                                                                         if ($('#idValide_{{ groupe.groupe.id }}').val() == 'O'){
                                                                                                                         nbValider = nbValider + 1;
@@ -1551,9 +1559,9 @@
                                                                                                                 return false;
                                                                                                                 }
                                                                                                                 });
-                                                                                                                }); 
+                                                                                                                });
 
-                                                                                                                {%if groupesMilieu| length%}  
+                                                                                                                {%if groupesMilieu| length%}
                                                                                                                     {% for groupe in groupesMilieu %}
 
                                                                                                                         $(document).on('click','#idBtMilieuGroupeParametres_{{ groupe.groupe.id }}',function(e){
@@ -1568,8 +1576,8 @@
                                                                                                                         url = url.replace("amp;","");
                                                                                                                         url = url.replace("par3", '{{ lotan.id }}');
                                                                                                                         url = url.replace("amp;","");
-                                                                                                                        $.get( url, requestData , function( responseData ) { 
-                                                                                                                        $("#idListeMilieuGroupeParametres" ).empty().html( responseData ); 
+                                                                                                                        $.get( url, requestData , function( responseData ) {
+                                                                                                                        $("#idListeMilieuGroupeParametres" ).empty().html( responseData );
                                                                                                                         $('#modal_milieu_groupe_parametres').modal();
                                                                                                                         $('#modalTraitementEncours').modal('hide');
                                                                                                                         });
@@ -1579,7 +1587,7 @@
                                                                                                                         nbcocher();
                                                                                                                         });
                                                                                                                     {% endfor %}
-                                                                                                                {% endif %}         
+                                                                                                                {% endif %}
 
                                                                                                                 {% if app.session.get('choixParametre')   %}
                                                                                                                     $('#idParametres option:selected').removeAttr('selected');
@@ -1592,7 +1600,7 @@
                                                                                                                 $(document).on('change','#idParametres',function(e){
                                                                                                                 texte = $('#idParametres option:selected').text();
                                                                                                                 $('#idParametre').val(texte);
-                                                                                                                });    
+                                                                                                                });
 
                                                                                                                 $(document).on('change','#idParametre',function(e){
                                                                                                                 $('#idParametres option:selected').removeAttr('selected');
@@ -1600,7 +1608,7 @@
                                                                                                                 var valeur = texte.substr(0, 4)
                                                                                                                 $("#idParametres option[value='" + valeur + "']").attr('selected','selected');
                                                                                                                 $("#idParametres").val(valeur);
-                                                                                                                });    
+                                                                                                                });
 
 
                                                                                                                 $(document).on('click','#idSelectonParametre',function(e){
@@ -1618,11 +1626,11 @@
                                                                                                                 type: 'GET', // La méthode indiquée dans le formulaire (get ou post)
                                                                                                                 data: $this.serialize(),
                                                                                                                 success: function(html) { // Je récupère la réponse du fichier PHP
-                                                                                                                $("#idGroupesMilieu" ).empty().html( html ); 
+                                                                                                                $("#idGroupesMilieu" ).empty().html( html );
                                                                                                                 $('#modalTraitementEncours').modal('hide');
                                                                                                                 }
                                                                                                                 });
-                                                                                                                });    
+                                                                                                                });
 
 
 
@@ -1729,7 +1737,7 @@
                                                                                                                 var nbRecords = $('#idTableMilieu_length option:selected').val();
                                                                                                                 tableMilieu.page.len( -1 ).draw();
                                                                                                                 var n = $( "input:checked" ).length;
-                                                                                                                html = "Groupes cochés  : <span class='badge'>" + n  + "</span>"; 
+                                                                                                                html = "Groupes cochés  : <span class='badge'>" + n  + "</span>";
                                                                                                                 $("#idNbCocher p").html(html);
                                                                                                                 tableMilieu.page.len(nbRecords).draw();
                                                                                                                 tableMilieu.page(info.page).draw(false);
@@ -1742,11 +1750,11 @@
 
                                                                                                                 $("#modal_milieu_groupe_parametres").draggable({
                                                                                                                 handle: ".modal-header"
-                                                                                                                });     
+                                                                                                                });
 
                                                                                                                 $("#modal_valider").draggable({
                                                                                                                 handle: ".modal-header"
-                                                                                                                });    
+                                                                                                                });
 
                                                                                                                 function remplacer(val){
                                                                                                                 val =  val.replace("&#039;","'");
