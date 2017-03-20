@@ -3281,7 +3281,7 @@ class SuiviHydrobioController extends Controller {
     }
 
     protected function getCheminEchange($pgCmdSuiviPrel) {
-        if ($pgCmdSuiviPrel->getStatutPrel() != 'D' or $pgCmdSuiviPrel->getStatutPrel() != 'DF' or $pgCmdSuiviPrel->getStatutPrel() != 'DO') {
+        if (substr($pgCmdSuiviPrel->getStatutPrel(), 0, 1) != 'D') {
             $chemin = $this->container->getParameter('repertoire_echange');
             $chemin .= $pgCmdSuiviPrel->getPrelev()->getDemande()->getAnneeProg() . '/' . $pgCmdSuiviPrel->getPrelev()->getDemande()->getCommanditaire()->getNomCorres();
             $chemin .= '/' . $pgCmdSuiviPrel->getPrelev()->getDemande()->getLotan()->getLot()->getId() . '/' . $pgCmdSuiviPrel->getPrelev()->getDemande()->getLotan()->getId();
