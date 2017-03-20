@@ -57,10 +57,9 @@ class ProcessDepotHydrobioCommand extends AeagCommand {
 
                 $erreur = false;
                 for ($i = 0; $i < count($tabFichiers); $i++) {
-                    for ($j = 0; $j < count($tabFichiers[$i]['feuillet']); $j++) {
-                        if ($tabFichiers[$i]['feuillet'][$j]['erreur']) {
-                            $erreur = true;
-                        }
+                    if ($tabFichiers[$i]['erreur']) {
+                        $erreur = true;
+                        break;
                     }
                 }
 

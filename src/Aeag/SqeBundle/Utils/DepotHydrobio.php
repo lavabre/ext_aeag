@@ -66,7 +66,7 @@ class DepotHydrobio {
                         $fic++;
                     }
                     if (strtoupper($tabNomFichier[1]) == 'JPG') {
-                        $tabFichier = $this->lirePdf($pgCmdFichierRps->getId(), $demandeId, $nomFichier, $pathBase, $rapport, $emSqe);
+                        $tabFichier = $this->lireJpg($pgCmdFichierRps->getId(), $demandeId, $nomFichier, $pathBase, $rapport, $emSqe);
                         $tabTraitFichiers[$fic] = $tabFichier;
                         $fic++;
                     }
@@ -160,17 +160,23 @@ class DepotHydrobio {
         $tabFeuillets = array();
         foreach ($fileExcel->getWorksheetIterator() as $worksheet) {
             if ($worksheet->getCell('B21') == 'CODE STATION') {
-                $this->lireXlsSupport10($worksheet, $feuil, $tabFeuillets, $rapport, $pgCmdFichierRpsId, $demandeId, $emSqe);
+                $tabFeuillets = $this->lireXlsSupport10($worksheet, $feuil, $tabFeuillets, $rapport, $pgCmdFichierRpsId, $demandeId, $emSqe);
                 $feuil++;
             }
             if ($worksheet->getCell('B22') == 'CODE STATION') {
-                $this->lireXlsSupport13($worksheet, $feuil, $tabFeuillets, $rapport, $pgCmdFichierRpsId, $demandeId, $emSqe);
+                $tabFeuillets = $this->lireXlsSupport13($worksheet, $feuil, $tabFeuillets, $rapport, $pgCmdFichierRpsId, $demandeId, $emSqe);
                 $feuil++;
             }
         }
 
         $tabFichier['feuillet'] = $tabFeuillets;
-
+        $tabFichier['erreur'] = false;
+        for ($feuil = 0; $feuil < count($tabFeuillets); $feuil++) {
+            if ($tabFeuillets[$feuil]['erreur']) {
+                $tabFichier['erreur'] = true;
+                break;
+            }
+        }
 
         return $tabFichier;
     }
@@ -1157,15 +1163,11 @@ class DepotHydrobio {
             }
         }
 
-        $tabFeuillets[$feuil]['erreur'] = $erreur;
-        $feuil++;
-
-        $tabFichier['feuillet'] = $tabFeuillets;
-
+        $tabFichier['erreur'] = $erreur;
         return $tabFichier;
     }
 
-    protected function lirePdf($pgCmdFichierRpsId, $demandeId, $nomFichier, $feuil, $tabFeuillets, $pathBase, $rapport, $emSqe) {
+    protected function lirePdf($pgCmdFichierRpsId, $demandeId, $nomFichier, $pathBase, $rapport, $emSqe) {
         // Récupération des programmations
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebUsers');
         $repoPgCmdFichierRps = $emSqe->getRepository('AeagSqeBundle:PgCmdFichiersRps');
@@ -1179,7 +1181,9 @@ class DepotHydrobio {
         $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByDemande($pgCmdDemande);
         $pgProgWebUser = $repoPgProgWebUsers->findOneByPrestataire($pgCmdDemande->getPrestataire());
 
-        $tabFeuillets[$feuil]['feuillet'] = $worksheet->getTitle();
+        $tabFichier = array();
+        $tabFichier['fichier'] = $nomFichier;
+
         $contenu = '          Pdf : ' . $nomFichier . CHR(13) . CHR(10);
         $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
         fputs($rapport, $contenu);
@@ -1205,7 +1209,7 @@ class DepotHydrobio {
         }
         if (!$trouve) {
             $erreur = true;
-            $contenu = '                     Erreur : la station ' . $codeStation . ' ' . $worksheet->getCell('D23')->getCalculatedValue() . ' ne fait pas partie de cette demande' . CHR(13) . CHR(10);
+            $contenu = '                     Erreur : la station ' . $codeStation . ' ne fait pas partie de cette demande' . CHR(13) . CHR(10);
             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
             fputs($rapport, $contenu);
         } else {
@@ -1243,12 +1247,11 @@ class DepotHydrobio {
 //                    }
 //                }
         }
-        $tabFeuillets[$feuil]['erreur'] = $erreur;
-        $feuil++;
-        return $tabFeuillets;
+        $tabFichier['erreur'] = $erreur;
+        return $tabFichier;
     }
 
-    protected function lireJpg($pgCmdFichierRpsId, $demandeId, $nomFichier, $feuil, $tabFeuillets, $pathBase, $rapport, $emSqe) {
+    protected function lireJpg($pgCmdFichierRpsId, $demandeId, $nomFichier, $pathBase, $rapport, $emSqe) {
         // Récupération des programmations
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebUsers');
         $repoPgCmdFichierRps = $emSqe->getRepository('AeagSqeBundle:PgCmdFichiersRps');
@@ -1262,12 +1265,13 @@ class DepotHydrobio {
         $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByDemande($pgCmdDemande);
         $pgProgWebUser = $repoPgProgWebUsers->findOneByPrestataire($pgCmdDemande->getPrestataire());
 
-        $tabFeuillets[$feuil]['feuillet'] = $worksheet->getTitle();
+        $tabFichier = array();
+        $tabFichier['fichier'] = $nomFichier;
+
         $contenu = '          Photo : ' . $nomFichier . CHR(13) . CHR(10);
         $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
         fputs($rapport, $contenu);
 
-        $avertissement = false;
         $erreur = false;
 
         // station
@@ -1288,7 +1292,7 @@ class DepotHydrobio {
         }
         if (!$trouve) {
             $erreur = true;
-            $contenu = '                     Erreur : la station ' . $codeStation . ' ' . $worksheet->getCell('D23')->getCalculatedValue() . ' ne fait pas partie de cette demande' . CHR(13) . CHR(10);
+            $contenu = '                     Erreur : la station ' . $codeStation . '  ne fait pas partie de cette demande' . CHR(13) . CHR(10);
             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
             fputs($rapport, $contenu);
         } else {
@@ -1326,9 +1330,9 @@ class DepotHydrobio {
 //                    }
 //                }
         }
-        $tabFeuillets[$feuil]['erreur'] = $erreur;
-        $feuil++;
-        return $tabFeuillets;
+
+        $tabFichier['erreur'] = $erreur;
+        return $tabFichier;
     }
 
 }
