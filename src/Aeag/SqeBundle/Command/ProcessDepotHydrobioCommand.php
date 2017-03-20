@@ -36,14 +36,14 @@ class ProcessDepotHydrobioCommand extends AeagCommand {
 
             if (count($pgCmdFichiersRps) > 0) {
                 $date = new \DateTime();
-                $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : ' . count($pgCmdFichiersRps) . " RAI(s) vont être traitées ");
+                $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI DepotHydrobio : ' . count($pgCmdFichiersRps) . " RAI(s) vont être traitées ");
             }
 
 
             foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
 
                 $date = new \DateTime();
-                $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : Le traitement du dépot Hydrobio ' . $pgCmdFichierRps->getId() . ' commence');
+                $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI DepotHydrobio : Le traitement du depot Hydrobio ' . $pgCmdFichierRps->getId() . ' commence');
                 $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R16');
 
                 // TODO On vérifie que l'on insère pas deux fois la même RAI
@@ -73,7 +73,7 @@ class ProcessDepotHydrobioCommand extends AeagCommand {
 
 
                 // Envoi mail
-                $objetMessage = "SQE - RAI : Fichier " . $pgCmdFichierRps->getNomFichier() . " - Récapitulatif";
+                $objetMessage = "SQE - RAI DepotHydrobio  : Fichier " . $pgCmdFichierRps->getNomFichier() . " - Récapitulatif";
                 if ($this->getEnv() !== 'prod') {
                     $objetMessage .= " - " . $this->getEnv();
                 }
@@ -102,12 +102,12 @@ class ProcessDepotHydrobioCommand extends AeagCommand {
                 }
 
                 $date = new \DateTime();
-                $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process depotHydrobio : Le traitement de la RAI ' . $pgCmdFichierRps->getId() . ' est terminé');
+                $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI DepotHydrobio  : Le traitement du depot hydrobio ' . $pgCmdFichierRps->getId() . ' est terminé');
             }
         }
         $date = new \DateTime();
         $cptRaisTraitesTot = $cptRaisTraitesOk + $cptRaisTraitesNok;
-        $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process depotHydrobio : ' . $cptRaisTraitesTot . " RAI(s) traitée(s), " . $cptRaisTraitesOk . " OK, " . $cptRaisTraitesNok . " NOK");
+        $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI DepotHydrobio  : ' . $cptRaisTraitesTot . " Depot hydrobio traitée(s), " . $cptRaisTraitesOk . " OK, " . $cptRaisTraitesNok . " NOK");
     }
 
 }
