@@ -80,7 +80,6 @@ class PgProgWebusersRepository extends EntityRepository {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgWebusers p";
         $query = $query . " where p.prestataire = :prestataire";
-        $query = $query . " and p.login not like '%ancien%'";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('prestataire', $prestataire->getAdrCorId());
         //print_r($query);
