@@ -918,7 +918,7 @@ class DepotHydrobio {
                             $pgCmdInvertListe->setCodeSandre($ecd->getCalculatedValue());
                             $qec = $worksheet->getCell('C' . $i);
                             $pgCmdInvertListe->setTaxon($qec->getCalculatedValue());
-                            $pgCmdInvertListe->setDenombrement($tabPhase[$jj]['valeur']);
+                            $pgCmdInvertListe->setDenombrement(intval($tabPhase[$jj]['valeur']));
                             $emSqe->persist($pgCmdInvertListe);
                         }
                         for ($kk = 0; $kk < count($tabQE); $kk++) {
@@ -928,7 +928,7 @@ class DepotHydrobio {
                             $pgCmdInvertListe->setCodeSandre($ecd->getCalculatedValue());
                             $qec = $worksheet->getCell('C' . $i);
                             $pgCmdInvertListe->setTaxon($qec->getCalculatedValue());
-                            $pgCmdInvertListe->setDenombrement($tabQE[$kk]['valeur']);
+                            $pgCmdInvertListe->setDenombrement(intval($tabQE[$kk]['valeur']));
                             $emSqe->persist($pgCmdInvertListe);
                         }
                     } else {

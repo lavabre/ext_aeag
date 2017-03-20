@@ -5,3 +5,6 @@ services:
 #    aeag_reference.example:
 #        class: %aeag_reference.example.class%
 #        arguments: [@service_id, "plain_value", %parameter%]
+
+    aeag_notifications:
+        class : AeagBundle\Aeag\
