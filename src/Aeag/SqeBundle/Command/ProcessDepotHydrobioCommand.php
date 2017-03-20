@@ -33,10 +33,6 @@ class ProcessDepotHydrobioCommand extends AeagCommand {
 
         if (!is_null($pgCmdFichiersRps)) {
 
-            // On les passe tous en phase R26
-            foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
-                $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R16');
-            }
 
             if (count($pgCmdFichiersRps) > 0) {
                 $date = new \DateTime();
@@ -47,7 +43,8 @@ class ProcessDepotHydrobioCommand extends AeagCommand {
             foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
 
                 $date = new \DateTime();
-                $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : Le traitement de la RAI ' . $pgCmdFichierRps->getId() . ' commence');
+                $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : Le traitement du dépot Hydrobio ' . $pgCmdFichierRps->getId() . ' commence');
+                $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R16');
 
                 // TODO On vérifie que l'on insère pas deux fois la même RAI
                 $pgCmdDemande = $pgCmdFichierRps->getDemande();
@@ -61,7 +58,9 @@ class ProcessDepotHydrobioCommand extends AeagCommand {
                 $erreur = false;
                 for ($i = 0; $i < count($tabFichiers); $i++) {
                     for ($j = 0; $j < count($tabFichiers[$i]['feuillet']); $j++) {
-                        $erreur = $tabFichiers[$i]['feuillet'][$j]['erreur'];
+                        if ($tabFichiers[$i]['feuillet'][$j]['erreur']) {
+                            $erreur = true;
+                        }
                     }
                 }
 
@@ -77,7 +76,7 @@ class ProcessDepotHydrobioCommand extends AeagCommand {
                 // Envoi mail
                 $objetMessage = "SQE - RAI : Fichier " . $pgCmdFichierRps->getNomFichier() . " - Récapitulatif";
                 if ($this->getEnv() !== 'prod') {
-                    $objetMessage .= " - ".$this->getEnv();
+                    $objetMessage .= " - " . $this->getEnv();
                 }
                 //$url = $this->getContainer()->get('router')->generate('AeagSqeBundle_depotHydrobio_demandes', array("lotanId" => $pgCmdFichierRps->getDemande()->getLotan()->getId()), UrlGeneratorInterface::ABSOLUTE_URL);
                 $url = $this->getContainer()->get('router')->generate('AeagSqeBundle_depotHydrobio_reponses_telecharger', array("reponseId" => $pgCmdFichierRps->getId(), "typeFichier" => "CR"), UrlGeneratorInterface::ABSOLUTE_URL);
@@ -89,7 +88,7 @@ class ProcessDepotHydrobioCommand extends AeagCommand {
                 $destinataire = $this->repoPgProgWebUsers->findOneByPrestataire($pgCmdFichierRps->getDemande()->getPrestataire());
                 $mailer = $this->getContainer()->get('mailer');
                 if (!$this->getContainer()->get('aeag_sqe.message')->createMail($this->em, $mailer, $txtMessage, $destinataire, $objetMessage)) {
-                    $this->_addLog('warning', $pgCmdFichierRps->getDemande()->getId(), $pgCmdFichierRps->getId(), "Erreur lors de l\'envoi de mail dans le process de verification des RAIs", null, $destinataire);
+                    $this->_addLog('warning', $pgCmdFichierRps->getDemande()->getId(), $pgCmdFichierRps->getId(), "Erreur lors de l\'envoi de mail dans le process de dépot hydrobio", null, $destinataire);
                 }
 
                 // Insertion données brutes
