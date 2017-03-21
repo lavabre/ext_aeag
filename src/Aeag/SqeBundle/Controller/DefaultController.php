@@ -33,19 +33,16 @@ class DefaultController extends Controller {
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
         $repoUsers = $em->getRepository('AeagUserBundle:User');
         $repoPgProgPrestaTypfic = $emSqe->getRepository('AeagSqeBundle:PgProgPrestaTypfic');
-          $repoPgProgLotAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotAn');
-    
-          $annee = $repoParametre->getParametreByCode('ANNEE');
+        $repoPgProgLotAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotAn');
+
+        $annee = $repoParametre->getParametreByCode('ANNEE');
         if (!$annee) {
             $this->initBase($emSqe, $em);
         } else {
             $session->set('anneeProg', $annee->getLibelle());
         }
 
-        if (is_object($user)) {
-            $mes = AeagController::notificationAction($user, $em, $session);
-            $mes1 = AeagController::messageAction($user, $em, $session);
-        } else {
+        if (!is_object($user)) {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
 
@@ -85,7 +82,7 @@ class DefaultController extends Controller {
             $message = $this->majPgProgWebusers();
             $message = $this->initPgProgWebusers();
             // return new Response  ($message);
-           // $session->getFlashBag()->add('notice-success', $message);
+            // $session->getFlashBag()->add('notice-success', $message);
         }
 
         $suiviHb = false;
@@ -135,11 +132,11 @@ class DefaultController extends Controller {
             $suiviSED = true;
             $suiviEau = true;
         }
-        
+
         $anneeProgs = $repoPgProgLotAn->getPgProgLotAnDistinctAnnee();
         $tabAnneeProgs = array();
         $i = 0;
-        foreach($anneeProgs as $anneeProg){
+        foreach ($anneeProgs as $anneeProg) {
             $tabAnneeProgs[$i] = $anneeProg['anneeProg'];
             $i++;
         }
@@ -192,10 +189,7 @@ class DefaultController extends Controller {
         $session->set('controller', 'Default');
         $session->set('fonction', 'envoyerMessage');
         $user = $this->getUser();
-        if (is_object($user)) {
-            $mes = AeagController::notificationAction($user, $em, $session);
-            $mes1 = AeagController::messageAction($user, $em, $session);
-        } else {
+        if (!is_object($user)) {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
