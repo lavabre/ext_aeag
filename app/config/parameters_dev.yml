@@ -5,61 +5,63 @@ parameters:
     database_port: null
     database_name: aeag
     database_user: postgres
-    database_password: 
-    
+    database_password:
+
     database_driver2: pdo_pgsql
     database_host2: vslindev211
     database_port2: null
     database_name2: dec
     database_user2: postgres
-    database_password2: 
-    
+    database_password2:
+
     database_driver3: pdo_pgsql
     database_host3: vslindev211
     database_port3: null
     database_name3: frd
     database_user3: postgres
-    database_password3: 
-    
+    database_password3:
+
     database_driver4: pdo_pgsql
     database_host4: vslindev211
     database_port4: null
     database_name4: aide
     database_user4: postgres
-    database_password4: 
-    
+    database_password4:
+
     database_driver5: pdo_pgsql
     database_host5: vslindev211
     database_port5: null
     database_name5: sqe
     database_user5: postgres
-    database_password5: 
-    
+    database_password5:
+
     database_driver6: pdo_pgsql
     database_host6: vslindev211
     database_port6: null
     database_name6: die
     database_user6: postgres
     database_password6: null
-    
+
     database_driver7: pdo_pgsql
     database_host7: vslindev211
     database_port7: null
     database_name7: diagme
     database_user7: postgres
     database_password7: null
-    
-      
+
+
     mailer_transport: smtp
     mailer_host: exhubcas.dag.aeag.fr
     mailer_user: automate
     mailer_password: aeag31
     locale: fr
     secret: ThisTokenIsNotSoSecretChangeIt
-    
+
     repertoire_echange : /base/extranet/Transfert/Sqe/Echanges/
     repertoire_exportdb : /base/extranet/Transfert/Sqe/Export_Db/
-    
+    repertoire_depotHydrobio : /base/extranet/Transfert/Sqe/depotHydrobio/
+
+
     router.request_context.host: vslindev211
     router.request_context.scheme: http
     router.request_context.base_url: /vincent/aeag/app_dev.php

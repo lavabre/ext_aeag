@@ -50,13 +50,23 @@ class DepotHydrobio {
                 $pos1 = stripos($nomFichier, '.');
                 if ($pos1) {
                     $tabNomFichier = explode('.', $nomFichier);
-                    if ($tabNomFichier[1] == 'xls') {
+                    if (strtoupper($tabNomFichier[1]) == 'XLS') {
                         $tabFichier = $this->lireXls($pgCmdFichierRps->getId(), $demandeId, $excelObj, $nomFichier, $pathBase, $rapport, $emSqe);
                         $tabTraitFichiers[$fic] = $tabFichier;
                         $fic++;
                     }
-                    if ($tabNomFichier[1] == 'prn') {
+                    if (strtoupper($tabNomFichier[1]) == 'PRN') {
                         $tabFichier = $this->lirePrn($demandeId, $nomFichier, $pathBase, $rapport, $emSqe);
+                        $tabTraitFichiers[$fic] = $tabFichier;
+                        $fic++;
+                    }
+                    if (strtoupper($tabNomFichier[1]) == 'PDF') {
+                        $tabFichier = $this->lirePdf($pgCmdFichierRps->getId(), $demandeId, $nomFichier, $pathBase, $rapport, $emSqe);
+                        $tabTraitFichiers[$fic] = $tabFichier;
+                        $fic++;
+                    }
+                    if (strtoupper($tabNomFichier[1]) == 'JPG') {
+                        $tabFichier = $this->lireJpg($pgCmdFichierRps->getId(), $demandeId, $nomFichier, $pathBase, $rapport, $emSqe);
                         $tabTraitFichiers[$fic] = $tabFichier;
                         $fic++;
                     }
@@ -150,17 +160,23 @@ class DepotHydrobio {
         $tabFeuillets = array();
         foreach ($fileExcel->getWorksheetIterator() as $worksheet) {
             if ($worksheet->getCell('B21') == 'CODE STATION') {
-                $this->lireXlsSupport10($worksheet, $feuil, $tabFeuillets, $rapport, $pgCmdFichierRpsId, $demandeId, $emSqe);
+                $tabFeuillets = $this->lireXlsSupport10($worksheet, $feuil, $tabFeuillets, $rapport, $pgCmdFichierRpsId, $demandeId, $emSqe);
                 $feuil++;
             }
             if ($worksheet->getCell('B22') == 'CODE STATION') {
-                $this->lireXlsSupport13($worksheet, $feuil, $tabFeuillets, $rapport, $pgCmdFichierRpsId, $demandeId, $emSqe);
+                $tabFeuillets = $this->lireXlsSupport13($worksheet, $feuil, $tabFeuillets, $rapport, $pgCmdFichierRpsId, $demandeId, $emSqe);
                 $feuil++;
             }
         }
 
         $tabFichier['feuillet'] = $tabFeuillets;
-
+        $tabFichier['erreur'] = false;
+        for ($feuil = 0; $feuil < count($tabFeuillets); $feuil++) {
+            if ($tabFeuillets[$feuil]['erreur']) {
+                $tabFichier['erreur'] = true;
+                break;
+            }
+        }
 
         return $tabFichier;
     }
@@ -918,7 +934,7 @@ class DepotHydrobio {
                             $pgCmdInvertListe->setCodeSandre($ecd->getCalculatedValue());
                             $qec = $worksheet->getCell('C' . $i);
                             $pgCmdInvertListe->setTaxon($qec->getCalculatedValue());
-                            $pgCmdInvertListe->setDenombrement($tabPhase[$jj]['valeur']);
+                            $pgCmdInvertListe->setDenombrement(intval($tabPhase[$jj]['valeur']));
                             $emSqe->persist($pgCmdInvertListe);
                         }
                         for ($kk = 0; $kk < count($tabQE); $kk++) {
@@ -928,7 +944,7 @@ class DepotHydrobio {
                             $pgCmdInvertListe->setCodeSandre($ecd->getCalculatedValue());
                             $qec = $worksheet->getCell('C' . $i);
                             $pgCmdInvertListe->setTaxon($qec->getCalculatedValue());
-                            $pgCmdInvertListe->setDenombrement($tabQE[$kk]['valeur']);
+                            $pgCmdInvertListe->setDenombrement(intval($tabQE[$kk]['valeur']));
                             $emSqe->persist($pgCmdInvertListe);
                         }
                     } else {
@@ -1147,11 +1163,175 @@ class DepotHydrobio {
             }
         }
 
-        $tabFeuillets[$feuil]['erreur'] = $erreur;
-        $feuil++;
+        $tabFichier['erreur'] = $erreur;
+        return $tabFichier;
+    }
 
-        $tabFichier['feuillet'] = $tabFeuillets;
+    protected function lirePdf($pgCmdFichierRpsId, $demandeId, $nomFichier, $pathBase, $rapport, $emSqe) {
+        // Récupération des programmations
+        $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebUsers');
+        $repoPgCmdFichierRps = $emSqe->getRepository('AeagSqeBundle:PgCmdFichiersRps');
+        $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
+        $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
+        $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
+        $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
 
+        $pgCmdFichierRps = $repoPgCmdFichierRps->findOneById($pgCmdFichierRpsId);
+        $pgCmdDemande = $repoPgCmdDemande->findOneById($demandeId);
+        $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByDemande($pgCmdDemande);
+        $pgProgWebUser = $repoPgProgWebUsers->findOneByPrestataire($pgCmdDemande->getPrestataire());
+
+        $tabFichier = array();
+        $tabFichier['fichier'] = $nomFichier;
+
+        $contenu = '          Pdf : ' . $nomFichier . CHR(13) . CHR(10);
+        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+        fputs($rapport, $contenu);
+
+        $avertissement = false;
+        $erreur = false;
+
+        // station
+
+        $codeStation = substr($nomFichier, 0, 8);
+        $trouve = false;
+        foreach ($pgCmdPrelevs as $pgCmdPrelev) {
+            if (substr($pgCmdPrelev->getStation()->getCode(), -(strlen($codeStation))) == $codeStation) {
+                $trouve = true;
+                if ($pgCmdPrelev->getPhaseDmd()->getCodePhase() == 'M40') {
+                    //  $avertissement = true;
+                    $contenu = '                     Avertissement : la station ' . $codeStation . ' ' . $pgCmdPrelev->getStation()->getLibelle() . ' à déjà étét traitée.' . CHR(13) . CHR(10);
+                    $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                    fputs($rapport, $contenu);
+                }
+                break;
+            }
+        }
+        if (!$trouve) {
+            $erreur = true;
+            $contenu = '                     Erreur : la station ' . $codeStation . ' ne fait pas partie de cette demande' . CHR(13) . CHR(10);
+            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+            fputs($rapport, $contenu);
+        } else {
+
+            // enregistrement en base
+            // table pg_cmd_suivi_prel
+            $pgCmdSuiviPrel = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelevStatutPrel($pgCmdPrelev, 'DF');
+            if (!$pgCmdSuiviPrel) {
+                $pgCmdSuiviPrel = new PgCmdSuiviPrel();
+                $pgCmdSuiviPrel->setPrelev($pgCmdPrelev);
+                $pgCmdSuiviPrel->setFichierRps($pgCmdFichierRps);
+                $pgCmdSuiviPrel->setUser($pgProgWebUser);
+                $pgCmdSuiviPrel->setDatePrel($pgCmdPrelev->getDatePrelev());
+                $pgCmdSuiviPrel->setStatutPrel('DF');
+                $pgCmdSuiviPrel->setCommentaire('Dépôt hydrobio Pdf');
+                $pgCmdSuiviPrel->setValidation('E');
+                $emSqe->persist($pgCmdSuiviPrel);
+                $emSqe->flush();
+            }
+
+
+//                foreach ($worksheet->getRowIterator() as $row) {
+//                    $contenu = '   Ligne n° - ' . $row->getRowIndex() . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+//                    $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+//                    fputs($rapport, $contenu);
+//
+//                    $cellIterator = $row->getCellIterator();
+//                    $cellIterator->setIterateOnlyExistingCells(false); // Loop all cells, even if it is not set
+//                    foreach ($cellIterator as $cell) {
+//                        if (!is_null($cell)) {
+//                            $contenu = '        Cellule - ' . $cell->getCoordinate() . ' - ' . $cell->getCalculatedValue() . CHR(13) . CHR(10);
+//                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+//                            fputs($rapport, $contenu);
+//                        }
+//                    }
+//                }
+        }
+        $tabFichier['erreur'] = $erreur;
+        return $tabFichier;
+    }
+
+    protected function lireJpg($pgCmdFichierRpsId, $demandeId, $nomFichier, $pathBase, $rapport, $emSqe) {
+        // Récupération des programmations
+        $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebUsers');
+        $repoPgCmdFichierRps = $emSqe->getRepository('AeagSqeBundle:PgCmdFichiersRps');
+        $repoPgCmdDemande = $emSqe->getRepository('AeagSqeBundle:PgCmdDemande');
+        $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
+        $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
+        $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
+
+        $pgCmdFichierRps = $repoPgCmdFichierRps->findOneById($pgCmdFichierRpsId);
+        $pgCmdDemande = $repoPgCmdDemande->findOneById($demandeId);
+        $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByDemande($pgCmdDemande);
+        $pgProgWebUser = $repoPgProgWebUsers->findOneByPrestataire($pgCmdDemande->getPrestataire());
+
+        $tabFichier = array();
+        $tabFichier['fichier'] = $nomFichier;
+
+        $contenu = '          Photo : ' . $nomFichier . CHR(13) . CHR(10);
+        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+        fputs($rapport, $contenu);
+
+        $erreur = false;
+
+        // station
+
+        $codeStation = substr($nomFichier, 0, 8);
+        $trouve = false;
+        foreach ($pgCmdPrelevs as $pgCmdPrelev) {
+            if (substr($pgCmdPrelev->getStation()->getCode(), -(strlen($codeStation))) == $codeStation) {
+                $trouve = true;
+                if ($pgCmdPrelev->getPhaseDmd()->getCodePhase() == 'M40') {
+                    //  $avertissement = true;
+                    $contenu = '                     Avertissement : la station ' . $codeStation . ' ' . $pgCmdPrelev->getStation()->getLibelle() . ' à déjà étét traitée.' . CHR(13) . CHR(10);
+                    $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                    fputs($rapport, $contenu);
+                }
+                break;
+            }
+        }
+        if (!$trouve) {
+            $erreur = true;
+            $contenu = '                     Erreur : la station ' . $codeStation . '  ne fait pas partie de cette demande' . CHR(13) . CHR(10);
+            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+            fputs($rapport, $contenu);
+        } else {
+
+            // enregistrement en base
+            // table pg_cmd_suivi_prel
+            $pgCmdSuiviPrel = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelevStatutPrel($pgCmdPrelev, 'DO');
+            if (!$pgCmdSuiviPrel) {
+                $pgCmdSuiviPrel = new PgCmdSuiviPrel();
+                $pgCmdSuiviPrel->setPrelev($pgCmdPrelev);
+                $pgCmdSuiviPrel->setFichierRps($pgCmdFichierRps);
+                $pgCmdSuiviPrel->setUser($pgProgWebUser);
+                $pgCmdSuiviPrel->setDatePrel($pgCmdPrelev->getDatePrelev());
+                $pgCmdSuiviPrel->setStatutPrel('DO');
+                $pgCmdSuiviPrel->setCommentaire('Dépôt hydrobio Photo');
+                $pgCmdSuiviPrel->setValidation('E');
+                $emSqe->persist($pgCmdSuiviPrel);
+                $emSqe->flush();
+            }
+
+
+//                foreach ($worksheet->getRowIterator() as $row) {
+//                    $contenu = '   Ligne n° - ' . $row->getRowIndex() . CHR(13) . CHR(10) . CHR(13) . CHR(10);
+//                    $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+//                    fputs($rapport, $contenu);
+//
+//                    $cellIterator = $row->getCellIterator();
+//                    $cellIterator->setIterateOnlyExistingCells(false); // Loop all cells, even if it is not set
+//                    foreach ($cellIterator as $cell) {
+//                        if (!is_null($cell)) {
+//                            $contenu = '        Cellule - ' . $cell->getCoordinate() . ' - ' . $cell->getCalculatedValue() . CHR(13) . CHR(10);
+//                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+//                            fputs($rapport, $contenu);
+//                        }
+//                    }
+//                }
+        }
+
+        $tabFichier['erreur'] = $erreur;
         return $tabFichier;
     }
 

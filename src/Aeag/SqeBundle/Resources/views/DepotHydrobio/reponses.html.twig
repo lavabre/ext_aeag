@@ -23,7 +23,7 @@
                     <tr>
                     {% endif %}
                     <td width="1%" align="center" nowrap>
-                        <a id="id_{{reponse.id}}" class="btn btn-success btn-telecharger" href="{{path("AeagSqeBundle_depotHydrobio_reponses_telecharger",{"reponseId":  reponse.id, "typeFichier" : "EXL"})}}" title="Télécharger le dépôt">
+                        <a id="id_{{reponse.id}}" class="btn btn-success btn-telecharger" href="{{path("AeagSqeBundle_depotHydrobio_reponses_telecharger",{"reponseId":  reponse.id, "typeFichier" : "DHY"})}}" title="Télécharger le dépôt">
                             <i class="fa fa-download"></i>
                         </a>
                         {%if is_granted('ROLE_ADMINSQE')%}

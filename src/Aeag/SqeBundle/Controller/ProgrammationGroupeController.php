@@ -714,29 +714,36 @@ class ProgrammationGroupeController extends Controller {
         $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
 
         $idGroupe = $request->get('groupe');
+        $prestataireAdrCorId = null;
         if ($session->get('browser') == 'Internet Explorer') {
             $prestataireAdrCorId = $request->get('prestataire');
         } else {
             $prestataireAncnumComplet = explode(" ", $request->get('prestataire'));
             $prestataireAncnum = $prestataireAncnumComplet[0];
             $prestataire = $repoPgRefCorresPresta->getPgRefCorresPrestaByAncnum($prestataireAncnum);
-            $prestataireAdrCorId = $prestataire->getAdrCorId();
-        }
-
-        $pgProgGrpParamRef = $repoPgProgGrpParamRef->getPgProgGrpParamRefById($idGroupe);
-        $prestataire = $repoPgRefCorresPresta->getPgRefCorresPrestaByAdrCorId($prestataireAdrCorId);
-
-        $pgProgLotGrparAn = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotAnGrpparref($pgProgLotAn, $pgProgGrpParamRef);
-        if ($pgProgLotGrparAn) {
-            $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
-            foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
-                $pgProgLotParamAn->setPrestataire($prestataire);
-                $emSqe->persist($pgProgLotParamAn);
+            if ($prestataire) {
+                $prestataireAdrCorId = $prestataire->getAdrCorId();
             }
-            $emSqe->flush();
         }
 
-        return new Response('ok');
+        if (!$prestataireAdrCorId) {
+            return new Response('ko');
+        } else {
+            $pgProgGrpParamRef = $repoPgProgGrpParamRef->getPgProgGrpParamRefById($idGroupe);
+            $prestataire = $repoPgRefCorresPresta->getPgRefCorresPrestaByAdrCorId($prestataireAdrCorId);
+
+            $pgProgLotGrparAn = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotAnGrpparref($pgProgLotAn, $pgProgGrpParamRef);
+            if ($pgProgLotGrparAn) {
+                $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
+                foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
+                    $pgProgLotParamAn->setPrestataire($prestataire);
+                    $emSqe->persist($pgProgLotParamAn);
+                }
+                $emSqe->flush();
+            }
+
+            return new Response('ok');
+        }
     }
 
     public function milieuGroupeParametresAction() {
@@ -973,8 +980,13 @@ class ProgrammationGroupeController extends Controller {
                         $preleveurAncnumComplet = explode(" ", $_POST['preleveur']);
                         $preleveurAncnum = $preleveurAncnumComplet[0];
                         $preleveur = $repoPgRefCorresPresta->getPgRefCorresPrestaByAncnum($preleveurAncnum);
-                        $session->set('selectionPreleveur', $preleveur->getAncnumNomCorres());
-                        $preleveurCorId = $preleveur->getAdrCorid();
+                        if ($preleveur) {
+                            $session->set('selectionPreleveur', $preleveur->getAncnumNomCorres());
+                            $preleveurCorId = $preleveur->getAdrCorid();
+                        } else {
+                            $tabMessage[$i] = 'Renseigner d\'abord le préleveur avant d\'ajouter un groupe';
+                            $i++;
+                        }
                     } else {
                         $tabMessage[$i] = 'Renseigner d\'abord le préleveur avant d\'ajouter un groupe';
                         $i++;
@@ -989,8 +1001,13 @@ class ProgrammationGroupeController extends Controller {
                         $laboratoireAncnumComplet = explode(" ", $_POST['laboratoire']);
                         $laboratoireAncnum = $laboratoireAncnumComplet[0];
                         $laboratoire = $repoPgRefCorresPresta->getPgRefCorresPrestaByAncnum($laboratoireAncnum);
-                        $session->set('selectionLaboratoire', $laboratoire->getAncnumNomCorres());
-                        $laboratoireCorId = $laboratoire->getAdrCorId();
+                        if ($laboratoire) {
+                            $session->set('selectionLaboratoire', $laboratoire->getAncnumNomCorres());
+                            $laboratoireCorId = $laboratoire->getAdrCorId();
+                        } else {
+                            $tabMessage[$i] = 'Renseigner d\'abord le laboratoire avant d\'ajouter un groupe';
+                            $i++;
+                        }
                     } else {
                         $tabMessage[$i] = 'Renseigner d\'abord le laboratoire avant d\'ajouter un groupe';
                         $i++;

@@ -40,8 +40,8 @@ class PgProgWebusersRepository extends EntityRepository {
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-    
-     /**
+
+    /**
      * @return array
      */
     public function getPgProgWebusersByExtid($extId) {
@@ -59,12 +59,12 @@ class PgProgWebusersRepository extends EntityRepository {
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgWebusers p";
         $query = $query . " where p.nom = :nom";
         $qb = $this->_em->createQuery($query);
-         $qb->setParameter('nom', $nom);
+        $qb->setParameter('nom', $nom);
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-    
-    public function getPgProgWebusersByLoginPassword($login,$pwd) {
+
+    public function getPgProgWebusersByLoginPassword($login, $pwd) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgWebusers p";
         $query = $query . " where p.login= :login";
@@ -75,17 +75,17 @@ class PgProgWebusersRepository extends EntityRepository {
         //print_r($query);
         return $qb->getOneOrNullResult();
     }
-    
-     public function getPgProgWebusersByPrestataire($prestataire) {
+
+    public function getPgProgWebusersByPrestataire($prestataire) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgWebusers p";
         $query = $query . " where p.prestataire = :prestataire";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('prestataire', $prestataire->getAdrCorId());
         //print_r($query);
-         return $qb->getResult();
+        return $qb->getResult();
     }
-    
+
     public function getPgProgWebusersByTypeUser($typeUser) {
         $query = "select p";
         $query = $query . " from Aeag\SqeBundle\Entity\PgProgWebusers p";
@@ -96,37 +96,37 @@ class PgProgWebusersRepository extends EntityRepository {
         //print_r($query);
         return $qb->getResult();
     }
-    
-        public function getSuppportByPrestataire($pgRefCorresPresta) {
+
+    public function getSuppportByPrestataire($pgRefCorresPresta) {
 //          $query = "select distinct sup";
 //          $query .= " from Aeag\SqeBundle\Entity\PgProgLotParamAn pan,";
 //          $query .= "         Aeag\SqeBundle\Entity\\PgProgLotGrparAn gran,";
 //          $query .= "         Aeag\SqeBundle\Entity\PgProgGrpParamRef gref,";
 //          $query .= "         Aeag\SqeBundle\Entity\PgProgLotAn lan,";
 //          $query .= "         Aeag\SqeBundle\Entity\PgSandreSupports sup";
-//          $query .= " where lan.phase > 6"; 
+//          $query .= " where lan.phase > 6";
 //          $query .= " and gran.id = pan.grparan";
 //          $query .= " and gref.id = gran.grparRef";
 //          $query .= " and lan.id = gran.lotan";
 //           $query .= " and sup.codeSupport = gref.support";
 //          $query .= " and gref.support is not null";
 //          $query .= " and pan.prestataire = :prestataire";
-            
-          $query = "select distinct sup";
-          $query .= " from Aeag\SqeBundle\Entity\PgCmdPrelev prel,";
-          $query .= "         Aeag\SqeBundle\Entity\\PgCmdDemande dem,";
-          $query .= "         Aeag\SqeBundle\Entity\PgSandreSupports sup";
-          $query .= " where dem.id =  prel.demande"; 
-          $query .= " and sup.codeSupport = prel.codeSupport";
-          $query .= " and prel.codeSupport is not null";
-          $query .= " and dem.prestataire = :prestataire";
-        
+
+        $query = "select distinct sup";
+        $query .= " from Aeag\SqeBundle\Entity\PgCmdPrelev prel,";
+        $query .= "         Aeag\SqeBundle\Entity\\PgCmdDemande dem,";
+        $query .= "         Aeag\SqeBundle\Entity\PgSandreSupports sup";
+        $query .= " where dem.id =  prel.demande";
+        $query .= " and sup.codeSupport = prel.codeSupport";
+        $query .= " and prel.codeSupport is not null";
+        $query .= " and dem.prestataire = :prestataire";
+
         $qb = $this->_em->createQuery($query);
-        $qb->setParameter('prestataire', $pgRefCorresPresta->getAdrCorId()); 
+        $qb->setParameter('prestataire', $pgRefCorresPresta->getAdrCorId());
         //print_r($query);
         return $qb->getResult();
     }
-    
+
     public function getNotAdminPgProgWebusersByProducteur($producteur) {
         $query = "select p";
         $query .= " from Aeag\SqeBundle\Entity\PgProgWebusers p";
@@ -134,12 +134,12 @@ class PgProgWebusersRepository extends EntityRepository {
         $query .= " and p.typeUser <> 'ADMIN'";
         $query .= " order by p.nom";
         $qb = $this->_em->createQuery($query);
-        
+
         $qb->setParameter('producteur', $producteur);
 
         return $qb->getResult();
     }
-    
+
     public function getNotAdminPgProgWebusersByProducteurAndMarche($producteur, $marche) {
         $query = "select p";
         $query .= " from Aeag\SqeBundle\Entity\PgProgWebusers p";
@@ -149,13 +149,13 @@ class PgProgWebusersRepository extends EntityRepository {
         $query .= " and mu.marche = :marche";
         $query .= " order by p.nom";
         $qb = $this->_em->createQuery($query);
-        
+
         $qb->setParameter('producteur', $producteur);
         $qb->setParameter('marche', $marche);
 
         return $qb->getResult();
     }
-    
+
     public function getNotAdminPgProgWebusersByProducteurAndMarcheAndTypeMilieu($producteur, $marche, $typeMilieu) {
         $query = "select p";
         $query .= " from Aeag\SqeBundle\Entity\PgProgWebusers p";
@@ -167,14 +167,14 @@ class PgProgWebusersRepository extends EntityRepository {
         $query .= " and (wt.typmil = :typemilieu or wt.typmil IS NULL)";
         $query .= " order by p.nom";
         $qb = $this->_em->createQuery($query);
-        
+
         $qb->setParameter('producteur', $producteur);
         $qb->setParameter('marche', $marche);
         $qb->setParameter('typemilieu', $typeMilieu);
 
         return $qb->getResult();
     }
-    
+
     public function getPgProgWebusersByPrestataireAndTypeMilieu($prestataire, $typeMilieu) {
         $query = "select p";
         $query .= " from Aeag\SqeBundle\Entity\PgProgWebusers p";
@@ -187,7 +187,5 @@ class PgProgWebusersRepository extends EntityRepository {
         //print_r($query);
         return $qb->getResult();
     }
-   
 
 }
-

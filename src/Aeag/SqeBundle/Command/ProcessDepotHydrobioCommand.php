@@ -33,21 +33,18 @@ class ProcessDepotHydrobioCommand extends AeagCommand {
 
         if (!is_null($pgCmdFichiersRps)) {
 
-            // On les passe tous en phase R26
-            foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
-                $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R16');
-            }
 
             if (count($pgCmdFichiersRps) > 0) {
                 $date = new \DateTime();
-                $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : ' . count($pgCmdFichiersRps) . " RAI(s) vont être traitées ");
+                $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI DepotHydrobio : ' . count($pgCmdFichiersRps) . " RAI(s) vont être traitées ");
             }
 
 
             foreach ($pgCmdFichiersRps as $pgCmdFichierRps) {
 
                 $date = new \DateTime();
-                $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : Le traitement de la RAI ' . $pgCmdFichierRps->getId() . ' commence');
+                $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI DepotHydrobio : Le traitement du depot Hydrobio ' . $pgCmdFichierRps->getId() . ' commence');
+                $this->_updatePhaseFichierRps($pgCmdFichierRps, 'R16');
 
                 // TODO On vérifie que l'on insère pas deux fois la même RAI
                 $pgCmdDemande = $pgCmdFichierRps->getDemande();
@@ -60,8 +57,9 @@ class ProcessDepotHydrobioCommand extends AeagCommand {
 
                 $erreur = false;
                 for ($i = 0; $i < count($tabFichiers); $i++) {
-                    for ($j = 0; $j < count($tabFichiers[$i]['feuillet']); $j++) {
-                        $erreur = $tabFichiers[$i]['feuillet'][$j]['erreur'];
+                    if ($tabFichiers[$i]['erreur']) {
+                        $erreur = true;
+                        break;
                     }
                 }
 
@@ -75,9 +73,9 @@ class ProcessDepotHydrobioCommand extends AeagCommand {
 
 
                 // Envoi mail
-                $objetMessage = "SQE - RAI : Fichier " . $pgCmdFichierRps->getNomFichier() . " - Récapitulatif";
+                $objetMessage = "SQE - RAI DepotHydrobio  : Fichier " . $pgCmdFichierRps->getNomFichier() . " - Récapitulatif";
                 if ($this->getEnv() !== 'prod') {
-                    $objetMessage .= " - ".$this->getEnv();
+                    $objetMessage .= " - " . $this->getEnv();
                 }
                 //$url = $this->getContainer()->get('router')->generate('AeagSqeBundle_depotHydrobio_demandes', array("lotanId" => $pgCmdFichierRps->getDemande()->getLotan()->getId()), UrlGeneratorInterface::ABSOLUTE_URL);
                 $url = $this->getContainer()->get('router')->generate('AeagSqeBundle_depotHydrobio_reponses_telecharger', array("reponseId" => $pgCmdFichierRps->getId(), "typeFichier" => "CR"), UrlGeneratorInterface::ABSOLUTE_URL);
@@ -86,10 +84,12 @@ class ProcessDepotHydrobioCommand extends AeagCommand {
                 $txtMessage .= 'Le traitement de la RAI ' . $pgCmdFichierRps->getNomFichier() . ' est maintenant terminé <br/>';
                 $txtMessage .= "L'état final est le suivant : <strong>" . $pgCmdFichierRps->getPhaseFichier()->getLibellePhase() . "</strong><br/>";
                 $txtMessage .= 'Vous pouvez lire le récapitulatif dans le fichier disponible à l\'adresse suivante : <a href="' . $url . '">' . $pgCmdFichierRps->getNomFichierCompteRendu() . '</a>';
-                $destinataire = $this->repoPgProgWebUsers->findOneByPrestataire($pgCmdFichierRps->getDemande()->getPrestataire());
-                $mailer = $this->getContainer()->get('mailer');
-                if (!$this->getContainer()->get('aeag_sqe.message')->createMail($this->em, $mailer, $txtMessage, $destinataire, $objetMessage)) {
-                    $this->_addLog('warning', $pgCmdFichierRps->getDemande()->getId(), $pgCmdFichierRps->getId(), "Erreur lors de l\'envoi de mail dans le process de verification des RAIs", null, $destinataire);
+                $destinataires = $this->repoPgProgWebUsers->findOneByPrestataire($pgCmdFichierRps->getDemande()->getPrestataire());
+                foreach ($destinataires as $destinataire) {
+                    $mailer = $this->getContainer()->get('mailer');
+                    if (!$this->getContainer()->get('aeag_sqe.message')->createMail($this->em, $mailer, $txtMessage, $destinataire, $objetMessage)) {
+                        $this->_addLog('warning', $pgCmdFichierRps->getDemande()->getId(), $pgCmdFichierRps->getId(), "Erreur lors de l\'envoi de mail dans le process de dépot hydrobio", null, $destinataire);
+                    }
                 }
 
                 // Insertion données brutes
@@ -102,12 +102,12 @@ class ProcessDepotHydrobioCommand extends AeagCommand {
                 }
 
                 $date = new \DateTime();
-                $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process depotHydrobio : Le traitement de la RAI ' . $pgCmdFichierRps->getId() . ' est terminé');
+                $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI DepotHydrobio  : Le traitement du depot hydrobio ' . $pgCmdFichierRps->getId() . ' est terminé');
             }
         }
         $date = new \DateTime();
         $cptRaisTraitesTot = $cptRaisTraitesOk + $cptRaisTraitesNok;
-        $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process depotHydrobio : ' . $cptRaisTraitesTot . " RAI(s) traitée(s), " . $cptRaisTraitesOk . " OK, " . $cptRaisTraitesNok . " NOK");
+        $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI DepotHydrobio  : ' . $cptRaisTraitesTot . " Depot hydrobio traitée(s), " . $cptRaisTraitesOk . " OK, " . $cptRaisTraitesNok . " NOK");
     }
 
 }
