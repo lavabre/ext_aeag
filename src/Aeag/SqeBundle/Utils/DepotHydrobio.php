@@ -799,7 +799,7 @@ class DepotHydrobio {
                         $pgProgLotStationAn = $repoPgProgLotStationAn->getPgProgLotStationAnByLotAnStation($pgProgLotAn, $pgRefStationMesure);
                         if ($pgProgLotStationAn) {
                             $pgRefReseauMesure = $repoPgRefReseauMesure->getPgRefReseauMesureByGroupementId($pgProgLotStationAn->getRsxId());
-                            if ($pgRefReseauMesure->getCodeAeagRsx == '099') {
+                            if ($pgRefReseauMesure->getCodeAeagRsx() == '099') {
                                 $celH = $worksheet->getCell('H' . $i);
                                 $celI = $worksheet->getCell('I' . $i);
                                 $celJ = $worksheet->getCell('J' . $i);
