@@ -3044,6 +3044,7 @@ class SaisieDonneesController extends Controller {
 
                                 $remarque = $tab[19];
                                 $valeur = str_replace(',', '.', $tab[20]);
+                                $lqM = $tab[25];
 
                                 // $pgCmdPrelev = $tabStations[$i]['prelev'];
 
@@ -3063,7 +3064,7 @@ class SaisieDonneesController extends Controller {
                                     $parametre = $codeParametre;
                                     $inSitu = 1;
                                     if (strlen($valeur) > 0) {
-                                        $tabStatut = $this->_controleVraisemblance($parametre, $valeur, $remarque, $unite, $inSitu, $pgSandreFraction, $tabStatut);
+                                        $tabStatut = $this->_controleVraisemblance_fichier($parametre, $valeur, $remarque, $unite, $inSitu, $lqM, $pgSandreFraction, $tabStatut);
                                         $okControleVraisemblance = $okControleVraisemblance + $tabStatut['ko'];
                                     }
                                     if (strlen($valeur) > 0) {
@@ -3161,7 +3162,7 @@ class SaisieDonneesController extends Controller {
 
 
                                     if (strlen($valeur) > 0) {
-                                        $tabStatut = $this->_controleVraisemblance($parametre, $valeur, $remarque, $unite, $inSitu, $pgSandreFraction, $tabStatut);
+                                        $tabStatut = $this->_controleVraisemblance_fichier($parametre, $valeur, $remarque, $unite, $inSitu, $lqM, $pgSandreFraction, $tabStatut);
                                         $okControleVraisemblance = $okControleVraisemblance + $tabStatut['ko'];
                                     }
 
@@ -3248,7 +3249,7 @@ class SaisieDonneesController extends Controller {
                                     //fputs($rapport, $contenu);
 
                                     if (strlen($valeur) > 0) {
-                                        $tabStatut = $this->_controleVraisemblance($parametre, $valeur, $remarque, $unite, $inSitu, $pgSandreFraction, $tabStatut);
+                                        $tabStatut = $this->_controleVraisemblance_fichier($parametre, $valeur, $remarque, $unite, $inSitu, $lqM, $pgSandreFraction, $tabStatut);
                                         $okControleVraisemblance = $okControleVraisemblance + $tabStatut['ko'];
                                     }
                                     if (strlen($valeur) > 0) {
@@ -5679,6 +5680,88 @@ class SaisieDonneesController extends Controller {
 
 // III.1 Champs non renseignés (valeurs et code remarque) ou valeurs non numériques ou valeurs impossibles params env / code remarque peut ne pas être renseigné pour cette liste (car réponse en edilabo 1.0) => avertissement
         $result = $controleVraisemblance->champsNonRenseignes($mesure, $codeRq, $codeParametre, $inSitu);
+
+        if (is_bool($result)) {
+            $result = $controleVraisemblance->valeursNumeriques($mesure, $codeRq);
+        }
+        if (is_bool($result)) {
+            $result = $controleVraisemblance->valeursEgalZero($mesure, $codeParametre, $inSitu);
+        }
+        if (is_bool($result)) {
+            $result = $controleVraisemblance->valeursInfZero($mesure, $codeParametre);
+        }
+        if (is_bool($result)) {
+            $result = $controleVraisemblance->valeursSupTrois($codeParametre, $codeRq);
+        }
+        if (is_bool($result)) {
+            if ($codeParametre == '1302') {
+                $result = $controleVraisemblance->pH($mesure);
+            }
+        }
+
+        if (is_bool($result)) {
+
+// III.12 Valeur de pourcentage hors 1312 oxygène (ex : matière sèche ou granulo) : non compris entre 0 et 100 si code unité = 243 ou 246
+            if ($unite == '243' or $unite == '246') {
+                if ($codeParametre != '1312') {
+                    if ($mesure < 0 or $mesure > 100) {
+                        $tabStatut['ko'] = $tabStatut['ko'] + 1;
+                        $tabStatut['statut'] = 2;
+                        $tabStatut['libelle'] = 'Valeur pourcentage : pourcentage n\'est pas entre 0 et 100';
+                    }
+                }
+            }
+
+            //  Résultat d’analyse< Valeur max de la base
+
+            $pgProgUnitesPossiblesParam = $repoPgProgUnitesPossiblesParam->getPgProgUnitesPossiblesParamByCodeParametreCodeUniteNatureFraction($codeParametre, $unite, $fraction);
+            if ($pgProgUnitesPossiblesParam) {
+                if (strlen($pgProgUnitesPossiblesParam->getValMax()) > 0) {
+                    if ($mesure > $pgProgUnitesPossiblesParam->getValMax()) {
+                        $tabStatut['ko'] = $tabStatut['ko'] + 1;
+                        $tabStatut['statut'] = 2;
+                        $tabStatut['libelle'] = 'Valeur doit être inferieure à ' . $pgProgUnitesPossiblesParam->getValMax();
+                    }
+                }
+            }
+        }
+
+        if (!is_bool($result)) {
+            $tabRetour = $result;
+            if ($tabRetour[0] == 'warning') {
+                $tabStatut['statut'] = 1;
+            } else {
+                $tabStatut['statut'] = 2;
+            }
+            $tabStatut['libelle'] = $tabRetour[1];
+            $tabStatut['ko'] = $tabStatut['ko'] + 1;
+        }
+
+        return $tabStatut;
+    }
+
+    protected function _controleVraisemblance_fichier($parametre, $valeur, $remarque, $unite, $lqM, $inSitu, $fraction, $tabStatut) {
+
+        $session = $this->get('session');
+        $session->set('menu', 'donnees');
+        $session->set('controller', 'SaisieDonnees');
+        $session->set('fonction', '_controleVraisemblance');
+
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+        $repoPgProgUnitesPossiblesParam = $emSqe->getRepository('AeagSqeBundle:PgProgUnitesPossiblesParam');
+        $controleVraisemblance = $this->get('aeag_sqe.controle_vraisemblance');
+
+// Contrôles sur toutes les valeurs insérées
+        $mesure = $valeur;
+        $codeRq = $remarque;
+        $codeParametre = $parametre;
+
+
+// III.1 Champs non renseignés (valeurs et code remarque) ou valeurs non numériques ou valeurs impossibles params env / code remarque peut ne pas être renseigné pour cette liste (car réponse en edilabo 1.0) => avertissement
+        $result = $controleVraisemblance->champsNonRenseignes($mesure, $codeRq, $codeParametre, $inSitu);
+        if (is_bool($result)) {
+            $result = $controleVraisemblance->testsComplementaires($mesure, $codeRq, $inSitu, $lqM);
+        }
         if (is_bool($result)) {
             $result = $controleVraisemblance->valeursNumeriques($mesure, $codeRq);
         }
