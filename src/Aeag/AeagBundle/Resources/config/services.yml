@@ -1,10 +1,29 @@
 parameters:
-#    aeag_reference.example.class: Aeag\AeagBundle\Example
+     aeag_notifications.class: Aeag\AeagBundle\Services\Notifications
+     aeag_notifications.listener: Aeag\AeagBundle\Services\NotificationsListener
+     aeag_messages.class: Aeag\AeagBundle\Services\Messages
+     aeag_messages.listener: Aeag\AeagBundle\Services\MessagesListener
 
 services:
 #    aeag_reference.example:
 #        class: %aeag_reference.example.class%
 #        arguments: [@service_id, "plain_value", %parameter%]
 
-    aeag_notifications:
-        class : AeagBundle\Aeag\
+     aeag.notifications:
+          class: %aeag_notifications.class%
+
+     aeag.notifications.listener:
+        class: %aeag_notifications.listener%
+        arguments: [@Service_container, @security.token_storage,@doctrine, @session]
+        tags:
+            - { name: kernel.event_listener, event: kernel.response, method: processNotifications }
+
+     aeag.messages:
+          class: %aeag_messages.class%
+
+     aeag.messages.listener:
+        class: %aeag_messages.listener%
+        arguments: [@Service_container, @security.token_storage,@doctrine, @session]
+        tags:
+            - { name: kernel.event_listener, event: kernel.response, method: processMessages }
+

@@ -2386,49 +2386,40 @@ class SaisieDonneesController extends Controller {
             }
 
 
+            // Récupération des services.
+            $mailer = $this->get('mailer');
+            $messages = $this->get('aeag.messages');
+
             for ($i = 0; $i < count($tabDestinataires); $i++) {
                 $userAdmin = $tabDestinataires[$i];
-                $message = new Message();
-                $message->setRecepteur($userAdmin->getId());
-                $message->setEmetteur($user->getid());
-                $message->setNouveau(true);
-                $message->setIteration(2);
                 $texte = "Bonjour ," . PHP_EOL;
                 $texte = $texte . 'La saisie des données des ' . $nbStations . ' stations de la période du ' . date_format($pgProgLotPeriodeAn->getPeriode()->getDateDeb(), 'd/m/Y') . ' au ' . date_format($pgProgLotPeriodeAn->getPeriode()->getDateFin(), 'd/m/Y');
                 $texte = $texte . "de la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL;
                 $texte = $texte . "vient d'être validée par  " . $pgProgWebUser->getNom() . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y') . PHP_EOL;
                 $texte = $texte . " " . PHP_EOL;
                 $texte = $texte . "Cordialement.";
-                $message->setMessage($texte);
-                $em->persist($message);
+                $messages->createMessage($user, $userAdmin, $em, $session, $texte);
 
-                $notification = new Notification();
-                $notification->setRecepteur($userAdmin->getId());
-                $notification->setEmetteur($user->getId());
-                $notification->setNouveau(true);
-                $notification->setIteration(2);
-                $notification->setMessage($texte);
-                $em->persist($notification);
-                // Récupération du service.
-                $mailer = $this->get('mailer');
-                // Création de l'e-mail : le service mailer utilise SwiftMailer, donc nous créons une instance de Swift_Message.
-                $mail = \Swift_Message::newInstance('Wonderful Subject')
-                        ->setSubject('Saisie des données des ' . $nbStations . ' stations de la période du ' . date_format($pgProgLotPeriodeAn->getPeriode()->getDateDeb(), 'd/m/Y') . ' au ' . date_format($pgProgLotPeriodeAn->getPeriode()->getDateFin(), 'd/m/Y') . '  valider')
-                        ->setFrom('automate@eau-adour-garonne.fr')
-                        ->setTo($userAdmin->getEmail())
-                        ->setBody($this->renderView('AeagSqeBundle:SaisieDonnees:validerParPeriodeEmail.txt.twig', array(
-                            'emetteur' => $pgProgWebUser,
-                            'lotPeriodeAn' => $pgProgLotPeriodeAn,
-                            'lotan' => $pgProgLotAn,
-                            'nbStations' => $nbStations
-                )));
+                $notifications = $this->get('aeag.notifications');
+                $notifications->createNotification($user, $userAdmin, $em, $session, $texte);
+
+                if ($userAdmin->getEmail()) {
+                    // Création de l'e-mail : le service mailer utilise SwiftMailer, donc nous créons une instance de Swift_Message.
+                    $mail = \Swift_Message::newInstance('Wonderful Subject')
+                            ->setSubject('Saisie des données des ' . $nbStations . ' stations de la période du ' . date_format($pgProgLotPeriodeAn->getPeriode()->getDateDeb(), 'd/m/Y') . ' au ' . date_format($pgProgLotPeriodeAn->getPeriode()->getDateFin(), 'd/m/Y') . '  valider')
+                            ->setFrom('automate@eau-adour-garonne.fr')
+                            ->setTo($userAdmin->getEmail())
+                            ->setBody($this->renderView('AeagSqeBundle:SaisieDonnees:validerParPeriodeEmail.txt.twig', array(
+                                'emetteur' => $pgProgWebUser,
+                                'lotPeriodeAn' => $pgProgLotPeriodeAn,
+                                'lotan' => $pgProgLotAn,
+                                'nbStations' => $nbStations
+                    )));
 
 // Retour au service mailer, nous utilisons sa méthode « send() » pour envoyer notre $message.
-                $mailer->send($mail);
+                    $mailer->send($mail);
+                }
             }
-
-
-            $em->flush();
         }
 
 
@@ -3053,6 +3044,7 @@ class SaisieDonneesController extends Controller {
 
                                 $remarque = $tab[19];
                                 $valeur = str_replace(',', '.', $tab[20]);
+                                $lqM = $tab[25];
 
                                 // $pgCmdPrelev = $tabStations[$i]['prelev'];
 
@@ -3072,7 +3064,7 @@ class SaisieDonneesController extends Controller {
                                     $parametre = $codeParametre;
                                     $inSitu = 1;
                                     if (strlen($valeur) > 0) {
-                                        $tabStatut = $this->_controleVraisemblance($parametre, $valeur, $remarque, $unite, $inSitu, $pgSandreFraction, $tabStatut);
+                                        $tabStatut = $this->_controleVraisemblance_fichier($parametre, $valeur, $remarque, $unite, $inSitu, $lqM, $pgSandreFraction, $tabStatut);
                                         $okControleVraisemblance = $okControleVraisemblance + $tabStatut['ko'];
                                     }
                                     if (strlen($valeur) > 0) {
@@ -3170,7 +3162,7 @@ class SaisieDonneesController extends Controller {
 
 
                                     if (strlen($valeur) > 0) {
-                                        $tabStatut = $this->_controleVraisemblance($parametre, $valeur, $remarque, $unite, $inSitu, $pgSandreFraction, $tabStatut);
+                                        $tabStatut = $this->_controleVraisemblance_fichier($parametre, $valeur, $remarque, $unite, $inSitu, $lqM, $pgSandreFraction, $tabStatut);
                                         $okControleVraisemblance = $okControleVraisemblance + $tabStatut['ko'];
                                     }
 
@@ -3257,7 +3249,7 @@ class SaisieDonneesController extends Controller {
                                     //fputs($rapport, $contenu);
 
                                     if (strlen($valeur) > 0) {
-                                        $tabStatut = $this->_controleVraisemblance($parametre, $valeur, $remarque, $unite, $inSitu, $pgSandreFraction, $tabStatut);
+                                        $tabStatut = $this->_controleVraisemblance_fichier($parametre, $valeur, $remarque, $unite, $inSitu, $lqM, $pgSandreFraction, $tabStatut);
                                         $okControleVraisemblance = $okControleVraisemblance + $tabStatut['ko'];
                                     }
                                     if (strlen($valeur) > 0) {
@@ -3503,14 +3495,9 @@ class SaisieDonneesController extends Controller {
                     $mail->attach(\Swift_Attachment::fromPath($pathBase . '/' . '/' . $user->getId() . '_' . $dateDepot->format('Y-m-d-H') . '_rapport.csv'));
                     $mailer->send($mail);
                     $message = 'un email  vous a été envoyé avec en pièce jointe le fichier rapport du dépôt ';
-                    $notification = new Notification();
-                    $notification->setRecepteur($user->getId());
-                    $notification->setEmetteur($user->getId());
-                    $notification->setNouveau(true);
-                    $notification->setIteration(2);
-                    $notification->setMessage($message);
-                    $em->persist($notification);
-                    $em->flush();
+
+                    $notifications = $this->get('aeag.notifications');
+                    $notifications->createNotification($user, $user, $em, $session, $message);
                 }
             }
         }
@@ -5693,6 +5680,88 @@ class SaisieDonneesController extends Controller {
 
 // III.1 Champs non renseignés (valeurs et code remarque) ou valeurs non numériques ou valeurs impossibles params env / code remarque peut ne pas être renseigné pour cette liste (car réponse en edilabo 1.0) => avertissement
         $result = $controleVraisemblance->champsNonRenseignes($mesure, $codeRq, $codeParametre, $inSitu);
+
+        if (is_bool($result)) {
+            $result = $controleVraisemblance->valeursNumeriques($mesure, $codeRq);
+        }
+        if (is_bool($result)) {
+            $result = $controleVraisemblance->valeursEgalZero($mesure, $codeParametre, $inSitu);
+        }
+        if (is_bool($result)) {
+            $result = $controleVraisemblance->valeursInfZero($mesure, $codeParametre);
+        }
+        if (is_bool($result)) {
+            $result = $controleVraisemblance->valeursSupTrois($codeParametre, $codeRq);
+        }
+        if (is_bool($result)) {
+            if ($codeParametre == '1302') {
+                $result = $controleVraisemblance->pH($mesure);
+            }
+        }
+
+        if (is_bool($result)) {
+
+// III.12 Valeur de pourcentage hors 1312 oxygène (ex : matière sèche ou granulo) : non compris entre 0 et 100 si code unité = 243 ou 246
+            if ($unite == '243' or $unite == '246') {
+                if ($codeParametre != '1312') {
+                    if ($mesure < 0 or $mesure > 100) {
+                        $tabStatut['ko'] = $tabStatut['ko'] + 1;
+                        $tabStatut['statut'] = 2;
+                        $tabStatut['libelle'] = 'Valeur pourcentage : pourcentage n\'est pas entre 0 et 100';
+                    }
+                }
+            }
+
+            //  Résultat d’analyse< Valeur max de la base
+
+            $pgProgUnitesPossiblesParam = $repoPgProgUnitesPossiblesParam->getPgProgUnitesPossiblesParamByCodeParametreCodeUniteNatureFraction($codeParametre, $unite, $fraction);
+            if ($pgProgUnitesPossiblesParam) {
+                if (strlen($pgProgUnitesPossiblesParam->getValMax()) > 0) {
+                    if ($mesure > $pgProgUnitesPossiblesParam->getValMax()) {
+                        $tabStatut['ko'] = $tabStatut['ko'] + 1;
+                        $tabStatut['statut'] = 2;
+                        $tabStatut['libelle'] = 'Valeur doit être inferieure à ' . $pgProgUnitesPossiblesParam->getValMax();
+                    }
+                }
+            }
+        }
+
+        if (!is_bool($result)) {
+            $tabRetour = $result;
+            if ($tabRetour[0] == 'warning') {
+                $tabStatut['statut'] = 1;
+            } else {
+                $tabStatut['statut'] = 2;
+            }
+            $tabStatut['libelle'] = $tabRetour[1];
+            $tabStatut['ko'] = $tabStatut['ko'] + 1;
+        }
+
+        return $tabStatut;
+    }
+
+    protected function _controleVraisemblance_fichier($parametre, $valeur, $remarque, $unite, $lqM, $inSitu, $fraction, $tabStatut) {
+
+        $session = $this->get('session');
+        $session->set('menu', 'donnees');
+        $session->set('controller', 'SaisieDonnees');
+        $session->set('fonction', '_controleVraisemblance');
+
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+        $repoPgProgUnitesPossiblesParam = $emSqe->getRepository('AeagSqeBundle:PgProgUnitesPossiblesParam');
+        $controleVraisemblance = $this->get('aeag_sqe.controle_vraisemblance');
+
+// Contrôles sur toutes les valeurs insérées
+        $mesure = $valeur;
+        $codeRq = $remarque;
+        $codeParametre = $parametre;
+
+
+// III.1 Champs non renseignés (valeurs et code remarque) ou valeurs non numériques ou valeurs impossibles params env / code remarque peut ne pas être renseigné pour cette liste (car réponse en edilabo 1.0) => avertissement
+        $result = $controleVraisemblance->champsNonRenseignes($mesure, $codeRq, $codeParametre, $inSitu);
+        if (is_bool($result)) {
+            $result = $controleVraisemblance->testsComplementaires($mesure, $codeRq, $inSitu, $lqM);
+        }
         if (is_bool($result)) {
             $result = $controleVraisemblance->valeursNumeriques($mesure, $codeRq);
         }

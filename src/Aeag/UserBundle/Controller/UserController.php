@@ -34,10 +34,6 @@ class UserController extends Controller {
         $session = $this->get('session');
         $session->set('retourErreur', $this->generateUrl('AeagUserBundle_User', array('role' => $role)));
         $user = $this->getUser();
-        if (is_object($user)) {
-            $mes = AeagController::notificationAction($user, $em, $session);
-            $mes1 = AeagController::messageAction($user, $em, $session);
-        }
 
         $session->set('menu', 'acteurs');
         $repoUsers = $em->getRepository('AeagUserBundle:User');
@@ -113,10 +109,6 @@ class UserController extends Controller {
         $em = $this->getDoctrine()->getManager();
         $session = $this->get('session');
         $user = $this->getUser();
-        if (is_object($user)) {
-            $mes = AeagController::notificationAction($user, $em, $session);
-            $mes1 = AeagController::messageAction($user, $em, $session);
-        }
 
         $entity = $em->getRepository('AeagUserBundle:User')->find($id);
 
@@ -295,8 +287,6 @@ class UserController extends Controller {
                     $utilisateur->addRole('ROLE_COMMENTATEUR');
                 } elseif ($entity->hasRole('ROLE_SUPERVISEUREDL')) {
                     $utilisateur->addRole('ROLE_SUPERVISEUR');
-                } elseif ($entity->hasRole('ROLE_ADMINEDL')) {
-                    $utilisateur->addRole('ROLE_ADMIN');
                 }
 
 //                $roles = $utilisateur->getRoles();
@@ -317,15 +307,9 @@ class UserController extends Controller {
                 $emEdl->flush();
             }
 
-            $repoNotifications = $em->getRepository('AeagAeagBundle:Notification');
-            $notification = new Notification();
-            $notification->setRecepteur($entity->getId());
-            $notification->setEmetteur($user->getId());
-            $notification->setNouveau(true);
-            $notification->setIteration(2);
-            $notification->setMessage('Votre compte a été crée.');
-            $em->persist($notification);
-            $em->flush();
+            $notifications = $this->get('aeag.notifications');
+            $texte = 'Votre compte a été crée.';
+            $notifications->createNotification($user, $user, $em, $session, $texte);
 
 
             if ($security->isGranted('ROLE_ADMIN')) {
@@ -564,8 +548,6 @@ class UserController extends Controller {
                     $utilisateur->addRole('ROLE_COMMENTATEUR');
                 } elseif ($entity->hasRole('ROLE_SUPERVISEUREDL')) {
                     $utilisateur->addRole('ROLE_SUPERVISEUR');
-                } elseif ($entity->hasRole('ROLE_ADMINEDL')) {
-                    $utilisateur->addRole('ROLE_ADMIN');
                 }
 
                 $emEdl->persist($utilisateur);
@@ -584,16 +566,9 @@ class UserController extends Controller {
                 $emEdl->flush();
             }
 
-            $repoNotifications = $em->getRepository('AeagAeagBundle:Notification');
-            $notification = new Notification();
-            $notification->setRecepteur($entity->getId());
-            $notification->setEmetteur($user->getId());
-            $notification->setNouveau(true);
-            $notification->setIteration(2);
-            $notification->setMessage('Votre compte a été mis à jour.');
-            $em->persist($notification);
-            $em->flush();
-
+            $notifications = $this->get('aeag.notifications');
+            $texte = 'Votre compte a été mis à jour.';
+            $notifications->createNotification($user, $user, $em, $session, $texte);
 
             if ($security->isGranted('ROLE_ADMIN')) {
                 return $this->redirect($this->generateUrl('AeagUserBundle_User', array('role' => 'ROLE_AEAG')));

@@ -32,10 +32,7 @@ class SuiviHydrobioController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
-        if (is_object($user)) {
-            $mes = AeagController::notificationAction($user, $em, $session);
-            $mes1 = AeagController::messageAction($user, $em, $session);
-        } else {
+        if (!is_object($user)) {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
 
@@ -164,10 +161,7 @@ class SuiviHydrobioController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
-        if (is_object($user)) {
-            $mes = AeagController::notificationAction($user, $em, $session);
-            $mes1 = AeagController::messageAction($user, $em, $session);
-        } else {
+        if (!is_object($user)) {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
 
@@ -379,6 +373,7 @@ class SuiviHydrobioController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
+        $repoUsers = $em->getRepository('AeagUserBundle:User');
         $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
         $repoPgRefStationMesure = $emSqe->getRepository('AeagSqeBundle:PgRefStationMesure');
         $repoPgSandreSupports = $emSqe->getRepository('AeagSqeBundle:PgSandreSupports');
@@ -805,15 +800,10 @@ class SuiviHydrobioController extends Controller {
                     if ($trouve) {
                         // Envoi d'un mail
                         if ($this->get('aeag_sqe.message')->envoiMessage($emSqe, $mailer, $txtMessage, $destinataire, $objetMessage)) {
-                            $message = 'un email  vous a été envoyé par ' . $pgProgWebUser->getNom() . ' suite à l\'intégration de plusieurs fichiers de terrain ' . CHR(13) . CHR(10) . ' sur le lot ' . $pgProgLot->getNomLot() . ' pour la période du ' . $pgProgPeriode->getDateDeb()->format('d/m/Y') . ' au ' . $dateFin->format('d/m/Y');
-                            $notification = new Notification();
-                            $notification->setRecepteur($destinataire->getExtId());
-                            $notification->setEmetteur($user->getId());
-                            $notification->setNouveau(true);
-                            $notification->setIteration(2);
-                            $notification->setMessage($message);
-                            $em->persist($notification);
-                            $em->flush();
+                            $texte = 'un email  vous a été envoyé par ' . $pgProgWebUser->getNom() . ' suite à l\'intégration de plusieurs fichiers de terrain ' . CHR(13) . CHR(10) . ' sur le lot ' . $pgProgLot->getNomLot() . ' pour la période du ' . $pgProgPeriode->getDateDeb()->format('d/m/Y') . ' au ' . $dateFin->format('d/m/Y');
+                            $notifications = $this->get('aeag.notifications');
+                            $userDest = $repoUsers->getUserById($destinataire->getExtId());
+                            $notifications->createNotification($user, $userDest, $em, $session, $texte);
                         } else {
                             $session->getFlashBag()->add('notice-warning', 'Le dépôt a été traité, mais l\'email n\'a pas pu être envoyé à ' . $destinataire->getNom());
                         }
@@ -837,15 +827,10 @@ class SuiviHydrobioController extends Controller {
 
                 $mail->attach(\Swift_Attachment::fromPath($pathRapport . '/' . $ficRapport));
                 $mailer->send($mail);
-                $message = 'un email  vous a été envoyé avec en pièce jointe le fichier rapport du dépôt ';
-                $notification = new Notification();
-                $notification->setRecepteur($user->getId());
-                $notification->setEmetteur($user->getId());
-                $notification->setNouveau(true);
-                $notification->setIteration(2);
-                $notification->setMessage($message);
-                $em->persist($notification);
-                $em->flush();
+
+                $texte = 'un email  vous a été envoyé avec en pièce jointe le fichier rapport du dépôt ';
+                $notifications = $this->get('aeag.notifications');
+                $notifications->createNotification($user, $user, $em, $session, $texte);
             }
         }
 
@@ -932,6 +917,7 @@ class SuiviHydrobioController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
+        $repoUsers = $em->getRepository('AeagUserBundle:User');
         $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
         $repoPgRefStationMesure = $emSqe->getRepository('AeagSqeBundle:PgRefStationMesure');
         $repoPgSandreSupports = $emSqe->getRepository('AeagSqeBundle:PgSandreSupports');
@@ -1393,15 +1379,10 @@ class SuiviHydrobioController extends Controller {
                     if ($trouve) {
                         // Envoi d'un mail
                         if ($this->get('aeag_sqe.message')->envoiMessage($emSqe, $mailer, $txtMessage, $destinataire, $objetMessage)) {
-                            $message = 'un email  vous a été envoyé par ' . $pgProgWebUser->getNom() . ' suite à l\'intégration de plusieurs fichiers de terrain ' . CHR(13) . CHR(10) . ' sur le lot ' . $pgProgLot->getNomLot() . ' pour la période du ' . $pgProgPeriode->getDateDeb()->format('d/m/Y') . ' au ' . $dateFin->format('d/m/Y');
-                            $notification = new Notification();
-                            $notification->setRecepteur($destinataire->getExtId());
-                            $notification->setEmetteur($user->getId());
-                            $notification->setNouveau(true);
-                            $notification->setIteration(2);
-                            $notification->setMessage($message);
-                            $em->persist($notification);
-                            $em->flush();
+                            $texte = 'un email  vous a été envoyé par ' . $pgProgWebUser->getNom() . ' suite à l\'intégration de plusieurs fichiers de terrain ' . CHR(13) . CHR(10) . ' sur le lot ' . $pgProgLot->getNomLot() . ' pour la période du ' . $pgProgPeriode->getDateDeb()->format('d/m/Y') . ' au ' . $dateFin->format('d/m/Y');
+                            $notifications = $this->get('aeag.notifications');
+                            $userDest = $repoUsers->getUserById($destinataire->getExtId());
+                            $notifications->createNotification($user, $userDest, $em, $session, $texte);
                         } else {
                             $session->getFlashBag()->add('notice-warning', 'Le dépôt a été traité, mais l\'email n\'a pas pu être envoyé à ' . $destinataire->getNom());
                         }
@@ -1429,15 +1410,9 @@ class SuiviHydrobioController extends Controller {
 
                 $mail->attach(\Swift_Attachment::fromPath($pathBase . '/' . '/' . $user->getId() . '_' . $dateDepot->format('Y-m-d-H') . '_rapport.csv'));
                 $mailer->send($mail);
-                $message = 'un email  vous a été envoyé avec en pièce jointe le fichier rapport du dépôt ';
-                $notification = new Notification();
-                $notification->setRecepteur($user->getId());
-                $notification->setEmetteur($user->getId());
-                $notification->setNouveau(true);
-                $notification->setIteration(2);
-                $notification->setMessage($message);
-                $em->persist($notification);
-                $em->flush();
+                $texte = 'un email  vous a été envoyé avec en pièce jointe le fichier rapport du dépôt ';
+                $notifications = $this->get('aeag.notifications');
+                $notifications->createNotification($user, $user, $em, $session, $texte);
             }
         }
 
@@ -2093,6 +2068,7 @@ class SuiviHydrobioController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
+        $repoUsers = $em->getRepository('AeagUserBundle:User');
         $repoPgRefStationMesure = $emSqe->getRepository('AeagSqeBundle:PgRefStationMesure');
         $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
         $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
@@ -2457,15 +2433,10 @@ class SuiviHydrobioController extends Controller {
                     if ($trouve) {
                         // Envoi d'un mail
                         if ($this->get('aeag_sqe.message')->envoiMessage($emSqe, $mailer, $txtMessage, $destinataire, $objetMessage)) {
-                            $message = 'un email  vous a été envoyé par ' . $pgProgWebUser->getNom() . ' suite à l\'intégration de plusieurs fichiers de terrain ' . CHR(13) . CHR(10) . ' sur le lot ' . $pgProgLot->getNomLot() . ' pour la période du ' . $pgProgPeriode->getDateDeb()->format('d/m/Y') . ' au ' . $dateFin->format('d/m/Y');
-                            $notification = new Notification();
-                            $notification->setRecepteur($destinataire->getExtId());
-                            $notification->setEmetteur($user->getId());
-                            $notification->setNouveau(true);
-                            $notification->setIteration(2);
-                            $notification->setMessage($message);
-                            $em->persist($notification);
-                            $em->flush();
+                            $texte = 'un email  vous a été envoyé par ' . $pgProgWebUser->getNom() . ' suite à l\'intégration de plusieurs fichiers de terrain ' . CHR(13) . CHR(10) . ' sur le lot ' . $pgProgLot->getNomLot() . ' pour la période du ' . $pgProgPeriode->getDateDeb()->format('d/m/Y') . ' au ' . $dateFin->format('d/m/Y');
+                            $notifications = $this->get('aeag.notifications');
+                            $userDest = $repoUsers->getUserById($destinataire->getExtId());
+                            $notifications->createNotification($user, $userDest, $em, $session, $texte);
                         } else {
                             $session->getFlashBag()->add('notice-warning', 'Le dépôt a été traité, mais l\'email n\'a pas pu être envoyé à ' . $destinataire->getNom());
                         }
@@ -2489,15 +2460,9 @@ class SuiviHydrobioController extends Controller {
 
                 $mail->attach(\Swift_Attachment::fromPath($pathRapport . '/' . $ficRapport));
                 $mailer->send($mail);
-                $message = 'un email  vous a été envoyé avec en pièce jointe le fichier rapport du dépôt ';
-                $notification = new Notification();
-                $notification->setRecepteur($user->getId());
-                $notification->setEmetteur($user->getId());
-                $notification->setNouveau(true);
-                $notification->setIteration(2);
-                $notification->setMessage($message);
-                $em->persist($notification);
-                $em->flush();
+                $texte = 'un email  vous a été envoyé avec en pièce jointe le fichier rapport du dépôt ';
+                $notifications = $this->get('aeag.notifications');
+                $notifications->createNotification($user, $user, $em, $session, $texte);
             }
         }
 
@@ -3141,18 +3106,9 @@ class SuiviHydrobioController extends Controller {
                     $message = $message . ' sur la station ' . $pgRefStationMesure->getCode() . " : " . $pgRefStationMesure->getLibelle() . CHR(13) . CHR(10);
                     $message = $message . ' pour le support  ' . $pgSandreSupport->getNomSupport() . CHR(13) . CHR(10);
                     $message = $message . ' à la date du ' . $pgCmdSuiviPrel->getdatePrel()->format('d/m/Y H:i') . CHR(13) . CHR(10);
-                    $notification = new Notification();
-                    $notification->setRecepteur($destinataire->getExtId());
-                    $notification->setEmetteur($user->getId());
-                    $notification->setNouveau(true);
-                    $notification->setIteration(2);
-                    $notification->setMessage($message);
-                    $em->persist($notification);
-                    $em->flush();
+                    $notifications = $this->get('aeag.notifications');
                     $userDest = $repoUsers->getUserById($destinataire->getExtId());
-                    if ($userDest) {
-                        $mes = AeagController::notificationAction($userDest, $em, $session);
-                    }
+                    $notifications->createNotification($user, $userDest, $em, $session, $message);
                 } else {
                     $session->getFlashBag()->add('notice-warning', ' l\'email n\'a pas pu être envoyé à ' . $destinataire->getNom());
                 }

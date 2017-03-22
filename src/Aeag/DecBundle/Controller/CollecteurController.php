@@ -45,11 +45,6 @@ class CollecteurController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
 
-        if (is_object($user)) {
-            $mes = AeagController::notificationAction($user, $em, $session);
-            $mes1 = AeagController::messageAction($user, $em, $session);
-        }
-
         $repoOuvrage = $em->getRepository('AeagAeagBundle:Ouvrage');
         $repoDeclarationCollecteur = $emDec->getRepository('AeagDecBundle:DeclarationCollecteur');
         $repoSousDeclarationCollecteur = $emDec->getRepository('AeagDecBundle:SousDeclarationCollecteur');
@@ -135,20 +130,11 @@ class CollecteurController extends Controller {
                 $emDec->persist($entity);
                 $emDec->flush();
 
-                $notification = new Notification();
-                $notification->setRecepteur($user->getId());
-                $notification->setEmetteur($user->getId());
-                $notification->setNouveau(true);
-                $notification->setIteration(2);
-                $notification->setMessage('Votre compte a été mis à jour.');
-                $emDec->persist($notification);
-                $emDec->flush();
-                $notifications = $repoNotifications->getNotificationByRecepteur($user);
-                $session->set('Notifications', $notifications);
+                $notifications = $this->get('aeag.notifications');
+                $texte = 'Votre compte a été mis à jour.';
+                $notifications->createNotification($user, $user, $em, $session, $texte);
 
 //$this->get('session')->getFlashBag()->add('notice', 'Vous avez un nouveau message');
-
-
                 return $this->redirect($this->generateUrl('aeag_dec'));
             }
         }
@@ -196,24 +182,14 @@ class CollecteurController extends Controller {
 
             $form->handleRequest($request);
             if ($form->isValid()) {
-                $message = new Message();
-                $message->setRecepteur($admin->getId());
-                $message->setEmetteur($user->getid());
-                $message->setNouveau(true);
-                $message->setIteration(2);
+                $messages = $this->get('aeag.messages');
                 $texte = $envoyerMessage->getMessage();
-                $message->setMessage($texte);
-                $em->persist($message);
-                $notification = new Notification();
-                $notification->setRecepteur($user->getId());
-                $notification->setEmetteur($user->getId());
-                $notification->setNouveau(true);
-                $notification->setIteration(2);
-                $notification->setMessage('Message envoyé à ' . $admin->getUsername());
-                $em->persist($notification);
-                $em->flush();
-                $notifications = $repoNotifications->getNotificationByRecepteur($user);
-                $session->set('Notifications', $notifications);
+                $messages->createMessage($user, $admin, $em, $session, $texte);
+
+                $notifications = $this->get('aeag.notifications');
+                $texte = 'Message envoyé à ' . $admin->getUsername();
+                $notifications->createNotification($user, $user, $em, $session, $texte);
+
 
 // Récupération du service.
                 $mailer = $this->get('mailer');
@@ -1017,16 +993,10 @@ class CollecteurController extends Controller {
                 $emDec->persist($ouvrage);
                 $emDec->flush();
 
-                $notification = new Notification();
-                $notification->setRecepteur($user->getId());
-                $notification->setEmetteur($user->getId());
-                $notification->setNouveau(true);
-                $notification->setIteration(2);
-                $notification->setMessage('Le collecteur ' . $ouvrage->getNumero() . ' a été mis à jour.');
-                $emDec->persist($notification);
-                $emDec->flush();
-                $notifications = $repoNotifications->getNotificationByRecepteur($user);
-                $session->set('Notifications', $notifications);
+                $notifications = $this->get('aeag.notifications');
+                $texte = 'Le collecteur ' . $ouvrage->getNumero() . ' a été mis à jour.';
+                $notifications->createNotification($user, $user, $em, $session, $texte);
+
 
 //$this->get('session')->getFlashBag()->add('notice', 'Vous avez un nouveau message');
 
@@ -1206,8 +1176,6 @@ class CollecteurController extends Controller {
         $repoParametre = $emDec->getRepository('AeagDecBundle:Parametre');
 
         if (is_object($user)) {
-            $mes = AeagController::notificationAction($user, $em, $session);
-            $mes1 = AeagController::messageAction($user, $em, $session);
             $tabMail = split("@", $user->getEmail());
             if ($tabMail[1] == "a-renseigner-merci.svp") {
                 $valider = 'N';
@@ -1475,16 +1443,12 @@ class CollecteurController extends Controller {
 
             if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMINDEC')) {
                 foreach ($correspondants as $cor) {
-                    $notification = new Notification();
                     $correspondant = $repoCorrespondant->getCorrespondantById($cor->getCorrespondant()->getId());
                     $userOdecs = $repoUser->getUserByCorrespondant($correspondant->getId());
+                    $notifications = $this->get('aeag.notifications');
+                    $texte = "La déclaration n° " . $sousDeclarationCollecteur->getNumero() . " a été approuvée par le responsable de l'agence de l'eau.";
                     foreach ($userOdecs as $userOdec) {
-                        $notification->setRecepteur($userOdec->getid());
-                        $notification->setEmetteur($user->getId());
-                        $notification->setNouveau(true);
-                        $notification->setIteration(2);
-                        $notification->setMessage("La déclaration n° " . $sousDeclarationCollecteur->getNumero() . " a été approuvée par le responsable de l'agence de l'eau.");
-                        $em->persist($notification);
+                        $notifications->createNotification($user, $userOdec, $em, $session, $texte);
                     }
                 }
                 $em->flush();
@@ -1597,16 +1561,12 @@ class CollecteurController extends Controller {
         }
 
         foreach ($correspondants as $cor) {
-            $notification = new Notification();
             $correspondant = $repoCorrespondant->getCorrespondantById($cor->getCorrespondant()->getId());
             $userOdecs = $repoUser->getUserByCorrespondant($correspondant->getId());
+            $notifications = $this->get('aeag.notifications');
+            $texte = "La déclaration n° " . $sousDeclarationCollecteur->getNumero() . " a été remise en préparation par le responsable de l'agence de l'eau. ";
             foreach ($userOdecs as $userOdec) {
-                $notification->setRecepteur($userOdec->getId());
-                $notification->setEmetteur($user->getId());
-                $notification->setNouveau(true);
-                $notification->setIteration(2);
-                $notification->setMessage("La déclaration n° " . $sousDeclarationCollecteur->getNumero() . " a été remise en préparation par le responsable de l'agence de l'eau. ");
-                $em->persist($notification);
+                $notifications->createNotification($user, $userOdec, $em, $session, $texte);
             }
         }
         $em->flush();

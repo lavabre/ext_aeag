@@ -13,7 +13,7 @@ use Aeag\AeagBundle\Controller\AeagController;
 class DefaultController extends Controller {
 
     public function indexAction() {
-        
+
         $user = $this->getUser();
         $session = $this->get('session');
         $session->set('appli', 'dec');
@@ -23,7 +23,7 @@ class DefaultController extends Controller {
         $session->set('fonction', 'index');
         $em = $this->get('doctrine')->getManager();
         $emDec = $this->get('doctrine')->getManager('dec');
-     
+
         $ua = $this->getBrowser();
 //        $yourbrowser= "Your browser: " . $ua['name'] . " " . $ua['version'] . " on " .$ua['platform'] . " reports: <br >" . $ua['userAgent'];
 //        print_r($yourbrowser);
@@ -58,10 +58,6 @@ class DefaultController extends Controller {
             }
         }
 
-        if (is_object($user)) {
-            $mes = AeagController::notificationAction($user, $em, $session);
-            $mes1 = AeagController::messageAction($user, $em, $session);
-          }
 
         if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMINDEC')) {
             $session->set('role', 'ROLE_ADMINDEC');

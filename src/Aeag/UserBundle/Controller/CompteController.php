@@ -85,37 +85,17 @@ class CompteController extends Controller {
 
                 $userManager->updateUser($user);
 
-                $repoNotifications = $em->getRepository('AeagAeagBundle:Notification');
-                $notification = new Notification();
-                $notification->setRecepteur($user->getId());
-                $notification->setEmetteur($user->getId());
-                $notification->setNouveau(true);
-                $notification->setIteration(2);
-                $notification->setMessage('Votre compte a été mis à jour.');
-                $em->persist($notification);
-                $em->flush();
-                $notifications = $repoNotifications->getNotificationByRecepteur($user);
-                $session->set('Notifications', $notifications);
+                $notifications = $this->get('aeag.notifications');
+                $texte = 'Votre compte a été mis à jour.';
+                $notifications->createNotification($user, $user, $em, $session, $texte);
+
 
                 // message aux administrateurs du site
                 $repoUsers = $em->getRepository('AeagUserBundle:User');
-                $admins = $repoUsers->getUsersByRole('ROLE_ADMINDEC');
+                $admins = $repoUsers->getUsersByRole('ROLE_ADMIN');
                 foreach ($admins as $admin) {
-                    $notification = new Notification();
-                    $notification->setRecepteur($admin->getId());
-                    $notification->setEmetteur($user->getId());
-                    $notification->setNouveau(true);
-                    $notification->setIteration(2);
-                    $notification->setMessage('Mon compte a été modifié.');
-                    $em->persist($notification);
-                    $em->flush();
-                }
-
-                if (is_object($user)) {
-                    $mes = AeagController::notificationAction($user, $em, $session);
-                    $mes1 = AeagController::messageAction($user, $em, $session);
-                } else {
-                    return $this->redirect($this->generateUrl('fos_user_security_login'));
+                    $texte = 'Mon compte a été modifié.';
+                    $notifications->createNotification($user, $user, $em, $session, $texte);
                 }
 
 
@@ -136,12 +116,15 @@ class CompteController extends Controller {
     }
 
     public function editAction(Request $request) {
+
+        $session = $this->get('session');
         $user = $this->getUser();
         $userHold = clone($user);
         if (!is_object($user) || !$user instanceof UserInterface) {
             throw new AccessDeniedException('This user does not have access to this section.');
         }
 
+        $em = $this->getDoctrine()->getEntityManager();
         $emSqe = $this->get('doctrine')->getManager('sqe');
         $repoPgProgWebusers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
 
@@ -167,8 +150,8 @@ class CompteController extends Controller {
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-             $user->setRoles($userHold->getRoles());
-               /** @var $userManager \FOS\UserBundle\Model\UserManagerInterface */
+            $user->setRoles($userHold->getRoles());
+            /** @var $userManager \FOS\UserBundle\Model\UserManagerInterface */
             $userManager = $this->get('fos_user.user_manager');
 
             $event = new FormEvent($form, $request);
@@ -176,7 +159,7 @@ class CompteController extends Controller {
 
             $userManager->updateUser($user);
 
-            
+
             $pgProgWebuser = $repoPgProgWebusers->getPgProgWebusersByExtid($user->getId());
             if ($pgProgWebuser) {
                 $pgProgWebuser->setMail($user->getEmail());
@@ -184,6 +167,10 @@ class CompteController extends Controller {
                 $emSqe->persist($pgProgWebuser);
                 $emSqe->flush();
             }
+
+            $notifications = $this->get('aeag.notifications');
+            $texte = 'Votre compte a été mis à jour.';
+            $notifications->createNotification($user, $user, $em, $session, $texte);
 
             if (null === $response = $event->getResponse()) {
                 $url = $this->generateUrl('fos_user_profile_show');
@@ -196,7 +183,7 @@ class CompteController extends Controller {
         }
 
 //         \Symfony\Component\VarDumper\VarDumper::dump($user->getRoles());
-//          return new Response (''); 
+//          return new Response ('');
 
         return $this->render('AeagUserBundle:Profile:edit.html.twig', array(
                     'form' => $form->createView()

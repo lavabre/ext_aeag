@@ -21,7 +21,7 @@ class AeagController extends Controller {
 
     public function indexAction() {
 
-        $user = $this->getUser();
+        //       $user = $this->getUser();
 //         if (!$user) {
 //            return $this->render('AeagAeagBundle:Default:interdit.html.twig');
 //        }
@@ -33,9 +33,11 @@ class AeagController extends Controller {
 
         $security = $this->get('security.authorization_checker');
 
+        $token = $this->get('security.token_storage')->getToken();
+        $user = $token->getUser();
 
-        $session->clear();
-        \apc_clear_cache();
+//        $session->clear();
+//        \apc_clear_cache();
 
 
         $session->set('retourErreur', $this->generateUrl('aeag_homepage'));
@@ -44,10 +46,7 @@ class AeagController extends Controller {
             $session->set('appli', 'aeag');
         }
 
-        if (is_object($user)) {
-            $mes = $this->notificationAction($user, $em, $session);
-            $mes1 = $this->messageAction($user, $em, $session);
-        } else {
+        if (!is_object($user)) {
             return $this->redirect($this->generateUrl('fos_user_security_login'));
         }
 
@@ -98,7 +97,7 @@ class AeagController extends Controller {
 //        return $this->render('AeagAeagBundle:Default:index.html.twig', array('roles' => $roles));
     }
 
-    public function envoyerMessageAllAction($id = nul, Request $request) {
+    public function envoyerMessageAllAction($id = null, Request $request) {
 
         $user = $this->getUser();
         if (!$user) {
@@ -197,42 +196,25 @@ class AeagController extends Controller {
 
             $form->handleRequest($request);
             if ($form->isValid()) {
-
-                foreach ($utilisateurs as $utilisateur) {
-                    $message = new Message();
-                    $message->setRecepteur($utilisateur->getId());
-                    $message->setEmetteur($user->getid());
-                    $message->setNouveau(true);
-                    $message->setIteration(2);
-                    $texte = $envoyerMessageAll->getMessage();
-                    $message->setMessage($texte);
-                    $em->persist($message);
+                $messages = $this->get('aeag.messages');
+                $texte = $envoyerMessageAll->getMessage();
+                foreach ($envoyerMessageAll->getDestinataire() as $destinataire) {
+                    $messages->createMessage($user, $destinataire, $em, $session, $texte);
                 }
 
-                $notification = new Notification();
-                $notification->setRecepteur($user->getId());
-                $notification->setEmetteur($user->getId());
-                $notification->setNouveau(true);
-                $notification->setIteration(2);
-                $notification->setMessage('Message envoyé à tous les utilisateurs ');
-                $em->persist($notification);
-                $em->flush();
-
-                if (is_object($user)) {
-                    $mes = $this->notificationAction($user, $em, $session);
-                    $mes1 = $this->messageAction($user, $em, $session);
-                }
+                $notifications = $this->get('aeag.notifications');
+                $notifications->createNotification($user, $user, $em, $session, 'Message envoyé à tous les utilisateurs');
 
                 // Récupération du service.
                 $mailer = $this->get('mailer');
                 foreach ($envoyerMessageAll->getDestinataire() as $destinataire) {
                     // Création de l'e-mail : le service mailer utilise SwiftMailer, donc nous créons une instance de Swift_Message.
                     $desti = explode(" ", $destinataire);
-                    $mail = \Swift_Message::newInstance()
+                    $mail = \Swift_Message::newInstance('Wonderful Subject')
                             ->setSubject($envoyerMessageAll->getSujet())
-                            ->setFrom(array('automate@eau-adour-garonne.fr'))
+                            ->setFrom('automate@eau-adour-garonne.fr')
                             ->setTo(array($desti[0]))
-                            ->setBody($envoyerMessageAll->getMessage());
+                            ->setBody($envoyerMessageAll->getMessage(), 'text/html');
 
                     // Retour au service mailer, nous utilisons sa méthode « send() » pour envoyer notre $message.
                     $mailer->send($mail);
@@ -333,29 +315,14 @@ class AeagController extends Controller {
 
             $form->handleRequest($request);
             if ($form->isValid()) {
-                $message = new Message();
-                $message->setRecepteur($User->getId());
-                $message->setEmetteur($user->getid());
-                $message->setNouveau(true);
-                $message->setIteration(2);
+
+                $messages = $this->get('aeag.messages');
                 $texte = $envoyerMessage->getMessage();
-                $message->setMessage($texte);
-                $em->persist($message);
+                $messages->createMessage($user, $User, $em, $session, $texte);
 
 
-                $notification = new Notification();
-                $notification->setRecepteur($user->getId());
-                $notification->setEmetteur($user->getId());
-                $notification->setNouveau(true);
-                $notification->setIteration(2);
-                $notification->setMessage('Message envoyé à ' . $User->getUsername());
-                $em->persist($notification);
-                $em->flush();
-
-                if (is_object($user)) {
-                    $mes = $this->notificationAction($user, $em, $session);
-                    $mes1 = $this->messageAction($user, $em, $session);
-                }
+                $notifications = $this->get('aeag.notifications');
+                $notifications->createNotification($user, $User, $em, $session, 'Message envoyé à ' . $User->getUsername());
 
                 $maj = 'ok';
 
@@ -366,9 +333,9 @@ class AeagController extends Controller {
                 foreach ($envoyerMessage->getDestinataire() as $destinataire) {
                     // Création de l'e-mail : le service mailer utilise SwiftMailer, donc nous créons une instance de Swift_Message.
                     $desti = explode(" ", $destinataire);
-                    $mail = \Swift_Message::newInstance()
+                    $mail = \Swift_Message::newInstance('Wonderful Subject')
                             ->setSubject($envoyerMessage->getSujet())
-                            ->setFrom(array('automate@eau-adour-garonne.fr'))
+                            ->setFrom('automate@eau-adour-garonne.fr')
                             ->setTo(array($desti[0]))
                             ->setBody($envoyerMessage->getMessage());
 
@@ -528,13 +495,13 @@ class AeagController extends Controller {
 
         foreach ($entities as $entity) {
 //            if ($entity->getid() == 24) {
-                $encoder = $factory->getEncoder($entity);
-                $entity->setSalt('');
-               // $entity->setPlainPwd($entity->getPassword());
-                $password = $encoder->encodePassword($entity->getPassword(), $entity->getSalt());
-                $entity->setpassword($password);
-                $em->persist($entity);
-                $nbModifies++;
+            $encoder = $factory->getEncoder($entity);
+            $entity->setSalt('');
+            // $entity->setPlainPwd($entity->getPassword());
+            $password = $encoder->encodePassword($entity->getPassword(), $entity->getSalt());
+            $entity->setpassword($password);
+            $em->persist($entity);
+            $nbModifies++;
 //            }
         }
         $em->flush();

@@ -32,10 +32,7 @@ class SuiviEauController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
-        if (is_object($user)) {
-            $mes = AeagController::notificationAction($user, $em, $session);
-            $mes1 = AeagController::messageAction($user, $em, $session);
-        } else {
+        if (!is_object($user)) {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
 
@@ -176,10 +173,7 @@ class SuiviEauController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
-        if (is_object($user)) {
-            $mes = AeagController::notificationAction($user, $em, $session);
-            $mes1 = AeagController::messageAction($user, $em, $session);
-        } else {
+        if (!is_object($user)) {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
 
@@ -826,14 +820,9 @@ class SuiviEauController extends Controller {
                 $mail->attach(\Swift_Attachment::fromPath($pathRapport . '/' . $ficRapport));
                 $mailer->send($mail);
                 $message = 'un email  vous a été envoyé avec en pièce jointe le fichier rapport du dépôt ';
-                $notification = new Notification();
-                $notification->setRecepteur($user->getId());
-                $notification->setEmetteur($user->getId());
-                $notification->setNouveau(true);
-                $notification->setIteration(2);
-                $notification->setMessage($message);
-                $em->persist($notification);
-                $em->flush();
+
+                $notifications = $this->get('aeag.notifications');
+                $notifications->createNotification($user, $user, $em, $session, $message);
             }
         }
 
@@ -1366,14 +1355,9 @@ class SuiviEauController extends Controller {
                 $mail->attach(\Swift_Attachment::fromPath($pathBase . '/' . '/' . $user->getId() . '_' . $dateDepot->format('Y-m-d-H') . '_rapport.csv'));
                 $mailer->send($mail);
                 $message = 'un email  vous a été envoyé avec en pièce jointe le fichier rapport du dépôt ';
-                $notification = new Notification();
-                $notification->setRecepteur($user->getId());
-                $notification->setEmetteur($user->getId());
-                $notification->setNouveau(true);
-                $notification->setIteration(2);
-                $notification->setMessage($message);
-                $em->persist($notification);
-                $em->flush();
+
+                $notifications = $this->get('aeag.notifications');
+                $notifications->createNotification($user, $user, $em, $session, $message);
             }
         }
 
@@ -2301,14 +2285,9 @@ class SuiviEauController extends Controller {
                 $mail->attach(\Swift_Attachment::fromPath($pathRapport . '/' . $ficRapport));
                 $mailer->send($mail);
                 $message = 'un email  vous a été envoyé avec en pièce jointe le fichier rapport du dépôt ';
-                $notification = new Notification();
-                $notification->setRecepteur($user->getId());
-                $notification->setEmetteur($user->getId());
-                $notification->setNouveau(true);
-                $notification->setIteration(2);
-                $notification->setMessage($message);
-                $em->persist($notification);
-                $em->flush();
+
+                $notifications = $this->get('aeag.notifications');
+                $notifications->createNotification($user, $user, $em, $session, $message);
             }
         }
 

@@ -33,19 +33,16 @@ class DefaultController extends Controller {
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
         $repoUsers = $em->getRepository('AeagUserBundle:User');
         $repoPgProgPrestaTypfic = $emSqe->getRepository('AeagSqeBundle:PgProgPrestaTypfic');
-          $repoPgProgLotAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotAn');
-    
-          $annee = $repoParametre->getParametreByCode('ANNEE');
+        $repoPgProgLotAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotAn');
+
+        $annee = $repoParametre->getParametreByCode('ANNEE');
         if (!$annee) {
             $this->initBase($emSqe, $em);
         } else {
             $session->set('anneeProg', $annee->getLibelle());
         }
 
-        if (is_object($user)) {
-            $mes = AeagController::notificationAction($user, $em, $session);
-            $mes1 = AeagController::messageAction($user, $em, $session);
-        } else {
+        if (!is_object($user)) {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
 
@@ -85,7 +82,7 @@ class DefaultController extends Controller {
             $message = $this->majPgProgWebusers();
             $message = $this->initPgProgWebusers();
             // return new Response  ($message);
-           // $session->getFlashBag()->add('notice-success', $message);
+            // $session->getFlashBag()->add('notice-success', $message);
         }
 
         $suiviHb = false;
@@ -135,11 +132,11 @@ class DefaultController extends Controller {
             $suiviSED = true;
             $suiviEau = true;
         }
-        
+
         $anneeProgs = $repoPgProgLotAn->getPgProgLotAnDistinctAnnee();
         $tabAnneeProgs = array();
         $i = 0;
-        foreach($anneeProgs as $anneeProg){
+        foreach ($anneeProgs as $anneeProg) {
             $tabAnneeProgs[$i] = $anneeProg['anneeProg'];
             $i++;
         }
@@ -192,10 +189,7 @@ class DefaultController extends Controller {
         $session->set('controller', 'Default');
         $session->set('fonction', 'envoyerMessage');
         $user = $this->getUser();
-        if (is_object($user)) {
-            $mes = AeagController::notificationAction($user, $em, $session);
-            $mes1 = AeagController::messageAction($user, $em, $session);
-        } else {
+        if (!is_object($user)) {
             return $this->render('AeagSqeBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
@@ -243,31 +237,19 @@ class DefaultController extends Controller {
                 // Retour au service mailer, nous utilisons sa méthode « send() » pour envoyer notre $message.
                 $mailer->send($mail);
 
+                $messages = $this->get('aeag.messages');
                 for ($i = 0; $i < count($admins); $i++) {
                     if ($admins[$i]->getEmail() == $desti[0]) {
                         $nb++;
-                        $message = new Message();
-                        $message->setRecepteur($admins[$i]->getId());
-                        $message->setEmetteur($user->getid());
-                        $message->setNouveau(true);
-                        $message->setIteration(2);
                         $texte = $envoyerMessage->getMessage();
-                        $message->setMessage($texte);
-                        $em->persist($message);
+                        $messages->createMessage($user, $User, $em, $session, $texte);
                     }
                 }
             }
 
-            $notification = new Notification();
-            $notification->setRecepteur($user->getId());
-            $notification->setEmetteur($user->getId());
-            $notification->setNouveau(true);
-            $notification->setIteration(2);
-            $notification->setMessage('Message envoyé à ' . $nb . ' responsable(s)');
-            $em->persist($notification);
-            $em->flush();
-            $notifications = $repoNotifications->getNotificationByRecepteur($user);
-            $session->set('Notifications', $notifications);
+            $notifications = $this->get('aeag.notifications');
+            $texte = 'Message envoyé à ' . $nb . ' responsable(s)';
+            $notifications->createNotification($user, $user, $em, $session, $texte);
 
             $this->get('session')->getFlashBag()->add('notice-success', 'Message envoyé avec succès !');
 
