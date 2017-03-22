@@ -204,9 +204,7 @@ class ProcessRaiCommand extends AeagCommand {
             if (!is_null($meSituHydro) && ($meSituHydro > 0 && $meSituHydro <= 2)) {
                 $prelevRealise = false;
             }
-
             if ($prelevRealise) {
-
                 // paramètres/unité : si unité changée => erreur
                 $mesuresRps = $this->repoPgTmpValidEdilabo->getMesures($codePrelev["codePrelevement"], $demandeId, $reponseId);
                 $date = new \DateTime();
@@ -236,7 +234,7 @@ class ProcessRaiCommand extends AeagCommand {
 
                 // paramètres/unité : paramètre manquant => erreur
                 if (count($diffMiss = $this->repoPgTmpValidEdilabo->getDiffCodeParametreMissing($codePrelev["codePrelevement"], $demandeId, $reponseId)) > 0) {
-                    if (((count($diffMiss) == 1) && in_array(1429, $diffMiss)) || ($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getTypeMarche() == 'MOE' || $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getCodeMilieu()->getCodeMilieu() == 'LPC')) {
+                    if (((count($diffMiss) == 1) && in_array(1429, $diffMiss)) || (($pgCmdFichierRps->getDemande()->getAnneeProg() < 2017 || ($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getTypeMarche() != 'MOE' && $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarch()->getTypeMarche() != 'MOA')) || $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getCodeMilieu()->getCodeMilieu() == 'LPC')) {
                         $this->_addLog('warning', $demandeId, $reponseId, "Incoherence RAI/DAI: Paramètre manquant", $codePrelev["codePrelevement"], $diffMiss);
                     } else {
                         $this->_addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: Paramètre manquant", $codePrelev["codePrelevement"], $diffMiss);
@@ -254,10 +252,10 @@ class ProcessRaiCommand extends AeagCommand {
                     }
                 }
                 if (count($diff) > 0) {
-                    if ($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getTypeMarche() == 'MOE') {
-                        $this->_addLog('warning', $demandeId, $reponseId, "Incoherence RAI/DAI: Fractions différentes", $codePrelev["codePrelevement"], $diff);
-                    } else {
+                    if ($pgCmdFichierRps->getDemande()->getAnneeProg() >= 2017 && ($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getTypeMarche() == 'MOE' || $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarch()->getTypeMarche() == 'MOA')) {
                         $this->_addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: Fractions différentes", $codePrelev["codePrelevement"], $diff);
+                    } else {
+                        $this->_addLog('warning', $demandeId, $reponseId, "Incoherence RAI/DAI: Fractions différentes", $codePrelev["codePrelevement"], $diff);
                     }
                 } else {
                     //$this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : '.$codePrelev["codePrelevement"].' : fractions ok');
