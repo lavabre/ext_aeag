@@ -48,11 +48,6 @@ class FraisDeplacementController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emFrd = $this->getDoctrine()->getManager('frd');
 
-        if (is_object($user)) {
-            $mes = AeagController::notificationAction($user, $em, $session);
-            $mes1 = AeagController::messageAction($user, $em, $session);
-        }
-
 
         return $this->redirect($this->generateUrl('AeagFrdBundle_membre_consulterEtatFraisParAnnee', array('anneeSelect' => $session->get('anneeSelect'))));
     }
@@ -99,7 +94,7 @@ class FraisDeplacementController extends Controller {
             $etatFrais = new EtatFrais();
             $phase = $repoPhase->getPhaseByCode('10');
             $entities[$i]['etatFrais'] = $etatFrais;
-            $entities[$i]['mandatement'] =null;
+            $entities[$i]['mandatement'] = null;
             $entities[$i]['phase'] = $phase;
             $entities[$i]['nbFraisDeplacements'] = $nbFraisDeplacementEnCours;
             $i++;
@@ -108,12 +103,12 @@ class FraisDeplacementController extends Controller {
         foreach ($etatsFrais as $etatFrais) {
             $entities[$i]['etatFrais'] = $etatFrais;
             $mandatement = $repoMandatement->getMandatementByEtfrId($etatFrais->getId());
-            if ($mandatement){
+            if ($mandatement) {
                 $entities[$i]['mandatement'] = $mandatement;
-            }else{
-                $entities[$i]['mandatement'] =null;
+            } else {
+                $entities[$i]['mandatement'] = null;
             }
-             if ($etatFrais->getPhase() == '10') {
+            if ($etatFrais->getPhase() == '10') {
                 $codePhase = '40';
             } else {
                 $codePhase = $etatFrais->getPhase();
@@ -159,8 +154,8 @@ class FraisDeplacementController extends Controller {
         $correspondant = $repoCorrespondant->getCorrespondantById($user->getCorrespondant());
         if ($etatFraisId) {
             $etatFrais = $repoEtatFrais->getEtatFraisById($etatFraisId);
-             $mandatement = $repoMandatement->getMandatementByEtfrId($etatFrais->getId());
-             $fraisDeplacements = $repoFraisDeplacement->getFraisDeplacementByEtfrId($etatFrais->getId());
+            $mandatement = $repoMandatement->getMandatementByEtfrId($etatFrais->getId());
+            $fraisDeplacements = $repoFraisDeplacement->getFraisDeplacementByEtfrId($etatFrais->getId());
         } else {
             $etatFrais = null;
             $mandatement = null;
@@ -281,7 +276,6 @@ class FraisDeplacementController extends Controller {
         $repoPhase = $this->getDoctrine()->getManager('frd')->getRepository('AeagFrdBundle:Phase');
         $repoUsers = $em->getRepository('AeagUserBundle:User');
         $repoDept = $em->getRepository('AeagAeagBundle:Departement');
-        $repoNotifications = $em->getRepository('AeagAeagBundle:Notification');
 
         if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMINFRD')) {
             $entity = $repoFraisDeplacement->getFraisDeplacementById($id);
@@ -303,15 +297,9 @@ class FraisDeplacementController extends Controller {
         $emFrd->persist($entity);
         $emFrd->flush();
 
-        $notification = new Notification();
-        $notification->setRecepteur($user->getId());
-        $notification->setEmetteur($user->getId());
-        $notification->setNouveau(true);
-        $notification->setIteration(2);
-        $notification->setMessage('Votre demande ' . $entity->getId() . ' a été validé');
-        $em->persist($notification);
-        $em->flush();
-        $mes = AeagController::notificationAction($user, $em, $session);
+        $notifications = $this->get('aeag.notifications');
+        $texte = 'Votre demande ' . $entity->getId() . ' a été validé';
+        $notifications->createNotification($user, $user, $em, $session, $texte);
 
         $fraisDeplacement = $entity;
         $entity = array();
@@ -433,7 +421,6 @@ class FraisDeplacementController extends Controller {
         $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
         $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
         $repoUsers = $em->getRepository('AeagUserBundle:User');
-        $repoNotifications = $em->getRepository('AeagAeagBundle:Notification');
 
         if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMINFRD')) {
             $entity = $repoFraisDeplacement->getFraisDeplacementById($id);
@@ -457,16 +444,9 @@ class FraisDeplacementController extends Controller {
         $emFrd->remove($fraisDeplacement);
         $emFrd->flush();
 
-        $notification = new Notification();
-        $notification->setRecepteur($membre->getId());
-        $notification->setEmetteur($user->getId());
-        $notification->setNouveau(true);
-        $notification->setIteration(2);
-        $notification->setMessage('Votre demande n° ' . $entity[0]->getId() . ' a été supprimée.');
-        $em->persist($notification);
-        $em->flush();
-        $mes = AeagController::notificationAction($user, $em, $session);
-
+        $notifications = $this->get('aeag.notifications');
+        $texte = 'Votre demande n° ' . $entity[0]->getId() . ' a été supprimée.';
+        $notifications->createNotification($user, $user, $em, $session, $texte);
 
         return $this->render('AeagFrdBundle:FraisDeplacement:afficherLigneFraisDeplacement.html.twig', array(
                     'entity' => $entity
@@ -843,7 +823,7 @@ class FraisDeplacementController extends Controller {
     }
 
     /*
-     * envoi d'un mail au responsable 
+     * envoi d'un mail au responsable
      */
 
     public function sendAccuseResponsable($id) {
@@ -927,23 +907,15 @@ class FraisDeplacementController extends Controller {
 
             $form->handleRequest($request);
             if ($form->isValid()) {
-                $message = new Message();
-                $message->setRecepteur($admin->getId());
-                $message->setEmetteur($user->getid());
-                $message->setNouveau(true);
-                $message->setIteration(2);
+
+                $messages = $this->get('aeag.messages');
                 $texte = $envoyerMessage->getMessage();
-                $message->setMessage($texte);
-                $em->persist($message);
-                $notification = new Notification();
-                $notification->setRecepteur($user->getId());
-                $notification->setEmetteur($user->getId());
-                $notification->setNouveau(true);
-                $notification->setIteration(2);
-                $notification->setMessage('Message envoyé à ' . $admin->getUsername());
-                $em->persist($notification);
-                $em->flush();
-                $mes = AeagController::notificationAction($user, $em, $session);
+                $messages->createMessage($user, $User, $em, $session, $texte);
+
+                $notifications = $this->get('aeag.notifications');
+                $texte = 'Message envoyé à ' . $admin->getUsername();
+                $notifications->createNotification($user, $user, $em, $session, $texte);
+
 
 // Récupération du service.
                 $mailer = $this->get('mailer');

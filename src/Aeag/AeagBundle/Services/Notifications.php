@@ -22,7 +22,7 @@ class Notifications {
         $notification->setRecepteur($recepteur->getId());
         $notification->setEmetteur($emetteur->getId());
         $notification->setNouveau(true);
-        $notification->setIteration(2);
+        $notification->setIteration(5);
         $notification->setMessage($txtMessage);
         $em->persist($notification);
 

@@ -676,6 +676,7 @@ class SuiviSedimentController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
+        $repoUsers = $em->getRepository('AeagUserBundle:User');
         $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
         $repoPgProgLotGrparAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotGrparAn');
         $repoPgRefStationMesure = $emSqe->getRepository('AeagSqeBundle:PgRefStationMesure');
@@ -1178,14 +1179,9 @@ class SuiviSedimentController extends Controller {
                         // Envoi d'un mail
                         if ($this->get('aeag_sqe.message')->envoiMessage($emSqe, $mailer, $txtMessage, $destinataire, $objetMessage)) {
                             $message = 'un email  vous a été envoyé par ' . $pgProgWebUser->getNom() . ' suite à l\'intégration de plusieurs fichiers de terrain ' . CHR(13) . CHR(10) . ' sur le lot ' . $pgProgLot->getNomLot() . ' pour la période du ' . $pgProgPeriode->getDateDeb()->format('d/m/Y') . ' au ' . $dateFin->format('d/m/Y');
-                            $notification = new Notification();
-                            $notification->setRecepteur($destinataire->getExtId());
-                            $notification->setEmetteur($user->getId());
-                            $notification->setNouveau(true);
-                            $notification->setIteration(2);
-                            $notification->setMessage($message);
-                            $em->persist($notification);
-                            $em->flush();
+                            $notifications = $this->get('aeag.notifications');
+                            $userDest = $repoUsers->getUserById($destinataire->getExtId());
+                            $notifications->createNotification($user, $userDest, $em, $session, $message);
                         } else {
                             $session->getFlashBag()->add('notice-warning', 'Le dépôt a été traité, mais l\'email n\'a pas pu être envoyé à ' . $destinataire->getNom());
                         }
@@ -1209,15 +1205,9 @@ class SuiviSedimentController extends Controller {
 
                 $mail->attach(\Swift_Attachment::fromPath($pathRapport . '/' . $ficRapport));
                 $mailer->send($mail);
-                $message = 'un email  vous a été envoyé avec en pièce jointe le fichier rapport du dépôt ';
-                $notification = new Notification();
-                $notification->setRecepteur($user->getId());
-                $notification->setEmetteur($user->getId());
-                $notification->setNouveau(true);
-                $notification->setIteration(2);
-                $notification->setMessage($message);
-                $em->persist($notification);
-                $em->flush();
+                $texte = 'un email  vous a été envoyé avec en pièce jointe le fichier rapport du dépôt ';
+                $notifications = $this->get('aeag.notifications');
+                $notifications->createNotification($user, $user, $em, $session, $texte);
             }
         }
 

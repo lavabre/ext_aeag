@@ -237,31 +237,19 @@ class DefaultController extends Controller {
                 // Retour au service mailer, nous utilisons sa méthode « send() » pour envoyer notre $message.
                 $mailer->send($mail);
 
+                $messages = $this->get('aeag.messages');
                 for ($i = 0; $i < count($admins); $i++) {
                     if ($admins[$i]->getEmail() == $desti[0]) {
                         $nb++;
-                        $message = new Message();
-                        $message->setRecepteur($admins[$i]->getId());
-                        $message->setEmetteur($user->getid());
-                        $message->setNouveau(true);
-                        $message->setIteration(2);
                         $texte = $envoyerMessage->getMessage();
-                        $message->setMessage($texte);
-                        $em->persist($message);
+                        $messages->createMessage($user, $User, $em, $session, $texte);
                     }
                 }
             }
 
-            $notification = new Notification();
-            $notification->setRecepteur($user->getId());
-            $notification->setEmetteur($user->getId());
-            $notification->setNouveau(true);
-            $notification->setIteration(2);
-            $notification->setMessage('Message envoyé à ' . $nb . ' responsable(s)');
-            $em->persist($notification);
-            $em->flush();
-            $notifications = $repoNotifications->getNotificationByRecepteur($user);
-            $session->set('Notifications', $notifications);
+            $notifications = $this->get('aeag.notifications');
+            $texte = 'Message envoyé à ' . $nb . ' responsable(s)';
+            $notifications->createNotification($user, $user, $em, $session, $texte);
 
             $this->get('session')->getFlashBag()->add('notice-success', 'Message envoyé avec succès !');
 

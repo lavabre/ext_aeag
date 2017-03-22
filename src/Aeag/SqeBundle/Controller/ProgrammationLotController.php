@@ -694,9 +694,6 @@ class ProgrammationLotController extends Controller {
 
         if (is_object($user)) {
 
-            $mes = AeagController::notificationAction($user, $em, $session);
-            $mes1 = AeagController::messageAction($user, $em, $session);
-
             if ($action == 'V' && !$this->get('security.authorization_checker')->isGranted('ROLE_SQE')) {
                 return $this->render('AeagSqeBundle:Default:interdit.html.twig');
             }
@@ -1250,9 +1247,6 @@ class ProgrammationLotController extends Controller {
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
         if (is_object($user)) {
-
-            $mes = AeagController::notificationAction($user, $em, $session);
-            $mes1 = AeagController::messageAction($user, $em, $session);
 
             if ($action == 'V' && !$this->get('security.authorization_checker')->isGranted('ROLE_SQE')) {
                 return $this->render('AeagSqeBundle:Default:interdit.html.twig');
@@ -1838,11 +1832,6 @@ class ProgrammationLotController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
-        if (is_object($user)) {
-            $mes = AeagController::notificationAction($user, $em, $session);
-            $mes1 = AeagController::messageAction($user, $em, $session);
-        }
-
         $repoPgProgLot = $emSqe->getRepository('AeagSqeBundle:PgProgLot');
         $repoPgProgTypeMilieu = $emSqe->getRepository('AeagSqeBundle:PgProgTypeMilieu');
         $repoPgProgLotAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotAn');
@@ -1901,11 +1890,6 @@ class ProgrammationLotController extends Controller {
         $session->set('fonction', 'retour');
         $em = $this->get('doctrine')->getManager();
         $emSqe = $this->get('doctrine')->getManager('sqe');
-
-        if (is_object($user)) {
-            $mes = AeagController::notificationAction($user, $em, $session);
-            $mes1 = AeagController::messageAction($user, $em, $session);
-        }
 
         $repoPgProgWebusers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
         $repoPgProgMarche = $emSqe->getRepository('AeagSqeBundle:PgProgMarche');
@@ -2399,13 +2383,9 @@ class ProgrammationLotController extends Controller {
         $emSqe->persist($pgProgSuiviPhases);
 
         if (!$this->get('security.authorization_checker')->isGranted('ROLE_ADMINSQE') and $this->get('security.authorization_checker')->isGranted('ROLE_PROGSQE')) {
-            $notification = new Notification();
-            $notification->setRecepteur($user->getId());
-            $notification->setEmetteur($user->getId());
-            $notification->setNouveau(true);
-            $notification->setIteration(2);
-            $notification->setMessage("la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été soumise à la validation par " . $pgProgWebuser->getNom() . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y') . PHP_EOL);
-            $em->persist($notification);
+            $notifications = $this->get('aeag.notifications');
+            $texte = "la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été soumise à la validation par " . $pgProgWebuser->getNom() . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y') . PHP_EOL;
+            $notifications->createNotification($user, $user, $em, $session, $texte);
         }
 
         $userAdmins = $repoUsers->getUsersByRole('ROLE_ADMINSQE');
@@ -2422,30 +2402,21 @@ class ProgrammationLotController extends Controller {
                     }
                 }
                 if ($trouve) {
-                    $message = new Message();
-                    $message->setRecepteur($userAdmin->getId());
-                    $message->setEmetteur($user->getid());
-                    $message->setNouveau(true);
-                    $message->setIteration(2);
+                    $messages = $this->get('aeag.messages');
                     $texte = "Bonjour ," . PHP_EOL;
                     $texte = $texte . "La programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL;
                     $texte = $texte . " a été soumise à la validation par " . $pgProgWebuser->getNom() . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y') . PHP_EOL;
                     $texte = $texte . " " . PHP_EOL;
-                     if ($pgProgLotAn->getPhase()->getCodePhase() == 'P24') {
-                     $texte = $texte . "ATTENTION : Il y a des prestataires fictifs dans cette programmation " . PHP_EOL;
-                      $texte = $texte . " " . PHP_EOL;
-                     }
-                    $texte = $texte . "Cordialement.";
-                    $message->setMessage($texte);
-                    $em->persist($message);
+                    if ($pgProgLotAn->getPhase()->getCodePhase() == 'P24') {
+                        $texte = $texte . "ATTENTION : Il y a des prestataires fictifs dans cette programmation " . PHP_EOL;
+                        $texte = $texte . " " . PHP_EOL;
+                    }
+                    $messages->createMessage($user, $userAdmin, $em, $session, $texte);
 
-                    $notification = new Notification();
-                    $notification->setRecepteur($userAdmin->getId());
-                    $notification->setEmetteur($user->getId());
-                    $notification->setNouveau(true);
-                    $notification->setIteration(2);
-                    $notification->setMessage("la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été soumise à la validation par " . $pgProgWebuser->getNom() . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y'));
-                    $em->persist($notification);
+                    $notifications = $this->get('aeag.notifications');
+                    $texte = "la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été soumise à la validation par " . $pgProgWebuser->getNom() . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y');
+                    $notifications->createNotification($user, $userAdmin, $em, $session, $texte);
+
                     // Récupération du service.
                     $mailer = $this->get('mailer');
                     $dest = $userAdmin->getEmail() . ";";
@@ -2598,27 +2569,18 @@ class ProgrammationLotController extends Controller {
 
         $emSqe->flush();
 
-        $message = new Message();
-        $message->setRecepteur($recepteur->getId());
-        $message->setEmetteur($user->getid());
-        $message->setNouveau(true);
-        $message->setIteration(2);
+        $messages = $this->get('aeag.messages');
         $texte = "Bonjour ," . PHP_EOL;
         $texte = $texte . " " . PHP_EOL;
         $texte = $texte . "La programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL;
         $texte = $texte . " a été validée par l'administrateur " . $emetteur->getNom() . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y') . PHP_EOL;
         $texte = $texte . " " . PHP_EOL;
-        $texte = $texte . "Cordialement.";
-        $message->setMessage($texte);
-        $em->persist($message);
+        $messages->createMessage($user, $recepteur, $em, $session, $texte);
 
-        $notification = new Notification();
-        $notification->setRecepteur($recepteur->getId());
-        $notification->setEmetteur($user->getId());
-        $notification->setNouveau(true);
-        $notification->setIteration(2);
-        $notification->setMessage("la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été validé par l'administrateur " . $emetteur->getNom());
-        $em->persist($notification);
+        $notifications = $this->get('aeag.notifications');
+        $texte = "la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été validé par l'administrateur " . $emetteur->getNom();
+        $notifications->createNotification($user, $recepteur, $em, $session, $texte);
+
         // Récupération du service.
         $mailer = $this->get('mailer');
         // Création de l'e-mail : le service mailer utilise SwiftMailer, donc nous créons une instance de Swift_Message.
@@ -2708,11 +2670,7 @@ class ProgrammationLotController extends Controller {
 
         $emSqe->flush();
 
-        $message = new Message();
-        $message->setRecepteur($recepteur->getId());
-        $message->setEmetteur($user->getid());
-        $message->setNouveau(true);
-        $message->setIteration(2);
+        $messages = $this->get('aeag.messages');
         $texte = "Bonjour ," . PHP_EOL;
         $texte = $texte . " " . PHP_EOL;
         $texte = $texte . "La programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL;
@@ -2727,24 +2685,14 @@ class ProgrammationLotController extends Controller {
         $texte = $texte . " " . PHP_EOL;
         $texte = $texte . "Vous devez la modifier et la soumettre à nouveau à la validation." . PHP_EOL;
         $texte = $texte . " " . PHP_EOL;
-        $texte = $texte . "Cordialement.";
-        $message->setMessage($texte);
-        $em->persist($message);
-        $messageEmetteur = clone($message);
-        $messageEmetteur->setRecepteur($user->getid());
-        $em->persist($messageEmetteur);
+        $messages->createMessage($user, $recepteur, $em, $session, $texte);
+        $messages->createMessage($user, $user, $em, $session, $texte);
 
-        $notification = new Notification();
-        $notification->setRecepteur($recepteur->getId());
-        $notification->setEmetteur($user->getId());
-        $notification->setNouveau(true);
-        $notification->setIteration(2);
-        $notification->setMessage("la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été refusée par l'administrateur " . $emetteur->getNom() . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y'));
-        $em->persist($notification);
-        $notificationEmetteur = clone($notification);
-        $notificationEmetteur->setRecepteur($user->getid());
-        $em->persist($notificationEmetteur);
-        
+        $notifications = $this->get('aeag.notifications');
+        $texte = "la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été refusée par l'administrateur " . $emetteur->getNom() . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y');
+        $notifications->createNotification($user, $recepteur, $em, $session, $texte);
+        $notifications->createNotification($user, $user, $em, $session, $texte);
+
         // Récupération du service.
         $mailer = $this->get('mailer');
         // Envoi au recepteur
@@ -2758,7 +2706,7 @@ class ProgrammationLotController extends Controller {
                     'motifRefus' => $motifRefus,
         )));
         $mailer->send($mail);
-        
+
         // Envoi a l'emetteur
         $mail = \Swift_Message::newInstance('Wonderful Subject')
                 ->setSubject('Programmation ' . $pgProgLotAn->getAnneeProg() . ' version ' . $pgProgLotAn->getVersion() . ' du lot  ' . $pgProgLotAn->getLot()->getNomLot() . '  refusée')

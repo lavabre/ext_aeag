@@ -39,9 +39,6 @@ class ProgrammationBilanController extends Controller {
 
         if (is_object($user)) {
 
-            $mes = AeagController::notificationAction($user, $em, $session);
-            $mes1 = AeagController::messageAction($user, $em, $session);
-
             if ($action == 'V' && !$this->get('security.authorization_checker')->isGranted('ROLE_SQE')) {
                 return $this->render('AeagSqeBundle:Default:interdit.html.twig');
             }

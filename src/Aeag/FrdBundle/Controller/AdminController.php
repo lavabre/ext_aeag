@@ -20,12 +20,12 @@ class AdminController extends Controller {
             return $this->render('AeagFrdBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-       $session->set('menu', 'Frais');
+        $session->set('menu', 'Frais');
         $session->set('controller', 'Admin');
         $session->set('fonction', 'index');
         $em = $this->get('doctrine')->getManager();
         $emFrd = $this->getDoctrine()->getManager('frd');
-        
+
         $repoStatistiques = $em->getRepository('AeagUserBundle:Statistiques');
         $nbStatistiques = $repoStatistiques->getNbStatistiques();
 
@@ -39,12 +39,11 @@ class AdminController extends Controller {
         }
         $annee = new \DateTime($annee->getLibelle());
         $session->set('annee', $annee);
-        
-        return $this->redirect($this->generateUrl('AeagFrdBundle_admin_consulterEtatFraisParAnnee', 
-                array('anneeSelect' => date_format($session->get('annee'), 'Y'),
-                     'nbStatistiques' => $nbStatistiques
-                )));
-        }
+
+        return $this->redirect($this->generateUrl('AeagFrdBundle_admin_consulterEtatFraisParAnnee', array('anneeSelect' => date_format($session->get('annee'), 'Y'),
+                            'nbStatistiques' => $nbStatistiques
+        )));
+    }
 
     public function validerFraisDeplacementAction() {
 
@@ -69,7 +68,6 @@ class AdminController extends Controller {
         $repoPhase = $this->getDoctrine()->getManager('frd')->getRepository('AeagFrdBundle:Phase');
         $repoUsers = $em->getRepository('AeagUserBundle:User');
         $repoDept = $em->getRepository('AeagAeagBundle:Departement');
-        $repoNotifications = $em->getRepository('AeagAeagBundle:Notification');
 
         $entity = $repoFraisDeplacement->getFraisDeplacementById($id);
 
@@ -100,15 +98,9 @@ class AdminController extends Controller {
             $this->sendAccuseReceptionCourrier($entity[0]->getId());
         }
 
-        $notification = new Notification();
-        $notification->setRecepteur($membre->getId());
-        $notification->setEmetteur($user->getId());
-        $notification->setNouveau(true);
-        $notification->setIteration(2);
-        $notification->setMessage('Les pièces justificatives de votre demande n° ' . $entity[0]->getId() . ' ont été enregistrées à l\'agence de l\'eau.');
-        $em->persist($notification);
-        $em->flush();
-        $mes = AeagController::notificationAction($user, $em, $session);
+        $notifications = $this->get('aeag.notifications');
+        $texte = 'Les pièces justificatives de votre demande n° ' . $entity[0]->getId() . ' ont été enregistrées à l\'agence de l\'eau.';
+        $notifications->createNotification($user, $user, $em, $session, $texte);
 
         $message = 'Courrier reçu le ' . $datePhase . ' pour les frais de déplacement n° ' . $entity[0]->getId();
         $message = $message . ' du ' . $entity[0]->getDateDepart()->format('d/m/Y') . ' ' . $entity[0]->getHeureDepart();
@@ -139,7 +131,6 @@ class AdminController extends Controller {
         $repoPhase = $this->getDoctrine()->getManager('frd')->getRepository('AeagFrdBundle:Phase');
         $repoUsers = $em->getRepository('AeagUserBundle:User');
         $repoDept = $em->getRepository('AeagAeagBundle:Departement');
-        $repoNotifications = $em->getRepository('AeagAeagBundle:Notification');
 
         if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMINFRD')) {
             $entity = $repoFraisDeplacement->getFraisDeplacementById($id);
@@ -189,15 +180,9 @@ class AdminController extends Controller {
         $entity[2] = $correspondant;
         $entity[3] = null;
 
-        $notification = new Notification();
-        $notification->setRecepteur($membre->getId());
-        $notification->setEmetteur($user->getId());
-        $notification->setNouveau(true);
-        $notification->setIteration(2);
-        $notification->setMessage('Les frais de déplacement n° ' . $entity[0]->getId() . ' sont repassés à l\'état : ' . $phase->getLibelle() . '.');
-        $em->persist($notification);
-        $em->flush();
-        $mes = AeagController::notificationAction($user, $em, $session);
+        $notifications = $this->get('aeag.notifications');
+        $texte = 'Les frais de déplacement n° ' . $entity[0]->getId() . ' sont repassés à l\'état : ' . $phase->getLibelle() . '.';
+        $notifications->createNotification($user, $user, $em, $session, $texte);
 
         $message = 'Les frais de déplacement n° ' . $entity[0]->getId();
         $message = $message . ' du ' . $entity[0]->getDateDepart()->format('d/m/Y') . ' ' . $entity[0]->getHeureDepart();
@@ -530,7 +515,7 @@ class AdminController extends Controller {
           $pdf->Output($fic_import, 'F');
           $message->attach(\Swift_Attachment::fromPath($fic_import));
           }
-         * 
+         *
          */
 
         // Retour au service mailer, nous utilisons sa méthode « send() » pour envoyer notre $message.
@@ -597,7 +582,7 @@ class AdminController extends Controller {
             foreach ($f as $files) {
                 $from = fopen($LOCAL_SERVER_DIR . $files, "r");
                 if (ftp_fput($conn_id, $files, $from, $mode)) {
-                    $count +=1;
+                    $count += 1;
                     $mess = $mess . $files . "<br>";
                 }
             }
