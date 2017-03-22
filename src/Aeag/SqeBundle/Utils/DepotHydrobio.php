@@ -653,7 +653,7 @@ class DepotHydrobio {
             $totRecouvrement = 0;
             for ($i = 39; $i <= 50; $i++) {
                 $H[$i] = $worksheet->getCell('H' . $i);
-                str_replace(',', '.', $H[i]->getCalculatedValue());
+                str_replace(',', '.', $H[$i]->getCalculatedValue());
                 if (!is_null($H[$i])) {
                     if (!is_numeric(intval($H[$i]->getCalculatedValue()))) {
                         $avertissement = true;
