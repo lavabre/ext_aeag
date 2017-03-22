@@ -252,6 +252,11 @@ class ProcessRaiCommand extends AeagCommand {
                     }
                 }
                 if (count($diff) > 0) {
+                    //TODO Verrue bien dégueulasse
+                    /*if ($pgCmdFichierRps->getDemande()->getAnneeProg() == 2016 && $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getId() == 135) {
+                        
+                    }*/
+                    
                     if ($pgCmdFichierRps->getDemande()->getAnneeProg() >= 2017 && ($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getTypeMarche() == 'MOE' || $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarch()->getTypeMarche() == 'MOA')) {
                         $this->_addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: Fractions différentes", $codePrelev["codePrelevement"], $diff);
                     } else {

@@ -372,7 +372,7 @@ class ControleVraisemblance {
         if ($inSitu > 0) {
             if ($codeRq == 10) {
                 if ($this->isNull($lqM)) {
-                    return array("error", "Tests complementaires : LQ non renseignée pour le code remarque 10");
+                    return array("warning", "Tests complementaires : LQ non renseignée pour le code remarque 10");
                 } 
                 if ($mesure !== $lqM) {
                     return array("error", "Tests complementaires :  Mesure différente de la LQ pour le code remarque 10");
