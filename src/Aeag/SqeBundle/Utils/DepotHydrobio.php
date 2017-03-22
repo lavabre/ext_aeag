@@ -525,10 +525,14 @@ class DepotHydrobio {
             fputs($rapport, $contenu);
         } else {
             // Coordonnées : cellules K24, L24, M24, N24 doivent être non vides, au format numérique et avec une valeur > 0
-            $K24 = str_replace(',', '.', $worksheet->getCell('K24'));
-            $L24 = str_replace(',', '.', $worksheet->getCell('L24'));
-            $M24 = str_replace(',', '.', $worksheet->getCell('M24'));
-            $N24 = str_replace(',', '.', $worksheet->getCell('N24'));
+            $K24 = $worksheet->getCell('K24');
+            str_replace(',', '.', $K24->getCalculatedValue());
+            $L24 = $worksheet->getCell('L24');
+            str_replace(',', '.', $L24->getCalculatedValue());
+            $M24 = $worksheet->getCell('M24');
+            str_replace(',', '.', $M24->getCalculatedValue());
+            $N24 = $worksheet->getCell('N24');
+            str_replace(',', '.', $N24->getCalculatedValue());
             $avertissement = false;
             if (is_null($K24) or is_null($L24) or is_null($M24) or is_null($N24)) {
                 $avertissement = true;
