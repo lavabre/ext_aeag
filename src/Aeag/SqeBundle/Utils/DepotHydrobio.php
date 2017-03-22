@@ -229,8 +229,10 @@ class DepotHydrobio {
         } else {
 
             // Coordonnées : cellules G23, H23 doivent être non vides, au format numérique et avec une valeur > 0
-            $G23 = str_replace(',', '.', $worksheet->getCell('G23'));
-            $H23 = str_replace(',', '.', $worksheet->getCell('H23'));
+            $G23 = $worksheet->getCell('G23');
+            str_replace(',', '.', $G23->getCalculatedValue());
+            $H23 = $worksheet->getCell('H23');
+            str_replace(',', '.', $H23->getCalculatedValue());
             $avertissement = false;
             if (is_null($G23) or is_null($H23)) {
                 $avertissement = true;
@@ -252,8 +254,10 @@ class DepotHydrobio {
 
             if ($avertissement) {
                 // Coordonnées : cellules G22, H22 doivent être non vides, au format numérique et avec une valeur > 0
-                $G22 = str_replace(',', '.', $worksheet->getCell('G22'));
-                $H22 = str_replace(',', '.', $worksheet->getCell('H22'));
+                $G22 = $worksheet->getCell('G22');
+                str_replace(',', '.', $G22->getCalculatedValue());
+                $H22 = $worksheet->getCell('H22');
+                str_replace(',', '.', $H22->getCalculatedValue());
                 if (is_null($G22) or is_null($H22)) {
                     $erreur = true;
                     $contenu = '                     Erreur : Coordonnées Lambert II incorrectes ou non renseignées. ' . CHR(13) . CHR(10);
@@ -274,11 +278,16 @@ class DepotHydrobio {
             }
 
             // Autres valeurs du prélèvement : cellules E40, F40, A53, B53, C53  doivent être non vide, au format numérique
-            $E40 = str_replace(',', '.', $worksheet->getCell('E40'));
-            $F40 = str_replace(',', '.', $worksheet->getCell('F40'));
-            $A53 = str_replace(',', '.', $worksheet->getCell('A53'));
-            $B53 = str_replace(',', '.', $worksheet->getCell('B53'));
-            $C53 = str_replace(',', '.', $worksheet->getCell('C53'));
+            $E40 = $worksheet->getCell('E40');
+            str_replace(',', '.', $E40->getCalculatedValue());
+            $F40 = $worksheet->getCell('F40');
+            str_replace(',', '.', $F40->getCalculatedValue());
+            $A53 = $worksheet->getCell('A53');
+            str_replace(',', '.', $A53->getCalculatedValue());
+            $B53 = $worksheet->getCell('B53');
+            str_replace(',', '.', $B53->getCalculatedValue());
+            $C53 = $worksheet->getCell('C53');
+            str_replace(',', '.', $C53->getCalculatedValue());
             if (is_null($E40)) {
                 $erreur = true;
                 $contenu = '                     Avertissementt : cellule ' . $E40->getCoordinate() . ' non renseignée. ' . CHR(13) . CHR(10);
@@ -351,9 +360,12 @@ class DepotHydrobio {
             }
 
             //    Cellules B40, C40, D40  les valeurs doivent être numériques si non vides
-            $B40 = str_replace(',', '.', $worksheet->getCell('B40'));
-            $C40 = str_replace(',', '.', $worksheet->getCell('C40'));
-            $D40 = str_replace(',', '.', $worksheet->getCell('D40'));
+            $B40 = $worksheet->getCell('B40');
+            str_replace(',', '.', $B40->getCalculatedValue());
+            $C40 = $worksheet->getCell('C40');
+            str_replace(',', '.', $C40->getCalculatedValue());
+            $D40 = $worksheet->getCell('D40');
+            str_replace(',', '.', $D40->getCalculatedValue());
             if (!is_null($B40)) {
                 if (!is_numeric(intval($B40->getCalculatedValue()))) {
                     $avertissement = true;
@@ -554,10 +566,14 @@ class DepotHydrobio {
 
             if ($avertissement) {
                 // Coordonnées : cellules K23, L23, M23, N23 doivent être non vides, au format numérique et avec une valeur > 0
-                $K23 = str_replace(',', '.', $worksheet->getCell('K23'));
-                $L23 = str_replace(',', '.', $worksheet->getCell('L23'));
-                $M23 = str_replace(',', '.', $worksheet->getCell('M23'));
-                $N23 = str_replace(',', '.', $worksheet->getCell('N23'));
+                $K23 = $worksheet->getCell('K23');
+                str_replace(',', '.', $K23->getCalculatedValue());
+                $L23 = $worksheet->getCell('L23');
+                str_replace(',', '.', $L23->getCalculatedValue());
+                $M23 = $worksheet->getCell('M23');
+                str_replace(',', '.', $M23->getCalculatedValue());
+                $N23 = $worksheet->getCell('N23');
+                str_replace(',', '.', $N23->getCalculatedValue());
                 if (is_null($K23) or is_null($L23) or is_null($M23) or is_null($N23)) {
                     $erreur = true;
                     $contenu = '                     Erreur : Coordonnées Lambert II incorrectes ou non renseignées. ' . CHR(13) . CHR(10);
@@ -579,9 +595,12 @@ class DepotHydrobio {
 
 
             //	Autres valeurs du prélèvement : cellules P23, E39, O23 doivent être non vide, au format numérique
-            $P23 = str_replace(',', '.', $worksheet->getCell('P23'));
-            $E39 = str_replace(',', '.', $worksheet->getCell('E39'));
-            $O23 = str_replace(',', '.', $worksheet->getCell('O23'));
+            $P23 = $worksheet->getCell('P23');
+            str_replace(',', '.', $P23->getCalculatedValue());
+            $E39 = $worksheet->getCell('E39');
+            str_replace(',', '.', $E39->getCalculatedValue());
+            $O23 = $worksheet->getCell('O23');
+            str_replace(',', '.', $O23->getCalculatedValue());
             if (is_null($P23)) {
                 $avertissement = true;
                 $contenu = '                     Avertissementt : cellule ' . $P23->getCoordinate() . ' non renseignée. ' . CHR(13) . CHR(10);
@@ -633,7 +652,8 @@ class DepotHydrobio {
             $tabH = array();
             $totRecouvrement = 0;
             for ($i = 39; $i <= 50; $i++) {
-                $H[$i] = str_replace(',', '.', $worksheet->getCell('H' . $i));
+                $H[$i] = $worksheet->getCell('H' . $i);
+                str_replace(',', '.', $H[i]->getCalculatedValue());
                 if (!is_null($H[$i])) {
                     if (!is_numeric(intval($H[$i]->getCalculatedValue()))) {
                         $avertissement = true;
