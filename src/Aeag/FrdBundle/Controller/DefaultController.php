@@ -19,7 +19,7 @@ class DefaultController extends Controller {
             return $this->render('AeagFrdBundle:Default:interdit.html.twig');
         }
         $session = $this->get('session');
-       $session->set('menu', 'Frais');
+        $session->set('menu', 'Frais');
         $session->set('controller', 'Default');
         $session->set('fonction', 'index');
         $em = $this->get('doctrine')->getManager();
@@ -40,7 +40,7 @@ class DefaultController extends Controller {
 
         $annee = new \DateTime($annee->getLibelle());
         $session->set('annee', $annee);
-         $session->set('anneeSelect', date_format($session->get('annee'), 'Y'));
+        $session->set('anneeSelect', date_format($session->get('annee'), 'Y'));
 
 
         if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMINFRD')) {
@@ -68,15 +68,15 @@ class DefaultController extends Controller {
         $session->set('annees', $tabAnnees);
 
 //                                    \Symfony\Component\VarDumper\VarDumper::dump($tabAnnees);
-//                                    return new Response ('');   
-        
+//                                    return new Response ('');
+
         $message = $emFrd->getRepository('AeagFrdBundle:Parametre')->findOneBy(array('code' => 'LIB_MESSAGE'));
         if (strlen($message->getLibelle()) > 0) {
             $session->set('messageAdmin', $message->getLibelle());
         }
 
 
-        if (is_object($user) && !($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN'))) {
+        if (is_object($user) && !($this->get('security.authorization_checker')->isGranted('ROLE_ADMINFRD'))) {
             $parametre = $emFrd->getRepository('AeagFrdBundle:Parametre')->findOneBy(array('code' => 'MAINTENANCE'));
             if ($parametre->getLibelle() == 'O') {
                 $parametre = $emFrd->getRepository('AeagFrdBundle:Parametre')->findOneBy(array('code' => 'LIB_MAINTENANCE'));
