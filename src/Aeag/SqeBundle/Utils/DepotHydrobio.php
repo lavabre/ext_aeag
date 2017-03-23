@@ -283,11 +283,11 @@ class DepotHydrobio {
             $F40 = $worksheet->getCell('F40');
             str_replace(',', '.', $F40->getCalculatedValue());
             $A53 = $worksheet->getCell('A53');
-            str_replace(',', '.', $A53->getCalculatedValue());
+            //str_replace(',', '.', $A53->getCalculatedValue());
             $B53 = $worksheet->getCell('B53');
-            str_replace(',', '.', $B53->getCalculatedValue());
+            //str_replace(',', '.', $B53->getCalculatedValue());
             $C53 = $worksheet->getCell('C53');
-            str_replace(',', '.', $C53->getCalculatedValue());
+            //str_replace(',', '.', $C53->getCalculatedValue());
             if (is_null($E40)) {
                 $erreur = true;
                 $contenu = '                     Avertissementt : cellule ' . $E40->getCoordinate() . ' non renseignée. ' . CHR(13) . CHR(10);
@@ -326,7 +326,7 @@ class DepotHydrobio {
                 $pgSandreHnNomemclature = $repoPgSandreHbNomemclatures->getPgSandreHbNomemclaturesByCodeNomemclatureCodeElementCodeSupport('274', $A53->getCalculatedValue(), '10');
                 if (!$pgSandreHnNomemclature) {
                     $erreur = true;
-                    $contenu = '                     Erreur : cellule ' . $A53->getCoordinate() . ' :  substrat ' . $A53->getCalculatedValue() . ' impossible. ' . CHR(13) . CHR(10);
+                    $contenu = '                     Erreur : cellule ' . $A53->getCoordinate() . ' :  support ' . $A53->getCalculatedValue() . ' impossible. ' . CHR(13) . CHR(10);
                     $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                     fputs($rapport, $contenu);
                 }
