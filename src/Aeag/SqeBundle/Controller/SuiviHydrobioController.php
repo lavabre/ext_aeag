@@ -1851,6 +1851,7 @@ class SuiviHydrobioController extends Controller {
         $repoPgCmdSuiviPrel = $emSqe->getRepository('AeagSqeBundle:PgCmdSuiviPrel');
         $repoPgProgWebUsers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
         $repoPgProgLotPeriodeAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeAn');
+        $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
 
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($periodeAnId);
@@ -1888,17 +1889,33 @@ class SuiviHydrobioController extends Controller {
                     $pgCmdSuiviPrel->setCommentaireAvis($commentaireAvisNew);
                 }
             }
-            $emSqe->persist($pgCmdSuiviPrel);
-            if (($pgCmdSuiviPrel->getStatutPrel() == 'F' or $pgCmdSuiviPrel->getStatutPrel() == 'D') and $pgCmdSuiviPrel->getValidation() == 'A') {
+
+            if (($pgCmdSuiviPrel->getStatutPrel() == 'F' or $pgCmdSuiviPrel->getStatutPrel() == 'D' or $pgCmdSuiviPrel->getStatutPrel() == 'DF' or $pgCmdSuiviPrel->getStatutPrel() == 'DO') and $pgCmdSuiviPrel->getValidation() == 'A') {
                 $pgCmdPrelev->setDatePrelev($datePrel);
                 $pgCmdPrelev->setRealise('O');
-            } elseif ($pgCmdSuiviPrel->getStatutPrel() == 'N' or $pgCmdSuiviPrel->getStatutPrel() == 'D' or $pgCmdSuiviPrel->getStatutPrel() == 'R') {
+                $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M40');
+                $pgCmdPrelev->setPhaseDmd($pgProgPhases);
+            } elseif ($pgCmdSuiviPrel->getStatutPrel() == 'N' or $pgCmdSuiviPrel->getStatutPrel() == 'R') {
                 $pgCmdPrelev->setDatePrelev($datePrel);
                 $pgCmdPrelev->setRealise('N');
             } else {
 //$pgCmdPrelev->setDatePrelev(null);
                 $pgCmdPrelev->setRealise(null);
             }
+            if ($pgCmdSuiviPrel->getValidation() == 'F') {
+                $pgCmdPrelev->setDatePrelev($datePrel);
+                $pgCmdPrelev->setRealise('N');
+                $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M60');
+                $pgCmdPrelev->setPhaseDmd($pgProgPhases);
+            }
+
+            if ($pgCmdSuiviPrel->getValidation() == 'R') {
+                $pgCmdPrelev->setRealise('N');
+                $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M10');
+                $pgCmdPrelev->setPhaseDmd($pgProgPhases);
+            }
+
+            $emSqe->persist($pgCmdSuiviPrel);
             $emSqe->persist($pgCmdPrelev);
             $emSqe->flush();
             $session->getFlashBag()->add('notice-success', 'le suivi du ' . $datePrel->format('d/m/Y') . ' a été modifié sur la station : ' . $pgCmdPrelev->getStation()->getCode() . ' !');

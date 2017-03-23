@@ -35,7 +35,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
                                         ->add('validation', 'choice', array(
-                                            'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté'),
+                                            'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté', 'F' => 'Abandonné'),
                                             'required' => false,
                                             'data' => $pgCmdSuiviPrelActuel->getValidation(),
                                         ))
@@ -55,7 +55,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
                                         ->add('validation', 'choice', array(
-                                            'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté'),
+                                            'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté', 'F' => 'Abandonné'),
                                             'required' => false,
                                         ))
                                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
@@ -74,7 +74,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
                                         ->add('validation', 'choice', array(
-                                            'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté'),
+                                            'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté', 'F' => 'Abandonné'),
                                             'required' => false,
                                         ))
                                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => false))
@@ -97,7 +97,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
                                         ->add('validation', 'choice', array(
-                                            'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté'),
+                                            'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté', 'F' => 'Abandonné'),
                                             'required' => false,
                                         ))
                                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => false))
@@ -116,7 +116,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
                                         ->add('validation', 'choice', array(
-                                            'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté'),
+                                            'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté', 'F' => 'Abandonné'),
                                             'required' => false,
                                         ))
                                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
@@ -136,7 +136,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
                                         ->add('validation', 'choice', array(
-                                            'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté'),
+                                            'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté', 'F' => 'Abandonné'),
                                             'required' => false,
                                         ))
                                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => false))
@@ -159,7 +159,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
                                         ->add('validation', 'choice', array(
-                                            'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté'),
+                                            'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté', 'F' => 'Abandonné'),
                                             'required' => false,
                                         ))
                                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
@@ -178,7 +178,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
                                         ->add('validation', 'choice', array(
-                                            'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté'),
+                                            'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté', 'F' => 'Abandonné'),
                                             'required' => false,
                                         ))
                                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
@@ -198,7 +198,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
                                         ->add('validation', 'choice', array(
-                                            'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté'),
+                                            'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté', 'F' => 'Abandonné'),
                                             'required' => false,
                                         ))
                                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
@@ -221,7 +221,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
                                         ->add('validation', 'choice', array(
-                                            'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté'),
+                                            'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté', 'F' => 'Abandonné'),
                                             'required' => false,
                                         ))
                                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
@@ -240,7 +240,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
                                         ->add('validation', 'choice', array(
-                                            'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté'),
+                                            'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté', 'F' => 'Abandonné'),
                                             'required' => false,
                                         ))
                                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
@@ -260,7 +260,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
                                         ->add('validation', 'choice', array(
-                                            'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté'),
+                                            'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté', 'F' => 'Abandonné'),
                                             'required' => false,
                                         ))
                                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
@@ -283,7 +283,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
                                         ->add('validation', 'choice', array(
-                                            'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté'),
+                                            'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté', 'F' => 'Abandonné'),
                                             'required' => false,
                                         ))
                                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
@@ -302,7 +302,7 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
                                         ->add('validation', 'choice', array(
-                                            'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté'),
+                                            'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté', 'F' => 'Abandonné'),
                                             'required' => false,
                                         ))
                                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
@@ -322,7 +322,131 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                                             'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
                                         ))
                                         ->add('validation', 'choice', array(
-                                            'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté'),
+                                            'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté', 'F' => 'Abandonné'),
+                                            'required' => false,
+                                        ))
+                                        ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
+                                        ->add('commentaireAvis', 'textarea', array('label' => 'CommentaireAvis', 'required' => false))
+                                ;
+                                break;
+                        }
+                        break;
+                    case 'DF' :
+                        switch ($pgCmdSuiviPrelActuel->getValidation()) {
+                            case 'E' :
+                                $builder
+                                        ->add('datePrel', 'date', array('widget' => 'single_text',
+                                            'format' => 'dd/MM/yyyy HH:mm',
+                                            'data' => $pgCmdSuiviPrelActuel->getDatePrel(),
+                                            'required' => true,))
+                                        ->add('statutPrel', 'choice', array(
+                                            'choices' => array('D' => 'Déposé'),
+                                            'required' => true,
+                                            'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
+                                        ))
+                                        ->add('validation', 'choice', array(
+                                            'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté', 'F' => 'Abandonné'),
+                                            'required' => false,
+                                        ))
+                                        ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
+                                        ->add('commentaireAvis', 'textarea', array('label' => 'CommentaireAvis', 'required' => false))
+                                ;
+                                break;
+                            case 'R' :
+                                $builder
+                                        ->add('datePrel', 'date', array('widget' => 'single_text',
+                                            'format' => 'dd/MM/yyyy HH:mm',
+                                            'data' => $pgCmdSuiviPrelActuel->getDatePrel(),
+                                            'required' => true,))
+                                        ->add('statutPrel', 'choice', array(
+                                            'choices' => array('D' => 'Déposé'),
+                                            'required' => true,
+                                            'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
+                                        ))
+                                        ->add('validation', 'choice', array(
+                                            'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté', 'F' => 'Abandonné'),
+                                            'required' => false,
+                                        ))
+                                        ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
+                                        ->add('commentaireAvis', 'textarea', array('label' => 'CommentaireAvis', 'required' => false))
+                                ;
+                                break;
+                            case 'A' :
+                                $builder
+                                        ->add('datePrel', 'date', array('widget' => 'single_text',
+                                            'format' => 'dd/MM/yyyy HH:mm',
+                                            'data' => $pgCmdSuiviPrelActuel->getDatePrel(),
+                                            'required' => true,
+                                        ))
+                                        ->add('statutPrel', 'choice', array(
+                                            'choices' => array('D' => 'Déposé'),
+                                            'required' => true,
+                                            'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
+                                        ))
+                                        ->add('validation', 'choice', array(
+                                            'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté', 'F' => 'Abandonné'),
+                                            'required' => false,
+                                        ))
+                                        ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
+                                        ->add('commentaireAvis', 'textarea', array('label' => 'CommentaireAvis', 'required' => false))
+                                ;
+                                break;
+                        }
+                        break;
+                    case 'DO' :
+                        switch ($pgCmdSuiviPrelActuel->getValidation()) {
+                            case 'E' :
+                                $builder
+                                        ->add('datePrel', 'date', array('widget' => 'single_text',
+                                            'format' => 'dd/MM/yyyy HH:mm',
+                                            'data' => $pgCmdSuiviPrelActuel->getDatePrel(),
+                                            'required' => true,))
+                                        ->add('statutPrel', 'choice', array(
+                                            'choices' => array('D' => 'Déposé'),
+                                            'required' => true,
+                                            'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
+                                        ))
+                                        ->add('validation', 'choice', array(
+                                            'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté', 'F' => 'Abandonné'),
+                                            'required' => false,
+                                        ))
+                                        ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
+                                        ->add('commentaireAvis', 'textarea', array('label' => 'CommentaireAvis', 'required' => false))
+                                ;
+                                break;
+                            case 'R' :
+                                $builder
+                                        ->add('datePrel', 'date', array('widget' => 'single_text',
+                                            'format' => 'dd/MM/yyyy HH:mm',
+                                            'data' => $pgCmdSuiviPrelActuel->getDatePrel(),
+                                            'required' => true,))
+                                        ->add('statutPrel', 'choice', array(
+                                            'choices' => array('D' => 'Déposé'),
+                                            'required' => true,
+                                            'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
+                                        ))
+                                        ->add('validation', 'choice', array(
+                                            'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté', 'F' => 'Abandonné'),
+                                            'required' => false,
+                                        ))
+                                        ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
+                                        ->add('commentaireAvis', 'textarea', array('label' => 'CommentaireAvis', 'required' => false))
+                                ;
+                                break;
+                            case 'A' :
+                                $builder
+                                        ->add('datePrel', 'date', array('widget' => 'single_text',
+                                            'format' => 'dd/MM/yyyy HH:mm',
+                                            'data' => $pgCmdSuiviPrelActuel->getDatePrel(),
+                                            'required' => true,
+                                        ))
+                                        ->add('statutPrel', 'choice', array(
+                                            'choices' => array('D' => 'Déposé'),
+                                            'required' => true,
+                                            'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
+                                        ))
+                                        ->add('validation', 'choice', array(
+                                            'choices' => array('E' => 'En attente', 'R' => 'Refusé', 'A' => 'Accepté', 'F' => 'Abandonné'),
                                             'required' => false,
                                         ))
                                         ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
@@ -535,6 +659,106 @@ class PgCmdSuiviPrelMajType extends AbstractType {
                         }
                         break;
                     case 'D' :
+                        switch ($pgCmdSuiviPrelActuel->getValidation()) {
+                            case 'E' :
+                                $builder
+                                        ->add('datePrel', 'date', array('widget' => 'single_text',
+                                            'format' => 'dd/MM/yyyy HH:mm',
+                                            'data' => $pgCmdSuiviPrelActuel->getDatePrel(),
+                                            'required' => true,))
+                                        ->add('statutPrel', 'choice', array(
+                                            'choices' => array('D' => 'Déposé'),
+                                            'required' => true,
+                                            'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
+                                        ))
+                                        ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
+                                        ->add('commentaireAvis', 'textarea', array('label' => 'CommentaireAvis', 'required' => false))
+                                ;
+                                break;
+                            case 'R' :
+                                $builder
+                                        ->add('datePrel', 'date', array('widget' => 'single_text',
+                                            'format' => 'dd/MM/yyyy HH:mm',
+                                            'data' => $pgCmdSuiviPrelActuel->getDatePrel(),
+                                            'required' => true,))
+                                        ->add('statutPrel', 'choice', array(
+                                            'choices' => array('D' => 'Déposé'),
+                                            'required' => true,
+                                            'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
+                                        ))
+                                        ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
+                                        ->add('commentaireAvis', 'textarea', array('label' => 'CommentaireAvis', 'required' => false))
+                                ;
+                                break;
+                            case 'A' :
+                                $builder
+                                        ->add('datePrel', 'date', array('widget' => 'single_text',
+                                            'format' => 'dd/MM/yyyy HH:mm',
+                                            'data' => $pgCmdSuiviPrelActuel->getDatePrel(),
+                                            'required' => true,
+                                        ))
+                                        ->add('statutPrel', 'choice', array(
+                                            'choices' => array('D' => 'Déposé'),
+                                            'required' => true,
+                                            'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
+                                        ))
+                                        ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
+                                        ->add('commentaireAvis', 'textarea', array('label' => 'CommentaireAvis', 'required' => false))
+                                ;
+                                break;
+                        }
+                        break;
+                    case 'DF' :
+                        switch ($pgCmdSuiviPrelActuel->getValidation()) {
+                            case 'E' :
+                                $builder
+                                        ->add('datePrel', 'date', array('widget' => 'single_text',
+                                            'format' => 'dd/MM/yyyy HH:mm',
+                                            'data' => $pgCmdSuiviPrelActuel->getDatePrel(),
+                                            'required' => true,))
+                                        ->add('statutPrel', 'choice', array(
+                                            'choices' => array('D' => 'Déposé'),
+                                            'required' => true,
+                                            'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
+                                        ))
+                                        ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
+                                        ->add('commentaireAvis', 'textarea', array('label' => 'CommentaireAvis', 'required' => false))
+                                ;
+                                break;
+                            case 'R' :
+                                $builder
+                                        ->add('datePrel', 'date', array('widget' => 'single_text',
+                                            'format' => 'dd/MM/yyyy HH:mm',
+                                            'data' => $pgCmdSuiviPrelActuel->getDatePrel(),
+                                            'required' => true,))
+                                        ->add('statutPrel', 'choice', array(
+                                            'choices' => array('D' => 'Déposé'),
+                                            'required' => true,
+                                            'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
+                                        ))
+                                        ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
+                                        ->add('commentaireAvis', 'textarea', array('label' => 'CommentaireAvis', 'required' => false))
+                                ;
+                                break;
+                            case 'A' :
+                                $builder
+                                        ->add('datePrel', 'date', array('widget' => 'single_text',
+                                            'format' => 'dd/MM/yyyy HH:mm',
+                                            'data' => $pgCmdSuiviPrelActuel->getDatePrel(),
+                                            'required' => true,
+                                        ))
+                                        ->add('statutPrel', 'choice', array(
+                                            'choices' => array('D' => 'Déposé'),
+                                            'required' => true,
+                                            'data' => $pgCmdSuiviPrelActuel->getStatutPrel(),
+                                        ))
+                                        ->add('commentaire', 'textarea', array('label' => 'Commentaire', 'required' => true))
+                                        ->add('commentaireAvis', 'textarea', array('label' => 'CommentaireAvis', 'required' => false))
+                                ;
+                                break;
+                        }
+                        break;
+                    case 'DO' :
                         switch ($pgCmdSuiviPrelActuel->getValidation()) {
                             case 'E' :
                                 $builder

@@ -465,9 +465,26 @@ class DepotHydrobio {
 
                 $emSqe->persist($pgCmdPrelevHbDiato);
 
+                $emSqe->flush();
+
                 //$pgCmdPrelev->setDatePrelev(new \DateTime());
-                $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M40');
+                $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelev($pgCmdPrelev);
+                $pgCmdDiatoListes = $repoPgCmdDiatoListe->getPgCmdDiatoListesByPrelev($pgCmdPrelevHbDiato);
+                $nbOk = 0;
+                foreach ($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
+                    if ($pgCmdSuiviPrel->getStatutPrel() == 'D' or $pgCmdSuiviPrel->getStatutPrel() == 'DF') {
+                        if (count($pgCmdDiatoListes) > 0) {
+                            $nbOk++;
+                        }
+                    }
+                }
+                if ($nbOk < 2) {
+                    $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M20');
+                } else {
+                    $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M30');
+                }
                 $pgCmdPrelev->setPhaseDmd($pgProgPhases);
+                $emSqe->persist($pgCmdPrelev);
             }
 
             $emSqe->flush();
@@ -1084,12 +1101,20 @@ class DepotHydrobio {
                     }
                 }
                 // $pgCmdPrelev->setDatePrelev(new \DateTime());
-                $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M40');
+                $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelev($pgCmdPrelev);
+                $nbOk = 0;
+                foreach ($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
+                    if ($pgCmdSuiviPrel->getStatutPrel() == 'D' or $pgCmdSuiviPrel->getStatutPrel() == 'DF') {
+                        $nbOk++;
+                    }
+                }
+                if ($nbOk < 2) {
+                    $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M20');
+                } else {
+                    $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M30');
+                }
                 $pgCmdPrelev->setPhaseDmd($pgProgPhases);
-            } else {
-                // $pgCmdPrelev->setDatePrelev(new \DateTime());
-                $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('R80');
-                $pgCmdPrelev->setPhaseDmd($pgProgPhases);
+                $emSqe->persist($pgCmdPrelev);
             }
 
             $emSqe->flush();
