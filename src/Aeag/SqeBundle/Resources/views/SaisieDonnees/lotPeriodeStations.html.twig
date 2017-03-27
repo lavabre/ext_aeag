@@ -168,18 +168,20 @@
                                                                 {#<a id="idTelechargerSuivi{{ cmdPrelev.cmdPrelev.id }}" class="btn btn-success btn-telecharger" href="{{path('AeagSqeBundle_saisieDonnees_lot_periode_station_telecharger',{'prelevId': cmdPrelev.cmdPrelev.id })}}" title="Télécharger les resultats">
                                                                             <i class="fa fa-upload"></i>
                                                                </a>#}
-                                                                {% if cmdPrelev.nbParametresTerrain > 0  and cmdPrelev.nbParametresAnalyse > 0  %}
-                                                                    <a id="idTelechargerSuivi{{ cmdPrelev.cmdPrelev.id }}" class="btn btn-success btn-telecharger" href="{{ path('AeagSqeBundle_saisieDonnees_lot_periode_station_telecharger',{ 'prelevId': cmdPrelev.cmdPrelev.id , 'type':'TA'})}}" title="Télécharger les resultats">
-                                                                        <i class="fa fa-upload"></i>
-                                                                    </a>
-                                                                {% elseif cmdPrelev.nbParametresTerrain > 0 %}
-                                                                    <a id="idTelechargerSuivi{{ cmdPrelev.cmdPrelev.id }}" class="btn btn-success btn-telecharger" href="{{ path('AeagSqeBundle_saisieDonnees_lot_periode_station_telecharger',{ 'prelevId': cmdPrelev.cmdPrelev.id , 'type':'T'})}}" title="Télécharger les resultats">
-                                                                        <i class="fa fa-upload"></i>
-                                                                    </a>
-                                                                {%elseif cmdPrelev.nbParametresAnalyse > 0 %}
-                                                                    <a id="idTelechargerSuivi{{ cmdPrelev.cmdPrelev.id }}" class="btn btn-success btn-telecharger" href="{{ path('AeagSqeBundle_saisieDonnees_lot_periode_station_telecharger',{ 'prelevId': cmdPrelev.cmdPrelev.id , 'type':'A'})}}" title="Télécharger les resultats">
-                                                                        <i class="fa fa-upload"></i>
-                                                                    </a>
+                                                                {% if cmdPrelev.cmdPrelev.fichierRps | length %}
+                                                                    {% if cmdPrelev.nbParametresTerrain > 0  and cmdPrelev.nbParametresAnalyse > 0  %}
+                                                                        <a id="idTelechargerSuivi{{ cmdPrelev.cmdPrelev.id }}" class="btn btn-success btn-telecharger" href="{{ path('AeagSqeBundle_saisieDonnees_lot_periode_station_telecharger',{ 'prelevId': cmdPrelev.cmdPrelev.id , 'type':'TA'})}}" title="Télécharger les resultats">
+                                                                            <i class="fa fa-upload"></i>
+                                                                        </a>
+                                                                    {% elseif cmdPrelev.nbParametresTerrain > 0 %}
+                                                                        <a id="idTelechargerSuivi{{ cmdPrelev.cmdPrelev.id }}" class="btn btn-success btn-telecharger" href="{{ path('AeagSqeBundle_saisieDonnees_lot_periode_station_telecharger',{ 'prelevId': cmdPrelev.cmdPrelev.id , 'type':'T'})}}" title="Télécharger les resultats">
+                                                                            <i class="fa fa-upload"></i>
+                                                                        </a>
+                                                                    {%elseif cmdPrelev.nbParametresAnalyse > 0 %}
+                                                                        <a id="idTelechargerSuivi{{ cmdPrelev.cmdPrelev.id }}" class="btn btn-success btn-telecharger" href="{{ path('AeagSqeBundle_saisieDonnees_lot_periode_station_telecharger',{ 'prelevId': cmdPrelev.cmdPrelev.id , 'type':'A'})}}" title="Télécharger les resultats">
+                                                                            <i class="fa fa-upload"></i>
+                                                                        </a>
+                                                                    {% endif %}
                                                                 {% endif %}
                                                             </li>
                                                         {% endif %}
