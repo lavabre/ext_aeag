@@ -270,7 +270,11 @@ class ControleVraisemblance {
                 if (1 < $indP && $indP <= 1.25) {
                     return array("warning", "Orthophosphate : Réserve");
                 } else if ($indP > 1.25) {
-                    return array("error", "Orthophosphate : Valeur non conforme");
+                    if (($mPo4 - $mP) > 0.01) {
+                        return array("error", "Orthophosphate : Valeur non conforme");
+                    } else if (($mPo4 - $mP) <= 0.01) {
+                        return array("warning", "Orthophosphate : Réserve");
+                    }
                 }
             }
         }
@@ -368,14 +372,20 @@ class ControleVraisemblance {
         return true;
     }
     
-    public function testsComplementaires($mesure, $codeRq, $inSitu, $lqM) {
+    public function testsComplementaires($mesure, $codeRq, $inSitu, $lqM, $marche) {
         if ($inSitu > 0) {
+            $mesure = floatval($mesure);
+            $lqM = floatval($lqM);
             if ($codeRq == 10) {
                 if ($this->isNull($lqM)) {
                     return array("warning", "Tests complementaires : LQ non renseignée pour le code remarque 10");
                 } 
-                if ($mesure !== $lqM) {
-                    return array("error", "Tests complementaires :  Mesure différente de la LQ pour le code remarque 10");
+                if ($mesure != $lqM) { //TODO Selon marché
+                    if ($marche == 'MOA') {
+                        return array("error", "Tests complementaires :  Mesure différente de la LQ pour le code remarque 10");
+                    } else {
+                        return array("warning", "Tests complementaires :  Mesure différente de la LQ pour le code remarque 10");
+                    }
                 }
             } else if ($codeRq == 1 && !$this->isNull($lqM)) {
                 if ($mesure < $lqM) {

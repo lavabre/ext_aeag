@@ -257,7 +257,7 @@ class ProcessRaiCommand extends AeagCommand {
                         
                     }*/
                     
-                    if ($pgCmdFichierRps->getDemande()->getAnneeProg() >= 2017 && ($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getTypeMarche() == 'MOE' || $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarch()->getTypeMarche() == 'MOA')) {
+                    if ($pgCmdFichierRps->getDemande()->getAnneeProg() >= 2017 && ($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getTypeMarche() == 'MOE' || $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getTypeMarche() == 'MOA')) {
                         $this->_addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: Fractions différentes", $codePrelev["codePrelevement"], $diff);
                     } else {
                         $this->_addLog('warning', $demandeId, $reponseId, "Incoherence RAI/DAI: Fractions différentes", $codePrelev["codePrelevement"], $diff);
@@ -344,6 +344,7 @@ class ProcessRaiCommand extends AeagCommand {
         $demandeId = $pgCmdFichierRps->getDemande()->getId();
         $reponseId = $pgCmdFichierRps->getId();
         $lqM = $pgTmpValidEdilabo->getLqM();
+        $marche = $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getTypeMarche();
         
         // III.1
         //$dateLog = new \DateTime();
@@ -395,7 +396,7 @@ class ProcessRaiCommand extends AeagCommand {
         //$this->output->writeln($dateLog->format('d/m/Y H:i:s') . '- Process RAI : RAI '.$pgCmdFichierRps->getId().' - Controle Vraisemblance - '.$codePrelevement.' - Fin III.5');
         
         // Tests complémentaires
-        if (is_array($result = $this->controleVraisemblaceService->testsComplementaires($mesure, $codeRq, $inSitu, $lqM))) {
+        if (is_array($result = $this->controleVraisemblaceService->testsComplementaires($mesure, $codeRq, $inSitu, $lqM, $marche))) {
             $this->_addLog($result[0], $demandeId, $reponseId, $result[1], $codePrelevement, $codeParametre);
         }
     }

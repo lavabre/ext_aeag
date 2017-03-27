@@ -57,33 +57,33 @@ class RelanceMailCommand extends AeagCommand {
         $this->output->writeln($date->format('d/m/Y H:i:s') .' - Début envoi mails Dais');
         
         // Récupération des DAIS dernièrement générées
-        $pgProgPhases = $this->repoPgProgPhases->findOneByCodePhase('D10');
-        $pgCmdDemandes = $this->repoPgCmdDemande->findBy(array('phaseDemande' => $pgProgPhases), array('id' => 'ASC'));
-        
+        $pgCmdDemandes = $this->repoPgCmdDemande->getLotanAndPrestaByCodePhase('D10');        
         foreach ($pgCmdDemandes as $pgCmdDemande) {
-            $codeMilieu = $pgCmdDemande->getLotan()->getLot()->getCodeMilieu()->getCodeMilieu();
-            $prestataire = $pgCmdDemande->getLotan()->getLot()->getTitulaire();
-            $objetMessage = "SQE : DAI générée - " . $pgCmdDemande->getLotan()->getLot()->getNomLot();
+            $prestataire = $this->repoPgRefCorresPresta->findOneByAdrCorId($pgCmdDemande['prestaId']);
+            $lotan = $this->repoPgProgLotan->findOneById($pgCmdDemande['lotanId']);
+            $codeMilieu = $lotan->getLot()->getCodeMilieu()->getCodeMilieu();
+            
+            $objetMessage = "SQE : DAI générée - " . $lotan->getLot()->getNomLot();
             if ($this->getEnv() !== 'prod') {
                 $objetMessage .= " - ".$this->getEnv();
             }
-            $pgProgPrestaTypfic = $this->repoPgProgPrestaTypfic->findOneBy(array('codeMilieu' => $codeMilieu, 'prestataire' => $prestataire));
             
+            $pgProgPrestaTypfic = $this->repoPgProgPrestaTypfic->findOneBy(array('codeMilieu' => $codeMilieu, 'prestataire' => $prestataire));
             if (!is_null($pgProgPrestaTypfic)) {
                 if (strpos($codeMilieu,"PC") !== false) {
                     if (strpos($pgProgPrestaTypfic->getFormatFic(), "EDILABO") !== false) {
-                        $url = $this->getContainer()->get('router')->generate('AeagSqeBundle_echangefichiers_demandes', array('lotId' => $pgCmdDemande->getLotan()->getLot()->getId(), 'anneeProg' => $pgCmdDemande->getLotan()->getAnneeProg()), UrlGeneratorInterface::ABSOLUTE_URL);
-                        $txtMessage = 'Les DAI du lot ' . $pgCmdDemande->getLotan()->getLot()->getNomLot() . ' ont été générées.<br/>';
+                        $url = $this->getContainer()->get('router')->generate('AeagSqeBundle_echangefichiers_demandes', array('lotId' => $lotan->getLot()->getId(), 'anneeProg' => $lotan->getAnneeProg()), UrlGeneratorInterface::ABSOLUTE_URL);
+                        $txtMessage = 'Les DAI du lot ' . $lotan->getLot()->getNomLot() . ' ont été générées.<br/>';
                         $txtMessage .= 'Vous pouvez les télécharger sur SQE : <a href="' . $url . '">Cliquez ici</a> <br/>';
                     } elseif (strpos($pgProgPrestaTypfic->getFormatFic(), "SAISIE") !== false) {
-                        $url = $this->getContainer()->get('router')->generate('AeagSqeBundle_saisieDonnees_lot_periodes', array("lotanId" => $pgCmdDemande->getLotan()->getId()), UrlGeneratorInterface::ABSOLUTE_URL);
-                        $txtMessage = 'Le lot ' . $pgCmdDemande->getLotan()->getLot()->getNomLot() . ' a été généré. <br/>';
+                        $url = $this->getContainer()->get('router')->generate('AeagSqeBundle_saisieDonnees_lot_periodes', array("lotanId" => $lotan->getId()), UrlGeneratorInterface::ABSOLUTE_URL);
+                        $txtMessage = 'Le lot ' . $lotan->getLot()->getNomLot() . ' a été généré. <br/>';
                         $txtMessage .= 'Vous pouvez les données sur SQE : <a href="'. $url .'">Cliquez ici</a> <br/>';
                     } 
                 } else if (strpos($codeMilieu,"HB") !== false || strpos($codeMilieu,"HM") !== false) {
                     if (strpos($pgProgPrestaTypfic->getFormatFic(), "Suivi_HB") !== false) {
-                        $url = $this->getContainer()->get('router')->generate('AeagSqeBundle_suiviHydrobio_lot_periodes', array("lotanId" => $pgCmdDemande->getLotan()->getId()), UrlGeneratorInterface::ABSOLUTE_URL);
-                        $txtMessage = 'Le lot ' . $pgCmdDemande->getLotan()->getLot()->getNomLot() . ' a été généré. <br/>';
+                        $url = $this->getContainer()->get('router')->generate('AeagSqeBundle_suiviHydrobio_lot_periodes', array("lotanId" => $lotan->getId()), UrlGeneratorInterface::ABSOLUTE_URL);
+                        $txtMessage = 'Le lot ' . $lotan->getLot()->getNomLot() . ' a été généré. <br/>';
                         $txtMessage .= 'Vous pouvez renseigner le suivi des prélèvements sur SQE : <a href="'.$url.'">Cliquez ici</a>. <br/>';
                     }
                 }
@@ -94,15 +94,18 @@ class RelanceMailCommand extends AeagCommand {
                     $this->sendEmail($utilisateur, $txtMessage, $objetMessage);
                 }
             }
+            
             //Mise à jour de la phase
+            $pgProgPhase = $this->repoPgProgPhases->findOneByCodePhase('D10');
+            $pgCmdDemandes = $this->repoPgCmdDemande->findBy(array('lotan' => $lotan, 'prestataire' => $prestataire, 'phaseDemande' => $pgProgPhase));
             $pgProgPhase = $this->repoPgProgPhases->findOneByCodePhase('D20');
-            $pgCmdDemande->setPhaseDemande($pgProgPhase);
-            
-            $this->emSqe->persist($pgCmdDemande);
-            
+            foreach($pgCmdDemandes as $pgCmdDemande) {
+                $this->output->writeln($date->format('d/m/Y H:i:s') .' Demande id :'.$pgCmdDemande->getId());
+                $pgCmdDemande->setPhaseDemande($pgProgPhase);
+                $this->emSqe->persist($pgCmdDemande);
+            }
             $this->emSqe->flush();
         }
-        
         
         $date = new \DateTime();
         $this->output->writeln($date->format('d/m/Y H:i:s') .' - Fin envoi mails Dais');
