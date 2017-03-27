@@ -286,5 +286,18 @@ class PgCmdDemandeRepository extends EntityRepository {
         $stmt->execute();
         return $stmt->fetchAll();
     }
+    
+    public function getLotanAndPrestaByCodePhase($codePhase) {
+        $query = "select dmd.prestataire, dmd.lotan";
+        $query .= " from Aeag\SqeBundle\Entity\PgCmdDemande dmd";
+        $query .= " where phase.codePhase = :codePhase";
+        $query .= " group by dmd.prestataire, dmd.lotan";
+        $query .= " order by dmd.lotan";
+        $qb = $this->_em->createQuery($query);
+        
+        $qb->setParameter('codePhase', $codePhase);
+        
+        return $qb->getResult();
+    }
 
 }

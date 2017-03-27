@@ -370,11 +370,13 @@ class ControleVraisemblance {
     
     public function testsComplementaires($mesure, $codeRq, $inSitu, $lqM) {
         if ($inSitu > 0) {
+            $mesure = floatval($mesure);
+            $lqM = floatval($lqM);
             if ($codeRq == 10) {
                 if ($this->isNull($lqM)) {
                     return array("warning", "Tests complementaires : LQ non renseignée pour le code remarque 10");
                 } 
-                if ($mesure !== $lqM) {
+                if ($mesure != $lqM) {
                     return array("error", "Tests complementaires :  Mesure différente de la LQ pour le code remarque 10");
                 }
             } else if ($codeRq == 1 && !$this->isNull($lqM)) {

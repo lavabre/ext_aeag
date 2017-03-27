@@ -59,7 +59,15 @@ class RelanceMailCommand extends AeagCommand {
         // Récupération des DAIS dernièrement générées
         $pgProgPhases = $this->repoPgProgPhases->findOneByCodePhase('D10');
         $pgCmdDemandes = $this->repoPgCmdDemande->findBy(array('phaseDemande' => $pgProgPhases), array('id' => 'ASC'));
-        
+        //TODO Envoyer un mail par lotan => groupby lotan, presta
+        //$pgCmdDemandes = $this->repoPgCmdDemande->getLotanAndPrestaByCodePhase('D10');
+        /*
+         * select dmd.lotan_id, dmd.prestataire_id
+            from pg_cmd_demande dmd
+            where phase_dmd_id = 110
+            group by dmd.lotan_id, dmd.prestataire_id
+            order by dmd.lotan_id asc
+         */
         foreach ($pgCmdDemandes as $pgCmdDemande) {
             $codeMilieu = $pgCmdDemande->getLotan()->getLot()->getCodeMilieu()->getCodeMilieu();
             $prestataire = $pgCmdDemande->getLotan()->getLot()->getTitulaire();

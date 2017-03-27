@@ -50,4 +50,8 @@ aeag_sqe_planning:
 aeag_sqe_exportDonneesBrutes:
     resource: "@AeagSqeBundle/Resources/config/routing_exportdonneesbrutes.yml"
     prefix:   /exportdonneesbrutes    
+    
+aeag_sqe_clearcache:
+    path:  /cc
+    defaults: { _controller: AeagSqeBundle:ClearCache:index }    
  
