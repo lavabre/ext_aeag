@@ -111,4 +111,37 @@ class EtatFraisRepository extends EntityRepository {
         return $qb->getResult();
     }
 
+    /**
+     *
+     * @return array
+     */
+    public function getAnnees() {
+
+
+        $query = "select distinct f.annee";
+        $query = $query . " from  Aeag\FrdBundle\Entity\EtatFrais f";
+        $query = $query . " order by f.annee";
+
+        //print_r($query);
+        $qb = $this->_em->createQuery($query);
+        return $qb->getResult();
+    }
+
+    /**
+     *
+     * @return array
+     */
+    public function getAnneesByCorId($corId) {
+
+        $query = "select distinct f.annee";
+        $query = $query . " from  Aeag\FrdBundle\Entity\EtatFrais f";
+        $query = $query . " where f.corId = :corId";
+        $query = $query . " order by f.annee";
+
+        //print_r($query);
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('corId', $corId);
+        return $qb->getResult();
+    }
+
 }

@@ -452,11 +452,9 @@ class AdminController extends Controller {
             $notifications = $this->get('aeag.notifications');
             $texte = "La déclaration n° " . $sousDeclarationCollecteur->getNumero() . " est en cours de traitement par le responsable de l'agence de l'eau.";
             foreach ($correspondants as $cor) {
-                $notification = new Notification();
                 $correspondant = $repoCorrespondant->getCorrespondantById($cor->getCorrespondant()->getId());
                 $userOdecs = $repoUser->getUserByCorrespondant($correspondant->getId());
                 foreach ($userOdecs as $userOdec) {
-                    $userOdec = $repoUser->getUserById($correspondant->getUser());
                     $notifications->createNotification($user, $userOdec, $em, $session, $texte);
                 }
             }

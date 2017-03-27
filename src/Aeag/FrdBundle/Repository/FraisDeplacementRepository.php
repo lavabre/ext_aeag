@@ -204,7 +204,7 @@ class FraisDeplacementRepository extends EntityRepository {
         $query = "select f";
         $query = $query . " from  Aeag\FrdBundle\Entity\FraisDeplacement f";
         $query = $query . " where f.user = :userId";
-        $query = $query . " and to_char(f.dateDepart,'YYYY-MM-DD') = :dateDepar";
+        $query = $query . " and to_char(f.dateDepart,'YYYY-MM-DD') = :dateDepart";
         $query = $query . " and f.heureDepart = :heureDepart";
         $query = $query . " and to_char(f.dateRetour,'YYYY-MM-DD') = :dateRetour";
         $query = $query . " and f.heureRetour = :heureRetour";
@@ -407,7 +407,7 @@ class FraisDeplacementRepository extends EntityRepository {
         $query = "select f";
         $query = $query . " from  Aeag\FrdBundle\Entity\FraisDeplacement f";
         if ($etfrId) {
-            $query = $query . " where f.etfrId = : etfrId";
+            $query = $query . " where f.etfrId = :etfrId";
         } else {
             $query = $query . " where f.etfrId is null";
         }

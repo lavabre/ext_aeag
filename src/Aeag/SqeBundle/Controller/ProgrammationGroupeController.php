@@ -555,11 +555,19 @@ class ProgrammationGroupeController extends Controller {
             $prestataireAncnumComplet = explode(" ", $request->get('prestataire'));
             $prestataireAncnum = $prestataireAncnumComplet[0];
             $prestataire = $repoPgRefCorresPresta->getPgRefCorresPrestaByAncnum($prestataireAncnum);
-            $prestataireAdrCorId = $prestataire->getAdrCorId();
+            if ($prestataire) {
+                $prestataireAdrCorId = $prestataire->getAdrCorId();
+            } else {
+                $prestataireAdrCorId = null;
+            }
         }
 
         $pgProgGrpParamRef = $repoPgProgGrpParamRef->getPgProgGrpParamRefById($idGroupe);
-        $prestataire = $repoPgRefCorresPresta->getPgRefCorresPrestaByAdrCorId($prestataireAdrCorId);
+        if ($prestataireAdrCorId) {
+            $prestataire = $repoPgRefCorresPresta->getPgRefCorresPrestaByAdrCorId($prestataireAdrCorId);
+        } else {
+            $prestataire = null;
+        }
 
         $tabGroupes = array();
         $tabGroupes['groupe'] = $pgProgGrpParamRef;
