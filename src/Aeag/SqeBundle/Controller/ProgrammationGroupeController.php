@@ -1123,57 +1123,61 @@ class ProgrammationGroupeController extends Controller {
         $pgProgGrpParamRef = $repoPgProgGrpParamRef->getPgProgGrpParamRefById($groupeId);
         $pgProgLotGrparAnSup = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotAnGrpparref($pgProgLotAn, $pgProgGrpParamRef);
 
-        if ($pgProgLotGrparAnSup->getGrparRef()->getSupport()) {
-            $trouve = false;
-            foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
-                if ($pgProgLotGrparAn->getid() != $pgProgLotGrparAnSup->getId()) {
-                    if ($pgProgLotGrparAn->getOrigine() == 'R' or $pgProgLotGrparAn->getOrigine() == 'A') {
-                        if ($pgProgLotGrparAn->getGrparRef()->getSupport()) {
-                            if ($pgProgLotGrparAn->getGrparRef()->getSupport()->getCodesupport() == $pgProgLotGrparAnSup->getGrparRef()->getSupport()->getCodesupport()) {
-                                $trouve = true;
-                                break;
+
+        if ($pgProgLotGrparAnSup) {
+            if ($pgProgLotGrparAnSup->getGrparRef()->getSupport()) {
+                $trouve = false;
+                foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
+                    if ($pgProgLotGrparAn->getid() != $pgProgLotGrparAnSup->getId()) {
+                        if ($pgProgLotGrparAn->getOrigine() == 'R' or $pgProgLotGrparAn->getOrigine() == 'A') {
+                            if ($pgProgLotGrparAn->getGrparRef()->getSupport()) {
+                                if ($pgProgLotGrparAn->getGrparRef()->getSupport()->getCodesupport() == $pgProgLotGrparAnSup->getGrparRef()->getSupport()->getCodesupport()) {
+                                    $trouve = true;
+                                    break;
+                                }
                             }
                         }
                     }
                 }
-            }
-            if (!$trouve) {
-                $support = $pgProgLotGrparAnSup->getGrparRef()->getSupport();
-                if ($support) {
-                    $pgProgGrparObligSupports = $repoPgProgGrparObligSupport->getPgProgGrparObligSupportByCodeSupport($support->getCodeSupport());
-                    foreach ($pgProgGrparObligSupports as $pgProgGrparObligSupport) {
-                        $pgProgGrpParamRefCompl = $repoPgProgGrpParamRef->getPgProgGrpParamRefById($pgProgGrparObligSupport->getGrparRefId());
-                        if ($pgProgGrpParamRef->getId() != $pgProgGrpParamRefCompl->getId()) {
-                            if ($pgProgGrpParamRefCompl->getCodeMilieu()->getCodeMilieu() == $pgProgTypeMilieu->getCodeMilieu()) {
-                                $pgProgLotGrparAnCompl = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotAnGrpparref($pgProgLotAn, $pgProgGrpParamRefCompl);
-                                if ($pgProgLotGrparAnCompl) {
-                                    $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByGrparAn($pgProgLotGrparAnCompl);
-                                    foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
-                                        $emSqe->remove($pgProgLotPeriodeProg);
+                if (!$trouve) {
+                    $support = $pgProgLotGrparAnSup->getGrparRef()->getSupport();
+                    if ($support) {
+                        $pgProgGrparObligSupports = $repoPgProgGrparObligSupport->getPgProgGrparObligSupportByCodeSupport($support->getCodeSupport());
+                        foreach ($pgProgGrparObligSupports as $pgProgGrparObligSupport) {
+                            $pgProgGrpParamRefCompl = $repoPgProgGrpParamRef->getPgProgGrpParamRefById($pgProgGrparObligSupport->getGrparRefId());
+                            if ($pgProgGrpParamRef->getId() != $pgProgGrpParamRefCompl->getId()) {
+                                if ($pgProgGrpParamRefCompl->getCodeMilieu()->getCodeMilieu() == $pgProgTypeMilieu->getCodeMilieu()) {
+                                    $pgProgLotGrparAnCompl = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotAnGrpparref($pgProgLotAn, $pgProgGrpParamRefCompl);
+                                    if ($pgProgLotGrparAnCompl) {
+                                        $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByGrparAn($pgProgLotGrparAnCompl);
+                                        foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
+                                            $emSqe->remove($pgProgLotPeriodeProg);
+                                        }
+                                        $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAnCompl);
+                                        foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
+                                            $emSqe->remove($pgProgLotParamAn);
+                                        }
+                                        $emSqe->remove($pgProgLotGrparAnCompl);
                                     }
-                                    $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAnCompl);
-                                    foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
-                                        $emSqe->remove($pgProgLotParamAn);
-                                    }
-                                    $emSqe->remove($pgProgLotGrparAnCompl);
                                 }
                             }
                         }
                     }
                 }
             }
+
+            $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByGrparAn($pgProgLotGrparAnSup);
+            foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
+                $emSqe->remove($pgProgLotPeriodeProg);
+            }
+            $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAnSup);
+            foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
+                $emSqe->remove($pgProgLotParamAn);
+            }
+            $emSqe->remove($pgProgLotGrparAnSup);
+            $emSqe->flush();
+            $session->getFlashBag()->add('notice-success', 'Le groupe  : ' . $pgProgLotGrparAnSup->getGrparRef()->getLibelleGrp() . ' a été supprimé de  la programmation : ' . $pgProgLotGrparAnSup->getLotan()->getAnneeProg() . ' version :  ' . $pgProgLotGrparAnSup->getLotan()->getVersion() . ' du lot : ' . $pgProgLotGrparAnSup->getLotan()->getLot()->getNomLot() . ' !');
         }
-        $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByGrparAn($pgProgLotGrparAnSup);
-        foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
-            $emSqe->remove($pgProgLotPeriodeProg);
-        }
-        $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAnSup);
-        foreach ($pgProgLotParamAns as $pgProgLotParamAn) {
-            $emSqe->remove($pgProgLotParamAn);
-        }
-        $emSqe->remove($pgProgLotGrparAnSup);
-        $emSqe->flush();
-        $session->getFlashBag()->add('notice-success', 'Le groupe  : ' . $pgProgLotGrparAnSup->getGrparRef()->getLibelleGrp() . ' a été supprimé de  la programmation : ' . $pgProgLotGrparAnSup->getLotan()->getAnneeProg() . ' version :  ' . $pgProgLotGrparAnSup->getLotan()->getVersion() . ' du lot : ' . $pgProgLotGrparAnSup->getLotan()->getLot()->getNomLot() . ' !');
         return $this->redirect($this->generateUrl('AeagSqeBundle_programmation_groupes', array(
                             'pgProgLotId' => round($pgProgLot->getId()),
                             'maj' => $maj,

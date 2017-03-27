@@ -180,7 +180,7 @@
                     <th>Libellé</th>
                     <th>Réseau</th>
                     <th>Support</th>
-                    <th>Autres prélèvements</th>
+                    <th>Phase du prélèvements</th>
                     <th>Date</th>
                     <th>Statut</th>
                     <th>Validation</th>
@@ -222,20 +222,24 @@
                                                 {% endif %}
                                             {% endif %}
                                         {% endif %}
-                                        {% if is_granted('ROLE_ADMINSQE') or pgProgWebUser.typeUser == 'XHBIO' %}
-                                            {#  {% if station.suiviPrel.statutPrel  == 'D'  and
-                                                      station.suiviPrel.validation  == 'E'  and
-                                                      station.suiviPrel.fichierRps | length %}#}
-                                            <a  id="idAvis-{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}" class="btn btn-warning"  title="Donner un avis">
-                                                <i class="fa fa-graduation-cap"></i>
-                                            </a>
-                                            {#{% endif %}#}
+                                        {% if  cmdPrelev.cmdPrelev.phaseDmd.codePhase == 'M30' %}
+                                            {% if is_granted('ROLE_ADMINSQE') or pgProgWebUser.typeUser == 'XHBIO' %}
+                                                {#  {% if station.suiviPrel.statutPrel  == 'D'  and
+                                                          station.suiviPrel.validation  == 'E'  and
+                                                          station.suiviPrel.fichierRps | length %}#}
+                                                <a  id="idAvis-{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}" class="btn btn-warning"  title="Donner un avis">
+                                                    <i class="fa fa-graduation-cap"></i>
+                                                </a>
+                                                {#{% endif %}#}
+                                            {% endif %}
                                         {% endif %}
 
                                         {% if is_granted('ROLE_ADMINSQE') %}
-                                            <a  id="idMaj-{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}" class="btn btn-warning"  title="valider le suivi">
-                                                <i class="fa fa-check"></i>
-                                            </a>
+                                            {% if  cmdPrelev.cmdPrelev.phaseDmd.codePhase == 'M30' %}
+                                                <a  id="idMaj-{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}" class="btn btn-warning"  title="valider le suivi">
+                                                    <i class="fa fa-check"></i>
+                                                </a>
+                                            {% endif %}
                                             {% if cmdPrelev.suiviPrels.0.suiviPrel.statutPrel != 'D' %}
                                                 <a class="btn btn-danger" data-toggle="modal" href="#sup-{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}" title="Supprimer le suivi">
                                                     <i class="fa fa-trash-o"></i>
@@ -289,15 +293,7 @@
                                 <td>
                                     {{ cmdPrelev.cmdPrelev.codeSupport.nomSupport }}
                                 </td>
-                                <td>
-                                    {%if  cmdPrelev.autrePrelevs %}
-                                        {% for autrePrelev in cmdPrelev.autrePrelevs  %}
-                                            {% if autrePrelev.datePrel %}
-                                                {{ autrePrelev.datePrel | date("d/m/Y H:i") }} : {{ autrePrelev.nomSupport }} <br/>
-                                            {% endif %}
-                                        {% endfor %}
-                                    {% endif %}
-                                </td>
+                                <td>{{ cmdPrelev.cmdPrelev.phaseDmd.libellePhase }}</td>
                                 {%if not cmdPrelev.suiviPrels.0.suiviPrel | length %}
                                     <td></td>
                                     <td></td>

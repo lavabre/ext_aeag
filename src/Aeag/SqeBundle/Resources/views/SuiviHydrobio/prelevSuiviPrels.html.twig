@@ -39,7 +39,11 @@
                                         {% elseif suiviPrel.statutPrel == 'R' %}
                                             Reporté
                                         {% elseif suiviPrel.statutPrel == 'D' %}
-                                            Déposé
+                                            Dépôt fichier excel
+                                        {% elseif suiviPrel.statutPrel == 'DF' %}
+                                            Dépôt  pdf
+                                        {% elseif suiviPrel.statutPrel == 'DO' %}
+                                            Dépôt Photo
                                         {% endif %}
                                     </td>
                                     <td>
@@ -49,6 +53,8 @@
                                             Refusé
                                         {% elseif suiviPrel.validation == 'A' %}
                                             Accepté
+                                        {% elseif suiviPrel.validation == 'F' %}
+                                            Abandonné
                                         {% endif %}
                                     </td>
                                     <td>

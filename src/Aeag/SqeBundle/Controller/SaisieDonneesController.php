@@ -1279,14 +1279,15 @@ class SaisieDonneesController extends Controller {
         }
 
 
-
-        $autresDemandes = $repoPgCmdDemande->getPgCmdDemandesByLotanPeriode($pgProgLotAn, $pgProgPeriodes);
-        foreach ($autresDemandes as $autreDemande) {
-            $autrePrelevs = $repoPgCmdPrelev->getPgCmdPrelevByDemandeStationPeriode($autreDemande, $pgRefStationMesure, $pgProgPeriodes);
-            foreach ($autrePrelevs as $autrePrelev) {
-                if ($autrePrelev->getid() != $pgCmdPrelev->getId()) {
-                    $autrePrelev->setDatePrelev($datePrel);
-                    $emSqe->persist($autrePrelev);
+        if ($datePrel) {
+            $autresDemandes = $repoPgCmdDemande->getPgCmdDemandesByLotanPeriode($pgProgLotAn, $pgProgPeriodes);
+            foreach ($autresDemandes as $autreDemande) {
+                $autrePrelevs = $repoPgCmdPrelev->getPgCmdPrelevByDemandeStationPeriode($autreDemande, $pgRefStationMesure, $pgProgPeriodes);
+                foreach ($autrePrelevs as $autrePrelev) {
+                    if ($autrePrelev->getid() != $pgCmdPrelev->getId()) {
+                        $autrePrelev->setDatePrelev($datePrel);
+                        $emSqe->persist($autrePrelev);
+                    }
                 }
             }
         }
@@ -1638,9 +1639,11 @@ class SaisieDonneesController extends Controller {
 //            }
 //        }
 
-        $pgCmdPrelev->setDatePrelev($datePrel);
-        $emSqe->persist($pgCmdPrelev);
-        $emSqe->flush();
+        if ($dateprel) {
+            $pgCmdPrelev->setDatePrelev($datePrel);
+            $emSqe->persist($pgCmdPrelev);
+            $emSqe->flush();
+        }
 
 //  return new Response(  \Symfony\Component\VarDumper\VarDumper::dump($tabParamAns));
 //return new Response ('');
@@ -2522,6 +2525,13 @@ class SaisieDonneesController extends Controller {
 
         $pgCmdPrelev = $repoPgCmdPrelev->getPgCmdPrelevById($prelevId);
         $pgCmdFichiersRps = $pgCmdPrelev->getFichierRps();
+
+        if (!$pgCmdFichiersRps) {
+            $session->getFlashBag()->add('notice-error', 'Le prélèvement  : ' . $prelevId . ' n\'a pasde fichier Rps associé !');
+            exit();
+        }
+
+
         $chemin = '/base/extranet/Transfert/Sqe/csv';
 
         if ($type == 'TA') {
