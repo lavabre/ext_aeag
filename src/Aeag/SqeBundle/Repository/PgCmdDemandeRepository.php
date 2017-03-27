@@ -288,11 +288,19 @@ class PgCmdDemandeRepository extends EntityRepository {
     }
     
     public function getLotanAndPrestaByCodePhase($codePhase) {
-        $query = "select dmd.prestataire, dmd.lotan";
+        $query = "select prestataire.adrCorId as prestaId, lotan.id as lotanId";
         $query .= " from Aeag\SqeBundle\Entity\PgCmdDemande dmd";
+        $query .= " join dmd.phaseDemande phase";
+        $query .= " join dmd.prestataire prestataire";
+        $query .= " join dmd.lotan lotan";
         $query .= " where phase.codePhase = :codePhase";
-        $query .= " group by dmd.prestataire, dmd.lotan";
-        $query .= " order by dmd.lotan";
+        $query .= " group by prestataire.adrCorId, lotan.id";
+        //$query .= " order by lotan";
+        /*select dmd.lotan_id, dmd.prestataire_id
+            from pg_cmd_demande dmd
+            where phase_dmd_id = 110
+            group by dmd.lotan_id, dmd.prestataire_id
+            order by dmd.lotan_id asc*/
         $qb = $this->_em->createQuery($query);
         
         $qb->setParameter('codePhase', $codePhase);

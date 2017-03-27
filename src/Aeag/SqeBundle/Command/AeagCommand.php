@@ -40,6 +40,7 @@ class AeagCommand extends ContainerAwareCommand {
     protected $repoPgProgWebuserTypmil;
     protected $repoPgProgBornesParams;
     protected $repoPgProgPrestaTypfic;
+    protected $repoPgProgLotan;
     protected $detectionCodeRemarqueComplet;
     protected $detectionCodeRemarqueMoitie;
     protected $controleVraisemblaceService;
@@ -92,6 +93,7 @@ class AeagCommand extends ContainerAwareCommand {
         $this->repoPgProgWebuserTypmil = $this->emSqe->getRepository('AeagSqeBundle:PgProgWebuserTypmil');
         $this->repoPgProgBornesParams = $this->emSqe->getRepository('AeagSqeBundle:PgProgBornesParams');
         $this->repoPgProgPrestaTypfic = $this->emSqe->getRepository('AeagSqeBundle:PgProgPrestaTypfic');
+        $this->repoPgProgLotan = $this->emSqe->getRepository('AeagSqeBundle:PgProgLotan');
         $this->repoParametre = $this->emSqe->getRepository('AeagSqeBundle:Parametre');
 
         // Chargement des fichiers csv dans des tableaux
