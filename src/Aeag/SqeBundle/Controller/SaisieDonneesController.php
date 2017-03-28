@@ -2975,6 +2975,14 @@ class SaisieDonneesController extends Controller {
                             fputs($rapport, $contenu);
                         }
 
+                        $valeur = str_replace(',', '.', $tab[20]);
+                        if (!is_float($valeur)) {
+                            $err = true;
+                            $contenu = 'ligne  ' . $ligne . '  :  valeur non numerique  (' . $tab[20] . ')' . CHR(13) . CHR(10);
+                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                            fputs($rapport, $contenu);
+                        }
+
                         $unite = $tab[22];
                         if ($unite) {
                             $pgSandreUnite = $repoPgSandreUnites->getPgSandreUnitesByCodeUnite($unite);
