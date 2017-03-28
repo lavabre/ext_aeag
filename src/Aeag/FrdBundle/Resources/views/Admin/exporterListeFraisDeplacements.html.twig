@@ -1,67 +1,66 @@
 {% extends "AeagFrdBundle::layout.html.twig" %}
 
 {% block breadcrumb %}
-         <li>
-          <i class="icon-home"></i>
-          <a href="{{ path('aeag_homepage') }}">Accueil</a> 
-       </li>
-       <li class="active">
-          Export des Frais de déplacements
-       </li>
+    <li>
+        <i class="icon-home"></i>
+        <a href="{{ path('aeag_homepage') }}">Accueil</a>
+    </li>
+    <li class="active">
+        Export des Frais de déplacements
+    </li>
 {% endblock breadcrumb %}
 
 
 {%block panel_heading %}
-           <h3>
-               Liste des demandes à exporter vers l'agence de l'eau
-           </h3>
- {%endblock panel_heading %}
+    <h3>
+        Liste des demandes à exporter vers l'agence de l'eau
+    </h3>
+{%endblock panel_heading %}
 
-    
+
 {%block modal %}
-       
-         <div  id="exporter" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog">
-               <div class="modal-content">
-                    <div class="modal-header">
-                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                         <h4 class="modal-title">
-                                   Exportation des demandes sélectionnées vers l'agence de l'eau
-                         </h4>
-                      </div>
-                      <div class="modal-body">
-                         <h4>Cliquer sur 'Exporter' pour confirmer l'exportation des demandes selectionnées vers l'agence de l'eau</h4>
-                         </br></br>
-                         <div class="alert alert-info">Info : Une fois exporter, aller sur "AEAG pour importer le fichier généré</div>
-                      </div>
-                      <div class="modal-footer">
-                         <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
-                         <a id="btValider" class="btn btn-success" data-dismiss="modal"><i class="fa fa-download"></i> exporter</a>
-                      </div>
-              </div>
-          </div>
-       </div>
-     
+
+    <div  id="exporter" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">
+                        Exportation des demandes sélectionnées vers l'agence de l'eau
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <h4>Cliquer sur 'Exporter' pour confirmer l'exportation des demandes selectionnées vers l'agence de l'eau</h4>
+                    </br></br>
+                    <div class="alert alert-info">Info : Une fois exporter, aller sur "AEAG pour importer le fichier généré</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
+                    <a id="btValider" class="btn btn-success" data-dismiss="modal"><i class="fa fa-download"></i> exporter</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
 {%endblock modal%}
- 
+
 
 {%block content %}
-         <div class="row">
-          <div class="col-xm-12">
-              <div class="small ">
-                  
-                  <form action="{{ path('AeagFrdBundle_admin_exporterListeFraisDeplacements') }}" id="idForm" class="form-horizontal" method="post">
-                    <div class="form-body">
-                        
-                       {% if message %}
-                            <div class="alert alert-success">
-                                <strong>Exportation réussi : </strong> {{ message }}
-                            </div>
-                        {% endif %} 
-                        
-                       <table class="table table-bordered table-striped table-condensed table-advance table-hover" id="idTable">
+    <div class="row">
+        <div class="col-xm-12">
+            {#   <div class="small ">#}
+            <form action="{{ path('AeagFrdBundle_admin_exporterListeFraisDeplacements') }}" id="idForm" class="form-horizontal" method="post">
+                <div class="form-body">
+
+                    {% if message %}
+                        <div class="alert alert-success">
+                            <strong>Exportation réussi : </strong> {{ message }}
+                        </div>
+                    {% endif %}
+
+                    <table class="table table-bordered table-striped table-condensed table-advance table-hover" id="idTable">
                         <thead>
-                           <tr>
+                            <tr>
                                 <th>Exporter</th>
                                 <th>Numéro</th>
                                 <th>Nom</th>
@@ -70,93 +69,93 @@
                                 <th>Objet</th>
                             </tr>
                         </thead>
-                         <tbody id="idBody">
+                        <tbody id="idBody">
                             {%if entities | length > 0 %}
                                 {% for entity in entities %}
                                     <tr>
                                         <td>
-                                         <input type="checkbox" class="checkbox" name="exp-{{entity.0.id}}" id="exp-{{entity.0.id}}" value="O" checked="true">
+                                            <input type="checkbox" class="checkbox" name="exp-{{entity.0.id}}" id="exp-{{entity.0.id}}" value="O" checked="true">
                                         </td>
                                         <td>{{ entity.0.id }}</td>
                                         <td>{{ entity.1.username }} {{ entity.1.prenom }}</td>
                                         <td>{{ entity.0.dateDepart | date("Y/m/d") }} &nbsp; {{ entity.0.heureDepart }}</td>
                                         <td>{{ entity.0.dateRetour | date("Y/m/d") }} &nbsp; {{ entity.0.heureretour }}</td>
                                         <td>{{ entity.0.objet }}</td>
-                                     </tr>
+                                    </tr>
                                 {% endfor %}
                             {%endif%}
                         </tbody>
-                     </table>
+                    </table>
                 </div>
-                 <input type="hidden" id="tout" name="tout" value="ko">
-                 
-               <div class="form-group">
-                   <div class="col-xs-3 left">
-                         <input type="checkbox" id="cocherTout" name="cocherTout"  checked="true" >
-                         <span id='cocheText'>Tout decocher</span>
+                <input type="hidden" id="tout" name="tout" value="ko">
+
+                <div class="form-group">
+                    <div class="col-xs-3 left">
+                        <input type="checkbox" id="cocherTout" name="cocherTout"  checked="true" >
+                        <span id='cocheText'>Tout decocher</span>
                     </div>
                     <div class="col-xs-9">
                         <a class="btn btn-success" data-toggle="modal" href="#exporter"><i class="fa fa-download"></i> Exporter</a>
                         <a class="btn btn-danger" href="{{ path('aeag_frd') }}"><i class="fa fa-power-off"></i> Retour</a>
                     </div>
-               </div>  
-                 
-                             
-              </form>
-            </div>
-          </div>
-        </div>
-     {%endblock content %}
- 
-{% block scripts %}
-           
-         $('#cocherTout').click(function() { // clic sur la case cocher/decocher
-                
-                if(this.checked){ // si 'cocheTout' est coché
-                    $body = '';
-                    {%if entities | length > 0 %}
-                      {% for entity in entities %}
-                         $body = $body + '<tr>';
-                         $body = $body + '<td>';
-                         $body = $body + '<input type="checkbox" class="checkbox" name="exp-' + {{entity.0.id}} + '" id="exp-' +{{entity.0.id}} + '" value="O" checked="true">';
-                         $body = $body + '</td>';
-                         $body = $body + '<td>{{ entity.0.id }}</td>';
-                         $body = $body + '<td>{{ entity.1.username }} {{ entity.1.prenom }}</td>';
-                         $body = $body + '<td>{{ entity.0.dateDepart | date("Y/m/d") }} {{ entity.0.heureDepart }}</td>';
-                         $body = $body + '<td>{{ entity.0.dateRetour | date("Y/m/d") }} {{ entity.0.heureretour }}</td>';
-                         $body = $body + '<td>{{ entity.0.objet }}</td>';
-                         $body = $body + '</tr>';
-                      {% endfor %}
-                    {%endif%}
-                    $('#idBody').html($body);
-                    $('#cocheText').html('Tout decocher'); // mise à jour du texte de cocheText
-                    $('#tout').val('ok'); 
-                }else{ // si on décoche 'cocheTout'
-                     $body = '';
-                    {%if entities | length > 0 %}
-                      {% for entity in entities %}
-                         $body = $body + '<tr>';
-                         $body = $body + '<td>';
-                         $body = $body + '<input type="checkbox" class="checkbox" name="exp-' + {{entity.0.id}} + '" id="exp-' +{{entity.0.id}} + '" value="O">';
-                         $body = $body + '</td>';
-                         $body = $body + '<td>{{ entity.0.id }}</td>';
-                         $body = $body + '<td>{{ entity.1.username }} {{ entity.1.prenom }}</td>';
-                         $body = $body + '<td>{{ entity.0.dateDepart | date("Y/m/d") }} {{ entity.0.heureDepart }}</td>';
-                         $body = $body + '<td>{{ entity.0.dateRetour | date("Y/m/d") }} {{ entity.0.heureretour }}</td>';
-                         $body = $body + '<td>{{ entity.0.objet }}</td>';
-                         $body = $body + '</tr>';
-                      {% endfor %}
-                    {%endif%}
-                    $('#idBody').html($body);
-                    $('#cocheText').html('Cocher tout');// mise à jour du texte de cocheText
-                    $('#tout').val('ko');
-                }           
+                </div>
 
-            });
-                  
-           $('#btValider').click( function() {
-             $('form').submit();
-             return false;
-          } ); 
-  
+
+            </form>
+            {# </div>#}
+        </div>
+    </div>
+{%endblock content %}
+
+{% block scripts %}
+
+    $('#cocherTout').click(function() { // clic sur la case cocher/decocher
+
+    if(this.checked){ // si 'cocheTout' est coché
+    $body = '';
+    {%if entities | length > 0 %}
+        {% for entity in entities %}
+            $body = $body + '<tr>';
+                $body = $body + '<td>';
+                    $body = $body + '<input type="checkbox" class="checkbox" name="exp-' + {{entity.0.id}} + '" id="exp-' +{{entity.0.id}} + '" value="O" checked="true">';
+                    $body = $body + '</td>';
+                $body = $body + '<td>{{ entity.0.id }}</td>';
+                $body = $body + '<td>{{ entity.1.username }} {{ entity.1.prenom }}</td>';
+                $body = $body + '<td>{{ entity.0.dateDepart | date("Y/m/d") }} {{ entity.0.heureDepart }}</td>';
+                $body = $body + '<td>{{ entity.0.dateRetour | date("Y/m/d") }} {{ entity.0.heureretour }}</td>';
+                $body = $body + '<td>{{ entity.0.objet }}</td>';
+                $body = $body + '</tr>';
+            {% endfor %}
+        {%endif%}
+    $('#idBody').html($body);
+    $('#cocheText').html('Tout decocher'); // mise à jour du texte de cocheText
+    $('#tout').val('ok');
+    }else{ // si on décoche 'cocheTout'
+    $body = '';
+    {%if entities | length > 0 %}
+        {% for entity in entities %}
+            $body = $body + '<tr>';
+                $body = $body + '<td>';
+                    $body = $body + '<input type="checkbox" class="checkbox" name="exp-' + {{entity.0.id}} + '" id="exp-' +{{entity.0.id}} + '" value="O">';
+                    $body = $body + '</td>';
+                $body = $body + '<td>{{ entity.0.id }}</td>';
+                $body = $body + '<td>{{ entity.1.username }} {{ entity.1.prenom }}</td>';
+                $body = $body + '<td>{{ entity.0.dateDepart | date("Y/m/d") }} {{ entity.0.heureDepart }}</td>';
+                $body = $body + '<td>{{ entity.0.dateRetour | date("Y/m/d") }} {{ entity.0.heureretour }}</td>';
+                $body = $body + '<td>{{ entity.0.objet }}</td>';
+                $body = $body + '</tr>';
+            {% endfor %}
+        {%endif%}
+    $('#idBody').html($body);
+    $('#cocheText').html('Cocher tout');// mise à jour du texte de cocheText
+    $('#tout').val('ko');
+    }
+
+    });
+
+    $('#btValider').click( function() {
+    $('form').submit();
+    return false;
+    } );
+
 {% endblock  scripts %}

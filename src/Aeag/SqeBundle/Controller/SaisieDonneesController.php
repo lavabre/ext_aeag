@@ -47,13 +47,13 @@ class SaisieDonneesController extends Controller {
 
         $tabProgLotAns = array();
         $i = 0;
+        $pgProgPhaseM40 = $repoProgPhases->getPgProgPhasesByCodePhase('M40');
+        $pgProgPhaseM50 = $repoProgPhases->getPgProgPhasesByCodePhase('M50');
         foreach ($pgProgLotAns as $pgProgLotAn) {
             $tabProgLotAns[$i]['lotan'] = $pgProgLotAn;
             $nbPrelevs = $repoPgCmdPrelev->getCountPgCmdPrelevByLotan($pgProgLotAn);
-            $pgProgPhase = $repoProgPhases->getPgProgPhasesByCodePhase('M40');
-            $nbPrelevCorrectes40 = $repoPgCmdPrelev->getCountPgCmdPrelevByLotanPhase($pgProgLotAn, $pgProgPhase);
-            $pgProgPhase = $repoProgPhases->getPgProgPhasesByCodePhase('M50');
-            $nbPrelevCorrectes50 = $repoPgCmdPrelev->getCountPgCmdPrelevByLotanPhase($pgProgLotAn, $pgProgPhase);
+            $nbPrelevCorrectes40 = $repoPgCmdPrelev->getCountPgCmdPrelevByLotanPhaseBis($pgProgLotAn, $pgProgPhaseM40);
+            $nbPrelevCorrectes50 = $repoPgCmdPrelev->getCountPgCmdPrelevByLotanPhaseBis($pgProgLotAn, $pgProgPhaseM50);
             $tabProgLotAns[$i]['nbDemandes'] = $nbPrelevs;
             $tabProgLotAns[$i]['nbDemandeCorrectes'] = $nbPrelevCorrectes40 + $nbPrelevCorrectes50;
 //            if ($pgProgLotAn->getid() == 330) {
@@ -1060,7 +1060,7 @@ class SaisieDonneesController extends Controller {
                         $tabParamAns[$nbParamAns]['unite'] = null;
                     }
                     if ($pgProgGrpParamRef->getTypeGrp() == 'ENV') {
-                        $pgCmdMesureEnv = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParamProg($pgCmdPrelev, $pgProgLotParamAn);
+                        $pgCmdMesureEnv = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, $$pgProgLotParamAn->getCodeParametre()->getParametre());
                         if ($pgCmdMesureEnv) {
                             if ($pgCmdMesureEnv->getCodeStatut() == '0') {
                                 $tabGroupes[$nbGroupes]['correct'] = $tabGroupes[$nbGroupes]['correct'] + 1;
@@ -1452,7 +1452,7 @@ class SaisieDonneesController extends Controller {
                                 $okControleVraisemblance = $okControleVraisemblance + $tabStatut['ko'];
                             }
 
-                            $pgCmdMesureEnv = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParamProg($pgCmdPrelev, $pgProgLotParamAn);
+                            $pgCmdMesureEnv = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, $parametre);
                             if (strlen($valeur) > 0) {
                                 if (!$pgCmdMesureEnv) {
                                     $pgCmdMesureEnv = new PgCmdMesureEnv();
@@ -1514,6 +1514,7 @@ class SaisieDonneesController extends Controller {
                             $nbParametresAna++;
                         }
                     }
+                    $emSqe->flush();
                 }
 
 
@@ -1639,7 +1640,7 @@ class SaisieDonneesController extends Controller {
 //            }
 //        }
 
-        if ($dateprel) {
+        if ($datePrel) {
             $pgCmdPrelev->setDatePrelev($datePrel);
             $emSqe->persist($pgCmdPrelev);
             $emSqe->flush();

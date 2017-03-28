@@ -1801,6 +1801,13 @@ class ReferentielController extends Controller {
         $repoPhase = $emFrd->getRepository('AeagFrdBundle:Phase');
         $repoUsers = $em->getRepository('AeagUserBundle:User');
         $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
+        $repoParametre = $emFrd->getRepository('AeagFrdBundle:Parametre');
+
+        if (!$session->has('annee')) {
+            $annee = $repoParametre->getParametreByCode('ANNEE');
+            $annee = new \DateTime($annee->getLibelle());
+            $session->set('annee', $annee);
+        }
 
         $anneeSel = $anneeSelect;
 
@@ -1885,7 +1892,7 @@ class ReferentielController extends Controller {
         $repoUsers = $em->getRepository('AeagUserBundle:User');
         $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
 
-         if ($etatFraisId) {
+        if ($etatFraisId) {
             $etatFrais = $repoEtatFrais->getEtatFraisById($etatFraisId);
             $correspondant = $repoCorrespondant->getCorrespondantByCorId($etatFrais->getCorId());
             $mandatement = $repoMandatement->getMandatementByEtfrId($etatFrais->getId());
@@ -1899,7 +1906,7 @@ class ReferentielController extends Controller {
             $anneeDeb = new \DateTime($annee1);
             $annee1 = $session->get('anneeSelect') . '-12-31';
             $anneeFin = new \DateTime($annee1);
-            $fraisDeplacements = $repoFraisDeplacement->getFraisDeplacementEnCoursByPhase( $phase->getId(), $anneeDeb, $anneeFin);
+            $fraisDeplacements = $repoFraisDeplacement->getFraisDeplacementEnCoursByPhase($phase->getId(), $anneeDeb, $anneeFin);
         }
 
         $i = 0;
