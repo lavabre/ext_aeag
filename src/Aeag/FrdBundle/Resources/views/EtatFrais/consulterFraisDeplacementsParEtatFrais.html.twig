@@ -245,10 +245,10 @@
             <ul class="list-inline">
                 <li><a class="btn btn-primary btn-xs" href="#" title="Consulter"><i class="fa fa-eye"></i></a> Consulter</li>
                 <li><a class="btn btn-info btn-xs" href="#" title="Valider"> <i class="fa fa-print"></i></a> Imprimer</li>
-                <li><a class="btn btn-warning btn-xs" href="#" title="Editerr"><i class="fa fa-edit"></i></a> Editer</li>
-                <li><a class="btn btn-danger btn-xs" href="#" title="Supprimer"><i class="fa fa-trash-o"></i></a> Supprimer</li>
+                        {#  <li><a class="btn btn-warning btn-xs" href="#" title="Editerr"><i class="fa fa-edit"></i></a> Editer</li>
+                          <li><a class="btn btn-danger btn-xs" href="#" title="Supprimer"><i class="fa fa-trash-o"></i></a> Supprimer</li>#}
                         {% if is_granted('ROLE_ADMINFRD') %}
-                    <li><a class="btn btn-success btn-xs" href="#" title="Valider"><i class="fa fa-check"></i></a> Valider</li>
+                    <li><a class="btn btn-success btn-xs" href="#" title="Enregistrer courrier et valider"><i class="fa fa-envelope"></i></a> Enregistrer courrier et valider</li>
                     <li><a class="btn btn-default btn-xs" href="#" title="Dévalider"><i class="fa fa-refresh"></i></a> Dévalider</li>
                         {% endif %}
             </ul>

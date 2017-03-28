@@ -507,6 +507,7 @@ class FraisDeplacementController extends Controller {
 
         $erreurDate = null;
         $erreurHeure = null;
+        $erreurDateHeure = null;
 
         $form = $this->createForm(new FraisDeplacementType(), $fraisDeplacement);
 
@@ -554,9 +555,27 @@ class FraisDeplacementController extends Controller {
                     }
                 }
 
+                //$fraisDeplacementPresents = $repoFraisDeplacement->getFraisDeplacementByUserDate($user->getId(), $fraisDeplacement->getDateDepart(), '00:00', $fraisDeplacement->getDateRetour(), '24:00');
+                $fraisDeplacementPresents = $repoFraisDeplacement->getFraisDeplacementByUserAnneeDebutAnneeFin($user->getId(), $fraisDeplacement->getDateDepart()->format('Y'), $fraisDeplacement->getDateRetour()->format('Y'));
+                foreach ($fraisDeplacementPresents as $fraisDeplacementPresent) {
+                    if ($fraisDeplacementPresent->getDateDepart()->format('YYYYMMDD') >= $fraisDeplacement->getDateDepart()->format('YYYYMMDD')) {
+                        if ($fraisDeplacementPresent->getHeureDepart() >= $fraisDeplacement->getHeureDepart()) {
+                            if ($fraisDeplacementPresent->getDateRetour()->format('YYYYMMDD') <= $fraisDeplacement->getDateRetour()->format('YYYYMMDD')) {
+                                if ($fraisDeplacementPresent->getHeureRetour() <= $fraisDeplacement->getHeureRetour()) {
+                                    $constraint = new True(array(
+                                        'message' => 'la  demande  ' . $fraisDeplacementPresent->getid() . ' existe déjà  entre le ' . $fraisDeplacement->getDateDepart()->format('d/m/Y') . ' ' . $fraisDeplacement->getHeureDepart() . ' et le ' . $fraisDeplacement->getDateRetour()->format('d/m/Y') . ' ' . $fraisDeplacement->getHeureRetour()
+                                    ));
+                                    $erreurDateHeure = $this->get('validator')->validateValue(false, $constraint);
+                                }
+                            }
+                        }
+                    }
+                }
+
                 //return new Response ('dept : ' . $fraisDeplacement->getDepartement() );
 
-                if (count($erreurDate) == 0 and count($erreurHeure) == 0) {
+                if (count($erreurDate) == 0 and count($erreurHeure) == 0 and count($erreurDateHeure) == 0) {
+
 
                     $emFrd = $this->getDoctrine()->getManager('frd');
                     if (!$id) {
@@ -622,7 +641,8 @@ class FraisDeplacementController extends Controller {
                     'departements' => $departements,
                     'form' => $form->createView(),
                     'erreurDate' => $erreurDate,
-                    'erreurHeure' => $erreurHeure
+                    'erreurHeure' => $erreurHeure,
+                    'erreurDateHeure' => $erreurDateHeure,
         ));
     }
 

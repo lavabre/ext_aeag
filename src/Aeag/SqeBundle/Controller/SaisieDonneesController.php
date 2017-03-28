@@ -419,7 +419,8 @@ class SaisieDonneesController extends Controller {
                                                 // if ($pgCmdPrelev->getprestaPrel()->getAdrCorId() == $pgProgLotParamAn->getPrestataire()->getAdrCorId()) {
                                                 if ($pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'ENV') {
                                                     $nbParametresTerrain++;
-                                                    $pgCmdMesureEnvs = $repoPgCmdMesureEnv->getPgCmdMesureEnvsByPrelevParamProg($pgCmdPrelev, $pgProgLotParamAn);
+                                                    //$pgCmdMesureEnvs = $repoPgCmdMesureEnv->getPgCmdMesureEnvsByPrelevParamProg($pgCmdPrelev, $pgProgLotParamAn);
+                                                    $pgCmdMesureEnvs = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, $pgProgLotParamAn->getCodeParametre()->getCodeParametre());
                                                     foreach ($pgCmdMesureEnvs as $pgCmdMesureEnv) {
                                                         $NbCmdMesureEnv++;
                                                         if ($pgCmdMesureEnv->getCodeStatut() == '0') {
@@ -1060,7 +1061,7 @@ class SaisieDonneesController extends Controller {
                         $tabParamAns[$nbParamAns]['unite'] = null;
                     }
                     if ($pgProgGrpParamRef->getTypeGrp() == 'ENV') {
-                        $pgCmdMesureEnv = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, $$pgProgLotParamAn->getCodeParametre()->getParametre());
+                        $pgCmdMesureEnv = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, $pgProgLotParamAn->getCodeParametre()->getCodeParametre());
                         if ($pgCmdMesureEnv) {
                             if ($pgCmdMesureEnv->getCodeStatut() == '0') {
                                 $tabGroupes[$nbGroupes]['correct'] = $tabGroupes[$nbGroupes]['correct'] + 1;

@@ -50,7 +50,7 @@
                     </br></br>
                     <div class="alert alert-danger">
                         <p>
-                            Attention : Une fois valider, votre demande ne sera plus modifiable.
+                            Attention : Une fois validée, votre demande ne sera plus modifiable.
                             Pensez à imprimer votre demande.
                             N'oubliez pas de la signer et de l'expédier accompagnée des justificatifs à l'agence de l'eau.
                         </p>
@@ -87,7 +87,7 @@
 
                     {% if erreurDate %}
                         <div class="alert alert-danger">
-                            <button class="close" data-dismiss="alert"></button>
+                            <button class="fa fa-close" data-dismiss="alert"></button>
                             <h5>
                                 {{ erreurDate | nl2br}}
                             </h5>
@@ -96,9 +96,17 @@
 
                     {% if erreurHeure %}
                         <div class="alert alert-danger">
-                            <button class="close" data-dismiss="alert"></button>
+                            <button class="fa fa-close" data-dismiss="alert"></button>
                             <h5>
                                 {{ erreurHeure | nl2br}}
+                            </h5>
+                        </div>
+                    {% endif %}
+
+                    {% if erreurDateHeure %}
+                        <div class="alert alert-danger">
+                            <h5>
+                                {{ erreurDateHeure | nl2br}}
                             </h5>
                         </div>
                     {% endif %}
@@ -137,7 +145,7 @@
                                             <tbody>
                                                 <tr>
                                                     <td>
-                                                        {%if form_errors(form.dateDepart)  or  erreurDate %}
+                                                        {%if form_errors(form.dateDepart)  or  erreurDate or erreurDateHeure%}
                                                             <div class="input-small date-picker has-error has-feedback">
                                                             {% else %}
                                                                 <div class="input-small date-picker">
@@ -146,7 +154,7 @@
                                                             </div>
                                                     </td>
                                                     <td>
-                                                        {%if form_errors(form.heureDepart) or erreurHeure %}
+                                                        {%if form_errors(form.heureDepart) or erreurHeure or erreurDateHeure%}
                                                             <div class="input-append bootstrap-timepicker has-error has-feedback">
                                                             {% else %}
                                                                 <div class="input-append bootstrap-timepicker">
@@ -155,7 +163,7 @@
                                                             </div>
                                                     </td>
                                                     <td>
-                                                        {%if form_errors(form.dateRetour) or erreurDate %}
+                                                        {%if form_errors(form.dateRetour) or erreurDate or erreurDateHeure%}
                                                             <div class="input-small date-picker has-error has-feedback">
                                                             {% else %}
                                                                 <div class="input-small date-picker">
@@ -164,7 +172,7 @@
                                                             </div>
                                                     </td>
                                                     <td>
-                                                        {%if form_errors(form.heureRetour) or erreurHeure  %}
+                                                        {%if form_errors(form.heureRetour) or erreurHeure  or erreurDateHeure%}
                                                             <div class="input-append bootstrap-timepicker has-error has-feedback">
                                                             {% else %}
                                                                 <div class="input-append bootstrap-timepicker">
@@ -753,22 +761,14 @@
 
                         $('#dateDepart').datepicker();
 
-                        {#  $('#heureDepart').timepicker({
-                          minuteStep: 30,
-                          showInputs: true,
-                          disableFocus: true,
-                          showMeridian: false,
-                          defaultTime: false
-                          });#}
-
-                        $('#heureDepart').datetimepicker({
-                        startDate: "{{ app.session.get('annee')|  date("d/m/Y") }}",
-                        format:"hh:ii",
-                        autoclose:"true",
-                        pickerPosition:"bottom-left",
-                        minView:"hour",
-                        language:"fr"
+                        $('#heureDepart').timepicker({
+                        minuteStep: 30,
+                        showInputs: true,
+                        disableFocus: true,
+                        showMeridian: false,
+                        defaultTime: false
                         });
+
 
 
                         $('#dateRetour').datepicker();
@@ -826,7 +826,7 @@
 
                         $('#btValider').click( function() {
                         $('#Valider').modal('hide');
-                        $('#idBtValider').hide();
+                        //$('#idBtValider').hide();
                         $('#valider').val('O');
                         $('form').submit();
                         return false;

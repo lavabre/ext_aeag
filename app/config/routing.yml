@@ -1,43 +1,43 @@
 aeag_aeag:
     resource: "@AeagAeagBundle/Resources/config/routing.yml"
     prefix:   /
-    
+
 aeag_dec:
     resource: "@AeagDecBundle/Resources/config/routing.yml"
     prefix:   /dec
-    
+
 aeag_frd:
     resource: "@AeagFrdBundle/Resources/config/routing.yml"
     prefix:   /frd
-    
+
 aeag_aide:
     resource: "@AeagAideBundle/Resources/config/routing.yml"
     prefix:   /aide
-    
-    
+
+
 aeag_sqe:
     resource: "@AeagSqeBundle/Resources/config/routing.yml"
     prefix:   /sqe
-    
+
 Aeag_die:
     resource: "@AeagDieBundle/Resources/config/routing.yml"
     prefix:   /die
-    
 
-    
+
+
 Aeag_dies:
     resource: "@AeagDieBundle/Resources/config/routing/dies.yml"
     prefix:   /dies
-    
+
 aeag_edl:
     resource: "@AeagEdlBundle/Resources/config/routing.yml"
     prefix:   /avis
-    
+
 aeag_user:
     resource: "@AeagUserBundle/Resources/config/routing.yml"
     prefix:   /user
-    
-  
+
+
 fos_user_security:
     resource: "@FOSUserBundle/Resources/config/routing/security.xml"
     prefix: /
@@ -45,7 +45,7 @@ fos_user_security:
 fos_user_profile:
     resource: "@FOSUserBundle/Resources/config/routing/profile.xml"
     prefix: /profile
-    
+
 
 fos_user_register:
     resource: "@FOSUserBundle/Resources/config/routing/registration.xml"
@@ -57,5 +57,6 @@ fos_user_resetting:
 
 fos_user_change_password:
     resource: "@FOSUserBundle/Resources/config/routing/change_password.xml"
-    prefix: /change-password 
-    
+    prefix: /change-password
+
+
