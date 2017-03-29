@@ -66,7 +66,7 @@ class PgCmdMesureEnvRepository extends EntityRepository {
         $query = $query . " and  c.paramProg = :pgProgLotParamAn";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('pgCmdPrelev', $pgCmdPrelev->getId());
-        $qb->setParameter('pgProgLotParamAn', $pgProgLotParamAn->getCodeParametre()->getCodeParametre());
+        $qb->setParameter('pgProgLotParamAn', $pgProgLotParamAn->getId());
         // print_r($query . '<br/>');
         return $qb->getOneOrNullResult();
     }
@@ -78,7 +78,7 @@ class PgCmdMesureEnvRepository extends EntityRepository {
         $query = $query . " and  c.paramProg = :pgProgLotParamAn";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('pgCmdPrelev', $pgCmdPrelev->getId());
-        $qb->setParameter('pgProgLotParamAn', $pgProgLotParamAn->getCodeParametre()->getCodeParametre());
+        $qb->setParameter('pgProgLotParamAn', $pgProgLotParamAn->getId());
         //print_r($query);
         return $qb->getResult();
     }
@@ -93,6 +93,18 @@ class PgCmdMesureEnvRepository extends EntityRepository {
         $qb->setParameter('parametre', $parametre);
         //print_r($query);
         return $qb->getOneOrNullResult();
+    }
+
+    public function getPgCmdMesureEnvsByPrelevParametre($pgCmdPrelev, $parametre) {
+        $query = "select c";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdMesureEnv c";
+        $query = $query . " where c.prelev = :pgCmdPrelev";
+        $query = $query . " and  c.codeParametre = :parametre";
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgCmdPrelev', $pgCmdPrelev->getId());
+        $qb->setParameter('parametre', $parametre);
+        //print_r($query);
+        return $qb->getResult();
     }
 
     public function getPgCmdMesureEnvByPrelevCodeUniteParametre($pgCmdPrelev, $codeUnite, $parametre) {
