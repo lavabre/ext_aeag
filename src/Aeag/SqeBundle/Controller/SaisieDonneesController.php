@@ -404,7 +404,11 @@ class SaisieDonneesController extends Controller {
                             $NbCmdAnalyseCorrect = 0;
                             $NbCmdAnalyseIncorrect = 0;
                             $NbCmdAnalyseErreur = 0;
-                            $pgProgPrestaTypfic = $repoPgProgPrestaTypfic->getPgProgPrestaTypficByCodeMilieuPrestataireFormatFic($pgProgTypeMilieu, $pgCmdPrelev->getprestaPrel(), 'Saisie');
+                            if ($userPrestataire) {
+                                $pgProgPrestaTypfic = $repoPgProgPrestaTypfic->getPgProgPrestaTypficByCodeMilieuPrestataireFormatFic($pgProgTypeMilieu, $userPrestataire, 'Saisie');
+                            } else {
+                                $pgProgPrestaTypfic = $repoPgProgPrestaTypfic->getPgProgPrestaTypficByCodeMilieuPrestataireFormatFic($pgProgTypeMilieu, $pgCmdPrelev->getprestaPrel(), 'Saisie');
+                            }
                             //$pgProgPrestaTypfic = $repoPgProgPrestaTypfic->getPgProgPrestaTypficByCodeMilieuPrestataireFormatFic($pgProgTypeMilieu, $pgCmdDemande->getPrestataire(), 'Saisie');
                             if ($pgProgPrestaTypfic) {
                                 $nbParametresTerrain = 0;
@@ -493,15 +497,16 @@ class SaisieDonneesController extends Controller {
                                         $tabPgCmdPrelevs[$ip]['nbSaisisParametresAnalyseErreur'] = $NbCmdAnalyseErreur;
                                         if ($pgCmdPrelev->getPhaseDmd()->getcodePhase() <= 'M40') {
                                             if ($userPrestataire) {
+
                                                 //if ($pgCmdPrelev->getprestaPrel()->getAdrCorId() == $userPrestataire->getAdrCorId()) {
-                                                if ($pgCmdDemande->getPrestataire()->getAdrCorId() == $userPrestataire->getAdrCorId()) {
-                                                    if (strtoupper($pgProgPrestaTypfic->getFormatFic()) == 'SAISIE_TA' or strtoupper($pgProgPrestaTypfic->getFormatFic()) == 'SAISIE_T') {
-                                                        $tabPgCmdPrelevs[$ip]['saisieTerrain'] = 'O';
-                                                    }
-                                                    if (strtoupper($pgProgPrestaTypfic->getFormatFic()) == 'SAISIE_TA' or strtoupper($pgProgPrestaTypfic->getFormatFic()) == 'SAISIE_A') {
-                                                        $tabPgCmdPrelevs[$ip]['saisieAnalyse'] = 'O';
-                                                    }
+                                                // if ($pgCmdDemande->getPrestataire()->getAdrCorId() == $userPrestataire->getAdrCorId()) {
+                                                if (strtoupper($pgProgPrestaTypfic->getFormatFic()) == 'SAISIE_TA' || strtoupper($pgProgPrestaTypfic->getFormatFic()) == 'SAISIE_T') {
+                                                    $tabPgCmdPrelevs[$ip]['saisieTerrain'] = 'O';
                                                 }
+                                                if (strtoupper($pgProgPrestaTypfic->getFormatFic()) == 'SAISIE_TA' || strtoupper($pgProgPrestaTypfic->getFormatFic()) == 'SAISIE_A') {
+                                                    $tabPgCmdPrelevs[$ip]['saisieAnalyse'] = 'O';
+                                                }
+                                                //   }
                                             }
                                             if ($user->hasRole('ROLE_ADMINSQE') and $pgCmdPrelev->getPhaseDmd()->getcodePhase() < 'M50') {
                                                 $tabPgCmdPrelevs[$ip]['saisieTerrain'] = 'O';
@@ -2647,6 +2652,8 @@ class SaisieDonneesController extends Controller {
         $pgProgLotPeriodeAn = $repoPgProgLotPeriodeAn->getPgProgLotPeriodeAnById($periodeAnId);
         $pgProgLotAn = $pgProgLotPeriodeAn->getLotAn();
         $pgProgLot = $pgProgLotAn->getLot();
+        $pgProgMarche = $pgProgLot->getMarche();
+        $marche = $pgProgMarche->getTypeMarche();
         $pgProgTypeMilieu = $pgProgLot->getCodeMilieu();
         $pgProgPeriode = $pgProgLotPeriodeAn->getPeriode();
         $pgProgLotGrparAns = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotan($pgProgLotAn);
@@ -2687,30 +2694,30 @@ class SaisieDonneesController extends Controller {
                     $j++;
                 }
             }
+
+//            \Symfony\Component\VarDumper\VarDumper::dump($tabStations);
+//            return new Response('');
             sort($tabStations);
             for ($i = 0; $i < count($tabStations); $i++) {
-                foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
-                    $prestataire = $tabStations[$i]['prestataire'];
-                    $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandesByLotanPeriode($pgProgLotAn, $pgProgPeriode);
-                    $k = 0;
-                    foreach ($pgCmdDemandes as $pgCmdDemande) {
-                        $prestataire = $pgCmdDemande->getPrestataire();
-                        //print_r('prestataire : ' . $prestataire->getAdrCorId() . ' demande : ' . $pgCmdDemande->getid() . ' station : ' .  $tabStations[$i]['station']->getOuvFoncId() . ' periode : ' . $pgProgPeriode->getid() . '<br/>');
-                        //$pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($prestataire, $pgCmdDemande, $tabStations[$i]['station'], $pgProgPeriode);
-                        $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByDemandeStationPeriode($pgCmdDemande, $tabStations[$i]['station'], $pgProgPeriode);
-                        $tabStations[$i]['demande'][$k]['demande'] = $pgCmdDemande;
-                        $tabStations[$i]['demande'][$k]['prelevs'] = array();
-                        for ($l = 0; $l < count($pgCmdPrelevs); $l++) {
-                            $pgCmdPrelev = $pgCmdPrelevs[$l];
-                            $tabStations[$i]['demande'][$k]['prelevs'][$l] = $pgCmdPrelev;
-                        }
-                        $k++;
+                //     foreach ($pgProgLotPeriodeProgs as $pgProgLotPeriodeProg) {
+                $prestataire = $tabStations[$i]['prestataire'];
+                $pgCmdDemandes = $repoPgCmdDemande->getPgCmdDemandesByLotanPeriode($pgProgLotAn, $pgProgPeriode);
+                $k = 0;
+                foreach ($pgCmdDemandes as $pgCmdDemande) {
+                    $prestataire = $pgCmdDemande->getPrestataire();
+                    //print_r('prestataire : ' . $prestataire->getAdrCorId() . ' demande : ' . $pgCmdDemande->getid() . ' station : ' .  $tabStations[$i]['station']->getOuvFoncId() . ' periode : ' . $pgProgPeriode->getid() . '<br/>');
+                    //$pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByPrestaPrelDemandeStationPeriode($prestataire, $pgCmdDemande, $tabStations[$i]['station'], $pgProgPeriode);
+                    $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByDemandeStationPeriode($pgCmdDemande, $tabStations[$i]['station'], $pgProgPeriode);
+                    $tabStations[$i]['demande'][$k]['demande'] = $pgCmdDemande;
+                    $tabStations[$i]['demande'][$k]['prelevs'] = array();
+                    $l = 0;
+                    foreach ($pgCmdPrelevs as $pgCmdPrelev) {
+                        $tabStations[$i]['demande'][$k]['prelevs'][$l] = $pgCmdPrelev;
                     }
+                    $k++;
                 }
+                //      }
             }
-
-//        \Symfony\Component\VarDumper\VarDumper::dump($tabStations);
-//        return new Response ('');
 // Récupération des valeurs du fichier
 
             $name = $_FILES['file']['name'];
@@ -2978,7 +2985,7 @@ class SaisieDonneesController extends Controller {
                         }
 
                         $valeur = str_replace(',', '.', $tab[20]);
-                        if (!is_float($valeur)) {
+                        if (!is_numeric($valeur)) {
                             $err = true;
                             $contenu = 'ligne  ' . $ligne . '  :  valeur non numerique  (' . $tab[20] . ')' . CHR(13) . CHR(10);
                             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
@@ -3084,7 +3091,7 @@ class SaisieDonneesController extends Controller {
                                     $parametre = $codeParametre;
                                     $inSitu = 1;
                                     if (strlen($valeur) > 0) {
-                                        $tabStatut = $this->_controleVraisemblance_fichier($parametre, $valeur, $remarque, $unite, $inSitu, $lqM, $pgSandreFraction, $tabStatut);
+                                        $tabStatut = $this->_controleVraisemblance_fichier($parametre, $valeur, $remarque, $unite, $inSitu, $lqM, $marche, $pgSandreFraction, $tabStatut);
                                         $okControleVraisemblance = $okControleVraisemblance + $tabStatut['ko'];
                                     }
                                     if (strlen($valeur) > 0) {
@@ -3182,7 +3189,7 @@ class SaisieDonneesController extends Controller {
 
 
                                     if (strlen($valeur) > 0) {
-                                        $tabStatut = $this->_controleVraisemblance_fichier($parametre, $valeur, $remarque, $unite, $inSitu, $lqM, $pgSandreFraction, $tabStatut);
+                                        $tabStatut = $this->_controleVraisemblance_fichier($parametre, $valeur, $remarque, $unite, $inSitu, $lqM, $marche, $pgSandreFraction, $tabStatut);
                                         $okControleVraisemblance = $okControleVraisemblance + $tabStatut['ko'];
                                     }
 
@@ -3269,7 +3276,7 @@ class SaisieDonneesController extends Controller {
                                     //fputs($rapport, $contenu);
 
                                     if (strlen($valeur) > 0) {
-                                        $tabStatut = $this->_controleVraisemblance_fichier($parametre, $valeur, $remarque, $unite, $inSitu, $lqM, $pgSandreFraction, $tabStatut);
+                                        $tabStatut = $this->_controleVraisemblance_fichier($parametre, $valeur, $remarque, $unite, $inSitu, $lqM, $marche, $pgSandreFraction, $tabStatut);
                                         $okControleVraisemblance = $okControleVraisemblance + $tabStatut['ko'];
                                     }
                                     if (strlen($valeur) > 0) {
@@ -5760,7 +5767,7 @@ class SaisieDonneesController extends Controller {
         return $tabStatut;
     }
 
-    protected function _controleVraisemblance_fichier($parametre, $valeur, $remarque, $unite, $lqM, $inSitu, $fraction, $tabStatut) {
+    protected function _controleVraisemblance_fichier($parametre, $valeur, $remarque, $unite, $lqM, $inSitu, $marche, $fraction, $tabStatut) {
 
         $session = $this->get('session');
         $session->set('menu', 'donnees');
@@ -5780,7 +5787,7 @@ class SaisieDonneesController extends Controller {
 // III.1 Champs non renseignés (valeurs et code remarque) ou valeurs non numériques ou valeurs impossibles params env / code remarque peut ne pas être renseigné pour cette liste (car réponse en edilabo 1.0) => avertissement
         $result = $controleVraisemblance->champsNonRenseignes($mesure, $codeRq, $codeParametre, $inSitu);
         if (is_bool($result)) {
-            $result = $controleVraisemblance->testsComplementaires($mesure, $codeRq, $inSitu, $lqM);
+            $result = $controleVraisemblance->testsComplementaires($mesure, $codeRq, $inSitu, $lqM, $marche);
         }
         if (is_bool($result)) {
             $result = $controleVraisemblance->valeursNumeriques($mesure, $codeRq);

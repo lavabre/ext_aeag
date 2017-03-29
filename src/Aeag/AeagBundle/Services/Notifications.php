@@ -12,7 +12,7 @@ use Aeag\AeagBundle\Entity\Notification;
 class Notifications {
 
     public function createNotification($emetteur, $recepteur, $em, $session, $txtMessage) {
-        if (!$emetteur or ! $recepteur) {
+        if (!$emetteur || !$recepteur) {
             return;
         }
         $session->set('service', 'Notifications');

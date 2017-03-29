@@ -109,7 +109,7 @@ class AdminController extends Controller {
 
 
         $declarations = $repoDeclarationCollecteur->getDeclarationCollecteursByAnnee($annee);
-        if (!$statut or $statut == '99') {
+        if (!$statut || $statut == '99') {
             $Statut = new Statut();
         } else {
             $Statut = $repoStatut->getStatutByCode($statut);
@@ -123,7 +123,7 @@ class AdminController extends Controller {
             $declaration = $repoDeclarationCollecteur->getDeclarationCollecteurByCollecteurAnnee($collecteur->getId(), $annee);
             $sousDeclarations = null;
             if ($declaration) {
-                if (!$statut or $statut == '99') {
+                if (!$statut || $statut == '99') {
                     $sousDeclarations = $repoSousDeclarationCollecteur->getSousDeclarationCollecteurByDeclarationCollecteur($declaration->getId());
                 } else {
                     $sousDeclarations = $repoSousDeclarationCollecteur->getSousDeclarationCollecteurByDeclarationCollecteurStatut($declaration->getId(), $Statut->getCode());
@@ -132,7 +132,7 @@ class AdminController extends Controller {
                     $maxSousDeclaration = $repoSousDeclarationCollecteur->getMaxNumero($annee);
                 }
             }
-            if (!$statut or $statut == '99') {
+            if (!$statut || $statut == '99') {
                 $odec[$i]['collecteur'] = $collecteur;
                 if ($declaration) {
                     $odec[$i]['declaration'] = $declaration;
@@ -159,7 +159,7 @@ class AdminController extends Controller {
 //
 //        foreach ($declarations as $declaration) {
 //            $collecteur = $repoOuvrage->getOuvrageById($declaration->getCollecteur());
-//            if (!$Statut or $statut == '99') {
+//            if (!$Statut ||  $statut == '99') {
 //                $sousDeclarations = $repoSousDeclarationCollecteur->getSousDeclarationCollecteurByDeclarationCollecteur($declaration->getId());
 //            } else {
 //                $sousDeclarations = $repoSousDeclarationCollecteur->getSousDeclarationCollecteurByDeclarationCollecteurStatut($declaration->getId(), $Statut->getCode());
@@ -684,9 +684,9 @@ class AdminController extends Controller {
 //                        $producteurLu = $repoOuvrage->getOuvrageById($declarationProducteur->getProducteur());
 //                        if ($producteurLu->getSiret() == $producteurEncours->getSiret()) {
 //                            $declarationProducteur->setProducteur($producteurEncours->getId());
-//                            if ($declarationProducteur->getQuantiteReel() == 0 and $declarationProducteur->getMontReel() == 0 and
-//                                    $declarationProducteur->getQuantiteRet() == 0 and $declarationProducteur->getMontRet() == 0 and
-//                                    $declarationProducteur->getQuantiteAide() == 0 and $declarationProducteur->getMontAide() == 0) {
+//                            if ($declarationProducteur->getQuantiteReel() == 0 && $declarationProducteur->getMontReel() == 0 and
+//                                    $declarationProducteur->getQuantiteRet() == 0 && $declarationProducteur->getMontRet() == 0 and
+//                                    $declarationProducteur->getQuantiteAide() == 0 && $declarationProducteur->getMontAide() == 0) {
 //                                $emDec->remove($declarationProducteur);
 //                            } else {
 //                                $emDec->persist($declarationProducteur);
@@ -827,7 +827,7 @@ class AdminController extends Controller {
         $FTP_DIR = $ftp_dir;
         $handle = opendir($LOCAL_SERVER_DIR);
         while (($file = readdir($handle)) !== false) {
-            if (!is_dir($file) and $file != "Sauvegardes" and $file != 'Pdf') {
+            if (!is_dir($file) && $file != "Sauvegardes" && $file != 'Pdf') {
                 $f[] = "$file";
             }
         }

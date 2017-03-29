@@ -58,21 +58,21 @@ class PressionDerniereProposition {
      * @ORM\Column(name="username", type="string", length=255, nullable=false)
      */
     private $username;
-    
-  public function getValueLib() {
-        if ($this->cdPression == 'RW_HYM_CONT' or
-                $this->cdPression == 'RW_HYM_HYD' or
+
+    public function getValueLib() {
+        if ($this->cdPression == 'RW_HYM_CONT' ||
+                $this->cdPression == 'RW_HYM_HYD' ||
                 $this->cdPression == 'RW_HYM_MOR') {
-           if ($this->valeur) {
-            switch ($this->valeur) {
-                case '1' : return 'Minime';
-                case '2' : return 'Modérée';
-                case '3' : return 'Elevée';
-                case 'U' : return 'Inconnu';
+            if ($this->valeur) {
+                switch ($this->valeur) {
+                    case '1' : return 'Minime';
+                    case '2' : return 'Modérée';
+                    case '3' : return 'Elevée';
+                    case 'U' : return 'Inconnu';
+                }
+            } else {
+                return 'non renseigné';
             }
-           }else{
-               return 'non renseigné';
-           }
         } else {
             if ($this->valeur) {
                 switch ($this->valeur) {
@@ -86,7 +86,6 @@ class PressionDerniereProposition {
             }
         }
     }
-
 
     function getEuCd() {
         return $this->euCd;

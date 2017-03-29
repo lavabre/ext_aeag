@@ -72,7 +72,7 @@ class ProgrammationPeriodeController extends Controller {
         }
 
 
-        if ($action == 'P' and $maj != 'V') {
+        if ($action == 'P' && $maj != 'V') {
             if ($pgProgTypeMilieu->getTypePeriode()->getcodeTypePeriode() == 'SEM') {
                 if (!$pgProgLotPeriodeAns) {
                     return $this->redirect($this->generateUrl('AeagSqeBundle_programmation_filtrer_semaines', array('action' => $action, 'maj' => $maj, 'lotan' => $pgProgLotAnId)));
@@ -1111,14 +1111,14 @@ class ProgrammationPeriodeController extends Controller {
                 $pgProgLotPeriodeProgSelectionne->setPprogCompl($pgProgLotPeriodeProgAutre);
                 $pgProgLotGrparAnSelectionne = $pgProgLotPeriodeProgSelectionne->getGrparAn();
                 $prestatSelectionne = null;
-                if ($pgProgLotGrparAnSelectionne->getGrparRef()->getTypeGrp() == 'ENV' or $pgProgLotGrparAnSelectionne->getGrparRef()->getTypeGrp() == 'SIT') {
+                if ($pgProgLotGrparAnSelectionne->getGrparRef()->getTypeGrp() == 'ENV' || $pgProgLotGrparAnSelectionne->getGrparRef()->getTypeGrp() == 'SIT') {
                     $pgProgLotParamAnSelectionnes = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAnSelectionne);
                     foreach ($pgProgLotParamAnSelectionnes as $pgProgLotParamAnSelectionne) {
                         $prestaSelectionne = $pgProgLotParamAnSelectionne->getPrestataire();
                         break;
                     } $prestaAutre = $prestatSelectionne;
                     $pgProgLotGrparAnAutre = $pgProgLotPeriodeProgAutre->getGrparAn();
-                    if ($pgProgLotGrparAnAutre->getGrparRef()->gettypeGrp() == 'ENV' or $pgProgLotGrparAnAutre->getGrparRef()->getTypeGrp() == 'SIT') {
+                    if ($pgProgLotGrparAnAutre->getGrparRef()->gettypeGrp() == 'ENV' || $pgProgLotGrparAnAutre->getGrparRef()->getTypeGrp() == 'SIT') {
                         $pgProgLotParamAnAutres = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAnAutre);
                         foreach ($pgProgLotParamAnAutres as $pgProgLotParamAnAutre) {
                             $prestaAutre = $pgProgLotParamAnAutre->getPrestataire();
@@ -1201,7 +1201,7 @@ class ProgrammationPeriodeController extends Controller {
                     }
                 }
 
-                if ($trouveCompl or count($tabGroupes) == 0) {
+                if ($trouveCompl || count($tabGroupes) == 0) {
                     $tabPeriodes[$j]["autreProgrammation"] = count($tabGroupeAutres);
                 }
                 $j++;
@@ -1355,7 +1355,7 @@ class ProgrammationPeriodeController extends Controller {
                         }
                     }
                 }
-                if ($trouveCompl or count($tabGroupes) == 0) {
+                if ($trouveCompl || count($tabGroupes) == 0) {
                     $tabPeriodes[$j]["autreProgrammation"] = count($tabGroupeAutres);
                 }
                 $j++;
@@ -1561,7 +1561,7 @@ class ProgrammationPeriodeController extends Controller {
         // recuperatiion des reseaux de l'utilisateurs
         $tabReseauxUsers = array();
         $i = 0;
-        if ($pgProgWebuser and ( !$this->get('security.authorization_checker')->isGranted('ROLE_ADMINSQE'))) {
+        if ($pgProgWebuser && (!$this->get('security.authorization_checker')->isGranted('ROLE_ADMINSQE'))) {
             $pgProgWebuserRsx = $repoPgProgWebuserRsx->getPgProgWebuserRsxByWebuser($pgProgWebuser);
         } else {
             $pgProgWebuserRsx = $repoPgProgWebuserRsx->getPgProgWebuserRsx();

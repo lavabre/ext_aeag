@@ -178,7 +178,7 @@ class DepotHydrobioController extends Controller {
                                 $tabCmdPrelevs[$nbCmdPrelevs]['commentaire'] = $pgCmdSuiviPrel->getCommentaire();
                             }
                         }
-                        if ($user->hasRole('ROLE_ADMINSQE') or ( $pgCmdPrelev->getPrestaPrel() == $pgCmdDemande->getPrestataire())) {
+                        if ($user->hasRole('ROLE_ADMINSQE') || ( $pgCmdPrelev->getPrestaPrel() == $pgCmdDemande->getPrestataire())) {
                             if ($pgCmdSuiviPrel->getStatutPrel() != 'F') {
                                 $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'O';
                                 $tabCmdPrelevs[$nbCmdPrelevs]['maj'] = 'O';
@@ -196,7 +196,7 @@ class DepotHydrobioController extends Controller {
                         for ($nbLignes = 0; $nbLignes < count($tabCommentaires); $nbLignes++) {
                             $pos = explode(' ', $tabCommentaires[$nbLignes]);
                             //echo ('ligne : ' . $nbLignes . '  pos : ' . $pos[0] .  ' ligne : ' . $tabCommentaires[$nbLignes] . '</br>');
-                            if ($pos[0] == 'Déposé' and $pos[1] = 'le' and $pos[3] == 'à' and $pos[5] == 'par' and $pos[7] == ':') {
+                            if ($pos[0] == 'Déposé' && $pos[1] = 'le' && $pos[3] == 'à' && $pos[5] == 'par' && $pos[7] == ':') {
                                 $commentaireBis = null;
                                 for ($nbLignesBis = 0; $nbLignesBis < $nbLignes; $nbLignesBis++) {
                                     $commentaireBis .= $tabCommentaires[$nbLignesBis] . CHR(13) . CHR(10);
@@ -460,11 +460,12 @@ class DepotHydrobioController extends Controller {
             $emSqe->persist($log);
             $emSqe->flush();
 
-            header('Content-Type', 'application/zip');
-            header('Content-disposition: attachment; filename="' . $zipName . '"');
-            header('Content-Length: ' . filesize($pathBase . $zipName));
-            readfile($pathBase . $zipName);
-            exit();
+            $response = new Response();
+            $response->setContent(file_get_contents($pathBase . $fileName));
+            $response->headers->set('Content-Type', 'application/zip');
+            $response->headers->set('Content-disposition', 'filename="' . $zipName . '"');
+            $response->headers->set('Content-Length ', filesize($pathBase . $zipName));
+            return $response;
         }
     }
 
@@ -683,11 +684,19 @@ class DepotHydrobioController extends Controller {
         $emSqe->persist($log);
         $emSqe->flush();
 
-        header('Content-Type', $contentType);
-        header('Content-disposition: attachment; filename="' . $fileName . '"');
-        header('Content-Length: ' . filesize($pathBase . '/' . $fileName));
-        readfile($pathBase . '/' . $fileName);
-        exit();
+        $response = new Response();
+        $response->setContent(file_get_contents($pathBase . '/' . $fileName));
+        $response->headers->set('Content-Type', $contentType);
+        $response->headers->set('Content-disposition', 'filename="' . $fileName . '"');
+        $response->headers->set('Content-Length', filesize($pathBase . '/' . $fileName));
+        return $response;
+
+
+//        header('Content-Type', $contentType);
+//        header('Content-disposition: attachment; filename="' . $fileName . '"');
+//        header('Content-Length: ' . filesize($pathBase . '/' . $fileName));
+//        readfile($pathBase . '/' . $fileName);
+//        exit();
     }
 
     public function supprimerReponseAction($reponseId) {
@@ -783,7 +792,7 @@ class DepotHydrobioController extends Controller {
                     $nom_fichier = zip_entry_name($zip_entry);
                     $nom_fichier = strtr($nom_fichier, "ÀÁÂÃÄÅàáâãäåÒÓÔÕÖØòóôõöøÈÉÊËèéêëÇçÌÍÎÏìíîïÙÚÛÜùúûüÿÑñ", "AAAAAAaaaaaaOOOOOOooooooEEEEeeeeCcIIIIiiiiUUUUuuuuyNn");
                     $nom_fichier = strtolower($nom_fichier);
-                    $nom_fichier = ereg_replace('[^a-zA-Z0-9.]', '-', $nom_fichier);
+                    $nom_fichier = preg_replace('[^a-zA-Z0-9.]', '-', $nom_fichier);
 
                     /* On ajoute le nom du fichier dans le tableau */
                     array_push($tab_liste_fichiers, $nom_fichier);

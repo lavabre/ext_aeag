@@ -1176,7 +1176,7 @@ class CollecteurController extends Controller {
         $repoParametre = $emDec->getRepository('AeagDecBundle:Parametre');
 
         if (is_object($user)) {
-            $tabMail = split("@", $user->getEmail());
+            $tabMail = preg_split("@", $user->getEmail());
             if ($tabMail[1] == "a-renseigner-merci.svp") {
                 $valider = 'N';
             } else {
@@ -1595,7 +1595,7 @@ class CollecteurController extends Controller {
         $sousDeclarationCollecteur = $repoSousDeclarationCollecteur->getSousDeclarationCollecteurById($sousDeclarationCollecteur_id);
 
         if ($sousDeclarationCollecteur) {
-            if (($this->get('security.authorization_checker')->isGranted('ROLE_ADMINDEC') and $sousDeclarationCollecteur->getStatut()->getCode() < '40') or ( $this->get('security.authorization_checker')->isGranted('ROLE_ODEC') and $sousDeclarationCollecteur->getStatut()->getCode() < '30')) {
+            if (($this->get('security.authorization_checker')->isGranted('ROLE_ADMINDEC') && $sousDeclarationCollecteur->getStatut()->getCode() < '40') || ( $this->get('security.authorization_checker')->isGranted('ROLE_ODEC') && $sousDeclarationCollecteur->getStatut()->getCode() < '30')) {
                 $declarationDetails = $repoDeclarationDetail->getDeclarationDetailsBySousDeclarationCollecteur($sousDeclarationCollecteur->getId());
                 if ($declarationDetails) {
                     foreach ($declarationDetails as $declarationDetail) {
@@ -1978,12 +1978,12 @@ class CollecteurController extends Controller {
         $erreur = 0;
         $ligne = 0;
         set_time_limit(10000); // temps dexecution du script le plus longtemps
-        $dir = opendir($repertoire) or die("Erreur le repertoire $repertoire n\'existe pas");
+        $dir = opendir($repertoire) || die("Erreur le repertoire $repertoire n\'existe pas");
         while ($fic = readdir($dir)) {
             //print_r('fichier : ' . $fic);
-            if (is_file($fic) or ( !in_array($fic, array(".", "..")) and $fic != 'Sauvegardes')) {
-                $res = split("_", $fic);
-                if ($res[2] == $collecteur->getNumero() and $res[3] == $declarationCollecteur->getAnnee() and $res[4] == $sousDeclarationCollecteur->getNumero()) {
+            if (is_file($fic) || (!in_array($fic, array(".", "..")) && $fic != 'Sauvegardes')) {
+                $res = preg_split("_", $fic);
+                if ($res[2] == $collecteur->getNumero() && $res[3] == $declarationCollecteur->getAnnee() && $res[4] == $sousDeclarationCollecteur->getNumero()) {
                     $fichier = fopen($repertoire . '/' . $fic, "r");
 
                     while (!feof($fichier)) {
@@ -2122,7 +2122,7 @@ class CollecteurController extends Controller {
                             } else {
                                 //print_r('date facture : ' . $tab[5] . ' a la ligne : ' . $ligne);
                                 $tab[5] = str_replace(' ', '', $tab[5]);
-                                $dateFact = split("/", $tab[5]);
+                                $dateFact = preg_split("/", $tab[5]);
                                 if (strlen($dateFact[2] == 2)) {
                                     $dateFact[2] = '20' . $dateFact[2];
                                 }
@@ -2194,7 +2194,7 @@ class CollecteurController extends Controller {
 
 
                             $repoOuvrageFiliere = $emDec->getRepository('AeagDecBundle:OuvrageFiliere');
-                            if ($centreTraitement and $DR) {
+                            if ($centreTraitement && $DR) {
                                 $ouvrageFiliere = $repoOuvrageFiliere->getOuvrageFiliereByOuvrageFiliere($centreTraitement->getId(), $DR->getCode(), $declarationCollecteur->getAnnee());
                                 if (!$ouvrageFiliere) {
                                     $err = true;
@@ -2241,7 +2241,7 @@ class CollecteurController extends Controller {
                             $tab[10] = str_replace(',', '.', $tab[10]);
                             $tab[13] = str_replace(' ', '', $tab[13]);
                             $tab[13] = str_replace(',', '.', $tab[13]);
-                            if ($dechet and $filiere and $DR) {
+                            if ($dechet && $filiere and $DR) {
                                 $declarationDetail = $repoDeclarationDetail->getDeclarationDetail($sousDeclarationCollecteur->getId(), $declarationProducteur->getId(), $dechet->getCode(), $filiere->getCode(), $DR->getCode(), $tab[4], $tab[10], $tab[13], $this->wd_remove_accents($tab[7]), $dateFacture);
                             } else {
                                 $declarationDetail = null;
@@ -2785,7 +2785,7 @@ class CollecteurController extends Controller {
                         ));
                         $erreurOuvrageFiliere = $this->get('validator')->validateValue(false, $constraint);
                     }
-                    if (count($erreurProducteur) == 0 and count($erreurOuvrageFiliere) == 0) {
+                    if (count($erreurProducteur) == 0 && count($erreurOuvrageFiliere) == 0) {
 
                         $statut = $repoStatut->getStatutByCode('20');
                         if ($crud == 'U') {
@@ -2862,7 +2862,7 @@ class CollecteurController extends Controller {
                             $crudDeclarationDetail->setQuantiteAide($quantiteRet);
                         }
 
-                        if (count($erreurProducteur) == 0 and count($erreurQuantiteReel) == 0) {
+                        if (count($erreurProducteur) == 0 && count($erreurQuantiteReel) == 0) {
 
                             $producteurTauxSpecial = $repoProducteurTauxSpecial->getProducteurTauxSpecialBySiret($producteur->getSiret());
                             if ($producteurTauxSpecial) {

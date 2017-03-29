@@ -47,7 +47,7 @@ class ProgrammationAvancementController extends Controller {
 
 
 //          \Symfony\Component\VarDumper\VarDumper::dump($tableau);
-//          return new Response (''); 
+//          return new Response ('');
 
         return $this->render('AeagSqeBundle:Programmation:Avancement\hydroGlobal.html.twig', array(
                     'anneeProg' => $anneeProg,
@@ -155,7 +155,7 @@ class ProgrammationAvancementController extends Controller {
         $tableau = $repoPgProgMarche->getAvancementAnalyseGlobal($anneeProg);
 
 //          \Symfony\Component\VarDumper\VarDumper::dump($tableau);
-//          return new Response (''); 
+//          return new Response ('');
 
         return $this->render('AeagSqeBundle:Programmation:Avancement\analyseGlobal.html.twig', array(
                     'anneeProg' => $anneeProg,
@@ -182,7 +182,7 @@ class ProgrammationAvancementController extends Controller {
 
 
 //          \Symfony\Component\VarDumper\VarDumper::dump($tableau);
-//          return new Response (''); 
+//          return new Response ('');
 
         return $this->render('AeagSqeBundle:Programmation:Avancement\analysePeriode.html.twig', array(
                     'anneeProg' => $anneeProg,
@@ -209,7 +209,7 @@ class ProgrammationAvancementController extends Controller {
 
 
 //          \Symfony\Component\VarDumper\VarDumper::dump($tableau);
-//          return new Response (''); 
+//          return new Response ('');
 
         return $this->render('AeagSqeBundle:Programmation:Avancement\analyseLot.html.twig', array(
                     'anneeProg' => $anneeProg,
@@ -250,7 +250,7 @@ class ProgrammationAvancementController extends Controller {
 
 
 //          \Symfony\Component\VarDumper\VarDumper::dump($tableau);
-//          return new Response (''); 
+//          return new Response ('');
 
         return $this->render('AeagSqeBundle:Programmation:Avancement\prelevementGlobal.html.twig', array(
                     'tableau' => $tableau,
@@ -276,10 +276,10 @@ class ProgrammationAvancementController extends Controller {
 
 
 //          \Symfony\Component\VarDumper\VarDumper::dump($tableau);
-//          return new Response (''); 
+//          return new Response ('');
 
         return $this->render('AeagSqeBundle:Programmation:Avancement\prelevementTypeMilieu.html.twig', array(
-                     'tableau' => $tableau,
+                    'tableau' => $tableau,
         ));
     }
 
@@ -302,7 +302,7 @@ class ProgrammationAvancementController extends Controller {
 
 
 //          \Symfony\Component\VarDumper\VarDumper::dump($tableau);
-//          return new Response (''); 
+//          return new Response ('');
 
         return $this->render('AeagSqeBundle:Programmation:Avancement\prelevementTypeMarche.html.twig', array(
                     'tableau' => $tableau,
@@ -353,7 +353,7 @@ class ProgrammationAvancementController extends Controller {
 
 
 //          \Symfony\Component\VarDumper\VarDumper::dump($tableau);
-//          return new Response (''); 
+//          return new Response ('');
 
         return $this->render('AeagSqeBundle:Programmation:Avancement\programmationGlobal.html.twig', array(
                     'tableau' => $tableau,
@@ -379,7 +379,7 @@ class ProgrammationAvancementController extends Controller {
 
 
 //          \Symfony\Component\VarDumper\VarDumper::dump($tableau);
-//          return new Response (''); 
+//          return new Response ('');
 
         return $this->render('AeagSqeBundle:Programmation:Avancement\programmationMilieu.html.twig', array(
                     'tableau' => $tableau,
@@ -405,7 +405,7 @@ class ProgrammationAvancementController extends Controller {
 
 
 //          \Symfony\Component\VarDumper\VarDumper::dump($tableau);
-//          return new Response (''); 
+//          return new Response ('');
 
         return $this->render('AeagSqeBundle:Programmation:Avancement\programmationMarche.html.twig', array(
                     'tableau' => $tableau,
@@ -494,7 +494,7 @@ class ProgrammationAvancementController extends Controller {
                     $nom_fichier = zip_entry_name($zip_entry);
                     $nom_fichier = strtr($nom_fichier, "ÀÁÂÃÄÅàáâãäåÒÓÔÕÖØòóôõöøÈÉÊËèéêëÇçÌÍÎÏìíîïÙÚÛÜùúûüÿÑñ", "AAAAAAaaaaaaOOOOOOooooooEEEEeeeeCcIIIIiiiiUUUUuuuuyNn");
                     $nom_fichier = strtolower($nom_fichier);
-                    $nom_fichier = ereg_replace('[^a-zA-Z0-9.]', '-', $nom_fichier);
+                    $nom_fichier = preg_replace('[^a-zA-Z0-9.]', '-', $nom_fichier);
 
                     /* On ajoute le nom du fichier dans le tableau */
                     array_push($tab_liste_fichiers, $nom_fichier);

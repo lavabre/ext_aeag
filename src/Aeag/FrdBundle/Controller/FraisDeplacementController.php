@@ -537,8 +537,8 @@ class FraisDeplacementController extends Controller {
                 }
 
                 if ($interval->format('%R%a') == 0) {
-                    $heureDepart = split("_", $fraisDeplacement->getHeureDepart());
-                    $heureRetour = split("_", $fraisDeplacement->getHeureRetour());
+                    $heureDepart = preg_split("_", $fraisDeplacement->getHeureDepart());
+                    $heureRetour = preg_split("_", $fraisDeplacement->getHeureRetour());
                     if ($heureDepart[0] > $heureRetour[0]) {
                         $constraint = new True(array(
                             'message' => 'L\'heure de départ ne peut être supérieure à l\'heure de retour'
@@ -574,7 +574,7 @@ class FraisDeplacementController extends Controller {
 
                 //return new Response ('dept : ' . $fraisDeplacement->getDepartement() );
 
-                if (count($erreurDate) == 0 and count($erreurHeure) == 0 and count($erreurDateHeure) == 0) {
+                if (count($erreurDate) == 0 && count($erreurHeure) == 0 && count($erreurDateHeure) == 0) {
 
 
                     $emFrd = $this->getDoctrine()->getManager('frd');

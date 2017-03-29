@@ -272,7 +272,7 @@ class AdminController extends Controller {
              */
 
             foreach ($entities as $entity) {
-                if ($_POST["tout"] == "ok" or ( isset($_POST['exp-' . $entity[0]->getId()]))) {
+                if ($_POST["tout"] == "ok" || ( isset($_POST['exp-' . $entity[0]->getId()]))) {
                     $dept = $repoDept->getDepartementByDept($entity[0]->getdepartement());
                     $contenu = $entity[0]->getId() . ';';
                     $contenu = $contenu . $entity[1]->getCorrespondant() . ';';
@@ -530,28 +530,6 @@ class AdminController extends Controller {
           } */
     }
 
-    public function telechargerFichierAction($ficent = null, $repertoire = null) {
-
-        $file = $repertoire . "/" . $ficent;
-
-        if (file_exists($file)) {
-            header('Content-Description: File Transfer');
-            header('Content-Type: application/octet-stream');
-            header('Content-Disposition: attachment; filename=' . basename($file));
-            header('Content-Transfer-Encoding: binary');
-            header('Expires: 0');
-            header('Cache-Control: must-revalidate');
-            header('Pragma: no-cache');
-            header('Content-Length: ' . filesize($file));
-            ob_clean();
-            flush();
-            readfile($file);
-            return new response('fichier : ' . $file . ' téléchargé !!!');
-        } else {
-            return new response('le fichier ' . $file . ' n\existe pas');
-        };
-    }
-
     private function Ftp($local_dir = null, $ftp_dir = null) {
 
 
@@ -565,7 +543,7 @@ class AdminController extends Controller {
         $FTP_DIR = $ftp_dir;
         $handle = opendir($LOCAL_SERVER_DIR);
         while (($file = readdir($handle)) !== false) {
-            if (!is_dir($file) and $file != "Sauvegardes" and $file != "Pdf" and $file != "Encours") {
+            if (!is_dir($file) && $file != "Sauvegardes" && $file != "Pdf" && $file != "Encours") {
                 $f[] = "$file";
             }
         }

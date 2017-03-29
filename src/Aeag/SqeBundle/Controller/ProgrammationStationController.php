@@ -192,7 +192,7 @@ class ProgrammationStationController extends Controller {
 //        $session->set('progTypeMilieu', $typeMilieu->getCodeMilieu());
 
 
-        if ($pgProgLotAn->getPhase()->getcodePhase() == 'P15' and $session->get('niveau2') == '') {
+        if ($pgProgLotAn->getPhase()->getcodePhase() == 'P15' && $session->get('niveau2') == '') {
             $session->set('niveau2', $this->generateUrl('AeagSqeBundle_programmation_stations', array('action' => $action, 'maj' => $maj, 'lotan' => $pgProgLotAnId)));
             return $this->redirect($this->generateUrl('AeagSqeBundle_programmation_periodes', array('action' => $action, 'maj' => $maj, 'lotan' => $pgProgLotAnId)));
         }
@@ -201,7 +201,7 @@ class ProgrammationStationController extends Controller {
         // recuperatiion des reseaux de l'utilisateurs
         $tabReseauxUsers = array();
         $i = 0;
-        if ($pgProgWebuser and ( !$this->get('security.authorization_checker')->isGranted('ROLE_ADMINSQE'))) {
+        if ($pgProgWebuser && (!$this->get('security.authorization_checker')->isGranted('ROLE_ADMINSQE'))) {
             $pgProgWebuserRsx = $repoPgProgWebuserRsx->getPgProgWebuserRsxByWebuser($pgProgWebuser);
         } else {
             $pgProgWebuserRsx = $repoPgProgWebuserRsx->getPgProgWebuserRsx();
@@ -599,7 +599,7 @@ class ProgrammationStationController extends Controller {
         // recuperatiion des reseaux de l'utilisateurs
         $tabReseauxUsers = array();
         $i = 0;
-        if ($pgProgWebuser and ( !$this->get('security.authorization_checker')->isGranted('ROLE_ADMINSQE'))) {
+        if ($pgProgWebuser && (!$this->get('security.authorization_checker')->isGranted('ROLE_ADMINSQE'))) {
             $pgProgWebuserRsx = $repoPgProgWebuserRsx->getPgProgWebuserRsxByWebuser($pgProgWebuser);
         } else {
             $pgProgWebuserRsx = $repoPgProgWebuserRsx->getPgProgWebuserRsx();
@@ -799,7 +799,7 @@ class ProgrammationStationController extends Controller {
         }
 
 
-        if ($action != 'P' or $maj == 'V') {
+        if ($action != 'P' || $maj == 'V') {
             if ($suivant == 'station') {
                 return $this->redirect($this->generateUrl('AeagSqeBundle_programmation_stations', array('action' => $action, 'maj' => $maj, 'lotan' => $pgProgLotAnId)));
             } elseif ($suivant == 'groupe') {
@@ -854,10 +854,10 @@ class ProgrammationStationController extends Controller {
             } else {
                 $tabSelResaux[$j]['station'] = substr($post, 18);
                 $tabSelResaux[$j]['reseau'] = $val;
-                 $j++;
+                $j++;
             }
         }
-       
+
         $tabStations = array();
         $i = 0;
         $j = 0;
@@ -920,7 +920,7 @@ class ProgrammationStationController extends Controller {
                 $emSqe->remove($pgProgLotStationAn);
             }
         }
-         $emSqe->flush();
+        $emSqe->flush();
 
         foreach ($tabStations as $station) {
             $pgRefStationMesure = $station['station'];
@@ -939,10 +939,10 @@ class ProgrammationStationController extends Controller {
 //                $pgProgLotStationAn->setDateModif($now);
 //                $pgProgLotStationAn->setUtilModif($pgProgWebuser);
             $emSqe->persist($pgProgLotStationAn);
-           // print_r('station : ' . $pgRefStationMesure->getCode() . '<br/>');
+            // print_r('station : ' . $pgRefStationMesure->getCode() . '<br/>');
         }
-         $emSqe->flush();
-         
+        $emSqe->flush();
+
 
         $pgProgLotStationAns = $repoPgProgLotStationAn->getPgProgLotStationAnBylotan($pgProgLotAn);
         $nbPeriodes = 0;
