@@ -60,6 +60,9 @@
                                         <i class="fa fa-download"></i>
                                     </a>
                                 {% endif%}
+                                <a class="btn btn-info" href="{{path('AeagSqeBundle_echangefichiers_stations',{'demandeId' : demande.id})}}" title="Voir les stations">
+                                    <i class="fa fa-eye"></i>
+                                </a>
                             </td>
                             {% if demande.periode %}
                                 <td>{{ demande.periode.labelPeriode}}</td>

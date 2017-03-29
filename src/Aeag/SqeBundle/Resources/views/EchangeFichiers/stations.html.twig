@@ -1,0 +1,174 @@
+{% extends "AeagSqeBundle::layout.html.twig" %}
+
+{% block breadcrumb %}
+    <li>
+        <a href="{{ path('aeag_homepage') }}">Accueil</a>
+    </li>
+    <li>
+        <a href="{{ path('AeagSqeBundle_echangefichiers_index') }}">Echange de fichiers</a>
+    </li>
+    <li class="active">
+        <a href="{{ path('AeagSqeBundle_echangefichiers_index') }}">Demandes</a>
+    </li>
+    <li class="active">
+        Stations
+    </li>
+{% endblock breadcrumb %}
+
+{%block panel_heading %}
+    <h3 class="page-title">
+        Echange de fichiers - Liste des Stations
+    </h3>
+{%endblock panel_heading %}
+
+{%block content %}
+        <div class="form-body">
+        <table class="table table-bordered table-condensed table-advance" id="idTable_stations">
+            <thead>
+                <tr>
+                    <th width="8%">Actions</th>
+                    <th>Code station</th>
+                    <th>Libellé station</th>
+                    <th>Réseau</th>
+                    <th>Support</th>
+                    <th>Date du prélèvement</th>
+                    <th>Réalisé</th>
+                    <th>Phase du prélèvement</th>
+                </tr>
+            </thead>
+            <tbody>
+                {%if prelevs | length%}
+                    {% for prelev in prelevs %}
+                        <tr
+                            {%if prelev.phaseDmd.id == 340 or prelev.phaseDmd.id == 350%}
+                                class="success"
+                            {% endif %}
+                            >
+                            <td>
+                                <a data-prelevid="{{prelev.id}}" class="btn btn-primary btn-asec" href="#" title="Indiquer que la station est a sec">
+                                    <i class="fa fa-tint"></i>
+                                </a>
+                                {%if is_granted('ROLE_ADMINSQE') and prelev.phaseDmd.id == 310 %}
+                                    <a data-prelevid="{{prelev.id}}" class="btn btn-danger btn-abandonner" href="#" title="Abandonner la station">
+                                        <i class="fa fa-close"></i>
+                                    </a>
+                                {% endif %}
+                            </td>
+                            <td>{{prelev.station.code}}</td>
+                            <td>{{prelev.station.libelle}}</td>
+                            <td>{{prelev.station.ouvFoncId}}</td>
+                            <td>{{prelev.codeSupport.nomSupport}}</td>
+                            <td>{{prelev.datePrelev | date("d/m/Y H:i")}}</td>
+                            <td>{{prelev.realise}}</td>
+                            <td>{{prelev.phaseDmd.libellePhase}}</td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+{%endblock content %}
+
+{% block modal %}
+<div class="modal modal-reponse fade" id="modal_station">
+    <div class="modal-dialog">
+        <div class="modal-content" id="modal-station-content">
+        </div>
+    </div>
+</div>
+    
+<div class="modal modal-reponse fade" id="modal_station_abandonner">
+    <div class="modal-dialog">
+        <div class="modal-content" id="modal-station-abandonner-content">
+            <div class="modal-header">
+                <button type="button" class="close btn-close-selection-2" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">
+                    Confirmation abandon
+                </h4>
+            </div>
+            <div class="modal-body">
+                Souhaitez vous vraiment abandonner cette station ?
+            </div>
+            <div class="modal-footer">
+                <form class="form" id="form-abandonner-station" name="form-abandonner-station" action="test">
+                    <input type="hidden" name="prelev-id" id="prelev-id" />
+                    <button type="button" class="btn btn-default btn-close-selection-2" data-dismiss="modal">Annuler</button>
+                    <input type="submit" id="abandonner" class="btn btn-primary" value="Abandonner" />
+                </form>
+            </div>
+        </div>
+    </div>
+</div>    
+{%endblock modal %}
+
+{% block scripts %}
+    
+    {%set prelevFirst = prelevs | first%}
+    {%set demandeId = prelevFirst.demande.id%}
+    
+    var table = $('#idTable_stations').DataTable(
+        {"stateSave": true,
+        "order": [[ 1, 'asc' ], [ 2, 'asc' ]],
+        "oLanguage": {
+        "sSearch": "Filtre",
+        "sFirst": "1ere page",
+        "sLast": "Dernière page",
+        "sNext": "Prochaine page",
+        "sPrevious": "Page précédente",
+        "EmptyTable": "Pas de données",
+        "sInfo": "Nombre d'enregistrements :  _TOTAL_",
+        "sInfoFiltered": " - filtrés sur _MAX_ enregistrements",
+        "sZeroRecords": "Pas d'enregistrement à afficher",
+        "sInfoEmpty": "Pas d'enregistrement à afficher",
+        "sInfoThousands": " ",
+        "sLengthMenu": 'Afficher <select id="select-length-menu">' +
+            '<option value="10">10</option>' +
+            '<option value="20">20</option>' +
+            '<option value="30">30</option>' +
+            '<option value="40">40</option>' +
+            '<option value="50">50</option>' +
+            '<option value="-1">Tous</option>' +
+            '</select> enregistrements',
+        "sPaginationType": "full_numbers"
+        }
+        }
+    );
+    
+    $('.btn-asec').click(function (e){
+        $('#modalTraitementEncours').modal();
+        var url = '{{ path("AeagSqeBundle_echangefichiers_stations_asec", {"demandeId":  demandeId }) }}';
+        $.ajax({
+            url: url,
+            data: {prelevId: $(this).data('prelevid')},
+            type: 'get',
+            success: function(html) {
+                $('#modal-station-content').empty().append(html);
+                $('#modalTraitementEncours').modal('hide');
+                $('#modal_station').modal();
+            }   
+        });
+        
+    });
+    
+    $('.btn-abandonner').click(function (e){
+        $('#modal_station_abandonner').modal();
+        $('#prelev-id').val($(this).data('prelevid'));
+    });
+    
+    $('#form-abandonner-station').submit(function(e){
+        e.preventDefault();
+        
+        var $this = $(this); 
+        var url = '{{ path("AeagSqeBundle_echangefichiers_stations_abandonner", {"demandeId":  demandeId }) }}';
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            data: { form : $this.serialize()},
+            method: "POST",
+            success: function(html) {
+                $('#modal_station_abandonner').modal('hide');
+                location.reload();
+            }   
+        });
+    });
+    
+{%endblock scripts %}    

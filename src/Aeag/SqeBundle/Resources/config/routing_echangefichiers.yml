@@ -29,3 +29,19 @@ AeagSqeBundle_echangefichiers_reponses_telecharger:
 AeagSqeBundle_echangefichiers_reponses_supprimer:
     path:  /reponses/supprimer/{reponseId}
     defaults: { _controller: AeagSqeBundle:EchangeFichiers:supprimerReponse, reponseId : null }
+    
+AeagSqeBundle_echangefichiers_stations:
+    path:  /stations/{demandeId}
+    defaults: { _controller: AeagSqeBundle:EchangeFichiers:stations, demandeId: null }
+    
+AeagSqeBundle_echangefichiers_stations_asec:
+    path:  /stations/{demandeId}/asec
+    defaults: { _controller: AeagSqeBundle:EchangeFichiers:aSecStation, demandeId: null}     
+    
+AeagSqeBundle_echangefichiers_stations_modifier:
+    path:  /stations/{demandeId}/asec/modifier
+    defaults: { _controller: AeagSqeBundle:EchangeFichiers:modifierStation, demandeId: null}    
+    
+AeagSqeBundle_echangefichiers_stations_abandonner:
+    path:  /stations/{demandeId}/abandonner
+    defaults: { _controller: AeagSqeBundle:EchangeFichiers:abandonnerStation, demandeId: null}         
