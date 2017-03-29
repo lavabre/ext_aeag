@@ -420,19 +420,19 @@ class SaisieDonneesController extends Controller {
                                                 if ($pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'ENV') {
                                                     $nbParametresTerrain++;
                                                     //$pgCmdMesureEnvs = $repoPgCmdMesureEnv->getPgCmdMesureEnvsByPrelevParamProg($pgCmdPrelev, $pgProgLotParamAn);
-                                                    $pgCmdMesureEnvs = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, $pgProgLotParamAn->getCodeParametre()->getCodeParametre());
-                                                    foreach ($pgCmdMesureEnvs as $pgCmdMesureEnv) {
-                                                        $NbCmdMesureEnv++;
-                                                        if ($pgCmdMesureEnv->getCodeStatut() == '0') {
-                                                            $NbCmdMesureEnvCorrect++;
-                                                        }
-                                                        if ($pgCmdMesureEnv->getCodeStatut() == '1') {
-                                                            $NbCmdMesureEnvIncorrect++;
-                                                        }
-                                                        if ($pgCmdMesureEnv->getCodeStatut() == '2') {
-                                                            $NbCmdMesureEnvErreur++;
-                                                        }
+                                                    $pgCmdMesureEnv = $repoPgCmdMesureEnv->getPgCmdMesureEnvByPrelevParametre($pgCmdPrelev, $pgProgLotParamAn->getCodeParametre()->getCodeParametre());
+//                                                    foreach ($pgCmdMesureEnvs as $pgCmdMesureEnv) {
+                                                    $NbCmdMesureEnv++;
+                                                    if ($pgCmdMesureEnv->getCodeStatut() == '0') {
+                                                        $NbCmdMesureEnvCorrect++;
                                                     }
+                                                    if ($pgCmdMesureEnv->getCodeStatut() == '1') {
+                                                        $NbCmdMesureEnvIncorrect++;
+                                                    }
+                                                    if ($pgCmdMesureEnv->getCodeStatut() == '2') {
+                                                        $NbCmdMesureEnvErreur++;
+                                                    }
+//                                                    }
                                                 }
                                                 if ($pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'SIT') {
                                                     $nbParametresTerrain++;

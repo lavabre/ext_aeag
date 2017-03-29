@@ -126,7 +126,7 @@ class PgCmdAnalyseRepository extends EntityRepository {
         $query = "select c";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdAnalyse c";
         $query = $query . " where c.prelevId = :pgCmdPrelev";
-        $query = $query . " and  ccodeParametre = :pgProgLotParamAn";
+        $query = $query . " and  c.codeParametre = :pgProgLotParamAn";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('pgCmdPrelev', $pgCmdPrelev->getId());
         $qb->setParameter('pgProgLotParamAn', $pgProgLotParamAn->getCodeParametre()->getCodeparametre());
