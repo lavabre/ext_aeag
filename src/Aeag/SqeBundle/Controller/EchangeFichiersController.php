@@ -528,5 +528,110 @@ class EchangeFichiersController extends Controller {
 
         return $tab_liste_fichiers;
     }
+    
+    public function stationsAction($demandeId) {
+        $session = $this->get('session');
+        $session->set('menu', 'donnees');
+        $session->set('controller', 'EchangeFichier');
+        $session->set('fonction', 'stations');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+        
+        $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
+        
+        $pgCmdPrelevs = $repoPgCmdPrelev->findBy(array('demande' => $demandeId));
+        
+        return $this->render('AeagSqeBundle:EchangeFichiers:stations.html.twig', array('prelevs' => $pgCmdPrelevs));
+    }
+    
+    public function aSecStationAction() {
+        $request = $this->get('request');
+
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+        
+        $prelevId = $request->get('prelevId');
+        
+        $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
+        $repoPgCmdPrelevPc = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelevPc');
+        
+        $pgCmdPrelev = $repoPgCmdPrelev->findOneById($prelevId);
+        $pgCmdPrelevPc = $repoPgCmdPrelevPc->findOneByPrelev($prelevId);
+        
+        return $this->render('AeagSqeBundle:EchangeFichiers:aSecStation.html.twig', array('prelev' => $pgCmdPrelev, 'prelevPc' => $pgCmdPrelevPc));
+    }
+    
+    public function modifierStationAction() {
+        $request = $this->get('request');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+        
+        $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
+        $repoPgCmdPrelevPc = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelevPc');
+        $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
+        
+        $formStr = $request->get('form');
+
+        $formTabs = explode('&', $formStr);
+        $form = array();
+        foreach ($formTabs as $formTab) {
+            $formLine = explode('=', $formTab);
+            $form[$formLine[0]] = urldecode($formLine[1]);
+        }
+        
+        $pgCmdPrelev = $repoPgCmdPrelev->findOneById($form['prelev-id']);
+        $pgCmdPrelevPc = $repoPgCmdPrelevPc->findOneByPrelev($form['prelev-id']);
+        
+        $datePrel = \DateTime::createFromFormat('d/m/Y H:i', $form['date-prelev']);
+        $pgCmdPrelev->setDatePrelev($datePrel);
+        $pgCmdPrelev->setRealise('N');
+        
+        $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M40');
+        $pgCmdPrelev->setPhaseDmd($pgProgPhases);
+        
+        $pgCmdPrelevPc->setCommentaire($form['commentaire']);
+        
+        $emSqe->persist($pgCmdPrelev);
+        $emSqe->persist($pgCmdPrelevPc);
+        
+        $emSqe->flush();
+        $result = true;
+        
+        return new Response(
+                json_encode($result)
+        );
+        
+    }
+    
+    public function abandonnerStationAction() {
+        $request = $this->get('request');
+        $emSqe = $this->get('doctrine')->getManager('sqe');
+        
+        $repoPgCmdPrelev = $emSqe->getRepository('AeagSqeBundle:PgCmdPrelev');
+        $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
+        
+        $formStr = $request->get('form');
+
+        $formTabs = explode('&', $formStr);
+        $form = array();
+        foreach ($formTabs as $formTab) {
+            $formLine = explode('=', $formTab);
+            $form[$formLine[0]] = urldecode($formLine[1]);
+        }
+        
+        $pgCmdPrelev = $repoPgCmdPrelev->findOneById($form['prelev-id']);
+        $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M60');
+        
+        $pgCmdPrelev->setRealise('N');
+        $pgCmdPrelev->setPhaseDmd($pgProgPhases);
+        
+        $emSqe->persist($pgCmdPrelev);
+        
+        $emSqe->flush();
+        $result = true;
+        
+        return new Response(
+                json_encode($result)
+        );
+    }
+    
+    
 
 }

@@ -25,9 +25,7 @@ class RelanceMailCommand extends AeagCommand {
         $this->output->writeln($date->format('d/m/Y H:i:s') . ' - Relance mail : Début');
         
         // Envoi de mails lorsque la DAI est déposé
-        if ($this->getEvolution()->getLibelle() == "false") {
-            $this->sendEmailDai();
-        } 
+        $this->sendEmailDai();
 
         // ANALYSE
         // Envoi des mails a J-7
@@ -78,7 +76,7 @@ class RelanceMailCommand extends AeagCommand {
                     } elseif (strpos($pgProgPrestaTypfic->getFormatFic(), "SAISIE") !== false) {
                         $url = $this->getContainer()->get('router')->generate('AeagSqeBundle_saisieDonnees_lot_periodes', array("lotanId" => $lotan->getId()), UrlGeneratorInterface::ABSOLUTE_URL);
                         $txtMessage = 'Le lot ' . $lotan->getLot()->getNomLot() . ' a été généré. <br/>';
-                        $txtMessage .= 'Vous pouvez les données sur SQE : <a href="'. $url .'">Cliquez ici</a> <br/>';
+                        $txtMessage .= 'Vous pouvez saisir les données sur SQE : <a href="'. $url .'">Cliquez ici</a> <br/>';
                     } 
                 } else if (strpos($codeMilieu,"HB") !== false || strpos($codeMilieu,"HM") !== false) {
                     if (strpos($pgProgPrestaTypfic->getFormatFic(), "Suivi_HB") !== false) {

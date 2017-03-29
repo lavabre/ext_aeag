@@ -1,0 +1,65 @@
+<div class="modal-header">
+    <button type="button" class="close btn-close-selection-2" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title">
+        {{prelev.station.code}} - {{prelev.station.libelle}}
+    </h4>
+</div>
+<form class="form" id="form-editer-station" name="form-editer-station" action="test">
+    <div id="body-modal-reponses"class="modal-body reponse-body">
+            <div class="form-group">
+                <label class="col-xs-3 control-label">Date de prélèvement</label>
+                <div class="col-xs-8 input-group">
+                    <input type="date" class="form-control" name="date-prelev" id="date-prelev" value="{{prelev.datePrelev |date('d/m/Y H:i')}}"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">Commentaire*</label>
+                <div class="col-xs-8 input-group">
+                    <input type="text" name="commentaire" class="form-control" id="commentaire" value="{{prelevPc.commentaire}}"/>
+                </div>
+            </div>
+            <input type="hidden" name="prelev-id" id="prelev-id" value="{{prelev.id}}"/>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-close-selection-2" data-dismiss="modal">Fermer</button>
+        <input type="submit" id="modifier" class="btn btn-primary" value="Modifier" />
+    </div>
+</form>
+    
+<script>
+    $('#date-prelev').datetimepicker({
+        language:  'fr',
+        format: 'dd/mm/yyyy hh:ii',
+        autoclose: true   
+    });
+    
+    $('#form-editer-station').submit(function(e){
+        e.preventDefault();
+        
+        var $this = $(this); 
+        if ($('#commentaire').val() == "") {
+            alert ('Veuillez saisir un commentaire. Celui-ci est obligatoire.');
+        } else {
+            $.ajax({
+                url: "{{ path('AeagSqeBundle_echangefichiers_stations_modifier',{"demandeId":  prelev.demande.id}) }}", 
+                method: "POST",
+                data: { form : $this.serialize()},
+                dataType: 'json',
+                success: function (result) {
+                    if (result === true) {
+                        $('#modal_station').modal('hide');
+                        location.reload();
+                        
+                    } else {
+                        alert('Une erreur a eu lieu lors de l\'enregistrement, veuillez réessayer');
+                    }
+                },
+                error: function () {
+                    alert('Une erreur a eu lieu, veuillez réessayer');
+                }
+            });
+        }
+        
+    })
+</script>
+
