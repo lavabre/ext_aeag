@@ -452,11 +452,9 @@ class AdminController extends Controller {
             $notifications = $this->get('aeag.notifications');
             $texte = "La déclaration n° " . $sousDeclarationCollecteur->getNumero() . " est en cours de traitement par le responsable de l'agence de l'eau.";
             foreach ($correspondants as $cor) {
-                $notification = new Notification();
                 $correspondant = $repoCorrespondant->getCorrespondantById($cor->getCorrespondant()->getId());
                 $userOdecs = $repoUser->getUserByCorrespondant($correspondant->getId());
                 foreach ($userOdecs as $userOdec) {
-                    $userOdec = $repoUser->getUserById($correspondant->getUser());
                     $notifications->createNotification($user, $userOdec, $em, $session, $texte);
                 }
             }
@@ -816,7 +814,7 @@ class AdminController extends Controller {
         return $this->redirect($this->generateUrl('AeagDecBundle_admin_listeDeclarationCollecteurs', array('annee' => $annee, 'statut' => $statut->getCode())));
     }
 
-    function Ftp($local_dir = null, $ftp_dir = null) {
+    private function Ftp($local_dir = null, $ftp_dir = null) {
 
 
         $mess = null;
@@ -860,7 +858,7 @@ class AdminController extends Controller {
         return $mess;
     }
 
-    public static function wd_remove_accents($str, $charset = 'utf-8') {
+    private function wd_remove_accents($str, $charset = 'utf-8') {
 
 
         $str = utf8_encode($str);
@@ -901,7 +899,7 @@ class AdminController extends Controller {
         return $str;
     }
 
-    public function majBugProducteurs() {
+    private function majBugProducteurs() {
 
         $user = $this->getUser();
         if (!$user) {
@@ -1023,7 +1021,7 @@ class AdminController extends Controller {
                             $tabCollecteurs = $tabProducteurs[$nbProd]['collecteurs'];
                             for ($nbCol = 0; $nbCol < count($tabCollecteurs); $nbCol++) {
                                 $collecteur = $tabCollecteurs[$nbCol];
-                                print_r('collecteur : ' . $collecteur->getNumero() . ' ' . $collecteur->getLibelle() . ' avec producteur : ' . $producteurRetenu->getNumero() . ' ' . $producteurRetenu->getLibelle() . ' ayant une quantite = ' . $totQuantiteAide . '<br/>');
+                                //  print_r('collecteur : ' . $collecteur->getNumero() . ' ' . $collecteur->getLibelle() . ' avec producteur : ' . $producteurRetenu->getNumero() . ' ' . $producteurRetenu->getLibelle() . ' ayant une quantite = ' . $totQuantiteAide . '<br/>');
                             }
                         }
                     } else {

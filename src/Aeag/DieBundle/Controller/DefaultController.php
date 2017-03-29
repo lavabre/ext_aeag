@@ -23,8 +23,8 @@ class DefaultController extends Controller {
 
         $session->set('logo', '1');
         $session->set('size', '2');
-   
-          if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
+
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
             // accres au menu adminitrateur
             return $this->render('AeagDieBundle:Admin:index.html.twig', array(
                         'logo' => $session->get('logo'),
@@ -80,7 +80,7 @@ class DefaultController extends Controller {
         $em = $this->get('doctrine')->getManager('die');
         $emAeag = $this->get('doctrine')->getManager();
 
-    
+
         if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
             // accres au menu adminitrateur
             return $this->render('AeagDieBundle:Admin:index.html.twig');
@@ -307,7 +307,7 @@ class DefaultController extends Controller {
      * envoi d'un mail accusé de reception au demandeur
      */
 
-    public function sendAccuseReception($Demande, $Organisme, $Theme, $SousTheme) {
+    private function sendAccuseReception($Demande, $Organisme, $Theme, $SousTheme) {
         // Récupération du service.
         $mailer = $this->get('mailer');
 
@@ -333,7 +333,7 @@ class DefaultController extends Controller {
      * envoi d'un mail au destinataire du sous-theme
      */
 
-    public function sendDestinataire($Demande, $Organisme, $Theme, $SousTheme) {
+    private function sendDestinataire($Demande, $Organisme, $Theme, $SousTheme) {
         // Récupération du service.
         $mailer = $this->get('mailer');
 

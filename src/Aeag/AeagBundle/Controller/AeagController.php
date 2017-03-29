@@ -482,7 +482,7 @@ class AeagController extends Controller {
         return "ok";
     }
 
-    public function majUsers() {
+    private function majUsers() {
 
         $em = $this->get('doctrine')->getManager();
         $factory = $this->get('security.encoder_factory');

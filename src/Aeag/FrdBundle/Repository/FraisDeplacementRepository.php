@@ -199,15 +199,36 @@ class FraisDeplacementRepository extends EntityRepository {
      *
      * @return array
      */
+    public function getFraisDeplacementByUserAnneeDebutAnneeFin($userId, $anneeDebut, $anneeFin) {
+
+        $query = "select f";
+        $query = $query . " from  Aeag\FrdBundle\Entity\FraisDeplacement f";
+        $query = $query . " where f.user = :userId";
+        $query = $query . " and to_char(f.dateDepart,'YYYY') = :anneeDebut";
+        $query = $query . " and to_char(f.dateRetour,'YYYY') = :anneeFin";
+        $query = $query . " order by f.dateDepart desc , f.heureDepart desc , f.dateRetour, f.heureRetour";
+
+        //print_r($query);
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('userId', $userId);
+        $qb->setParameter('anneeDebut', $anneeDebut);
+        $qb->setParameter('anneeFin', $anneeFin);
+        return $qb->getResult();
+    }
+
+    /**
+     *
+     * @return array
+     */
     public function getFraisDeplacementByUserDate($userId, $dateDepart, $heureDepart, $dateRetour, $heureRetour) {
 
         $query = "select f";
         $query = $query . " from  Aeag\FrdBundle\Entity\FraisDeplacement f";
         $query = $query . " where f.user = :userId";
-        $query = $query . " and to_char(f.dateDepart,'YYYY-MM-DD') = :dateDepar";
-        $query = $query . " and f.heureDepart = :heureDepart";
+        $query = $query . " and to_char(f.dateDepart,'YYYY-MM-DD') = :dateDepart";
+        $query = $query . " and f.heureDepart >= :heureDepart";
         $query = $query . " and to_char(f.dateRetour,'YYYY-MM-DD') = :dateRetour";
-        $query = $query . " and f.heureRetour = :heureRetour";
+        $query = $query . " and f.heureRetour <= :heureRetour";
         $query = $query . " order by f.dateDepart desc , f.heureDepart desc , f.dateRetour, f.heureRetour";
 
         //print_r($query);
@@ -407,7 +428,7 @@ class FraisDeplacementRepository extends EntityRepository {
         $query = "select f";
         $query = $query . " from  Aeag\FrdBundle\Entity\FraisDeplacement f";
         if ($etfrId) {
-            $query = $query . " where f.etfrId = : etfrId";
+            $query = $query . " where f.etfrId = :etfrId";
         } else {
             $query = $query . " where f.etfrId is null";
         }

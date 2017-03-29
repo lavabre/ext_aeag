@@ -1,827 +1,836 @@
 {% extends "AeagFrdBundle::layout.html.twig" %}
 
 {% block breadcrumb %}
-       <li>
-         <a href="{{ path('aeag_frd') }}">Accueil</a> 
-       </li>
-         <li>
-         <a href="{{ app.session.get('retour') }}">Etats</a> 
-       </li>
-     {#    <li>
-         <a href="{{ app.session.get('retour1') }}">Missions</a> 
-        </li>#}
-       <li class="active">
-          {%if entity.0.id %}
-                Demande n° {{entity.0.id}} de {{ entity.1.username }} {{ entity.1.prenom }}
-          {%else%}
-                Nouvelle demande
-           {%endif%}
-       </li>
+    <li>
+        <a href="{{ path('aeag_frd') }}">Accueil</a>
+    </li>
+    <li>
+        <a href="{{ app.session.get('retour') }}">Etats</a>
+    </li>
+    {#    <li>
+        <a href="{{ app.session.get('retour1') }}">Missions</a>
+       </li>#}
+    <li class="active">
+        {%if entity.0.id %}
+            Demande n° {{entity.0.id}} de {{ entity.1.username }} {{ entity.1.prenom }}
+        {%else%}
+            Nouvelle demande
+        {%endif%}
+    </li>
 {% endblock breadcrumb %}
 
 
 {%block panel_heading %}
-           <h3>
-                {%if entity.0.id %}
-                Modification de la demande  n° {{entity.0.id}} de {{ entity.1.username }} {{ entity.1.prenom }}
-                {%else%}
-                Création d'une demande de {{ user.username }} {{ user.prenom }}
-                {%endif%}
-           </h3>
- {%endblock panel_heading %}
-      
+    <h3>
+        {%if entity.0.id %}
+            Modification de la demande  n° {{entity.0.id}} de {{ entity.1.username }} {{ entity.1.prenom }}
+        {%else%}
+            Création d'une demande de {{ user.username }} {{ user.prenom }}
+        {%endif%}
+    </h3>
+{%endblock panel_heading %}
+
 {%block modal %}
-       
-         <div class="modal fade" id="Valider" tabindex="-1" role="dialog" aria-labelledby="ValiderLabel" aria-hidden="true">
-               <div class="modal-dialog">
-                 <div class="modal-content">
-                   <div class="modal-header">
-                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                     <h4 class="modal-title" id="ValiderLabel">
+
+    <div class="modal fade" id="Valider" tabindex="-1" role="dialog" aria-labelledby="ValiderLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="ValiderLabel">
                         {%if entity.0.id %}
-                                Validation de la demande n° {{ entity.0.id}} de {{ entity.1.username }} {{ entity.1.prenom }}
-                          {%else%}
-                               validation de la demande de {{ user.username }} {{ user.prenom }}
+                            Validation de la demande n° {{ entity.0.id}} de {{ entity.1.username }} {{ entity.1.prenom }}
+                        {%else%}
+                            validation de la demande de {{ user.username }} {{ user.prenom }}
                         {%endif%}
-                     </h4>
-                   </div>
-                   <div class="modal-body">
-                        <h4>Cliquer sur 'Valider' pour confirmer la validation de la demande et  la transmettre à l'agence de l'eau</h4>
-                        </br></br>
-                        <div class="alert alert-danger">
-                            <p>
-                               Attention : Une fois valider, votre demande ne sera plus modifiable.
-                               Pensez à imprimer votre demande.
-                               N'oubliez pas de la signer et de l'expédier accompagnée des justificatifs à l'agence de l'eau.
-                            </p>
-                        </div> 
-                   </div>
-                   <div class="modal-footer">
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <h4>Cliquer sur 'Valider' pour confirmer la validation de la demande et  la transmettre à l'agence de l'eau</h4>
+                    </br></br>
+                    <div class="alert alert-danger">
+                        <p>
+                            Attention : Une fois validée, votre demande ne sera plus modifiable.
+                            Pensez à imprimer votre demande.
+                            N'oubliez pas de la signer et de l'expédier accompagnée des justificatifs à l'agence de l'eau.
+                        </p>
+                    </div>
+                </div>
+                <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
                     <a id="btValider" class="btn btn-success" data-dismiss="modal"><i class="fa fa-check"></i> Valider</a>
-                    </div>
-                 </div>
-               </div>
-       </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
- {%endblock modal %}
-     
+{%endblock modal %}
+
 
 
 {%block content %}
-   <div class="row ">    
-    <div class="col-xs-12 medium">
-     <form class="form-horizontal" role="form" action="{{ path('AeagFrdBundle_membre_fraisDeplacement' , { 'id': entity.0.id }) }}" id="idForm"  method="post" {{ form_enctype(form) }}>
-       
-           
-             {% spaceless %}
-                     {% if not form.vars.valid %}
-                             <div class="alert alert-danger">
-                                {% for children in form.children %}
-                                     {% if not children.vars.valid %}
-                                         {{ form_errors(children) }}
-                                    {% endif %}
-                                 {% endfor %}
-                             </div>
-                     {% endif %}
-                     
+    <div class="row ">
+        <div class="col-xs-12 medium">
+            <form class="form-horizontal" role="form" action="{{ path('AeagFrdBundle_membre_fraisDeplacement' , { 'id': entity.0.id }) }}" id="idForm"  method="post" {{ form_enctype(form) }}>
+
+
+                {% spaceless %}
+                    {% if not form.vars.valid %}
+                        <div class="alert alert-danger">
+                            {% for children in form.children %}
+                                {% if not children.vars.valid %}
+                                    {{ form_errors(children) }}
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
                     {% if erreurDate %}
                         <div class="alert alert-danger">
-                            <button class="close" data-dismiss="alert"></button>
+                            <button class="fa fa-close" data-dismiss="alert"></button>
                             <h5>
-                             {{ erreurDate | nl2br}}
+                                {{ erreurDate | nl2br}}
                             </h5>
-                       </div>
-                    {% endif %}   
-                    
+                        </div>
+                    {% endif %}
+
                     {% if erreurHeure %}
                         <div class="alert alert-danger">
-                            <button class="close" data-dismiss="alert"></button>
+                            <button class="fa fa-close" data-dismiss="alert"></button>
                             <h5>
-                             {{ erreurHeure | nl2br}}
+                                {{ erreurHeure | nl2br}}
                             </h5>
-                       </div>
-                    {% endif %}   
-                     
-             {% endspaceless %}
-             
-           
-       <div class="row"> 
-           
-          <div class="form-group">
-            <label for="objet" class="col-xs-3 control-label">Objet<span class="required">*</span></label>
-            {%if form_errors(form.objet) %}
-                <div class="col-xs-9 input-group has-error has-feedback">
-            {% else %}
-                 <div class="col-xs-9 input-group">
-             {% endif %}
-               {{ form_widget(form.objet, { 'attr': {'class': 'form-control ', 'placeholder': 'Objet'} }) }}
-             </div>
-         </div> 
-            
-         <div class="form-group form-inline">
-            <label for="dates" class="col-xs-3 control-label">Dates<span class="required">*</span></label>
-            {%if form_errors(form.objet) %}
-                <div class="col-xs-9 input-group has-error has-feedback">
-            {% else %}
-                 <div class="col-xs-9 input-group">
-             {% endif %}
-                <div class="small ">
-                  <table class="table table-bordered table-striped table-condensed table-advance table-hover">
-                          <thead>
-                          <th class="control-label">Date départ</th>
-                          <th class="control-label">Heure départ</th>
-                          <th class="control-label">Date retour</th>
-                          <th class="control-label">Heure retour</th>
-                          </thead>
-                          <tbody>
-                              <tr>
-                                  <td>
-                                    {%if form_errors(form.dateDepart)  or  erreurDate %}
-                                       <div class="input-small date-picker has-error has-feedback">
-                                    {% else %}
-                                        <div class="input-small date-picker">
-                                    {% endif %}
-                                      {{ form_widget(form.dateDepart , { 'attr': {'class': 'input- form-control col-xs-2 text-right'} }) }}
-                                    </div>
-                                  </td>
-                                   <td>
-                                    {%if form_errors(form.heureDepart) or erreurHeure %}
-                                       <div class="input-append bootstrap-timepicker has-error has-feedback">
-                                    {% else %}
-                                        <div class="input-append bootstrap-timepicker">
-                                    {% endif %}
-                                      {{ form_widget(form.heureDepart , { 'attr': {'class': 'input-small form-control col-xs-2 text-right'} }) }}
-                                    </div>
-                                  </td>
-                                  <td>
-                                    {%if form_errors(form.dateRetour) or erreurDate %}
-                                       <div class="input-small date-picker has-error has-feedback">
-                                    {% else %}
-                                        <div class="input-small date-picker">
-                                    {% endif %}
-                                      {{ form_widget(form.dateRetour , { 'attr': {'class': 'input-small form-control col-xs-2 text-right'} }) }}
-                                    </div>
-                                  </td>
-                                  <td>
-                                     {%if form_errors(form.heureRetour) or erreurHeure  %}
-                                       <div class="input-append bootstrap-timepicker has-error has-feedback">
-                                    {% else %}
-                                        <div class="input-append bootstrap-timepicker">
-                                    {% endif %}
-                                      {{ form_widget(form.heureRetour , { 'attr': {'class': 'input-small form-control col-xs-2 text-right'} }) }}
-                                    </div>
-                                 </td>
-                              </tr>
-                        </tbody>
-                      </table>
-                    </div>
-             </div>
-         </div> 
-            
-         <div class="form-group">
-            <label for="finalite" class="col-xs-3 control-label">Finalité<span class="required">*</span></label>
-            {%if form_errors(form.finalite) %}
-                <div class="col-xs-9 input-group has-error has-feedback">
-            {% else %}
-                 <div class="col-xs-9 input-group">
-             {% endif %}
-               <table class="table-condensed" border="0">
-                        <tr>
-                           <td width="20%">
-                              {{ form_widget(form.finalite, { 'attr': {'class': 'input-medium form-control ', 'placeholder': 'Finalité'} }) }}   
-                           </td>
-                           <td id="idSousTheme"></td>
-                       </tr>
-                 </table>
-             </div>
-         </div> 
-            
-         <div class="form-group">
-            <label for="itineraire" class="col-xs-3 control-label">Itinéraire<span class="required">*</span></label>
-            {%if form_errors(form.objet) %}
-                <div class="col-xs-9 input-group has-error has-feedback">
-            {% else %}
-                 <div class="col-xs-9 input-group">
-             {% endif %}
-               {{ form_widget(form.itineraire, { 'attr': {'class': 'form-control ', 'placeholder': 'Itinéraire'} }) }}
-             </div>
-         </div> 
-        
-          <div class="form-group">
-                <label for="departement" class="col-xs-3 control-label">Département du lieu de mission<span class="required">*</span></label>
-                <div class="col-xs-8 input-group">
-                     <select class="form-control" id="idDept" name="departement" required="required" >    
-                        <option value=""></option> 
-                        {%for dept in departements %}
-                               <option value="{{dept.dept}}">{{ dept.deptLibelle }}</option> 
-                        {% endfor %}
-                    </select>
-                 </div>
-             </div> 
-         
-     </div> 
-    
-     <div class="row">
-         
-        <div class="col-sm-12">
-           <div class="panel panel-title">
-                <div class="panel-heading">
-                  <h3 class="panel-title">
-                     Frais
-                  </h3>
-                </div>
-                <div class="panel-body">
-                    <ul  class="nav nav-pills nav-justified">
-                       <li class="active"><a href="#tab_1_1" data-toggle="tab"><i class="fa fa-truck"></i><b> Transport</b></a></li>
-                       <li class=""><a href="#tab_1_2" data-toggle="tab"><i class="fa fa-apple"></i><b> Repas</b></a></li>
-                       <li class=""><a href="#tab_1_3" data-toggle="tab"><i class="fa fa-home"></i><b> Nuitée</b></a></li>
-                    </ul>
-                <div  class="tab-content">
-                   <div class="tab-pane fade active in" id="tab_1_1">
-                     <div class="col-sm-12">
-                               <div class="col-sm-6">
-                                    <div class="table-responsive small ">
-                                       <table class="table table-bordered table-striped table-condensed table-advance table-hover">
-                                       <thead>
-                                           <th></th>
-                                           <th>Nbre de tickets joints</th>
-                                           <th>non joints</th>
-                                           <th>Total payé</th>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>Parking</td>
-                                                <td>
-                                                    {%if form_errors(form.parkJustif) %}
-                                                        <div class="has-error">
-                                                    {% else %}
-                                                         <div>
-                                                     {% endif %}
-                                                       {{ form_widget(form.parkJustif, { 'attr': {'class': 'input-small form-control text-right'}}) }}
-                                                     </div>
-                                                </td>
-                                                <td>
-                                                    {%if form_errors(form.parkNonJustif) %}
-                                                        <div class="has-error">
-                                                    {% else %}
-                                                         <div>
-                                                     {% endif %}
-                                                       {{ form_widget(form.parkNonJustif, { 'attr': {'class': 'input-small form-control text-right'}}) }}
-                                                     </div>
-                                                </td>
-                                                <td>
-                                                    {%if form_errors(form.parkTotal) %}
-                                                        <div class="has-error">
-                                                    {% else %}
-                                                         <div>
-                                                     {% endif %}
-                                                       {{ form_widget(form.parkTotal, { 'attr': {'class': 'input-small form-control text-right'}}) }}
-                                                     </div>
-                                              </td>
-                                            </tr>
-                                             <tr>
-                                                <td>Péage</td>
-                                                <td>
-                                                    {%if form_errors(form.peageJustif) %}
-                                                        <div class="has-error">
-                                                    {% else %}
-                                                         <div>
-                                                     {% endif %}
-                                                       {{ form_widget(form.peageJustif, { 'attr': {'class': 'input-small form-control text-right'}}) }}
-                                                     </div>
-                                                </td>
-                                                <td>
-                                                    {%if form_errors(form.peageNonJustif) %}
-                                                        <div class="has-error">
-                                                    {% else %}
-                                                         <div>
-                                                     {% endif %}
-                                                       {{ form_widget(form.peageNonJustif, { 'attr': {'class': 'input-small form-control text-right'}}) }}
-                                                     </div>
-                                                </td>
-                                                <td>
-                                                    {%if form_errors(form.peageTotal) %}
-                                                        <div class="has-error">
-                                                    {% else %}
-                                                         <div>
-                                                     {% endif %}
-                                                       {{ form_widget(form.peageTotal, { 'attr': {'class': 'input-small form-control text-right'}}) }}
-                                                     </div>
-                                                </td>
-                                            </tr>
-                                             <tr>
-                                                <td>Transport en commun</td>
-                                                <td>
-                                                    {%if form_errors(form.busMetroJustif) %}
-                                                        <div class="has-error">
-                                                    {% else %}
-                                                         <div>
-                                                     {% endif %}
-                                                       {{ form_widget(form.busMetroJustif, { 'attr': {'class': 'input-small form-control text-right'}}) }}
-                                                     </div>
-                                                </td>
-                                                <td>
-                                                    {%if form_errors(form.busMetroNonJustif) %}
-                                                        <div class="has-error">
-                                                    {% else %}
-                                                         <div>
-                                                     {% endif %}
-                                                       {{ form_widget(form.busMetroNonJustif, { 'attr': {'class': 'input-small form-control text-right'}}) }}
-                                                     </div>
-                                                </td>
-                                                 <td>
-                                                    {%if form_errors(form.busMetroTotal) %}
-                                                        <div class="has-error">
-                                                    {% else %}
-                                                         <div>
-                                                     {% endif %}
-                                                       {{ form_widget(form.busMetroTotal, { 'attr': {'class': 'input-small form-control text-right'}}) }}
-                                                     </div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Orlyval</td>
-                                                 <td>
-                                                    {%if form_errors(form.orlyvalJustif) %}
-                                                        <div class="has-error">
-                                                    {% else %}
-                                                         <div>
-                                                     {% endif %}
-                                                       {{ form_widget(form.orlyvalJustif, { 'attr': {'class': 'input-small form-control text-right'}}) }}
-                                                     </div>
-                                                </td>
-                                                <td>
-                                                    {%if form_errors(form.orlyvalNonJustif) %}
-                                                        <div class="has-error">
-                                                    {% else %}
-                                                         <div>
-                                                     {% endif %}
-                                                       {{ form_widget(form.orlyvalNonJustif, { 'attr': {'class': 'input-small form-control text-right'}}) }}
-                                                     </div>
-                                                </td>
-                                                <td>
-                                                    {%if form_errors(form.orlyvalTotal) %}
-                                                        <div class="has-error">
-                                                    {% else %}
-                                                         <div>
-                                                     {% endif %}
-                                                       {{ form_widget(form.orlyvalTotal, { 'attr': {'class': 'input-small form-control text-right'}}) }}
-                                                     </div>
-                                                </td>
-                                             </tr>
-                                             <tr>
-                                                <td>Avion (et/ou bateau)</td>
-                                                <td>
-                                                    {%if form_errors(form.avionJustif) %}
-                                                        <div class="has-error">
-                                                    {% else %}
-                                                         <div>
-                                                     {% endif %}
-                                                       {{ form_widget(form.avionJustif, { 'attr': {'class': 'input-small form-control text-right'}}) }}
-                                                     </div>
-                                                </td>
-                                                <td>
-                                                    {%if form_errors(form.avionNonJustif) %}
-                                                        <div class="has-error">
-                                                    {% else %}
-                                                         <div>
-                                                     {% endif %}
-                                                       {{ form_widget(form.avionNonJustif, { 'attr': {'class': 'input-small form-control text-right'}}) }}
-                                                     </div>
-                                                </td>
-                                                <td>
-                                                    {%if form_errors(form.avionTotal) %}
-                                                        <div class="has-error">
-                                                    {% else %}
-                                                         <div>
-                                                     {% endif %}
-                                                       {{ form_widget(form.avionTotal, { 'attr': {'class': 'input-small form-control text-right'}}) }}
-                                                     </div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Véhicule de location</td>
-                                                <td>
-                                                    {%if form_errors(form.reservationJustif) %}
-                                                        <div class="has-error">
-                                                    {% else %}
-                                                         <div>
-                                                     {% endif %}
-                                                       {{ form_widget(form.reservationJustif, { 'attr': {'class': 'input-small form-control text-right'}}) }}
-                                                     </div>
-                                                </td>
-                                                <td>
-                                                    {%if form_errors(form.reservationNonJustif) %}
-                                                        <div class="has-error">
-                                                    {% else %}
-                                                         <div>
-                                                     {% endif %}
-                                                       {{ form_widget(form.reservationNonJustif, { 'attr': {'class': 'input-small form-control text-right'}}) }}
-                                                     </div>
-                                                </td>
-                                                <td>
-                                                    {%if form_errors(form.reservationTotal) %}
-                                                        <div class="has-error">
-                                                    {% else %}
-                                                         <div>
-                                                     {% endif %}
-                                                       {{ form_widget(form.reservationTotal, { 'attr': {'class': 'input-small form-control text-right'}}) }}
-                                                     </div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Taxi</td>
-                                                 <td>
-                                                    {%if form_errors(form.taxiJustif) %}
-                                                        <div class="has-error">
-                                                    {% else %}
-                                                         <div>
-                                                     {% endif %}
-                                                       {{ form_widget(form.taxiJustif, { 'attr': {'class': 'input-small form-control text-right'}}) }}
-                                                     </div>
-                                                </td>
-                                                 <td>
-                                                    {%if form_errors(form.taxiNonJustif) %}
-                                                        <div class="has-error">
-                                                    {% else %}
-                                                         <div>
-                                                     {% endif %}
-                                                       {{ form_widget(form.taxiNonJustif, { 'attr': {'class': 'input-small form-control text-right'}}) }}
-                                                     </div>
-                                                </td>
-                                                 <td>
-                                                    {%if form_errors(form.taxiTotal) %}
-                                                        <div class="has-error">
-                                                    {% else %}
-                                                         <div>
-                                                     {% endif %}
-                                                       {{ form_widget(form.taxiTotal, { 'attr': {'class': 'input-small form-control text-right'}}) }}
-                                                     </div>
-                                                </td>
-                                             </tr>
-                                        </tbody>
-                                   </table>
-                                  </div>
-                                </div>
-                               <div class="col-sm-6">
-                                     <div class="table-responsive small ">
-                                       <table class="table table-bordered table-striped table-condensed table-advance table-hover">
-                                       <thead>
-                                           <th></th>
-                                           <th>&nbsp;&nbsp;&nbsp;Classe&nbsp;&nbsp;&nbsp;</th>
-                                           <th>Couchette</th>
-                                           <th>Nbre de tickets joints</th>
-                                           <th>non joints</th>
-                                           <th>Total payé</th>
-                                        </thead> 
-                                        <tbody>
-                                            <tr>
-                                                <td>Train</td>
-                                                  <td>
-                                                    {%if form_errors(form.trainClasse) %}
-                                                        <div class="has-error">
-                                                    {% else %}
-                                                         <div>
-                                                     {% endif %}
-                                                       {{ form_widget(form.trainClasse, { 'attr': {'class': 'form-control text-left'}}) }}
-                                                     </div>
-                                                </td>
-                                                  <td>
-                                                    {%if form_errors(form.trainCouchette) %}
-                                                        <div class="has-error">
-                                                    {% else %}
-                                                         <div>
-                                                     {% endif %}
-                                                       {{ form_widget(form.trainCouchette, { 'attr': {'class': 'form-control text-left'}}) }}
-                                                     </div>
-                                                </td>
-                                                  <td>
-                                                    {%if form_errors(form.trainJustif) %}
-                                                        <div class="has-error">
-                                                    {% else %}
-                                                         <div>
-                                                     {% endif %}
-                                                       {{ form_widget(form.trainJustif, { 'attr': {'class': 'form-control text-right'}}) }}
-                                                     </div>
-                                                </td>
-                                                  <td>
-                                                    {%if form_errors(form.trainNonJustif) %}
-                                                        <div class="has-error">
-                                                    {% else %}
-                                                         <div>
-                                                     {% endif %}
-                                                       {{ form_widget(form.trainNonJustif, { 'attr': {'class': 'form-control text-right'}}) }}
-                                                     </div>
-                                                </td>
-                                                <td>
-                                                    {%if form_errors(form.trainTotal) %}
-                                                        <div class="has-error">
-                                                    {% else %}
-                                                         <div>
-                                                     {% endif %}
-                                                       {{ form_widget(form.trainTotal, { 'attr': {'class': 'form-control text-right'}}) }}
-                                                     </div>
-                                                </td>
-                                               </tr>
-                                        </tbody>
-                                   </table>
-                                </div>
-                                 <div class="table-responsive small ">
-                                    <table class="table table-bordered table-striped table-condensed table-advance table-hover">
-                                       <thead>
-                                           <th></th>
-                                           <th>Nbre de kilomètres</th>
-                                          </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>Moto</td>
-                                                 <td>
-                                                    {%if form_errors(form.KmMoto) %}
-                                                        <div class="has-error">
-                                                    {% else %}
-                                                         <div>
-                                                     {% endif %}
-                                                       {{ form_widget(form.KmMoto, { 'attr': {'class': 'input-small form-control text-right'}}) }}
-                                                     </div>
-                                                </td>
-                                             </tr>
-                                            <tr>
-                                                <td>Véhicule personnel (joindre la photocopie de la carte grise)</td>
-                                                <td>
-                                                    {%if form_errors(form.KmVoiture) %}
-                                                        <div class="has-error">
-                                                    {% else %}
-                                                         <div>
-                                                     {% endif %}
-                                                       {{ form_widget(form.KmVoiture, { 'attr': {'class': 'input-small form-control text-right'}}) }}
-                                                     </div>
-                                                </td>
-                                             </tr>
-                                        </tbody>
-                                   </table>
-                                 </div>
-                              </div>
-                     </div>
-                    </div>
-                   <div class="tab-pane fade" id="tab_1_2">
-                      <div class="col-sm-12">
-                                <div class="col-sm-12">
-                                     <div class="table-responsive small ">
-                                       <table class="table table-bordered table-striped table-condensed table-advance table-hover">
-                                        <thead>
-                                           <th></th>
-                                           <th>Restaurant</th>
-                                           <th>Offerts ou sans frais</th>
-                                          </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>Nombre de repas de <b>midi</b> en <b>semaine</b></td>
-                                                <td>
-                                                    {%if form_errors(form.AutreMidiSem) %}
-                                                        <div class="has-error">
-                                                    {% else %}
-                                                         <div>
-                                                     {% endif %}
-                                                       {{ form_widget(form.AutreMidiSem, { 'attr': {'class': 'input-small form-control text-right'}}) }}
-                                                     </div>
-                                                </td>
-                                                <td>
-                                                    {%if form_errors(form.OffertMidiSem) %}
-                                                        <div class="has-error">
-                                                    {% else %}
-                                                         <div>
-                                                     {% endif %}
-                                                       {{ form_widget(form.OffertMidiSem, { 'attr': {'class': 'input-small form-control text-right'}}) }}
-                                                     </div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Nombre de repas de <b>midi</b> en <b>week-end</b></td>
-                                                <td>
-                                                    {%if form_errors(form.AutreMidiWeek) %}
-                                                        <div class="has-error">
-                                                    {% else %}
-                                                         <div>
-                                                     {% endif %}
-                                                       {{ form_widget(form.AutreMidiWeek, { 'attr': {'class': 'input-small form-control text-right'}}) }}
-                                                     </div>
-                                                </td>
-                                                <td>
-                                                    {%if form_errors(form.OffertMidiWeek) %}
-                                                        <div class="has-error">
-                                                    {% else %}
-                                                         <div>
-                                                     {% endif %}
-                                                       {{ form_widget(form.OffertMidiWeek, { 'attr': {'class': 'input-small form-control text-right'}}) }}
-                                                     </div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Nombre de repas du <b>soir</b></td>
-                                                 <td>
-                                                    {%if form_errors(form.AutreSoir) %}
-                                                        <div class="has-error">
-                                                    {% else %}
-                                                         <div>
-                                                     {% endif %}
-                                                       {{ form_widget(form.AutreSoir, { 'attr': {'class': 'input-small form-control text-right'}}) }}
-                                                     </div>
-                                                </td>
-                                                 <td>
-                                                    {%if form_errors(form.OffertSoir) %}
-                                                        <div class="has-error">
-                                                    {% else %}
-                                                         <div>
-                                                     {% endif %}
-                                                       {{ form_widget(form.OffertSoir, { 'attr': {'class': 'input-small form-control text-right'}}) }}
-                                                     </div>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                   </table>
-                                    </div>
-                               </div>
-                      </div>
-                   </div>
-                   <div class="tab-pane fade" id="tab_1_3">
-                      <div class="col-sm-12">
-                                <div class="col-sm-12">
-                                   <div class="table-responsive small ">
-                                     <table class="table table-bordered table-striped table-condensed table-advance table-hover">
-                                       <thead>
-                                           <th></th>
-                                           <th>Nombre de nuitées</th>
-                                           </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>Justifiés (factures fournies)</td>
-                                                <td>
-                                                    {%if form_errors(form.ProvenceJustif) %}
-                                                        <div class="has-error">
-                                                    {% else %}
-                                                         <div>
-                                                     {% endif %}
-                                                       {{ form_widget(form.ProvenceJustif, { 'attr': {'class': 'input-small form-control text-right'}}) }}
-                                                     </div>
-                                                </td>
-                                             </tr>
-                                            <tr>
-                                                <td>Nuitées offertes ou sans frais</td>
-                                                <td>
-                                                    {%if form_errors(form.offertNuit) %}
-                                                        <div class="has-error">
-                                                    {% else %}
-                                                         <div>
-                                                     {% endif %}
-                                                       {{ form_widget(form.offertNuit, { 'attr': {'class': 'input-small form-control text-right'}}) }}
-                                                     </div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Hébergement administratif</td>
-                                                <td>
-                                                    {%if form_errors(form.adminNuit) %}
-                                                        <div class="has-error">
-                                                    {% else %}
-                                                         <div>
-                                                     {% endif %}
-                                                       {{ form_widget(form.adminNuit, { 'attr': {'class': 'input-small form-control text-left'}}) }}
-                                                     </div>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                   </table>
-                                    </div>
-                               </div>
                         </div>
-                 </div>
-            </div> 
-         </div>
-      </div>
-   </div>
- </div>
-                                                     
-          <div class="form-actions fluid center">
-              <div class="col-md-offset-5 col-md-9">
-                  {#   <button type="submit" class="btn btn-warning"><i class="fa fa-save"></i> Enregister</button>#}
-                    <a class="btn btn-success" data-toggle="modal" href="#Valider" id="idBtValider"><i class="fa fa-check"></i> Valider</a>
-                    <a class="btn btn-danger" href="{{ path('aeag_frd') }}"><i class="fa fa-power-off"></i> Quitter</a>
-              </div>
-          </div>
-            
-         
-     <div class="hide">
-     {{ form_rest(form) }}
-     </div>
-    
-  </form>
-    <input id="passage" name="passage" value="0" type="hidden"/>
- </div>  
- </div>  
-     
-  <div class="row">
-         <div class="col-md-12 pull-left text-info">
-           <ul class="list-inline">
-         {#   <li><a class="btn btn-warning btn-xs" href="#" title="Consulter"><i class="fa fa-save"></i></a> Enregistrer votre saisie</li>#}
-            <li><a class="btn btn-success btn-xs" href="#" title="Valider"> <i class="fa fa-check"></i></a> Valider et transmettre à l'agence de l'eau</li>
-            <li><a class="btn btn-danger btn-xs" href="#" title="Quitter"><i class="fa fa-trash-o"></i></a> Quitter votre saisie et retour à l'accueil</li>
-         </ul>  
-        </div>
-      </div>  
-  
+                    {% endif %}
 
-{%endblock content %}
+                    {% if erreurDateHeure %}
+                        <div class="alert alert-danger">
+                            <h5>
+                                {{ erreurDateHeure | nl2br}}
+                            </h5>
+                        </div>
+                    {% endif %}
 
-{% block scripts %}
-    
-            
-           {% if entity.0.departement    %}
-                var valeur = {{ entity.0.departement  }};
-                if (valeur < 10){
-                    valeur = '0' + valeur;
-                }
-                $("#idDept option[value='" + valeur + "']").attr('selected','selected');
-                document.getElementById('idDept').value=valeur;
-          {% endif %}
-          
-       
-            $('#idDept').change(function(){
-                $('#departement').val($('#idDept').val());
-             });
-       
-                 
-        $('#dateDepart').datepicker();
-                 
-          $('#heureDepart').timepicker({
-            minuteStep: 30,
-            showInputs: true,
-            disableFocus: true,
-            showMeridian: false,
-            defaultTime: false
-            });
-                 
-             
-          $('#dateRetour').datepicker(); 
-                 
-            $('#heureRetour').timepicker({
-            minuteStep: 30,
-            showInputs: true,
-            disableFocus: true,
-            showMeridian: false,
-            defaultTime: false
-            });
-            
-            
-             cache: false  
-             var requestData = {
-                  finalite : $('#finalite').val(),
-                  sousTheme: $('#sousTheme').val()
-              }
-              
-              $('#sousTheme').remove();
-             
-              $.get( "{{path("AeagFrdBundle_membre_afficherSousTheme")}}", requestData , function( responseData ) { 
-                   $("#idSousTheme" ).html( responseData ); 
-              });
-            
-          
-          $('#finalite').change( function() {
-             cache: false  
-             var requestData = {
-                  finalite : $('#finalite').val(),
-                  sousTheme: $('#sousTheme').val()
-              }
-              
-              $('#sousTheme').remove();
-             
-              $.get( "{{path("AeagFrdBundle_membre_afficherSousTheme")}}", requestData , function( responseData ) { 
-                   $("#idSousTheme" ).html( responseData ); 
-              });
-          } );  
-          
-          $('#finalite').click( function() {
-             cache: false  
-             var requestData = {
-                  finalite : $('#finalite').val(),
-                  sousTheme: $('#sousTheme').val()
-              }
-              
-              $('#sousTheme').remove();
-             
-              $.get( "{{path("AeagFrdBundle_membre_afficherSousTheme")}}", requestData , function( responseData ) { 
-                   $("#idSousTheme" ).html( responseData ); 
-              });
-          } );  
-          
-          
-          $('#btValider').click( function() {
-            $('#Valider').modal('hide');
-            $('#idBtValider').hide();
-             $('#valider').val('O');
-             $('form').submit();
-             return false;
-          } );  
-    
-   
-{% endblock scripts %}
+                {% endspaceless %}
+
+
+                <div class="row">
+
+                    <div class="form-group">
+                        <label for="objet" class="col-xs-3 control-label">Objet<span class="required">*</span></label>
+                        {%if form_errors(form.objet) %}
+                            <div class="col-xs-9 input-group has-error has-feedback">
+                            {% else %}
+                                <div class="col-xs-9 input-group">
+                                {% endif %}
+                                {{ form_widget(form.objet, { 'attr': {'class': 'form-control ', 'placeholder': 'Objet'} }) }}
+                            </div>
+                        </div>
+
+                        <div class="form-group form-inline">
+                            <label for="dates" class="col-xs-3 control-label">Dates<span class="required">*</span></label>
+                            {%if form_errors(form.objet) %}
+                                <div class="col-xs-9 input-group has-error has-feedback">
+                                {% else %}
+                                    <div class="col-xs-9 input-group">
+                                    {% endif %}
+                                    <div class="small ">
+                                        <table class="table table-bordered table-striped table-condensed table-advance table-hover">
+                                            <thead>
+                                            <th class="text-center">Date départ</th>
+                                            <th class="text-center">Heure départ</th>
+                                            <th class="text-center">Date retour</th>
+                                            <th class="text-center">Heure retour</th>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        {%if form_errors(form.dateDepart)  or  erreurDate or erreurDateHeure%}
+                                                            <div class="input-small date-picker has-error has-feedback">
+                                                            {% else %}
+                                                                <div class="input-small date-picker">
+                                                                {% endif %}
+                                                                {{ form_widget(form.dateDepart , { 'attr': {'class': 'input- form-control col-xs-2 text-right'} }) }}
+                                                            </div>
+                                                    </td>
+                                                    <td>
+                                                        {%if form_errors(form.heureDepart) or erreurHeure or erreurDateHeure%}
+                                                            <div class="input-append bootstrap-timepicker has-error has-feedback">
+                                                            {% else %}
+                                                                <div class="input-append bootstrap-timepicker">
+                                                                {% endif %}
+                                                                {{ form_widget(form.heureDepart , { 'attr': {'class': 'input-small form-control col-xs-2 text-right'} }) }}
+                                                            </div>
+                                                    </td>
+                                                    <td>
+                                                        {%if form_errors(form.dateRetour) or erreurDate or erreurDateHeure%}
+                                                            <div class="input-small date-picker has-error has-feedback">
+                                                            {% else %}
+                                                                <div class="input-small date-picker">
+                                                                {% endif %}
+                                                                {{ form_widget(form.dateRetour , { 'attr': {'class': 'input-small form-control col-xs-2 text-right'} }) }}
+                                                            </div>
+                                                    </td>
+                                                    <td>
+                                                        {%if form_errors(form.heureRetour) or erreurHeure  or erreurDateHeure%}
+                                                            <div class="input-append bootstrap-timepicker has-error has-feedback">
+                                                            {% else %}
+                                                                <div class="input-append bootstrap-timepicker">
+                                                                {% endif %}
+                                                                {{ form_widget(form.heureRetour , { 'attr': {'class': 'input-small form-control col-xs-2 text-right'} }) }}
+                                                            </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="finalite" class="col-xs-3 control-label">Finalité<span class="required">*</span></label>
+                                {%if form_errors(form.finalite) %}
+                                    <div class="col-xs-9 input-group has-error has-feedback">
+                                    {% else %}
+                                        <div class="col-xs-9 input-group">
+                                        {% endif %}
+                                        <table class="table-condensed" border="0">
+                                            <tr>
+                                                <td width="20%">
+                                                    {{ form_widget(form.finalite, { 'attr': {'class': 'input-medium form-control ', 'placeholder': 'Finalité'} }) }}
+                                                </td>
+                                                <td id="idSousTheme"></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="itineraire" class="col-xs-3 control-label">Itinéraire<span class="required">*</span></label>
+                                    {%if form_errors(form.objet) %}
+                                        <div class="col-xs-9 input-group has-error has-feedback">
+                                        {% else %}
+                                            <div class="col-xs-9 input-group">
+                                            {% endif %}
+                                            {{ form_widget(form.itineraire, { 'attr': {'class': 'form-control ', 'placeholder': 'Itinéraire'} }) }}
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="departement" class="col-xs-3 control-label">Département du lieu de mission<span class="required">*</span></label>
+                                        <div class="col-xs-8 input-group">
+                                            <select class="form-control" id="idDept" name="departement" required="required" >
+                                                <option value=""></option>
+                                                {%for dept in departements %}
+                                                    <option value="{{dept.dept}}">{{ dept.deptLibelle }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row">
+
+                                    <div class="col-sm-12">
+                                        <div class="panel panel-title">
+                                            <div class="panel-heading">
+                                                <h3 class="panel-title">
+                                                    Frais
+                                                </h3>
+                                            </div>
+                                            <div class="panel-body">
+                                                <ul  class="nav nav-pills nav-justified">
+                                                    <li class="active"><a href="#tab_1_1" data-toggle="tab"><i class="fa fa-truck"></i><b> Transport</b></a></li>
+                                                    <li class=""><a href="#tab_1_2" data-toggle="tab"><i class="fa fa-apple"></i><b> Repas</b></a></li>
+                                                    <li class=""><a href="#tab_1_3" data-toggle="tab"><i class="fa fa-home"></i><b> Nuitée</b></a></li>
+                                                </ul>
+                                                <div  class="tab-content">
+                                                    <div class="tab-pane fade active in" id="tab_1_1">
+                                                        <div class="col-sm-12">
+                                                            <div class="col-sm-6">
+                                                                <div class="table-responsive small ">
+                                                                    <table class="table table-bordered table-striped table-condensed table-advance table-hover">
+                                                                        <thead>
+                                                                        <th></th>
+                                                                        <th>Nbre de tickets joints</th>
+                                                                        <th>non joints</th>
+                                                                        <th>Total payé</th>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td>Parking</td>
+                                                                                <td>
+                                                                                    {%if form_errors(form.parkJustif) %}
+                                                                                        <div class="has-error">
+                                                                                        {% else %}
+                                                                                            <div>
+                                                                                            {% endif %}
+                                                                                            {{ form_widget(form.parkJustif, { 'attr': {'class': 'input-small form-control text-right'}}) }}
+                                                                                        </div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    {%if form_errors(form.parkNonJustif) %}
+                                                                                        <div class="has-error">
+                                                                                        {% else %}
+                                                                                            <div>
+                                                                                            {% endif %}
+                                                                                            {{ form_widget(form.parkNonJustif, { 'attr': {'class': 'input-small form-control text-right'}}) }}
+                                                                                        </div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    {%if form_errors(form.parkTotal) %}
+                                                                                        <div class="has-error">
+                                                                                        {% else %}
+                                                                                            <div>
+                                                                                            {% endif %}
+                                                                                            {{ form_widget(form.parkTotal, { 'attr': {'class': 'input-small form-control text-right'}}) }}
+                                                                                        </div>
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>Péage</td>
+                                                                                <td>
+                                                                                    {%if form_errors(form.peageJustif) %}
+                                                                                        <div class="has-error">
+                                                                                        {% else %}
+                                                                                            <div>
+                                                                                            {% endif %}
+                                                                                            {{ form_widget(form.peageJustif, { 'attr': {'class': 'input-small form-control text-right'}}) }}
+                                                                                        </div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    {%if form_errors(form.peageNonJustif) %}
+                                                                                        <div class="has-error">
+                                                                                        {% else %}
+                                                                                            <div>
+                                                                                            {% endif %}
+                                                                                            {{ form_widget(form.peageNonJustif, { 'attr': {'class': 'input-small form-control text-right'}}) }}
+                                                                                        </div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    {%if form_errors(form.peageTotal) %}
+                                                                                        <div class="has-error">
+                                                                                        {% else %}
+                                                                                            <div>
+                                                                                            {% endif %}
+                                                                                            {{ form_widget(form.peageTotal, { 'attr': {'class': 'input-small form-control text-right'}}) }}
+                                                                                        </div>
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>Transport en commun</td>
+                                                                                <td>
+                                                                                    {%if form_errors(form.busMetroJustif) %}
+                                                                                        <div class="has-error">
+                                                                                        {% else %}
+                                                                                            <div>
+                                                                                            {% endif %}
+                                                                                            {{ form_widget(form.busMetroJustif, { 'attr': {'class': 'input-small form-control text-right'}}) }}
+                                                                                        </div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    {%if form_errors(form.busMetroNonJustif) %}
+                                                                                        <div class="has-error">
+                                                                                        {% else %}
+                                                                                            <div>
+                                                                                            {% endif %}
+                                                                                            {{ form_widget(form.busMetroNonJustif, { 'attr': {'class': 'input-small form-control text-right'}}) }}
+                                                                                        </div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    {%if form_errors(form.busMetroTotal) %}
+                                                                                        <div class="has-error">
+                                                                                        {% else %}
+                                                                                            <div>
+                                                                                            {% endif %}
+                                                                                            {{ form_widget(form.busMetroTotal, { 'attr': {'class': 'input-small form-control text-right'}}) }}
+                                                                                        </div>
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>Orlyval</td>
+                                                                                <td>
+                                                                                    {%if form_errors(form.orlyvalJustif) %}
+                                                                                        <div class="has-error">
+                                                                                        {% else %}
+                                                                                            <div>
+                                                                                            {% endif %}
+                                                                                            {{ form_widget(form.orlyvalJustif, { 'attr': {'class': 'input-small form-control text-right'}}) }}
+                                                                                        </div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    {%if form_errors(form.orlyvalNonJustif) %}
+                                                                                        <div class="has-error">
+                                                                                        {% else %}
+                                                                                            <div>
+                                                                                            {% endif %}
+                                                                                            {{ form_widget(form.orlyvalNonJustif, { 'attr': {'class': 'input-small form-control text-right'}}) }}
+                                                                                        </div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    {%if form_errors(form.orlyvalTotal) %}
+                                                                                        <div class="has-error">
+                                                                                        {% else %}
+                                                                                            <div>
+                                                                                            {% endif %}
+                                                                                            {{ form_widget(form.orlyvalTotal, { 'attr': {'class': 'input-small form-control text-right'}}) }}
+                                                                                        </div>
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>Avion (et/ou bateau)</td>
+                                                                                <td>
+                                                                                    {%if form_errors(form.avionJustif) %}
+                                                                                        <div class="has-error">
+                                                                                        {% else %}
+                                                                                            <div>
+                                                                                            {% endif %}
+                                                                                            {{ form_widget(form.avionJustif, { 'attr': {'class': 'input-small form-control text-right'}}) }}
+                                                                                        </div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    {%if form_errors(form.avionNonJustif) %}
+                                                                                        <div class="has-error">
+                                                                                        {% else %}
+                                                                                            <div>
+                                                                                            {% endif %}
+                                                                                            {{ form_widget(form.avionNonJustif, { 'attr': {'class': 'input-small form-control text-right'}}) }}
+                                                                                        </div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    {%if form_errors(form.avionTotal) %}
+                                                                                        <div class="has-error">
+                                                                                        {% else %}
+                                                                                            <div>
+                                                                                            {% endif %}
+                                                                                            {{ form_widget(form.avionTotal, { 'attr': {'class': 'input-small form-control text-right'}}) }}
+                                                                                        </div>
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>Véhicule de location</td>
+                                                                                <td>
+                                                                                    {%if form_errors(form.reservationJustif) %}
+                                                                                        <div class="has-error">
+                                                                                        {% else %}
+                                                                                            <div>
+                                                                                            {% endif %}
+                                                                                            {{ form_widget(form.reservationJustif, { 'attr': {'class': 'input-small form-control text-right'}}) }}
+                                                                                        </div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    {%if form_errors(form.reservationNonJustif) %}
+                                                                                        <div class="has-error">
+                                                                                        {% else %}
+                                                                                            <div>
+                                                                                            {% endif %}
+                                                                                            {{ form_widget(form.reservationNonJustif, { 'attr': {'class': 'input-small form-control text-right'}}) }}
+                                                                                        </div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    {%if form_errors(form.reservationTotal) %}
+                                                                                        <div class="has-error">
+                                                                                        {% else %}
+                                                                                            <div>
+                                                                                            {% endif %}
+                                                                                            {{ form_widget(form.reservationTotal, { 'attr': {'class': 'input-small form-control text-right'}}) }}
+                                                                                        </div>
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>Taxi</td>
+                                                                                <td>
+                                                                                    {%if form_errors(form.taxiJustif) %}
+                                                                                        <div class="has-error">
+                                                                                        {% else %}
+                                                                                            <div>
+                                                                                            {% endif %}
+                                                                                            {{ form_widget(form.taxiJustif, { 'attr': {'class': 'input-small form-control text-right'}}) }}
+                                                                                        </div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    {%if form_errors(form.taxiNonJustif) %}
+                                                                                        <div class="has-error">
+                                                                                        {% else %}
+                                                                                            <div>
+                                                                                            {% endif %}
+                                                                                            {{ form_widget(form.taxiNonJustif, { 'attr': {'class': 'input-small form-control text-right'}}) }}
+                                                                                        </div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    {%if form_errors(form.taxiTotal) %}
+                                                                                        <div class="has-error">
+                                                                                        {% else %}
+                                                                                            <div>
+                                                                                            {% endif %}
+                                                                                            {{ form_widget(form.taxiTotal, { 'attr': {'class': 'input-small form-control text-right'}}) }}
+                                                                                        </div>
+                                                                                </td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-6">
+                                                                <div class="table-responsive small ">
+                                                                    <table class="table table-bordered table-striped table-condensed table-advance table-hover">
+                                                                        <thead>
+                                                                        <th></th>
+                                                                        <th>&nbsp;&nbsp;&nbsp;Classe&nbsp;&nbsp;&nbsp;</th>
+                                                                        <th>Couchette</th>
+                                                                        <th>Nbre de tickets joints</th>
+                                                                        <th>non joints</th>
+                                                                        <th>Total payé</th>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td>Train</td>
+                                                                                <td>
+                                                                                    {%if form_errors(form.trainClasse) %}
+                                                                                        <div class="has-error">
+                                                                                        {% else %}
+                                                                                            <div>
+                                                                                            {% endif %}
+                                                                                            {{ form_widget(form.trainClasse, { 'attr': {'class': 'form-control text-left'}}) }}
+                                                                                        </div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    {%if form_errors(form.trainCouchette) %}
+                                                                                        <div class="has-error">
+                                                                                        {% else %}
+                                                                                            <div>
+                                                                                            {% endif %}
+                                                                                            {{ form_widget(form.trainCouchette, { 'attr': {'class': 'form-control text-left'}}) }}
+                                                                                        </div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    {%if form_errors(form.trainJustif) %}
+                                                                                        <div class="has-error">
+                                                                                        {% else %}
+                                                                                            <div>
+                                                                                            {% endif %}
+                                                                                            {{ form_widget(form.trainJustif, { 'attr': {'class': 'form-control text-right'}}) }}
+                                                                                        </div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    {%if form_errors(form.trainNonJustif) %}
+                                                                                        <div class="has-error">
+                                                                                        {% else %}
+                                                                                            <div>
+                                                                                            {% endif %}
+                                                                                            {{ form_widget(form.trainNonJustif, { 'attr': {'class': 'form-control text-right'}}) }}
+                                                                                        </div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    {%if form_errors(form.trainTotal) %}
+                                                                                        <div class="has-error">
+                                                                                        {% else %}
+                                                                                            <div>
+                                                                                            {% endif %}
+                                                                                            {{ form_widget(form.trainTotal, { 'attr': {'class': 'form-control text-right'}}) }}
+                                                                                        </div>
+                                                                                </td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                                <div class="table-responsive small ">
+                                                                    <table class="table table-bordered table-striped table-condensed table-advance table-hover">
+                                                                        <thead>
+                                                                        <th></th>
+                                                                        <th>Nbre de kilomètres</th>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td>Moto</td>
+                                                                                <td>
+                                                                                    {%if form_errors(form.KmMoto) %}
+                                                                                        <div class="has-error">
+                                                                                        {% else %}
+                                                                                            <div>
+                                                                                            {% endif %}
+                                                                                            {{ form_widget(form.KmMoto, { 'attr': {'class': 'input-small form-control text-right'}}) }}
+                                                                                        </div>
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>Véhicule personnel (joindre la photocopie de la carte grise)</td>
+                                                                                <td>
+                                                                                    {%if form_errors(form.KmVoiture) %}
+                                                                                        <div class="has-error">
+                                                                                        {% else %}
+                                                                                            <div>
+                                                                                            {% endif %}
+                                                                                            {{ form_widget(form.KmVoiture, { 'attr': {'class': 'input-small form-control text-right'}}) }}
+                                                                                        </div>
+                                                                                </td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="tab-pane fade" id="tab_1_2">
+                                                        <div class="col-sm-12">
+                                                            <div class="col-sm-12">
+                                                                <div class="table-responsive small ">
+                                                                    <table class="table table-bordered table-striped table-condensed table-advance table-hover">
+                                                                        <thead>
+                                                                        <th></th>
+                                                                        <th>Restaurant</th>
+                                                                        <th>Offerts ou sans frais</th>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td>Nombre de repas de <b>midi</b> en <b>semaine</b></td>
+                                                                                <td>
+                                                                                    {%if form_errors(form.AutreMidiSem) %}
+                                                                                        <div class="has-error">
+                                                                                        {% else %}
+                                                                                            <div>
+                                                                                            {% endif %}
+                                                                                            {{ form_widget(form.AutreMidiSem, { 'attr': {'class': 'input-small form-control text-right'}}) }}
+                                                                                        </div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    {%if form_errors(form.OffertMidiSem) %}
+                                                                                        <div class="has-error">
+                                                                                        {% else %}
+                                                                                            <div>
+                                                                                            {% endif %}
+                                                                                            {{ form_widget(form.OffertMidiSem, { 'attr': {'class': 'input-small form-control text-right'}}) }}
+                                                                                        </div>
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>Nombre de repas de <b>midi</b> en <b>week-end</b></td>
+                                                                                <td>
+                                                                                    {%if form_errors(form.AutreMidiWeek) %}
+                                                                                        <div class="has-error">
+                                                                                        {% else %}
+                                                                                            <div>
+                                                                                            {% endif %}
+                                                                                            {{ form_widget(form.AutreMidiWeek, { 'attr': {'class': 'input-small form-control text-right'}}) }}
+                                                                                        </div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    {%if form_errors(form.OffertMidiWeek) %}
+                                                                                        <div class="has-error">
+                                                                                        {% else %}
+                                                                                            <div>
+                                                                                            {% endif %}
+                                                                                            {{ form_widget(form.OffertMidiWeek, { 'attr': {'class': 'input-small form-control text-right'}}) }}
+                                                                                        </div>
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>Nombre de repas du <b>soir</b></td>
+                                                                                <td>
+                                                                                    {%if form_errors(form.AutreSoir) %}
+                                                                                        <div class="has-error">
+                                                                                        {% else %}
+                                                                                            <div>
+                                                                                            {% endif %}
+                                                                                            {{ form_widget(form.AutreSoir, { 'attr': {'class': 'input-small form-control text-right'}}) }}
+                                                                                        </div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    {%if form_errors(form.OffertSoir) %}
+                                                                                        <div class="has-error">
+                                                                                        {% else %}
+                                                                                            <div>
+                                                                                            {% endif %}
+                                                                                            {{ form_widget(form.OffertSoir, { 'attr': {'class': 'input-small form-control text-right'}}) }}
+                                                                                        </div>
+                                                                                </td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="tab-pane fade" id="tab_1_3">
+                                                        <div class="col-sm-12">
+                                                            <div class="col-sm-12">
+                                                                <div class="table-responsive small ">
+                                                                    <table class="table table-bordered table-striped table-condensed table-advance table-hover">
+                                                                        <thead>
+                                                                        <th></th>
+                                                                        <th>Nombre de nuitées</th>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td>Justifiés (factures fournies)</td>
+                                                                                <td>
+                                                                                    {%if form_errors(form.ProvenceJustif) %}
+                                                                                        <div class="has-error">
+                                                                                        {% else %}
+                                                                                            <div>
+                                                                                            {% endif %}
+                                                                                            {{ form_widget(form.ProvenceJustif, { 'attr': {'class': 'input-small form-control text-right'}}) }}
+                                                                                        </div>
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>Nuitées offertes ou sans frais</td>
+                                                                                <td>
+                                                                                    {%if form_errors(form.offertNuit) %}
+                                                                                        <div class="has-error">
+                                                                                        {% else %}
+                                                                                            <div>
+                                                                                            {% endif %}
+                                                                                            {{ form_widget(form.offertNuit, { 'attr': {'class': 'input-small form-control text-right'}}) }}
+                                                                                        </div>
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>Hébergement administratif</td>
+                                                                                <td>
+                                                                                    {%if form_errors(form.adminNuit) %}
+                                                                                        <div class="has-error">
+                                                                                        {% else %}
+                                                                                            <div>
+                                                                                            {% endif %}
+                                                                                            {{ form_widget(form.adminNuit, { 'attr': {'class': 'input-small form-control text-left'}}) }}
+                                                                                        </div>
+                                                                                </td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-actions fluid center">
+                                    <div class="col-md-offset-5 col-md-9">
+                                        {#   <button type="submit" class="btn btn-warning"><i class="fa fa-save"></i> Enregister</button>#}
+                                        <a class="btn btn-success" data-toggle="modal" href="#Valider" id="idBtValider"><i class="fa fa-check"></i> Valider</a>
+                                        <a class="btn btn-danger" href="{{ path('aeag_frd') }}"><i class="fa fa-power-off"></i> Quitter</a>
+                                    </div>
+                                </div>
+
+
+                                <div class="hide">
+                                    {{ form_rest(form) }}
+                                </div>
+
+                                </form>
+                                <input id="passage" name="passage" value="0" type="hidden"/>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 pull-left text-info">
+                                <ul class="list-inline">
+                                    {#   <li><a class="btn btn-warning btn-xs" href="#" title="Consulter"><i class="fa fa-save"></i></a> Enregistrer votre saisie</li>#}
+                                    <li><a class="btn btn-success btn-xs" href="#" title="Valider"> <i class="fa fa-check"></i></a> Valider et transmettre à l'agence de l'eau</li>
+                                    <li><a class="btn btn-danger btn-xs" href="#" title="Quitter"><i class="fa fa-trash-o"></i></a> Quitter votre saisie et retour à l'accueil</li>
+                                </ul>
+                            </div>
+                        </div>
+
+
+                    {%endblock content %}
+
+                    {% block scripts %}
+
+
+                        {% if entity.0.departement    %}
+                            var valeur = {{ entity.0.departement  }};
+                            if (valeur < 10){
+                            valeur = '0' + valeur;
+                            }
+                            $("#idDept option[value='" + valeur + "']").attr('selected','selected');
+                            document.getElementById('idDept').value=valeur;
+                        {% endif %}
+
+
+                        $('#idDept').change(function(){
+                        $('#departement').val($('#idDept').val());
+                        });
+
+
+                        $('#dateDepart').datepicker();
+
+                        $('#heureDepart').timepicker({
+                        minuteStep: 30,
+                        showInputs: true,
+                        disableFocus: true,
+                        showMeridian: false,
+                        defaultTime: false
+                        });
+
+
+
+                        $('#dateRetour').datepicker();
+
+                        $('#heureRetour').timepicker({
+                        minuteStep: 30,
+                        showInputs: true,
+                        disableFocus: true,
+                        showMeridian: false,
+                        defaultTime: false
+                        });
+
+
+                        cache: false
+                        var requestData = {
+                        finalite : $('#finalite').val(),
+                        sousTheme: $('#sousTheme').val()
+                        }
+
+                        $('#sousTheme').remove();
+
+                        $.get( "{{path("AeagFrdBundle_membre_afficherSousTheme")}}", requestData , function( responseData ) {
+                        $("#idSousTheme" ).html( responseData );
+                        });
+
+
+                        $('#finalite').change( function() {
+                        cache: false
+                        var requestData = {
+                        finalite : $('#finalite').val(),
+                        sousTheme: $('#sousTheme').val()
+                        }
+
+                        $('#sousTheme').remove();
+
+                        $.get( "{{path("AeagFrdBundle_membre_afficherSousTheme")}}", requestData , function( responseData ) {
+                        $("#idSousTheme" ).html( responseData );
+                        });
+                        } );
+
+                        $('#finalite').click( function() {
+                        cache: false
+                        var requestData = {
+                        finalite : $('#finalite').val(),
+                        sousTheme: $('#sousTheme').val()
+                        }
+
+                        $('#sousTheme').remove();
+
+                        $.get( "{{path("AeagFrdBundle_membre_afficherSousTheme")}}", requestData , function( responseData ) {
+                        $("#idSousTheme" ).html( responseData );
+                        });
+                        } );
+
+
+                        $('#btValider').click( function() {
+                        $('#Valider').modal('hide');
+                        //$('#idBtValider').hide();
+                        $('#valider').val('O');
+                        $('form').submit();
+                        return false;
+                        } );
+
+
+                    {% endblock scripts %}

@@ -3,7 +3,7 @@
 {% block breadcrumb %}
     <li>
         <i class="icon-home"></i>
-        <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+        <a href="{{ path('aeag_homepage') }}">Accueil</a>
     </li>
     <li class="active">
         Frais de déplacements
@@ -13,7 +13,7 @@
 
 {% block panel_heading %}
     <h3>
-       {{ entities | length }}  Frais de déplacements {% if annee != 9999 %} pour l'année {{ annee }} {% endif %}
+        {{ entities | length }}  Frais de déplacements {% if annee != 9999 %} pour l'année {{ annee }} {% endif %}
     </h3>
 {% endblock panel_heading %}
 
@@ -27,11 +27,11 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                            <h4 class="modal-title" id="supLabel-{{entity.0.id}}">Suppression de la demande n° {{ entity.0.id}} 
+                            <h4 class="modal-title" id="supLabel-{{entity.0.id}}">Suppression de la demande n° {{ entity.0.id}}
                                 {% if  entity.1 %}
                                     de {{ entity.1.username }} {{ entity.1.prenom }}
                                 {% endif %}
-                                </h4>
+                            </h4>
                         </div>
                         <div class="modal-body">
                             <h4>Cliquer sur la corbeille pour valider la suppression</h4>
@@ -55,14 +55,14 @@
                                 {%if entity.0.id %}
                                     Validation de la demande n° {{ entity.0.id}}
                                     {% if  entity.1 %}
-                                    de {{ entity.1.username }} {{ entity.1.prenom }}
+                                        de {{ entity.1.username }} {{ entity.1.prenom }}
                                     {% endif %}
-                                  {%else%}
+                                {%else%}
                                     Validation de la demande
                                     {% if  entity.1 %}
-                                    de {{ entity.1.username }} {{ entity.1.prenom }}
+                                        de {{ entity.1.username }} {{ entity.1.prenom }}
                                     {% endif %}
-                                 {%endif%}
+                                {%endif%}
                             </h4>
                         </div>
                         <div class="modal-body">
@@ -101,14 +101,14 @@
                                 {%if entity.0.id %}
                                     Modifier la demande n° {{ entity.0.id}}
                                     {% if  entity.1 %}
-                                    de {{ entity.1.username }} {{ entity.1.prenom }}
+                                        de {{ entity.1.username }} {{ entity.1.prenom }}
                                     {% endif %}
-                                 {%else%}
-                                    Modifier la demande 
+                                {%else%}
+                                    Modifier la demande
                                     {% if  entity.1 %}
-                                    de {{ entity.1.username }} {{ entity.1.prenom }}
+                                        de {{ entity.1.username }} {{ entity.1.prenom }}
                                     {% endif %}
-                                  {%endif%}
+                                {%endif%}
                             </h4>
                         </div>
                         <div class="modal-body">
@@ -122,10 +122,10 @@
                         </div>
                     </div>
                 </div>
-            </div>     
+            </div>
 
         {% endfor %}
-    {% endif %}  
+    {% endif %}
 {% endblock modal%}
 
 
@@ -146,8 +146,8 @@
                             <th>Objet</th>
                             <th>Couurier</th>
                         </tr>
-                      </thead>
-                         <tbody id="idTbody">
+                    </thead>
+                    <tbody id="idTbody">
                         {%if entities | length > 0 %}
                             {% for entity in entities %}
                                 <tr id="idTr-{{ entity.0.id }}">
@@ -167,11 +167,11 @@
                                                 <a class="btn btn-info" href="{{ path('AeagFrdBundle_declaration_pdf', { 'id': entity.0.id }) }}" title="Imprimer">
                                                     <i class="fa fa-print"></i>
                                                 </a>
-                                              {% if is_granted('ROLE_ADMINFRD') %}
-                                                <a class="btn btn-default" data-toggle="modal" href="#deval-{{entity.0.id}}" title="Repasser au statut précédent">
-                                                    <i class="fa fa-refresh"></i>
-                                                </a>
-                                               {% endif %}
+                                                {% if is_granted('ROLE_ADMINFRD') %}
+                                                    <a class="btn btn-default" data-toggle="modal" href="#deval-{{entity.0.id}}" title="Repasser au statut précédent">
+                                                        <i class="fa fa-refresh"></i>
+                                                    </a>
+                                                {% endif %}
                                             {%endif%}
                                             {%if entity.0.valider == 'N'  and is_granted('ROLE_ADMINFRD') %}
                                                 <a class="btn btn-success" data-toggle="modal" href="#val-{{entity.0.id}}" title="Courrier reçu">
@@ -180,13 +180,13 @@
                                             {%endif%}
                                         {%else%}
                                             <a class="btn btn-warning" href="{{ path('AeagFrdBundle_membre_fraisDeplacement', { 'id': entity.0.id }) }}" title="Editer">
-                                                <i class="fa fa-edit"></i> 
+                                                <i class="fa fa-edit"></i>
                                             </a>
                                             <a class="btn btn-info" href="{{ path('AeagFrdBundle_declaration_pdf', { 'id': entity.0.id }) }}" title="Imprimer">
                                                 <i class="fa fa-print"></i>
                                             </a>
                                             <a class="btn btn-danger" data-toggle="modal" href="#sup-{{entity.0.id}}" title="Supprimer">
-                                                <i class="fa fa-trash-o"></i> 
+                                                <i class="fa fa-trash-o"></i>
                                             </a>
                                         {%endif%}
                                     </td>
@@ -207,7 +207,7 @@
                                     <td nowrap width="5%">
                                         {% if entity.0.phase.code >= '30' %}
                                             {% if  entity.0.dateCourrier %}
-                                              {{ entity.0.dateCourrier | date("d/m/Y") }}
+                                                {{ entity.0.dateCourrier | date("d/m/Y") }}
                                             {% endif %}
                                         {% endif %}
                                     </td>
@@ -225,15 +225,15 @@
             <ul class="list-inline">
                 <li><a class="btn btn-primary btn-xs" href="#" title="Consulter"><i class="fa fa-eye"></i></a> Consulter</li>
                 <li><a class="btn btn-info btn-xs" href="#" title="Valider"> <i class="fa fa-print"></i></a> Imprimer</li>
-                <li><a class="btn btn-warning btn-xs" href="#" title="Editerr"><i class="fa fa-edit"></i></a> Editer</li>
-                <li><a class="btn btn-danger btn-xs" href="#" title="Supprimer"><i class="fa fa-trash-o"></i></a> Supprimer</li>
-                {% if is_granted('ROLE_ADMINFRD') %}
-                    <li><a class="btn btn-success btn-xs" href="#" title="Valider"><i class="fa fa-check"></i></a> Valider</li>
+                        {#   <li><a class="btn btn-warning btn-xs" href="#" title="Editer"><i class="fa fa-edit"></i></a> Editer</li>
+                           <li><a class="btn btn-danger btn-xs" href="#" title="Supprimer"><i class="fa fa-trash-o"></i></a> Supprimer</li>#}
+                        {% if is_granted('ROLE_ADMINFRD') %}
+                    <li><a class="btn btn-success btn-xs" href="#" title="Enregistrer courrier et valider"><i class="fa fa-envelope"></i></a> Enregistrer courrier et valider</li>
                     <li><a class="btn btn-default btn-xs" href="#" title="Dévalider"><i class="fa fa-refresh"></i></a> Dévalider</li>
-                {% endif %}
-            </ul>  
+                        {% endif %}
+            </ul>
         </div>
-    </div>  
+    </div>
 
 {%endblock content %}
 
@@ -243,17 +243,17 @@
     // DataTable
     var table = $('#idTable').DataTable(
     {"stateSave": true,
-     "order": [[ 1, "desc" ]],
-     "language": {
-                                 "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
-                             },
-             "aLengthMenu": [
-                                        [10, 25, 50, 100, -1],
-                                        [10, 25, 50, 100, "Tous"]
-                                    ],
-              "iDisplayLength": 10
-            }
-            );
+    "order": [[ 1, "desc" ]],
+    "language": {
+    "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
+    },
+    "aLengthMenu": [
+    [10, 25, 50, 100, -1],
+    [10, 25, 50, 100, "Tous"]
+    ],
+    "iDisplayLength": 10
+    }
+    );
 
 
     {#$("#idTable thead td").each( function ( i ) {
@@ -278,7 +278,7 @@
     {%if entities | length > 0 %}
         {% for entity in entities %}
             $('#btValider-{{ entity.0.id}}').click( function() {
-            cache: false, 
+            cache: false,
             datePhase = $('#datePhase-{{ entity.0.id}}').val();
             if(!datePhase){
             alert('Vous devez renseigner une date d\'arrivée pour le courrier');
@@ -289,21 +289,21 @@
             data: 'id=' + {{ entity.0.id}} + '&datePhase=' + datePhase})
             .done(function( html ) { $('#idTr-{{ entity.0.id }}' ).empty().html( html );  });
 
-            } );  
+            } );
             $('#btSupprimer-{{ entity.0.id}}').click( function() {
-            cache: false,  
-            $.get( "{{ path('AeagFrdBundle_membre_deleteFraisDeplacement', { 'id': entity.0.id }) }}",  function( responseData ) { 
+            cache: false,
+            $.get( "{{ path('AeagFrdBundle_membre_deleteFraisDeplacement', { 'id': entity.0.id }) }}",  function( responseData ) {
             $('#idTr-{{ entity.0.id }}').empty().html( responseData );
             });
-            } );  
+            } );
             $('#btDeValider-{{ entity.0.id}}').click( function() {
-            cache: false,  
-            $.get( "{{ path('AeagFrdBundle_admin_devaliderFraisDeplacement', { 'id': entity.0.id }) }}",  function( responseData ) { 
-            $('#idTr-{{ entity.0.id }}').empty().html( responseData ); 
+            cache: false,
+            $.get( "{{ path('AeagFrdBundle_admin_devaliderFraisDeplacement', { 'id': entity.0.id }) }}",  function( responseData ) {
+            $('#idTr-{{ entity.0.id }}').empty().html( responseData );
             });
 
 
-            } ); 
+            } );
 
 
             $( "#datePhase-{{ entity.0.id}}" ).datepicker();
@@ -311,7 +311,7 @@
 
 
         {%endfor%}
-    {%endif%}                 
+    {%endif%}
 
 
 {% endblock scripts %}

@@ -3228,7 +3228,7 @@ class CollecteurController extends Controller {
         return 'ok';
     }
 
-    public static function wd_remove_accents($str, $charset = 'utf-8') {
+    private static function wd_remove_accents($str, $charset = 'utf-8') {
 
 
         $str = utf8_encode($str);
@@ -3269,7 +3269,7 @@ class CollecteurController extends Controller {
         return $str;
     }
 
-    static function tri_producteurs($a, $b) {
+    private static function tri_producteurs($a, $b) {
         if ($a->getSiret() == $b->getSiret())
             return 0;
         return ($a->getSiret() < $b->getSiret()) ? -1 : 1;

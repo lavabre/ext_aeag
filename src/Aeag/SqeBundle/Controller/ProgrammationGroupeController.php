@@ -555,11 +555,19 @@ class ProgrammationGroupeController extends Controller {
             $prestataireAncnumComplet = explode(" ", $request->get('prestataire'));
             $prestataireAncnum = $prestataireAncnumComplet[0];
             $prestataire = $repoPgRefCorresPresta->getPgRefCorresPrestaByAncnum($prestataireAncnum);
-            $prestataireAdrCorId = $prestataire->getAdrCorId();
+            if ($prestataire) {
+                $prestataireAdrCorId = $prestataire->getAdrCorId();
+            } else {
+                $prestataireAdrCorId = null;
+            }
         }
 
         $pgProgGrpParamRef = $repoPgProgGrpParamRef->getPgProgGrpParamRefById($idGroupe);
-        $prestataire = $repoPgRefCorresPresta->getPgRefCorresPrestaByAdrCorId($prestataireAdrCorId);
+        if ($prestataireAdrCorId) {
+            $prestataire = $repoPgRefCorresPresta->getPgRefCorresPrestaByAdrCorId($prestataireAdrCorId);
+        } else {
+            $prestataire = null;
+        }
 
         $tabGroupes = array();
         $tabGroupes['groupe'] = $pgProgGrpParamRef;
@@ -1860,7 +1868,7 @@ class ProgrammationGroupeController extends Controller {
         exit();
     }
 
-    public static function wd_remove_accents($str, $charset = 'utf-8') {
+    private static function wd_remove_accents($str, $charset = 'utf-8') {
 
 
         $str = utf8_encode($str);

@@ -338,7 +338,7 @@ class ReferentielController extends Controller {
                 set_time_limit(0);
                 for ($j = 1; $j < $nb; $j++) {
                     $fichier = "init_sous_decdet_" . $j . ".csv";
-                    print_r('fichier en cours : ' . $fichier);
+                    //print_r('fichier en cours : ' . $fichier);
                     $message = $this->chargeDeclarationDetailAction($fichier, $ajout, $modif);
                 }
 
@@ -4192,7 +4192,7 @@ class ReferentielController extends Controller {
         return $str;
     }
 
-    public static function dateFR2Time($date) {
+    private static function dateFR2Time($date) {
         list($day, $month, $year) = explode('/', $date);
         $timestamp = mktime(0, 0, 0, $month, $day, $year);
         return $timestamp;

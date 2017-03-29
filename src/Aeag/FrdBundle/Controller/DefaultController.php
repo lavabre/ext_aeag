@@ -29,7 +29,8 @@ class DefaultController extends Controller {
         $session->set('retourErreur', $this->generateUrl('aeag_frd'));
 
         $repoParametre = $emFrd->getRepository('AeagFrdBundle:Parametre');
-        $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
+        $repoEtatFrais = $emFrd->getRepository('AeagFrdBundle:EtatFrais');
+        $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
 
         $annee = $repoParametre->getParametreByCode('ANNEE');
 
@@ -44,31 +45,26 @@ class DefaultController extends Controller {
 
 
         if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMINFRD')) {
-            $annees = $repoFraisDeplacement->getAnnees();
+            $annees = $repoEtatFrais->getAnnees();
         } else {
-            $annees = $repoFraisDeplacement->getUserAnnees($user->getId());
+            $correspondant = $repoCorrespondant->getCorrespondantById($user->getCorrespondant());
+            if ($correspondant) {
+                $annees = $repoEtatFrais->getAnneesByCorId($correspondant->getCorId());
+            } else {
+                $annees = $repoEtatFrais->getAnnees();
+            }
         }
         $tabAnnees = array();
         $nb = 0;
         $nbAnnees = 0;
         foreach ($annees as $annee) {
-            $dateString = date_format($annee['dateDepart'], 'Y');
-            $trouve = false;
-            for ($i = 0; $i < count($tabAnnees); $i++) {
-                if ($tabAnnees[$i] == $dateString) {
-                    $trouve = true;
-                    break;
-                }
-            }
-            if (!$trouve) {
-                $tabAnnees[$nbAnnees] = $dateString;
-                $nbAnnees++;
-            }
+            $tabAnnees[$nbAnnees] = $annee['annee'];
+            $nbAnnees++;
         }
         $session->set('annees', $tabAnnees);
 
-//                                    \Symfony\Component\VarDumper\VarDumper::dump($tabAnnees);
-//                                    return new Response ('');
+//        \Symfony\Component\VarDumper\VarDumper::dump($tabAnnees);
+//        return new Response('');
 
         $message = $emFrd->getRepository('AeagFrdBundle:Parametre')->findOneBy(array('code' => 'LIB_MESSAGE'));
         if (strlen($message->getLibelle()) > 0) {

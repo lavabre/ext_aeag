@@ -2641,7 +2641,7 @@ class SuiviHydrobioController extends Controller {
         $emSqe->flush();
 
         $chemin = $pathBase . '/' . $fichierZip;
-        print_r('chemin : ' . $chemin);
+        //print_r('chemin : ' . $chemin);
         $fichiers = $this->unzip($chemin, $pathBase . '/');
         $tabFichiers = array();
         $i = 0;

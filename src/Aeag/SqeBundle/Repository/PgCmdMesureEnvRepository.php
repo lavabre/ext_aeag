@@ -95,12 +95,24 @@ class PgCmdMesureEnvRepository extends EntityRepository {
         return $qb->getOneOrNullResult();
     }
 
+    public function getPgCmdMesureEnvsByPrelevParametre($pgCmdPrelev, $parametre) {
+        $query = "select c";
+        $query = $query . " from Aeag\SqeBundle\Entity\PgCmdMesureEnv c";
+        $query = $query . " where c.prelev = :pgCmdPrelev";
+        $query = $query . " and  c.codeParametre = :parametre";
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('pgCmdPrelev', $pgCmdPrelev->getId());
+        $qb->setParameter('parametre', $parametre);
+        //print_r($query);
+        return $qb->getResult();
+    }
+
     public function getPgCmdMesureEnvByPrelevCodeUniteParametre($pgCmdPrelev, $codeUnite, $parametre) {
         $query = "select c";
         $query = $query . " from Aeag\SqeBundle\Entity\PgCmdMesureEnv c";
         $query = $query . " where c.prelev = :pgCmdPrelev";
         $query = $query . " and  c.codeUnite = :codeUnite";
-        $query = $query . " and  c.codeParametre <> :parametre"; 
+        $query = $query . " and  c.codeParametre <> :parametre";
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('pgCmdPrelev', $pgCmdPrelev->getId());
         $qb->setParameter('codeUnite', $codeUnite);

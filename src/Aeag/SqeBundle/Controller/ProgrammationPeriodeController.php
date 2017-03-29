@@ -1927,7 +1927,7 @@ class ProgrammationPeriodeController extends Controller {
         usort($tabStations, create_function('$a,$b', 'return $a[\'station\']->getStation()->getCode()-$b[\'station\']->getStation()->getCode();'));
     }
 
-    public function getAutreProgrammation($repoPgProgLotPeriodeProg, $pgProgLotStationAn, $pgProgPeriode, $pgProgLotGrparAns) {
+    private function getAutreProgrammation($repoPgProgLotPeriodeProg, $pgProgLotStationAn, $pgProgPeriode, $pgProgLotGrparAns) {
         $tabGroupeAutres = array();
         $k = 0;
         $pgProgLotPeriodeProgAutresGroupesRef = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgAutresGroupesRef($pgProgLotStationAn, $pgProgPeriode, $pgProgLotGrparAns, 3);
@@ -2400,29 +2400,55 @@ class ProgrammationPeriodeController extends Controller {
             for ($j = 0; $j < count($tabStations[$i]['periodes']); $j++) {
                 for ($k = 0; $k < count($tabStations[$i]['periodes'][$j]['groupes']); $k++) {
 //                    for ($l = 0; $l < count($tabStations[$i]['periodes'][$j]['groupes'][$k]['parametres']); $l++) {
-                    $ligne = array($pgProgLotAn->getAnneeProg(),
-                        $pgProgLotAn->getversion(),
-                        $pgProgLotAn->getLot()->getNomLot(),
-                        $tabStations[$i]['station']['code'],
-                        $tabStations[$i]['station']['libelle'],
-                        $tabStations[$i]['commune']['libelle'],
-                        $tabStations[$i]['station']['codeMasdo'],
-                        $tabStations[$i]['station']['nomCoursEau'],
-                        $tabStations[$i]['reseau']->getNomRsx(),
-                        $tabStations[$i]['periodes'][$j]['periode']->getLabelPeriode(),
-                        $tabStations[$i]['periodes'][$j]['periode']->getDateDeb()->format('d/m/Y'),
-                        $tabStations[$i]['periodes'][$j]['periode']->getDateFin()->format('d/m/Y'),
-                        $tabStations[$i]['periodes'][$j]['groupes'][$k]['groupe']->getGrparRef()->getCodeGrp(),
-                        $tabStations[$i]['periodes'][$j]['groupes'][$k]['groupe']->getGrparRef()->getLibelleGrp(),
-                        $tabStations[$i]['periodes'][$j]['groupes'][$k]['groupe']->getGrparRef()->getTypeGrp(),
-                        $tabStations[$i]['periodes'][$j]['groupes'][$k]['support'],
-                        $tabStations[$i]['periodes'][$j]['groupes'][$k]['groupe']->getPrestaDft()->getNomCorres(),
+                    if ($tabStations[$i]['periodes'][$j]['groupes'][$k]['groupe']->getPrestaDft()) {
+                        $ligne = array($pgProgLotAn->getAnneeProg(),
+                            $pgProgLotAn->getversion(),
+                            $pgProgLotAn->getLot()->getNomLot(),
+                            $tabStations[$i]['station']['code'],
+                            $tabStations[$i]['station']['libelle'],
+                            $tabStations[$i]['commune']['libelle'],
+                            $tabStations[$i]['station']['codeMasdo'],
+                            $tabStations[$i]['station']['nomCoursEau'],
+                            $tabStations[$i]['reseau']->getNomRsx(),
+                            $tabStations[$i]['periodes'][$j]['periode']->getLabelPeriode(),
+                            $tabStations[$i]['periodes'][$j]['periode']->getDateDeb()->format('d/m/Y'),
+                            $tabStations[$i]['periodes'][$j]['periode']->getDateFin()->format('d/m/Y'),
+                            $tabStations[$i]['periodes'][$j]['groupes'][$k]['groupe']->getGrparRef()->getCodeGrp(),
+                            $tabStations[$i]['periodes'][$j]['groupes'][$k]['groupe']->getGrparRef()->getLibelleGrp(),
+                            $tabStations[$i]['periodes'][$j]['groupes'][$k]['groupe']->getGrparRef()->getTypeGrp(),
+                            $tabStations[$i]['periodes'][$j]['groupes'][$k]['support'],
+                            $tabStations[$i]['periodes'][$j]['groupes'][$k]['groupe']->getPrestaDft()->getNomCorres(),
 //                            $tabStations[$i]['periodes'][$j]['groupes'][$k]['parametres'][$l]['parametre']->getCodeParametre()->getCodeParametre(),
 //                            $tabStations[$i]['periodes'][$j]['groupes'][$k]['parametres'][$l]['parametre']->getCodeParametre()->getNomParametre(),
 //                            $tabStations[$i]['periodes'][$j]['groupes'][$k]['parametres'][$l]['fraction'],
 //                            $tabStations[$i]['periodes'][$j]['groupes'][$k]['parametres'][$l]['unite'],
 //                            $tabStations[$i]['periodes'][$j]['groupes'][$k]['parametres'][$l]['parametre']->getPrestataire()->getNomCorres(),
-                    );
+                        );
+                    } else {
+                        $ligne = array($pgProgLotAn->getAnneeProg(),
+                            $pgProgLotAn->getversion(),
+                            $pgProgLotAn->getLot()->getNomLot(),
+                            $tabStations[$i]['station']['code'],
+                            $tabStations[$i]['station']['libelle'],
+                            $tabStations[$i]['commune']['libelle'],
+                            $tabStations[$i]['station']['codeMasdo'],
+                            $tabStations[$i]['station']['nomCoursEau'],
+                            $tabStations[$i]['reseau']->getNomRsx(),
+                            $tabStations[$i]['periodes'][$j]['periode']->getLabelPeriode(),
+                            $tabStations[$i]['periodes'][$j]['periode']->getDateDeb()->format('d/m/Y'),
+                            $tabStations[$i]['periodes'][$j]['periode']->getDateFin()->format('d/m/Y'),
+                            $tabStations[$i]['periodes'][$j]['groupes'][$k]['groupe']->getGrparRef()->getCodeGrp(),
+                            $tabStations[$i]['periodes'][$j]['groupes'][$k]['groupe']->getGrparRef()->getLibelleGrp(),
+                            $tabStations[$i]['periodes'][$j]['groupes'][$k]['groupe']->getGrparRef()->getTypeGrp(),
+                            $tabStations[$i]['periodes'][$j]['groupes'][$k]['support'],
+//                       $tabStations[$i]['periodes'][$j]['groupes'][$k]['groupe']->getPrestaDft()->getNomCorres(),
+//                            $tabStations[$i]['periodes'][$j]['groupes'][$k]['parametres'][$l]['parametre']->getCodeParametre()->getCodeParametre(),
+//                            $tabStations[$i]['periodes'][$j]['groupes'][$k]['parametres'][$l]['parametre']->getCodeParametre()->getNomParametre(),
+//                            $tabStations[$i]['periodes'][$j]['groupes'][$k]['parametres'][$l]['fraction'],
+//                            $tabStations[$i]['periodes'][$j]['groupes'][$k]['parametres'][$l]['unite'],
+//                            $tabStations[$i]['periodes'][$j]['groupes'][$k]['parametres'][$l]['parametre']->getPrestataire()->getNomCorres(),
+                        );
+                    }
                     for ($m = 0; $m < count($ligne); $m++) {
                         $ligne[$m] = \iconv("UTF-8", "Windows-1252//TRANSLIT", $ligne[$m]);
                     }

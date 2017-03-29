@@ -2,7 +2,7 @@
 
 {% block breadcrumb %}
     <li>
-        <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+        <a href="{{ path('aeag_homepage') }}">Accueil</a>
     </li>
     <li class="active">
         Etats
@@ -24,81 +24,81 @@
 
     <div class="row">
         <div class="col-xm-12">
-            <div class="small ">
-                <table class="table table-bordered table-striped table-condensed table-advance table-hover" id="idTable">
-                    <thead>
-                        <tr>
-                            <th>Actions</th>
-                            <th>Numéro</th>
-                            <th>Nom</th>
-                            <th>Statut</th>
-                            <th>date de remboursement</th>
-                            <th>Montant rembourser </th>
-                            <th>Observations</th>
-                            <th>Nombres de demandes</th>
-                        </tr>
-                    </thead>
-                    <tbody id="idTbody">
-                        {%if entities | length > 0 %}
-                            {% for entity in entities %}
-                                <tr id="idTr-{{ entity.etatFrais.id }}">
-                                    <td  nowrap id="idTd1-{{ entity.etatFrais.id }}" width="1%">
-                                        {% if entity.nbFraisDeplacements > 0 %}
-                                            <a class="btn btn-primary" href="{{ path('AeagFrdBundle_admin_consulterFraisDeplacementsParEtatFrais', { 'etatFraisId': entity.etatFrais.id }) }}" title="Détails">
-                                                <i class="fa fa-eye"></i>
+            {#<div class="small ">#}
+            <table class="table table-bordered table-striped table-condensed table-advance table-hover" id="idTable">
+                <thead>
+                    <tr>
+                        <th>Actions</th>
+                        <th>Numéro</th>
+                        <th>Nom</th>
+                        <th>Statut</th>
+                        <th>date remboursement</th>
+                        <th>Montant rembourser </th>
+                        <th>Observations</th>
+                        <th>Nb de demandes</th>
+                    </tr>
+                </thead>
+                <tbody id="idTbody">
+                    {%if entities | length > 0 %}
+                        {% for entity in entities %}
+                            <tr id="idTr-{{ entity.etatFrais.id }}">
+                                <td  nowrap id="idTd1-{{ entity.etatFrais.id }}" width="1%">
+                                    {% if entity.nbFraisDeplacements > 0 %}
+                                        <a class="btn btn-primary" href="{{ path('AeagFrdBundle_admin_consulterFraisDeplacementsParEtatFrais', { 'etatFraisId': entity.etatFrais.id }) }}" title="Détails">
+                                            <i class="fa fa-eye"></i>
+                                        </a>
+                                        {# <a class="btn btn-info" href="{{ path('AeagFrdBundle_declaration_pdf', { 'id': entity.etatFrais.id }) }}" title="Imprimer">
+                                             <i class="fa fa-print"></i>
+                                         </a>#}
+                                    {% else %}
+                                        {% if app.session.get('annee') | date("Y")  == app.session.get('anneeSelect') %}
+                                            <a class="btn btn-success" href="{{ path('AeagFrdBundle_membre_fraisDeplacement') }}" title="Nouvelle demande">
+                                                <i class="fa fa-plus"></i>
                                             </a>
-                                            {# <a class="btn btn-info" href="{{ path('AeagFrdBundle_declaration_pdf', { 'id': entity.etatFrais.id }) }}" title="Imprimer">
-                                                 <i class="fa fa-print"></i>
-                                             </a>#}
-                                        {% else %}
-                                            {% if app.session.get('annee') | date("Y")  == app.session.get('anneeSelect') %}
-                                                <a class="btn btn-success" href="{{ path('AeagFrdBundle_membre_fraisDeplacement') }}" title="Nouvelle demande"> 
-                                                    <i class="fa fa-plus"></i>
-                                                </a>
-                                            {% endif %}
                                         {% endif %}
-                                    </td>
-                                    <td class="text-center" nowrap width="1%">{{ entity.etatFrais.num }}</td>
-                                     <td class="text-center" nowrap width="5%">
-                                        {% if entity.correspondant %}
-                                            {{ entity.correspondant.adr1 }} &nbsp; {{ entity.correspondant.adr1  }}
-                                        {% endif %}
-                                    </td>
-                                    <td nowrap width="10%">
-                                        {% if entity.phase %}
+                                    {% endif %}
+                                </td>
+                                <td class="text-center" nowrap width="1%">{{ entity.etatFrais.num }}</td>
+                                <td class="text-left" nowrap width="5%">
+                                    {% if entity.correspondant %}
+                                        {{ entity.correspondant.adr1 }} &nbsp; {{ entity.correspondant.adr1  }}
+                                    {% endif %}
+                                </td>
+                                <td  width="5%">
+                                    {% if entity.phase %}
                                         {% if entity.phase.code != '10' %}
                                             {{ entity.phase.libelle }}
                                         {% else %}
                                             En cours
                                         {% endif %}
-                                       {% endif %}
-                                    </td>
-                                    <td class="text-center" nowrap width="5%">
-                                        {% if entity.mandatement %}
-                                            <span class="hidden">{{ entity.mandatement.datePaiement | date("Y/m/d H:i") }}</span>
-                                            {{ entity.mandatement.datePaiement | date("d/m/Y") }}
+                                    {% endif %}
+                                </td>
+                                <td class="text-center" nowrap width="3%">
+                                    {% if entity.mandatement %}
+                                        <span class="hidden">{{ entity.mandatement.datePaiement | date("Y/m/d H:i") }}</span>
+                                        {{ entity.mandatement.datePaiement | date("d/m/Y") }}
+                                    {% endif %}
+                                </td>
+                                <td class="text-right" nowrap width="5%">{{ entity.etatFrais.mntRemb | number_format(2,'.',' ') }} €</td>
+                                <td  width="10%">
+                                    {% if entity.etatFrais.obsGen | length %}
+                                        {{ entity.etatFrais.obsGen | nl2br }}
+                                        {% if entity.etatFrais.obsSup | length > 0  %}
+                                            <br/>{{ entity.etatFrais.obsSup  | nl2br }}
                                         {% endif %}
-                                    </td>
-                                    <td class="text-right" nowrap width="5%">{{ entity.etatFrais.mntRemb | number_format(2,'.',' ') }} €</td>
-                                    <td nowrap width="10%">
-                                        {% if entity.etatFrais.obsGen | length %}
-                                            {{ entity.etatFrais.obsGen | nl2br }}
-                                            {% if entity.etatFrais.obsSup | length > 0  %}
-                                                <br/>{{ entity.etatFrais.obsSup  | nl2br }}
-                                            {% endif %}
-                                        {% else %}
-                                            {% if entity.etatFrais.obsSup | length > 0  %}
-                                                {{ entity.etatFrais.obsSup  | nl2br }}
-                                            {% endif %}
+                                    {% else %}
+                                        {% if entity.etatFrais.obsSup | length > 0  %}
+                                            {{ entity.etatFrais.obsSup  | nl2br }}
                                         {% endif %}
-                                    </td>
-                                    <td class="text-right" width="5%">{{ entity.nbFraisDeplacements }}</td>
-                                </tr>
-                            {% endfor %}
-                        {%endif%}
-                    </tbody>
-                </table>
-            </div>
+                                    {% endif %}
+                                </td>
+                                <td class="text-right" width="5%">{{ entity.nbFraisDeplacements }}</td>
+                            </tr>
+                        {% endfor %}
+                    {%endif%}
+                </tbody>
+            </table>
+            {#  </div>#}
         </div>
     </div>
 
@@ -108,9 +108,9 @@
                 <li><a class="btn btn-primary btn-xs" href="#" title="Consulter"><i class="fa fa-eye"></i></a> Consulter</li>
                 <li><a class="btn btn-success btn-xs" href="#" title="Nouvelle demande"><i class="fa fa-plus"></i></a> Nouvelle demande</li>
                         {# <li><a class="btn btn-info btn-xs" href="#" title="Valider"> <i class="fa fa-print"></i></a> Imprimer</li>#}
-            </ul>  
+            </ul>
         </div>
-    </div>  
+    </div>
 
 {%endblock content %}
 
