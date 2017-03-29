@@ -79,7 +79,7 @@ class DefaultController extends Controller {
         ));
     }
 
-    public function getBrowser() {
+    private function getBrowser() {
         $u_agent = $_SERVER['HTTP_USER_AGENT'];
         $bname = 'Unknown';
         $platform = 'Unknown';
@@ -152,7 +152,7 @@ class DefaultController extends Controller {
         );
     }
 
-    public static function initBase($param_em) {
+    private static function initBase($param_em) {
         $emDec = $param_em;
         $repoParametre = $emDec->getRepository('AeagDecBundle:Parametre');
         $parametre = new Parametre();

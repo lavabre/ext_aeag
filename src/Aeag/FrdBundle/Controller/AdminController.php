@@ -422,7 +422,7 @@ class AdminController extends Controller {
         ));
     }
 
-    public function sendAccuseReceptionCourrier($id) {
+    private function sendAccuseReceptionCourrier($id) {
 
         $user = $this->getUser();
         if (!$user) {
@@ -471,7 +471,7 @@ class AdminController extends Controller {
         $session->set('notice', $message);
     }
 
-    public function sendExporterFraisDeplacement($dest, $frais) {
+    private function sendExporterFraisDeplacement($dest, $frais) {
 
         $user = $this->getUser();
         if (!$user) {
@@ -552,7 +552,7 @@ class AdminController extends Controller {
         };
     }
 
-    function Ftp($local_dir = null, $ftp_dir = null) {
+    private function Ftp($local_dir = null, $ftp_dir = null) {
 
 
         $mess = null;
@@ -592,7 +592,7 @@ class AdminController extends Controller {
         return $mess;
     }
 
-    public static function wd_remove_pointVirgule($str) {
+    private static function wd_remove_pointVirgule($str) {
 
 
         $str = nl2br(strtr(

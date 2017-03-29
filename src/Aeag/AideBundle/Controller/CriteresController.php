@@ -35,7 +35,7 @@ class CriteresController extends Controller {
         $emAeag = $this->getDoctrine()->getManager();
         $em = $this->getDoctrine()->getManager('aide');
         $session->set('retourErreur', $this->generateUrl('aeag_aide'));
-     
+
         $criteres = new CriteresRequest();
 
         $form = $this->createForm(new CriteresRequestType(), $criteres);
@@ -476,7 +476,7 @@ class CriteresController extends Controller {
         return $this->render('AeagAideBundle:Criteres:csv.html.twig', array('fichier' => $nom_fichier));
     }
 
-    static function tri_dossiers($a, $b) {
+    private static function tri_dossiers($a, $b) {
         $al = strtolower($a->getLigne()->getLigne());
         $bl = strtolower($b->getLigne()->getLigne());
         if ($al == $bl) {
@@ -495,7 +495,7 @@ class CriteresController extends Controller {
         return ($al > $bl) ? +1 : -1;
     }
 
-    public static function wd_remove_accents($str, $charset = 'utf-8') {
+    private static function wd_remove_accents($str, $charset = 'utf-8') {
 
 
         //$str = utf8_encode($str);

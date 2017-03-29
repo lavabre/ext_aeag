@@ -43,7 +43,7 @@ class LigneRepository extends EntityRepository {
         $qb = $this->_em->createQuery($query);
         $qb->setParameter('ligne', $ligne);
 
-        print_r($query);
+        //print_r($query);
         return $qb->getOneOrNullResult();
     }
 

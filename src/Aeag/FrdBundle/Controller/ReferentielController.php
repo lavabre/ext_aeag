@@ -2153,7 +2153,7 @@ class ReferentielController extends Controller {
         ));
     }
 
-    public static function wd_remove_accents($str, $charset = 'utf-8') {
+    private static function wd_remove_accents($str, $charset = 'utf-8') {
 
         $str = str_replace('\'', ' ', $str);
 
@@ -2202,7 +2202,7 @@ class ReferentielController extends Controller {
         return $str;
     }
 
-    public static function dateFR2Time($date) {
+    private static function dateFR2Time($date) {
         list($day, $month, $year) = explode('/', $date);
         $timestamp = mktime(0, 0, 0, $month, $day, $year);
         return $timestamp;

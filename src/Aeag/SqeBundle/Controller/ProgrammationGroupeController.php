@@ -1868,7 +1868,7 @@ class ProgrammationGroupeController extends Controller {
         exit();
     }
 
-    public static function wd_remove_accents($str, $charset = 'utf-8') {
+    private static function wd_remove_accents($str, $charset = 'utf-8') {
 
 
         $str = utf8_encode($str);

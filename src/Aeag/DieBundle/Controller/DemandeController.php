@@ -40,13 +40,12 @@ class DemandeController extends Controller {
         ));
     }
 
-  
     /**
      * Finds and displays a Demande entity.
      *
      */
     public function showAction($id) {
-        
+
         $user = $this->getUser();
         if (!$user) {
             return $this->render('AeagDieBundle:Default:interdit.html.twig');
@@ -56,7 +55,7 @@ class DemandeController extends Controller {
         $session->set('controller', 'Demande');
         $session->set('fonction', 'show');
         $em = $this->get('doctrine')->getManager('die');
-       
+
         $entity = $em->getRepository('AeagDieBundle:Demande')->find($id);
 
         if (!$entity) {
@@ -73,7 +72,7 @@ class DemandeController extends Controller {
      *
      */
     public function newAction() {
-        
+
         $user = $this->getUser();
         if (!$user) {
             return $this->render('AeagDieBundle:Default:interdit.html.twig');
@@ -83,7 +82,7 @@ class DemandeController extends Controller {
         $session->set('controller', 'Demande');
         $session->set('fonction', 'index');
         $em = $this->get('doctrine')->getManager('die');
-        
+
         $entity = new Demande();
         $form = $this->createForm(new DemandeType(), $entity);
 
@@ -98,27 +97,27 @@ class DemandeController extends Controller {
      *
      */
     public function createAction(Request $request) {
-        
-         $user = $this->getUser();
+
+        $user = $this->getUser();
         $session = $this->get('session');
         $session->set('menu', 'Admin');
         $session->set('controller', 'Demande');
         $session->set('fonction', 'create');
         $em = $this->get('doctrine')->getManager('die');
-        
+
         $entity = new Demande();
-          
+
         $form = $this->createForm(new DemandeType(), $entity);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-       
+
             $Organisme = $em->getRepository('AeagDieBundle:Organisme')->find($entity->getOrganisme()->getId());
 
             $Theme = $em->getRepository('AeagDieBundle:Theme')->find($entity->getTheme()->getId());
 
             $SousTheme = $em->getRepository('AeagDieBundle:SousTheme')->findOneBy(array('theme' => $Theme->getId()));
-            
+
             $departement = $entity->getDept();
 
             $entity->setDept($departement->getLibelle());
@@ -133,10 +132,10 @@ class DemandeController extends Controller {
 
             $em->persist($entity);
             $em->flush();
-            
+
             $this->sendAccuseReception($entity, $Organisme, $Theme, $SousTheme);
             $this->sendDestinataire($entity, $Organisme, $Theme, $SousTheme);
-            
+
             return $this->redirect($this->generateUrl('demande'));
         }
 
@@ -151,7 +150,7 @@ class DemandeController extends Controller {
      *
      */
     public function editAction($id) {
-        
+
         $user = $this->getUser();
         if (!$user) {
             return $this->render('AeagDieBundle:Default:interdit.html.twig');
@@ -161,7 +160,7 @@ class DemandeController extends Controller {
         $session->set('controller', 'Demande');
         $session->set('fonction', 'edit');
         $em = $this->get('doctrine')->getManager('die');
-     
+
         $entity = $em->getRepository('AeagDieBundle:Demande')->find($id);
 
         if (!$entity) {
@@ -172,14 +171,14 @@ class DemandeController extends Controller {
         $organisme = $em->getRepository('AeagDieBundle:Organisme')->getOrganismesByOrganisme($entity->getOrganisme());
         $departement = $em->getRepository('AeagDieBundle:Departement')->getDepartementByLibelle($entity->getDept());
         $theme = $em->getRepository('AeagDieBundle:Theme')->getThemesByTheme($entity->getTheme());
-     
+
         return $this->render('AeagDieBundle:Demande:edit.html.twig', array(
                     'entity' => $entity,
                     'organisme' => $organisme,
                     'departement' => $departement,
                     'theme' => $theme,
                     'form' => $form->createView(),
-         ));
+        ));
     }
 
     /**
@@ -196,7 +195,7 @@ class DemandeController extends Controller {
         $session->set('controller', 'Demande');
         $session->set('fonction', 'update');
         $em = $this->get('doctrine')->getManager('die');
-   
+
         $entity = $em->getRepository('AeagDieBundle:Demande')->find($id);
 
         if (!$entity) {
@@ -211,13 +210,13 @@ class DemandeController extends Controller {
         $editForm->handleRequest($request);
 
         if ($editForm->isValid()) {
-            
+
             $Organisme = $em->getRepository('AeagDieBundle:Organisme')->find($entity->getOrganisme()->getId());
 
             $Theme = $em->getRepository('AeagDieBundle:Theme')->find($entity->getTheme()->getId());
 
             $SousTheme = $em->getRepository('AeagDieBundle:SousTheme')->findOneBy(array('theme' => $Theme->getId()));
-            
+
             $departement = $entity->getDept();
 
             $entity->setDept($departement->getLibelle());
@@ -228,10 +227,10 @@ class DemandeController extends Controller {
             $date = new \Datetime();
             $date->add(new \DateInterval('P' . $SousTheme->getEcheance() . 'D'));
             $entity->setDateEcheance($date);
-            
+
             $em->persist($entity);
             $em->flush();
-            
+
             $this->get('session')->getFlashBag()->add('notice-success', 'La  demande n° ' . $entity->getId() . ' a bien été modifiée.');
 
             return $this->redirect($this->generateUrl('demande'));
@@ -240,7 +239,7 @@ class DemandeController extends Controller {
         return $this->render('AeagDieBundle:Demande:edit.html.twig', array(
                     'entity' => $entity,
                     'edit_form' => $editForm->createView(),
-          ));
+        ));
     }
 
     /**
@@ -258,7 +257,7 @@ class DemandeController extends Controller {
         $demande = clone($entity);
         $em->remove($entity);
         $em->flush();
-        
+
         $this->get('session')->getFlashBag()->add('notice-success', 'La  demande n° ' . $demande->getId() . ' a  été supprimée.');
 
         return $this->redirect($this->generateUrl('demande'));
@@ -308,12 +307,12 @@ class DemandeController extends Controller {
             ));
         }
     }
-    
-      /*
+
+    /*
      * envoi d'un mail accusé de reception au demandeur
      */
 
-    public function sendAccuseReception($Demande, $Organisme, $Theme, $SousTheme) {
+    private function sendAccuseReception($Demande, $Organisme, $Theme, $SousTheme) {
         // Récupération du service.
         $mailer = $this->get('mailer');
 
@@ -339,7 +338,7 @@ class DemandeController extends Controller {
      * envoi d'un mail au destinataire du sous-theme
      */
 
-    public function sendDestinataire($Demande, $Organisme, $Theme, $SousTheme) {
+    private function sendDestinataire($Demande, $Organisme, $Theme, $SousTheme) {
         // Récupération du service.
         $mailer = $this->get('mailer');
 
@@ -374,4 +373,5 @@ class DemandeController extends Controller {
         //$this->get('session')->setFlash('message', $body);
         $this->get('session')->getFlashBag()->add('notice-success', 'Votre demande a bien été prise en compte, vous allez recevoir un accusé de réception.');
     }
+
 }

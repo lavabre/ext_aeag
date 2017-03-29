@@ -774,7 +774,7 @@ class FraisDeplacementController extends Controller {
      * envoi d'un mail à l'administrateur
      */
 
-    public function sendAccuseReception($id) {
+    private function sendAccuseReception($id) {
 
         $user = $this->getUser();
         if (!$user) {
@@ -846,7 +846,7 @@ class FraisDeplacementController extends Controller {
      * envoi d'un mail au responsable
      */
 
-    public function sendAccuseResponsable($id) {
+    private function sendAccuseResponsable($id) {
 
         $user = $this->getUser();
         if (!$user) {

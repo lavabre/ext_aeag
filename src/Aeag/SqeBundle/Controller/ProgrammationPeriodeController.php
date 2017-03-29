@@ -1927,7 +1927,7 @@ class ProgrammationPeriodeController extends Controller {
         usort($tabStations, create_function('$a,$b', 'return $a[\'station\']->getStation()->getCode()-$b[\'station\']->getStation()->getCode();'));
     }
 
-    public function getAutreProgrammation($repoPgProgLotPeriodeProg, $pgProgLotStationAn, $pgProgPeriode, $pgProgLotGrparAns) {
+    private function getAutreProgrammation($repoPgProgLotPeriodeProg, $pgProgLotStationAn, $pgProgPeriode, $pgProgLotGrparAns) {
         $tabGroupeAutres = array();
         $k = 0;
         $pgProgLotPeriodeProgAutresGroupesRef = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgAutresGroupesRef($pgProgLotStationAn, $pgProgPeriode, $pgProgLotGrparAns, 3);

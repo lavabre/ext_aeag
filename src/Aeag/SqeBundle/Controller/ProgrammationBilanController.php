@@ -1777,7 +1777,7 @@ class ProgrammationBilanController extends Controller {
         return $tabControle;
     }
 
-    static function tri_periodes($a, $b) {
+    private static function tri_periodes($a, $b) {
         if ($a['periode']->getNumPeriode() == $b['periode']->getNumPeriode())
             return 0;
         return ($a['periode']->getNumPeriode() < $b['periode']->getNumPeriode()) ? -1 : 1;
