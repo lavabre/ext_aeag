@@ -89,7 +89,7 @@ class RelanceMailCommand extends AeagCommand {
                 }
             }
             if (isset($txtMessage)) {
-                $utilisateurs = $this->repoPgProgWebUsers->findByPrestataire($prestataire);
+                $utilisateurs = $this->repoPgProgWebUsers->getPgProgWebusersByPrestataireAndTypeMilieu($prestataire, $lotan->getLot()->getCodeMilieu());
                 foreach ($utilisateurs as $utilisateur) {
                     $this->sendEmail($utilisateur, $txtMessage, $objetMessage);
                 }
