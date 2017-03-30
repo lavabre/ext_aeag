@@ -104,11 +104,11 @@ class ReferentielController extends Controller {
         $rep_export = $parametre->getLibelle();
         $fichiers = array();
         $i = 0;
-        $dir = opendir($rep_export) or die("Erreur le repertoire $rep_export n\'existe pas");
+        $dir = opendir($rep_export) || die("Erreur le repertoire $rep_export n\'existe pas");
         while ($fic = readdir($dir)) {
 //print_r('file : ' . $fic. "\n");
-            if (is_file($fic) or ! in_array($fic, array(".", ".."))) {
-                if (substr($fic, 0, 7) == 'ext_dec' or substr($fic, 0, 5) == 'init_') {
+            if (is_file($fic) || !in_array($fic, array(".", ".."))) {
+                if (substr($fic, 0, 7) == 'ext_dec' || substr($fic, 0, 5) == 'init_') {
                     $lines = file($rep_export . "/" . $fic);
                     $nblignes = count($lines) - 1;
                     $taille = filesize($rep_export . "/" . $fic);
@@ -169,9 +169,9 @@ class ReferentielController extends Controller {
         $rep_export = $parametre->getLibelle();
         $fichiers = array();
         $i = 0;
-        $dir = opendir($rep_export) or die("Erreur le repertoire $rep_export n\'existe pas");
+        $dir = opendir($rep_export) || die("Erreur le repertoire $rep_export n\'existe pas");
         while ($fic = readdir($dir)) {
-            if (is_file($fic) or ! in_array($fic, array(".", ".."))) {
+            if (is_file($fic) || !in_array($fic, array(".", ".."))) {
                 if (substr($fic, 0, 10) == 'dec_deccol') {
                     //   print_r('file : ' . $fic. ' --> ' . substr($fic, 0, 10) . "\n");
                     $lines = file($rep_export . "/" . $fic);
@@ -1080,7 +1080,7 @@ class ReferentielController extends Controller {
                     $Dechet = $repoDechet->getDechetByCode($tab[0]);
                     $Filiere = $repoFiliere->getFiliereByCode($tab[1]);
                     $i = 0;
-                    if ($Dechet and $Filiere) {
+                    if ($Dechet && $Filiere) {
 
                         $DechetFiliere = $repoDechetFiliere->getDechetFiliereByDechetFiliereAnnee($Dechet->getCode(), $Filiere->getCode(), $tab[2]);
 
@@ -1853,7 +1853,7 @@ class ReferentielController extends Controller {
                     $Operation = $repoOperation->getOperationByCode($tab[0]);
                     $Naf = $repoNaf->getNafByCode($tab[1]);
 
-                    if ($Operation and $Naf) {
+                    if ($Operation && $Naf) {
 
                         $OperationNaf = $repoOperationNaf->getOperationNafByOperationNaf($Operation->getId(), $Naf->getId());
 
@@ -2077,7 +2077,7 @@ class ReferentielController extends Controller {
                     $Ouvrage = $repoOuvrage->getOuvrageByNumeroType($tab[1], $tab[3]);
 
                     if (!$Ouvrage) {
-                        if ($tab[4] != '000000000000000' and $tab[3] != 'ODEC') {
+                        if ($tab[4] != '000000000000000' && $tab[3] != 'ODEC') {
                             $Ouvrages = $repoOuvrage->getOuvragesBySiretType($tab[4], $tab[3]);
                             $Ouvrage = null;
                             if ($Ouvrages) {
@@ -2104,7 +2104,7 @@ class ReferentielController extends Controller {
                     $entity->setLibelle($this->wd_remove_accents($tab[2]));
                     $entity->setType($tab[3]);
                     $entity->setSiret($tab[4]);
-                    if ($tab[5] and $tab[6]) {
+                    if ($tab[5] && $tab[6]) {
                         $commune = $repoCommune->getCommuneByCommune($tab[5] . $tab[6]);
                         if ($commune) {
                             $entity->setCommune($commune);
@@ -2175,7 +2175,7 @@ class ReferentielController extends Controller {
                     $Ouvrage = $repoOuvrage->getOuvrageByOuvIdType($tab[0], $tab[1]);
                     $Filiere = $repoFiliere->getFiliereByCode($tab[2]);
 
-                    if ($Ouvrage and $Filiere) {
+                    if ($Ouvrage && $Filiere) {
 
                         $OuvrageFiliere = $repoOuvrageFiliere->getOuvrageFiliereByOuvrageFiliere($Ouvrage->getId(), $Filiere->getCode(), $tab[3]);
 
@@ -2363,7 +2363,7 @@ class ReferentielController extends Controller {
                     $Ouvrage = $repoOuvrage->getOuvrageByOuvIdType($tab[0], $tab[1]);
                     $Correspondant = $repoCorrespondant->getCorrespondantByCorId($tab[2]);
 
-                    if ($Ouvrage and $Correspondant) {
+                    if ($Ouvrage && $Correspondant) {
 
                         $OuvrageCorrespondant = $repoOuvrageCorrespondant->getOuvrageCorrespondantByOuvrageCorrespondant($Ouvrage->getId(), $Correspondant->getId());
 
@@ -2493,7 +2493,7 @@ class ReferentielController extends Controller {
                             }
 
                             $commune = null;
-                            if ($tab[5] and $tab[6]) {
+                            if ($tab[5] && $tab[6]) {
                                 $codeCommune = $tab[5] . $tab[6];
                                 $commune = $repoCommune->getCommuneByCommune($tab[5] . $tab[6]);
                                 if ($commune) {
@@ -2620,7 +2620,7 @@ class ReferentielController extends Controller {
                         $Producteur = $Producteurs[0];
                     }
                     $Collecteur = $repoOuvrage->getOuvrageByOuvIdType($tab[1], 'ODEC');
-                    if ($Producteur and $Collecteur) {
+                    if ($Producteur && $Collecteur) {
                         $CollecteurProducteur = $repoCollecteurProducteur->getCollecteurProducteurByCollecteurProducteur($Collecteur->getId(), $Producteur->getId());
                         if (!$CollecteurProducteur) {
                             $entityCollecteurProducteur = new CollecteurProducteur();
@@ -3987,7 +3987,7 @@ class ReferentielController extends Controller {
                         if (!($tab[20] == "")) {
                             $entity->setMontAide($tab[20]);
                         }
-                        if ($entity->getMontAide() and $entity->getQuantiteAide()) {
+                        if ($entity->getMontAide() && $entity->getQuantiteAide()) {
                             $entity->setCoutFacture(round((($entity->getMontAide() / $entity->getQuantiteAide()) / $tauxAide), 4));
                         } else {
                             $entity->setCoutFacture(0);
@@ -4151,7 +4151,7 @@ class ReferentielController extends Controller {
         ));
     }
 
-    public static function wd_remove_accents($str, $charset = 'utf-8') {
+    private static function wd_remove_accents($str, $charset = 'utf-8') {
 
 
         $str = utf8_encode($str);

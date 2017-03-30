@@ -257,7 +257,7 @@ class UserController extends Controller {
             } else {
                 $entity->setEnabled(TRUE);
             }
-            if ($entity->hasRole('ROLE_COMMENTATEUREDL') or $entity->hasRole('ROLE_SUPERVISEUREDL') or $entity->hasRole('ROLE_ADMINEDL')) {
+            if ($entity->hasRole('ROLE_COMMENTATEUREDL') || $entity->hasRole('ROLE_SUPERVISEUREDL') || $entity->hasRole('ROLE_ADMINEDL')) {
                 $entity->addRole('ROLE_EDL');
                 $entity->removeRole('ROLE_AEAG');
             } else {
@@ -528,7 +528,7 @@ class UserController extends Controller {
                 $entity->removeRole('ROLE_ADMINEDL');
                 $entity->removeRole('ROLE_SUPERVISEUREDL');
             }
-            if ($entity->hasRole('ROLE_COMMENTATEUREDL') or $entity->hasRole('ROLE_SUPERVISEUREDL') or $entity->hasRole('ROLE_ADMINEDL')) {
+            if ($entity->hasRole('ROLE_COMMENTATEUREDL') || $entity->hasRole('ROLE_SUPERVISEUREDL') || $entity->hasRole('ROLE_ADMINEDL')) {
                 $entity->addRole('ROLE_EDL');
                 $entity->removeRole('ROLE_AEAG');
             } else {

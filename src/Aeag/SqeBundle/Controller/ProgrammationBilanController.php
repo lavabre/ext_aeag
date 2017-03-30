@@ -68,8 +68,8 @@ class ProgrammationBilanController extends Controller {
 
         $tabControle = ProgrammationBilanController::controleProgrammationAction($pgProgLotAnId, $emSqe, $session);
 
-        if ($action == 'P' and $maj != 'V') {
-            if ($tabControle['station']['ok'] and $tabControle['groupe']['ok'] and $tabControle['periode']['ok']) {
+        if ($action == 'P' && $maj != 'V') {
+            if ($tabControle['station']['ok'] && $tabControle['groupe']['ok'] && $tabControle['periode']['ok']) {
 //                if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMINSQE')) {
 //                    $pgProgPhase = $repoPgProgPhases->getPgProgPhasesByCodePhase('P25');
 //                } else {
@@ -80,7 +80,7 @@ class ProgrammationBilanController extends Controller {
                 }
 //                }
             } else {
-                if ($tabControle['station']['ok'] or $tabControle['groupe']['ok'] or $tabControle['periode']['ok']) {
+                if ($tabControle['station']['ok'] || $tabControle['groupe']['ok'] || $tabControle['periode']['ok']) {
                     $pgProgPhase = $repoPgProgPhases->getPgProgPhasesByCodePhase('P15');
                 } else {
                     $pgProgPhase = $repoPgProgPhases->getPgProgPhasesByCodePhase('P10');

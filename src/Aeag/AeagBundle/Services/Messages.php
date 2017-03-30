@@ -13,7 +13,7 @@ class Messages {
 
     public function createMessage($emetteur, $recepteur, $em, $session, $txtMessage) {
 
-        if (!is_object($emetteur) or ! is_object($recepteur)) {
+        if (!is_object($emetteur) || !is_object($recepteur)) {
             return;
         }
         $session->set('service', 'Messages');

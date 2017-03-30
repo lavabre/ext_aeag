@@ -70,8 +70,8 @@ class PressionMe {
     private $proposed;
 
     public function getValueLib() {
-        if ($this->cdPression == 'RW_HYM_CONT' or
-                $this->cdPression == 'RW_HYM_HYD' or
+        if ($this->cdPression == 'RW_HYM_CONT' ||
+                $this->cdPression == 'RW_HYM_HYD' ||
                 $this->cdPression == 'RW_HYM_MOR') {
             switch ($this->valeur) {
                 case '1' : return 'Minime';
@@ -89,7 +89,7 @@ class PressionMe {
         }
     }
 
-    /*    public function getDerniereProposition() 
+    /*    public function getDerniereProposition()
       {
       $em = EdlBundle::getContainer()->get('doctrine')->getEntityManager('default');
 
@@ -113,7 +113,7 @@ class PressionMe {
     /**
      * Get euCd
      *
-     * @return string 
+     * @return string
      */
     public function getEuCd() {
         return $this->euCd;
@@ -131,7 +131,7 @@ class PressionMe {
     /**
      * Get cdPression
      *
-     * @return string 
+     * @return string
      */
     public function getCdPression() {
         return $this->cdPression;
@@ -149,7 +149,7 @@ class PressionMe {
     /**
      * Get valeur
      *
-     * @return string 
+     * @return string
      */
     public function getValeur() {
         return $this->valeur;
@@ -167,7 +167,7 @@ class PressionMe {
     /**
      * Get commentaire
      *
-     * @return text 
+     * @return text
      */
     public function getCommentaire() {
         return $this->commentaire;
@@ -185,7 +185,7 @@ class PressionMe {
     /**
      * Get masseEau
      *
-     * @return Aeag\EdlBundle\Entity\MasseEau 
+     * @return Aeag\EdlBundle\Entity\MasseEau
      */
     public function getMasseEau() {
         return $this->masseEau;
@@ -203,7 +203,7 @@ class PressionMe {
     /**
      * Get type
      *
-     * @return Aeag\EdlBundle\Entity\PressionType 
+     * @return Aeag\EdlBundle\Entity\PressionType
      */
     public function getType() {
         return $this->type;
@@ -225,7 +225,7 @@ class PressionMe {
     /**
      * Get proposed
      *
-     * @return Doctrine\Common\Collections\Collection 
+     * @return Doctrine\Common\Collections\Collection
      */
     public function getProposed() {
         return $this->proposed;

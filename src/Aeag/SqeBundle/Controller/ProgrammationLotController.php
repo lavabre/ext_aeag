@@ -1408,7 +1408,7 @@ class ProgrammationLotController extends Controller {
                 $session->remove('selMilieu');
             }
 
-            if ($criteres->getCatMilieu() and ! $criteres->getTypeMilieu()) {
+            if ($criteres->getCatMilieu() && !$criteres->getTypeMilieu()) {
                 $critTypeMilieu = $criteres->getCatMilieu();
             } else {
                 $critTypeMilieu = $criteres->getTypeMilieu();
@@ -2382,7 +2382,7 @@ class ProgrammationLotController extends Controller {
         }
         $emSqe->persist($pgProgSuiviPhases);
 
-        if (!$this->get('security.authorization_checker')->isGranted('ROLE_ADMINSQE') and $this->get('security.authorization_checker')->isGranted('ROLE_PROGSQE')) {
+        if (!$this->get('security.authorization_checker')->isGranted('ROLE_ADMINSQE') && $this->get('security.authorization_checker')->isGranted('ROLE_PROGSQE')) {
             $notifications = $this->get('aeag.notifications');
             $texte = "la programmation " . $pgProgLotAn->getAnneeProg() . " version " . $pgProgLotAn->getVersion() . " du lot " . $pgProgLotAn->getLot()->getNomLot() . PHP_EOL . " a été soumise à la validation par " . $pgProgWebuser->getNom() . " le " . date_format($pgProgLotAn->getDateModif(), 'd/m/Y') . PHP_EOL;
             $notifications->createNotification($user, $user, $em, $session, $texte);

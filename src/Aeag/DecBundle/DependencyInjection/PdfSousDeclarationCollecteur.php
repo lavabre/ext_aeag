@@ -277,7 +277,7 @@ class PdfSousDeclarationCollecteur extends PageGroup {
         if (count($tabStr) == 1) {
             $str = $tabStr[0];
         } elseif (count($tabStr) > 1) {
-            if ($tabStr[1] == '0' or $tabStr[1] == '00' or $tabStr[1] == '000' or $tabStr[1] == '0000') {
+            if ($tabStr[1] == '0' || $tabStr[1] == '00' || $tabStr[1] == '000' || $tabStr[1] == '0000') {
                 $str = $tabStr[0];
             } else {
                 $str = $tabStr[0] . ',' . rtrim($tabStr[1], '0');

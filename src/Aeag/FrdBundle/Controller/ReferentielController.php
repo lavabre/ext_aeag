@@ -145,11 +145,11 @@ class ReferentielController extends Controller {
         $rep_export = $parametre->getLibelle();
         $fichiers = array();
         $i = 0;
-        $dir = opendir($rep_export) or die("Erreur le repertoire $rep_export n\'existe pas");
+        $dir = opendir($rep_export) || die("Erreur le repertoire $rep_export n\'existe pas");
         while ($fic = readdir($dir)) {
             //print_r('file : ' . $fic. "\n");
-            if (is_file($fic) or ! in_array($fic, array(".", ".."))) {
-                if (substr($fic, 0, 4) == 'frd_' or substr($fic, 0, 5) == 'init_') {
+            if (is_file($fic) || !in_array($fic, array(".", ".."))) {
+                if (substr($fic, 0, 4) == 'frd_' || substr($fic, 0, 5) == 'init_') {
                     $lines = file($rep_export . "/" . $fic);
                     $nblignes = count($lines) - 1;
                     $taille = filesize($rep_export . "/" . $fic);
@@ -212,17 +212,17 @@ class ReferentielController extends Controller {
                 $message = $this->chargeUsersAction($ficent);
             }
 
-            if ($ficent == "frd_finalite.csv" or $ficent == "init_finalite.csv") {
+            if ($ficent == "frd_finalite.csv" || $ficent == "init_finalite.csv") {
                 $message = $this->chargeFinaliteAction($ficent);
             }
-            if ($ficent == "frd_sous_theme.csv" or $ficent == "init_sous_theme.csv") {
+            if ($ficent == "frd_sous_theme.csv" || $ficent == "init_sous_theme.csv") {
                 $message = $this->chargeSousThemeAction($ficent);
             }
-            if ($ficent == "frd_type_mission.txt" or $ficent == "init_type_mission.csv") {
+            if ($ficent == "frd_type_mission.txt" || $ficent == "init_type_mission.csv") {
                 $message = $this->chargeTypeMissionAction($ficent);
             }
 
-            if ($ficent == "frd_dept.csv" or $ficent == "init_departement.csv") {
+            if ($ficent == "frd_dept.csv" || $ficent == "init_departement.csv") {
                 $message = $this->chargeDepartementsAction($ficent);
             }
             //return new Response ('fichier : ' . $ficent);
@@ -381,7 +381,7 @@ class ReferentielController extends Controller {
                                 $tabAd = fgetcsv($ficAd, 1024, '$');
                                 if (!(is_null($tabAd[2]))) {
                                     $adr1 = strtoupper($tabAd[2]) . ' ' . strtoupper($tabAd[1]);
-                                    if ($correspondant->getAdr1() == $adr1 and $correspondant->getCp() == $tabAd[7]) {
+                                    if ($correspondant->getAdr1() == $adr1 && $correspondant->getCp() == $tabAd[7]) {
                                         $entity->setUsername($this->wd_remove_accents($tabAd[2]));
                                         $entity->setPrenom($this->wd_remove_accents($tabAd[1]));
                                         $entity->setTel($tabAd[9]);
@@ -1326,7 +1326,7 @@ class ReferentielController extends Controller {
                                     $entity->setDatePhase($now);
                                     $entity->setEtfrId($tab[16]);
 
-                                    if ($refuser == 'N' and $fraistrouver == 1) {
+                                    if ($refuser == 'N' && $fraistrouver == 1) {
                                         $emFrd->persist($entity);
                                     } else {
                                         $modif = $modif - 1;

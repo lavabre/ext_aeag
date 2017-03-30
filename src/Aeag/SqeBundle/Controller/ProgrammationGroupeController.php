@@ -165,7 +165,7 @@ class ProgrammationGroupeController extends Controller {
             $pgProgGrpParamRef = $pgProgLotGrparRef->getGrpparref();
             if ($pgProgGrpParamRef->getCodeMilieu()->getCodeMilieu() == $pgProgTypeMilieu->getCodeMilieu()) {
                 $pgProgGrpParamRef = $pgProgLotGrparRef->getGrpparref();
-                if ($action == 'P' and $maj != 'V') {
+                if ($action == 'P' && $maj != 'V') {
                     if ($pgProgGrpParamRef->getValide() == 'O') {
                         $tabGroupes[$i]['groupe'] = $pgProgGrpParamRef;
                         $tabGroupes[$i]['origine'] = 'R';
@@ -205,8 +205,8 @@ class ProgrammationGroupeController extends Controller {
                                     $j = count($tabGroupes) + 1;
                                 }
                             }
-                            if ($trouve == false and $tabGroupes[$i]['origine'] == 'R') {
-                                if ($action == 'P' and $maj != 'V') {
+                            if ($trouve == false && $tabGroupes[$i]['origine'] == 'R') {
+                                if ($action == 'P' && $maj != 'V') {
                                     if ($pgProgGrpParamRefCompl->getValide() == 'O') {
                                         $j = $size;
                                         $tabGroupes[$j]['groupe'] = $pgProgGrpParamRefCompl;
@@ -238,14 +238,14 @@ class ProgrammationGroupeController extends Controller {
         $support = null;
         foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
             if ($session->get('browser') == 'Internet Explorer') {
-                if (!$session->has('selectionPreleveur_ie') or ! $session->get('selectionPreleveur_ie')) {
+                if (!$session->has('selectionPreleveur_ie') || !$session->get('selectionPreleveur_ie')) {
                     if ($pgProgLotGrparAn->getGrparRef()->getTypeGrp() != 'ANA') {
                         if ($pgProgLotGrparAn->getPrestaDft()) {
                             $session->set('selectionPreleveur_ie', $pgProgLotGrparAn->getPrestaDft()->getAdrCorid());
                         }
                     }
                 }
-                if (!$session->has('selectionLaboratoire_ie') or ! $session->get('selectionLaboratoire_ie')) {
+                if (!$session->has('selectionLaboratoire_ie') || !$session->get('selectionLaboratoire_ie')) {
                     if ($pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'ANA') {
                         if ($pgProgLotGrparAn->getPrestaDft()) {
                             $session->set('selectionLaboratoire_ie', $pgProgLotGrparAn->getPrestaDft()->getAdrCorid());
@@ -254,14 +254,14 @@ class ProgrammationGroupeController extends Controller {
                     }
                 }
             } else {
-                if (!$session->has('selectionPreleveur') or ! $session->get('selectionPreleveur')) {
+                if (!$session->has('selectionPreleveur') || !$session->get('selectionPreleveur')) {
                     if ($pgProgLotGrparAn->getGrparRef()->getTypeGrp() != 'ANA') {
                         if ($pgProgLotGrparAn->getPrestaDft()) {
                             $session->set('selectionPreleveur', $pgProgLotGrparAn->getPrestaDft()->getAncnumNomCorres());
                         }
                     }
                 }
-                if (!$session->has('selectionLaboratoire') or ! $session->get('selectionLaboratoire')) {
+                if (!$session->has('selectionLaboratoire') || !$session->get('selectionLaboratoire')) {
                     if ($pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'ANA') {
                         if ($pgProgLotGrparAn->getPrestaDft()) {
                             $session->set('selectionLaboratoire', $pgProgLotGrparAn->getPrestaDft()->getAncnumNomCorres());
@@ -281,7 +281,7 @@ class ProgrammationGroupeController extends Controller {
                     }
                 }
                 if ($trouve == false) {
-                    if ($action == 'P' and $maj != 'V') {
+                    if ($action == 'P' && $maj != 'V') {
                         if ($pgProgGrpParamRef->getValide() == 'O') {
                             $i = $size;
                             $tabGroupes[$i]['groupe'] = $pgProgGrpParamRef;
@@ -304,8 +304,8 @@ class ProgrammationGroupeController extends Controller {
                                                 $j = $size + 1;
                                             }
                                         }
-                                        if ($trouve == false and $tabGroupes[$i]['origine'] == 'R') {
-                                            if ($action == 'P' and $maj != 'V') {
+                                        if ($trouve == false && $tabGroupes[$i]['origine'] == 'R') {
+                                            if ($action == 'P' && $maj != 'V') {
                                                 if ($pgProgGrpParamRefCompl->getValide() == 'O') {
                                                     $j = $size;
                                                     $tabGroupes[$j]['groupe'] = $pgProgGrpParamRefCompl;
@@ -348,7 +348,7 @@ class ProgrammationGroupeController extends Controller {
                                                 $j = $size + 1;
                                             }
                                         }
-                                        if ($trouve == false and $tabGroupes[$i]['origine'] == 'R') {
+                                        if ($trouve == false && $tabGroupes[$i]['origine'] == 'R') {
                                             $j = $size;
                                             $tabGroupes[$j]['groupe'] = $pgProgGrpParamRefCompl;
                                             $tabGroupes[$j]['prestataire'] = $pgProgLotGrparAn->getPrestaDft();
@@ -371,7 +371,7 @@ class ProgrammationGroupeController extends Controller {
 
 
             $pgProgLotGrparAn = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotAnGrpparref($pgProgLotAn, $tabGroupes[$i]['groupe']);
-            if (!$pgProgLotGrparAn and $maj != 'V') {
+            if (!$pgProgLotGrparAn && $maj != 'V') {
                 $pgProgLotGrparAn = new PgProgLotGrparAn();
                 $pgProgLotGrparAn->setLotAn($pgProgLotAn);
                 $pgProgLotGrparAn->setGrparRef($tabGroupes[$i]['groupe']);
@@ -387,7 +387,7 @@ class ProgrammationGroupeController extends Controller {
             }
 
 
-            if ($action == 'P' and $maj != 'V') {
+            if ($action == 'P' && $maj != 'V') {
                 $nbPgProgGrparRefLstParams = $repoPgProgGrparRefLstParam->getNbPgProgGrparRefLstParamValideByGrparRef($tabGroupes[$i]['groupe']);
             } else {
                 $nbPgProgGrparRefLstParams = $repoPgProgGrparRefLstParam->getNbPgProgGrparRefLstParamByGrparRef($tabGroupes[$i]['groupe']);
@@ -431,7 +431,7 @@ class ProgrammationGroupeController extends Controller {
             }
             if ($trouve == false) {
                 if ($groupeMilieu->getCodeMilieu()->getCodeMilieu() == $pgProgTypeMilieu->getCodeMilieu()) {
-                    if ($action == 'P' and $maj != 'V') {
+                    if ($action == 'P' && $maj != 'V') {
                         if ($groupeMilieu->getValide() == 'O') {
                             $i = count($tabGroupesMilieu);
                             $tabGroupesMilieu[$i]['groupe'] = $groupeMilieu;
@@ -579,7 +579,7 @@ class ProgrammationGroupeController extends Controller {
         $tabParametres = array();
         $j = 0;
         foreach ($pgProgGrparRefLstParams as $pgProgGrparRefLstParam) {
-            if ($action == 'P' and $maj != 'V') {
+            if ($action == 'P' && $maj != 'V') {
                 if ($pgProgGrparRefLstParam->getValide() == 'O') {
                     $tabParametres[$j]['pgProgGrparRefLstParam'] = $pgProgGrparRefLstParam;
                     $pgSandreParametre = $pgProgGrparRefLstParam->getCodeParametre();
@@ -1036,10 +1036,10 @@ class ProgrammationGroupeController extends Controller {
                             $pgProgLotGrparAn->setValide('O');
                         }
                         $pgProgLotGrparAn->setOrigine('A');
-                        if ($pgProgGrpParamRefSel->getTypeGrp() == 'ANA' and $laboratoireCorId) {
+                        if ($pgProgGrpParamRefSel->getTypeGrp() == 'ANA' && $laboratoireCorId) {
                             $pgProgLotGrparAn->setPrestaDft($laboratoire);
                         }
-                        if ($pgProgGrpParamRefSel->getTypeGrp() != 'ANA' and $preleveurCorId) {
+                        if ($pgProgGrpParamRefSel->getTypeGrp() != 'ANA' && $preleveurCorId) {
                             $pgProgLotGrparAn->setPrestaDft($preleveur);
                         }
                         $emSqe->persist($pgProgLotGrparAn);
@@ -1066,10 +1066,10 @@ class ProgrammationGroupeController extends Controller {
                                             $pgProgLotGrparAnCompl->setGrparRef($pgProgGrpParamRef);
                                             $pgProgLotGrparAnCompl->setValide('N');
                                             $pgProgLotGrparAnCompl->setOrigine('AC');
-                                            if ($pgProgGrpParamRef->getTypeGrp() == 'ANA' and $laboratoireCorId) {
+                                            if ($pgProgGrpParamRef->getTypeGrp() == 'ANA' && $laboratoireCorId) {
                                                 $pgProgLotGrparAnCompl->setPrestaDft($laboratoire);
                                             }
-                                            if ($pgProgGrpParamRef->getTypeGrp() != 'ANA' and $preleveurCorId) {
+                                            if ($pgProgGrpParamRef->getTypeGrp() != 'ANA' && $preleveurCorId) {
                                                 $pgProgLotGrparAnCompl->setPrestaDft($preleveur);
                                             }
                                             $emSqe->persist($pgProgLotGrparAnCompl);
@@ -1137,7 +1137,7 @@ class ProgrammationGroupeController extends Controller {
                 $trouve = false;
                 foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
                     if ($pgProgLotGrparAn->getid() != $pgProgLotGrparAnSup->getId()) {
-                        if ($pgProgLotGrparAn->getOrigine() == 'R' or $pgProgLotGrparAn->getOrigine() == 'A') {
+                        if ($pgProgLotGrparAn->getOrigine() == 'R' || $pgProgLotGrparAn->getOrigine() == 'A') {
                             if ($pgProgLotGrparAn->getGrparRef()->getSupport()) {
                                 if ($pgProgLotGrparAn->getGrparRef()->getSupport()->getCodesupport() == $pgProgLotGrparAnSup->getGrparRef()->getSupport()->getCodesupport()) {
                                     $trouve = true;
@@ -1553,7 +1553,7 @@ class ProgrammationGroupeController extends Controller {
         }
 
 
-        if ($action != 'P' or $maj == 'V') {
+        if ($action != 'P' || $maj == 'V') {
             if ($suivant == 'station') {
                 return $this->redirect($this->generateUrl('AeagSqeBundle_programmation_stations', array('action' => $action, 'maj' => $maj, 'lotan' => $pgProgLotAnId)));
             } elseif ($suivant == 'groupe') {

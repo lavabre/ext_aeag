@@ -116,7 +116,7 @@ class SuiviEauController extends Controller {
         $tabPeriodeAns = array();
         $i = 0;
         foreach ($pgProgLotPeriodeAns as $pgProgLotPeriodeAn) {
-            if ($pgProgLotPeriodeAn->getCodeStatut()->getCodeStatut() != 'DEL' and $pgProgLotPeriodeAn->getCodeStatut()->getCodeStatut() != 'INV') {
+            if ($pgProgLotPeriodeAn->getCodeStatut()->getCodeStatut() != 'DEL' && $pgProgLotPeriodeAn->getCodeStatut()->getCodeStatut() != 'INV') {
                 $tabPeriodeAns[$i]['pgProgLotPeriodeAn'] = $pgProgLotPeriodeAn;
                 $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByPeriodeAn($pgProgLotPeriodeAn);
                 $tabStations = array();
@@ -206,7 +206,7 @@ class SuiviEauController extends Controller {
         $pgProgLotGrparAns = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotan($pgProgLotAn);
         $prestaprel = null;
         foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
-            if (substr_count($pgProgLotGrparAn->getGrparRef()->getLibelleGrp(), 'situ') > 0 or substr_count($pgProgLotGrparAn->getGrparRef()->getLibelleGrp(), 'environ') > 0) {
+            if (substr_count($pgProgLotGrparAn->getGrparRef()->getLibelleGrp(), 'situ') > 0 || substr_count($pgProgLotGrparAn->getGrparRef()->getLibelleGrp(), 'environ') > 0) {
                 $prestaprel = $pgProgLotGrparAn->getPrestaDft();
             }
         }
@@ -275,14 +275,14 @@ class SuiviEauController extends Controller {
                                                 $tabCmdPrelevs[$nbCmdPrelevs]['commentaire'] = $pgCmdSuiviPrel->getCommentaire();
                                             }
                                         }
-                                        if ($user->hasRole('ROLE_ADMINSQE') or ( $pgCmdSuiviPrel->getUser()->getPrestataire() == $pgCmdDemande->getPrestataire())) {
-                                            if ($pgCmdSuiviPrel->getStatutPrel() != 'F' or ( $pgCmdSuiviPrel->getStatutPrel() == 'F' and $pgCmdSuiviPrel->getValidation() != 'A')) {
+                                        if ($user->hasRole('ROLE_ADMINSQE') || ( $pgCmdSuiviPrel->getUser()->getPrestataire() == $pgCmdDemande->getPrestataire())) {
+                                            if ($pgCmdSuiviPrel->getStatutPrel() != 'F' || ( $pgCmdSuiviPrel->getStatutPrel() == 'F' && $pgCmdSuiviPrel->getValidation() != 'A')) {
                                                 $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'O';
                                                 $tabCmdPrelevs[$nbCmdPrelevs]['maj'] = 'O';
                                             }
                                         } else {
                                             if ($user->hasRole('ROLE_ADMINSQE')) {
-                                                if ($pgCmdSuiviPrel->getStatutPrel() != 'F' or ( $pgCmdSuiviPrel->getStatutPrel() == 'F' and $pgCmdSuiviPrel->getValidation() != 'A')) {
+                                                if ($pgCmdSuiviPrel->getStatutPrel() != 'F' || ( $pgCmdSuiviPrel->getStatutPrel() == 'F' && $pgCmdSuiviPrel->getValidation() != 'A')) {
                                                     $tabSuiviPrels[$nbSuiviPrels]['maj'] = 'O';
                                                     $tabCmdPrelevs[$nbCmdPrelevs]['maj'] = 'O';
                                                 }
@@ -416,13 +416,13 @@ class SuiviEauController extends Controller {
         $pgProgLotGrparAns = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotan($pgProgLotAn);
         $prestaprel = null;
         foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
-            if (substr_count($pgProgLotGrparAn->getGrparRef()->getLibelleGrp(), 'situ') > 0 or substr_count($pgProgLotGrparAn->getGrparRef()->getLibelleGrp(), 'environ') > 0) {
+            if (substr_count($pgProgLotGrparAn->getGrparRef()->getLibelleGrp(), 'situ') > 0 || substr_count($pgProgLotGrparAn->getGrparRef()->getLibelleGrp(), 'environ') > 0) {
                 $prestaprel = $pgProgLotGrparAn->getPrestaDft();
             }
         }
 
 
-        if ($pgProgLotPeriodeAn->getCodeStatut()->getCodeStatut() != 'DEL' and $pgProgLotPeriodeAn->getCodeStatut()->getCodeStatut() != 'INV') {
+        if ($pgProgLotPeriodeAn->getCodeStatut()->getCodeStatut() != 'DEL' && $pgProgLotPeriodeAn->getCodeStatut()->getCodeStatut() != 'INV') {
             $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByPeriodeAn($pgProgLotPeriodeAn);
             $tabStations = array();
             $nbStations = 0;
@@ -665,7 +665,7 @@ class SuiviEauController extends Controller {
                                     }
                                 }
                             }
-                            if ($NbFt < 1 or $NbPhoto < 2) {
+                            if ($NbFt < 1 || $NbPhoto < 2) {
                                 $contenu = 'La station  ' . $tabStations[$k]['station']->getCode() . ' doit  regrouper  au moins un fichier dont le nom contient \'ft\' et 2 fichiers dont le nom contient \'photo\'.' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
                                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                                 fputs($rapport, $contenu);
@@ -727,7 +727,7 @@ class SuiviEauController extends Controller {
                             $pgCmdSuiviPrels = $tabStations[$k]['prelevs'][0]['cmdSuiviPrelevs'];
                             if ($pgCmdSuiviPrels) {
                                 $pgCmdSuiviPrel = $tabStations[$k]['prelevs'][0]['cmdSuiviPrelevs'][0];
-                                if (($pgCmdSuiviPrel->getStatutPrel() == 'N') or ( $pgCmdSuiviPrel->getStatutPrel() == 'F') or ( $pgCmdSuiviPrel->getStatutPrel() == 'R')) {
+                                if (($pgCmdSuiviPrel->getStatutPrel() == 'N') || ( $pgCmdSuiviPrel->getStatutPrel() == 'F') || ( $pgCmdSuiviPrel->getStatutPrel() == 'R')) {
                                     if ($pgCmdSuiviPrel->getFichierRps()) {
                                         $pgCmdFichiersRps = $pgCmdSuiviPrel->getFichierRps();
                                         $emSqe->remove($pgCmdFichiersRps);
@@ -781,7 +781,7 @@ class SuiviEauController extends Controller {
                             $pgCmdSuiviPrels = $tabStations[$k]['prelevs'][0]['cmdSuiviPrelevs'];
                             if ($pgCmdSuiviPrels) {
                                 $pgCmdSuiviPrel = $tabStations[$k]['prelevs'][0]['cmdSuiviPrelevs'][0];
-                                if ($pgCmdSuiviPrel->getStatutPrel() == 'F' and ! $pgCmdSuiviPrel->getfichierRps()) {
+                                if ($pgCmdSuiviPrel->getStatutPrel() == 'F' && !$pgCmdSuiviPrel->getfichierRps()) {
                                     $contenu = 'Attention : le dernier suivi de la station  ' . $tabStations[$k]['station']->getCode() . ' a le statut : "Effectué" et il n\'y a pas de fichier terrain associé.' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
                                     $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                                     fputs($rapport, $contenu);
@@ -831,7 +831,7 @@ class SuiviEauController extends Controller {
         $tabRapport[$nbRapport] = "Nombre de fichiers incorrects : " . $nbIncorrect;
         $nbRapport++;
         $tabRapport[$nbRapport] = "</br><h5><div class='text-center'>Voir le rapport d'integration </div></h5>";
-        if ($nbIncorrect == 0 or $valid) {
+        if ($nbIncorrect == 0 || $valid) {
             $this->rmAllDir($pathBase);
         }
 
@@ -936,13 +936,13 @@ class SuiviEauController extends Controller {
         $pgProgLotGrparAns = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotan($pgProgLotAn);
         $prestaprel = null;
         foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
-            if (substr_count($pgProgLotGrparAn->getGrparRef()->getLibelleGrp(), 'situ') > 0 or substr_count($pgProgLotGrparAn->getGrparRef()->getLibelleGrp(), 'environ') > 0) {
+            if (substr_count($pgProgLotGrparAn->getGrparRef()->getLibelleGrp(), 'situ') > 0 || substr_count($pgProgLotGrparAn->getGrparRef()->getLibelleGrp(), 'environ') > 0) {
                 $prestaprel = $pgProgLotGrparAn->getPrestaDft();
             }
         }
 
 
-        if ($pgProgLotPeriodeAn->getCodeStatut()->getCodeStatut() != 'DEL' and $pgProgLotPeriodeAn->getCodeStatut()->getCodeStatut() != 'INV') {
+        if ($pgProgLotPeriodeAn->getCodeStatut()->getCodeStatut() != 'DEL' && $pgProgLotPeriodeAn->getCodeStatut()->getCodeStatut() != 'INV') {
             $pgProgLotPeriodeProgs = $repoPgProgLotPeriodeProg->getPgProgLotPeriodeProgByPeriodeAn($pgProgLotPeriodeAn);
             $tabStations = array();
             $nbStations = 0;
@@ -1140,7 +1140,7 @@ class SuiviEauController extends Controller {
                     }
 
                     $statutPrel = $tab[2];
-                    if ($statutPrel != 'P' and $statutPrel != 'F' and $statutPrel != 'N' and $statutPrel != 'R') {
+                    if ($statutPrel != 'P' && $statutPrel != 'F' && $statutPrel != 'N' && $statutPrel != 'R') {
                         $err = true;
                         $contenu = 'ligne  ' . $ligne . '  :  code statut inconnu (\'' . $statutPrel . '\')' . CHR(13) . CHR(10);
                         $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
@@ -1167,7 +1167,7 @@ class SuiviEauController extends Controller {
                             fputs($rapport, $contenu);
                         }
                         if ($statutPrel == 'P') {
-                            if ($datePrel < $dateActuel or $datePrel > $dateFin) {
+                            if ($datePrel < $dateActuel || $datePrel > $dateFin) {
                                 //$contenu = 'ligne  ' . $ligne . '  :  Avertissement date  (' . $datePrel->format('d/m/Y H:i') . ') non comprise entre ' . $dateActuel->format('d/m/Y H:i') . ' et ' . $dateFin->format('d/m/Y H:i') . CHR(13) . CHR(10);
                                 if ($datePrel < $dateActuel) {
                                     $contenu = 'ligne  ' . $ligne . ' , Avertissement : date prévisionnelle (' . $datePrel->format('d/m/Y H:i') . ') antérieure à la date actuelle (' . $dateActuel->format('d/m/Y H:i') . ')';
@@ -1181,7 +1181,7 @@ class SuiviEauController extends Controller {
                         $dateDebut = clone($pgProgLotPeriodeAn->getPeriode()->getDateDeb());
                         $dateActuel = new \DateTime();
                         if ($statutPrel != 'P') {
-                            if ($datePrel < $dateDebut or $datePrel > $dateActuel) {
+                            if ($datePrel < $dateDebut || $datePrel > $dateActuel) {
                                 if (!$user->hasRole('ROLE_ADMINSQE')) {
                                     $err = true;
                                 }
@@ -1199,14 +1199,14 @@ class SuiviEauController extends Controller {
 
                     $commentaire = $tab[4];
                     if ($statutPrel == 'P') {
-                        if (!$commentaire or $commentaire == '') {
+                        if (!$commentaire || $commentaire == '') {
                             $contenu = 'ligne  ' . $ligne . '  :  Avertissement commentaire renseigner l’équipe et le contact (portable)  ' . CHR(13) . CHR(10);
                             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                             fputs($rapport, $contenu);
                         }
                     }
-                    if ($statutPrel == 'N' or $statutPrel == 'R') {
-                        if (!$commentaire or $commentaire == '') {
+                    if ($statutPrel == 'N' || $statutPrel == 'R') {
+                        if (!$commentaire || $commentaire == '') {
                             $err = true;
                             $contenu = 'ligne  ' . $ligne . '  :  commentaire obligatoire indiquer pourquoi   ' . CHR(13) . CHR(10);
                             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
@@ -1269,21 +1269,21 @@ class SuiviEauController extends Controller {
                         fputs($rapport, $contenu);
                     } else {
                         if ($suiviPrelActuel) {
-                            if ($suiviPrelActuel->getStatutPrel() == 'E' and $statutPrel == 'P') {
+                            if ($suiviPrelActuel->getStatutPrel() == 'E' && $statutPrel == 'P') {
                                 $err = true;
                                 $contenu = 'ligne  ' . $ligne . '  :  code statut ne peut être à \'P\' ' . CHR(13) . CHR(10);
                                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                                 fputs($rapport, $contenu);
                             }
-                            if ($suiviPrelActuel->getStatutPrel() == 'P' and $statutPrel == 'P') {
+                            if ($suiviPrelActuel->getStatutPrel() == 'P' && $statutPrel == 'P') {
                                 if ($suiviPrelActuel->getdatePrel() != $datePrel) {
                                     $contenu = 'ligne  ' . $ligne . '  :  Attention modification de la date de prélevement ' . CHR(13) . CHR(10);
                                     $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                                     fputs($rapport, $contenu);
                                 }
                             }
-                            if ($suiviPrelActuel->getStatutPrel() == 'P' and $statutPrel == 'E') {
-                                if ($suiviPrelActuel->getdatePrel() != $datePrel and ( !$commentaire or $commentaire == '')) {
+                            if ($suiviPrelActuel->getStatutPrel() == 'P' && $statutPrel == 'E') {
+                                if ($suiviPrelActuel->getdatePrel() != $datePrel && (!$commentaire || $commentaire == '')) {
                                     $contenu = 'ligne  ' . $ligne . '  :  commentaire obligatoire  ' . CHR(13) . CHR(10);
                                     $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                                     fputs($rapport, $contenu);
@@ -1313,7 +1313,7 @@ class SuiviEauController extends Controller {
                         $pgCmdSuiviPrel->setCommentaire(utf8_encode($commentaire));
                         $pgCmdSuiviPrel->setValidation('E');
                         $emSqe->persist($pgCmdSuiviPrel);
-                        if ($pgCmdSuiviPrel->getStatutPrel() == 'N' or $pgCmdSuiviPrel->getStatutPrel() == 'R') {
+                        if ($pgCmdSuiviPrel->getStatutPrel() == 'N' || $pgCmdSuiviPrel->getStatutPrel() == 'R') {
                             $pgCmdPrelev->setDatePrelev($datePrel);
                             $pgCmdPrelev->setRealise('N');
                         }
@@ -1467,7 +1467,7 @@ class SuiviEauController extends Controller {
             if ($pgCmdPrelevs) {
                 $i = 0;
                 foreach ($pgCmdPrelevs as $pgCmdPrelev) {
-                    if ($pgCmdPrelev->getStation()->getOuvFoncId() == $stationId and $pgCmdPrelev->getPeriode()->getId() == $pgProgPeriode->getId()) {
+                    if ($pgCmdPrelev->getStation()->getOuvFoncId() == $stationId && $pgCmdPrelev->getPeriode()->getId() == $pgProgPeriode->getId()) {
                         $tabCmdPrelevs[$i]['cmdPrelev'] = $pgCmdPrelev;
                         $tabCmdPrelevs[$i]['maj'] = 'N';
                         $pgCmdSuiviPrels = $repoPgCmdSuiviPrel->getPgCmdSuiviPrelByPrelev($pgCmdPrelev);
@@ -1482,7 +1482,7 @@ class SuiviEauController extends Controller {
                             foreach ($pgCmdSuiviPrels as $pgCmdSuiviPrel) {
                                 $tabSuiviPrels[$j]['suiviPrel'] = $pgCmdSuiviPrel;
                                 $tabSuiviPrels[$j]['maj'] = 'N';
-                                if ($user->hasRole('ROLE_ADMINSQE') or $pgCmdSuiviPrel->getUser()->getPrestataire()) {
+                                if ($user->hasRole('ROLE_ADMINSQE') || $pgCmdSuiviPrel->getUser()->getPrestataire()) {
                                     $tabSuiviPrels[$j]['maj'] = 'O';
                                     $tabCmdPrelevs[$i]['maj'] = 'O';
                                     $tabDemande[$i]['maj'] = 'O';
@@ -1580,7 +1580,7 @@ class SuiviEauController extends Controller {
                 $nbMessages++;
             }
             if ($pgCmdSuiviPrel->getStatutPrel() == 'P') {
-                if ($pgCmdSuiviPrel->getDatePrel() < $dateActuel or $pgCmdSuiviPrel->getDatePrel() > $dateFin) {
+                if ($pgCmdSuiviPrel->getDatePrel() < $dateActuel || $pgCmdSuiviPrel->getDatePrel() > $dateFin) {
                     $contenu = 'Avertissement date  (' . $pgCmdSuiviPrel->getDatePrel()->format('d/m/Y H:i') . ') non comprise entre ' . $dateActuel->format('d/m/Y H:i') . ' et ' . $dateFin->format('d/m/Y H:i');
                     $tabMessage[$nbMessages][0] = 'av';
                     $tabMessage[$nbMessages][1] = $contenu;
@@ -1590,7 +1590,7 @@ class SuiviEauController extends Controller {
             $dateDebut = clone($pgProgLotPeriodeAn->getPeriode()->getDateDeb());
             $dateActuel = new \DateTime();
             if ($pgCmdSuiviPrel->getStatutPrel() != 'P') {
-                if ($pgCmdSuiviPrel->getDatePrel() < $dateDebut or $pgCmdSuiviPrel->getDatePrel() > $dateActuel) {
+                if ($pgCmdSuiviPrel->getDatePrel() < $dateDebut || $pgCmdSuiviPrel->getDatePrel() > $dateActuel) {
                     if (!$user->hasRole('ROLE_ADMINSQE')) {
                         $err = true;
                     }
@@ -1605,7 +1605,7 @@ class SuiviEauController extends Controller {
 
 
             if ($pgCmdSuiviPrel->getStatutPrel() == 'P') {
-                if (!$pgCmdSuiviPrel->getCommentaire() or $pgCmdSuiviPrel->getCommentaire() == '') {
+                if (!$pgCmdSuiviPrel->getCommentaire() || $pgCmdSuiviPrel->getCommentaire() == '') {
                     $err = true;
                     $contenu = 'Renseigner l’équipe et le contact (portable)  ';
                     $tabMessage[$nbMessages][0] = 'ko';
@@ -1613,8 +1613,8 @@ class SuiviEauController extends Controller {
                     $nbMessages++;
                 }
             }
-            if ($pgCmdSuiviPrel->getStatutPrel() == 'N' or $pgCmdSuiviPrel->getStatutPrel() == 'R') {
-                if (!$pgCmdSuiviPrel->getCommentaire() or $pgCmdSuiviPrel->getCommentaire() == '') {
+            if ($pgCmdSuiviPrel->getStatutPrel() == 'N' || $pgCmdSuiviPrel->getStatutPrel() == 'R') {
+                if (!$pgCmdSuiviPrel->getCommentaire() || $pgCmdSuiviPrel->getCommentaire() == '') {
                     $err = true;
                     $contenu = ' Commentaire obligatoire indiquer pourquoi   ';
                     $tabMessage[$nbMessages][0] = 'ko';
@@ -1656,14 +1656,14 @@ class SuiviEauController extends Controller {
 
 
             if ($pgCmdSuiviPrelActuel) {
-                if ($pgCmdSuiviPrelActuel->getStatutPrel() == 'E' and $pgCmdSuiviPrel->getStatutPrel() == 'P') {
+                if ($pgCmdSuiviPrelActuel->getStatutPrel() == 'E' && $pgCmdSuiviPrel->getStatutPrel() == 'P') {
                     $err = true;
                     $contenu = 'Le statut ne peut être à \'Prévisionnel\' ' . CHR(13) . CHR(10);
                     $tabMessage[$nbMessages][0] = 'ko';
                     $tabMessage[$nbMessages][1] = $contenu;
                     $nbMessages++;
                 }
-                if ($pgCmdSuiviPrelActuel->getStatutPrel() == 'P' and $pgCmdSuiviPrel->getStatutPrel() == 'P') {
+                if ($pgCmdSuiviPrelActuel->getStatutPrel() == 'P' && $pgCmdSuiviPrel->getStatutPrel() == 'P') {
                     if ($pgCmdSuiviPrelActuel->getdatePrel() != $pgCmdSuiviPrel->getDatePrel()) {
                         $contenu = ' Avertissement  modification de la date de prélevement ';
                         $tabMessage[$nbMessages][0] = 'av';
@@ -1671,8 +1671,8 @@ class SuiviEauController extends Controller {
                         $nbMessages++;
                     }
                 }
-                if ($pgCmdSuiviPrelActuel->getStatutPrel() == 'P' and $pgCmdSuiviPrel->getStatutPrel() == 'E') {
-                    if ($pgCmdSuiviPrelActuel->getdatePrel() != $pgCmdSuiviPrel->getDatePrel() and ( !$pgCmdSuiviPrel->getCommentaire() or $pgCmdSuiviPrel->getCommentaire() == '')) {
+                if ($pgCmdSuiviPrelActuel->getStatutPrel() == 'P' && $pgCmdSuiviPrel->getStatutPrel() == 'E') {
+                    if ($pgCmdSuiviPrelActuel->getdatePrel() != $pgCmdSuiviPrel->getDatePrel() && (!$pgCmdSuiviPrel->getCommentaire() || $pgCmdSuiviPrel->getCommentaire() == '')) {
                         $err = true;
                         $contenu = 'Commentaire obligatoire  ';
                         $tabMessage[$nbMessages][0] = 'ko';
@@ -1691,10 +1691,10 @@ class SuiviEauController extends Controller {
 
                 $datePrel = $pgCmdSuiviPrel->getDatePrel();
                 $emSqe->persist($pgCmdSuiviPrel);
-                if ($pgCmdSuiviPrel->getStatutPrel() == 'F' and $pgCmdSuiviPrel->getValidation() == 'A') {
+                if ($pgCmdSuiviPrel->getStatutPrel() == 'F' && $pgCmdSuiviPrel->getValidation() == 'A') {
                     $pgCmdPrelev->setDatePrelev($datePrel);
                     $pgCmdPrelev->setRealise('O');
-                } elseif ($pgCmdSuiviPrel->getStatutPrel() == 'N' or $pgCmdSuiviPrel->getStatutPrel() == 'R') {
+                } elseif ($pgCmdSuiviPrel->getStatutPrel() == 'N' || $pgCmdSuiviPrel->getStatutPrel() == 'R') {
                     $pgCmdPrelev->setDatePrelev($datePrel);
                     $pgCmdPrelev->setRealise('N');
                 } else {
@@ -1769,10 +1769,10 @@ class SuiviEauController extends Controller {
         if ($form->isValid()) {
             $datePrel = $pgCmdSuiviPrel->getDatePrel();
             $emSqe->persist($pgCmdSuiviPrel);
-            if ($pgCmdSuiviPrel->getStatutPrel() == 'F' and $pgCmdSuiviPrel->getValidation() == 'A') {
+            if ($pgCmdSuiviPrel->getStatutPrel() == 'F' && $pgCmdSuiviPrel->getValidation() == 'A') {
                 $pgCmdPrelev->setDatePrelev($datePrel);
                 $pgCmdPrelev->setRealise('O');
-            } elseif ($pgCmdSuiviPrel->getStatutPrel() == 'N' or $pgCmdSuiviPrel->getStatutPrel() == 'R') {
+            } elseif ($pgCmdSuiviPrel->getStatutPrel() == 'N' || $pgCmdSuiviPrel->getStatutPrel() == 'R') {
                 $pgCmdPrelev->setDatePrelev($datePrel);
                 $pgCmdPrelev->setRealise('N');
             } else {
@@ -2143,7 +2143,7 @@ class SuiviEauController extends Controller {
                             }
                         }
                     }
-                    if ($NbFt < 1 or $NbPhoto < 2) {
+                    if ($NbFt < 1 || $NbPhoto < 2) {
                         $contenu = 'La station  ' . $pgRefStationMesure->getCode() . ' doit  regrouper  au moins un fichier dont le nom contient \'ft\' et 2 fichiers dont le nom contient \'photo\'.' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
                         $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                         fputs($rapport, $contenu);
@@ -2196,7 +2196,7 @@ class SuiviEauController extends Controller {
                         $nbSupport = count($tabSupport);
                         $tabSupport[$nbSupport] = $pgCmdPrelev->getCodeSupport()->getCodeSupport();
                     }
-                    if (($pgCmdSuiviPrel->getStatutPrel() == 'N') or ( $pgCmdSuiviPrel->getStatutPrel() == 'F') or ( $pgCmdSuiviPrel->getStatutPrel() == 'R')) {
+                    if (($pgCmdSuiviPrel->getStatutPrel() == 'N') || ( $pgCmdSuiviPrel->getStatutPrel() == 'F') || ( $pgCmdSuiviPrel->getStatutPrel() == 'R')) {
                         if ($pgCmdSuiviPrel->getFichierRps()) {
                             $pgCmdFichiersRps = $pgCmdSuiviPrel->getFichierRps();
                             $pgCmdDwnldUsrRpss = $repoPgCmdDwnldUsrRps->getPgCmdDwnldUsrRpsByFichierReponse($pgCmdFichiersRps);
@@ -2246,7 +2246,7 @@ class SuiviEauController extends Controller {
                         }
                     }
                 } else {
-                    if ($pgCmdSuiviPrel->getStatutPrel() == 'F' and ! $pgCmdSuiviPrel->getfichierRps()) {
+                    if ($pgCmdSuiviPrel->getStatutPrel() == 'F' && !$pgCmdSuiviPrel->getfichierRps()) {
                         $contenu = 'Attention : le dernier suivi de la station  ' . $pgRefStationMesure->getCode() . ' a le statut : "Effectué" et il n\'y a pas de fichier terrain associé.' . CHR(13) . CHR(10) . CHR(13) . CHR(10);
                         $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                         fputs($rapport, $contenu);
@@ -2296,7 +2296,7 @@ class SuiviEauController extends Controller {
         $tabRapport[$nbRapport] = "Nombre de fichiers incorrects : " . $nbIncorrect;
         $nbRapport++;
         $tabRapport[$nbRapport] = "</br><h5><div class='text-center'>Voir le rapport d'integration </div></h5>";
-        if ($nbIncorrect == 0 or $valid) {
+        if ($nbIncorrect == 0 || $valid) {
             $this->rmAllDir($pathBase);
         }
 
@@ -2705,10 +2705,10 @@ class SuiviEauController extends Controller {
         if ($form->isValid()) {
             $datePrel = $pgCmdSuiviPrel->getDatePrel();
             $emSqe->persist($pgCmdSuiviPrel);
-            if ($pgCmdSuiviPrel->getStatutPrel() == 'F' and $pgCmdSuiviPrel->getValidation() == 'A') {
+            if ($pgCmdSuiviPrel->getStatutPrel() == 'F' && $pgCmdSuiviPrel->getValidation() == 'A') {
                 $pgCmdPrelev->setDatePrelev($datePrel);
                 $pgCmdPrelev->setRealise('O');
-            } elseif ($pgCmdSuiviPrel->getStatutPrel() == 'N' or $pgCmdSuiviPrel->getStatutPrel() == 'R') {
+            } elseif ($pgCmdSuiviPrel->getStatutPrel() == 'N' || $pgCmdSuiviPrel->getStatutPrel() == 'R') {
                 $pgCmdPrelev->setDatePrelev($datePrel);
                 $pgCmdPrelev->setRealise('N');
             } else {
