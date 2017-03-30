@@ -55,7 +55,8 @@ class RelanceMailCommand extends AeagCommand {
         $this->output->writeln($date->format('d/m/Y H:i:s') .' - Début envoi mails Dais');
         
         // Récupération des DAIS dernièrement générées
-        $pgCmdDemandes = $this->repoPgCmdDemande->getLotanAndPrestaByCodePhase('D10');        
+        $pgCmdDemandes = $this->repoPgCmdDemande->getLotanAndPrestaByCodePhase('D10');  
+        $this->output->writeln($date->format('d/m/Y H:i:s') .' Nb demandes :'.count($pgCmdDemandes));
         foreach ($pgCmdDemandes as $pgCmdDemande) {
             $prestataire = $this->repoPgRefCorresPresta->findOneByAdrCorId($pgCmdDemande['prestaId']);
             $lotan = $this->repoPgProgLotan->findOneById($pgCmdDemande['lotanId']);
@@ -67,19 +68,20 @@ class RelanceMailCommand extends AeagCommand {
             }
             
             $pgProgPrestaTypfic = $this->repoPgProgPrestaTypfic->findOneBy(array('codeMilieu' => $codeMilieu, 'prestataire' => $prestataire));
+            
             if (!is_null($pgProgPrestaTypfic)) {
-                if (strpos($codeMilieu,"PC") !== false) {
-                    if (strpos($pgProgPrestaTypfic->getFormatFic(), "EDILABO") !== false) {
+                if (stripos($codeMilieu,"PC") !== false) {
+                    if (stripos($pgProgPrestaTypfic->getFormatFic(), "EDILABO") !== false) {
                         $url = $this->getContainer()->get('router')->generate('AeagSqeBundle_echangefichiers_demandes', array('lotId' => $lotan->getLot()->getId(), 'anneeProg' => $lotan->getAnneeProg()), UrlGeneratorInterface::ABSOLUTE_URL);
                         $txtMessage = 'Les DAI du lot ' . $lotan->getLot()->getNomLot() . ' ont été générées.<br/>';
                         $txtMessage .= 'Vous pouvez les télécharger sur SQE : <a href="' . $url . '">Cliquez ici</a> <br/>';
-                    } elseif (strpos($pgProgPrestaTypfic->getFormatFic(), "SAISIE") !== false) {
+                    } elseif (stripos($pgProgPrestaTypfic->getFormatFic(), "SAISIE") !== false) {
                         $url = $this->getContainer()->get('router')->generate('AeagSqeBundle_saisieDonnees_lot_periodes', array("lotanId" => $lotan->getId()), UrlGeneratorInterface::ABSOLUTE_URL);
                         $txtMessage = 'Le lot ' . $lotan->getLot()->getNomLot() . ' a été généré. <br/>';
                         $txtMessage .= 'Vous pouvez saisir les données sur SQE : <a href="'. $url .'">Cliquez ici</a> <br/>';
                     } 
-                } else if (strpos($codeMilieu,"HB") !== false || strpos($codeMilieu,"HM") !== false) {
-                    if (strpos($pgProgPrestaTypfic->getFormatFic(), "Suivi_HB") !== false) {
+                } else if (stripos($codeMilieu,"HB") !== false || stripos($codeMilieu,"HM") !== false) {
+                    if (stripos($pgProgPrestaTypfic->getFormatFic(), "Suivi_HB") !== false) {
                         $url = $this->getContainer()->get('router')->generate('AeagSqeBundle_suiviHydrobio_lot_periodes', array("lotanId" => $lotan->getId()), UrlGeneratorInterface::ABSOLUTE_URL);
                         $txtMessage = 'Le lot ' . $lotan->getLot()->getNomLot() . ' a été généré. <br/>';
                         $txtMessage .= 'Vous pouvez renseigner le suivi des prélèvements sur SQE : <a href="'.$url.'">Cliquez ici</a>. <br/>';
@@ -95,12 +97,12 @@ class RelanceMailCommand extends AeagCommand {
             
             //Mise à jour de la phase
             $pgProgPhase = $this->repoPgProgPhases->findOneByCodePhase('D10');
-            $pgCmdDemandes = $this->repoPgCmdDemande->findBy(array('lotan' => $lotan, 'prestataire' => $prestataire, 'phaseDemande' => $pgProgPhase));
+            $pgCmdDemandesMaJ = $this->repoPgCmdDemande->findBy(array('lotan' => $lotan, 'prestataire' => $prestataire, 'phaseDemande' => $pgProgPhase));
             $pgProgPhase = $this->repoPgProgPhases->findOneByCodePhase('D20');
-            foreach($pgCmdDemandes as $pgCmdDemande) {
-                $this->output->writeln($date->format('d/m/Y H:i:s') .' Demande id :'.$pgCmdDemande->getId());
-                $pgCmdDemande->setPhaseDemande($pgProgPhase);
-                $this->emSqe->persist($pgCmdDemande);
+            foreach($pgCmdDemandesMaJ as $pgCmdDemandeMaJ) {
+                $this->output->writeln($date->format('d/m/Y H:i:s') .' Demande id :'.$pgCmdDemandeMaJ->getId());
+                $pgCmdDemandeMaJ->setPhaseDemande($pgProgPhase);
+                $this->emSqe->persist($pgCmdDemandeMaJ);
             }
             $this->emSqe->flush();
         }
