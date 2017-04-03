@@ -2818,10 +2818,26 @@ class SuiviHydrobioController extends Controller {
         $pgProgWebUser = $repoPgProgWebUsers->getPgProgWebusersByExtid($user->getId());
         $pgSandreSupport = $repoPgSandreSupport->getPgSandreSupportsByCodeSupport($codeSupport);
 
-        $presta = $_POST['prestataire'];
-        $avis = $_POST['avis'];
-        $statut = $_POST['statut'];
-        $validation = $_POST['validation'];
+        if (isset($_POST['prestataire'])) {
+            $presta = $_POST['prestataire'];
+        } else {
+            $presta = null;
+        }
+        if (isset($_POST['avis'])) {
+            $avis = $_POST['avis'];
+        } else {
+            $avis = null;
+        }
+        if (isset($_POST['statut'])) {
+            $statut = $_POST['statut'];
+        } else {
+            $statut = null;
+        }
+        if (isset($_POST['validation'])) {
+            $validation = $_POST['validation'];
+        } else {
+            $validation = null;
+        }
 
         if ($presta) {
             $pgRefCorresPresta = $repoPgRefCorresPresta->getPgRefCorresPrestaByAdrCorId($presta);
@@ -2897,6 +2913,7 @@ class SuiviHydrobioController extends Controller {
                     $tabStations[$i]['station']['ouvFoncId'] = $pgRefStationMesure->getOuvFoncId();
                     $tabStations[$i]['station']['code'] = $pgRefStationMesure->getCode();
                     $tabStations[$i]['station']['libelle'] = $pgRefStationMesure->getLibelle();
+                    $tabStations[$i]['station']['dept'] = substr($pgRefStationMesure->getInseeCommune(), 0, 2);
                     $tabStations[$i]['lien'] = '/sqe_fiches_stations/' . str_replace('/', '-', $pgRefStationMesure->getCode()) . '.pdf';
                     $pgProgLotStationAn = $repoPgProgLotStationAn->getPgProgLotStationAnByLotAnStation($pgCmdPrelev->getDemande()->getLotan(), $pgRefStationMesure);
                     $pgRefReseauMesure = $repoPgRefReseauMesure->getPgRefReseauMesureByGroupementId($pgProgLotStationAn->getRsxId());

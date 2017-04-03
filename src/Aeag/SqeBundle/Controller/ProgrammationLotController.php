@@ -1836,6 +1836,11 @@ class ProgrammationLotController extends Controller {
         $repoPgProgTypeMilieu = $emSqe->getRepository('AeagSqeBundle:PgProgTypeMilieu');
         $repoPgProgLotAn = $emSqe->getRepository('AeagSqeBundle:PgProgLotAn');
 
+        if (!$session->has('critLot')) {
+            $session->getFlashBag()->add('notice-warning', 'Sélection perdue. Merci de recommencer');
+            return $this->redirect($this->generateUrl('Aeag_sqe_programmation_lots', array('action' => $action)));
+        }
+
         $annee = $session->get('critAnnee');
         $lot = $repoPgProgLot->getPgProgLotById($session->get('critLot'));
         $typeMilieu = $lot->getCodeMilieu();

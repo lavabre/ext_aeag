@@ -2,15 +2,15 @@
 
 {% block breadcrumb %}
     <li>
-        <a href="{{ path('aeag_homepage') }}">Accueil</a> 
+        <a href="{{ path('aeag_homepage') }}">Accueil</a>
     </li>
     <li>
-        <a href="{{ path('AeagSqeBundle_suiviHydrobio_synthese') }}">Qualification suivis Hydrobio</a> 
+        <a href="{{ path('AeagSqeBundle_suiviHydrobio_synthese') }}">Qualification suivis Hydrobio</a>
     </li>
     <li class="active">
         Support
     </li>
-{% endblock breadcrumb %} 
+{% endblock breadcrumb %}
 
 {% block modal %}
 
@@ -20,11 +20,11 @@
             <div class="modal-content" >
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                             <h4 class="modal-title text-center" id="labelModalArchive"></h4>
-                  </div>
+                    <h4 class="modal-title text-center" id="labelModalArchive"></h4>
+                </div>
                 <div class="modal-body">
                     <div id="bodyModalArchive"></div>
-                </div>   
+                </div>
                 <div class="modal-footer"></div>
             </div>
         </div>
@@ -40,7 +40,7 @@
                 </div>
                 <div class="modal-body">
                     <div id="idModalContentNouveauSuivi"></div>
-                </div>   
+                </div>
             </div>
         </div>
     </div>
@@ -57,37 +57,37 @@
 {%endblock panel_heading %}
 
 {%block content %}
-    
+
     {% if app.session.get('suiviHydrobio_prestataire')  or app.session.get('suiviHydrobio_avis') or app.session.get('suiviHydrobio_statut') or app.session.get('suiviHydrobio_validation')%}
-         <div class="row responsive">
-                <div class="col-md-offset-3 col-md-6  text-info text-center">
-                    <div class="panel panel-info">
-                            <div class="panel-body">
-                                    <ul class="list-inline">
-                                         <li class="list-group-item-text list"><h5>Filtrer sur :</h5></li>
-                                        {% if app.session.get('suiviHydrobio_prestataire') %}
-                                                <li class="list-group-item list-group-item-text list-group-item-info">Prestataire : {{ app.session.get('suiviHydrobio_prestataire') }}</li>
-                                        {% endif %}
-                                        {% if app.session.get('suiviHydrobio_avis') %}
-                                                <li class="list-group-item list-group-item-text list-group-item-info">Avis : {{ app.session.get('suiviHydrobio_avis') }}</li>
-                                        {% endif %}
-                                        {% if app.session.get('suiviHydrobio_statut') %}
-                                                <li class="list-group-item list-group-item-text list-group-item-info">Statut : {{ app.session.get('suiviHydrobio_statut') }}</li>
-                                        {% endif %}
-                                        {% if app.session.get('suiviHydrobio_validation') %}
-                                                <li class="list-group-item list-group-item-text list-group-item-info">Validation : {{ app.session.get('suiviHydrobio_validation') }}</li>
-                                        {% endif %}
-                                    </ul>
-                            </div>
+        <div class="row responsive">
+            <div class="col-md-offset-3 col-md-6  text-info text-center">
+                <div class="panel panel-info">
+                    <div class="panel-body">
+                        <ul class="list-inline">
+                            <li class="list-group-item-text list"><h5>Filtrer sur :</h5></li>
+                                {% if app.session.get('suiviHydrobio_prestataire') %}
+                                <li class="list-group-item list-group-item-text list-group-item-info">Prestataire : {{ app.session.get('suiviHydrobio_prestataire') }}</li>
+                                {% endif %}
+                                {% if app.session.get('suiviHydrobio_avis') %}
+                                <li class="list-group-item list-group-item-text list-group-item-info">Avis : {{ app.session.get('suiviHydrobio_avis') }}</li>
+                                {% endif %}
+                                {% if app.session.get('suiviHydrobio_statut') %}
+                                <li class="list-group-item list-group-item-text list-group-item-info">Statut : {{ app.session.get('suiviHydrobio_statut') }}</li>
+                                {% endif %}
+                                {% if app.session.get('suiviHydrobio_validation') %}
+                                <li class="list-group-item list-group-item-text list-group-item-info">Validation : {{ app.session.get('suiviHydrobio_validation') }}</li>
+                                {% endif %}
+                        </ul>
                     </div>
                 </div>
-         </div>
-        
+            </div>
+        </div>
+
     {% endif %}
 
     <div class="row responsive">
         <div class="col-xm-12">
-            <div class="small ">     
+            <div class="small ">
                 <table class="table table-bordered table-condensed table-advance table-responsive table-striped" id="idTable_stations">
                     <thead>
                         <tr>
@@ -95,6 +95,7 @@
                             <th>Avis</th>
                             <th>Station</th>
                             <th>Libellé</th>
+                            <th>Dept</th>
                             <th>Réseau</th>
                             <th>Prestataire</th>
                             <th>Statut</th>
@@ -111,314 +112,318 @@
                             <td></td>
                             <td></td>
                             <td></td>
+                            <td></td>
                         </tr>
                     </thead>
                     <tbody>
                         {% set nb = 0 %}
-                        {%if stations | length%} 
+                        {%if stations | length%}
                             {% for station in stations %}
                                 {% set nb = nb + 1%}
-                                   <tr id="idTr-{{nb}}"> 
-                                      <td  id="idTd1-{{nb}}" width="15%" class="text-center" nowrap>
+                                <tr id="idTr-{{nb}}">
+                                    <td  id="idTd1-{{nb}}" width="15%" class="text-center" nowrap>
                                         {%if station.cmdPrelev | length%}
                                             <a id="idVoirSuivi-{{ station.cmdPrelev.id }}" class="btn btn-primary" href="#" title="consulter l'historique">
-                                                <i class="fa fa-archive"></i> 
+                                                <i class="fa fa-archive"></i>
                                             </a>
 
                                             {% if station.suiviPrel.statutPrel  == 'F' %}
                                                 {% if   station.suiviPrel.fichierRps %}
                                                     {% if station.suiviPrel.fichierRps.nomFichier %}
                                                         <a id="idTelechargerSuivi-{{ station.suiviPrel.id }}" class="btn btn-success btn-telecharger" data-id="{{ station.suiviPrel.id }}"  title="Télécharger le fichier terrain">
-                                                            <i class="fa fa-upload"></i> 
+                                                            <i class="fa fa-upload"></i>
                                                         </a>
                                                     {% endif %}
                                                 {% endif %}
                                             {% endif %}
 
                                             {% if is_granted('ROLE_ADMINSQE') or pgProgWebUser.typeUser == 'XHBIO' %}
-                                              {#  {% if station.suiviPrel.statutPrel  == 'F'  and 
-                                                        station.suiviPrel.validation  == 'E'  and
-                                                        station.suiviPrel.fichierRps | length %}#}
+                                                {#  {% if station.suiviPrel.statutPrel  == 'F'  and
+                                                          station.suiviPrel.validation  == 'E'  and
+                                                          station.suiviPrel.fichierRps | length %}#}
                                                 <a  id="idAvis-{{ station.suiviPrel.id }}" class="btn btn-warning"  title="Donner un avis">
                                                     <i class="fa fa-graduation-cap"></i>
                                                 </a>
-                                            {#{% endif %}#}
-                                        {% endif %}
+                                                {#{% endif %}#}
+                                            {% endif %}
 
-                                        {% if is_granted('ROLE_ADMINSQE') %}
-                                            <a  id="idValider-{{ station.suiviPrel.id }}" class="btn btn-warning"  title="valider le suivi">
-                                                <i class="fa fa-check"></i>
-                                            </a>
-                                        {% endif %}
+                                            {% if is_granted('ROLE_ADMINSQE') %}
+                                                <a  id="idValider-{{ station.suiviPrel.id }}" class="btn btn-warning"  title="valider le suivi">
+                                                    <i class="fa fa-check"></i>
+                                                </a>
+                                            {% endif %}
 
-                                        {% if is_granted('ROLE_ADMINSQE') or pgProgWebUser.typeUser == 'XHBIO' %}
-                                            {% if station.suiviPrel.statutPrel  == 'F'  and 
+                                            {% if is_granted('ROLE_ADMINSQE') or pgProgWebUser.typeUser == 'XHBIO' %}
+                                                {% if station.suiviPrel.statutPrel  == 'F'  and
                                                         station.suiviPrel.validation  == 'E'  and
                                                         station.suiviPrel.fichierRps | length %}
-                                            {% if  station.dateLimite %}
-                                                <br/>
-                                                <div class="danger text-info">date limite : {{ station.dateLimite | date("d/m/Y") }}</div>
-                                            {% endif %}
-                                        {% endif %}
-                                        {% endif %}
-
-
-                                            {% endif %}
-                                                  </td>
-                                            {%if station.suiviPrel | length%}
-                                                {% if station.suiviPrel.avis == 'F' %}
-                                                       <td id="idTd-{{nb}}" class="success">
-                                                           {% if station.suiviPrel.validAuto == 'O' %}
-                                                               Favorable (auto)
-                                                           {% elseif  station.suiviPrel.validAuto == 'N' %}
-                                                                Favorable (manu)
-                                                           {% else %}
-                                                                Favorable
-                                                           {% endif %}
-                                                       </td>
-                                                   {% elseif station.suiviPrel.avis == 'D' %}
-                                                       <td id="idTd-{{nb}}" class="danger">
-                                                             {% if station.suiviPrel.validAuto == 'O' %}
-                                                               Défavorable (auto)
-                                                           {% elseif  station.suiviPrel.validAuto == 'N' %}
-                                                                Défavorable (manu)
-                                                           {% else %}
-                                                                Défavorable
-                                                           {% endif %}
-                                                        </td>
-                                                    {% else %}
-                                                         <td id="idTd-{{nb}}"> </td>
+                                                {% if  station.dateLimite %}
+                                                    <br/>
+                                                    <div class="danger text-info">date limite : {{ station.dateLimite | date("d/m/Y") }}</div>
                                                 {% endif %}
+                                            {% endif %}
+                                        {% endif %}
+
+
+                                        {% endif %}
+                                        </td>
+                                        {%if station.suiviPrel | length%}
+                                            {% if station.suiviPrel.avis == 'F' %}
+                                                <td id="idTd-{{nb}}" class="success">
+                                                    {% if station.suiviPrel.validAuto == 'O' %}
+                                                        Favorable (auto)
+                                                    {% elseif  station.suiviPrel.validAuto == 'N' %}
+                                                        Favorable (manu)
+                                                    {% else %}
+                                                        Favorable
+                                                    {% endif %}
+                                                </td>
+                                            {% elseif station.suiviPrel.avis == 'D' %}
+                                                <td id="idTd-{{nb}}" class="danger">
+                                                    {% if station.suiviPrel.validAuto == 'O' %}
+                                                        Défavorable (auto)
+                                                    {% elseif  station.suiviPrel.validAuto == 'N' %}
+                                                        Défavorable (manu)
+                                                    {% else %}
+                                                        Défavorable
+                                                    {% endif %}
+                                                </td>
                                             {% else %}
                                                 <td id="idTd-{{nb}}"> </td>
                                             {% endif %}
-                                            <td>
-                                                <a  href="{{ station.lien }}" target="_blank" title="Localisation">{{ station.station.code }}</a>
-                                            </td>
-                                            <td>
-                                                {{ station.station.libelle }}
-                                            </td>
-                                            <td>
-                                                {% if station.reseau %}
-                                                    {{ station.reseau }}
+                                        {% else %}
+                                            <td id="idTd-{{nb}}"> </td>
+                                        {% endif %}
+                                        <td>
+                                            <a  href="{{ station.lien }}" target="_blank" title="Localisation">{{ station.station.code }}</a>
+                                        </td>
+                                        <td>
+                                            {{ station.station.libelle }}
+                                        </td>
+                                        <td class="text-center">
+                                            {{ station.station.dept }}
+                                        </td>
+                                        <td>
+                                            {% if station.reseau %}
+                                                {{ station.reseau }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {{ station.cmdPrelev.prestaPrel.nomCorres }}
+                                        </td>
+                                        {%if not station.suiviPrel | length %}
+                                            <td id="idTd7-{{nb}}"></td>
+                                            <td id="idTd8-{{nb}}"></td>
+                                            <td id="idTd8-{{nb}}"></td>
+                                        {% else %}
+                                            {% if station.suiviPrel.validation  == 'A' %}
+                                                <td id="idTd7-{{nb}}" class="success" nowrap>
+                                                {% elseif station.suiviPrel.validation  == 'R' %}
+                                                <td id="idTd7-{{nb}}" class="danger" nowrap>
+                                                {% else %}
+                                                <td id="idTd7-{{nb}}" class="warning" nowrap>
+                                                {% endif %}
+                                                {% if station.suiviPrel.statutPrel == 'P' %}
+                                                    Prévisionnel
+                                                {% elseif station.suiviPrel.statutPrel == 'F' %}
+                                                    Effectué
+                                                {% elseif station.suiviPrel.statutPrel == 'N' %}
+                                                    Non effectué
                                                 {% endif %}
                                             </td>
-                                            <td>
-                                                {{ station.cmdPrelev.prestaPrel.nomCorres }}
+                                            {% if station.suiviPrel.validation  == 'A' %}
+                                                <td id="idTd8-{{nb}}" class="success" nowrap>
+                                                {% elseif station.suiviPrel.validation  == 'R' %}
+                                                <td id="idTd8-{{nb}}" class="danger" nowrap>
+                                                {% else %}
+                                                <td id="idTd8-{{nb}}" class="warning" nowrap>
+                                                {% endif %}
+                                                <span class="hidden">{{station.suiviPrel.datePrel | date("Y/m/d H:i") }}</span>
+                                                {{station.suiviPrel.datePrel | date("d/m/Y H:i") }}
                                             </td>
-                                            {%if not station.suiviPrel | length %}
-                                                <td id="idTd7-{{nb}}"></td>
-                                                <td id="idTd8-{{nb}}"></td>
-                                                <td id="idTd8-{{nb}}"></td>
-                                            {% else %}
+                                            {% if station.suiviPrel.validation  == 'A' %}
+                                                <td class="success" nowrap>
+                                                {% elseif station.suiviPrel.validation  == 'R' %}
+                                                <td class="danger" nowrap>
+                                                {% else%}
+                                                <td class="warning" nowrap>
+                                                {% endif %}
                                                 {% if station.suiviPrel.validation  == 'A' %}
-                                                    <td id="idTd7-{{nb}}" class="success" nowrap>
-                                                    {% elseif station.suiviPrel.validation  == 'R' %}
-                                                    <td id="idTd7-{{nb}}" class="danger" nowrap>
-                                                    {% else %}
-                                                    <td id="idTd7-{{nb}}" class="warning" nowrap>
-                                                    {% endif %}
-                                                    {% if station.suiviPrel.statutPrel == 'P' %}
-                                                        Prévisionnel
-                                                    {% elseif station.suiviPrel.statutPrel == 'F' %}
-                                                        Effectué
-                                                    {% elseif station.suiviPrel.statutPrel == 'N' %}
-                                                        Non effectué
-                                                    {% endif %}
-                                                </td>
-                                                {% if station.suiviPrel.validation  == 'A' %}
-                                                    <td id="idTd8-{{nb}}" class="success" nowrap>
-                                                    {% elseif station.suiviPrel.validation  == 'R' %}
-                                                    <td id="idTd8-{{nb}}" class="danger" nowrap>
-                                                    {% else %}
-                                                    <td id="idTd8-{{nb}}" class="warning" nowrap>
-                                                    {% endif %}
-                                                    <span class="hidden">{{station.suiviPrel.datePrel | date("Y/m/d H:i") }}</span>
-                                                    {{station.suiviPrel.datePrel | date("d/m/Y H:i") }}
-                                                </td>
-                                                  {% if station.suiviPrel.validation  == 'A' %}
-                                                            <td class="success" nowrap>
-                                                            {% elseif station.suiviPrel.validation  == 'R' %}
-                                                            <td class="danger" nowrap>
-                                                            {% else%}
-                                                            <td class="warning" nowrap>
-                                                            {% endif %}
-                                                            {% if station.suiviPrel.validation  == 'A' %}
-                                                                Accepté
-                                                            {% elseif station.suiviPrel.validation  == 'R' %}
-                                                                Refusé
-                                                            {% else %}
-                                                                En attente
-                                                            {% endif %}
-                                                        </td>
-                                              {% endif %}
-                                        </tr>
-                                        {% endfor %}
-                                            {% endif %}
-                                            </tbody>
-                                        </table>
+                                                    Accepté
+                                                {% elseif station.suiviPrel.validation  == 'R' %}
+                                                    Refusé
+                                                {% else %}
+                                                    En attente
+                                                {% endif %}
+                                            </td>
+                                        {% endif %}
+                                    </tr>
+                                    {% endfor %}
+                                        {% endif %}
+                                        </tbody>
+                                    </table>
 
-                                        <div class="row">
-                                            <div class="col-md-offset-9 col-md-3 pull-right text-info">
-                                                <ul class="list-inline">
-                                                    <li><span class="label label-success">Accepté</span></li>
-                                                    <li><span class="label label-warning">En attente</span></li>
-                                                    <li><span class="label label-danger">Refusé</span></li>
-                                                </ul>  
-                                            </div>
-                                        </div>        
-
+                                    <div class="row">
+                                        <div class="col-md-offset-9 col-md-3 pull-right text-info">
+                                            <ul class="list-inline">
+                                                <li><span class="label label-success">Accepté</span></li>
+                                                <li><span class="label label-warning">En attente</span></li>
+                                                <li><span class="label label-danger">Refusé</span></li>
+                                            </ul>
+                                        </div>
                                     </div>
+
                                 </div>
                             </div>
-                                            
-                             <div id="idListeFichiers"></div>
-                             
-                            {%endblock content %}    
+                        </div>
+
+                        <div id="idListeFichiers"></div>
+
+                        {%endblock content %}
 
 
-                                {% block scripts %}
-                                    jQuery(document).ready(function() {
+                            {% block scripts %}
+                                jQuery(document).ready(function() {
 
-                                    $('#idTable_stations').DataTable( {
-                                    "stateSave": true,
-                                    "order": [[ 1, "asc" ]],
-                                    "language": {
-                                    "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
-                                    },
-                                    "aLengthMenu": [
-                                    [10, 25, 50, 100, -1],
-                                    [10, 25, 50, 100, "Tous"]
-                                    ],
-                                    "iDisplayLength": -1,
-                                    initComplete: function () {
-                                    var api = this.api();
+                                $('#idTable_stations').DataTable( {
+                                "stateSave": true,
+                                "order": [[ 1, "asc" ]],
+                                "language": {
+                                "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json"
+                                },
+                                "aLengthMenu": [
+                                [10, 25, 50, 100, -1],
+                                [10, 25, 50, 100, "Tous"]
+                                ],
+                                "iDisplayLength": -1,
+                                initComplete: function () {
+                                var api = this.api();
 
-                                    {#  api.columns().indexes().flatten().each( function ( i ) {#}
-                                    $("#idTable_stations thead td").each( function ( i ) {
-                                    if (i != 0 && i != 2 && i != 3 && i != 7){
-                                    var column =  api.column( i );
-                                    var select = $('<select><option value=""></option></select>')
-                                    .appendTo( $(this).empty() )
-                                    .on( 'change', function () {
-                                    column
-                                    .search( $(this).val() )
-                                    .draw();
-                                    } )
+                                {#  api.columns().indexes().flatten().each( function ( i ) {#}
+                                $("#idTable_stations thead td").each( function ( i ) {
+                                if (i != 0 && i != 2 && i != 3 && i != 8){
+                                var column =  api.column( i );
+                                var select = $('<select><option value=""></option></select>')
+                                .appendTo( $(this).empty() )
+                                .on( 'change', function () {
+                                column
+                                .search( $(this).val() )
+                                .draw();
+                                } )
 
-                                    column.data().unique().sort().each( function ( d, j ) {
-                                    select.append( '<option value="'+d+'">'+d+'</option>' )
-                                    } );
-                                    };
-                                    } );
-                                    }
-                                    } );
+                                column.data().unique().sort().each( function ( d, j ) {
+                                select.append( '<option value="'+d+'">'+d+'</option>' )
+                                } );
+                                };
+                                } );
+                                }
+                                } );
 
-                                    $("#modalArchive").draggable({
-                                    handle: ".modal-header"
-                                    }); 
-                                    
-                                    $("#modalNouveauSuivi").draggable({
-                                    handle: ".modal-header"
-                                    }); 
+                                $("#modalArchive").draggable({
+                                handle: ".modal-header"
+                                });
 
-                                    {%set nb1 = 0 %}
-                                    {%if stations | length%} 
-                                        {% for station in stations %}
-                                            {% if  station.cmdPrelev | length %}
-                                                {%set nb1 = nb1 + 1 %}
-                                                {%if station.suiviPrel | length%} 
+                                $("#modalNouveauSuivi").draggable({
+                                handle: ".modal-header"
+                                });
 
-                                                    $(document).on('click','#idVoirSuivi-{{ station.cmdPrelev.id }}',function(e){
-                                                    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                                                    $('#modalTraitementEncours').modal('toggle');
-                                                    var url = '{{ path("AeagSqeBundle_suiviHydrobio_prelev_suiviprels",{"prelevId": "par1"}) }}', // Le nom du fichier indiqué dans le formulaire
-                                                    url = url.replace("par1", {{ station.cmdPrelev.id }});
-                                                    url = url.replace("amp;","");
-                                                    $.ajax({
-                                                    url: url,
-                                                    type: 'get', // La méthode indiquée dans le formulaire (get ou post)
-                                                    success: function(html) { // Je récupère la réponse du fichier PHP
-                                                    $('#bodyModalArchive').empty().append(html);
-                                                    var html = 'Historique des suivis de la station  {{ station.station.code }} <br/>sur le support : {{ station.cmdPrelev.codeSupport.nomSupport }}';
-                                                    $('#labelModalArchive').html(html);
-                                                    $('#modalArchive').modal('show');
-                                                    $('#modalTraitementEncours').modal('hide');
-                                                    }
-                                                    });
-                                                    });
+                                {%set nb1 = 0 %}
+                                {%if stations | length%}
+                                    {% for station in stations %}
+                                        {% if  station.cmdPrelev | length %}
+                                            {%set nb1 = nb1 + 1 %}
+                                            {%if station.suiviPrel | length%}
 
-                                                 $(document).on('click','#idValider-{{ station.suiviPrel.id }}',function(e){
-                                                    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                                                    $('#modalTraitementEncours').modal('toggle');
-                                                    var url = '{{ path("AeagSqeBundle_suiviHydrobio_synthese_support_station_valider",{"codeSupport": "par1", "stationId": "par2", "suiviPrelId":  "par3", "tr": "par4"}) }}', // Le nom du fichier indiqué dans le formulaire
-                                                    url = url.replace("par1", {{ support.codeSupport }});
-                                                    url = url.replace("par2", {{station.station.ouvFoncId }});
-                                                    url = url.replace("par3", {{ station.suiviPrel.id }});
-                                                    url = url.replace("par4", {{ nb1 }});
-                                                    url = url.replace("amp;","");
-                                                    $.ajax({
-                                                    url: url,
-                                                    type: 'post', // La méthode indiquée dans le formulaire (get ou post)
-                                                    success: function(html) { // Je récupère la réponse du fichier PHP
-                                                    $('#idModalContentNouveauSuivi').empty().append(html);
-                                                    var html = 'Avis sur le suivi Hydrobio de la station  {{ station.station.code }}<br/>sur le support :  {{ station.cmdPrelev.codeSupport.nomSupport }}';
-                                                    $('#labelModalNouveauSuivi').html(html);
-                                                    $('#modalNouveauSuivi').modal('show');
-                                                    $('#modalTraitementEncours').modal('hide');
-                                                    }
-                                                    });
-                                                    });
+                                                $(document).on('click','#idVoirSuivi-{{ station.cmdPrelev.id }}',function(e){
+                                                e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                                                $('#modalTraitementEncours').modal('toggle');
+                                                var url = '{{ path("AeagSqeBundle_suiviHydrobio_prelev_suiviprels",{"prelevId": "par1"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                                url = url.replace("par1", {{ station.cmdPrelev.id }});
+                                                url = url.replace("amp;","");
+                                                $.ajax({
+                                                url: url,
+                                                type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+                                                success: function(html) { // Je récupère la réponse du fichier PHP
+                                                $('#bodyModalArchive').empty().append(html);
+                                                var html = 'Historique des suivis de la station  {{ station.station.code }} <br/>sur le support : {{ station.cmdPrelev.codeSupport.nomSupport }}';
+                                                $('#labelModalArchive').html(html);
+                                                $('#modalArchive').modal('show');
+                                                $('#modalTraitementEncours').modal('hide');
+                                                }
+                                                });
+                                                });
 
-                                                    $(document).on('click','#idAvis-{{ station.suiviPrel.id }}',function(e){
-                                                    e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                                                    $('#modalTraitementEncours').modal('toggle');
-                                                    var url = '{{ path("AeagSqeBundle_suiviHydrobio_synthese_support_station",{"codeSupport": "par1", "stationId": "par2", "suiviPrelId":  "par3", "tr": "par4"}) }}', // Le nom du fichier indiqué dans le formulaire
-                                                    url = url.replace("par1", {{ support.codeSupport }});
-                                                    url = url.replace("par2", {{station.station.ouvFoncId }});
-                                                    url = url.replace("par3", {{ station.suiviPrel.id }});
-                                                    url = url.replace("par4", {{ nb1 }});
-                                                    url = url.replace("amp;","");
-                                                    $.ajax({
-                                                    url: url,
-                                                    type: 'get', // La méthode indiquée dans le formulaire (get ou post)
-                                                    success: function(html) { // Je récupère la réponse du fichier PHP
-                                                    $('#idModalContentNouveauSuivi').empty().append(html);
-                                                    var html = 'Avis sur le suivi Hydrobio de la station  {{ station.station.code }}<br/>sur le support :  {{ station.cmdPrelev.codeSupport.nomSupport }}';
-                                                    $('#labelModalNouveauSuivi').html(html);
-                                                    $('#modalNouveauSuivi').modal('show');
-                                                    $('#modalTraitementEncours').modal('hide');
-                                                    }
-                                                    });
-                                                    });
-                                                    
-                                                   $(document).on('click','#idTelechargerSuivi-{{ station.suiviPrel.id }}',function(e){
-                                                        e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
-                                                        $('#modalTraitementEncours').modal('toggle');
-                                                         var url = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_fichier_liste_fichiers",{"suiviPrelId":  "par1" }) }}';
-                                                         var suiviPrelId = $(this).data('id');
-                                                         url = url.replace("par1", suiviPrelId);
-                                                        $.ajax({
-                                                             url: url,
-                                                             type: 'get',
-                                                             success: function(html) {
-                                                               $('#idListeFichiers').empty().append(html);
-                                                                $('#modalTraitementEncours').modal('hide');
-                                                                $('#modal_fichiers').modal();
-                                                             }
-                                                         });
-                                                      });
+                                                $(document).on('click','#idValider-{{ station.suiviPrel.id }}',function(e){
+                                                e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                                                $('#modalTraitementEncours').modal('toggle');
+                                                var url = '{{ path("AeagSqeBundle_suiviHydrobio_synthese_support_station_valider",{"codeSupport": "par1", "stationId": "par2", "suiviPrelId":  "par3", "tr": "par4"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                                url = url.replace("par1", {{ support.codeSupport }});
+                                                url = url.replace("par2", {{station.station.ouvFoncId }});
+                                                url = url.replace("par3", {{ station.suiviPrel.id }});
+                                                url = url.replace("par4", {{ nb1 }});
+                                                url = url.replace("amp;","");
+                                                $.ajax({
+                                                url: url,
+                                                type: 'post', // La méthode indiquée dans le formulaire (get ou post)
+                                                success: function(html) { // Je récupère la réponse du fichier PHP
+                                                $('#idModalContentNouveauSuivi').empty().append(html);
+                                                var html = 'Avis sur le suivi Hydrobio de la station  {{ station.station.code }}<br/>sur le support :  {{ station.cmdPrelev.codeSupport.nomSupport }}';
+                                                $('#labelModalNouveauSuivi').html(html);
+                                                $('#modalNouveauSuivi').modal('show');
+                                                $('#modalTraitementEncours').modal('hide');
+                                                }
+                                                });
+                                                });
 
-                                                  
-                                                {% endif %}
+                                                $(document).on('click','#idAvis-{{ station.suiviPrel.id }}',function(e){
+                                                e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                                                $('#modalTraitementEncours').modal('toggle');
+                                                var url = '{{ path("AeagSqeBundle_suiviHydrobio_synthese_support_station",{"codeSupport": "par1", "stationId": "par2", "suiviPrelId":  "par3", "tr": "par4"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                                url = url.replace("par1", {{ support.codeSupport }});
+                                                url = url.replace("par2", {{station.station.ouvFoncId }});
+                                                url = url.replace("par3", {{ station.suiviPrel.id }});
+                                                url = url.replace("par4", {{ nb1 }});
+                                                url = url.replace("amp;","");
+                                                $.ajax({
+                                                url: url,
+                                                type: 'get', // La méthode indiquée dans le formulaire (get ou post)
+                                                success: function(html) { // Je récupère la réponse du fichier PHP
+                                                $('#idModalContentNouveauSuivi').empty().append(html);
+                                                var html = 'Avis sur le suivi Hydrobio de la station  {{ station.station.code }}<br/>sur le support :  {{ station.cmdPrelev.codeSupport.nomSupport }}';
+                                                $('#labelModalNouveauSuivi').html(html);
+                                                $('#modalNouveauSuivi').modal('show');
+                                                $('#modalTraitementEncours').modal('hide');
+                                                }
+                                                });
+                                                });
+
+                                                $(document).on('click','#idTelechargerSuivi-{{ station.suiviPrel.id }}',function(e){
+                                                e.preventDefault(); // J'empêche le comportement par défaut du navigateur, c-à-d de soumettre le formulaire
+                                                $('#modalTraitementEncours').modal('toggle');
+                                                var url = '{{ path("AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_fichier_liste_fichiers",{"suiviPrelId":  "par1" }) }}';
+                                                var suiviPrelId = $(this).data('id');
+                                                url = url.replace("par1", suiviPrelId);
+                                                $.ajax({
+                                                url: url,
+                                                type: 'get',
+                                                success: function(html) {
+                                                $('#idListeFichiers').empty().append(html);
+                                                $('#modalTraitementEncours').modal('hide');
+                                                $('#modal_fichiers').modal();
+                                                }
+                                                });
+                                                });
+
+
                                             {% endif %}
-                                        {% endfor %}              
-                                    {% endif %}   
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
 
 
-                                    });
+                                });
 
 
 
 
-                                {%endblock scripts %}    
+                            {%endblock scripts %}

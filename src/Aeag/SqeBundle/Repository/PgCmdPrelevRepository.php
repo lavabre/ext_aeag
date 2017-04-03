@@ -550,7 +550,7 @@ class PgCmdPrelevRepository extends EntityRepository {
             $query = $query . " and suiviprel.avis = :avis";
         }
         if ($statut) {
-            $query = $query . " and suiviprel.statutPrel = :statu";
+            $query = $query . " and suiviprel.statutPrel = :statut";
         }
         if ($validation) {
             $query = $query . " and suiviprel.validation = :validation";
