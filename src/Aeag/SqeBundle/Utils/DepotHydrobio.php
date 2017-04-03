@@ -27,7 +27,7 @@ class DepotHydrobio {
         $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
         fputs($rapport, $contenu);
         $contenu = '                                   Fichier : ' . $nomFichier . CHR(13) . CHR(10);
-        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+        //$contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
         fputs($rapport, $contenu);
         $contenu = '                                   Demande : ' . $pgCmdDemande->getCodeDemandeCmd() . CHR(13) . CHR(10);
         $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
@@ -150,7 +150,7 @@ class DepotHydrobio {
         $tabFichier['fichier'] = $nomFichier;
 
         $contenu = '     fichier : ' . $nomFichier . CHR(13) . CHR(10);
-        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+        //$contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
         fputs($rapport, $contenu);
 
         // $fileExcel = \PHPExcel_IOFactory::load($pathBase . '/' . $nomFichier);
@@ -703,7 +703,7 @@ class DepotHydrobio {
                     }
                 }
             }
-            if ($totRecouvrement != 100) {
+            if (round($totRecouvrement, 0) != 100) {
                 $erreur = true;
                 $contenu = '                     Erreur : la somme des recouvrements ' . $totRecouvrement . ' doit être égale à 100. ' . CHR(13) . CHR(10);
                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
@@ -838,7 +838,7 @@ class DepotHydrobio {
                     } else {
                         if ($celC->getCalculatedValue() != $pgSandreAppellationTaxon->getNomAppelTaxon()) {
                             $avertissement = true;
-                            $contenu = '                     Avertissement : cellule C' . $i . '  libellé sandre :  ' . $celC->getCalculatedValue() . ' différent de celui en base : ' . $pgSandreAppellationTaxon->getNomAppelTaxon() . CHR(13) . CHR(10);
+                            $contenu = '                     Avertissement : cellule C' . $i . '  libellé sandre : ' . $celC->getCalculatedValue() . ' différent de celui en base : ' . $pgSandreAppellationTaxon->getNomAppelTaxon() . CHR(13) . CHR(10);
                             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                             fputs($rapport, $contenu);
                         }
@@ -1195,7 +1195,7 @@ class DepotHydrobio {
         $tabFichier['fichier'] = $nomFichier;
 
         $contenu = '     fichier : ' . $nomFichier . CHR(13) . CHR(10);
-        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+        //$contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
         fputs($rapport, $contenu);
         $contenu = CHR(13) . CHR(10);
         $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);

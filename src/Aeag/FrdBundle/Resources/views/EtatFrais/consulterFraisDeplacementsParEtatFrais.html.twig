@@ -168,7 +168,7 @@
                         <th>Date de départ</th>
                         <th>Date de retour</th>
                         <th>Objet</th>
-                        <th>Couurier</th>
+                        <th>Courrier</th>
                     </tr>
                 </thead>
                 <tbody id="idTbody">
@@ -322,6 +322,7 @@
             $('#idTr-{{ entity.0.id }}').empty().html( responseData );
             });
             } );
+
             $('#btDeValider-{{ entity.0.id}}').click( function() {
             cache: false,
             $.get( "{{ path('AeagFrdBundle_admin_devaliderFraisDeplacement', { 'id': entity.0.id }) }}",  function( responseData ) {
