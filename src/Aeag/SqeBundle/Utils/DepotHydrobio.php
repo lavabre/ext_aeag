@@ -230,9 +230,9 @@ class DepotHydrobio {
 
             // Coordonnées : cellules G23, H23 doivent être non vides, au format numérique et avec une valeur > 0
             $G23 = $worksheet->getCell('G23');
-            str_replace(',', '.', $G23->getCalculatedValue());
+            //str_replace(',', '.', $G23->getCalculatedValue());
             $H23 = $worksheet->getCell('H23');
-            str_replace(',', '.', $H23->getCalculatedValue());
+            //str_replace(',', '.', $H23->getCalculatedValue());
             $avertissement = false;
             if ($G23->getCalculatedValue() == '' && $H23->getCalculatedValue() == '') {
                 $avertissement = true;
@@ -255,9 +255,9 @@ class DepotHydrobio {
             if ($avertissement) {
                 // Coordonnées : cellules G22, H22 doivent être non vides, au format numérique et avec une valeur > 0
                 $G22 = $worksheet->getCell('G22');
-                str_replace(',', '.', $G22->getCalculatedValue());
+                //str_replace(',', '.', $G22->getCalculatedValue());
                 $H22 = $worksheet->getCell('H22');
-                str_replace(',', '.', $H22->getCalculatedValue());
+                //str_replace(',', '.', $H22->getCalculatedValue());
                 if ($G22->getCalculatedValue() == '' && $H22->getCalculatedValue() == '') {
                     $erreur = true;
                     $contenu = '                     Erreur : Coordonnées Lambert II non renseignées. ' . CHR(13) . CHR(10);
@@ -279,15 +279,15 @@ class DepotHydrobio {
 
             // Autres valeurs du prélèvement : cellules E40, F40, A53, B53, C53  doivent être non vide, au format numérique
             $E40 = $worksheet->getCell('E40');
-            str_replace(',', '.', $E40->getCalculatedValue());
+            //str_replace(',', '.', $E40->getCalculatedValue());
             $F40 = $worksheet->getCell('F40');
-            str_replace(',', '.', $F40->getCalculatedValue());
+            //str_replace(',', '.', $F40->getCalculatedValue());
             $A53 = $worksheet->getCell('A53');
-            str_replace(',', '.', $A53->getCalculatedValue());
+            //str_replace(',', '.', $A53->getCalculatedValue());
             $B53 = $worksheet->getCell('B53');
-            str_replace(',', '.', $B53->getCalculatedValue());
+            //str_replace(',', '.', $B53->getCalculatedValue());
             $C53 = $worksheet->getCell('C53');
-            str_replace(',', '.', $C53->getCalculatedValue());
+            //str_replace(',', '.', $C53->getCalculatedValue());
             if (is_null($E40)) {
                 $erreur = true;
                 $contenu = '                     Avertissement : cellule E40 non renseignée. ' . CHR(13) . CHR(10);
@@ -361,11 +361,11 @@ class DepotHydrobio {
 
             //    Cellules B40, C40, D40  les valeurs doivent être numériques si non vides
             $B40 = $worksheet->getCell('B40');
-            str_replace(',', '.', $B40->getCalculatedValue());
+            //str_replace(',', '.', $B40->getCalculatedValue());
             $C40 = $worksheet->getCell('C40');
-            str_replace(',', '.', $C40->getCalculatedValue());
+            //str_replace(',', '.', $C40->getCalculatedValue());
             $D40 = $worksheet->getCell('D40');
-            str_replace(',', '.', $D40->getCalculatedValue());
+            //str_replace(',', '.', $D40->getCalculatedValue());
             if (!is_null($B40)) {
                 if (!is_numeric(intval($B40->getCalculatedValue()))) {
                     $avertissement = true;
@@ -424,36 +424,36 @@ class DepotHydrobio {
                     $pgCmdPrelevHbDiato->setPrelev($pgCmdPrelev);
                 }
                 if (is_null($G23) || !is_numeric(intval($G23->getCalculatedValue())) || ( $G23->getCalculatedValue() == 0)) {
-                    $pgCmdPrelevHbDiato->setXPrel($G22->getCalculatedValue());
+                    $pgCmdPrelevHbDiato->setXPrel(str_replace(',', '.', $G22->getCalculatedValue()));
                 } else {
-                    $pgCmdPrelevHbDiato->setXPrel($G23->getCalculatedValue());
+                    $pgCmdPrelevHbDiato->setXPrel(str_replace(',', '.', $G23->getCalculatedValue()));
                 }
                 if (is_null($H23) || !is_numeric(intval($H23->getCalculatedValue())) || ( $H23->getCalculatedValue() == 0)) {
-                    $pgCmdPrelevHbDiato->setYPrel($H22->getCalculatedValue());
+                    $pgCmdPrelevHbDiato->setYPrel(str_replace(',', '.', $H22->getCalculatedValue()));
                 } else {
-                    $pgCmdPrelevHbDiato->setYPrel($H23->getCalculatedValue());
+                    $pgCmdPrelevHbDiato->setYPrel(str_replace(',', '.', $H23->getCalculatedValue()));
                 }
 
                 if (!is_null($B40)) {
                     if (is_numeric(intval($B40->getCalculatedValue()))) {
-                        $pgCmdPrelevHbDiato->setTempEau($B40->getCalculatedValue());
+                        $pgCmdPrelevHbDiato->setTempEau(str_replace(',', '.', $B40->getCalculatedValue()));
                     }
                 }
                 if (!is_null($C40)) {
                     if (is_numeric(intval($C40->getCalculatedValue()))) {
-                        $pgCmdPrelevHbDiato->setPh($C40->getCalculatedValue());
+                        $pgCmdPrelevHbDiato->setPh(str_replace(',', '.', $C40->getCalculatedValue()));
                     }
                 }
                 if (!is_null($D40)) {
                     if (is_numeric(intval($D40->getCalculatedValue()))) {
-                        $pgCmdPrelevHbDiato->setConductivite($D40->getCalculatedValue());
+                        $pgCmdPrelevHbDiato->setConductivite(str_replace(',', '.', $D40->getCalculatedValue()));
                     }
                 }
 
                 if (!is_null($F40)) {
                     if (is_numeric(intval($F40->getCalculatedValue()))) {
                         if ($F40->getCalculatedValue() != 0) {
-                            $pgCmdPrelevHbDiato->setLargeur($F40->getCalculatedValue());
+                            $pgCmdPrelevHbDiato->setLargeur(str_replace(',', '.', $F40->getCalculatedValue()));
                         }
                     }
                 }
@@ -574,13 +574,13 @@ class DepotHydrobio {
 
             // Coordonnées : cellules K24, L24, M24, N24 doivent être non vides, au format numérique et avec une valeur > 0
             $K24 = $worksheet->getCell('K24');
-            str_replace(',', '.', $K24->getCalculatedValue());
+            // str_replace(',', '.', $K24->getCalculatedValue());
             $L24 = $worksheet->getCell('L24');
-            str_replace(',', '.', $L24->getCalculatedValue());
+            //  str_replace(',', '.', $L24->getCalculatedValue());
             $M24 = $worksheet->getCell('M24');
-            str_replace(',', '.', $M24->getCalculatedValue());
+            //  str_replace(',', '.', $M24->getCalculatedValue());
             $N24 = $worksheet->getCell('N24');
-            str_replace(',', '.', $N24->getCalculatedValue());
+            //  str_replace(',', '.', $N24->getCalculatedValue());
             $avertissement = false;
             if ($K24->getCalculatedValue() == '' && $L24->getCalculatedValue() == '' && $M24->getCalculatedValue() == '' && $N24->getCalculatedValue() == '') {
                 $avertissement = true;
@@ -603,13 +603,13 @@ class DepotHydrobio {
             if ($avertissement) {
                 // Coordonnées : cellules K23, L23, M23, N23 doivent être non vides, au format numérique et avec une valeur > 0
                 $K23 = $worksheet->getCell('K23');
-                str_replace(',', '.', $K23->getCalculatedValue());
+                //str_replace(',', '.', $K23->getCalculatedValue());
                 $L23 = $worksheet->getCell('L23');
-                str_replace(',', '.', $L23->getCalculatedValue());
+                //str_replace(',', '.', $L23->getCalculatedValue());
                 $M23 = $worksheet->getCell('M23');
-                str_replace(',', '.', $M23->getCalculatedValue());
+                //str_replace(',', '.', $M23->getCalculatedValue());
                 $N23 = $worksheet->getCell('N23');
-                str_replace(',', '.', $N23->getCalculatedValue());
+                //str_replace(',', '.', $N23->getCalculatedValue());
                 if ($K23->getCalculatedValue() == '' && $L23->getCalculatedValue() == '' && $M23->getCalculatedValue() == '' && $N23->getCalculatedValue() == '') {
                     $erreur = true;
                     $contenu = '                     Erreur : Coordonnées Lambert II non renseignées. ' . CHR(13) . CHR(10);
@@ -632,11 +632,11 @@ class DepotHydrobio {
 
             //	Autres valeurs du prélèvement : cellules P23, E39, O23 doivent être non vide, au format numérique
             $P23 = $worksheet->getCell('P23');
-            str_replace(',', '.', $P23->getCalculatedValue());
+            //str_replace(',', '.', $P23->getCalculatedValue());
             $E39 = $worksheet->getCell('E39');
-            str_replace(',', '.', $E39->getCalculatedValue());
+            // str_replace(',', '.', $E39->getCalculatedValue());
             $O23 = $worksheet->getCell('O23');
-            str_replace(',', '.', $O23->getCalculatedValue());
+            // str_replace(',', '.', $O23->getCalculatedValue());
             if (is_null($P23)) {
                 $avertissement = true;
                 $contenu = '                     Avertissement : cellule ' . $P23->getCoordinate() . ' non renseignée. ' . CHR(13) . CHR(10);
@@ -691,7 +691,7 @@ class DepotHydrobio {
             for ($i = 39; $i <= 50; $i++) {
                 $H[$i] = $worksheet->getCell('H' . $i);
                 $celH = $worksheet->getCell('H' . $i);
-                str_replace(',', '.', $celH->getCalculatedValue());
+                // str_replace(',', '.', $celH->getCalculatedValue());
                 if (!is_null($celH)) {
                     if (!is_numeric(floatval($celH->getCalculatedValue()))) {
                         $avertissement = true;
@@ -931,24 +931,24 @@ class DepotHydrobio {
                     $pgCmdPrelevHbInvert->setPrelev($pgCmdPrelev);
                 }
                 if (is_null($K24) || !is_numeric(floatval($K24->getCalculatedValue())) || ( $K24->getCalculatedValue() == 0)) {
-                    $pgCmdPrelevHbInvert->setXAmont($k23->getCalculatedValue());
+                    $pgCmdPrelevHbInvert->setXAmont(str_replace(',', '.', $K23->getCalculatedValue()));
                 } else {
-                    $pgCmdPrelevHbInvert->setXAmont($K24->getCalculatedValue());
+                    $pgCmdPrelevHbInvert->setXAmont(str_replace(',', '.', $K24->getCalculatedValue()));
                 }
                 if (is_null($L24) || !is_numeric(floatval($L24->getCalculatedValue())) || ( $L24->getCalculatedValue() == 0)) {
-                    $pgCmdPrelevHbInvert->setYAmont($L23->getCalculatedValue());
+                    $pgCmdPrelevHbInvert->setYAmont(str_replace(',', '.', $L23->getCalculatedValue()));
                 } else {
-                    $pgCmdPrelevHbInvert->setYAmont($L24->getCalculatedValue());
+                    $pgCmdPrelevHbInvert->setYAmont(str_replace(',', '.', $L24->getCalculatedValue()));
                 }
                 if (is_null($M24) || !is_numeric(floatval($M24->getCalculatedValue())) || ( $M24->getCalculatedValue() == 0)) {
-                    $pgCmdPrelevHbInvert->setXAvalt($M23->getCalculatedValue());
+                    $pgCmdPrelevHbInvert->setXAvalt(str_replace(',', '.', $M23->getCalculatedValue()));
                 } else {
-                    $pgCmdPrelevHbInvert->setXAval($M24->getCalculatedValue());
+                    $pgCmdPrelevHbInvert->setXAval(str_replace(',', '.', $M24->getCalculatedValue()));
                 }
                 if (is_null($N24) || !is_numeric(floatval($N24->getCalculatedValue())) || ( $N24->getCalculatedValue() == 0)) {
-                    $pgCmdPrelevHbInvert->setYAval($N23->getCalculatedValue());
+                    $pgCmdPrelevHbInvert->setYAval(str_replace(',', '.', $N23->getCalculatedValue()));
                 } else {
-                    $pgCmdPrelevHbInvert->setYAval($N24->getCalculatedValue());
+                    $pgCmdPrelevHbInvert->setYAval(str_replace(',', '.', $N24->getCalculatedValue()));
                 }
                 $pgCmdPrelevHbInvert->setLongueur($P23->getCalculatedValue());
                 $pgCmdPrelevHbInvert->setLargeurMoy(str_replace(',', '.', $E39->getCalculatedValue()));
