@@ -73,7 +73,9 @@ class DepotHydrobioController extends Controller {
             return $this->render('AeagSqeBundle:DepotHydrobio:index.html.twig', array('user' => $user,
                         'lotans' => $tabProglotAns));
         } else {
-            return $this->render('AeagSqeBundle:Default:maintenanceFonctionnalite.html.twig');
+            //return $this->render('AeagSqeBundle:Default:maintenanceFonctionnalite.html.twig');
+            return $this->render('AeagSqeBundle:DepotHydrobio:index.html.twig', array('user' => $user,
+                        'lotans' => $tabProglotAns));
         }
     }
 
