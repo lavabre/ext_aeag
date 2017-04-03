@@ -1478,6 +1478,7 @@ class ProgrammationGroupeController extends Controller {
         $emSqe->persist($pgProgLotGrparAn);
         $emSqe->flush();
 
+        $nb = 0;
         foreach ($selParametres as $codeParametre) {
             $pgSandreParametre = $repoPgSandreParametre->getPgSandreParametresByCodeParametre($codeParametre);
             $pgProgGrparRefLstParam = $repoPgProgGrparRefLstParam->getPgProgGrparRefLstParamByGrparRefCodeParametre($pgProgGrpParamRef, $codeParametre);
@@ -1508,6 +1509,10 @@ class ProgrammationGroupeController extends Controller {
             $emSqe->persist($pgProgLotParamAn);
             $pgProgLotGrparAn->setvalide('O');
             $emSqe->persist($pgProgLotGrparAn);
+            $nb++;
+            if ($nb > 100) {
+                $emSqe->flush();
+            }
         }
 
 
