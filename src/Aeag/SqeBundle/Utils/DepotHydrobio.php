@@ -239,13 +239,13 @@ class DepotHydrobio {
                 $contenu = '                     Avertissement : Coordonnées Lambert 93 non renseignées. ' . CHR(13) . CHR(10);
                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                 fputs($rapport, $contenu);
-            } elseif (!is_numeric($G23->getCalculatedValue()) || !is_numeric($H23->getCalculatedValue())) {
+            } elseif (!is_numeric(floatval($G23->getCalculatedValue())) || !is_numeric(floatval($H23->getCalculatedValue()))) {
                 $avertissement = true;
                 $contenu = '                     Avertissement : Coordonnées Lambert 93 incorrectes. ';
                 $contenu = $contenu . ' G23 : ' . $G23->getCalculatedValue() . ' H23 : ' . $H23->getCalculatedValue() . CHR(13) . CHR(10);
                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                 fputs($rapport, $contenu);
-            } elseif ($G23->getCalculatedValue() == 0 && $H23->getCalculatedValue() == 0) {
+            } elseif ($G23->getCalculatedValue() == 0 || $H23->getCalculatedValue() == 0) {
                 $avertissement = true;
                 $contenu = '                     Avertissement : Coordonnées Lambert 93 non renseignées. ' . CHR(13) . CHR(10);
                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
@@ -263,13 +263,13 @@ class DepotHydrobio {
                     $contenu = '                     Erreur : Coordonnées Lambert II non renseignées. ' . CHR(13) . CHR(10);
                     $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                     fputs($rapport, $contenu);
-                } elseif (!is_numeric($G22->getCalculatedValue()) || !is_numeric($H22->getCalculatedValue())) {
+                } elseif (!is_numeric(floatval($G22->getCalculatedValue())) || !is_numeric(floatval($H22->getCalculatedValue()))) {
                     $erreur = true;
                     $contenu = '                     Erreur : Coordonnées Lambert II incorrectes. ';
                     $contenu = $contenu . ' G22 : ' . $G22->getCalculatedValue() . ' H22 : ' . $H22->getCalculatedValue() . CHR(13) . CHR(10);
                     $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                     fputs($rapport, $contenu);
-                } elseif ($G22->getCalculatedValue() == 0 && $H223->getCalculatedValue() == 0) {
+                } elseif ($G22->getCalculatedValue() == 0 || $H223->getCalculatedValue() == 0) {
                     $erreur = true;
                     $contenu = '                     Erreur : Coordonnées Lambert II non renseignées. ' . CHR(13) . CHR(10);
                     $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
@@ -302,7 +302,7 @@ class DepotHydrobio {
 
             if (is_null($F40)) {
                 $erreur = true;
-                $contenu = '                      Avertissement : cellule F40 incorrecte ou non renseignée. ' . CHR(13) . CHR(10);
+                $contenu = '                      Avertissement : cellule F40 non renseignée. ' . CHR(13) . CHR(10);
                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                 fputs($rapport, $contenu);
             } elseif (!is_numeric(intval($F40->getCalculatedValue()))) {
@@ -423,12 +423,12 @@ class DepotHydrobio {
                     $pgCmdPrelevHbDiato = new PgCmdPrelevHbDiato();
                     $pgCmdPrelevHbDiato->setPrelev($pgCmdPrelev);
                 }
-                if (is_null($G23) || !is_numeric($G23->getCalculatedValue()) || ( $G23->getCalculatedValue() == 0)) {
+                if (is_null($G23) || !is_numeric(intval($G23->getCalculatedValue())) || ( $G23->getCalculatedValue() == 0)) {
                     $pgCmdPrelevHbDiato->setXPrel($G22->getCalculatedValue());
                 } else {
                     $pgCmdPrelevHbDiato->setXPrel($G23->getCalculatedValue());
                 }
-                if (is_null($H23) || !is_numeric($H23->getCalculatedValue()) || ( $H23->getCalculatedValue() == 0)) {
+                if (is_null($H23) || !is_numeric(intval($H23->getCalculatedValue())) || ( $H23->getCalculatedValue() == 0)) {
                     $pgCmdPrelevHbDiato->setYPrel($H22->getCalculatedValue());
                 } else {
                     $pgCmdPrelevHbDiato->setYPrel($H23->getCalculatedValue());
@@ -587,7 +587,7 @@ class DepotHydrobio {
                 $contenu = '                     Avertissement : Coordonnées Lambert 93 non renseignées. ' . CHR(13) . CHR(10);
                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                 fputs($rapport, $contenu);
-            } elseif (!is_numeric($K24->getCalculatedValue()) || !is_numeric($L24->getCalculatedValue()) || !is_numeric($M24->getCalculatedValue()) || !is_numeric($N24->getCalculatedValue())) {
+            } elseif (!is_numeric(floatval($K24->getCalculatedValue())) || !is_numeric(floatval($L24->getCalculatedValue())) || !is_numeric(floatval($M24->getCalculatedValue())) || !is_numeric(floatval($N24->getCalculatedValue()))) {
                 $avertissement = true;
                 $contenu = '                     Avertissement : Coordonnées Lambert 93 incorrectes. ';
                 $contenu = $contenu . ' K24 : ' . $K24->getCalculatedValue() . ' L24 : ' . $L24->getCalculatedValue() . ' M24 : ' . $M24->getCalculatedValue() . ' N24 : ' . $N24->getCalculatedValue() . CHR(13) . CHR(10);
@@ -615,7 +615,7 @@ class DepotHydrobio {
                     $contenu = '                     Erreur : Coordonnées Lambert II non renseignées. ' . CHR(13) . CHR(10);
                     $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                     fputs($rapport, $contenu);
-                } elseif (!is_numeric($K23->getCalculatedValue()) || !is_numeric($L23->getCalculatedValue()) || !is_numeric($M23->getCalculatedValue()) || !is_numeric($N23->getCalculatedValue())) {
+                } elseif (!is_numeric(floatval($K23->getCalculatedValue())) || !is_numeric(floatval($L23->getCalculatedValue())) || !is_numeric(floatval($M23->getCalculatedValue())) || !is_numeric(floatval($N23->getCalculatedValue()))) {
                     $erreur = true;
                     $contenu = '                     Erreur : Coordonnées Lambert II incorrectes. ';
                     $contenu = $contenu . ' K23 : ' . $K23->getCalculatedValue() . ' L23 : ' . $L23->getCalculatedValue() . ' M23 : ' . $M23->getCalculatedValue() . ' N23 : ' . $N23->getCalculatedValue() . CHR(13) . CHR(10);
@@ -930,22 +930,22 @@ class DepotHydrobio {
                     $pgCmdPrelevHbInvert = new PgCmdPrelevHbInvert();
                     $pgCmdPrelevHbInvert->setPrelev($pgCmdPrelev);
                 }
-                if (is_null($K24) || !is_numeric($K24->getCalculatedValue()) || ( $K24->getCalculatedValue() == 0)) {
+                if (is_null($K24) || !is_numeric(floatval($K24->getCalculatedValue())) || ( $K24->getCalculatedValue() == 0)) {
                     $pgCmdPrelevHbInvert->setXAmont($k23->getCalculatedValue());
                 } else {
                     $pgCmdPrelevHbInvert->setXAmont($K24->getCalculatedValue());
                 }
-                if (is_null($L24) || !is_numeric($L24->getCalculatedValue()) || ( $L24->getCalculatedValue() == 0)) {
+                if (is_null($L24) || !is_numeric(floatval($L24->getCalculatedValue())) || ( $L24->getCalculatedValue() == 0)) {
                     $pgCmdPrelevHbInvert->setYAmont($L23->getCalculatedValue());
                 } else {
                     $pgCmdPrelevHbInvert->setYAmont($L24->getCalculatedValue());
                 }
-                if (is_null($M24) || !is_numeric($M24->getCalculatedValue()) || ( $M24->getCalculatedValue() == 0)) {
+                if (is_null($M24) || !is_numeric(floatval($M24->getCalculatedValue())) || ( $M24->getCalculatedValue() == 0)) {
                     $pgCmdPrelevHbInvert->setXAvalt($M23->getCalculatedValue());
                 } else {
                     $pgCmdPrelevHbInvert->setXAval($M24->getCalculatedValue());
                 }
-                if (is_null($N24) || !is_numeric($N24->getCalculatedValue()) || ( $N24->getCalculatedValue() == 0)) {
+                if (is_null($N24) || !is_numeric(floatval($N24->getCalculatedValue())) || ( $N24->getCalculatedValue() == 0)) {
                     $pgCmdPrelevHbInvert->setYAval($N23->getCalculatedValue());
                 } else {
                     $pgCmdPrelevHbInvert->setYAval($N24->getCalculatedValue());
@@ -983,7 +983,7 @@ class DepotHydrobio {
                         $pgCmdInvertRecouv->setPrelev($pgCmdPrelevHbInvert);
                         $pgCmdInvertRecouv->setSubstrat($substrat);
                         $pgCmdInvertRecouv->setRecouvrement($celH->getCalculatedValue());
-                        if (is_numeric($celH->getCalculatedValue())) {
+                        if (is_numeric(intval($celH->getCalculatedValue()))) {
                             $pgCmdInvertRecouv->setRecouvNum($celH->getCalculatedValue());
                         }
                         $emSqe->persist($pgCmdInvertRecouv);
@@ -1011,11 +1011,11 @@ class DepotHydrobio {
                             $pgCmdInvertPrelem->setPhase($mpf->getCalculatedValue());
                         }
                         $mpg = $worksheet->getCell('G' . $i);
-                        if (!is_null($mpg) && is_numeric($mpg->getCalculatedValue())) {
+                        if (!is_null($mpg) && is_numeric(intval($mpg->getCalculatedValue()))) {
                             $pgCmdInvertPrelem->setHauteurEau($mpg->getCalculatedValue());
                         }
                         $mph = $worksheet->getCell('H' . $i);
-                        if (!is_null($mph) && is_numeric($mph->getCalculatedValue())) {
+                        if (!is_null($mph) && is_numeric(intval($mph->getCalculatedValue()))) {
                             $pgCmdInvertPrelem->setColmatage($mph->getCalculatedValue());
                         }
                         $mpi = $worksheet->getCell('I' . $i);

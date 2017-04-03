@@ -84,7 +84,7 @@ class ProcessDepotHydrobioCommand extends AeagCommand {
                 $txtMessage .= 'Le traitement de la RAI ' . $pgCmdFichierRps->getNomFichier() . ' est maintenant terminé <br/>';
                 $txtMessage .= "L'état final est le suivant : <strong>" . $pgCmdFichierRps->getPhaseFichier()->getLibellePhase() . "</strong><br/>";
                 $txtMessage .= 'Vous pouvez lire le récapitulatif dans le fichier disponible à l\'adresse suivante : <a href="' . $url . '">' . $pgCmdFichierRps->getNomFichierCompteRendu() . '</a>';
-                $destinataires = $this->repoPgProgWebUsers->findAllByPrestataire($pgCmdFichierRps->getDemande()->getPrestataire());
+                $destinataires = $this->repoPgProgWebUsers->findByPrestataire($pgCmdFichierRps->getDemande()->getPrestataire());
                 foreach ($destinataires as $destinataire) {
                     $mailer = $this->getContainer()->get('mailer');
                     if (!$this->getContainer()->get('aeag_sqe.message')->createMail($this->em, $mailer, $txtMessage, $destinataire, $objetMessage)) {
