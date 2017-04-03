@@ -537,8 +537,8 @@ class FraisDeplacementController extends Controller {
                 }
 
                 if ($interval->format('%R%a') == 0) {
-                    $heureDepart = preg_split("_", $fraisDeplacement->getHeureDepart());
-                    $heureRetour = preg_split("_", $fraisDeplacement->getHeureRetour());
+                    $heureDepart = preg_split("/_/", $fraisDeplacement->getHeureDepart());
+                    $heureRetour = preg_split("/_/", $fraisDeplacement->getHeureRetour());
                     if ($heureDepart[0] > $heureRetour[0]) {
                         $constraint = new True(array(
                             'message' => 'L\'heure de départ ne peut être supérieure à l\'heure de retour'

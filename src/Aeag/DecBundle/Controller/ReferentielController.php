@@ -104,7 +104,7 @@ class ReferentielController extends Controller {
         $rep_export = $parametre->getLibelle();
         $fichiers = array();
         $i = 0;
-        $dir = opendir($rep_export) || die("Erreur le repertoire $rep_export n\'existe pas");
+        $dir = opendir($rep_export) or die("Erreur le repertoire $rep_export n\'existe pas");
         while ($fic = readdir($dir)) {
 //print_r('file : ' . $fic. "\n");
             if (is_file($fic) || !in_array($fic, array(".", ".."))) {
@@ -169,7 +169,7 @@ class ReferentielController extends Controller {
         $rep_export = $parametre->getLibelle();
         $fichiers = array();
         $i = 0;
-        $dir = opendir($rep_export) || die("Erreur le repertoire $rep_export n\'existe pas");
+        $dir = opendir($rep_export) or die("Erreur le repertoire $rep_export n\'existe pas");
         while ($fic = readdir($dir)) {
             if (is_file($fic) || !in_array($fic, array(".", ".."))) {
                 if (substr($fic, 0, 10) == 'dec_deccol') {

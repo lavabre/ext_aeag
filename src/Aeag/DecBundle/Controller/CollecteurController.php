@@ -1176,7 +1176,7 @@ class CollecteurController extends Controller {
         $repoParametre = $emDec->getRepository('AeagDecBundle:Parametre');
 
         if (is_object($user)) {
-            $tabMail = preg_split("@", $user->getEmail());
+            $tabMail = preg_split("/@/", $user->getEmail());
             if ($tabMail[1] == "a-renseigner-merci.svp") {
                 $valider = 'N';
             } else {
@@ -1978,11 +1978,12 @@ class CollecteurController extends Controller {
         $erreur = 0;
         $ligne = 0;
         set_time_limit(10000); // temps dexecution du script le plus longtemps
-        $dir = opendir($repertoire) || die("Erreur le repertoire $repertoire n\'existe pas");
+        $dir = opendir($repertoire) or die("Erreur le repertoire $repertoire n\'existe pas");
+        print_r('repertoire : ' . $repertoire);
         while ($fic = readdir($dir)) {
             //print_r('fichier : ' . $fic);
             if (is_file($fic) || (!in_array($fic, array(".", "..")) && $fic != 'Sauvegardes')) {
-                $res = preg_split("_", $fic);
+                $res = preg_split("/_/", $fic);
                 if ($res[2] == $collecteur->getNumero() && $res[3] == $declarationCollecteur->getAnnee() && $res[4] == $sousDeclarationCollecteur->getNumero()) {
                     $fichier = fopen($repertoire . '/' . $fic, "r");
 
@@ -2122,7 +2123,7 @@ class CollecteurController extends Controller {
                             } else {
                                 //print_r('date facture : ' . $tab[5] . ' a la ligne : ' . $ligne);
                                 $tab[5] = str_replace(' ', '', $tab[5]);
-                                $dateFact = preg_split("/", $tab[5]);
+                                $dateFact = split("/", $tab[5]);
                                 if (strlen($dateFact[2] == 2)) {
                                     $dateFact[2] = '20' . $dateFact[2];
                                 }

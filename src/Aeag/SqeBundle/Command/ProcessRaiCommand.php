@@ -88,7 +88,7 @@ class ProcessRaiCommand extends AeagCommand {
             // Envoi mail
             $objetMessage = "SQE - RAI : Fichier " . $pgCmdFichierRps->getNomFichier() . " - Récapitulatif";
             if ($this->getEnv() !== 'prod') {
-                $objetMessage .= " - ".$this->getEnv();
+                $objetMessage .= " - " . $this->getEnv();
             }
             $url = $this->getContainer()->get('router')->generate('AeagSqeBundle_echangefichiers_reponses_telecharger', array("reponseId" => $pgCmdFichierRps->getId(), "typeFichier" => "CR"), UrlGeneratorInterface::ABSOLUTE_URL);
             $txtMessage = "Lot : " . $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getNomLot() . "<br/>";
@@ -234,7 +234,7 @@ class ProcessRaiCommand extends AeagCommand {
 
                 // paramètres/unité : paramètre manquant => erreur
                 if (count($diffMiss = $this->repoPgTmpValidEdilabo->getDiffCodeParametreMissing($codePrelev["codePrelevement"], $demandeId, $reponseId)) > 0) {
-                    if (((count($diffMiss) == 1) && in_array(1429, $diffMiss)) || (($pgCmdFichierRps->getDemande()->getAnneeProg() < 2017 || ($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getTypeMarche() != 'MOE' && $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarch()->getTypeMarche() != 'MOA')) || $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getCodeMilieu()->getCodeMilieu() == 'LPC')) {
+                    if (((count($diffMiss) == 1) && in_array(1429, $diffMiss)) || (($pgCmdFichierRps->getDemande()->getAnneeProg() < 2017 || ($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getTypeMarche() != 'MOE' && $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getTypeMarche() != 'MOA')) || $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getCodeMilieu()->getCodeMilieu() == 'LPC')) {
                         $this->_addLog('warning', $demandeId, $reponseId, "Incoherence RAI/DAI: Paramètre manquant", $codePrelev["codePrelevement"], $diffMiss);
                     } else {
                         $this->_addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: Paramètre manquant", $codePrelev["codePrelevement"], $diffMiss);
@@ -253,10 +253,10 @@ class ProcessRaiCommand extends AeagCommand {
                 }
                 if (count($diff) > 0) {
                     //TODO Verrue bien dégueulasse
-                    /*if ($pgCmdFichierRps->getDemande()->getAnneeProg() == 2016 && $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getId() == 135) {
-                        
-                    }*/
-                    
+                    /* if ($pgCmdFichierRps->getDemande()->getAnneeProg() == 2016 && $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getId() == 135) {
+
+                      } */
+
                     if ($pgCmdFichierRps->getDemande()->getAnneeProg() >= 2017 && ($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getTypeMarche() == 'MOE' || $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getTypeMarche() == 'MOA')) {
                         $this->_addLog('error', $demandeId, $reponseId, "Incoherence RAI/DAI: Fractions différentes", $codePrelev["codePrelevement"], $diff);
                     } else {
@@ -272,7 +272,6 @@ class ProcessRaiCommand extends AeagCommand {
         $date = new \DateTime();
         $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI : RAI ' . $pgCmdFichierRps->getId() . ' - Fin cohérence RAI/DAI');
     }
-    
 
     protected function _existePresta($codeIntervenants) {
         foreach ($codeIntervenants as $codeIntervenant) {
@@ -345,7 +344,7 @@ class ProcessRaiCommand extends AeagCommand {
         $reponseId = $pgCmdFichierRps->getId();
         $lqM = $pgTmpValidEdilabo->getLqM();
         $marche = $pgCmdFichierRps->getDemande()->getLotan()->getLot()->getMarche()->getTypeMarche();
-        
+
         // III.1
         //$dateLog = new \DateTime();
         //$this->output->writeln($dateLog->format('d/m/Y H:i:s') . '- Process RAI : RAI '.$pgCmdFichierRps->getId().' - Controle Vraisemblance - '.$codePrelevement.' - Début III.1');
@@ -394,7 +393,6 @@ class ProcessRaiCommand extends AeagCommand {
         }
         //$dateLog = new \DateTime();
         //$this->output->writeln($dateLog->format('d/m/Y H:i:s') . '- Process RAI : RAI '.$pgCmdFichierRps->getId().' - Controle Vraisemblance - '.$codePrelevement.' - Fin III.5');
-        
         // Tests complémentaires
         if (is_array($result = $this->controleVraisemblaceService->testsComplementaires($mesure, $codeRq, $inSitu, $lqM, $marche))) {
             $this->_addLog($result[0], $demandeId, $reponseId, $result[1], $codePrelevement, $codeParametre);
@@ -410,7 +408,7 @@ class ProcessRaiCommand extends AeagCommand {
         if (is_array($result = $this->controleVraisemblaceService->pH($mPh))) {
             $this->_addLog($result[0], $demandeId, $reponseId, $result[1], $codePrelevement);
         }
-        
+
         // III.7 modèle  de WEISS : cohérence Teau, % O2, Concentration O2  sauf si Conductivité > 10 000
         $mConductivite = $this->getMesureByCodeParametre(1303, $demandeId, $reponseId, $codePrelevement, 23);
         if ($pgCmdFichierRps->getDemande()->getLotan()->getLot()->getCodeMilieu()->getCodeMilieu() !== 'LPC') {
@@ -423,8 +421,8 @@ class ProcessRaiCommand extends AeagCommand {
         }
 
         // III.8 Balance ionique (meq) sauf si tous les résultats < LQ
-        /*$this->getMesureByCodeParametre(1367, $demandeId, $reponseId, $codePrelevement, 3);
-        $this->getMesureByCodeParametre(1375, $demandeId, $reponseId, $codePrelevement, 3);*/
+        /* $this->getMesureByCodeParametre(1367, $demandeId, $reponseId, $codePrelevement, 3);
+          $this->getMesureByCodeParametre(1375, $demandeId, $reponseId, $codePrelevement, 3); */
         $cCationParams = array(1374 => $this->getMesureByCodeParametre(1374, $demandeId, $reponseId, $codePrelevement, 3),
             1335 => $this->getMesureByCodeParametre(1335, $demandeId, $reponseId, $codePrelevement, 3),
             1372 => $this->getMesureByCodeParametre(1372, $demandeId, $reponseId, $codePrelevement, 3),
@@ -450,13 +448,13 @@ class ProcessRaiCommand extends AeagCommand {
         if (is_array($result = $this->controleVraisemblaceService->balanceIonique($cCationParams, $cAnionParams, $codeRqCationParams, $codeRqAnionParams))) {
             $this->_addLog($result[0], $demandeId, $reponseId, $result[1], $codePrelevement);
         }
-        
+
         // III.9 Comparaison Balance ionique / conductivité (Feret)
         if (is_array($result = $this->controleVraisemblaceService->balanceIoniqueTds2($cCationParams, $cAnionParams, $codeRqCationParams, $codeRqAnionParams, $mConductivite))) {
             $this->_addLog($result[0], $demandeId, $reponseId, $result[1], $codePrelevement);
         }
 
-        // III.10 [PO4] (1433) en P < [P total](1350) 
+        // III.10 [PO4] (1433) en P < [P total](1350)
         $mPo4 = $this->getMesureByCodeParametre(1433, $demandeId, $reponseId, $codePrelevement, 3);
         $mP = $this->getMesureByCodeParametre(1350, $demandeId, $reponseId, $codePrelevement, 23);
         $codeRqPo4 = $this->getCodeRqByCodeParametre(1433, $demandeId, $reponseId, $codePrelevement, 3);
@@ -473,7 +471,7 @@ class ProcessRaiCommand extends AeagCommand {
         if (is_array($result = $this->controleVraisemblaceService->ammonium($mNh4, $mNkj, $codeRqNh4, $codeRqNkj))) {
             $this->_addLog($result[0], $demandeId, $reponseId, $result[1], $codePrelevement);
         }
-        
+
         // III.12 Valeur de pourcentage hors 1312 oxygène (ex : matière sèche ou granulo) : non compris entre 0 et 100 si code unité = 243 ou 246
         $tabMesures = array(243 => $this->repoPgTmpValidEdilabo->getMesureByCodeUnite(243, $demandeId, $reponseId, $codePrelevement, 1312),
             246 => $this->repoPgTmpValidEdilabo->getMesureByCodeUnite(246, $demandeId, $reponseId, $codePrelevement, 1312));
@@ -515,27 +513,27 @@ class ProcessRaiCommand extends AeagCommand {
             }
         }
 
-        //III.14 Contrôle de vraisemblance par parmètres macropolluants : Résultat d’analyse< Valeur max de la base x 2 
+        //III.14 Contrôle de vraisemblance par parmètres macropolluants : Résultat d’analyse< Valeur max de la base x 2
         $this->controleVraisemblanceMacroPolluants($demandeId, $reponseId, $codePrelevement);
-        
+
         //III.15 Détection Code remarque Lot 7 (Etat chimique, Substance pertinentes, Complément AEAG, PSEE) :  % de détection différent de 100 (= recherche d'absence de code remarque) suivant liste ref-doc
         $this->detectionCodeRemarqueLot7($demandeId, $reponseId, $codePrelevement);
-        
+
         //III.16
         $this->detectionCodeRemarqueLot8($demandeId, $reponseId, $codePrelevement);
-        
+
         // III.17
         $this->controleLqAeag($pgCmdFichierRps, $codePrelevement);
-        
+
         $this->codeMethodesValides($pgCmdFichierRps, $codePrelevement);
-        
+
         // Vérification des doublons
         $this->detectionDoublons($pgCmdFichierRps, $codePrelevement);
     }
 
-    //III.14 Contrôle de vraisemblance par parmètres macropolluants : Résultat d’analyse< Valeur max de la base x 2 
+    //III.14 Contrôle de vraisemblance par parmètres macropolluants : Résultat d’analyse< Valeur max de la base x 2
     public function controleVraisemblanceMacroPolluants($demandeId, $reponseId, $codePrelevement) {
-        
+
         $rps = $this->repoPgCmdFichiersRps->findOneById($reponseId);
         $codeMilieu = $rps->getDemande()->getLotan()->getLot()->getCodeMilieu()->getCodeMilieu();
         $pgProgBornesParams = $this->repoPgProgBornesParams->getPgProgBornesParamsByCodeMilieu($codeMilieu);
@@ -618,7 +616,7 @@ class ProcessRaiCommand extends AeagCommand {
 
     // III.17
     public function controleLqAeag($pgCmdFichierRps, $codePrelevement) {
-        
+
         $demandeId = $pgCmdFichierRps->getDemande()->getId();
         $reponseId = $pgCmdFichierRps->getId();
         $pgTmpValidEdilabos = $this->repoPgTmpValidEdilabo->findBy(array('demandeId' => $demandeId, 'fichierRpsId' => $reponseId, 'codePrelevement' => $codePrelevement));
@@ -627,7 +625,7 @@ class ProcessRaiCommand extends AeagCommand {
 
             foreach ($pgTmpValidEdilabos as $pgTmpValidEdilabo) {
                 if (!$this->controleVraisemblaceService->isNull($pgTmpValidEdilabo->getLqM())) {
-   
+
                     $lq = $this->repoPgProgLotLqParam->isNotValidLq($pgCmdFichierRps->getDemande()->getLotan()->getLot(), $pgTmpValidEdilabo->getCodeParametre(), $pgTmpValidEdilabo->getCodeFraction(), $pgTmpValidEdilabo->getLqM());
                     if (count($lq) > 0) {
                         $this->_addLog('warning', $demandeId, $reponseId, "Controle Lq AEAG : Lq supérieure à la valeur prévue: " . $pgTmpValidEdilabo->getLqM(), $codePrelevement, $pgTmpValidEdilabo->getCodeParametre());
@@ -655,17 +653,16 @@ class ProcessRaiCommand extends AeagCommand {
             }
         }
     }
-    
+
     public function detectionDoublons($pgCmdFichierRps, $codePrelevement) {
         $demandeId = $pgCmdFichierRps->getDemande()->getId();
         $reponseId = $pgCmdFichierRps->getId();
         $pgTmpValidEdilabos = $this->repoPgTmpValidEdilabo->findBy(array('demandeId' => $demandeId, 'fichierRpsId' => $reponseId, 'codePrelevement' => $codePrelevement));
-        foreach($pgTmpValidEdilabos as $pgTmpValidEdilabo) {
+        foreach ($pgTmpValidEdilabos as $pgTmpValidEdilabo) {
             $pgTmpValidEdilabosDoublons = $this->repoPgTmpValidEdilabo->findBy(array('demandeId' => $demandeId, 'fichierRpsId' => $reponseId, 'codePrelevement' => $codePrelevement, "numOrdre" => $pgTmpValidEdilabo->getNumOrdre(), "codeParametre" => $pgTmpValidEdilabo->getCodeParametre(), "codeFraction" => $pgTmpValidEdilabo->getCodeFraction()));
             if (count($pgTmpValidEdilabosDoublons) > 1) {
-                $this->_addLog('error', $demandeId, $reponseId, "Détection doublons analyse : Présence de doublon pour le prelevement ".$codePrelevement." , le numero d'ordre ".$pgTmpValidEdilabo->getNumOrdre()." , le code parametre ".$pgTmpValidEdilabo->getCodeParametre()."  et le code fraction  ".$pgTmpValidEdilabo->getCodeFraction(), $codePrelevement);
+                $this->_addLog('error', $demandeId, $reponseId, "Détection doublons analyse : Présence de doublon pour le prelevement " . $codePrelevement . " , le numero d'ordre " . $pgTmpValidEdilabo->getNumOrdre() . " , le code parametre " . $pgTmpValidEdilabo->getCodeParametre() . "  et le code fraction  " . $pgTmpValidEdilabo->getCodeFraction(), $codePrelevement);
             }
-            
         }
     }
 
