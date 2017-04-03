@@ -828,7 +828,7 @@ class DepotHydrobio {
                 $celE = $worksheet->getCell('E' . $i);
                 $celF = $worksheet->getCell('F' . $i);
                 $celG = $worksheet->getCell('G' . $i);
-                if ($celD->getCalculatedValue() != '' && $celC->getCalculatedValue() != '') {
+                if ($celD->getCalculatedValue() != '' || $celC->getCalculatedValue() != '') {
                     if ($celD->getCalculatedValue() == '') {
                         $erreur = true;
                         $contenu = '                     Erreur : cellule D' . $i . '  le code Sandre doit être renseigné. ' . CHR(13) . CHR(10);
