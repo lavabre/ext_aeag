@@ -489,7 +489,6 @@ class DepotHydrobio {
 
             $emSqe->flush();
 
-
             $contenu = CHR(13) . CHR(10);
             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
             fputs($rapport, $contenu);
