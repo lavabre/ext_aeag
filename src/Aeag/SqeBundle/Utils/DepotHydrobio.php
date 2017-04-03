@@ -234,20 +234,20 @@ class DepotHydrobio {
             $H23 = $worksheet->getCell('H23');
             str_replace(',', '.', $H23->getCalculatedValue());
             $avertissement = false;
-            if (is_null($G23) || is_null($H23)) {
+            if ($G23->getCalculatedValue() == '' && $H23->getCalculatedValue() == '') {
                 $avertissement = true;
-                $contenu = '                     Avertissement : Coordonnées Lambert 93 incorrectes ou non renseignées. ' . CHR(13) . CHR(10);
+                $contenu = '                     Avertissement : Coordonnées Lambert 93 non renseignées. ' . CHR(13) . CHR(10);
                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                 fputs($rapport, $contenu);
             } elseif (!is_numeric($G23->getCalculatedValue()) || !is_numeric($H23->getCalculatedValue())) {
                 $avertissement = true;
-                $contenu = '                     Avertissement : Coordonnées Lambert 93 incorrectes ou non renseignées. ';
+                $contenu = '                     Avertissement : Coordonnées Lambert 93 incorrectes. ';
                 $contenu = $contenu . ' G23 : ' . $G23->getCalculatedValue() . ' H23 : ' . $H23->getCalculatedValue() . CHR(13) . CHR(10);
                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                 fputs($rapport, $contenu);
-            } elseif ($G23->getCalculatedValue() == 0 || $H23->getCalculatedValue() == 0) {
+            } elseif ($G23->getCalculatedValue() == 0 && $H23->getCalculatedValue() == 0) {
                 $avertissement = true;
-                $contenu = '                     Avertissement : Coordonnées Lambert 93 incorrectes ou non renseignées. ' . CHR(13) . CHR(10);
+                $contenu = '                     Avertissement : Coordonnées Lambert 93 non renseignées. ' . CHR(13) . CHR(10);
                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                 fputs($rapport, $contenu);
             }
@@ -258,20 +258,20 @@ class DepotHydrobio {
                 str_replace(',', '.', $G22->getCalculatedValue());
                 $H22 = $worksheet->getCell('H22');
                 str_replace(',', '.', $H22->getCalculatedValue());
-                if (is_null($G22) || is_null($H22)) {
+                if ($G22->getCalculatedValue() == '' && $H22->getCalculatedValue() == '') {
                     $erreur = true;
-                    $contenu = '                     Erreur : Coordonnées Lambert II incorrectes ou non renseignées. ' . CHR(13) . CHR(10);
+                    $contenu = '                     Erreur : Coordonnées Lambert II non renseignées. ' . CHR(13) . CHR(10);
                     $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                     fputs($rapport, $contenu);
                 } elseif (!is_numeric($G22->getCalculatedValue()) || !is_numeric($H22->getCalculatedValue())) {
                     $erreur = true;
-                    $contenu = '                     Erreur : Coordonnées Lambert II incorrectes ou non renseignées. ';
+                    $contenu = '                     Erreur : Coordonnées Lambert II incorrectes. ';
                     $contenu = $contenu . ' G22 : ' . $G22->getCalculatedValue() . ' H22 : ' . $H22->getCalculatedValue() . CHR(13) . CHR(10);
                     $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                     fputs($rapport, $contenu);
-                } elseif ($G22->getCalculatedValue() == 0 || $H223->getCalculatedValue() == 0) {
+                } elseif ($G22->getCalculatedValue() == 0 && $H223->getCalculatedValue() == 0) {
                     $erreur = true;
-                    $contenu = '                     Erreur : Coordonnées Lambert II incorrectes ou non renseignées. ' . CHR(13) . CHR(10);
+                    $contenu = '                     Erreur : Coordonnées Lambert II non renseignées. ' . CHR(13) . CHR(10);
                     $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                     fputs($rapport, $contenu);
                 }
@@ -582,20 +582,20 @@ class DepotHydrobio {
             $N24 = $worksheet->getCell('N24');
             str_replace(',', '.', $N24->getCalculatedValue());
             $avertissement = false;
-            if (is_null($K24) || is_null($L24) || is_null($M24) || is_null($N24)) {
+            if ($K24->getCalculatedValue() == '' && $L24->getCalculatedValue() == '' && $M24->getCalculatedValue() == '' && $N24->getCalculatedValue() == '') {
                 $avertissement = true;
-                $contenu = '                     Avertissement : Coordonnées Lambert 93 incorrectes ou non renseignées. ' . CHR(13) . CHR(10);
+                $contenu = '                     Avertissement : Coordonnées Lambert 93 non renseignées. ' . CHR(13) . CHR(10);
                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                 fputs($rapport, $contenu);
             } elseif (!is_numeric($K24->getCalculatedValue()) || !is_numeric($L24->getCalculatedValue()) || !is_numeric($M24->getCalculatedValue()) || !is_numeric($N24->getCalculatedValue())) {
                 $avertissement = true;
-                $contenu = '                     Avertissement : Coordonnées Lambert 93 incorrectes ou non renseignées. ';
+                $contenu = '                     Avertissement : Coordonnées Lambert 93 incorrectes. ';
                 $contenu = $contenu . ' K24 : ' . $K24->getCalculatedValue() . ' L24 : ' . $L24->getCalculatedValue() . ' M24 : ' . $M24->getCalculatedValue() . ' N24 : ' . $N24->getCalculatedValue() . CHR(13) . CHR(10);
                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                 fputs($rapport, $contenu);
-            } elseif ($K24->getCalculatedValue() == 0 || $L24->getCalculatedValue() == 0 || $M24->getCalculatedValue() == 0 || $N24->getCalculatedValue() == 0) {
+            } elseif ($K24->getCalculatedValue() == 0 && $L24->getCalculatedValue() == 0 && $M24->getCalculatedValue() == 0 && $N24->getCalculatedValue() == 0) {
                 $avertissement = true;
-                $contenu = '                     Avertissement : Coordonnées Lambert 93 incorrectes ou non renseignées. ' . CHR(13) . CHR(10);
+                $contenu = '                     Avertissement : Coordonnées Lambert 93 non renseignées. ' . CHR(13) . CHR(10);
                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                 fputs($rapport, $contenu);
             }
@@ -610,20 +610,20 @@ class DepotHydrobio {
                 str_replace(',', '.', $M23->getCalculatedValue());
                 $N23 = $worksheet->getCell('N23');
                 str_replace(',', '.', $N23->getCalculatedValue());
-                if (is_null($K23) || is_null($L23) || is_null($M23) || is_null($N23)) {
+                if ($K23->getCalculatedValue() == '' && $L23->getCalculatedValue() == '' && $M23->getCalculatedValue() == '' && $N23->getCalculatedValue() == '') {
                     $erreur = true;
-                    $contenu = '                     Erreur : Coordonnées Lambert II incorrectes ou non renseignées. ' . CHR(13) . CHR(10);
+                    $contenu = '                     Erreur : Coordonnées Lambert II non renseignées. ' . CHR(13) . CHR(10);
                     $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                     fputs($rapport, $contenu);
                 } elseif (!is_numeric($K23->getCalculatedValue()) || !is_numeric($L23->getCalculatedValue()) || !is_numeric($M23->getCalculatedValue()) || !is_numeric($N23->getCalculatedValue())) {
                     $erreur = true;
-                    $contenu = '                     Erreur : Coordonnées Lambert II incorrectes ou non renseignées. ';
+                    $contenu = '                     Erreur : Coordonnées Lambert II incorrectes. ';
                     $contenu = $contenu . ' K23 : ' . $K23->getCalculatedValue() . ' L23 : ' . $L23->getCalculatedValue() . ' M23 : ' . $M23->getCalculatedValue() . ' N23 : ' . $N23->getCalculatedValue() . CHR(13) . CHR(10);
                     $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                     fputs($rapport, $contenu);
-                } elseif ($K23->getCalculatedValue() == 0 || $L23->getCalculatedValue() == 0 || $M23->getCalculatedValue() == 0 || $N23->getCalculatedValue() == 0) {
+                } elseif ($K23->getCalculatedValue() == 0 && $L23->getCalculatedValue() == 0 && $M23->getCalculatedValue() == 0 && $N23->getCalculatedValue() == 0) {
                     $erreur = true;
-                    $contenu = '                     Erreur : Coordonnées Lambert II incorrectes ou non renseignées. ' . CHR(13) . CHR(10);
+                    $contenu = '                     Erreur : Coordonnées Lambert II  non renseignées. ' . CHR(13) . CHR(10);
                     $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                     fputs($rapport, $contenu);
                 }

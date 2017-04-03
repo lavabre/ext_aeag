@@ -5,11 +5,11 @@
     <li  class="active">
     {% else %}
     <li>
-    {% endif %}   
+    {% endif %}
     <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
         {%if app.session.get('menu') == 'programmation'%}<span class="selected"></span>{%endif%}
         Programmation
-         <i class="fa fa-angle-down"></i>     
+        <i class="fa fa-angle-down"></i>
     </a>
 
     <ul class="dropdown-menu">
@@ -24,55 +24,55 @@
     <li  class="active">
     {% else %}
     <li>
-    {% endif %}   
+    {% endif %}
     <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
         {%if app.session.get('menu') == 'echangeFichier'%}<span class="selected"></span>{%endif%}
         Données
-        <i class="fa fa-angle-down"></i>     
+        <i class="fa fa-angle-down"></i>
     </a>
 
     <ul class="dropdown-menu">
         <li><a href="{{ path('AeagSqeBundle_echangefichiers_index')}}">Echange EDI LABO</a></li>
-       {# {% if  not app.session.get('evolution')%}#}
+            {# {% if  not app.session.get('evolution')%}#}
         <li><a href="{{ path('AeagSqeBundle_depotHydrobio_index')}}">Dépôt Hydrobio</a></li>
-       {# {% endif %}   #}
-        {% if app.session.get('suiviDonnees') %}
-                <li><a  href="{{ path('AeagSqeBundle_saisieDonnees_index')}}" title="Saisie Terrain / Labo">Saisie Terrain / Labo</a></li>
-        {% endif %}
-            <li><a  href="{{ path('AeagSqeBundle_exportdonneesbrutes_index')}}" title="Export des Données Brutes">Export des Données Brutes</a></li>    
-     </ul>
+            {# {% endif %}   #}
+            {% if app.session.get('suiviDonnees') %}
+            <li><a  href="{{ path('AeagSqeBundle_saisieDonnees_index')}}" title="Saisie Terrain / Labo">Saisie Terrain / Labo</a></li>
+            {% endif %}
+        <li><a  href="{{ path('AeagSqeBundle_exportdonneesbrutes_index')}}" title="Export des Données Brutes">Export des Données Brutes</a></li>
+    </ul>
 </li>
 
 {% if app.session.get('suiviDonnees')  or app.session.get('suiviHb') or app.session.get('suiviQHb') or app.session.get('suiviSED') %}
- 
-{%if  app.session.get('menu') == 'syntheseHydrobio' or app.session.get('menu') == 'suiviHydrobio' or app.session.get('menu') == 'suiviSediment'%}
-    <li  class="active">
-    {% else %}
-    <li>
-    {% endif %}   
-    <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
-        {%if app.session.get('menu') == 'programmation'%}<span class="selected"></span>{%endif%}
-        Suivi des prélèvements
-        <i class="fa fa-angle-down"></i>     
-    </a>
 
-    <ul class="dropdown-menu">
-        <li><a href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}">Hydrobio</a></li>
-        {% if app.session.get('suiviQHb') %}
-        <li><a href="{{ path('AeagSqeBundle_suiviHydrobio_synthese')}}">Qualification Hydrobio</a></li>
+    {%if  app.session.get('menu') == 'syntheseHydrobio' or app.session.get('menu') == 'suiviHydrobio' or app.session.get('menu') == 'suiviSediment'%}
+        <li  class="active">
+        {% else %}
+        <li>
         {% endif %}
-        {% if app.session.get('suiviSED') %}
-        <li><a href="{{ path('AeagSqeBundle_suiviSediment_index')}}">Sédiment</a></li>
-        {% endif  %}
-        {# {% if  not app.session.get('evolution')%}#}
-                 {% if app.session.get('suiviEau') %}
-                           <li><a href="{{ path('AeagSqeBundle_suiviEau_index')}}">Eau</a></li>
-                 {% endif %}
-         {#{% endif %}#}
-         <li><a href="{{ path('AeagSqeBundle_planning_index', {'typeMilieu': 'HB'}) }}" title="Planning Hydrobio">Planning Hydrobio</a></li>
-         <li><a href="{{ path('AeagSqeBundle_planning_index', {'typeMilieu': 'PC'}) }}" title="Planning Autres"> Planning Autres</a></li>
-     </ul>
-</li>
+        <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+            {%if app.session.get('menu') == 'programmation'%}<span class="selected"></span>{%endif%}
+            Suivi des prélèvements
+            <i class="fa fa-angle-down"></i>
+        </a>
+
+        <ul class="dropdown-menu">
+            <li><a href="{{ path('AeagSqeBundle_suiviHydrobio_index')}}">Hydrobio</a></li>
+                {% if app.session.get('suiviQHb') %}
+                <li><a href="{{ path('AeagSqeBundle_suiviHydrobio_synthese')}}">Qualification Hydrobio</a></li>
+                {% endif %}
+                {% if app.session.get('suiviSED') %}
+                <li><a href="{{ path('AeagSqeBundle_suiviSediment_index')}}">Sédiment</a></li>
+                {% endif  %}
+                {# {% if  not app.session.get('evolution')%}#}
+                {% if app.session.get('suiviEau') %}
+                <li><a href="{{ path('AeagSqeBundle_suiviEau_index')}}">Eau</a></li>
+                {% endif %}
+                {#{% endif %}#}
+            <li><a href="{{ path('AeagSqeBundle_planning_index', {'typeMilieu': 'HB'}) }}" title="Planning Hydrobio">Planning Hydrobio</a></li>
+            <li><a href="{{ path('AeagSqeBundle_planning_index', {'typeMilieu': 'PC'}) }}" title="Planning Autres"> Planning Autres</a></li>
+        </ul>
+    </li>
 {% endif %}
 
 {%if app.session.get('menu') == 'referentiel'%}
@@ -83,7 +83,7 @@
     <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
         {%if app.session.get('menu') == 'referentiel'%}<span class="selected"></span>{%endif%}
         Référentiel
-        <i class="fa fa-angle-down"></i>     
+        <i class="fa fa-angle-down"></i>
     </a>
     <ul class="dropdown-menu">
         <li class="dropdown-submenu">
@@ -124,19 +124,21 @@
             </ul>
         </li>
     </ul>
-</li>   
+</li>
 
 <li>
- <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+    <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
         {%if app.session.get('menu') == 'programmation'%}<span class="selected"></span>{%endif%}
         Aides
-        <i class="fa fa-angle-down"></i>     
+        <i class="fa fa-angle-down"></i>
     </a>
 
     <ul class="dropdown-menu">
         <li><a  href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur-prog.pdf') }}" target="_blank" title="Aide">Aide programmation</a></li>
         <li><a  href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur.pdf') }}" target="_blank" title="Aide">Aide utilisateur</a></li>
-     </ul>
+        <li><a  href="{{ asset('bundles/aeagsqe/doc/Procedure-de-depot-des-donnees-hydrobiologiques-SQEterrain.pdf') }}" target="_blank" title="Aide dépôt des données hydrobiologiques terrains">Aide dépôt des données hydrobiologiques terrains</a></li>
+        <li><a  href="{{ asset('bundles/aeagsqe/doc/procedure-Depot-donnees-hydrobio-SQE.pdf') }}" target="_blank" title="Aide dépôt des données hydrobiologiques analyses">Aide dépôt des données hydrobiologiques analyses</a></li>
+    </ul>
 </li>
 
 {%if app.session.get('menu') == 'contact'%}

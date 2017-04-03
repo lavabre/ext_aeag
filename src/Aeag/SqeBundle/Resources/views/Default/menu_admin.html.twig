@@ -15,29 +15,29 @@
     <li  class="active">
     {% else %}
     <li>
-    {% endif %}   
+    {% endif %}
     <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
         {%if app.session.get('menu') == 'programmation'%}<span class="selected"></span>{%endif%}
         Programmation
-        <i class="fa fa-angle-down"></i>     
+        <i class="fa fa-angle-down"></i>
     </a>
 
     <ul class="dropdown-menu">
         <li><a href="{{ path('Aeag_sqe_programmation_lots', {'action': 'P'}) }}">Programmer</a></li>
         <li><a href="{{ path('Aeag_sqe_programmation_lots', {'action': 'V'}) }}">Consulter</a></li>
             {% if  not app.session.get('evolution')%}
-             <li class="dropdown-submenu">
+            <li class="dropdown-submenu">
                 <a href="javascript:;">
                     Avancement campagne
                 </a>
                 <ul class="dropdown-menu">
                     {% for anneeProg  in app.session.get('anneeProgs')%}
-                    <li><a href="{{ path('AeagSqeBundle_programmation_avancement_hydro',{ 'anneeProg': anneeProg }) }}" title="Avancement campagne {{ anneeProg }} Hydrobio"> Hydrobio {{ anneeProg }} </a></li>
-                    <li><a href="{{ path('AeagSqeBundle_programmation_avancement_analyse',{ 'anneeProg': anneeProg }) }}" title="Avancement campagne {{ anneeProg }} Analyses"> Analyses {{ anneeProg }} </a></li>
-                     {% endfor %}
+                        <li><a href="{{ path('AeagSqeBundle_programmation_avancement_hydro',{ 'anneeProg': anneeProg }) }}" title="Avancement campagne {{ anneeProg }} Hydrobio"> Hydrobio {{ anneeProg }} </a></li>
+                        <li><a href="{{ path('AeagSqeBundle_programmation_avancement_analyse',{ 'anneeProg': anneeProg }) }}" title="Avancement campagne {{ anneeProg }} Analyses"> Analyses {{ anneeProg }} </a></li>
+                        {% endfor %}
                     <li><a href="{{ path('AeagSqeBundle_programmation_avancement_prelevement') }}" title="Avancement campagne Prélèvements"> Prélèvements </a></li>
-               </ul>
-                <li><a href="{{ path('AeagSqeBundle_programmation_avancement_programmation') }}" title="Avancement pogrammation">Avancement programmation  </a></li>
+                </ul>
+            <li><a href="{{ path('AeagSqeBundle_programmation_avancement_programmation') }}" title="Avancement pogrammation">Avancement programmation  </a></li>
             {% endif %}
     </ul>
 </li>
@@ -48,18 +48,18 @@
     <li  class="active">
     {% else %}
     <li>
-    {% endif %}   
+    {% endif %}
     <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
         {%if app.session.get('menu') == 'echangeFichier'%}<span class="selected"></span>{%endif%}
         Données
-        <i class="fa fa-angle-down"></i>     
+        <i class="fa fa-angle-down"></i>
     </a>
 
     <ul class="dropdown-menu">
         <li><a href="{{ path('AeagSqeBundle_echangefichiers_index')}}">Echange EDI LABO</a></li>
-       {# {% if  not app.session.get('evolution')%}#}
+            {# {% if  not app.session.get('evolution')%}#}
         <li><a href="{{ path('AeagSqeBundle_depotHydrobio_index')}}">Dépôt Hydrobio</a></li>
-      {#  {% endif %}   #}
+            {#  {% endif %}   #}
         <li><a href="{{ path('AeagSqeBundle_saisieDonnees_index')}}">Saisie Terrain / Labo</a></li>
         <li><a href="{{ path('AeagSqeBundle_exportdonneesbrutes_index')}}">Export données brutes</a></li>
     </ul>
@@ -70,11 +70,11 @@
     <li  class="active">
     {% else %}
     <li>
-    {% endif %}   
+    {% endif %}
     <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
         {%if app.session.get('menu') == 'programmation'%}<span class="selected"></span>{%endif%}
         Suivi des prélèvements
-        <i class="fa fa-angle-down"></i>     
+        <i class="fa fa-angle-down"></i>
     </a>
 
     <ul class="dropdown-menu">
@@ -103,7 +103,7 @@
     <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
         {%if app.session.get('menu') == 'referentiel'%}<span class="selected"></span>{%endif%}
         Référentiel
-        <i class="fa fa-angle-down"></i>     
+        <i class="fa fa-angle-down"></i>
     </a>
     <ul class="dropdown-menu">
         <li class="dropdown-submenu">
@@ -145,17 +145,19 @@
             </ul>
         </li>
     </ul>
-</li>   
+</li>
 
 <li>
     <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
         {%if app.session.get('menu') == 'programmation'%}<span class="selected"></span>{%endif%}
         Aides
-        <i class="fa fa-angle-down"></i>     
+        <i class="fa fa-angle-down"></i>
     </a>
 
     <ul class="dropdown-menu">
         <li><a  href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur-prog.pdf') }}" target="_blank" title="Aide">Aide programmation</a></li>
         <li><a  href="{{ asset('bundles/aeagsqe/doc/manuel-utilisateur.pdf') }}" target="_blank" title="Aide">Aide utilisateur</a></li>
+        <li><a  href="{{ asset('bundles/aeagsqe/doc/Procedure-de-depot-des-donnees-hydrobiologiques-SQEterrain.pdf') }}" target="_blank" title="Aide dépôt des données hydrobiologiques terrains">Aide dépôt des données hydrobiologiques terrains</a></li>
+        <li><a  href="{{ asset('bundles/aeagsqe/doc/procedure-Depot-donnees-hydrobio-SQE.pdf') }}" target="_blank" title="Aide dépôt des données hydrobiologiques analyses">Aide dépôt des données hydrobiologiques analyses</a></li>
     </ul>
 </li>
