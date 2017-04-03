@@ -2632,13 +2632,16 @@ class SuiviHydrobioController extends Controller {
             return $this->redirect($this->generateUrl('AeagSqeBundle_suiviHydrobio_lot_periode_station_demande_suivi_fichier_telecharger', array('suiviPrelId' => $suiviPrelId)));
         }
 
-        $pgCmdDwnldUsrRps = new PgCmdDwnldUsrRps();
-        $pgCmdDwnldUsrRps->setUser($pgProgWebUser);
-        $pgCmdDwnldUsrRps->setFichierReponse($pgCmdFichiersRps);
-        $pgCmdDwnldUsrRps->setDate(new \DateTime());
-        $pgCmdDwnldUsrRps->setTypeFichier($pgCmdFichiersRps->getTypeFichier());
-        $emSqe->persist($pgCmdDwnldUsrRps);
-        $emSqe->flush();
+
+        if ($pgProgWebUser) {
+            $pgCmdDwnldUsrRps = new PgCmdDwnldUsrRps();
+            $pgCmdDwnldUsrRps->setUser($pgProgWebUser);
+            $pgCmdDwnldUsrRps->setFichierReponse($pgCmdFichiersRps);
+            $pgCmdDwnldUsrRps->setDate(new \DateTime());
+            $pgCmdDwnldUsrRps->setTypeFichier($pgCmdFichiersRps->getTypeFichier());
+            $emSqe->persist($pgCmdDwnldUsrRps);
+            $emSqe->flush();
+        }
 
         $chemin = $pathBase . '/' . $fichierZip;
         //print_r('chemin : ' . $chemin);
