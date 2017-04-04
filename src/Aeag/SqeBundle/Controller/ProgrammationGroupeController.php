@@ -1414,7 +1414,7 @@ class ProgrammationGroupeController extends Controller {
         $action = $request->get('action');
         $maj = $request->get('maj');
         $selParametres = explode(',', $request->get('parametres'));
-        $selIdprestataires = explode(',', $request->get('idPrestataires'));
+        $selIdPrestataires = explode(',', $request->get('idPrestataires'));
         $selPrestataires = explode(',', $request->get('prestataires'));
 
         $annee = $session->get('critAnnee');

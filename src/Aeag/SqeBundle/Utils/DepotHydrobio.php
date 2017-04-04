@@ -124,12 +124,14 @@ class DepotHydrobio {
 
                     /* On extrait le fichier */
                     if (zip_entry_open($zip, $zip_entry, "r")) {
-                        $fd = fopen($complete_name, 'w');
+                        if (is_file($complete_name)) {
+                            $fd = fopen($complete_name, 'w');
 
-                        fwrite($fd, zip_entry_read($zip_entry, zip_entry_filesize($zip_entry)));
+                            fwrite($fd, zip_entry_read($zip_entry, zip_entry_filesize($zip_entry)));
 
-                        fclose($fd);
-                        zip_entry_close($zip_entry);
+                            fclose($fd);
+                            zip_entry_close($zip_entry);
+                        }
                     }
                 }
             }
@@ -1383,7 +1385,7 @@ class DepotHydrobio {
         $tabFichier['fichier'] = $nomFichier;
 
         $contenu = '          Pdf : ' . $nomFichier . CHR(13) . CHR(10);
-        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+        // $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
         fputs($rapport, $contenu);
 
         $avertissement = false;

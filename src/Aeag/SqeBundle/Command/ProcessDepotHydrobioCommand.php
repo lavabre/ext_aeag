@@ -36,7 +36,7 @@ class ProcessDepotHydrobioCommand extends AeagCommand {
 
             if (count($pgCmdFichiersRps) > 0) {
                 $date = new \DateTime();
-                $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI DepotHydrobio : ' . count($pgCmdFichiersRps) . " RAI(s) vont être traitées ");
+                $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI DepotHydrobio : ' . count($pgCmdFichiersRps) . " RAI(s) vont etre traitees ");
             }
 
 
@@ -85,10 +85,16 @@ class ProcessDepotHydrobioCommand extends AeagCommand {
                 $txtMessage .= "L'état final est le suivant : <strong>" . $pgCmdFichierRps->getPhaseFichier()->getLibellePhase() . "</strong><br/>";
                 $txtMessage .= 'Vous pouvez lire le récapitulatif dans le fichier disponible à l\'adresse suivante : <a href="' . $url . '">' . $pgCmdFichierRps->getNomFichierCompteRendu() . '</a>';
                 $destinataires = $this->repoPgProgWebUsers->findByPrestataire($pgCmdFichierRps->getDemande()->getPrestataire());
+                $mailer = $this->getContainer()->get('mailer');
                 foreach ($destinataires as $destinataire) {
-                    $mailer = $this->getContainer()->get('mailer');
                     if (!$this->getContainer()->get('aeag_sqe.message')->createMail($this->em, $mailer, $txtMessage, $destinataire, $objetMessage)) {
                         $this->_addLog('warning', $pgCmdFichierRps->getDemande()->getId(), $pgCmdFichierRps->getId(), "Erreur lors de l\'envoi de mail dans le process de dépot hydrobio", null, $destinataire);
+                    }
+                }
+                if (!$erreur) {
+                    $responsable = $this->repoPgProgWebUsers->getPgProgWebusersByid(3);
+                    if (!$this->getContainer()->get('aeag_sqe.message')->createMail($this->em, $mailer, $txtMessage, $responsable, $objetMessage)) {
+                        $this->_addLog('warning', $pgCmdFichierRps->getDemande()->getId(), $pgCmdFichierRps->getId(), "Erreur lors de l\'envoi de mail dans le process de dépot hydrobio", null, $responsable);
                     }
                 }
 
@@ -107,7 +113,7 @@ class ProcessDepotHydrobioCommand extends AeagCommand {
         }
         $date = new \DateTime();
         $cptRaisTraitesTot = $cptRaisTraitesOk + $cptRaisTraitesNok;
-        $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI DepotHydrobio  : ' . $cptRaisTraitesTot . " Depot hydrobio traitée(s), " . $cptRaisTraitesOk . " OK, " . $cptRaisTraitesNok . " NOK");
+        $this->output->writeln($date->format('d/m/Y H:i:s') . '- Process RAI DepotHydrobio  : ' . $cptRaisTraitesTot . " Depot hydrobio traitee(s), " . $cptRaisTraitesOk . " OK, " . $cptRaisTraitesNok . " NOK");
     }
 
 }
