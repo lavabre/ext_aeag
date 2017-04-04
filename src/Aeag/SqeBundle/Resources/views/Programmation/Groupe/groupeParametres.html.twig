@@ -160,7 +160,7 @@
                                                                                 {%if laboratoires | length %}
                                                                                     {% if parametre.prestataire %}
                                                                                         {% for laboratoire in laboratoires if parametre.prestataire.adrCorId == laboratoire.adrCorId %}
-                                                                                            $("#prestataire_{{ parametre.pgSandreParametre.codeParametre }} option[value='" +           {{ laboratoire.adrCorId }} + "']").attr('selected', 'selected');
+                                                                                            $("#prestataire_{{ parametre.pgSandreParametre.codeParametre }} option[value='" +                  {{ laboratoire.adrCorId }} + "']").attr('selected', 'selected');
                                                                                             {#   $("#prestataire_{{ parametre.pgSandreParametre.codeParametre }}").val('{{ laboratoire.nomCorres }}');#}
                                                                                         {% endfor %}
                                                                                     {% endif %}
@@ -247,18 +247,23 @@
                                                                         };
                                                                         tableGroupeParametres.page.len( - 1).draw();
                                                                         var tableCocher = new Array();
+                                                                        tableCocher['parametre'] = new Array();
+                                                                        tableCocher['idPrestataire'] = new Array();
+                                                                        tableCocher['prestataire'] = new Array();
                                                                         var i = 0;
                                                                     {% if groupe.parametres | length %}
                                                                         {% for parametre in groupe.parametres %}
                                                                             if ($('#check_{{ parametre.pgSandreParametre.codeParametre }}').prop('checked') == true){
-                                                                            tableCocher[i] = {{ parametre.pgSandreParametre.codeParametre }};
+                                                                            tableCocher['parametre'][i] = {{ parametre.pgSandreParametre.codeParametre }};
+                                                                            tableCocher['idPrestataire'][i] = $('#idPrestataire_{{ parametre.pgSandreParametre.codeParametre }}').val();
+                                                                            tableCocher['prestataire'][i] = $('#prestataire_{{ parametre.pgSandreParametre.codeParametre }}').val();
                                                                             i++;
                                                                             };
                                                                         {% endfor %}
                                                                     {% endif %}
 
                                                                         var $this = $('#idForm_groupe_parametres'); // L'objet jQuery du formulaire
-                                                                        var url = '{{ path("AeagSqeBundle_programmation_groupe_valider",{"groupeId":  "texte","action": "par1","maj":"par2","lotan":"par3", "cochers":"par4"}) }}', // Le nom du fichier indiqué dans le formulaire
+                                                                        var url = '{{ path("AeagSqeBundle_programmation_groupe_valider",{"groupeId":  "texte","action": "par1","maj":"par2","lotan":"par3", "parametres":"par4", "idPrestataires":"par5", "prestataires":"par6"}) }}', // Le nom du fichier indiqué dans le formulaire
                                                                                 url = url.replace("texte", {{ groupe.groupe.id }});
                                                                         url = url.replace("par1", '{{ action }}');
                                                                         url = url.replace("amp;", "");
@@ -266,7 +271,11 @@
                                                                         url = url.replace("amp;", "");
                                                                         url = url.replace("par3", '{{ lotan.id }}');
                                                                         url = url.replace("amp;", "");
-                                                                        url = url.replace("par4", tableCocher);
+                                                                        url = url.replace("par4", tableCocher['parametre']);
+                                                                        url = url.replace("amp;", "");
+                                                                        url = url.replace("par5", tableCocher['idPrestataire']);
+                                                                        url = url.replace("amp;", "");
+                                                                        url = url.replace("par6", tableCocher['prestataire']);
                                                                         url = url.replace("amp;", "");
                                                                         $.ajax({
                                                                         url: url,
@@ -291,8 +300,8 @@
                                                                                     }
                                                                         {% endfor %}
                                                                     {% endif %}
-                                                                                $("#idNbParametres_{{ groupe.groupe.id }}").empty().append(nbParametres + '/' +        {{ groupe.parametres | length }} );
-                                                                                if (nbParametres == 0 &&        {{ groupe.parametres | length }} != 0){
+                                                                                $("#idNbParametres_{{ groupe.groupe.id }}").empty().append(nbParametres + '/' +               {{ groupe.parametres | length }} );
+                                                                                if (nbParametres == 0 &&               {{ groupe.parametres | length }} != 0){
                                                                                 $("#idTd_{{ groupe.groupe.id }} a").removeClass("btn-success").addClass("btn-info");
                                                                                 $('#idValide_{{ groupe.groupe.id }}').val('N');
                                                                                 } else{
@@ -349,7 +358,7 @@
                                                                             {% endif %}
                                                                         {% endfor %}
                                                                     {% endif %}
-                                                                        $("#idNbParametres").empty().append(nbParametres + '/' +           {{ groupe.parametres | length }} );
+                                                                        $("#idNbParametres").empty().append(nbParametres + '/' +                  {{ groupe.parametres | length }} );
                                                                         if (filtre != ''){
                                                                         tableGroupeParametres.search(filtre).draw();
                                                                         };

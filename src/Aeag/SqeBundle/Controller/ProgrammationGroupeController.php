@@ -1413,7 +1413,9 @@ class ProgrammationGroupeController extends Controller {
         $pgProgLotAnId = $request->get('lotan');
         $action = $request->get('action');
         $maj = $request->get('maj');
-        $selParametres = explode(',', $request->get('cochers'));
+        $selParametres = explode(',', $request->get('parametres'));
+        $selIdprestataires = explode(',', $request->get('idPrestataires'));
+        $selPrestataires = explode(',', $request->get('prestataires'));
 
         $annee = $session->get('critAnnee');
         $pgProgLotAn = $repoPgProgLotAn->getPgProgLotAnById($pgProgLotAnId);
@@ -1443,17 +1445,18 @@ class ProgrammationGroupeController extends Controller {
 //        $i++;
         $nb = 0;
         foreach ($selParametres as $codeParametre) {
-            $nb++;
             $pgSandreParametre = $repoPgSandreParametre->getPgSandreParametresByCodeParametre($codeParametre);
             $pgProgGrparRefLstParam = $repoPgProgGrparRefLstParam->getPgProgGrparRefLstParamByGrparRefCodeParametre($pgProgGrpParamRef, $codeParametre);
             if ($pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'ANA') {
-                if (!$_POST['prestataire_' . $codeParametre]) {
+                //    if (!$_POST['prestataire_' . $codeParametre]) {
+                if (!$selPrestataires[$nb]) {
                     $tabMessage[$i] = "Le prestataire doit être renseigné pour le parametre : " . $codeParametre;
                     $i++;
                     $ok = 'ko';
                 }
             } else {
-                if (!$_POST['idPrestataire_' . $codeParametre]) {
+                //     if (!$_POST['idPrestataire_' . $codeParametre]) {
+                if (!$selIdPrestataires[$nb]) {
                     $tabMessage[$i] = "Le prestataire doit être renseigné pour le parametre : " . $codeParametre;
                     $i++;
                     $ok = 'ko';
@@ -1465,6 +1468,7 @@ class ProgrammationGroupeController extends Controller {
                 $i++;
                 $ok = 'ok';
             }
+            $nb++;
         }
 
 //        $tabMessage[$i] = "nombre de parametres : " . $nb;
@@ -1491,10 +1495,10 @@ class ProgrammationGroupeController extends Controller {
             $pgSandreParametre = $repoPgSandreParametre->getPgSandreParametresByCodeParametre($codeParametre);
             $pgProgGrparRefLstParam = $repoPgProgGrparRefLstParam->getPgProgGrparRefLstParamByGrparRefCodeParametre($pgProgGrpParamRef, $codeParametre);
             if ($pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'ANA') {
-                $adrCorId = $_POST['prestataire_' . $codeParametre];
+                $adrCorId = $selPrestataires[$nb];
                 $pgRefCorresPresta = $repoPgRefCorresPresta->getPgRefCorresPrestaByAdrCorId($adrCorId);
             } else {
-                $adrCorId = $_POST['idPrestataire_' . $codeParametre];
+                $adrCorId = $selIdPrestataires[$nb];
                 $pgRefCorresPresta = $repoPgRefCorresPresta->getPgRefCorresPrestaByAdrCorId($adrCorId);
             }
             $pgProgLotParamAn = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparanCodeParametre($pgProgLotGrparAn, $pgSandreParametre);
@@ -1518,9 +1522,6 @@ class ProgrammationGroupeController extends Controller {
             $pgProgLotGrparAn->setvalide('O');
             $emSqe->persist($pgProgLotGrparAn);
             $nb++;
-            if ($nb > 100) {
-                $emSqe->flush();
-            }
         }
 
 
