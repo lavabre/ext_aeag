@@ -872,7 +872,7 @@ class DepotHydrobio {
                                     $celR = $worksheet->getCell('R' . $i)->getCalculatedValue();
                                     $celS = $worksheet->getCell('S' . $i)->getCalculatedValue();
                                     if ($celH == "" && $celI == "" && $celJ == "" &&
-                                            $celK == "" && $cel == "" && $celM == "" &&
+                                            $celK == "" && $celL == "" && $celM == "" &&
                                             $celN == "" && $celO == "" && $celP == "" &&
                                             $celQ == "" && $celR == "" && $celS == "") {
                                         $erreur = true;
