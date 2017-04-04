@@ -29,7 +29,7 @@ class ProgrammationGroupeController extends Controller {
         $session->set('controller', 'ProgrammationGroupe');
         $session->set('fonction', 'index');
 
-        //recupération des parametres
+//recupération des parametres
         $request = $this->container->get('request');
         $pgProgLotAnId = $request->get('lotan');
         $action = $request->get('action');
@@ -157,7 +157,7 @@ class ProgrammationGroupeController extends Controller {
         }
 
 
-        // récuperation des groupes de parametres liés au lot et type de milieu
+// récuperation des groupes de parametres liés au lot et type de milieu
         $tabGroupes = array();
         $i = 0;
         $pgProgLotGrparRefs = $repoPgProgLotGrparRef->getPgProgLotGrparRefByLot($pgProgLot);
@@ -189,7 +189,7 @@ class ProgrammationGroupeController extends Controller {
             $l = 0;
             $j = 0;
             for ($i = 0; $i < $size; $i++) {
-                // recuperation des groupes de parametres obligatoires lies au meme support et type de milieu
+// recuperation des groupes de parametres obligatoires lies au meme support et type de milieu
                 $support = $tabGroupes[$i]['groupe']->getSupport();
                 if ($support) {
                     $pgProgGrparObligSupports = $repoPgProgGrparObligSupport->getPgProgGrparObligSupportByCodeSupport($support->getCodeSupport());
@@ -232,7 +232,7 @@ class ProgrammationGroupeController extends Controller {
 
 
 
-        // recuperation des groupes de parametres programmés pour le lot
+// recuperation des groupes de parametres programmés pour le lot
         $size = count($tabGroupes);
         $l = 0;
         $support = null;
@@ -249,7 +249,7 @@ class ProgrammationGroupeController extends Controller {
                     if ($pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'ANA') {
                         if ($pgProgLotGrparAn->getPrestaDft()) {
                             $session->set('selectionLaboratoire_ie', $pgProgLotGrparAn->getPrestaDft()->getAdrCorid());
-                            // return new Response('browser : ' . $session->get('browser') . ' laboratoire :  ' . $session->get('selectionLaboratoire_ie'));
+// return new Response('browser : ' . $session->get('browser') . ' laboratoire :  ' . $session->get('selectionLaboratoire_ie'));
                         }
                     }
                 }
@@ -363,7 +363,7 @@ class ProgrammationGroupeController extends Controller {
                 }
             }
         }
-        //asort($tabGroupes);
+//asort($tabGroupes);
         $tabGroupesAeagCles = array();
         $size = count($tabGroupes);
 
@@ -408,7 +408,7 @@ class ProgrammationGroupeController extends Controller {
         }
 
         $session->set('groupesAeag', serialize($tabGroupesAeagCles));
-        // recuperation des autres groupes lies au type de milieu
+// recuperation des autres groupes lies au type de milieu
         $tabGroupesMilieu = array();
         $i = 0;
         foreach ($pgProgGrpParamRefs as $groupeMilieu) {
@@ -451,7 +451,7 @@ class ProgrammationGroupeController extends Controller {
                 }
             }
         }
-        //asort($tabGroupesMilieu);
+//asort($tabGroupesMilieu);
 
         $tabGroupeMilieuCles = array();
         $size = count($tabGroupesMilieu);
@@ -459,7 +459,7 @@ class ProgrammationGroupeController extends Controller {
             $tabGroupesMilieuCles[$i] = $tabGroupesMilieu[$i]['groupe']->getId();
         }
         $session->set('groupesMilieu', serialize($tabGroupesMilieuCles));
-        // controle des groupes sélectionnés
+// controle des groupes sélectionnés
         if ($session->has('selectionGroupes')) {
             $choixGroupes = $session->get('selectionGroupes');
             foreach ($choixGroupes as $groupeSelectionne) {
@@ -475,7 +475,7 @@ class ProgrammationGroupeController extends Controller {
         }
 
 
-        // recupérations des parametres liés au type de milieu
+// recupérations des parametres liés au type de milieu
         $tabSandreParametres = array();
         $j = 0;
         foreach ($pgProgGrpParamRefs as $pgProgGrpParamRef) {
@@ -495,7 +495,7 @@ class ProgrammationGroupeController extends Controller {
                 }
             }
         }
-        //asort($tabSandreParametres);
+//asort($tabSandreParametres);
 //$session->set('niveau1', $this->generateUrl('AeagSqeBundle_programmation', array('action' => $action)));
         $session->set('niveau1', $this->generateUrl('AeagSqeBundle_programmation_groupes', array('action' => $action, 'maj' => $maj, 'lotan' => $pgProgLotAnId)));
 
@@ -538,7 +538,7 @@ class ProgrammationGroupeController extends Controller {
         $repoPgProgLotPresta = $emSqe->getRepository('AeagSqeBundle:PgProgLotPresta');
         $repoPgRefCorresPresta = $emSqe->getRepository('AeagSqeBundle:PgRefCorresPresta');
 
-        //recupération des parametres
+//recupération des parametres
         $request = $this->container->get('request');
         $pgProgLotAnId = $request->get('lotan');
         $action = $request->get('action');
@@ -617,7 +617,7 @@ class ProgrammationGroupeController extends Controller {
         $pgProgLotGrparAn = $repoPgProgLotGrparAn->getPgProgLotGrparAnByLotAnGrpparref($pgProgLotAn, $tabGroupes['groupe']);
         if ($pgProgLotGrparAn) {
             $valide = $pgProgLotGrparAn->getValide();
-            //$tabGroupes['prestataire'] = $pgProgLotGrparAn->getPrestaDft();
+//$tabGroupes['prestataire'] = $pgProgLotGrparAn->getPrestaDft();
             $sizeTab = count($tabParametres);
             $pgProgLotParamAns = $repoPgProgLotParamAn->getPgProgLotParamAnByGrparan($pgProgLotGrparAn);
             if (count($pgProgLotParamAns)) {
@@ -644,7 +644,7 @@ class ProgrammationGroupeController extends Controller {
         $tabGroupes['parametres'] = $tabParametres;
 
 
-        // récuperation des laboratoires
+// récuperation des laboratoires
         $tabLaboratoires = array();
         $pgProgLotPrestas = $repoPgProgLotPresta->getPgProgLotPrestaByLotTypePresta($pgProgLotAn->getLot(), 'L');
         if ($pgProgLotPrestas) {
@@ -706,7 +706,7 @@ class ProgrammationGroupeController extends Controller {
         $repoPgProgLotPresta = $emSqe->getRepository('AeagSqeBundle:PgProgLotPresta');
         $repoPgRefCorresPresta = $emSqe->getRepository('AeagSqeBundle:PgRefCorresPresta');
 
-        //recupération des parametres
+//recupération des parametres
         $request = $this->container->get('request');
         $pgProgLotAnId = $request->get('lotan');
         $action = $request->get('action');
@@ -768,7 +768,7 @@ class ProgrammationGroupeController extends Controller {
         $repoPgSandreFractions = $emSqe->getRepository('AeagSqeBundle:PgSandreFractions');
 
 
-        //recupération des parametres
+//recupération des parametres
         $request = $this->container->get('request');
         $pgProgLotAnId = $request->get('lotan');
         $action = $request->get('action');
@@ -822,7 +822,7 @@ class ProgrammationGroupeController extends Controller {
         $repoPgProgGrpParamRef = $emSqe->getRepository('AeagSqeBundle:PgProgGrpParamRef');
         $repoPgProgGrparRefLstParam = $emSqe->getRepository('AeagSqeBundle:PgProgGrparRefLstParam');
 
-        //recupération des parametres
+//recupération des parametres
         $request = $this->container->get('request');
         $pgProgLotAnId = $request->get('lotan');
         $action = $request->get('action');
@@ -904,7 +904,7 @@ class ProgrammationGroupeController extends Controller {
         $repoPgProgGrparObligSupport = $emSqe->getRepository('AeagSqeBundle:PgProgGrparObligSupport');
         $repoPgProgPhases = $emSqe->getRepository('AeagSqeBundle:PgProgPhases');
 
-        //recupération des parametres
+//recupération des parametres
         $request = $this->container->get('request');
         $pgProgLotAnId = $request->get('lotan');
         $action = $request->get('action');
@@ -1043,13 +1043,13 @@ class ProgrammationGroupeController extends Controller {
                             $pgProgLotGrparAn->setPrestaDft($preleveur);
                         }
                         $emSqe->persist($pgProgLotGrparAn);
-                        // corerction APPLI-6503
+// corerction APPLI-6503
                         if ($pgProgLotGrparAn->getValide() == 'N') {
                             $pgProgPhases = $repoPgProgPhases->getPgProgPhasesByCodePhase('P10');
                             $pgProgLotAn->setPhase($pgProgPhases);
                         }
                         $emSqe->persist($pgProgLotAn);
-                        // fin correction APPLI-6503
+// fin correction APPLI-6503
                         $emSqe->flush();
                         $session->getFlashBag()->add('notice-success', 'Le groupe  : ' . $pgProgLotGrparAn->getGrparRef()->getLibelleGrp() . ' a été ajouté à la programmation : ' . $pgProgLotGrparAn->getLotan()->getAnneeProg() . ' version :  ' . $pgProgLotGrparAn->getLotan()->getVersion() . ' du lot : ' . $pgProgLotGrparAn->getLotan()->getLot()->getNomLot() . ' !');
                         $support = $pgProgLotGrparAn->getGrparRef()->getSupport();
@@ -1103,7 +1103,7 @@ class ProgrammationGroupeController extends Controller {
         $em = $this->get('doctrine')->getManager();
         $emSqe = $this->get('doctrine')->getManager('sqe');
 
-        //recupération des parametres
+//recupération des parametres
         $request = $this->container->get('request');
         $pgProgLotAnId = $request->get('lotan');
         $action = $request->get('action');
@@ -1211,7 +1211,7 @@ class ProgrammationGroupeController extends Controller {
         $repoPgProgGrparRefLstParam = $emSqe->getRepository('AeagSqeBundle:PgProgGrparRefLstParam');
         $repoPgSandreFractions = $emSqe->getRepository('AeagSqeBundle:PgSandreFractions');
 
-        //recupération des parametres
+//recupération des parametres
         $request = $this->container->get('request');
         $pgProgLotAnId = $request->get('lotan');
         $action = $request->get('action');
@@ -1279,7 +1279,7 @@ class ProgrammationGroupeController extends Controller {
         }
 
 
-        // recuperation des groupes lies au parametres
+// recuperation des groupes lies au parametres
         if ($pgProgGrparRefLstParams) {
             foreach ($pgProgGrparRefLstParams as $pgProgGrparRefLstParam) {
                 $pgProgGrpParamRef = $pgProgGrparRefLstParam->getGrparRef();
@@ -1314,7 +1314,7 @@ class ProgrammationGroupeController extends Controller {
                 }
             }
         } else {
-            // recuperation des groupes lies au type de milieu
+// recuperation des groupes lies au type de milieu
             if (count($tabGroupesMilieu) > 0) {
                 for ($i = 0; $i < count($tabGroupesMilieu); $i++) {
                     $pgProgGrpParamRef = $repoPgProGrpParamRef->getPgProgGrpParamRefById($tabGroupesMilieu[$i]);
@@ -1357,7 +1357,7 @@ class ProgrammationGroupeController extends Controller {
             $tabGroupes[$i]['parametres'] = $tabParametres;
         }
 
-        // recupérations des parametres liés au type de milieu
+// recupérations des parametres liés au type de milieu
         $tabSandreParametres = array();
         $j = 0;
         foreach ($pgProgGrpParamRefs as $pgProgGrpParamRef) {
@@ -1408,11 +1408,12 @@ class ProgrammationGroupeController extends Controller {
         $repoPgSandreParametre = $emSqe->getRepository('AeagSqeBundle:PgSandreParametres');
         $repoPgProgStatut = $emSqe->getRepository('AeagSqeBundle:PgProgStatut');
 
-        //recupération des parametres
+//recupération des parametres
         $request = $this->container->get('request');
         $pgProgLotAnId = $request->get('lotan');
         $action = $request->get('action');
         $maj = $request->get('maj');
+        $selParametres = explode(',', $request->get('cochers'));
 
         $annee = $session->get('critAnnee');
         $pgProgLotAn = $repoPgProgLotAn->getPgProgLotAnById($pgProgLotAnId);
@@ -1428,18 +1429,21 @@ class ProgrammationGroupeController extends Controller {
         $tabMessage = array();
         $session->set('messageErreur', null);
 
-        $selParametres = array();
-        if (!empty($_POST['check'])) {
-            $selParametres = $_POST['check'];
-            $ok = 'ok';
-        } else {
-            //$tabMessage[$i] = 'Séléctionner au moins un parametre  svp.';
-            //$i++;
-            $ok = 'ok';
-            //return new Response(json_encode($tabMessage));
-        }
-
+//        $selParametres = array();
+//        if (!empty($_POST['check'])) {
+//            $selParametres = $_POST['check'];
+//            $ok = 'ok';
+//        } else {
+////$tabMessage[$i] = 'Séléctionner au moins un parametre  svp.';
+////$i++;
+//            $ok = 'ok';
+////return new Response(json_encode($tabMessage));
+//        }
+//        $tabMessage[$i] = "nombre de parametres avant: " . count($selParametres);
+//        $i++;
+        $nb = 0;
         foreach ($selParametres as $codeParametre) {
+            $nb++;
             $pgSandreParametre = $repoPgSandreParametre->getPgSandreParametresByCodeParametre($codeParametre);
             $pgProgGrparRefLstParam = $repoPgProgGrparRefLstParam->getPgProgGrparRefLstParamByGrparRefCodeParametre($pgProgGrpParamRef, $codeParametre);
             if ($pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'ANA') {
@@ -1462,6 +1466,10 @@ class ProgrammationGroupeController extends Controller {
                 $ok = 'ok';
             }
         }
+
+//        $tabMessage[$i] = "nombre de parametres : " . $nb;
+//        $i++;
+//        $ok = 'ko';
 
 
         if ($ok == 'ko') {
@@ -1545,7 +1553,7 @@ class ProgrammationGroupeController extends Controller {
         $repoPgProgLotPeriodeProg = $emSqe->getRepository('AeagSqeBundle:PgProgLotPeriodeProg');
         $repoPgProgWebusers = $emSqe->getRepository('AeagSqeBundle:PgProgWebusers');
 
-        //recupération des parametres
+//recupération des parametres
         $request = $this->container->get('request');
         $pgProgLotAnId = $request->get('lotan');
         $action = $request->get('action');
@@ -1767,7 +1775,7 @@ class ProgrammationGroupeController extends Controller {
         $session->set('controller', 'ProgrammationGroupe');
         $session->set('fonction', 'telecharger');
 
-        //recupération des parametres
+//recupération des parametres
         $pgProgLotAnId = $lotan;
 
         $em = $this->get('doctrine')->getManager();
@@ -1787,7 +1795,7 @@ class ProgrammationGroupeController extends Controller {
         asort($pgProgLotGrparAns);
 
 
-        // récuperation des groupes de parametres liés au lot et type de milieu
+// récuperation des groupes de parametres liés au lot et type de milieu
         $tabGroupes = array();
         $i = 0;
         foreach ($pgProgLotGrparAns as $pgProgLotGrparAn) {
@@ -1828,7 +1836,7 @@ class ProgrammationGroupeController extends Controller {
             unlink($fullFileName);
         }
         $fichier_csv = fopen($fullFileName, 'w+');
-        // Entete
+// Entete
         $ligne = array('Programmation', 'Version', 'Lot', 'Groupe', 'Libellé', 'Type', 'Support', 'Prestataire', 'Parametre', 'libellé', 'Fraction', 'Unité', 'Prestataire');
         for ($i = 0; $i < count($ligne); $i++) {
             $ligne[$i] = \iconv("UTF-8", "Windows-1252//TRANSLIT", $ligne[$i]);

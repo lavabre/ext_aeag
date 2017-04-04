@@ -436,36 +436,41 @@ class CollecteurController extends Controller {
 
         $collecteur = $repoOuvrage->getOuvrageByUserIdType($user->getId(), 'ODEC');
 
-        $collecteurProducteurs = $repoCollecteurProducteur->getCollecteurProducteurByCollecteur($collecteur->getId());
+        if ($collecteur) {
+            $collecteurProducteurs = $repoCollecteurProducteur->getCollecteurProducteurByCollecteur($collecteur->getId());
 
-        $prod = array();
-        $i = 0;
-        foreach ($collecteurProducteurs as $collecteurProducteur) {
-            $producteur = $repoOuvrage->getOuvrageById($collecteurProducteur->getProducteur());
-            if ($producteur) {
-                $nbCollecteurs = $repoCollecteurProducteur->getNbCollecteurProducteurByProducteur($producteur->getId());
-                $producteurTauxSpecial = $repoProducteurTauxSpecial->getProducteurTauxSpecialBySiret($producteur->getSiret());
-                if ($producteurTauxSpecial) {
-                    $tauxAide = $producteurTauxSpecial->getTaux() / 100;
-                    $bonnifier = true;
-                } else {
-                    $tauxAide = null;
-                    $bonnifier = false;
+            $prod = array();
+            $i = 0;
+            foreach ($collecteurProducteurs as $collecteurProducteur) {
+                $producteur = $repoOuvrage->getOuvrageById($collecteurProducteur->getProducteur());
+                if ($producteur) {
+                    $nbCollecteurs = $repoCollecteurProducteur->getNbCollecteurProducteurByProducteur($producteur->getId());
+                    $producteurTauxSpecial = $repoProducteurTauxSpecial->getProducteurTauxSpecialBySiret($producteur->getSiret());
+                    if ($producteurTauxSpecial) {
+                        $tauxAide = $producteurTauxSpecial->getTaux() / 100;
+                        $bonnifier = true;
+                    } else {
+                        $tauxAide = null;
+                        $bonnifier = false;
+                    }
+                    $prod[$i][0] = $producteur;
+                    $prod[$i][1] = $nbCollecteurs;
+                    $prod[$i][2] = $bonnifier;
+                    $prod[$i][3] = $tauxAide;
+                    $i++;
                 }
-                $prod[$i][0] = $producteur;
-                $prod[$i][1] = $nbCollecteurs;
-                $prod[$i][2] = $bonnifier;
-                $prod[$i][3] = $tauxAide;
-                $i++;
             }
+
+            $session->set('retour', $this->generateUrl('AeagDecBundle_collecteur_listeProducteurs'));
+
+            return $this->render('AeagDecBundle:Collecteur:listeProducteurs.html.twig', array(
+                        'collecteur' => $collecteur,
+                        'producteurs' => $prod
+            ));
+        } else {
+            $session->getFlashBag()->add('notice-error', "pas de collecteur pour " . $user->getUserName());
+            return $this->redirect($this->generateUrl('aeag_dec'));
         }
-
-        $session->set('retour', $this->generateUrl('AeagDecBundle_collecteur_listeProducteurs'));
-
-        return $this->render('AeagDecBundle:Collecteur:listeProducteurs.html.twig', array(
-                    'collecteur' => $collecteur,
-                    'producteurs' => $prod
-        ));
     }
 
     /**
