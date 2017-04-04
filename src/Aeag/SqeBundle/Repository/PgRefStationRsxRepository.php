@@ -59,7 +59,7 @@ class PgRefStationRsxRepository extends EntityRepository {
         $query = $query . " from Aeag\SqeBundle\Entity\PgRefStationRsx p";
         $query = $query . " where p.stationMesure = :pgRefStationMesure";
         $qb = $this->_em->createQuery($query);
-        $qb->setParameter('pgRefStationMesure', $pgRefStationMesuree->getOuvFoncId());
+        $qb->setParameter('pgRefStationMesure', $pgRefStationMesure->getOuvFoncId());
         //print_r($query);
         return $qb->getResult();
     }
