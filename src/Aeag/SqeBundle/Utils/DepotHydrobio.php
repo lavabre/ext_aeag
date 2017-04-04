@@ -1013,7 +1013,7 @@ class DepotHydrobio {
                         }
                         $mpg = $worksheet->getCell('G' . $i)->getCalculatedValue();
                         if (!is_null($mpg) && is_numeric(intval($mpg))) {
-                            $pgCmdInvertPrelem->setHauteurEau($mpg->getCalculatedValue());
+                            $pgCmdInvertPrelem->setHauteurEau($mpg);
                         }
                         $mph = $worksheet->getCell('H' . $i)->getCalculatedValue();
                         if (!is_null($mph) && is_numeric(intval($mph))) {
