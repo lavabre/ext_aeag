@@ -835,55 +835,55 @@ class DepotHydrobio {
                         fputs($rapport, $contenu);
                     } else {
                         if ($celD == '#N/A') {
-                            $erreur = true;
+                            $avertissement = true;
                             $contenu = '                      Erreur : cellule D' . $i . '  le code Sandre est illisible ?? ' . CHR(13) . CHR(10);
                             $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                             fputs($rapport, $contenu);
+                            $celD = $worksheet->getCell('D' . $i)->getCalculatedValue();
+                        }
+                        $pgSandreAppellationTaxon = $repoPgSandreAppellationTaxon->getPgSandreAppellationTaxonByCodeAppelTaxonCodeSupport($celD, '13');
+                        if (!$pgSandreAppellationTaxon) {
+                            $erreur = true;
+                            $contenu = '                      Erreur : cellule D' . $i . '  le code Sandre ' . $celD . ' ne faire partie de la liste des codes possibles pour le support 13. ' . CHR(13) . CHR(10);
+                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                            fputs($rapport, $contenu);
                         } else {
-                            $pgSandreAppellationTaxon = $repoPgSandreAppellationTaxon->getPgSandreAppellationTaxonByCodeAppelTaxonCodeSupport($celD, '13');
-                            if (!$pgSandreAppellationTaxon) {
-                                $erreur = true;
-                                $contenu = '                      Erreur : cellule D' . $i . '  le code Sandre ' . $celD . ' ne faire partie de la liste des codes possibles pour le support 13. ' . CHR(13) . CHR(10);
+                            if ($celC != $pgSandreAppellationTaxon->getNomAppelTaxon()) {
+                                $avertissement = true;
+                                $contenu = '                      Avertissement : cellule C' . $i . '  libellé sandre : ' . $celC . ' différent de celui en base : ' . $pgSandreAppellationTaxon->getNomAppelTaxon() . CHR(13) . CHR(10);
                                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                                 fputs($rapport, $contenu);
-                            } else {
-                                if ($celC != $pgSandreAppellationTaxon->getNomAppelTaxon()) {
-                                    $avertissement = true;
-                                    $contenu = '                      Avertissement : cellule C' . $i . '  libellé sandre : ' . $celC . ' différent de celui en base : ' . $pgSandreAppellationTaxon->getNomAppelTaxon() . CHR(13) . CHR(10);
-                                    $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                                    fputs($rapport, $contenu);
-                                }
-                                if ($celE == "" && $celF == "" && $celG == "") {
-                                    $erreur = true;
-                                    $contenu = '                      Erreur : cellule D' . $i . '  le code Sandre ' . $celD . ' n’est pas dénombré dans les phases A, B et C . ' . CHR(13) . CHR(10);
-                                    $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                                    fputs($rapport, $contenu);
-                                }
-                                $pgProgLotStationAn = $repoPgProgLotStationAn->getPgProgLotStationAnByLotAnStation($pgProgLotAn, $pgRefStationMesure);
-                                if ($pgProgLotStationAn) {
-                                    $pgRefReseauMesure = $repoPgRefReseauMesure->getPgRefReseauMesureByGroupementId($pgProgLotStationAn->getRsxId());
-                                    if ($pgRefReseauMesure->getCodeAeagRsx() == '099') {
-                                        $celH = $worksheet->getCell('H' . $i)->getCalculatedValue();
-                                        $celI = $worksheet->getCell('I' . $i)->getCalculatedValue();
-                                        $celJ = $worksheet->getCell('J' . $i)->getCalculatedValue();
-                                        $celK = $worksheet->getCell('K' . $i)->getCalculatedValue();
-                                        $celL = $worksheet->getCell('L' . $i)->getCalculatedValue();
-                                        $celM = $worksheet->getCell('M' . $i)->getCalculatedValue();
-                                        $celN = $worksheet->getCell('N' . $i)->getCalculatedValue();
-                                        $celO = $worksheet->getCell('O' . $i)->getCalculatedValue();
-                                        $celP = $worksheet->getCell('P' . $i)->getCalculatedValue();
-                                        $celQ = $worksheet->getCell('Q' . $i)->getCalculatedValue();
-                                        $celR = $worksheet->getCell('R' . $i)->getCalculatedValue();
-                                        $celS = $worksheet->getCell('S' . $i)->getCalculatedValue();
-                                        if ($celH == "" && $celI == "" && $celJ == "" &&
-                                                $celK == "" && $celL == "" && $celM == "" &&
-                                                $celN == "" && $celO == "" && $celP == "" &&
-                                                $celQ == "" && $celR == "" && $celS == "") {
-                                            $erreur = true;
-                                            $contenu = '                     Erreur : cellule D' . $i . '   le code Sandre ' . $celD . ' n’est pas dénombré dans les microprélèvements P1 à P12. ' . CHR(13) . CHR(10);
-                                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                                            fputs($rapport, $contenu);
-                                        }
+                            }
+                            if ($celE == "" && $celF == "" && $celG == "") {
+                                $erreur = true;
+                                $contenu = '                      Erreur : cellule D' . $i . '  le code Sandre ' . $celD . ' n’est pas dénombré dans les phases A, B et C . ' . CHR(13) . CHR(10);
+                                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                fputs($rapport, $contenu);
+                            }
+                            $pgProgLotStationAn = $repoPgProgLotStationAn->getPgProgLotStationAnByLotAnStation($pgProgLotAn, $pgRefStationMesure);
+                            if ($pgProgLotStationAn) {
+                                $pgRefReseauMesure = $repoPgRefReseauMesure->getPgRefReseauMesureByGroupementId($pgProgLotStationAn->getRsxId());
+                                if ($pgRefReseauMesure->getCodeAeagRsx() == '099') {
+                                    $celH = $worksheet->getCell('H' . $i)->getCalculatedValue();
+                                    $celI = $worksheet->getCell('I' . $i)->getCalculatedValue();
+                                    $celJ = $worksheet->getCell('J' . $i)->getCalculatedValue();
+                                    $celK = $worksheet->getCell('K' . $i)->getCalculatedValue();
+                                    $celL = $worksheet->getCell('L' . $i)->getCalculatedValue();
+                                    $celM = $worksheet->getCell('M' . $i)->getCalculatedValue();
+                                    $celN = $worksheet->getCell('N' . $i)->getCalculatedValue();
+                                    $celO = $worksheet->getCell('O' . $i)->getCalculatedValue();
+                                    $celP = $worksheet->getCell('P' . $i)->getCalculatedValue();
+                                    $celQ = $worksheet->getCell('Q' . $i)->getCalculatedValue();
+                                    $celR = $worksheet->getCell('R' . $i)->getCalculatedValue();
+                                    $celS = $worksheet->getCell('S' . $i)->getCalculatedValue();
+                                    if ($celH == "" && $celI == "" && $celJ == "" &&
+                                            $celK == "" && $celL == "" && $celM == "" &&
+                                            $celN == "" && $celO == "" && $celP == "" &&
+                                            $celQ == "" && $celR == "" && $celS == "") {
+                                        $erreur = true;
+                                        $contenu = '                     Erreur : cellule D' . $i . '   le code Sandre ' . $celD . ' n’est pas dénombré dans les microprélèvements P1 à P12. ' . CHR(13) . CHR(10);
+                                        $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                        fputs($rapport, $contenu);
                                     }
                                 }
                             }
