@@ -354,7 +354,7 @@ class DepotHydrobio {
                 $contenu = '                      Erreur : cellule C53  ombrage  incorrecte ou non renseignée. ' . CHR(13) . CHR(10);
                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                 fputs($rapport, $contenu);
-            } elseif (!strtoupper($C53->getCalculatedValue()) == 'OUVERT' || !strtoupper($C53->getCalculatedValue()) == 'SEMI-OUVERT' || !strtoupper(substr($C53, 0, 4)) == 'FERM') {
+            } elseif (!strtoupper($C53) == 'OUVERT' || !strtoupper($C53) == 'SEMI-OUVERT' || !strtoupper(substr($C53, 0, 4)) == 'FERM') {
                 $erreur = true;
                 $contenu = '                      Erreur : cellule C53  ombrage  ' . $C53 . ' incorrecte. ' . CHR(13) . CHR(10);
                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
