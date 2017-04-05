@@ -25,7 +25,7 @@
                     <td width="1%" align="center" nowrap>
                         {% if reponse.phaseFichier.codePhase != 'R80' %}
                             <a id="id_{{reponse.id}}" class="btn btn-success btn-telecharger" href="{{path("AeagSqeBundle_depotHydrobio_reponses_telecharger",{"reponseId":  reponse.id, "typeFichier" : "DHY"})}}" title="Télécharger le dépôt">
-                                <i class="fa fa-download"></i>
+                                <i class="fa fa-upload"></i>
                             </a>
                         {% endif %}
                         {%if is_granted('ROLE_ADMINSQE')%}

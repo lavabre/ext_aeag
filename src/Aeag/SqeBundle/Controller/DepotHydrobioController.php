@@ -678,13 +678,15 @@ class DepotHydrobioController extends Controller {
                 break;
         }
         // On log le téléchargement
-        $log = new \Aeag\SqeBundle\Entity\PgCmdDwnldUsrRps();
-        $log->setUser($pgProgWebUser);
-        $log->setFichierReponse($pgCmdFichiersRps);
-        $log->setDate(new \DateTime());
-        $log->setTypeFichier($typeFichier);
-        $emSqe->persist($log);
-        $emSqe->flush();
+        if ($pgProgWebUser) {
+            $log = new \Aeag\SqeBundle\Entity\PgCmdDwnldUsrRps();
+            $log->setUser($pgProgWebUser);
+            $log->setFichierReponse($pgCmdFichiersRps);
+            $log->setDate(new \DateTime());
+            $log->setTypeFichier($typeFichier);
+            $emSqe->persist($log);
+            $emSqe->flush();
+        }
 
         $response = new Response();
         $response->setContent(file_get_contents($pathBase . '/' . $fileName));
