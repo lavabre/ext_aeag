@@ -23,9 +23,11 @@
                     <tr>
                     {% endif %}
                     <td width="1%" align="center" nowrap>
-                        <a id="id_{{reponse.id}}" class="btn btn-success btn-telecharger" href="{{path("AeagSqeBundle_depotHydrobio_reponses_telecharger",{"reponseId":  reponse.id, "typeFichier" : "DHY"})}}" title="Télécharger le dépôt">
-                            <i class="fa fa-download"></i>
-                        </a>
+                        {% if reponse.phaseFichier.codePhase <> 'R80' %}
+                            <a id="id_{{reponse.id}}" class="btn btn-success btn-telecharger" href="{{path("AeagSqeBundle_depotHydrobio_reponses_telecharger",{"reponseId":  reponse.id, "typeFichier" : "DHY"})}}" title="Télécharger le dépôt">
+                                <i class="fa fa-download"></i>
+                            </a>
+                        {% endif %}
                         {%if is_granted('ROLE_ADMINSQE')%}
                             <a id="supprimerReponseId_{{ reponse.id }}" class="btn btn-danger" href="{{path("AeagSqeBundle_depotHydrobio_reponses_supprimer",{"reponseId":  reponse.id})}}" title="Supprimer le dépôt">
                                 <i class="fa fa-eraser"></i>
