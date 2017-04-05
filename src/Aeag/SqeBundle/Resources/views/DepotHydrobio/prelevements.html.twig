@@ -215,7 +215,7 @@
                                                     </a>
                                                 {% endif %}
                                             {% else %}
-                                                {% if cmdPrelev.suiviPrels.0.suiviPrel.fichierRps.nomFichier %}
+                                                {% if cmdPrelev.suiviPrels.0.suiviPrel.fichierRps.nomFichier  and  cmdPrelev.cmdPrelev.phaseDmd.codePhase == 'M40' %}
                                                     <a id="idTelechargerSuivi{{ cmdPrelev.suiviPrels.0.suiviPrel.id }}" class="btn btn-success btn-telecharger" data-id="{{ cmdPrelev.suiviPrels.0.suiviPrel.id  }}"  title="Télécharger les fichiers déposés">
                                                         <i class="fa fa-upload"></i>
                                                     </a>

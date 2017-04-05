@@ -91,6 +91,16 @@
                                                     </a>
                                                 {% endif %}
                                             {% endif %}
+                                        {% else %}
+                                            {% if cmdPrelev.cmdPrelev.phaseDmd.codePhase == 'M40' and ( suiviPrel.statutPrel  == 'D' or suiviPrel.statutPrel  == 'DF' or suiviPrel.statutPrel  == 'DO')%}
+                                                {% if suiviPrel.fichierRps %}
+                                                    {% if suiviPrel.fichierRps.nomFichier %}
+                                                        <a id="idTelechargerSuivi-{{ suiviPrel.id }}" class="btn btn-success btn-telecharger" data-id="{{ suiviPrel.id }}"  title="Télécharger le fichier">
+                                                            <i class="fa fa-upload"></i>
+                                                        </a>
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endif %}
                                         {% endif %}
                                     </td>
                                 </tr>

@@ -130,6 +130,7 @@ class DepotHydrobio {
                             fwrite($fd, zip_entry_read($zip_entry, zip_entry_filesize($zip_entry)));
 
                             fclose($fd);
+                            chmod($complete_name, 0755);
                             zip_entry_close($zip_entry);
                         }
                     }
