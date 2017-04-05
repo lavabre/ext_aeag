@@ -23,7 +23,7 @@
                     <tr>
                     {% endif %}
                     <td width="1%" align="center" nowrap>
-                        {% if reponse.phaseFichier.codePhase <> 'R80' %}
+                        {% if reponse.phaseFichier.codePhase != 'R80' %}
                             <a id="id_{{reponse.id}}" class="btn btn-success btn-telecharger" href="{{path("AeagSqeBundle_depotHydrobio_reponses_telecharger",{"reponseId":  reponse.id, "typeFichier" : "DHY"})}}" title="Télécharger le dépôt">
                                 <i class="fa fa-download"></i>
                             </a>
