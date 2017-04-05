@@ -1,0 +1,26 @@
+AeagFrdBundle_etat:
+    path:  /
+    defaults: { _controller: AeagFrdBundle:Etat:index }
+    requirements:
+        methods:  GET|POST
+
+AeagFrdBundle_etat_consulterEtatsParAnnee:
+    path:  /consulterEtatsParAnnee/{anneeSelect}
+    defaults: { _controller: AeagFrdBundle:Etat:consulterEtatsParAnnee, anneeSelect:null }
+    requirements:
+        methods:  GET|POST
+
+AeagFrdBundle_etat_consulterEtatParAnnee:
+    path:  /consulterEtatParAnnee/{anneeSelect}
+    defaults: { _controller: AeagFrdBundle:Etat:consulterEtatParAnnee, anneeSelect:null }
+    requirements:
+        methods:  GET|POST
+
+AeagFrdBundle_etat_consulterFraisDeplacementsParEtat:
+    path:  /consulterFraisDeplacementsParEtat/{etatFraisId}
+    defaults: { _controller: AeagFrdBundle:Etat:consulterFraisDeplacementsParEtat, etatFraisId:null }
+    requirements:
+        methods:  GET|POST
+
+
+

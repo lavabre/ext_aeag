@@ -1,82 +1,54 @@
 AeagFrdBundle_admin_referentiel:
     path:  /
     defaults: { _controller: AeagFrdBundle:Referentiel:index }
-    
+
 AeagFrdBundle_admin_chargeReferentiel:
     path:  /chargeReferentiel
     defaults: { _controller: AeagFrdBundle:Referentiel:chargeReferentiel }
     requirements:
         methods:  GET|POST
-        
+
 AeagFrdBundle_admin_chargeFichier:
     path:  /chargeFichier/{ficent}
     defaults: { _controller: AeagFrdBundle:Referentiel:chargeFichier, ficent:null , message:null, passage:null}
     requirements:
         methods:  GET|POST
-        
+
 AeagFrdBundle_admin_consulterPhases:
     path:  /consulterPhases
     defaults: { _controller: AeagFrdBundle:Referentiel:consulterPhases }
     requirements:
         methods:  GET|POST
-        
+
 AeagFrdBundle_admin_majPhase:
     path:  /majPhase/{code}
     defaults: { _controller: AeagFrdBundle:Referentiel:phase, code:null }
     requirements:
         methods:  GET|POST
-        
+
 AeagFrdBundle_admin_consulterUtilisateurs:
     path:  /consulterUtilisateurs
     defaults: { _controller: AeagFrdBundle:Referentiel:consulterUtilisateurs }
     requirements:
         methods:  GET|POST
-        
+
 AeagFrdBundle_admin_consulterDepartements:
     path:  /consulterDepartements
     defaults: { _controller: AeagFrdBundle:Referentiel:consulterDepartements }
     requirements:
         methods:  GET|POST
-        
+
 AeagFrdBundle_admin_consulterFinalites:
     path:  /consulterFinalites
     defaults: { _controller: AeagFrdBundle:Referentiel:consulterFinalites }
     requirements:
         methods:  GET|POST
-        
+
 AeagFrdBundle_admin_consulterSousThemes:
     path:  /consulterSousThemes
     defaults: { _controller: AeagFrdBundle:Referentiel:consulterSousThemes }
     requirements:
         methods:  GET|POST
-        
-AeagFrdBundle_admin_consulterFraisDeplacements:
-    path:  /consulterFraisDeplacements
-    defaults: { _controller: AeagFrdBundle:Referentiel:consulterFraisDeplacements }
-    requirements:
-        methods:  GET|POST
-        
-AeagFrdBundle_admin_consulterEtatFraisParAnnee:
-    path:  /consulterEtatFraisParAnnee/{anneeSelect}
-    defaults: { _controller: AeagFrdBundle:Referentiel:consulterEtatFraisParAnnee, anneeSelect:null }
-    requirements:
-        methods:  GET|POST
-        
-AeagFrdBundle_admin_consulterFraisDeplacementsParEtatFrais:
-    path:  /consulterFraisDeplacementsParEtatFrais/{etatFraisId}
-    defaults: { _controller: AeagFrdBundle:Referentiel:consulterFraisDeplacementsParEtatFrais, etatFraisId:null }
-    requirements:
-        methods:  GET|POST
-        
-AeagFrdBundle_admin_consulterFraisDeplacementsParAnnee:
-    path:  /consulterFraisDeplacementsParAnnee/{anneeSelect}
-    defaults: { _controller: AeagFrdBundle:Referentiel:consulterFraisDeplacementsParAnnee, anneeSelect:null }
-    requirements:
-        methods:  GET|POST
-        
-AeagFrdBundle_admin_consulterFraisDeplacement:
-    path:  /consulterFraisDeplacement/{id}
-    defaults: { _controller: AeagFrdBundle:Referentiel:consulterFraisDeplacement }
-    requirements:
-        methods:  GET|POST
-        
+
+
+

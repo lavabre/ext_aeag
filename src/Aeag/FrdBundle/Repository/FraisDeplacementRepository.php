@@ -110,7 +110,7 @@ class FraisDeplacementRepository extends EntityRepository {
         $query = "select f";
         $query = $query . " from  Aeag\FrdBundle\Entity\FraisDeplacement f";
         $query = $query . " where to_char(f.dateDepart,'YYYYMMDD') >= :anneeDeb";
-        $query = $query . " and to_char(f.dateDepart,'YYYYMMDD') <= ':anneeFin";
+        $query = $query . " and to_char(f.dateDepart,'YYYYMMDD') <= :anneeFin";
 
         //print_r($query);
         $qb = $this->_em->createQuery($query);

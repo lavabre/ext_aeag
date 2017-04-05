@@ -4294,6 +4294,7 @@ class SaisieDonneesController extends Controller {
         if (isset($_POST['datePrel'])) {
             $dateSaisie = str_replace('/', '-', $_POST['datePrel']);
             $datePrel = new \DateTime($dateSaisie);
+            $pgCmdPrelev->setDatePrelev($datePrel);
         } else {
             $datePrel = null;
         }
@@ -4302,7 +4303,7 @@ class SaisieDonneesController extends Controller {
             $profMax = $_POST['profMax'];
         }
 
-        $pgCmdPrelev->setDatePrelev($datePrel);
+
         $pgCmdPrelev->setProfMax($profMax);
         $emSqe->persist($pgCmdPrelev);
 
@@ -4313,28 +4314,32 @@ class SaisieDonneesController extends Controller {
             $autrePrelevs = $repoPgCmdPrelev->getPgCmdPrelevByDemandeStationPeriode($autreDemande, $pgRefStationMesure, $pgProgPeriodes);
             foreach ($autrePrelevs as $autrePrelev) {
                 if ($autrePrelev->getid() != $pgCmdPrelev->getId()) {
-                    $autrePrelev->setDatePrelev($datePrel);
-                    $emSqe->persist($autrePrelev);
+                    if ($datePrel) {
+                        $autrePrelev->setDatePrelev($datePrel);
+                        $emSqe->persist($autrePrelev);
+                    }
                     $pgCmdPrelevPcs = $repoPgCmdPrelevPc->getPgCmdPrelevPcByPrelev($autrePrelev);
                     foreach ($pgCmdPrelevPcs as $autrePrelevPc) {
-                        if (isset($_POST['nonRealise_' . $autrePrelevPc->getZoneVerticale()->getcodeZone() . '_' . $autrePrelev->getCodeSupport()->getCodeSupport()])) {
-                            $autrePrelev = $autrePrelevPc->getPrelev();
-                            $autrePrelev->setRealise('N');
-                            $pgProgPhase = $repoPgProgPhases->getPgProgPhasesByCodePhase('M60');
-                            $autrePrelev->setPhaseDmd($pgProgPhase);
-                            $emSqe->persist($autrePrelev);
-                        } else {
-                            $autrePrelev = $autrePrelevPc->getPrelev();
-                            $autrePrelev->setRealise('O');
-                            $pgProgPhase = $repoPgProgPhases->getPgProgPhasesByCodePhase('M40');
-                            $autrePrelev->setPhaseDmd($pgProgPhase);
-                            $emSqe->persist($autrePrelev);
-                        }
-                        if (isset($_POST['profAna_' . $autrePrelevPc->getZoneVerticale()->getcodeZone() . '_' . $autrePrelev->getCodeSupport()->getCodeSupport()])) {
-                            $profAna = $_POST['profAna_' . $autrePrelevPc->getZoneVerticale()->getcodeZone() . '_' . $autrePrelev->getCodeSupport()->getCodeSupport()];
-                            if (strlen($profAna) > 0) {
-                                $autrePrelevPc->setProfondeur($profAna);
-                                $emSqe->persist($autrePrelevPc);
+                        if ($autrePrelevPc->getZoneVerticale()) {
+                            if (isset($_POST['nonRealise_' . $autrePrelevPc->getZoneVerticale()->getcodeZone() . '_' . $autrePrelev->getCodeSupport()->getCodeSupport()])) {
+                                $autrePrelev = $autrePrelevPc->getPrelev();
+                                $autrePrelev->setRealise('N');
+                                $pgProgPhase = $repoPgProgPhases->getPgProgPhasesByCodePhase('M60');
+                                $autrePrelev->setPhaseDmd($pgProgPhase);
+                                $emSqe->persist($autrePrelev);
+                            } else {
+                                $autrePrelev = $autrePrelevPc->getPrelev();
+                                $autrePrelev->setRealise('O');
+                                $pgProgPhase = $repoPgProgPhases->getPgProgPhasesByCodePhase('M40');
+                                $autrePrelev->setPhaseDmd($pgProgPhase);
+                                $emSqe->persist($autrePrelev);
+                            }
+                            if (isset($_POST['profAna_' . $autrePrelevPc->getZoneVerticale()->getcodeZone() . '_' . $autrePrelev->getCodeSupport()->getCodeSupport()])) {
+                                $profAna = $_POST['profAna_' . $autrePrelevPc->getZoneVerticale()->getcodeZone() . '_' . $autrePrelev->getCodeSupport()->getCodeSupport()];
+                                if (strlen($profAna) > 0) {
+                                    $autrePrelevPc->setProfondeur($profAna);
+                                    $emSqe->persist($autrePrelevPc);
+                                }
                             }
                         }
                     }
@@ -4360,9 +4365,11 @@ class SaisieDonneesController extends Controller {
                         if ($pgProgGrpParamRef->getTypeGrp() == 'SIT') {
                             $pgCmdPrelevPcs = $repoPgCmdPrelevPc->getPgCmdPrelevPcByPrelev($pgCmdPrelev);
                             foreach ($pgCmdPrelevPcs as $pgCmdPrelevPc) {
-                                if ($pgCmdPrelevPc->getZoneVerticale()->getCodeZone() == '6') {
-                                    $trouve = true;
-                                    break;
+                                if ($pgCmdPrelevPc->getZoneVerticale()) {
+                                    if ($pgCmdPrelevPc->getZoneVerticale()->getCodeZone() == '6') {
+                                        $trouve = true;
+                                        break;
+                                    }
                                 }
                             }
 
@@ -4484,9 +4491,11 @@ class SaisieDonneesController extends Controller {
                             $trouve = false;
                             $pgCmdPrelevPcs = $repoPgCmdPrelevPc->getPgCmdPrelevPcByPrelev($pgCmdPrelev);
                             foreach ($pgCmdPrelevPcs as $pgCmdPrelevPc) {
-                                if ($pgCmdPrelevPc->getZoneVerticale()->getCodeZone() == '1') {
-                                    $trouve = true;
-                                    break;
+                                if ($pgCmdPrelevPc->getZoneVerticale()) {
+                                    if ($pgCmdPrelevPc->getZoneVerticale()->getCodeZone() == '1') {
+                                        $trouve = true;
+                                        break;
+                                    }
                                 }
                             }
 
@@ -4689,8 +4698,7 @@ class SaisieDonneesController extends Controller {
             echo ('$nbSaisieParametresTotal : ' . $nbSaisieParametresTotal . ' </br>');
 
 //            return new Response('');
-
-            $pgCmdPrelev->setDatePrelev($datePrel);
+            //           $pgCmdPrelev->setDatePrelev($datePrel);
             if ($nbParametresTotal == $nbSaisieParametresTotal) {
                 $okPhase = true;
                 $pgProgPhases = $repoPgProgPhases->findOneByCodePhase('M30');

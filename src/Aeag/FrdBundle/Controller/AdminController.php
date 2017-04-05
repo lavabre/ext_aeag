@@ -40,7 +40,7 @@ class AdminController extends Controller {
         $annee = new \DateTime($annee->getLibelle());
         $session->set('annee', $annee);
 
-        return $this->redirect($this->generateUrl('AeagFrdBundle_admin_consulterEtatFraisParAnnee', array('anneeSelect' => date_format($session->get('annee'), 'Y'),
+        return $this->redirect($this->generateUrl('AeagFrdBundle_etat_consulterEtatsParAnnee', array('anneeSelect' => date_format($session->get('annee'), 'Y'),
                             'nbStatistiques' => $nbStatistiques
         )));
     }
@@ -100,7 +100,7 @@ class AdminController extends Controller {
 
         $notifications = $this->get('aeag.notifications');
         $texte = 'Les pièces justificatives de votre demande n° ' . $entity[0]->getId() . ' ont été enregistrées à l\'agence de l\'eau.';
-        $notifications->createNotification($user, $user, $em, $session, $texte);
+        $notifications->createNotification($user, $membre, $em, $session, $texte);
 
         $message = 'Courrier reçu le ' . $datePhase . ' pour les frais de déplacement n° ' . $entity[0]->getId();
         $message = $message . ' du ' . $entity[0]->getDateDepart()->format('d/m/Y') . ' ' . $entity[0]->getHeureDepart();
@@ -182,7 +182,7 @@ class AdminController extends Controller {
 
         $notifications = $this->get('aeag.notifications');
         $texte = 'Les frais de déplacement n° ' . $entity[0]->getId() . ' sont repassés à l\'état : ' . $phase->getLibelle() . '.';
-        $notifications->createNotification($user, $user, $em, $session, $texte);
+        $notifications->createNotification($user, $membre, $em, $session, $texte);
 
         $message = 'Les frais de déplacement n° ' . $entity[0]->getId();
         $message = $message . ' du ' . $entity[0]->getDateDepart()->format('d/m/Y') . ' ' . $entity[0]->getHeureDepart();

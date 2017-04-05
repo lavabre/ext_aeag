@@ -397,7 +397,7 @@ class DepotHydrobio {
             }
 
             if (!$erreur) {
-                $contenu = '                     Correct ' . CHR(13) . CHR(10);
+                $contenu = '                       Correct ' . CHR(13) . CHR(10);
                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                 fputs($rapport, $contenu);
                 // enregistrement en base
@@ -836,11 +836,15 @@ class DepotHydrobio {
                         fputs($rapport, $contenu);
                     } else {
                         if ($celD == '#N/A') {
-                            $avertissement = true;
-                            $contenu = '                      Erreur : cellule D' . $i . '  le code Sandre est illisible ?? ' . CHR(13) . CHR(10);
-                            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
-                            fputs($rapport, $contenu);
-                            $celD = $worksheet->getCell('D' . $i)->getCalculatedValue();
+                            $cell = $worksheet->getCell('D' . $i);
+                            $celD = $this->getCalculatedValueBis($cell, $rapport);
+                            if ($celD == '#N/A') {
+                                $avertissement = true;
+                                $contenu = '                      Erreur : cellule D' . $i . '  le libelle ' . $celC . ' n\'a pas de correspondance dans la formule : ' . $worksheet->getCell('D' . $i)->getValue() . CHR(13) . CHR(10);
+                                $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+                                fputs($rapport, $contenu);
+                                $celD = $worksheet->getCell('D' . $i)->getCalculatedValue();
+                            }
                         }
                         $pgSandreAppellationTaxon = $repoPgSandreAppellationTaxon->getPgSandreAppellationTaxonByCodeAppelTaxonCodeSupport($celD, '13');
                         if (!$pgSandreAppellationTaxon) {
@@ -908,7 +912,7 @@ class DepotHydrobio {
 //            }
 
             if (!$erreur) {
-                $contenu = '                     Correct ' . CHR(13) . CHR(10);
+                $contenu = '                      Correct ' . CHR(13) . CHR(10);
                 $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
                 fputs($rapport, $contenu);
                 // enregistrement en base
@@ -1539,6 +1543,26 @@ class DepotHydrobio {
 
         $tabFichier['erreur'] = $erreur;
         return $tabFichier;
+    }
+
+    /**
+     * Get calculated cell value
+     *
+     * @return mixed
+     */
+    private function getCalculatedValueBis($cell, $rapport) {
+        echo 'Cell ' . $cell->getCoordinate() . ' value : ' . $cell->getValue() . '<br />';
+        try {
+            $result = $cell->getCalculatedValue();
+        } catch (Exception $ex) {
+            $result = '#N/A';
+            $erreur = true;
+            $contenu = '                     Erreur : cellule ' . $cell->getCoordinate() . '  avec formule en erreur : ' . $ex->getMessage() . CHR(13) . CHR(10);
+            $contenu = \iconv("UTF-8", "Windows-1252//TRANSLIT", $contenu);
+            fputs($rapport, $contenu);
+        }
+        echo $cell->getCoordinate() . ' resultat :  ' . $result . '<br />';
+        return $result;
     }
 
 }

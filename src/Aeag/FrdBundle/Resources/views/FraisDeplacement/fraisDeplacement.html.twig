@@ -58,7 +58,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-undo"></i> Annuler</button>
-                    <a id="btValider" class="btn btn-success" data-dismiss="modal"><i class="fa fa-check"></i> Valider</a>
+                    <button type="button" id="btValider" class="btn btn-success" data-dismiss="modal"><i class="fa fa-check"></i> Valider</button>
                 </div>
             </div>
         </div>
@@ -826,10 +826,10 @@
 
                         $('#btValider').click( function() {
                         $('#Valider').modal('hide');
-                        //$('#idBtValider').hide();
+                        $('#idBtValider').hide();
                         $('#valider').val('O');
                         $('form').submit();
-                        return false;
+                        $('#modalTraitementEncours').modal('hide');
                         } );
 
 

@@ -2,35 +2,35 @@
 
 {%if app.session.get('menu') == 'Frais'%}
     <li  id="idDeclarations" class="active">
-{% else %}
-     <li>
-{% endif %}
-        <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
-            <span class="selected"></span>
-            Frais de déplacements
-            <i class="fa fa-angle-down"></i>     
-        </a>
-     <ul class="dropdown-menu">
+    {% else %}
+    <li>
+    {% endif %}
+    <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
+        <span class="selected"></span>
+        Frais de déplacements
+        <i class="fa fa-angle-down"></i>
+    </a>
+    <ul class="dropdown-menu">
         <li class="dropdown-submenu">
             <a href="javascript:;">
                 Consulter
             </a>
             <ul class="dropdown-menu">
-               {% for annee in app.session.get('annees') %}
+                {% for annee in app.session.get('annees') %}
                     <li>
-                        <a href="{{ path('AeagFrdBundle_admin_consulterEtatFraisParAnnee', { 'anneeSelect': annee }) }}">
-                                          {{ annee }}
+                        <a href="{{ path('AeagFrdBundle_etat_consulterEtatsParAnnee', { 'anneeSelect': annee }) }}">
+                            {{ annee }}
                         </a>
                     </li>
-                 {% endfor %}
+                {% endfor %}
             </ul>
         </li>
         <li>
             <a href="{{ path('AeagFrdBundle_admin_exporterListeFraisDeplacements') }}">
                 Exporter
             </a>
-        </li> 
-    </ul> 
+        </li>
+    </ul>
 </li>
 
 
@@ -49,18 +49,18 @@
     </li>
 {%endif%}
 
-{%if app.session.get('menu') == 'referentiel'%}   
+{%if app.session.get('menu') == 'referentiel'%}
     <li class="active">
         <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
             <span class="selected"></span>
             Référentiel
-            <i class="fa fa-angle-down"></i>     
+            <i class="fa fa-angle-down"></i>
         </a>
     {%else%}
     <li>
         <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
             Référentiel
-            <i class="fa fa-angle-down"></i>     
+            <i class="fa fa-angle-down"></i>
         </a>
     {%endif%}
     <ul class="dropdown-menu">
@@ -68,7 +68,7 @@
             <a href="{{ path('AeagFrdBundle_admin_chargeReferentiel') }}">
                 Importer
             </a>
-        </li> 
+        </li>
         <li class="dropdown-submenu">
             <a href="javascript:;">
                 Consulter
@@ -83,17 +83,17 @@
     </ul>
 </li>
 {%if is_granted('ROLE_ADMINFRD')%}
-    {%if app.session.get('menu') == 'acteurs'%}  
+    {%if app.session.get('menu') == 'acteurs'%}
         <li class="active">
             <a href="{{ path('AeagUserBundle_User', { 'role': 'ROLE_FRD' }) }}">
                 <span class="selected"></span>
                 Membres
-              </a>
+            </a>
         {%else%}
         <li>
             <a href="{{ path('AeagUserBundle_User', { 'role': 'ROLE_FRD' }) }}">
                 Membres
-             </a>   
+            </a>
         {%endif%}
     </li>
 {% endif %}

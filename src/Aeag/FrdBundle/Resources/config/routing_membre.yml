@@ -3,83 +3,65 @@ AeagFrdBundle_membre:
     defaults: { _controller: AeagFrdBundle:FraisDeplacement:index }
     requirements:
         methods:  GET|POST
-        
-AeagFrdBundle_membre_consulterEtatFraisParAnnee:
-    path:  /consulterEtatFraisParAnnee/{anneeSelect}
-    defaults: { _controller: AeagFrdBundle:FraisDeplacement:consulterEtatFraisParAnnee, anneeSelect:null }
-    requirements:
-        methods:  GET|POST
-        
-AeagFrdBundle_membre_consulterFraisDeplacementsParEtatFrais:
-    path:  /consulterFraisDeplacementsParEtatFrais/{etatFraisId}
-    defaults: { _controller: AeagFrdBundle:FraisDeplacement:consulterFraisDeplacementsParEtatFrais, etatFraisId:null }
-    requirements:
-        methods:  GET|POST
-        
-AeagFrdBundle_membre_consulterFraisDeplacementsParAnnee:
-    path:  /consulterFraisDeplacementsParAnnee/{anneeSelect}
-    defaults: { _controller: AeagFrdBundle:FraisDeplacement:consulterFraisDeplacementsParAnnee, anneeSelect:null }
-    requirements:
-        methods:  GET|POST
- 
-       
+
+
 AeagFrdBundle_membre_newFraisDeplacement:
     path:  /newFraisDeplacement
     defaults: { _controller: AeagFrdBundle:FraisDeplacement:newFraisDeplacement }
     requirements:
         methods:  GET|POST
-        
+
 AeagFrdBundle_membre_fraisDeplacement:
     path:  /fraisDeplacement/{id}
     defaults: { _controller: AeagFrdBundle:FraisDeplacement:fraisDeplacement, id:null }
     requirements:
         methods:  GET|POST
-        
+
 AeagFrdBundle_membre_deleteFraisDeplacement:
     path:  /deleteFraisDeplacement/{id}
     defaults: { _controller: AeagFrdBundle:FraisDeplacement:deleteFraisDeplacement }
     requirements:
         methods:  GET|POST
-        
+
 AeagFrdBundle_membre_viewFraisDeplacement:
     path:  /viewFraisDeplacement/{id}
     defaults: { _controller: AeagFrdBundle:FraisDeplacement:viewFraisDeplacement }
     requirements:
         methods:  GET|POST
-        
+
 AeagFrdBundle_membre_validerFraisDeplacement:
     path:  /validerFraisDeplacement/{id}
     defaults: { _controller: AeagFrdBundle:FraisDeplacement:validerFraisDeplacement }
     requirements:
         methods:  GET|POST
-        
+
 AeagFrdBundle_membre_devaliderFraisDeplacement:
     path:  /devaliderFraisDeplacement/{id}
     defaults: { _controller: AeagFrdBundle:FraisDeplacement:devaliderFraisDeplacement }
     requirements:
         methods:  GET|POST
-        
+
 AeagFrdBundle_membre_afficherSousTheme:
     path:  /afficherSousTheme
     defaults: { _controller: AeagFrdBundle:FraisDeplacement:afficherSousTheme }
     requirements:
-        methods:  GET|POST        
+        methods:  GET|POST
 
 AeagFrdBundle_declaration_pdf:
     path:  /pdf/{id}
-    defaults: { _controller: AeagFrdBundle:FraisDeplacement:pdf }  
+    defaults: { _controller: AeagFrdBundle:FraisDeplacement:pdf }
     requirements:
         station_numero: '[0-9]{5}[A-Z][0-9]{3}|[0-9]{5}[A-Z][0-9]{4}'
         annee: \d{4}
         action: '[A-Z]{1}'
-        
+
 AeagFrdBundle_membre_envoyerMessage:
     path:  /envoyerMessage
     defaults: { _controller: AeagFrdBundle:FraisDeplacement:envoyerMessage }
     requirements:
         methods:  GET|POST
 
-    
 
-    
+
+
 

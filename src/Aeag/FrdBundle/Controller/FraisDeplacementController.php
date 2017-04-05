@@ -49,212 +49,7 @@ class FraisDeplacementController extends Controller {
         $emFrd = $this->getDoctrine()->getManager('frd');
 
 
-        return $this->redirect($this->generateUrl('AeagFrdBundle_membre_consulterEtatFraisParAnnee', array('anneeSelect' => $session->get('anneeSelect'))));
-    }
-
-    public function consulterEtatFraisParAnneeAction($anneeSelect = null) {
-
-        $user = $this->getUser();
-        if (!$user) {
-            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
-        }
-        $session = $this->get('session');
-        $session->set('menu', 'Frais');
-        $session->set('controller', 'Admin');
-        $session->set('fonction', 'consulterEtatFraisParAnnee');
-        $em = $this->get('doctrine')->getManager();
-        $emFrd = $this->getDoctrine()->getManager('frd');
-
-        $repoEtatFrais = $emFrd->getRepository('AeagFrdBundle:EtatFrais');
-        $repoMandatement = $emFrd->getRepository('AeagFrdBundle:Mandatement');
-        $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
-        $repoPhase = $emFrd->getRepository('AeagFrdBundle:Phase');
-        $repoUsers = $em->getRepository('AeagUserBundle:User');
-        $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
-
-        if ($anneeSelect == '9999') {
-            $anneeSel = $session->get('anneeSelect');
-        } else {
-            $anneeSel = $anneeSelect;
-        }
-
-        $session->set('anneeSelect', $anneeSel);
-
-        $annee1 = $anneeSel . '-01-01';
-        $anneeDeb = new \DateTime($annee1);
-        $annee1 = $anneeSel . '-12-31';
-        $anneeFin = new \DateTime($annee1);
-
-        $correspondant = $repoCorrespondant->getCorrespondantById($user->getCorrespondant());
-        $phase = $repoPhase->getPhaseByCode('40');
-        $nbFraisDeplacementEnCours = $repoFraisDeplacement->getNbFraisDeplacementEnCoursByUserPhase($user->getId(), $phase->getId(), $anneeDeb, $anneeFin);
-        $i = 0;
-        $entities = array();
-        if ($anneeSel == date_format($session->get('annee'), 'Y')) {
-            $etatFrais = new EtatFrais();
-            $phase = $repoPhase->getPhaseByCode('10');
-            $entities[$i]['etatFrais'] = $etatFrais;
-            $entities[$i]['mandatement'] = null;
-            $entities[$i]['phase'] = $phase;
-            $entities[$i]['nbFraisDeplacements'] = $nbFraisDeplacementEnCours;
-            $i++;
-        }
-        $etatsFrais = $repoEtatFrais->getListeEtatFraisByCorrespondantAnnee($correspondant->getCorId(), $anneeSel);
-        foreach ($etatsFrais as $etatFrais) {
-            $entities[$i]['etatFrais'] = $etatFrais;
-            $mandatement = $repoMandatement->getMandatementByEtfrId($etatFrais->getId());
-            if ($mandatement) {
-                $entities[$i]['mandatement'] = $mandatement;
-            } else {
-                $entities[$i]['mandatement'] = null;
-            }
-            if ($etatFrais->getPhase() == '10') {
-                $codePhase = '40';
-            } else {
-                $codePhase = $etatFrais->getPhase();
-            }
-            $phase = $repoPhase->getPhaseByCode($codePhase);
-            $entities[$i]['phase'] = $phase;
-            $nbFraisDeplacements = $repoFraisDeplacement->getNbFraisDeplacementByEtfrId($etatFrais->getId());
-            $entities[$i]['nbFraisDeplacements'] = $nbFraisDeplacements;
-            $i++;
-        }
-        usort($entities, create_function('$a,$b', 'return $a[\'etatFrais\']->getNum()-$b[\'etatFrais\']->getNum();'));
-
-        $session->set('retour', $this->generateUrl('AeagFrdBundle_membre_consulterEtatFraisParAnnee', array('anneeSelect' => $session->get('anneeSelect'))));
-
-        return $this->render('AeagFrdBundle:EtatFrais:consulterEtatFrais.html.twig', array(
-                    'user' => $user,
-                    'correspondant' => $correspondant,
-                    'entities' => $entities,
-                    'annee' => $anneeSelect
-        ));
-    }
-
-    public function consulterFraisDeplacementsParEtatFraisAction($etatFraisId = null) {
-
-        $user = $this->getUser();
-        if (!$user) {
-            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
-        }
-        $session = $this->get('session');
-        $session->set('menu', 'Frais');
-        $session->set('controller', 'Admin');
-        $session->set('fonction', 'consulterFraisDeplacementsParEtatFrais');
-        $em = $this->get('doctrine')->getManager();
-        $emFrd = $this->getDoctrine()->getManager('frd');
-
-        $repoEtatFrais = $emFrd->getRepository('AeagFrdBundle:EtatFrais');
-        $repoMandatement = $emFrd->getRepository('AeagFrdBundle:Mandatement');
-        $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
-        $repoPhase = $emFrd->getRepository('AeagFrdBundle:Phase');
-        $repoUsers = $em->getRepository('AeagUserBundle:User');
-        $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
-
-        $correspondant = $repoCorrespondant->getCorrespondantById($user->getCorrespondant());
-        if ($etatFraisId) {
-            $etatFrais = $repoEtatFrais->getEtatFraisById($etatFraisId);
-            $mandatement = $repoMandatement->getMandatementByEtfrId($etatFrais->getId());
-            $fraisDeplacements = $repoFraisDeplacement->getFraisDeplacementByEtfrId($etatFrais->getId());
-        } else {
-            $etatFrais = null;
-            $mandatement = null;
-            $phase = $repoPhase->getPhaseByCode('40');
-            $annee1 = $session->get('anneeSelect') . '-01-01';
-            $anneeDeb = new \DateTime($annee1);
-            $annee1 = $session->get('anneeSelect') . '-12-31';
-            $anneeFin = new \DateTime($annee1);
-            $fraisDeplacements = $repoFraisDeplacement->getFraisDeplacementEnCoursByUserPhase($user->getId(), $phase->getId(), $anneeDeb, $anneeFin);
-        }
-
-        $i = 0;
-        $entities = array();
-        foreach ($fraisDeplacements as $fraisDeplacement) {
-            // print_r('frais : '. $fraisDeplacement->getid() );
-            $entities[$i][0] = $fraisDeplacement;
-            $user = $repoUsers->getUserById($fraisDeplacement->getUser());
-            $entities[$i][1] = $user;
-            if ($correspondant) {
-                $entities[$i][2] = $correspondant;
-            } else {
-                $entities[$i][2] = null;
-            }
-            $i++;
-        }
-
-        $session->set('retour1', $this->generateUrl('AeagFrdBundle_membre_consulterFraisDeplacementsParEtatFrais', array('etatFraisId' => $etatFraisId)));
-
-        return $this->render('AeagFrdBundle:EtatFrais:consulterFraisDeplacementsParEtatFrais.html.twig', array(
-                    'user' => $user,
-                    'correspondant' => $correspondant,
-                    'etatFrais' => $etatFrais,
-                    'mandatement' => $mandatement,
-                    'entities' => $entities,
-                    'annee' => $session->get('anneeSelect')
-        ));
-    }
-
-    public function consulterFraisDeplacementsParAnneeAction($anneeSelect = null) {
-
-        $user = $this->getUser();
-        if (!$user) {
-            return $this->render('AeagFrdBundle:Default:interdit.html.twig');
-        }
-        $session = $this->get('session');
-        $session->set('menu', 'Frais');
-        $session->set('controller', 'Admin');
-        $session->set('fonction', 'consulterFraisDeplacementsParAnnee');
-        $em = $this->get('doctrine')->getManager();
-        $emFrd = $this->getDoctrine()->getManager('frd');
-
-        $repoFraisDeplacement = $emFrd->getRepository('AeagFrdBundle:FraisDeplacement');
-        $repoUsers = $em->getRepository('AeagUserBundle:User');
-        $repoCorrespondant = $em->getRepository('AeagAeagBundle:Correspondant');
-
-        if ($anneeSelect == '9999') {
-            $anneeSel = $session->get('annee');
-        } else {
-            $annee = $anneeSelect . '-01-01';
-            $anneeSel = new \DateTime($annee);
-        }
-
-        $annee1 = $anneeSel->format('Y');
-        $anneeDeb1 = $annee1 . '-01-01';
-        $anneeFin1 = $annee1 . '-12-31';
-        $anneeDeb = new \DateTime($anneeDeb1);
-        $anneeFin = new \DateTime($anneeFin1);
-
-        $fraisDeplacements = $repoFraisDeplacement->getFraisDeplacementByUserAnnee($user->getId(), $anneeDeb, $anneeFin);
-        $i = 0;
-        $entities = array();
-        foreach ($fraisDeplacements as $fraisDeplacement) {
-            // print_r('frais : '. $fraisDeplacement->getid() );
-            $entities[$i][0] = $fraisDeplacement;
-            $user = $repoUsers->getUserById($fraisDeplacement->getUser());
-            if ($user) {
-                if ($user->getCorrespondant()) {
-                    $correspondant = $repoCorrespondant->getCorrespondantById($user->getCorrespondant());
-                } else {
-                    $correspondant = $repoCorrespondant->getCorrespondant($user->getUsername());
-                }
-                $entities[$i][1] = $user;
-                if ($correspondant) {
-                    $entities[$i][2] = $correspondant;
-                } else {
-                    $entities[$i][2] = null;
-                }
-            } else {
-                $entities[$i][1] = null;
-                $entities[$i][2] = null;
-            }
-            $i++;
-        }
-
-        return $this->render('AeagFrdBundle:FraisDeplacement:consulterFraisDeplacements.html.twig', array(
-                    'user' => $user,
-                    'entities' => $entities,
-                    'annee' => $anneeSelect
-        ));
+        return $this->redirect($this->generateUrl('AeagFrdBundle_etat_consulterEtatParAnnee', array('anneeSelect' => $session->get('anneeSelect'))));
     }
 
     public function validerFraisDeplacementAction($id) {
@@ -555,17 +350,18 @@ class FraisDeplacementController extends Controller {
                     }
                 }
 
-                //$fraisDeplacementPresents = $repoFraisDeplacement->getFraisDeplacementByUserDate($user->getId(), $fraisDeplacement->getDateDepart(), '00:00', $fraisDeplacement->getDateRetour(), '24:00');
-                $fraisDeplacementPresents = $repoFraisDeplacement->getFraisDeplacementByUserAnneeDebutAnneeFin($user->getId(), $fraisDeplacement->getDateDepart()->format('Y'), $fraisDeplacement->getDateRetour()->format('Y'));
-                foreach ($fraisDeplacementPresents as $fraisDeplacementPresent) {
-                    if ($fraisDeplacementPresent->getDateDepart()->format('YYYYMMDD') >= $fraisDeplacement->getDateDepart()->format('YYYYMMDD')) {
-                        if ($fraisDeplacementPresent->getHeureDepart() >= $fraisDeplacement->getHeureDepart()) {
-                            if ($fraisDeplacementPresent->getDateRetour()->format('YYYYMMDD') <= $fraisDeplacement->getDateRetour()->format('YYYYMMDD')) {
-                                if ($fraisDeplacementPresent->getHeureRetour() <= $fraisDeplacement->getHeureRetour()) {
-                                    $constraint = new True(array(
-                                        'message' => 'la  demande  ' . $fraisDeplacementPresent->getid() . ' existe déjà  entre le ' . $fraisDeplacement->getDateDepart()->format('d/m/Y') . ' ' . $fraisDeplacement->getHeureDepart() . ' et le ' . $fraisDeplacement->getDateRetour()->format('d/m/Y') . ' ' . $fraisDeplacement->getHeureRetour()
-                                    ));
-                                    $erreurDateHeure = $this->get('validator')->validateValue(false, $constraint);
+                if (!$id) {
+                    $fraisDeplacementPresents = $repoFraisDeplacement->getFraisDeplacementByUserAnneeDebutAnneeFin($user->getId(), $fraisDeplacement->getDateDepart()->format('Y'), $fraisDeplacement->getDateRetour()->format('Y'));
+                    foreach ($fraisDeplacementPresents as $fraisDeplacementPresent) {
+                        if ($fraisDeplacementPresent->getDateDepart()->format('YYYYMMDD') >= $fraisDeplacement->getDateDepart()->format('YYYYMMDD')) {
+                            if ($fraisDeplacementPresent->getHeureDepart() >= $fraisDeplacement->getHeureDepart()) {
+                                if ($fraisDeplacementPresent->getDateRetour()->format('YYYYMMDD') <= $fraisDeplacement->getDateRetour()->format('YYYYMMDD')) {
+                                    if ($fraisDeplacementPresent->getHeureRetour() <= $fraisDeplacement->getHeureRetour()) {
+                                        $constraint = new True(array(
+                                            'message' => 'la  demande  ' . $fraisDeplacementPresent->getid() . ' existe déjà  entre le ' . $fraisDeplacement->getDateDepart()->format('d/m/Y') . ' ' . $fraisDeplacement->getHeureDepart() . ' et le ' . $fraisDeplacement->getDateRetour()->format('d/m/Y') . ' ' . $fraisDeplacement->getHeureRetour()
+                                        ));
+                                        $erreurDateHeure = $this->get('validator')->validateValue(false, $constraint);
+                                    }
                                 }
                             }
                         }

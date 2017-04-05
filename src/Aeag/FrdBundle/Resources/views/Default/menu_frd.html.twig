@@ -8,29 +8,24 @@
     <a data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle" href="javascript:;">
         <span class="selected"></span>
         Frais de déplacements
-        <i class="fa fa-angle-down"></i>     
+        <i class="fa fa-angle-down"></i>
     </a>
-   <ul class="dropdown-menu">
+    <ul class="dropdown-menu">
         <li class="dropdown-submenu">
             <a href="javascript:;">
                 Consulter
             </a>
             <ul class="dropdown-menu">
-               {% for annee in app.session.get('annees') %}
+                {% for annee in app.session.get('annees') %}
                     <li>
-                        <a href="{{ path('AeagFrdBundle_membre_consulterEtatFraisParAnnee', { 'anneeSelect': annee }) }}">
-                                          {{ annee }}
+                        <a href="{{ path('AeagFrdBundle_etat_consulterEtatParAnnee', { 'anneeSelect': annee }) }}">
+                            {{ annee }}
                         </a>
                     </li>
-                 {% endfor %}
+                {% endfor %}
             </ul>
         </li>
-        <li>
-            <a href="{{ path('AeagFrdBundle_admin_exporterListeFraisDeplacements') }}">
-                Exporter
-            </a>
-        </li> 
-    </ul> 
+    </ul>
 </li>
 
 {%if app.session.get('menu') == 'contact'%}
