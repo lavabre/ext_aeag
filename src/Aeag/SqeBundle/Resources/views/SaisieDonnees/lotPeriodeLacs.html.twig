@@ -136,7 +136,7 @@
                                                 {% endif %}
                                             </td>
                                             <td nowrap>
-                                                {{ cmdPrelev.cmdPrelev.prestaPrel.nomCorres }}
+                                                {{ demande.prestataire.nomCorres }}
                                             </td>
                                             <td>
                                                 {%if cmdPrelev.cmdPrelev.datePrelev %}{{ cmdPrelev.cmdPrelev.datePrelev | date("d/m/Y H:i") }}{% endif %}
@@ -155,7 +155,7 @@
                                                             <li><span  class="label label-danger">{{ cmdPrelev.nbSaisisParametresTerrainErreur}}</li>
                                                             <li><span  class="label label-default">{{ cmdPrelev.nbSaisisParametresTerrain  }}/{{ cmdPrelev.nbParametresTerrain}}</li>
                                                         </ul>
-                                                    {% else %}
+                                                    {% elseif cmdPrelev.saisieTerrain == 'N' %}
                                                         <ul class="list-inline">
                                                             <li>
                                                                 <a class="btn btn-success" id="idConsulterDonneesTerrain{{ cmdPrelev.cmdPrelev.id  }}" href="#" title="Consulter les données terrains">

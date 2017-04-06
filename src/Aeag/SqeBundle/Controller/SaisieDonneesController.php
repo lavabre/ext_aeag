@@ -3675,12 +3675,14 @@ class SaisieDonneesController extends Controller {
                     $tabPgCmdDemandes[$id]['prestataire'] = $pgCmdDemande->getPrestataire();
                     $tabPgCmdDemandes[$id]['pgCmdPrelevs'] = null;
                     $tabPgCmdPrelevs = array();
+                    $tabZones = array();
+                    $iz = 0;
                     $ip = 0;
                     $pgCmdPrelevs = $repoPgCmdPrelev->getPgCmdPrelevByDemandeStationPeriode($pgCmdDemande, $station, $periode);
                     foreach ($pgCmdPrelevs as $pgCmdPrelev) {
                         if ($pgCmdPrelev->getPhaseDmd()->getcodePhase() != 'M60') {
-                            $tabPgCmdPrelevs[$ip]['cmdPrelev'] = $pgCmdPrelev;
                             $tabCodePrelevCmd = explode("_", $pgCmdPrelev->getCodePrelevCmd());
+                            $tabPgCmdPrelevs[$ip]['cmdPrelev'] = $pgCmdPrelev;
                             $tabPgCmdPrelevs[$ip]['type'] = $tabCodePrelevCmd[2];
                             $tabPgCmdPrelevs[$ip]['valider'] = 'N';
                             $tabPgCmdPrelevs[$ip]['devalider'] = 'N';
@@ -3712,6 +3714,19 @@ class SaisieDonneesController extends Controller {
                             $pgPrelevPc = $pgCmdPrelevPcs[0];
                             if ($pgCmdPrelevPcs) {
                                 $tabPgCmdPrelevs[$ip]['prelevPcs'] = $pgCmdPrelevPcs;
+                                foreach ($pgCmdPrelevPcs as $pgCmdPrelevPc) {
+                                    $trouve = false;
+                                    for ($iiz = 0; $iiz < count($tabZones); $iiz++) {
+                                        if ($tabZones[$iiz] == $pgCmdPrelevPc->getZoneVerticale()) {
+                                            $trouve = true;
+                                            break;
+                                        }
+                                    }
+                                    if (!$trouve) {
+                                        $tabZones[$iz] = $pgCmdPrelevPc->getZoneVerticale();
+                                        $iz++;
+                                    }
+                                }
                             } else {
                                 $tabPgCmdPrelevs[$ip]['prelevPcs'] = null;
                             }
@@ -3836,7 +3851,11 @@ class SaisieDonneesController extends Controller {
 //                                                if ($pgCmdPrelev->getprestaPrel()->getAdrCorId() == $userPrestataire->getAdrCorId()) {
                                                 if ($pgCmdDemande->getPrestataire()->getAdrCorId() == $userPrestataire->getAdrCorId()) {
                                                     if (strtoupper($pgProgPrestaTypfic->getFormatFic()) == 'SAISIE_TA' or strtoupper($pgProgPrestaTypfic->getFormatFic()) == 'SAISIE_T') {
-                                                        $tabPgCmdPrelevs[$ip]['saisieTerrain'] = 'O';
+                                                        if ($tabPgCmdPrelevs[$ip]['type'] == '6') {
+                                                            $tabPgCmdPrelevs[$ip]['saisieTerrain'] = 'O';
+                                                        } else {
+                                                            $tabPgCmdPrelevs[$ip]['saisieTerrain'] = 'X';
+                                                        }
                                                     }
                                                     if (strtoupper($pgProgPrestaTypfic->getFormatFic()) == 'SAISIE_TA' or strtoupper($pgProgPrestaTypfic->getFormatFic()) == 'SAISIE_A') {
                                                         $tabPgCmdPrelevs[$ip]['saisieAnalyse'] = 'O';
@@ -3868,6 +3887,7 @@ class SaisieDonneesController extends Controller {
                                     }
                                 }
                             }
+                            $tabPgCmdPrelevs[$ip]['zones'] = $tabZones;
                             $ip++;
                         }
                     }
@@ -3881,7 +3901,7 @@ class SaisieDonneesController extends Controller {
         }
 
 //        \Symfony\Component\VarDumper\VarDumper::dump($tabStations);
-//        return new Response('');
+//       return new Response('');
 
         return $this->render('AeagSqeBundle:SaisieDonnees:lotPeriodeLacs.html.twig', array(
                     'user' => $pgProgWebUser,
