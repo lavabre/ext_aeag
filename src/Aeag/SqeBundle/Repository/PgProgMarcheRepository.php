@@ -60,7 +60,7 @@ class PgProgMarcheRepository extends EntityRepository {
         //print_r($query);
         return $qb->getResult();
     }
-    
+
     /**
      * @return array
      */
@@ -72,150 +72,155 @@ class PgProgMarcheRepository extends EntityRepository {
         //print_r($query);
         return $qb->getResult();
     }
-    
-     /**
+
+    /**
      * @return array
      */
     public function getAvancementHydrobioGlobal($annee_prog) {
-   
-        $query = "select * from sqe_avancement_hydrobio_global(" . $annee_prog. ")"; 
-         return $this->getEntityManager('')
-                ->getConnection()
-                ->query($query);
+
+        $query = "select * from sqe_avancement_hydrobio_global(:annee_prog)";
+        $stmt = $this->_em->getConnection()->prepare($query);
+        $stmt->bindValue('annee_prog', $annee_prog);
+        $stmt->execute();
+        return $stmt->fetchAll();
     }
-    
-      /**
+
+    /**
      * @return array
      */
     public function getAvancementHydrobioSupport($annee_prog) {
-   
-        $query = "select * from sqe_avancement_hydrobio_support(" . $annee_prog . ")"; 
-         return $this->getEntityManager('')
-                ->getConnection()
-                ->query($query);
+
+        $query = "select * from sqe_avancement_hydrobio_support(:annee_prog)";
+        $stmt = $this->_em->getConnection()->prepare($query);
+        $stmt->bindValue('annee_prog', $annee_prog);
+        $stmt->execute();
+        return $stmt->fetchAll();
     }
-    
-      /**
+
+    /**
      * @return array
      */
     public function getAvancementHydrobioLot($annee_prog) {
-   
-        $query = "select * from sqe_avancement_hydrobio_lot(" . $annee_prog . ")"; 
-         return $this->getEntityManager('')
-                ->getConnection()
-                ->query($query);
+
+        $query = "select * from sqe_avancement_hydrobio_lot(:annee_prog)";
+        $stmt = $this->_em->getConnection()->prepare($query);
+        $stmt->bindValue('annee_prog', $annee_prog);
+        $stmt->execute();
+        return $stmt->fetchAll();
     }
-    
+
     /**
      * @return array
      */
     public function getAvancementHydrobioStation($annee_prog) {
-   
-        $query = "select * from sqe_avancement_hydrobio_station(" . $annee_prog . ")"; 
-         return $this->getEntityManager('')
-                ->getConnection()
-                ->query($query);
+
+        $query = "select * from sqe_avancement_hydrobio_station(:annee_prog)";
+        $stmt = $this->_em->getConnection()->prepare($query);
+        $stmt->bindValue('annee_prog', $annee_prog);
+        $stmt->execute();
+        return $stmt->fetchAll();
     }
-    
-    
-     /**
+
+    /**
      * @return array
      */
     public function getAvancementAnalyseGlobal($annee_prog) {
-   
-        $query = "select * from sqe_avancement_analyse_global(" . $annee_prog . ")"; 
-         return $this->getEntityManager('')
-                ->getConnection()
-                ->query($query);
+
+        $query = "select * from sqe_avancement_analyse_global(:annee_prog)";
+        $stmt = $this->_em->getConnection()->prepare($query);
+        $stmt->bindValue('annee_prog', $annee_prog);
+        $stmt->execute();
+        return $stmt->fetchAll();
     }
-    
-     /**
+
+    /**
      * @return array
      */
     public function getAvancementAnalysePeriode($annee_prog) {
-   
-        $query = "select * from sqe_avancement_analyse_periode(" . $annee_prog . ")"; 
-         return $this->getEntityManager('')
-                ->getConnection()
-                ->query($query);
+
+        $query = "select * from sqe_avancement_analyse_periode(:annee_prog)";
+        $stmt = $this->_em->getConnection()->prepare($query);
+        $stmt->bindValue('annee_prog', $annee_prog);
+        $stmt->execute();
+        return $stmt->fetchAll();
     }
-    
-     /**
+
+    /**
      * @return array
      */
     public function getAvancementAnalyseLot($annee_prog) {
-   
-        $query = "select * from sqe_avancement_analyse_lot(" . $annee_prog . ")"; 
-         return $this->getEntityManager('')
-                ->getConnection()
-                ->query($query);
+
+        $query = "select * from sqe_avancement_analyse_lot(:annee_prog)";
+        $stmt = $this->_em->getConnection()->prepare($query);
+        $stmt->bindValue('annee_prog', $annee_prog);
+        $stmt->execute();
+        return $stmt->fetchAll();
     }
-    
+
     /**
      * @return array
      */
     public function getAvancementPrelevementGlobal() {
-   
-        $query = "select * from sqe_avancement_prelevement_global()"; 
-         return $this->getEntityManager('')
-                ->getConnection()
-                ->query($query);
+
+        $query = "select * from sqe_avancement_prelevement_global()";
+        return $this->getEntityManager('')
+                        ->getConnection()
+                        ->query($query);
     }
-    
+
     /**
      * @return array
      */
     public function getAvancementPrelevementTypeMarche() {
-   
-        $query = "select * from sqe_avancement_prelevement_type_marche()"; 
-         return $this->getEntityManager('')
-                ->getConnection()
-                ->query($query);
+
+        $query = "select * from sqe_avancement_prelevement_type_marche()";
+        return $this->getEntityManager('')
+                        ->getConnection()
+                        ->query($query);
     }
-    
+
     /**
      * @return array
      */
     public function getAvancementPrelevementTypeMilieu() {
-   
-        $query = "select * from sqe_avancement_prelevement_type_milieu()"; 
-         return $this->getEntityManager('')
-                ->getConnection()
-                ->query($query);
+
+        $query = "select * from sqe_avancement_prelevement_type_milieu()";
+        return $this->getEntityManager('')
+                        ->getConnection()
+                        ->query($query);
     }
-    
-     /**
+
+    /**
      * @return array
      */
     public function getAvancementProgrammationGlobal($annee_prog) {
-   
-        $query = "select * from sqe_avancement_Programmation_global(" . $annee_prog .")"; 
-         return $this->getEntityManager('')
-                ->getConnection()
-                ->query($query);
+
+        $query = "select * from sqe_avancement_Programmation_global(" . $annee_prog . ")";
+        return $this->getEntityManager('')
+                        ->getConnection()
+                        ->query($query);
     }
-    
+
     /**
      * @return array
      */
     public function getAvancementProgrammationMarche() {
-   
-        $query = "select * from sqe_avancement_Programmation_marche() "; 
-         return $this->getEntityManager('')
-                ->getConnection()
-                ->query($query);
+
+        $query = "select * from sqe_avancement_Programmation_marche() ";
+        return $this->getEntityManager('')
+                        ->getConnection()
+                        ->query($query);
     }
-    
+
     /**
      * @return array
      */
     public function getAvancementProgrammationMilieu() {
-   
-        $query = "select * from sqe_avancement_Programmation_milieu() "; 
-         return $this->getEntityManager('')
-                ->getConnection()
-                ->query($query);
-    }
 
+        $query = "select * from sqe_avancement_Programmation_milieu() ";
+        return $this->getEntityManager('')
+                        ->getConnection()
+                        ->query($query);
+    }
 
 }

@@ -3863,7 +3863,11 @@ class SaisieDonneesController extends Controller {
                                                 }
                                             }
                                             if ($user->hasRole('ROLE_ADMINSQE') and $pgCmdPrelev->getPhaseDmd()->getcodePhase() < 'M50') {
-                                                $tabPgCmdPrelevs[$ip]['saisieTerrain'] = 'O';
+                                                if ($tabPgCmdPrelevs[$ip]['type'] == '6') {
+                                                    $tabPgCmdPrelevs[$ip]['saisieTerrain'] = 'O';
+                                                } else {
+                                                    $tabPgCmdPrelevs[$ip]['saisieTerrain'] = 'X';
+                                                }
                                                 $tabPgCmdPrelevs[$ip]['saisieAnalyse'] = 'O';
                                             }
                                         }
@@ -3877,7 +3881,11 @@ class SaisieDonneesController extends Controller {
                                         if ($pgCmdPrelev->getPhaseDmd()->getcodePhase() == 'M40') {
                                             $tabPgCmdPrelevs[$ip]['devalider'] = 'O';
                                             $tabStations[$is]['devalider'] = 'O';
-                                            $tabPgCmdPrelevs[$ip]['saisieTerrain'] = 'N';
+                                            if ($tabPgCmdPrelevs[$ip]['type'] == '6') {
+                                                $tabPgCmdPrelevs[$ip]['saisieTerrain'] = 'N';
+                                            } else {
+                                                $tabPgCmdPrelevs[$ip]['saisieTerrain'] = 'X';
+                                            }
                                             $tabPgCmdPrelevs[$ip]['saisieAnalyse'] = 'N';
                                             $tabStations[$is]['saisieTerrain'] = 'N';
                                         } else {
@@ -3973,6 +3981,7 @@ class SaisieDonneesController extends Controller {
         $nbDemande = 0;
         $autresDemandes = $repoPgCmdDemande->getPgCmdDemandesByLotanPeriode($pgProgLotAn, $pgProgPeriodes);
         foreach ($autresDemandes as $autreDemande) {
+            //    if ($autreDemande->getid() != $pgCmdDemande->getid()) {
             $tabAutreDemandes[$nbDemande]['demande'] = $autreDemande;
             $tabAutrePrelevs = array();
             $nbPrelev = 0;
@@ -3987,6 +3996,7 @@ class SaisieDonneesController extends Controller {
             }
             $tabAutreDemandes[$nbDemande]['prelevs'] = $tabAutrePrelevs;
 //                $nbDemande++;
+            //           }
         }
 
         $tabGroupes = array();
@@ -3998,7 +4008,7 @@ class SaisieDonneesController extends Controller {
             $pgProgLotGrparAn = $pgProgLotPeriodeProg->getGrparAn();
             $prestataire = $pgProgLotGrparAn->getPrestaDft();
             $pgProgGrpParamRef = $pgProgLotGrparAn->getGrparRef();
-            if ($pgProgLotGrparAn->getvalide() == 'O' and $pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'ENV') {
+            if ($pgProgLotGrparAn->getvalide() == 'O' and $pgProgGrpParamRef->getTypeGrp() == 'ENV') {
 
 // if ($pgProgGrpParamRef->getCodeMilieu()->getCodeMilieu() == $pgProgTypeMilieu->getCodeMilieu()) {
                 $tabGroupes[$nbGroupes]['grparAn'] = $pgProgLotGrparAn;
@@ -4055,7 +4065,7 @@ class SaisieDonneesController extends Controller {
 // }
             }
 
-            if ($pgProgLotGrparAn->getvalide() == 'O' and $pgProgLotGrparAn->getGrparRef()->getTypeGrp() == 'SIT') {
+            if ($pgProgLotGrparAn->getvalide() == 'O' and $pgProgGrpParamRef->getTypeGrp() == 'SIT') {
 
 // if ($pgProgGrpParamRef->getCodeMilieu()->getCodeMilieu() == $pgProgTypeMilieu->getCodeMilieu()) {
                 $tabGroupes[$nbGroupes]['grparAn'] = $pgProgLotGrparAn;
@@ -4349,8 +4359,8 @@ class SaisieDonneesController extends Controller {
                                 $emSqe->persist($autrePrelev);
                             } else {
                                 $autrePrelev = $autrePrelevPc->getPrelev();
-                                $autrePrelev->setRealise('O');
-                                $pgProgPhase = $repoPgProgPhases->getPgProgPhasesByCodePhase('M40');
+                                $autrePrelev->setRealise('N');
+                                $pgProgPhase = $repoPgProgPhases->getPgProgPhasesByCodePhase('M20');
                                 $autrePrelev->setPhaseDmd($pgProgPhase);
                                 $emSqe->persist($autrePrelev);
                             }

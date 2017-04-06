@@ -6,3 +6,5 @@ app/logs/
 web/bundles/
 # ignorer tous les fichiers dans le r�pertoire nbproject/private
 nbproject/private/
+# ignorer le fichier parameters.yml
+app/config/parameters.yml

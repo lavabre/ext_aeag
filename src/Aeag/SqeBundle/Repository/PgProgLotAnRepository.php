@@ -509,20 +509,27 @@ class PgProgLotAnRepository extends EntityRepository {
      * @return array
      */
     public function getProgrammationPeriodes($lotanId) {
-        $query = "select * from sqe_programmation_periode(" . $lotanId . ")";
-        return $this->getEntityManager('')
-                        ->getConnection()
-                        ->query($query);
+        $query = "select * from sqe_programmation_periode(:lotanId)";
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('lotanId', $lotanId);
+        return $qb->getResult();
+//        return $this->getEntityManager('')
+//                        ->getConnection()
+//                        ->query($query);
     }
 
     /**
      * @return array
      */
     public function getProgrammationStationPeriodes($lotanId, $stationId) {
-        $query = "select * from sqe_programmation_station_periode(" . $lotanId . "," . $stationId . ")";
-        return $this->getEntityManager('')
-                        ->getConnection()
-                        ->query($query);
+        $query = "select * from sqe_programmation_station_periode(:lotanId , :stationId)";
+        $qb = $this->_em->createQuery($query);
+        $qb->setParameter('lotanId', $lotanId);
+        $qb->setParameter('stationId', $stationId);
+        return $qb->getResult();
+//        return $this->getEntityManager('')
+//                        ->getConnection()
+//                        ->query($query);
     }
 
 }

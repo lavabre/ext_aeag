@@ -386,7 +386,7 @@ class PgCmdPrelevRepository extends EntityRepository {
                     join pg_prog_marche marche on marche.id = lot.marche_id
                     join pg_ref_corres_producteur prod on prod.adr_cor_id = marche.resp_adr_cor_id
                     join pg_prog_zgeoref_station zgsta on zgsta.station_id = prlv.station_id
-                    where zgsta.zgeo_ref_id IN (' . $zgeorefs . ')
+                    where zgsta.zgeo_ref_id IN (:zgeorefs)
                     and lot.code_milieu = :codemilieu
                     and (prlv.date_prelev >= :datedeb
                     and prlv.date_prelev <= :datefin)';
@@ -395,6 +395,7 @@ class PgCmdPrelevRepository extends EntityRepository {
         //where lot.zgeo_ref_id IN (' . $zgeorefs . ') --uniquement les données des lots associés à $zgeorefs
 
         $stmt = $this->_em->getConnection()->prepare($query);
+        $stmt->bindValue('zgeorefs', $zgeorefs);
         $stmt->bindValue('codemilieu', $codemilieu);
         $stmt->bindValue('datedeb', $datedeb);
         $stmt->bindValue('datefin', $datefin);
@@ -466,8 +467,8 @@ class PgCmdPrelevRepository extends EntityRepository {
                     join pg_ref_corres_producteur prod on prod.adr_cor_id = marche.resp_adr_cor_id
                     left join pg_sandre_vals_possibles_params_env vpos on vpos.code_parametre = mesenv.code_parametre and vpos.valeur = mesenv.resultat
                     join pg_prog_zgeoref_station zgsta on zgsta.station_id = prlv.station_id
-                    where zgsta.zgeo_ref_id IN (' . $zgeorefs . ')
-                    and ((lot.code_milieu = \'LPC\' and prlvpc.zone_verticale = \'1\') or (lot.code_milieu <> \'LPC\'))
+                    where zgsta.zgeo_ref_id IN (:zgeorefs)
+                   and ((lot.code_milieu = \'LPC\' and prlvpc.zone_verticale = \'1\') or (lot.code_milieu <> \'LPC\'))
                     and lot.code_milieu = :codemilieu
                     and (prlv.date_prelev >= :datedeb
                     and prlv.date_prelev <= :datefin)';
@@ -476,6 +477,7 @@ class PgCmdPrelevRepository extends EntityRepository {
         //where lot.zgeo_ref_id IN (' . $zgeorefs . ') --uniquement les données des lots associés à $zgeorefs
 
         $stmt = $this->_em->getConnection()->prepare($query);
+        $stmt->bindValue('zgeorefs', $zgeorefs);
         $stmt->bindValue('codemilieu', $codemilieu);
         $stmt->bindValue('datedeb', $datedeb);
         $stmt->bindValue('datefin', $datefin);
